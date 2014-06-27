@@ -34,7 +34,7 @@ namespace Concord.Tests
                         User = ""
                     }
                 })
-                .WillResponseWith(new PactServiceResponse
+                .WillRespondWith(new PactServiceResponse
                 {
                     Status = 200,
                     Headers = new Dictionary<string, string>
@@ -43,6 +43,12 @@ namespace Concord.Tests
                     },
                     Body = new {}
                 });
+
+            pactServiceMock.Start();
+
+
+
+            pactServiceMock.Stop();
         }
     }
 }

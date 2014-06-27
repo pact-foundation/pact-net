@@ -1,14 +1,25 @@
-﻿namespace Concord
+﻿using System;
+using Nancy.Hosting.Self;
+
+namespace Concord
 {
-    public class PactService
+    public class PactService : IDisposable
     {
+        private NancyHost _host;
         private string _description;
         private PactServiceRequest _request;
         private PactServiceResponse _response;
 
         public PactService(int port)
         {
-            //Server should be booted here
+            var hostConfig = new HostConfiguration
+            {
+                UrlReservations = { CreateAutomatically = true }
+            };
+
+            var uri = String.Format("http://localhost:{0}", port);
+
+            _host = new NancyHost(hostConfig, new Uri(uri));
         }
 
         public PactService UponReceiving(string description)
@@ -25,11 +36,29 @@
             return this;
         }
 
-        public PactService WillResponseWith(PactServiceResponse response)
+        public PactService WillRespondWith(PactServiceResponse response)
         {
             _response = response;
 
             return this;
+        }
+
+        public void Start()
+        {
+            //Register the built module
+
+            _host.Start();
+        }
+
+        public void Stop()
+        {
+            _host.Stop();
+        }
+
+        public void Dispose()
+        {
+            if(_host != null)
+                _host.Dispose();
         }
     }
 }
