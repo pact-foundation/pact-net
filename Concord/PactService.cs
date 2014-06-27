@@ -1,8 +1,53 @@
 ﻿using System;
+using Nancy;
 using Nancy.Hosting.Self;
 
 namespace Concord
 {
+    public class PactServiceNancyModule : NancyModule
+    {
+        private static HttpVerb _method;
+        private static string _path;
+        private static PactServiceRequest _request;
+        private static PactServiceResponse _response;
+
+        public PactServiceNancyModule()
+        {
+            Get[_path] = parameters => _response.Body;
+
+            /*if (_method == HttpVerb.Get)
+            {
+                
+            }*/
+        }
+
+        public static void Set(HttpVerb method, string path, PactServiceRequest request, PactServiceResponse response)
+        {
+            Reset();
+
+            _method = method;
+            _path = path;
+            _request = request;
+            _response = response;
+        }
+
+        private static void Reset()
+        {
+            _method = 0;
+            _path = null;
+            _request = null;
+            _response = null;
+        }
+    }
+
+    public class PactServiceNancyModule2 : NancyModule
+    {
+        public PactServiceNancyModule2()
+        {
+            Get["/"] = parameters => "Hello";
+        }
+    }
+
     public class PactService : IDisposable
     {
         private NancyHost _host;

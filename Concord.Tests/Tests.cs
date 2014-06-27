@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using Xunit;
 
 namespace Concord.Tests
@@ -46,7 +47,11 @@ namespace Concord.Tests
 
             pactServiceMock.Start();
 
+            var client = new HttpClient();
+            var response = client.GetAsync("http://localhost:1234/");
 
+            var content = response.Result.Content.ReadAsStringAsync().Result;
+            var status = response.Result.StatusCode;
 
             pactServiceMock.Stop();
         }
