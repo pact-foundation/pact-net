@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using Xunit;
 
@@ -19,7 +20,7 @@ namespace Concord.Tests
             pactServiceMock.UponReceiving("A POST request with an event")
                 .With(new PactServiceRequest
                 {
-                    Method = HttpVerb.Post,
+                    Method = HttpVerb.Get,
                     Path = "/events",
                     Headers = new Dictionary<string, string>
                     {
@@ -42,18 +43,21 @@ namespace Concord.Tests
                     {
                         { "Content-Type", "application/json" }
                     },
-                    Body = new {}
+                    Body = new { Test = "tester", Test2 = "Tester2" }
                 });
 
             pactServiceMock.Start();
 
             var client = new HttpClient();
-            var response = client.GetAsync("http://localhost:1234/");
+            var response = client.GetAsync("http://localhost:1234/events");
 
             var content = response.Result.Content.ReadAsStringAsync().Result;
             var status = response.Result.StatusCode;
 
+            Assert.Equal(HttpStatusCode.OK, status);
+
             pactServiceMock.Stop();
+            pactServiceMock.Dispose();
         }
     }
 }

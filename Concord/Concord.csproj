@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{7024B146-2CB2-4DE2-B079-58CF9C44640B}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Concord</RootNamespace>
     <AssemblyName>Concord</AssemblyName>
@@ -45,6 +45,9 @@
     <Reference Include="Nancy.Testing">
       <HintPath>..\packages\Nancy.Testing.0.23.0\lib\net40\Nancy.Testing.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Owin">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
@@ -59,11 +62,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HttpVerb.cs" />
+    <Compile Include="NancyResponseMapper.cs" />
     <Compile Include="PactService.cs" />
     <Compile Include="Pact.cs" />
+    <Compile Include="PactServiceNancyModule.cs" />
     <Compile Include="PactServiceRequest.cs" />
     <Compile Include="PactServiceResponse.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
