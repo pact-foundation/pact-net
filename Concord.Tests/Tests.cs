@@ -46,7 +46,7 @@ namespace Concord.Tests
                     Body = new { Test = "tester", Test2 = "Tester2" }
                 });
 
-            pactServiceMock.Start();
+            pact.StartServer();
 
             var client = new HttpClient();
             var response = client.GetAsync("http://localhost:1234/events");
@@ -56,8 +56,7 @@ namespace Concord.Tests
 
             Assert.Equal(HttpStatusCode.OK, status);
 
-            pactServiceMock.Stop();
-            pactServiceMock.Dispose();
+            pact.StopServer();
         }
 
         [Fact]

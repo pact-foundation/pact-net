@@ -52,6 +52,16 @@ namespace Concord
             _host.Stop();
         }
 
+        public PactInteraction DescribeInteraction()
+        {
+            return new PactInteraction
+                       {
+                           Description = _description,
+                           Request = _request,
+                           Response = _response
+                       };
+        }
+
         public void Dispose()
         {
             if(_host != null)

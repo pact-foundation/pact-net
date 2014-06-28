@@ -1,16 +1,28 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 namespace Concord
 {
-    public class Pact
+    public class Pact //TODO: Should we split this into consumer and provider?
     {
         private string _consumerName;
         private string _providerName;
         private PactProvider _pactProvider;
-        private string _pactFilePath = "./specs/pacts/";
+        private string _pactFileDirectory = "./specs/pacts/";
+        private readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
+                                                                   {
+                                                                       ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                                                                       NullValueHandling = NullValueHandling.Ignore,
+                                                                       Formatting = Formatting.Indented
+                                                                   };
+
+        public string PactFilePath
+        {
+            get { return Path.Combine(_pactFileDirectory, PactFileName); }
+        }
 
         public string PactFileName 
         {
@@ -46,10 +58,8 @@ namespace Concord
         {
             _consumerName = consumerName;
 
-            var pactFilePath = Path.Combine(_pactFilePath, PactFileName);
-            var pactFileJson = File.ReadAllText(pactFilePath);
-            var jsonSettings = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
-            var pactFile = JsonConvert.DeserializeObject<PactFile>(pactFileJson, jsonSettings);
+            var pactFileJson = File.ReadAllText(PactFilePath);
+            var pactFile = JsonConvert.DeserializeObject<PactFile>(pactFileJson, JsonSettings);
             pactFile.VerifyProvider();
 
             return this;
@@ -76,6 +86,33 @@ namespace Concord
                 throw new InvalidOperationException("Please define a Mock Service by calling MockService(...) before calling GetMockService()");
 
             return _pactProvider;
+        }
+
+        public void StartServer()
+        {
+            _pactProvider.Start();
+        }
+
+        public void StopServer()
+        {
+            _pactProvider.Stop();
+            _pactProvider.Dispose();
+
+            //TODO: Should we get from disk and append interactions
+            var pactFile = new PactFile
+            {
+                Provider = new PactParty { Name = _providerName },
+                Consumer = new PactParty { Name = _consumerName },
+                Interactions = new List<PactInteraction>
+                    {
+                        _pactProvider.DescribeInteraction()
+                    },
+                Metadata = new { PactSpecificationVersion =  "1.0.0" }
+            };
+
+            var pactFileJson = JsonConvert.SerializeObject(pactFile, JsonSettings);
+
+            File.WriteAllText(PactFilePath, pactFileJson);
         }
     }
 }
