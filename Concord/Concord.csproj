@@ -63,11 +63,14 @@
   <ItemGroup>
     <Compile Include="HttpVerb.cs" />
     <Compile Include="NancyResponseMapper.cs" />
-    <Compile Include="PactService.cs" />
+    <Compile Include="PactFile.cs" />
+    <Compile Include="PactInteraction.cs" />
+    <Compile Include="PactParty.cs" />
+    <Compile Include="PactProvider.cs" />
     <Compile Include="Pact.cs" />
-    <Compile Include="PactServiceNancyModule.cs" />
-    <Compile Include="PactServiceRequest.cs" />
-    <Compile Include="PactServiceResponse.cs" />
+    <Compile Include="PactProviderNancyModule.cs" />
+    <Compile Include="PactProviderRequest.cs" />
+    <Compile Include="PactProviderResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

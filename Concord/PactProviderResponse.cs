@@ -2,7 +2,7 @@
 
 namespace Concord
 {
-    public class PactServiceResponse
+    public class PactProviderResponse
     {
         public int Status { get; set; }
         public Dictionary<string, string> Headers { get; set; }

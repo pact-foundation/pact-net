@@ -2,7 +2,7 @@
 
 namespace Concord
 {
-    public class PactServiceRequest
+    public class PactProviderRequest
     {
         public HttpVerb Method { get; set; }
         public string Path { get; set; }

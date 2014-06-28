@@ -9,7 +9,7 @@ namespace Concord.Tests
     public class Tests
     {
         [Fact]
-        public void Test()
+        public void ConsumerTest()
         {
             var pact = new Pact().ServiceConsumer("Source System")
                 .HasPactWith("Event API")
@@ -18,7 +18,7 @@ namespace Concord.Tests
             var pactServiceMock = pact.GetMockService();
 
             pactServiceMock.UponReceiving("A POST request with an event")
-                .With(new PactServiceRequest
+                .With(new PactProviderRequest
                 {
                     Method = HttpVerb.Get,
                     Path = "/events",
@@ -36,7 +36,7 @@ namespace Concord.Tests
                         User = ""
                     }
                 })
-                .WillRespondWith(new PactServiceResponse
+                .WillRespondWith(new PactProviderResponse
                 {
                     Status = 200,
                     Headers = new Dictionary<string, string>
@@ -58,6 +58,16 @@ namespace Concord.Tests
 
             pactServiceMock.Stop();
             pactServiceMock.Dispose();
+        }
+
+        [Fact]
+        public void ProviderTest()
+        {
+            //Create a test Owin API
+            //Use Microsoft.Owin.Testing to spin up the Owin API
+            
+            var pact = new Pact().ServiceProvider("Event API")
+                .HonoursPactWith("Source System");
         }
     }
 }

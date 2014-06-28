@@ -3,34 +3,34 @@ using Nancy.Hosting.Self;
 
 namespace Concord
 {
-    public class PactService : IDisposable
+    public class PactProvider : IDisposable
     {
         private NancyHost _host;
         private readonly string _uri;
         private string _description;
-        private PactServiceRequest _request;
-        private PactServiceResponse _response;
+        private PactProviderRequest _request;
+        private PactProviderResponse _response;
 
-        public PactService(int port)
+        public PactProvider(int port)
         {
             _uri = String.Format("http://localhost:{0}", port);
         }
 
-        public PactService UponReceiving(string description)
+        public PactProvider UponReceiving(string description)
         {
             _description = description;
 
             return this;
         }
 
-        public PactService With(PactServiceRequest request)
+        public PactProvider With(PactProviderRequest request)
         {
             _request = request;
 
             return this;
         }
 
-        public PactService WillRespondWith(PactServiceResponse response)
+        public PactProvider WillRespondWith(PactProviderResponse response)
         {
             _response = response;
 
@@ -39,7 +39,7 @@ namespace Concord
 
         public void Start()
         {
-            PactServiceNancyModule.Set(_request, _response);
+            PactProviderNancyModule.Set(_request, _response);
 
             var hostConfig = new HostConfiguration { UrlReservations = { CreateAutomatically = true }, AllowChunkedEncoding = false };
             _host = new NancyHost(hostConfig, new Uri(_uri));

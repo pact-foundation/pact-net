@@ -2,12 +2,12 @@
 
 namespace Concord
 {
-    public class PactServiceNancyModule : NancyModule
+    public class PactProviderNancyModule : NancyModule
     {
-        private static PactServiceRequest _request;
-        private static PactServiceResponse _response;
+        private static PactProviderRequest _request;
+        private static PactProviderResponse _response;
 
-        public PactServiceNancyModule()
+        public PactProviderNancyModule()
         {
             switch (_request.Method)
             {
@@ -30,7 +30,7 @@ namespace Concord
             }
         }
 
-        public static void Set(PactServiceRequest request, PactServiceResponse response)
+        public static void Set(PactProviderRequest request, PactProviderResponse response)
         {
             Reset();
 
@@ -44,7 +44,7 @@ namespace Concord
             return mapper.Convert(_response);
         }
 
-        private bool FilterRequest(Request nancyRequest, PactServiceRequest serviceRequest)
+        private bool FilterRequest(Request nancyRequest, PactProviderRequest providerRequest)
         {
             //Compare headers
             //Compare Body
