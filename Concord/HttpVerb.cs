@@ -2,9 +2,9 @@
 {
     public enum HttpVerb
     {
+        Get,
         Post,
         Put,
-        Get,
         Delete,
         Head,
         Patch

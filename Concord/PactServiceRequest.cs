@@ -8,7 +8,5 @@ namespace Concord
         public string Path { get; set; }
         public Dictionary<string, string> Headers { get; set; }
         public dynamic Body { get; set; } //TODO: Handle different Json Formatters CamelCase or PascalCase
-
-        //TODO: Create a customer compare with NancyRequest object
     }
 }

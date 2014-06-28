@@ -41,7 +41,7 @@ namespace Concord
         {
             PactServiceNancyModule.Set(_request, _response);
 
-            var hostConfig = new HostConfiguration { UrlReservations = { CreateAutomatically = true } };
+            var hostConfig = new HostConfiguration { UrlReservations = { CreateAutomatically = true }, AllowChunkedEncoding = false };
             _host = new NancyHost(hostConfig, new Uri(_uri));
 
             _host.Start();
