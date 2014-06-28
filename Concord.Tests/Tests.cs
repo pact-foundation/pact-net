@@ -8,6 +8,8 @@ namespace Concord.Tests
 {
     public class Tests
     {
+        //TODO: Test order is important here atm, refactor so it isn't
+
         [Fact]
         public void ConsumerTest()
         {
