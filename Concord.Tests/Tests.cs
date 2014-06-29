@@ -9,6 +9,7 @@ namespace Concord.Tests
     public class Tests
     {
         //TODO: Test order is important here atm, refactor so it isn't
+        //TODO: Refactor the code, it needs a big cleanup
 
         [Fact]
         public void ConsumerTest()
