@@ -18,6 +18,8 @@ namespace Concord.Api.Web
 
             config.MapHttpAttributeRoutes();
 
+            app.UseWebApi(config);
+
             var json = config.Formatters.JsonFormatter;
             json.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             json.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;

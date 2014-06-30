@@ -22,7 +22,7 @@ namespace Concord.Api.Web.Controllers
                 {
                     EventId = Guid.Parse("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5"),
                     Timestamp = "2014-06-30T01:37:41.0660548Z",
-                    EventType = "JobSearchViews"
+                    EventType = "JobSearchView"
                 },
                 new
                 {
