@@ -5,6 +5,8 @@ using Dynamitey;
 
 namespace Concord
 {
+    //TODO: Implement fine grain failures
+
     public class PactProviderResponse : IEquatable<PactProviderResponse>
     {
         public int Status { get; set; }
@@ -19,8 +21,32 @@ namespace Concord
             if (!Status.Equals(other.Status))
                 return false;
 
-            //TODO: Ensure headers are all good
+            if (Headers != null && Headers.Any())
+            {
+                foreach (var header in Headers)
+                {
+                    string headerValue;
 
+                    if (other.Headers == null || !other.Headers.Any())
+                    {
+                        return false;
+                    }
+
+                    if (other.Headers.TryGetValue(header.Key, out headerValue))
+                    {
+                        if (!header.Value.Equals(headerValue, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            //TODO: Refactor the names here, as they are kind of rubbish atm
             //TODO: Does not support nested objects, without equality operators
             var leftItemsEnumerable = Body as IEnumerable<dynamic>;
             var rightItemsEnumerable = other.Body as IEnumerable<dynamic>;
@@ -61,7 +87,7 @@ namespace Concord
                 var leftValue = Dynamic.InvokeGet(leftObject, propertyName);
                 var rightValue = Dynamic.InvokeGet(rightObject, propertyName);
 
-                if (!leftValue.Equals(rightValue))
+                if (!leftValue.Equals(rightValue)) //TODO: This will fail if there is a casing mismatch
                 {
                     return false;
                 }

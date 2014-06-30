@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using Microsoft.Owin.Testing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -30,14 +32,20 @@ namespace Concord
             {
                 var request = new HttpRequestMessage(_httpVerbMap[interaction.Request.Method], interaction.Request.Path);
 
-                //client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                /*if (interaction.Request.Headers != null && interaction.Request.Headers.Any())
+                if (interaction.Request.Headers != null && interaction.Request.Headers.Any())
                 {
                     foreach (var header in interaction.Request.Headers)
                     {
-                        request.Headers.Add(header.Key, header.Value);
+                        if (header.Key.Equals("Content-Type", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(header.Value));
+                        }
+                        else
+                        {
+                            request.Headers.Add(header.Key, header.Value);
+                        }
                     }
-                }*/
+                }
 
                 var jsonSettings = new JsonSerializerSettings
                 {
@@ -52,12 +60,12 @@ namespace Concord
 
                 var response = client.SendAsync(request).Result;
 
-                var headers = response.Headers;
                 
                 var actualResponse = new PactProviderResponse
                 {
                     Status = (int)response.StatusCode,
-                    Body = JsonConvert.DeserializeObject<dynamic>(response.Content.ReadAsStringAsync().Result)
+                    Body = JsonConvert.DeserializeObject<dynamic>(response.Content.ReadAsStringAsync().Result),
+                    Headers = ConvertHeaders(response.Headers, response.Content.Headers)
                 };
 
                 if (!interaction.Response.Equals(actualResponse))
@@ -66,6 +74,29 @@ namespace Concord
                     //TODO: Give more details about this!
                 }
             }
+        }
+
+        private Dictionary<string, string> ConvertHeaders(HttpResponseHeaders responseHeaders, HttpContentHeaders contentHeaders)
+        {
+            if ((responseHeaders == null || !responseHeaders.Any()) &&
+                (contentHeaders == null || !contentHeaders.Any()))
+            {
+                return null;
+            }
+
+            var headers = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+
+            foreach (var responseHeader in responseHeaders)
+            {
+                headers.Add(responseHeader.Key, responseHeader.Value.First());
+            }
+
+            foreach (var contentHeader in contentHeaders)
+            {
+                headers.Add(contentHeader.Key, contentHeader.Value.First());
+            }
+
+            return headers;
         }
     }
 }
