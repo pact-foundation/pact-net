@@ -6,14 +6,14 @@ namespace Concord
     public class PactProvider : IDisposable
     {
         private NancyHost _host;
-        private readonly string _uri;
+        private readonly string _baseUri;
         private string _description;
         private PactProviderRequest _request;
         private PactProviderResponse _response;
 
         public PactProvider(int port)
         {
-            _uri = String.Format("http://localhost:{0}", port);
+            _baseUri = String.Format("http://localhost:{0}", port);
         }
 
         public PactProvider UponReceiving(string description)
@@ -42,7 +42,7 @@ namespace Concord
             PactProviderNancyModule.Set(_request, _response);
 
             var hostConfig = new HostConfiguration { UrlReservations = { CreateAutomatically = true }, AllowChunkedEncoding = false };
-            _host = new NancyHost(hostConfig, new Uri(_uri));
+            _host = new NancyHost(hostConfig, new Uri(_baseUri));
 
             _host.Start();
         }

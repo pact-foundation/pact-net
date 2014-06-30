@@ -5,6 +5,8 @@ using Concord.Api.Web.Controllers;
 using DotNetDoodle.Owin;
 using DotNetDoodle.Owin.Dependencies.Autofac;
 using Microsoft.Owin;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Owin;
 
 [assembly: OwinStartup("ApiConfiguration", typeof(Concord.Api.Web.Startup))]
@@ -21,7 +23,9 @@ namespace Concord.Api.Web
             app.UseWebApi(config);
 
             var json = config.Formatters.JsonFormatter;
-            json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.Objects;
+            json.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            json.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            json.SerializerSettings.Formatting = Formatting.None;
             config.Formatters.Remove(config.Formatters.XmlFormatter);
 
             var builder = new ContainerBuilder();

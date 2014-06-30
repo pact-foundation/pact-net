@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.Owin.Testing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -54,13 +55,14 @@ namespace Concord
             return this;
         }
 
-        public Pact HonoursPactWith(string consumerName)
+        public Pact HonoursPactWith(string consumerName, TestServer server)
         {
             _consumerName = consumerName;
 
             var pactFileJson = File.ReadAllText(PactFilePath);
             var pactFile = JsonConvert.DeserializeObject<PactFile>(pactFileJson, JsonSettings);
-            pactFile.VerifyProvider();
+
+            pactFile.VerifyProvider(server);
 
             return this;
         }
@@ -80,7 +82,7 @@ namespace Concord
             return this;
         }*/
 
-        public PactProvider GetMockService()
+        public PactProvider GetMockProvider()
         {
             if (_pactProvider == null)
                 throw new InvalidOperationException("Please define a Mock Service by calling MockService(...) before calling GetMockService()");

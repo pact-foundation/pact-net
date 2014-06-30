@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
+using Microsoft.Owin.Testing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -24,21 +24,21 @@ namespace Concord
             { HttpVerb.Patch, new HttpMethod("PATCH") }
         };
 
-        public void VerifyProvider()
+        public void VerifyProvider(TestServer server)
         {
-            var client = new HttpClient { BaseAddress = new Uri("http://localhost:1234/") };
-
+            var client = server.HttpClient;
             foreach (var interaction in Interactions)
             {
                 var request = new HttpRequestMessage(_httpVerbMap[interaction.Request.Method], interaction.Request.Path);
 
-                if (interaction.Request.Headers != null && interaction.Request.Headers.Any())
+                //client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                /*if (interaction.Request.Headers != null && interaction.Request.Headers.Any())
                 {
                     foreach (var header in interaction.Request.Headers)
                     {
                         request.Headers.Add(header.Key, header.Value);
                     }
-                }
+                }*/
 
                 var jsonSettings = new JsonSerializerSettings
                 {
@@ -48,16 +48,24 @@ namespace Concord
 
                 if (interaction.Request.Body != null)
                 {
-                    request.Content = JsonConvert.SerializeObject(interaction.Request.Body, jsonSettings);
+                    request.Content = new StringContent(JsonConvert.SerializeObject(interaction.Request.Body, jsonSettings));
                 }
-                
+
                 var response = client.SendAsync(request).Result;
 
-                var statusCode = response.StatusCode;
                 var headers = response.Headers;
-                var body = response.Content.ReadAsStringAsync().Result;
+                
+                var actualResponse = new PactProviderResponse
+                {
+                    Status = (int)response.StatusCode,
+                    Body = JsonConvert.DeserializeObject<dynamic>(response.Content.ReadAsStringAsync().Result)
+                };
 
-                //TODO:Verify the response is a per the pact response
+                if (!interaction.Response.Equals(actualResponse))
+                {
+                    throw new Exception("Response does not match");
+                    //TODO: Give more details about this!
+                }
             }
         }
     }
