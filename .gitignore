@@ -27,7 +27,7 @@ Thumbs.db
 [Rr]elease*/
 _ReSharper*/
 [Tt]est[Rr]esult*
-[Ww]eb.[Cc]onfig
+#[Ww]eb.[Cc]onfig
 *.csproj.user
 *.orig
 *.psess
