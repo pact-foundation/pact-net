@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ImpromptuInterface;
+using Dynamitey;
 
 namespace Concord
 {
@@ -14,70 +13,74 @@ namespace Concord
 
         public bool Equals(PactProviderResponse other)
         {
-            return true;
-
-            /*if (other == null)
+            if (other == null)
                 return false;
 
             if (!Status.Equals(other.Status))
-                return true;
+                return false;
+
+            //TODO: Ensure headers are all good
 
             //TODO: Does not support nested objects, without equality operators
-            //TODO: Still WIP
-            var tt = (IEnumerable<dynamic>) Body;
+            var leftItemsEnumerable = Body as IEnumerable<dynamic>;
+            var rightItemsEnumerable = other.Body as IEnumerable<dynamic>;
 
-
-            foreach (var t in tt)
+            if (leftItemsEnumerable != null && rightItemsEnumerable != null)
             {
-                IEnumerable<string> ttd = Impromptu.GetMemberNames(t);
+                var leftItemsArr = leftItemsEnumerable.ToArray();
+                var rightItemsArr = rightItemsEnumerable.ToArray();
 
+                for (var i = 0; i < leftItemsArr.Length; i++)
+                {
+                    var leftItem = leftItemsArr[i];
+                    var rightItem = rightItemsArr[i];
+
+                    if (!DoOrderedPropertyValuesMatch(leftItem, rightItem))
+                    {
+                        return false;
+                    }
+                }
             }
-            
-
-            IEnumerable<string> members = Impromptu.GetMemberNames(Body);
-            members = members.OrderBy(m => m);
-
-            IEnumerable<string> otherMembers = Impromptu.GetMemberNames(other.Body);
-            otherMembers = otherMembers.OrderBy(m => m);
-
-            if (members.SequenceEqual(otherMembers))
+            else
             {
-                return false;
-            }
-
-            foreach(var memberName in members)
-            {
-                var memberVal = Impromptu.InvokeGet(Body, memberName);
-                var otherMemberVal = Impromptu.InvokeGet(other.Body, memberName);
-
-                if (!memberVal.Equals(otherMemberVal))
+                if (!DoOrderedPropertyValuesMatch(Body, other.Body))
                 {
                     return false;
                 }
             }
 
-            return true;*/
-
-            //if (ReferenceEquals(null, other)) return false;
-            //if (ReferenceEquals(this, other)) return true;
-            //return Status == other.Status && Equals(Headers, other.Headers) && Equals(Body, other.Body);
+            return true;
         }
 
-        /*public override bool Equals(object obj)
+        private bool DoOrderedPropertyValuesMatch(dynamic leftObject, dynamic rightObject)
         {
-            return true;
-            return Equals((PactProviderResponse) obj);
-        }*/
+            var customPropertiesOnObject = Dynamic.GetMemberNames(leftObject, true);
 
-        /*public override int GetHashCode()
+            foreach (var propertyName in customPropertiesOnObject)
+            {
+                var leftValue = Dynamic.InvokeGet(leftObject, propertyName);
+                var rightValue = Dynamic.InvokeGet(rightObject, propertyName);
+
+                if (!leftValue.Equals(rightValue))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public override int GetHashCode()
         {
-            unchecked
+            //TODO: implement GetHashCode
+            return 0;
+            /*unchecked
             {
                 int hashCode = Status;
                 hashCode = (hashCode * 397) ^ (Headers != null ? Headers.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (Body != null ? Body.GetHashCode() : 0);
                 return hashCode;
-            }
+            }*/
         }
 
         public static bool operator ==(PactProviderResponse a, PactProviderResponse b)
@@ -88,6 +91,6 @@ namespace Concord
         public static bool operator !=(PactProviderResponse a, PactProviderResponse b)
         {
             return !Equals(a, b);
-        }*/
+        }
     }
 }

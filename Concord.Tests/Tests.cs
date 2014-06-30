@@ -83,7 +83,7 @@ namespace Concord.Tests
             server.HttpClient.BaseAddress = new Uri(BaseUri); //Don't think we really need to do this
 
             var pact = new Pact().ServiceProvider("Event API")
-                .HonoursPactWith("Source System", server);
+                .HonoursPactWith("Source System", server.HttpClient);
 
             server.Dispose();
         }

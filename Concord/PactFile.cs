@@ -24,9 +24,8 @@ namespace Concord
             { HttpVerb.Patch, new HttpMethod("PATCH") }
         };
 
-        public void VerifyProvider(TestServer server)
+        public void VerifyProvider(HttpClient client)
         {
-            var client = server.HttpClient;
             foreach (var interaction in Interactions)
             {
                 var request = new HttpRequestMessage(_httpVerbMap[interaction.Request.Method], interaction.Request.Path);

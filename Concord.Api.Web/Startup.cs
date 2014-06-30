@@ -2,8 +2,6 @@
 using Autofac;
 using Autofac.Integration.WebApi;
 using Concord.Api.Web.Controllers;
-using DotNetDoodle.Owin;
-using DotNetDoodle.Owin.Dependencies.Autofac;
 using Microsoft.Owin;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -20,8 +18,6 @@ namespace Concord.Api.Web
 
             config.MapHttpAttributeRoutes();
 
-            app.UseWebApi(config);
-
             var json = config.Formatters.JsonFormatter;
             json.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             json.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
@@ -31,10 +27,10 @@ namespace Concord.Api.Web
             var builder = new ContainerBuilder();
             
             builder.RegisterApiControllers(typeof(TestController).Assembly);
-            builder.RegisterOwinApplicationContainer();
             var container = builder.Build();
 
-            app.UseAutofacContainer(container).UseWebApiWithContainer(config);
+            app.UseAutofacMiddleware(container);
+            app.UseAutofacWebApi(config);
         }
     }
 }

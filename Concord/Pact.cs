@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 using Microsoft.Owin.Testing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -55,14 +56,14 @@ namespace Concord
             return this;
         }
 
-        public Pact HonoursPactWith(string consumerName, TestServer server)
+        public Pact HonoursPactWith(string consumerName, HttpClient client)
         {
             _consumerName = consumerName;
 
             var pactFileJson = File.ReadAllText(PactFilePath);
             var pactFile = JsonConvert.DeserializeObject<PactFile>(pactFileJson, JsonSettings);
 
-            pactFile.VerifyProvider(server);
+            pactFile.VerifyProvider(client);
 
             return this;
         }
