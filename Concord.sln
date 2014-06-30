@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Concord", "Concord\Concord.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Concord.Tests", "Concord.Tests\Concord.Tests.csproj", "{FED26847-EA11-4B2B-BFEC-0DBC62B2CF9E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Concord.Api.Web", "Concord.Api.Web\Concord.Api.Web.csproj", "{E85C47D3-F985-4C1F-A598-A4AEB5740DA2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{FED26847-EA11-4B2B-BFEC-0DBC62B2CF9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FED26847-EA11-4B2B-BFEC-0DBC62B2CF9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FED26847-EA11-4B2B-BFEC-0DBC62B2CF9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E85C47D3-F985-4C1F-A598-A4AEB5740DA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E85C47D3-F985-4C1F-A598-A4AEB5740DA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E85C47D3-F985-4C1F-A598-A4AEB5740DA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E85C47D3-F985-4C1F-A598-A4AEB5740DA2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
