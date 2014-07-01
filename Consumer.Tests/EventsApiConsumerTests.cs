@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Consumer.Tests
 {
-    public class Tests
+    public class EventsApiConsumerTests
     {
         //TODO: Test order is important here atm, refactor so it isn't
         //TODO: Refactor the code, it needs a big cleanup
@@ -14,8 +14,8 @@ namespace Consumer.Tests
         //TODO:! Implement a new test and share the server for both consumer and provider
         //TODO:! Assertions in library (Look how other testing tools do it)
 
-
-        private const string BaseUri = "http://localhost:1234";
+        private const int MockServerPort = 1234;
+        private readonly string _mockServerBaseUri = String.Format("http://localhost:{0}", MockServerPort);
 
         /*private Pact _pact;
         private PactProvider _pactProviderMock;
@@ -38,11 +38,11 @@ namespace Consumer.Tests
         }*/
 
         [Fact]
-        public void GetAllEvents_WhenCalled_ReturnsEvents()
+        public void GetAllEvents_WhenCalled_ReturnsAllEvents()
         {
-            var pact = new Pact().ServiceConsumer("Source System")
+            var pact = new Pact().ServiceConsumer("Consumer")
                 .HasPactWith("Event API")
-                .MockService(1234);
+                .MockService(MockServerPort);
 
             var pactProviderMock = pact.GetMockProvider();
 
@@ -53,7 +53,7 @@ namespace Consumer.Tests
                     Path = "/events",
                     Headers = new Dictionary<string, string>
                     {
-                        { "Content-Type", "application/json" }
+                        { "Accept", "application/json" }
                     }
                 })
                 .WillRespondWith(new PactProviderResponse
@@ -86,7 +86,7 @@ namespace Consumer.Tests
                     }
                 });
 
-            var consumer = new TestApiConsumer(BaseUri);
+            var consumer = new EventsApiConsumer(_mockServerBaseUri);
 
             //Act
             pact.StartServer();
@@ -95,6 +95,48 @@ namespace Consumer.Tests
 
             Assert.NotEmpty(events);
             Assert.Equal(3, events.Count());
+        }
+
+        [Fact]
+        public void CreateEvent_WhenCalledWithEvent_Suceeds()
+        {
+            var eventId = Guid.Parse("1F587704-2DCC-4313-A233-7B62B4B469DB");
+            var dateTime = new DateTime(2011, 07, 01, 01, 41, 03);
+            DateTimeFactory.Now = () => dateTime;
+
+            var pact = new Pact().ServiceConsumer("Consumer")
+                .HasPactWith("Event API")
+                .MockService(MockServerPort);
+
+            var pactProviderMock = pact.GetMockProvider();
+
+            pactProviderMock.UponReceiving("A GET request to retrieve all events")
+                .With(new PactProviderRequest
+                {
+                    Method = HttpVerb.Post,
+                    Path = "/events",
+                    Headers = new Dictionary<string, string>
+                    {
+                        { "Content-Type", "application/json" }
+                    },
+                    Body = new
+                    {
+                        EventId = eventId,
+                        Timestamp = dateTime.ToString("O"),
+                        EventType = "JobDetailsView"
+                    }
+                })
+                .WillRespondWith(new PactProviderResponse
+                {
+                    Status = 201
+                });
+
+            var consumer = new EventsApiConsumer(_mockServerBaseUri);
+
+            //Act
+            pact.StartServer();
+            consumer.CreateEvent(eventId);
+            pact.StopServer();
         }
     }
 }

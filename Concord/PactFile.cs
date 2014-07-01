@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using Microsoft.Owin.Testing;
+using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -15,6 +15,12 @@ namespace Concord
         public PactParty Consumer { get; set; }
         public IEnumerable<PactInteraction> Interactions { get; set; }
         public dynamic Metadata { get; set; }
+
+        private readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
+        {
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            NullValueHandling = NullValueHandling.Ignore
+        };
 
         private Dictionary<HttpVerb, HttpMethod> _httpVerbMap = new Dictionary<HttpVerb, HttpMethod>
         {
@@ -30,37 +36,61 @@ namespace Concord
         {
             foreach (var interaction in Interactions)
             {
-                var request = new HttpRequestMessage(_httpVerbMap[interaction.Request.Method], interaction.Request.Path);
+                var requestHeaders = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
 
                 if (interaction.Request.Headers != null && interaction.Request.Headers.Any())
                 {
                     foreach (var header in interaction.Request.Headers)
                     {
-                        if (header.Key.Equals("Content-Type", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(header.Value));
-                        }
-                        else
-                        {
-                            request.Headers.Add(header.Key, header.Value);
-                        }
+                        requestHeaders.Add(header.Key, header.Value);
                     }
                 }
 
-                var jsonSettings = new JsonSerializerSettings
-                {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                    NullValueHandling = NullValueHandling.Ignore
-                };
+                var request = new HttpRequestMessage(_httpVerbMap[interaction.Request.Method], interaction.Request.Path);
 
                 if (interaction.Request.Body != null)
                 {
-                    request.Content = new StringContent(JsonConvert.SerializeObject(interaction.Request.Body, jsonSettings));
+                    //If there is a content-type header add it to the content
+                    var jsonContent = JsonConvert.SerializeObject(interaction.Request.Body, _jsonSettings);
+                    StringContent content;
+                    if (requestHeaders.ContainsKey("Content-Type"))
+                    {
+                        content = new StringContent(jsonContent, Encoding.UTF8, requestHeaders["Content-Type"]);
+                    }
+                    else
+                    {
+                        content = new StringContent(jsonContent);
+                    }
+
+                    foreach (var requestHeader in requestHeaders)
+                    {
+                        if (requestHeader.Key.Equals("Content-Type", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            continue;
+                        }
+
+                        content.Headers.Add(requestHeader.Key, requestHeader.Value);
+                    }
+
+                    request.Content = content;
+                }
+
+                if (interaction.Request.Headers != null && interaction.Request.Headers.Any())
+                {
+                    foreach (var requestHeader in interaction.Request.Headers)
+                    {
+                        //Ignore any content headers, as they will be attached above if applicable
+                        if (requestHeader.Key.Equals("Content-Type", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            continue;
+                        }
+
+                        request.Headers.Add(requestHeader.Key, requestHeader.Value);
+                    }
                 }
 
                 var response = client.SendAsync(request).Result;
 
-                
                 var actualResponse = new PactProviderResponse
                 {
                     Status = (int)response.StatusCode,

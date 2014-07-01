@@ -3,15 +3,15 @@ using Xunit;
 
 namespace Concord.Api.Web.Tests
 {
-    public class Tests
+    public class EventApiTests
     {
         [Fact]
-        public void ProviderTest()
+        public void EnsureEventApiHonoursPactWithConsumer()
         {
             var testServer = TestServer.Create<Startup>();
 
-            var pact = new Pact().ServiceProvider("Event API")
-                .HonoursPactWith("Source System", testServer.HttpClient);
+            new Pact().ServiceProvider("Event API")
+                .HonoursPactWith("Consumer", testServer.HttpClient);
 
             testServer.Dispose();
         }

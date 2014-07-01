@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
 using System.Web.Http;
 
 namespace Concord.Api.Web.Controllers
@@ -12,6 +14,17 @@ namespace Concord.Api.Web.Controllers
             var events = GetAllEventsFromRepo();
 
             return events;
+        }
+
+        [Route("events")]
+        public HttpResponseMessage Post(dynamic @event)
+        {
+            if (@event == null)
+            {
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+
+            return new HttpResponseMessage(HttpStatusCode.Created);
         }
 
         private IEnumerable<dynamic> GetAllEventsFromRepo()
