@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
-using Microsoft.Owin.Testing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -13,17 +12,17 @@ namespace Concord
         private string _consumerName;
         private string _providerName;
         private PactProvider _pactProvider;
-        private string _pactFileDirectory = "./specs/pacts/";
-        private readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
-                                                                   {
-                                                                       ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                                                                       NullValueHandling = NullValueHandling.Ignore,
-                                                                       Formatting = Formatting.Indented
-                                                                   };
+        private const string PactFileDirectory = "C:/specs/pacts/";
+        private readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
+        {
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            NullValueHandling = NullValueHandling.Ignore,
+            Formatting = Formatting.Indented
+        };
 
         public string PactFilePath
         {
-            get { return Path.Combine(_pactFileDirectory, PactFileName); }
+            get { return Path.Combine(PactFileDirectory, PactFileName); }
         }
 
         public string PactFileName 
@@ -61,7 +60,7 @@ namespace Concord
             _consumerName = consumerName;
 
             var pactFileJson = File.ReadAllText(PactFilePath);
-            var pactFile = JsonConvert.DeserializeObject<PactFile>(pactFileJson, JsonSettings);
+            var pactFile = JsonConvert.DeserializeObject<PactFile>(pactFileJson, _jsonSettings);
 
             pactFile.VerifyProvider(client);
 
@@ -113,7 +112,7 @@ namespace Concord
                 Metadata = new { PactSpecificationVersion =  "1.0.0" }
             };
 
-            var pactFileJson = JsonConvert.SerializeObject(pactFile, JsonSettings);
+            var pactFileJson = JsonConvert.SerializeObject(pactFile, _jsonSettings);
 
             File.WriteAllText(PactFilePath, pactFileJson);
         }

@@ -1,18 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Concord.Api.Web;
-using Microsoft.Owin.Testing;
+using Concord;
 using Xunit;
 
-namespace Concord.Tests
+namespace Consumer.Tests
 {
     public class Tests
     {
         //TODO: Test order is important here atm, refactor so it isn't
         //TODO: Refactor the code, it needs a big cleanup
 
+        //TODO:! Implement a new test and share the server for both consumer and provider
+        //TODO:! Assertions in library (Look how other testing tools do it)
+
+
         private const string BaseUri = "http://localhost:1234";
+
+        /*private Pact _pact;
+        private PactProvider _pactProviderMock;
+        private TestServer _testServer;*/
+
+        /*public Tests()
+        {
+            _pact = 
+
+            _pact.StartServer();
+
+            _testServer = TestServer.Create<Startup>();
+            _testServer.HttpClient.BaseAddress = new Uri(BaseUri); //Don't think we really need to do this
+        }
+
+        public void Dispose()
+        {
+            _pact.StopServer();
+            _testServer.Dispose();
+        }*/
 
         [Fact]
         public void GetAllEvents_WhenCalled_ReturnsEvents()
@@ -63,29 +86,15 @@ namespace Concord.Tests
                     }
                 });
 
-            pact.StartServer();
-
             var consumer = new TestApiConsumer(BaseUri);
 
             //Act
+            pact.StartServer();
             var events = consumer.GetAllEvents();
-
             pact.StopServer();
 
             Assert.NotEmpty(events);
             Assert.Equal(3, events.Count());
-        }
-
-        [Fact]
-        public void ProviderTest()
-        {
-            var server = TestServer.Create<Startup>();
-            server.HttpClient.BaseAddress = new Uri(BaseUri); //Don't think we really need to do this
-
-            var pact = new Pact().ServiceProvider("Event API")
-                .HonoursPactWith("Source System", server.HttpClient);
-
-            server.Dispose();
         }
     }
 }

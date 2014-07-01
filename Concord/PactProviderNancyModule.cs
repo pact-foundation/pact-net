@@ -9,6 +9,11 @@ namespace Concord
 
         public PactProviderNancyModule()
         {
+            if (_request == null || _response == null)
+            {
+                return;
+            }
+            
             switch (_request.Method)
             {
                 case HttpVerb.Head:

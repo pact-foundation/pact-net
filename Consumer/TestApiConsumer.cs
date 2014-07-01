@@ -6,7 +6,7 @@ using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Concord.Tests
+namespace Consumer
 {
     public class TestApiConsumer
     {
