@@ -1,7 +1,8 @@
-﻿using Nancy;
-
-namespace Concord
+﻿namespace Concord
 {
+    using Nancy;
+    using System;
+
     public class PactProviderNancyModule : NancyModule
     {
         private static PactProviderRequest _request;
@@ -18,29 +19,36 @@ namespace Concord
             {
                 case HttpVerb.Head:
                 case HttpVerb.Get:
-                    Get[_request.Path, ctx => FilterRequest(ctx.Request, _request)] = _ => GenerateResponse();
+                    Get[_request.Path] = _ => HandleRequest();
                     break;
                 case HttpVerb.Post:
-                    Post[_request.Path, ctx => FilterRequest(ctx.Request, _request)] = _ => GenerateResponse();
+                    Post[_request.Path] = _ => HandleRequest();
                     break;
                 case HttpVerb.Put:
-                    Put[_request.Path, ctx => FilterRequest(ctx.Request, _request)] = _ => GenerateResponse();
+                    Put[_request.Path] = _ => HandleRequest();
                     break;
                 case HttpVerb.Delete:
-                    Delete[_request.Path, ctx => FilterRequest(ctx.Request, _request)] = _ => GenerateResponse();
+                    Delete[_request.Path] = _ => HandleRequest();
                     break;
                 case HttpVerb.Patch:
-                    Patch[_request.Path, ctx => FilterRequest(ctx.Request, _request)] = _ => GenerateResponse();
+                    Patch[_request.Path] = _ => HandleRequest();
                     break;
             }
         }
 
         public static void Set(PactProviderRequest request, PactProviderResponse response)
         {
-            Reset();
-
             _request = request;
             _response = response;
+        }
+
+        private Response HandleRequest()
+        {
+            // TODO: Handle this in a better way
+            if (!this.FilterRequest(this.Context.Request, _request))
+                throw new Exception("Nancy Pact Request Mismatch");
+
+            return this.GenerateResponse();
         }
 
         private Response GenerateResponse()
@@ -53,6 +61,8 @@ namespace Concord
         {
             //Compare headers
             //Compare Body
+
+
             return true; //Just for now, don't filter any requests
         }
 
