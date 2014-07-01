@@ -11,9 +11,17 @@ namespace Concord
 {
     public class PactFile
     {
+        private IList<PactInteraction> _interactions;
+
         public PactParty Provider { get; set; }
         public PactParty Consumer { get; set; }
-        public IEnumerable<PactInteraction> Interactions { get; set; }
+
+        public IEnumerable<PactInteraction> Interactions
+        {
+            get { return _interactions; }
+            set { _interactions = value.ToList(); }
+        }
+
         public dynamic Metadata { get; set; }
 
         public PactFile()
@@ -125,6 +133,21 @@ namespace Concord
             }
 
             return headers;
+        }
+
+        public void AddInteraction(PactInteraction interation)
+        {
+            _interactions = _interactions ?? new List<PactInteraction>();
+
+            if (_interactions.Any(x => x.Description == interation.Description))
+            {
+                var interactionToReplace = _interactions.Single(x => x.Description == interation.Description);
+                _interactions[_interactions.IndexOf(interactionToReplace)] = interation;
+            }
+            else
+            {
+                _interactions.Add(interation);
+            }
         }
     }
 }

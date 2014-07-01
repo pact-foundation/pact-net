@@ -110,7 +110,7 @@ namespace Consumer.Tests
 
             var pactProviderMock = pact.GetMockProvider();
 
-            pactProviderMock.UponReceiving("A GET request to retrieve all events")
+            pactProviderMock.UponReceiving("A PUT request to create a new event")
                 .With(new PactProviderRequest
                 {
                     Method = HttpVerb.Post,

@@ -38,8 +38,6 @@ namespace Consumer
 
             if (status == HttpStatusCode.OK)
             {
-                
-
                 return !String.IsNullOrEmpty(content) ? 
                     JsonConvert.DeserializeObject<IEnumerable<dynamic>>(content, _jsonSettings)
                     : new List<dynamic>();
