@@ -16,6 +16,14 @@ namespace Concord
         public IEnumerable<PactInteraction> Interactions { get; set; }
         public dynamic Metadata { get; set; }
 
+        public PactFile()
+        {
+            Metadata = new
+            {
+                PactSpecificationVersion = "1.0.0"
+            };
+        }
+
         private readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
         {
             ContractResolver = new CamelCasePropertyNamesContractResolver(),
@@ -60,16 +68,6 @@ namespace Concord
                     else
                     {
                         content = new StringContent(jsonContent);
-                    }
-
-                    foreach (var requestHeader in requestHeaders)
-                    {
-                        if (requestHeader.Key.Equals("Content-Type", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            continue;
-                        }
-
-                        content.Headers.Add(requestHeader.Key, requestHeader.Value);
                     }
 
                     request.Content = content;

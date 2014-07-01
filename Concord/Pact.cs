@@ -101,15 +101,19 @@ namespace Concord
             _pactProvider.Dispose();
 
             //TODO: Should we get from disk and append interactions
+
+            //Check if file exists
+                //If it does check if the interaction exists
+                    //If it does overwrite interaction
+
             var pactFile = new PactFile
             {
                 Provider = new PactParty { Name = _providerName },
                 Consumer = new PactParty { Name = _consumerName },
                 Interactions = new List<PactInteraction>
-                    {
-                        _pactProvider.DescribeInteraction()
-                    },
-                Metadata = new { PactSpecificationVersion =  "1.0.0" }
+                {
+                    _pactProvider.DescribeInteraction()
+                }
             };
 
             var pactFileJson = JsonConvert.SerializeObject(pactFile, _jsonSettings);
