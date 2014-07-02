@@ -71,7 +71,9 @@ namespace Concord
                     StringContent content;
                     if (requestHeaders.ContainsKey("Content-Type"))
                     {
-                        content = new StringContent(jsonContent, Encoding.UTF8, requestHeaders["Content-Type"]);
+                        // TODO: This is extremely icky. Need a better way of dealing with this.
+                        var contentType = requestHeaders["Content-Type"].Split(';');
+                        content = new StringContent(jsonContent, Encoding.UTF8, contentType[0]);
                     }
                     else
                     {
