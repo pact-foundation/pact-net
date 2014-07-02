@@ -1,8 +1,11 @@
-﻿namespace Concord
-{
-    using Nancy;
-    using System;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Text;
+using Nancy;
 
+namespace Concord
+{
     public class PactProviderNancyModule : NancyModule
     {
         private static PactProviderRequest _request;
@@ -44,10 +47,7 @@
 
         private Response HandleRequest()
         {
-            // TODO: Handle this in a better way
-            if (!this.FilterRequest(this.Context.Request, _request))
-                throw new Exception("Nancy Pact Request Mismatch");
-
+            this.FilterRequest();
             return this.GenerateResponse();
         }
 
@@ -57,13 +57,39 @@
             return mapper.Convert(_response);
         }
 
-        private bool FilterRequest(Request nancyRequest, PactProviderRequest providerRequest)
+        private void FilterRequest()
         {
-            //Compare headers
-            //Compare Body
+            if (_request == null)
+                throw new Exception("Pact Request not set");
 
+            // TODO: Handle in a better way and return mismatches
+            this.CompareHeaders();
+            this.CompareBody();
+        }
 
-            return true; //Just for now, don't filter any requests
+        private void CompareHeaders()
+        {
+            foreach (var providerHeader in _request.Headers)
+            {
+                // Check header exists in Nancy Headers
+                var nancyHeader = this.Request.Headers.FirstOrDefault(header => header.Key == providerHeader.Key);
+
+                // If matching nancy header doesn't exist return false
+                if (!nancyHeader.Value.Contains(providerHeader.Value))
+                    throw new Exception("Nancy Pact Request Header Mismatch");
+            }
+        }
+
+        private void CompareBody()
+        {
+            using (var reader = new StreamReader(this.Request.Body, Encoding.UTF8))
+            {
+                var nancyBody = reader.ReadToEnd();
+                var pactBody = _request.Body != null ? Newtonsoft.Json.JsonConvert.SerializeObject(_request.Body) : string.Empty;
+
+                if (!nancyBody.Equals(pactBody, StringComparison.InvariantCultureIgnoreCase))
+                    throw new Exception("Nancy Pact Request Body Mismatch");
+            }
         }
 
         private static void Reset()

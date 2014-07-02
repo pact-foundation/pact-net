@@ -27,7 +27,7 @@ namespace Consumer
         {
             var client = new HttpClient();
             client.BaseAddress = new Uri(BaseUri);
-
+            
             var request = new HttpRequestMessage(HttpMethod.Get, "/events");
             request.Headers.Add("Accept", "application/json");
 
@@ -63,6 +63,7 @@ namespace Consumer
             var requestContent = new StringContent(eventJson, Encoding.UTF8, "application/json");
 
             var request = new HttpRequestMessage(HttpMethod.Post, "/events");
+            request.Headers.Add("Accept", "application/json");
             request.Content = requestContent;
 
             var response = client.SendAsync(request);
