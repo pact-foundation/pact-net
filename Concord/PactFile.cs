@@ -104,11 +104,7 @@ namespace Concord
                     Headers = ConvertHeaders(response.Headers, response.Content.Headers)
                 };
 
-                if (!interaction.Response.Equals(actualResponse))
-                {
-                    throw new Exception("Response does not match");
-                    //TODO: Give more details about this!
-                }
+                PactAssert.Equal(interaction.Response, actualResponse);
             }
         }
 
