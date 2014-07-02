@@ -114,10 +114,6 @@ namespace Consumer.Tests
 
             var pactProviderMock = pact.GetMockProvider();
 
-            /* TODO: The Accept Header has q=1 as Nancy modifies headers to match Http spec.
-            This needs to be fixed so that Nancy doesn't modify the header. 
-            https://github.com/NancyFx/Nancy/wiki/Content-Negotiation 
-            http://stackoverflow.com/questions/8552927/what-is-q-0-5-in-accept-http-headers */
             pactProviderMock.UponReceiving("A PUT request to create a new event")
                 .With(new PactProviderRequest
                 {
@@ -125,7 +121,7 @@ namespace Consumer.Tests
                     Path = "/events",
                     Headers = new Dictionary<string, string>
                     {
-                        { "Accept", "application/json;q=1" }
+                        { "Content-Type", "application/json; charset=utf-8" }
                     },
                     Body = new
                     {
