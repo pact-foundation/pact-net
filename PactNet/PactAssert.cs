@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dynamitey;
+using Microsoft.CSharp.RuntimeBinder;
 
 namespace PactNet
 {
@@ -96,7 +97,21 @@ namespace PactNet
             foreach (var propertyName in customPropertiesOnObject)
             {
                 var expectedValue = Dynamic.InvokeGet(expected, propertyName);
-                var actualValue = Dynamic.InvokeGet(actual, propertyName);
+
+                dynamic actualValue;
+                try
+                {
+                    if (actual == null)
+                    {
+                        throw new PactAssertException("Body is null in response");
+                    }
+                    actualValue = Dynamic.InvokeGet(actual, propertyName);
+                }
+                catch (RuntimeBinderException)
+                {
+                    //Body is null in response
+                    throw new PactAssertException(String.Format("Body.{0} does not exist in response", propertyName));
+                }
 
                 if (!expectedValue.Equals(actualValue))
                 {
