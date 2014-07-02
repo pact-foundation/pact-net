@@ -63,7 +63,6 @@ namespace Consumer
             var requestContent = new StringContent(eventJson, Encoding.UTF8, "application/json");
 
             var request = new HttpRequestMessage(HttpMethod.Post, "/events");
-            request.Headers.Add("Accept", "application/json");
             request.Content = requestContent;
 
             var response = client.SendAsync(request);
