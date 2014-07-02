@@ -90,7 +90,7 @@ namespace Client.Tests
                     }
                 });
 
-            var consumer = new EventsApiConsumer(_mockServerBaseUri);
+            var consumer = new EventsApiClient(_mockServerBaseUri);
 
             //Act
             pact.StartServer();
@@ -135,7 +135,7 @@ namespace Client.Tests
                     Status = 201
                 });
 
-            var consumer = new EventsApiConsumer(_mockServerBaseUri);
+            var consumer = new EventsApiClient(_mockServerBaseUri);
 
             //Act
             pact.StartServer();

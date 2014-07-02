@@ -8,11 +8,11 @@ using Newtonsoft.Json.Serialization;
 
 namespace Client
 {
-    public class EventsApiConsumer
+    public class EventsApiClient
     {
         public string BaseUri { get; set; }
 
-        public EventsApiConsumer(string baseUri = null)
+        public EventsApiClient(string baseUri = null)
         {
             BaseUri = baseUri ?? "http://infra.api/v2/capture";
         }
