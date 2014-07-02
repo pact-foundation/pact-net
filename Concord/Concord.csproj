@@ -58,6 +58,7 @@
     <Compile Include="HttpVerb.cs" />
     <Compile Include="NancyResponseMapper.cs" />
     <Compile Include="PactAssert.cs" />
+    <Compile Include="PactAssertException.cs" />
     <Compile Include="PactFile.cs" />
     <Compile Include="PactInteraction.cs" />
     <Compile Include="PactParty.cs" />

@@ -7,85 +7,102 @@ namespace Concord
 {
     public static class PactAssert
     {
+        private const string MessagePrefix = "\t- Returns a response which";
+
         public static void Equal(PactProviderResponse expectedResponse, PactProviderResponse actualResponse)
         {
-            if (actualResponse == null)
-                throw new Exception("Response does not match");
-
+            Console.WriteLine("{0} has status code of {1}", MessagePrefix, expectedResponse.Status);
             if (!expectedResponse.Status.Equals(actualResponse.Status))
-                throw new Exception("Response does not match");
+            {
+                throw new PactAssertException(expectedResponse.Status, actualResponse.Status);
+            }
 
             if (expectedResponse.Headers != null && expectedResponse.Headers.Any())
             {
                 foreach (var header in expectedResponse.Headers)
                 {
-                    string headerValue;
+                    Console.WriteLine("{0} includes header {1} with value {2}", MessagePrefix, header.Key, header.Value);
 
-                    if (actualResponse.Headers == null || !actualResponse.Headers.Any())
+                    if (actualResponse.Headers == null)
                     {
-                        throw new Exception("Response does not match");
+                        throw new PactAssertException("Headers is null in response");
                     }
+
+                    //TODO: This is a hack, come up with a better way or just make sure the pact generates header casing correctly
+                    var caseInsensitiveHeaders = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+                    foreach (var actualResponseHeader in actualResponse.Headers)
+                    {
+                        caseInsensitiveHeaders.Add(actualResponseHeader.Key, actualResponseHeader.Value);
+                    }
+
+                    actualResponse.Headers = caseInsensitiveHeaders;
+
+                    string headerValue;
 
                     if (actualResponse.Headers.TryGetValue(header.Key, out headerValue))
                     {
                         if (!header.Value.Equals(headerValue, StringComparison.InvariantCultureIgnoreCase))
                         {
-                            throw new Exception("Response does not match");
+                            throw new PactAssertException(header.Value, headerValue);
                         }
                     }
                     else
                     {
-                        throw new Exception("Response does not match");
+                        throw new PactAssertException("Header does not exist in response");
                     }
                 }
             }
 
-            //TODO: Refactor the names here, as they are kind of rubbish atm
-            //TODO: Does not support nested objects, without equality operators
-            var leftItemsEnumerable = expectedResponse.Body as IEnumerable<dynamic>;
-            var rightItemsEnumerable = actualResponse.Body as IEnumerable<dynamic>;
-
-            if (leftItemsEnumerable != null && rightItemsEnumerable != null)
+            if (expectedResponse.Body != null)
             {
-                var leftItemsArr = leftItemsEnumerable.ToArray();
-                var rightItemsArr = rightItemsEnumerable.ToArray();
+                var expectedItemsEnumerable = expectedResponse.Body as IEnumerable<dynamic>;
 
-                for (var i = 0; i < leftItemsArr.Length; i++)
+                if (expectedItemsEnumerable != null)
                 {
-                    var leftItem = leftItemsArr[i];
-                    var rightItem = rightItemsArr[i];
+                    //Support for collection response body
+                    Console.WriteLine("{0} has a matching body", MessagePrefix);
 
-                    if (!DoOrderedPropertyValuesMatch(leftItem, rightItem))
+                    var actualItemsEnumerable = actualResponse.Body as IEnumerable<dynamic>;
+
+                    if (actualItemsEnumerable == null)
                     {
-                        throw new Exception("Response does not match");
+                        throw new PactAssertException("Body is null in response");
+                    }
+
+                    var expectedItemsArr = expectedItemsEnumerable.ToArray();
+                    var actualItemsArr = actualItemsEnumerable.ToArray();
+
+                    for (var i = 0; i < expectedItemsArr.Length; i++)
+                    {
+                        var expectedItem = expectedItemsArr[i];
+                        var actualItem = actualItemsArr[i];
+
+                        AssertPropertyValuesMatch(expectedItem, actualItem);
                     }
                 }
-            }
-            else
-            {
-                if (!DoOrderedPropertyValuesMatch(expectedResponse.Body, actualResponse.Body))
+                else
                 {
-                    throw new Exception("Response does not match");
+                    //Support for object response body
+                    AssertPropertyValuesMatch(expectedResponse.Body, actualResponse.Body);
                 }
+                //TODO: Add Support for primitate response body
             }
         }
 
-        private static bool DoOrderedPropertyValuesMatch(dynamic leftObject, dynamic rightObject)
+        private static void AssertPropertyValuesMatch(dynamic expected, dynamic actual)
         {
-            var customPropertiesOnObject = Dynamic.GetMemberNames(leftObject, true);
+            var customPropertiesOnObject = Dynamic.GetMemberNames(expected, true);
 
             foreach (var propertyName in customPropertiesOnObject)
             {
-                var leftValue = Dynamic.InvokeGet(leftObject, propertyName);
-                var rightValue = Dynamic.InvokeGet(rightObject, propertyName);
+                var expectedValue = Dynamic.InvokeGet(expected, propertyName);
+                var actualValue = Dynamic.InvokeGet(actual, propertyName);
 
-                if (!leftValue.Equals(rightValue)) //TODO: This will fail if there is a casing mismatch
+                if (!expectedValue.Equals(actualValue))
                 {
-                    return false;
+                    throw new PactAssertException(String.Format("Body.{0}", propertyName), expectedValue, actualValue);
                 }
             }
-
-            return true;
         }
     }
 }

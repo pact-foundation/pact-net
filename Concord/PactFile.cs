@@ -50,8 +50,11 @@ namespace Concord
 
         public void VerifyProvider(HttpClient client)
         {
+            var interationNumber = 1;
             foreach (var interaction in Interactions)
             {
+                Console.WriteLine("{0}) Verifying a Pact between {1} and {2} - {3}.", interationNumber, Consumer.Name, Provider.Name, interaction.Description);
+
                 var requestHeaders = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
 
                 if (interaction.Request.Headers != null && interaction.Request.Headers.Any())
@@ -102,11 +105,17 @@ namespace Concord
                 var actualResponse = new PactProviderResponse
                 {
                     Status = (int)response.StatusCode,
-                    Body = JsonConvert.DeserializeObject<dynamic>(response.Content.ReadAsStringAsync().Result),
                     Headers = ConvertHeaders(response.Headers, response.Content.Headers)
                 };
 
+                var responseContent = response.Content.ReadAsStringAsync().Result;
+                if (!String.IsNullOrEmpty(responseContent))
+                {
+                    actualResponse.Body = JsonConvert.DeserializeObject<dynamic>(responseContent);
+                }
+
                 PactAssert.Equal(interaction.Response, actualResponse);
+                interationNumber++;
             }
         }
 
@@ -118,7 +127,7 @@ namespace Concord
                 return null;
             }
 
-            var headers = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+            var headers = new Dictionary<string, string>();
 
             foreach (var responseHeader in responseHeaders)
             {
