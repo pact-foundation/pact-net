@@ -76,7 +76,7 @@ namespace Concord
 
                 // If matching nancy header doesn't exist return false
                 if (!nancyHeader.Value.Contains(providerHeader.Value))
-                    throw new Exception("Nancy Pact Request Header Mismatch");
+                    throw new Exception("Pact Request Header Not Found in Nancy Request: " + providerHeader.Key + " " + providerHeader.Value);
             }
         }
 
