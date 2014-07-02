@@ -54,7 +54,7 @@
       <Project>{7024b146-2cb2-4de2-b079-58cf9c44640b}</Project>
       <Name>PactNet</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Client\Client.csproj">
+    <ProjectReference Include="..\Consumer\Consumer.csproj">
       <Project>{4df20682-f8dd-4271-86ca-17fa2b3d8d29}</Project>
       <Name>Consumer</Name>
     </ProjectReference>

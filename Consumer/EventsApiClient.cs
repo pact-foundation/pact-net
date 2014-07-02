@@ -6,7 +6,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Client
+namespace Consumer
 {
     public class EventsApiClient
     {

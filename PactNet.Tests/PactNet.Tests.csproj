@@ -7,8 +7,8 @@
     <ProjectGuid>{658C5A6B-64AF-4602-8E34-5074BD32CC1D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Concord.Tests</RootNamespace>
-    <AssemblyName>Concord.Tests</AssemblyName>
+    <RootNamespace>PactNet.Tests</RootNamespace>
+    <AssemblyName>PactNet.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

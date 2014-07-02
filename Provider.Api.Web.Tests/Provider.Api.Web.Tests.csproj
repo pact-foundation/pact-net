@@ -7,8 +7,8 @@
     <ProjectGuid>{9FAFB3C5-5872-470A-98A5-19603EDF1D1A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Concord.Api.Web.Tests</RootNamespace>
-    <AssemblyName>Concord.Api.Web.Tests</AssemblyName>
+    <RootNamespace>Provider.Api.Web.Tests</RootNamespace>
+    <AssemblyName>Provider.Api.Web.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

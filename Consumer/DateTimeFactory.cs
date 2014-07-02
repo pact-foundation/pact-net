@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Client
+namespace Consumer
 {
     public class DateTimeFactory
     {

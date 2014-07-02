@@ -7,8 +7,8 @@
     <ProjectGuid>{7024B146-2CB2-4DE2-B079-58CF9C44640B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Concord</RootNamespace>
-    <AssemblyName>Concord</AssemblyName>
+    <RootNamespace>PactNet</RootNamespace>
+    <AssemblyName>PactNet</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

@@ -4,7 +4,7 @@ using System.Linq;
 using PactNet;
 using Xunit;
 
-namespace Client.Tests
+namespace Consumer.Tests
 {
     public class EventsApiConsumerTests
     {
