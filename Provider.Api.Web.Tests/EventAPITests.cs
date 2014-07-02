@@ -1,7 +1,8 @@
 ﻿using Microsoft.Owin.Testing;
+using PactNet;
 using Xunit;
 
-namespace PactNet.Api.Web.Tests
+namespace Provider.Api.Web.Tests
 {
     public class EventApiTests
     {

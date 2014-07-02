@@ -11,31 +11,8 @@ namespace Consumer.Tests
         //TODO: Test order is important here atm, refactor so it isn't
         //TODO: Refactor the code, it needs a big cleanup
 
-        //TODO:! Implement a new test and share the server for both consumer and provider
-        //TODO:! Assertions in library (Look how other testing tools do it)
-
         private const int MockServerPort = 1234;
         private readonly string _mockServerBaseUri = String.Format("http://localhost:{0}", MockServerPort);
-
-        /*private Pact _pact;
-        private PactProvider _pactProviderMock;
-        private TestServer _testServer;*/
-
-        /*public Tests()
-        {
-            _pact = 
-
-            _pact.StartServer();
-
-            _testServer = TestServer.Create<Startup>();
-            _testServer.HttpClient.BaseAddress = new Uri(BaseUri); //Don't think we really need to do this
-        }
-
-        public void Dispose()
-        {
-            _pact.StopServer();
-            _testServer.Dispose();
-        }*/
 
         [Fact]
         public void GetAllEvents_WhenCalled_ReturnsAllEvents()

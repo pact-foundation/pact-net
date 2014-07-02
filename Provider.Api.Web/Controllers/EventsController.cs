@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
-namespace PactNet.Api.Web.Controllers
+namespace Provider.Api.Web.Controllers
 {
     public class EventsController : ApiController
     {

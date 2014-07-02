@@ -1,14 +1,15 @@
 ﻿using System.Web.Http;
 using Autofac;
 using Autofac.Integration.WebApi;
-using Provider.Api.Web.Controllers;
 using Microsoft.Owin;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Owin;
+using Provider.Api.Web;
+using Provider.Api.Web.Controllers;
 
-[assembly: OwinStartup("ApiConfiguration", typeof(PactNet.Api.Web.Startup))]
-namespace PactNet.Api.Web
+[assembly: OwinStartup("ApiConfiguration", typeof(Startup))]
+namespace Provider.Api.Web
 {
     public class Startup
     {
