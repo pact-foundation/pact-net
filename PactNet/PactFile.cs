@@ -74,7 +74,7 @@ namespace PactNet
                     StringContent content;
                     if (requestHeaders.ContainsKey("Content-Type"))
                     {
-                        // TODO: This is extremely icky. Need a better way of dealing with this.
+                        // TODO: This is extremely icky. Need a better way of dealing with this. Also set content encoding
                         var contentType = requestHeaders["Content-Type"].Split(';');
                         content = new StringContent(jsonContent, Encoding.UTF8, contentType[0]);
                     }

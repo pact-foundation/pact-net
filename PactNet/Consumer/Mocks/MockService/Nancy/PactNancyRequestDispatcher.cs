@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Nancy;
 using Nancy.Routing;
 
-namespace PactNet
+namespace PactNet.Consumer.Mocks.MockService.Nancy
 {
     public class PactNancyRequestDispatcher : IRequestDispatcher
     {

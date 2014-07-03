@@ -1,9 +1,10 @@
 ﻿using System;
 using Nancy.Hosting.Self;
+using PactNet.Consumer.Mocks.MockService.Nancy;
 
-namespace PactNet
+namespace PactNet.Consumer.Mocks.MockService
 {
-    public class PactProvider : IDisposable
+    public class MockProviderService : IMockProviderService
     {
         private NancyHost _host;
         private readonly string _baseUri;
@@ -11,19 +12,19 @@ namespace PactNet
         private PactProviderRequest _request;
         private PactProviderResponse _response;
 
-        public PactProvider(int port)
+        public MockProviderService(int port)
         {
             _baseUri = String.Format("http://localhost:{0}", port);
         }
 
-        public PactProvider UponReceiving(string description)
+        public IMockProvider UponReceiving(string description)
         {
             _description = description;
 
             return this;
         }
 
-        public PactProvider With(PactProviderRequest request)
+        public IMockProvider With(PactProviderRequest request)
         {
             _request = request;
             PactNancyRequestDispatcher.Set(request);
@@ -31,7 +32,7 @@ namespace PactNet
             return this;
         }
 
-        public PactProvider WillRespondWith(PactProviderResponse response)
+        public IMockProvider WillRespondWith(PactProviderResponse response)
         {
             _response = response;
             PactNancyRequestDispatcher.Set(response);
@@ -39,17 +40,17 @@ namespace PactNet
             return this;
         }
 
-        internal void Start()
+        public void Start()
         {
+            PactNancyRequestDispatcher.Reset();
+
             var hostConfig = new HostConfiguration { UrlReservations = { CreateAutomatically = true }, AllowChunkedEncoding = false };
             _host = new NancyHost(new PactNancyBootstrapper(), hostConfig, new Uri(_baseUri));
 
             _host.Start();
-
-            PactNancyRequestDispatcher.Reset();
         }
 
-        internal void Stop()
+        public void Stop()
         {
             _host.Stop();
 

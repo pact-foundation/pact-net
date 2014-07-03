@@ -2,26 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using PactNet;
+using PactNet.Consumer;
+using PactNet.Consumer.Mocks;
 using Xunit;
 
 namespace Consumer.Tests
 {
     public class EventsApiConsumerTests : IDisposable
     {
-        //TODO: Refactor the code, it needs a big cleanup
-
         private const int MockServerPort = 1234;
         private readonly string _mockServerBaseUri = String.Format("http://localhost:{0}", MockServerPort);
 
-        private readonly Pact _pact;
-        private readonly PactProvider _pactProviderMock;
+        private readonly IPactConsumer _pact;
+        private readonly IMockProvider _mockProvider;
 
         public EventsApiConsumerTests()
         {
             _pact = new Pact().ServiceConsumer("Consumer")
                 .HasPactWith("Event API");
 
-            _pactProviderMock = _pact.MockService(MockServerPort);
+            _mockProvider = _pact.MockService(MockServerPort);
         }
 
         public void Dispose()
@@ -32,7 +32,7 @@ namespace Consumer.Tests
         [Fact]
         public void GetAllEvents_WhenCalled_ReturnsAllEvents()
         {
-            _pactProviderMock.UponReceiving("A GET request to retrieve all events")
+            _mockProvider.UponReceiving("A GET request to retrieve all events")
                 .With(new PactProviderRequest
                 {
                     Method = HttpVerb.Get,
@@ -88,7 +88,7 @@ namespace Consumer.Tests
             var dateTime = new DateTime(2011, 07, 01, 01, 41, 03);
             DateTimeFactory.Now = () => dateTime;
 
-            _pactProviderMock.UponReceiving("A POST request to create a new event")
+            _mockProvider.UponReceiving("A POST request to create a new event")
                 .With(new PactProviderRequest
                 {
                     Method = HttpVerb.Post,

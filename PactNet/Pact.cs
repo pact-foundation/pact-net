@@ -4,15 +4,20 @@ using System.IO;
 using System.Net.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using PactNet.Consumer;
+using PactNet.Consumer.Mocks.MockService;
+using PactNet.Provider;
 
 namespace PactNet
 {
-    //TODO: Should we split this into consumer and provider?
-    public class Pact : IDisposable
+    //TODO: Implement a Pact file broker
+    //TODO: Allow specification of a Pact file path
+
+    public class Pact : IPactConsumer, IPactProvider
     {
         private string _consumerName;
         private string _providerName;
-        private PactProvider _pactProvider;
+        private IMockProviderService _mockProviderService;
         private const string PactFileDirectory = "C:/specs/pacts/";
         private readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
         {
@@ -26,37 +31,33 @@ namespace PactNet
             get { return Path.Combine(PactFileDirectory, PactFileName); }
         }
 
-        public string PactFileName 
+        public string PactFileName
         {
             get { return String.Format("{0}-{1}.json", _consumerName, _providerName); }
         }
 
-        public Pact()
-        {
-        }
-
-        public Pact ServiceConsumer(string consumerName)
+        public IPactConsumer ServiceConsumer(string consumerName)
         {
             _consumerName = consumerName;
 
             return this;
         }
 
-        public Pact HasPactWith(string providerName)
+        public IPactConsumer HasPactWith(string providerName)
         {
             _providerName = providerName;
 
             return this;
         }
 
-        public Pact ServiceProvider(string providerName)
+        public IPactProvider ServiceProvider(string providerName)
         {
             _providerName = providerName;
 
             return this;
         }
 
-        public Pact HonoursPactWith(string consumerName, HttpClient client)
+        public IPactProvider HonoursPactWith(string consumerName, HttpClient client)
         {
             _consumerName = consumerName;
 
@@ -68,29 +69,21 @@ namespace PactNet
             return this;
         }
 
-        public PactProvider MockService(int port)
+        public IMockProviderService MockService(int port)
         {
-            _pactProvider = new PactProvider(port);
+            _mockProviderService = new MockProviderService(port);
 
-            _pactProvider.Start();
+            _mockProviderService.Start();
 
-            return _pactProvider;
+            return _mockProviderService;
         }
-         
-        /*public Pact PactUri()
-        {
-            //TODO: We should be able to specify a Pact file path
-            //TODO: We should also provide a Pact Broker which allows us to obtain pact artifacts from build server etc
-
-            return this;
-        }*/
 
         public void Dispose()
         {
             PersistPactFile();
 
-            _pactProvider.Stop();
-            _pactProvider.Dispose();
+            _mockProviderService.Stop();
+            _mockProviderService.Dispose();
         }
 
         private void PersistPactFile()
@@ -117,7 +110,7 @@ namespace PactNet
             }
 
             pactFile.Interactions = pactFile.Interactions ?? new List<PactInteraction>();
-            pactFile.AddInteraction(_pactProvider.DescribeInteraction());
+            pactFile.AddInteraction(_mockProviderService.DescribeInteraction());
 
             var pactFileJson = JsonConvert.SerializeObject(pactFile, _jsonSettings);
 

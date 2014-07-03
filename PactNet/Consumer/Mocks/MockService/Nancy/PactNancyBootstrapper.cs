@@ -4,7 +4,7 @@ using Nancy.Bootstrapper;
 using Nancy.Diagnostics;
 using Nancy.TinyIoc;
 
-namespace PactNet
+namespace PactNet.Consumer.Mocks.MockService.Nancy
 {
     public class PactNancyBootstrapper : DefaultNancyBootstrapper
     {

@@ -16,7 +16,7 @@ namespace Provider.Api.Web.Tests
 
         public void Dispose()
         {
-            //_testServer.Dispose();
+            _testServer.Dispose();
         }
 
         [Fact]
