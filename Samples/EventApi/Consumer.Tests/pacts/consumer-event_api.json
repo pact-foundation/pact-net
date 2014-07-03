@@ -1,0 +1,64 @@
+{
+  "provider": {
+    "name": "Event API"
+  },
+  "consumer": {
+    "name": "Consumer"
+  },
+  "interactions": [
+    {
+      "description": "A GET request to retrieve all events",
+      "request": {
+        "method": "get",
+        "path": "/events",
+        "headers": {
+          "Accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": [
+          {
+            "eventId": "45d80d13-d5a2-48d7-8353-cbb4c0eaabf5",
+            "timestamp": "2014-06-30T01:37:41.0660548Z",
+            "eventType": "JobSearchView"
+          },
+          {
+            "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
+            "timestamp": "2014-06-30T01:37:52.2618864Z",
+            "eventType": "JobDetailsView"
+          },
+          {
+            "eventId": "3e83a96b-2a0c-49b1-9959-26df23f83aeb",
+            "timestamp": "2014-06-30T01:38:00.8518952Z",
+            "eventType": "JobSearchView"
+          }
+        ]
+      }
+    },
+    {
+      "description": "A POST request to create a new event",
+      "request": {
+        "method": "post",
+        "path": "/events",
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": {
+          "eventId": "1f587704-2dcc-4313-a233-7b62b4b469db",
+          "timestamp": "2011-07-01T01:41:03.0000000",
+          "eventType": "JobDetailsView"
+        }
+      },
+      "response": {
+        "status": 201
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecificationVersion": "1.0.0"
+  }
+}

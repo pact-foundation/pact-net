@@ -1,10 +1,9 @@
-﻿using System.Net.Http;
-
-namespace PactNet.Provider
+﻿namespace PactNet.Provider
 {
     public interface IPactProvider
     {
         IPactProvider ServiceProvider(string providerName);
-        IPactProvider HonoursPactWith(string consumerName, HttpClient client);
+        IPactProvider HonoursPactWith(string consumerName);
+        IPactProvider PactUri(string uri);
     }
 }

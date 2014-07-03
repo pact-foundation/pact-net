@@ -29,15 +29,6 @@ namespace PactNet
                         throw new PactAssertException("Headers is null in response");
                     }
 
-                    //TODO: This is a hack, come up with a better way or just make sure the pact generates header casing correctly
-                    var caseInsensitiveHeaders = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
-                    foreach (var actualResponseHeader in actualResponse.Headers)
-                    {
-                        caseInsensitiveHeaders.Add(actualResponseHeader.Key, actualResponseHeader.Value);
-                    }
-
-                    actualResponse.Headers = caseInsensitiveHeaders;
-
                     string headerValue;
 
                     if (actualResponse.Headers.TryGetValue(header.Key, out headerValue))
@@ -56,9 +47,12 @@ namespace PactNet
 
             if (expectedResponse.Body != null)
             {
-                var expectedItemsEnumerable = expectedResponse.Body as IEnumerable<dynamic>;
+                var expectedResponseBodyAsEnumerable = expectedResponse.Body as IEnumerable<dynamic>;
+                var expectedResponseBodyAsInt = expectedResponse.Body as int?;
+                var expectedResponseBodyAsDouble = expectedResponse.Body as double?;
+                var expectedResponseBodyAsString = expectedResponse.Body as string;
 
-                if (expectedItemsEnumerable != null)
+                if (expectedResponseBodyAsEnumerable != null)
                 {
                     //Support for collection response body
                     Console.WriteLine("{0} has a matching body", MessagePrefix);
@@ -70,7 +64,7 @@ namespace PactNet
                         throw new PactAssertException("Body is null in response");
                     }
 
-                    var expectedItemsArr = expectedItemsEnumerable.ToArray();
+                    var expectedItemsArr = expectedResponseBodyAsEnumerable.ToArray();
                     var actualItemsArr = actualItemsEnumerable.ToArray();
 
                     for (var i = 0; i < expectedItemsArr.Length; i++)
@@ -81,12 +75,35 @@ namespace PactNet
                         AssertPropertyValuesMatch(expectedItem, actualItem);
                     }
                 }
+                else if (expectedResponseBodyAsInt != null)
+                {
+                    var actualResponseBodyAsInt = (int)actualResponse.Body;
+                    if (!expectedResponseBodyAsInt.Value.Equals(actualResponseBodyAsInt))
+                    {
+                        throw new PactAssertException(expectedResponseBodyAsInt, actualResponseBodyAsInt);
+                    }
+                }
+                else if (expectedResponseBodyAsDouble != null)
+                {
+                    var actualResponseBodyAsDouble = (double)actualResponse.Body;
+                    if (!expectedResponseBodyAsDouble.Value.Equals(actualResponseBodyAsDouble))
+                    {
+                        throw new PactAssertException(expectedResponseBodyAsDouble, actualResponseBodyAsDouble);
+                    }
+                }
+                else if (expectedResponseBodyAsString != null)
+                {
+                    var actualResponseBodyAsString = (string)actualResponse.Body;
+                    if (!expectedResponseBodyAsString.Equals(actualResponseBodyAsString))
+                    {
+                        throw new PactAssertException(expectedResponseBodyAsString, actualResponseBodyAsString);
+                    }
+                }
                 else
                 {
                     //Support for object response body
                     AssertPropertyValuesMatch(expectedResponse.Body, actualResponse.Body);
                 }
-                //TODO: Add Support for primitate response body
             }
         }
 

@@ -55,32 +55,22 @@ namespace PactNet
             {
                 Console.WriteLine("{0}) Verifying a Pact between {1} and {2} - {3}.", interationNumber, Consumer.Name, Provider.Name, interaction.Description);
 
-                var requestHeaders = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
-
-                if (interaction.Request.Headers != null && interaction.Request.Headers.Any())
-                {
-                    foreach (var header in interaction.Request.Headers)
-                    {
-                        requestHeaders.Add(header.Key, header.Value);
-                    }
-                }
-
                 var request = new HttpRequestMessage(_httpVerbMap[interaction.Request.Method], interaction.Request.Path);
 
                 if (interaction.Request.Body != null)
                 {
                     //If there is a content-type header add it to the content
-                    var jsonContent = JsonConvert.SerializeObject(interaction.Request.Body, _jsonSettings);
+                    var jsonRequestBody = JsonConvert.SerializeObject(interaction.Request.Body, _jsonSettings);
                     StringContent content;
-                    if (requestHeaders.ContainsKey("Content-Type"))
+                    if (interaction.Request.Headers != null && interaction.Request.Headers.ContainsKey("Content-Type"))
                     {
                         // TODO: This is extremely icky. Need a better way of dealing with this. Also set content encoding
-                        var contentType = requestHeaders["Content-Type"].Split(';');
-                        content = new StringContent(jsonContent, Encoding.UTF8, contentType[0]);
+                        var contentType = interaction.Request.Headers["Content-Type"].Split(';');
+                        content = new StringContent(jsonRequestBody, Encoding.UTF8, contentType[0]);
                     }
                     else
                     {
-                        content = new StringContent(jsonContent);
+                        content = new StringContent(jsonRequestBody);
                     }
 
                     request.Content = content;

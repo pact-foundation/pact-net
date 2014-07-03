@@ -66,7 +66,7 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void Equal_WithMatchingHeadersButWithDifferentCasingOnName_NoExceptionsAreThrown()
+        public void Equal_WithMatchingHeadersButWithDifferentCasingOnName_ThrowsPactAssertException()
         {
             var expected = new PactProviderResponse
             {
@@ -86,7 +86,7 @@ namespace PactNet.Tests
                 }
             };
 
-            PactAssert.Equal(expected, actual);
+            Assert.Throws<PactAssertException>(() => PactAssert.Equal(expected, actual));
         }
 
         [Fact]

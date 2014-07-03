@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using PactNet.Configuration.Json;
 using PactNet.Consumer;
 using PactNet.Consumer.Mocks.MockService;
 using PactNet.Provider;
@@ -18,22 +18,26 @@ namespace PactNet
         private string _consumerName;
         private string _providerName;
         private IMockProviderService _mockProviderService;
-        private const string PactFileDirectory = "C:/specs/pacts/";
-        private readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
-        {
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            NullValueHandling = NullValueHandling.Ignore,
-            Formatting = Formatting.Indented
-        };
+        private const string PactFileDirectory = "../../pacts/";
+        private HttpClient _client;
 
-        public string PactFilePath
+        private string PactFilePath
         {
             get { return Path.Combine(PactFileDirectory, PactFileName); }
         }
 
-        public string PactFileName
+        private string PactFileName
         {
-            get { return String.Format("{0}-{1}.json", _consumerName, _providerName); }
+            get { return String.Format("{0}-{1}.json", _consumerName, _providerName).Replace(' ', '_').ToLower(); }
+        }
+
+        public Pact()
+        {
+        }
+
+        public Pact(HttpClient client)
+        {
+            _client = client;
         }
 
         public IPactConsumer ServiceConsumer(string consumerName)
@@ -50,25 +54,6 @@ namespace PactNet
             return this;
         }
 
-        public IPactProvider ServiceProvider(string providerName)
-        {
-            _providerName = providerName;
-
-            return this;
-        }
-
-        public IPactProvider HonoursPactWith(string consumerName, HttpClient client)
-        {
-            _consumerName = consumerName;
-
-            var pactFileJson = File.ReadAllText(PactFilePath);
-            var pactFile = JsonConvert.DeserializeObject<PactFile>(pactFileJson, _jsonSettings);
-
-            pactFile.VerifyProvider(client);
-
-            return this;
-        }
-
         public IMockProviderService MockService(int port)
         {
             _mockProviderService = new MockProviderService(port);
@@ -76,6 +61,36 @@ namespace PactNet
             _mockProviderService.Start();
 
             return _mockProviderService;
+        }
+
+        public IPactProvider ServiceProvider(string providerName)
+        {
+            _providerName = providerName;
+
+            return this;
+        }
+
+        public IPactProvider HonoursPactWith(string consumerName)
+        {
+            _consumerName = consumerName;
+
+            return this;
+        }
+
+        public IPactProvider PactUri(string uri)
+        {
+            try
+            {
+                var pactFileJson = File.ReadAllText(uri);
+                var pactFile = JsonConvert.DeserializeObject<PactFile>(pactFileJson, JsonConfig.SerializerSettings);
+                pactFile.VerifyProvider(_client);
+            }
+            catch (IOException)
+            {
+                throw new PactAssertException(String.Format("Json Pact file could not be retrieved using uri \'{0}\'", uri));
+            }
+
+            return this;
         }
 
         public void Dispose()
@@ -93,7 +108,7 @@ namespace PactNet
             try
             {
                 var previousPactFileJson = File.ReadAllText(PactFilePath);
-                pactFile = JsonConvert.DeserializeObject<PactFile>(previousPactFileJson, _jsonSettings);
+                pactFile = JsonConvert.DeserializeObject<PactFile>(previousPactFileJson, JsonConfig.SerializerSettings);
             }
             catch (IOException ex)
             {
@@ -112,7 +127,7 @@ namespace PactNet
             pactFile.Interactions = pactFile.Interactions ?? new List<PactInteraction>();
             pactFile.AddInteraction(_mockProviderService.DescribeInteraction());
 
-            var pactFileJson = JsonConvert.SerializeObject(pactFile, _jsonSettings);
+            var pactFileJson = JsonConvert.SerializeObject(pactFile, JsonConfig.SerializerSettings);
 
             File.WriteAllText(PactFilePath, pactFileJson);
         }

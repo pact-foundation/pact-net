@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using PactNet.Configuration.Json.Converters;
 
 namespace PactNet
 {
     public class PactProviderRequest
     {
-        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonConverter(typeof(LowercaseStringEnumConverter))]
         public HttpVerb Method { get; set; }
 
         public string Path { get; set; }
 
-        //TODO: Do not change the casing for header values in the json pact file this may help https://json.codeplex.com/workitem/20923
+        [JsonConverter(typeof(DictionaryConverter))]
         public Dictionary<string, string> Headers { get; set; }
 
         public dynamic Body { get; set; } //TODO: Handle different Json Formatters CamelCase or PascalCase
