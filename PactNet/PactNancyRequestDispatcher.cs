@@ -2,41 +2,34 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Nancy;
+using Nancy.Routing;
 
 namespace PactNet
 {
-    public class PactProviderNancyModule : NancyModule
+    public class PactNancyRequestDispatcher : IRequestDispatcher
     {
         private static PactProviderRequest _request;
         private static PactProviderResponse _response;
 
-        public PactProviderNancyModule()
+        public Task<Response> Dispatch(NancyContext context, CancellationToken cancellationToken)
         {
-            if (_request == null || _response == null)
+            var tcs = new TaskCompletionSource<Response>();
+
+            try
             {
-                return;
+                var response = HandleRequest(context.Request);
+                context.Response = response;
+                tcs.SetResult(context.Response);
             }
-            
-            switch (_request.Method)
+            catch (Exception ex)
             {
-                case HttpVerb.Head:
-                case HttpVerb.Get:
-                    Get[_request.Path] = _ => HandleRequest();
-                    break;
-                case HttpVerb.Post:
-                    Post[_request.Path] = _ => HandleRequest();
-                    break;
-                case HttpVerb.Put:
-                    Put[_request.Path] = _ => HandleRequest();
-                    break;
-                case HttpVerb.Delete:
-                    Delete[_request.Path] = _ => HandleRequest();
-                    break;
-                case HttpVerb.Patch:
-                    Patch[_request.Path] = _ => HandleRequest();
-                    break;
+                tcs.SetException(ex);
             }
+
+            return tcs.Task;
         }
 
         public static void Set(PactProviderRequest request, PactProviderResponse response)
@@ -45,9 +38,9 @@ namespace PactNet
             _response = response;
         }
 
-        private Response HandleRequest()
+        private Response HandleRequest(Request request)
         {
-            this.FilterRequest();
+            this.FilterRequest(request);
             return this.GenerateResponse();
         }
 
@@ -57,22 +50,22 @@ namespace PactNet
             return mapper.Convert(_response);
         }
 
-        private void FilterRequest()
+        private void FilterRequest(Request request)
         {
             if (_request == null)
                 throw new Exception("Pact Request not set");
 
             // TODO: Handle in a better way and return mismatches
-            this.CompareHeaders();
-            this.CompareBody();
+            this.CompareHeaders(request);
+            this.CompareBody(request);
         }
 
-        private void CompareHeaders()
+        private void CompareHeaders(Request request)
         {
             foreach (var providerHeader in _request.Headers)
             {
                 // Check header exists in Nancy Headers
-                var nancyHeader = this.Request.Headers.FirstOrDefault(header => header.Key == providerHeader.Key);
+                var nancyHeader = request.Headers.FirstOrDefault(header => header.Key == providerHeader.Key);
 
                 // If matching nancy header doesn't exist return false
                 if (!nancyHeader.Value.Contains(providerHeader.Value))
@@ -80,9 +73,9 @@ namespace PactNet
             }
         }
 
-        private void CompareBody()
+        private void CompareBody(Request request)
         {
-            using (var reader = new StreamReader(this.Request.Body, Encoding.UTF8))
+            using (var reader = new StreamReader(request.Body, Encoding.UTF8))
             {
                 var nancyBody = reader.ReadToEnd();
                 var pactBody = _request.Body != null ? Newtonsoft.Json.JsonConvert.SerializeObject(_request.Body) : string.Empty;
@@ -92,7 +85,7 @@ namespace PactNet
             }
         }
 
-        private static void Reset()
+        public static void Reset()
         {
             _request = null;
             _response = null;

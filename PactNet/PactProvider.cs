@@ -39,10 +39,10 @@ namespace PactNet
 
         public void Start()
         {
-            PactProviderNancyModule.Set(_request, _response);
+            PactNancyRequestDispatcher.Set(_request, _response);
 
             var hostConfig = new HostConfiguration { UrlReservations = { CreateAutomatically = true }, AllowChunkedEncoding = false };
-            _host = new NancyHost(hostConfig, new Uri(_baseUri));
+            _host = new NancyHost(new PactNancyBootstrapper(), hostConfig, new Uri(_baseUri));
 
             _host.Start();
         }
@@ -50,6 +50,8 @@ namespace PactNet
         public void Stop()
         {
             _host.Stop();
+
+            PactNancyRequestDispatcher.Reset();
         }
 
         public PactInteraction DescribeInteraction()

@@ -61,10 +61,11 @@
     <Compile Include="PactAssertException.cs" />
     <Compile Include="PactFile.cs" />
     <Compile Include="PactInteraction.cs" />
+    <Compile Include="PactNancyBootstrapper.cs" />
     <Compile Include="PactParty.cs" />
     <Compile Include="PactProvider.cs" />
     <Compile Include="Pact.cs" />
-    <Compile Include="PactProviderNancyModule.cs" />
+    <Compile Include="PactNancyRequestDispatcher.cs" />
     <Compile Include="PactProviderRequest.cs" />
     <Compile Include="PactProviderResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

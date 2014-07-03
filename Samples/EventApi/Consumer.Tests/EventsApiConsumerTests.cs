@@ -34,7 +34,7 @@ namespace Consumer.Tests
                     Path = "/events",
                     Headers = new Dictionary<string, string>
                     {
-                        { "Accept", "application/json;q=1" }
+                        { "Accept", "application/json" }
                     }
                 })
                 .WillRespondWith(new PactProviderResponse
