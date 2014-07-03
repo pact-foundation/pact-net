@@ -38,4 +38,4 @@ _ReSharper*/
 local.scalpel.environment.txt
 scalpel.log*
 TestResults/*
-_TeamCity/
+_TeamCity*/
