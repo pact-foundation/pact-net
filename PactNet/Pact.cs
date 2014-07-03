@@ -7,7 +7,8 @@ using Newtonsoft.Json.Serialization;
 
 namespace PactNet
 {
-    public class Pact //TODO: Should we split this into consumer and provider?
+    //TODO: Should we split this into consumer and provider?
+    public class Pact : IDisposable
     {
         private string _consumerName;
         private string _providerName;
@@ -67,11 +68,13 @@ namespace PactNet
             return this;
         }
 
-        public Pact MockService(int port)
+        public PactProvider MockService(int port)
         {
             _pactProvider = new PactProvider(port);
 
-            return this;
+            _pactProvider.Start();
+
+            return _pactProvider;
         }
          
         /*public Pact PactUri()
@@ -82,24 +85,16 @@ namespace PactNet
             return this;
         }*/
 
-        public PactProvider GetMockProvider()
+        public void Dispose()
         {
-            if (_pactProvider == null)
-                throw new InvalidOperationException("Please define a Mock Service by calling MockService(...) before calling GetMockService()");
+            PersistPactFile();
 
-            return _pactProvider;
-        }
-
-        public void StartServer()
-        {
-            _pactProvider.Start();
-        }
-
-        public void StopServer()
-        {
             _pactProvider.Stop();
             _pactProvider.Dispose();
+        }
 
+        private void PersistPactFile()
+        {
             PactFile pactFile;
 
             try
@@ -109,10 +104,10 @@ namespace PactNet
             }
             catch (IOException ex)
             {
-                if (ex.GetType() == typeof (DirectoryNotFoundException))
+                if (ex.GetType() == typeof(DirectoryNotFoundException))
                 {
                     Directory.CreateDirectory(PactFileDirectory);
-                } 
+                }
 
                 pactFile = new PactFile
                 {

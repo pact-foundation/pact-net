@@ -32,9 +32,13 @@ namespace PactNet
             return tcs.Task;
         }
 
-        public static void Set(PactProviderRequest request, PactProviderResponse response)
+        public static void Set(PactProviderRequest request)
         {
             _request = request;
+        }
+
+        public static void Set(PactProviderResponse response)
+        {
             _response = response;
         }
 

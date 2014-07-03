@@ -6,28 +6,33 @@ using Xunit;
 
 namespace Consumer.Tests
 {
-    public class EventsApiConsumerTests
+    public class EventsApiConsumerTests : IDisposable
     {
-        //TODO: Test order is important here atm, refactor so it isn't
         //TODO: Refactor the code, it needs a big cleanup
 
         private const int MockServerPort = 1234;
         private readonly string _mockServerBaseUri = String.Format("http://localhost:{0}", MockServerPort);
 
+        private readonly Pact _pact;
+        private readonly PactProvider _pactProviderMock;
+
+        public EventsApiConsumerTests()
+        {
+            _pact = new Pact().ServiceConsumer("Consumer")
+                .HasPactWith("Event API");
+
+            _pactProviderMock = _pact.MockService(MockServerPort);
+        }
+
+        public void Dispose()
+        {
+            _pact.Dispose();
+        }
+
         [Fact]
         public void GetAllEvents_WhenCalled_ReturnsAllEvents()
         {
-            var pact = new Pact().ServiceConsumer("Consumer")
-                .HasPactWith("Event API")
-                .MockService(MockServerPort);
-
-            var pactProviderMock = pact.GetMockProvider();
-
-            /* TODO: The Accept Header has q=1 as Nancy modifies headers to match Http spec.
-            This needs to be fixed so that Nancy doesn't modify the header. 
-            https://github.com/NancyFx/Nancy/wiki/Content-Negotiation 
-            http://stackoverflow.com/questions/8552927/what-is-q-0-5-in-accept-http-headers */
-            pactProviderMock.UponReceiving("A GET request to retrieve all events")
+            _pactProviderMock.UponReceiving("A GET request to retrieve all events")
                 .With(new PactProviderRequest
                 {
                     Method = HttpVerb.Get,
@@ -70,9 +75,7 @@ namespace Consumer.Tests
             var consumer = new EventsApiClient(_mockServerBaseUri);
 
             //Act
-            pact.StartServer();
             var events = consumer.GetAllEvents();
-            pact.StopServer();
 
             Assert.NotEmpty(events);
             Assert.Equal(3, events.Count());
@@ -85,13 +88,7 @@ namespace Consumer.Tests
             var dateTime = new DateTime(2011, 07, 01, 01, 41, 03);
             DateTimeFactory.Now = () => dateTime;
 
-            var pact = new Pact().ServiceConsumer("Consumer")
-                .HasPactWith("Event API")
-                .MockService(MockServerPort);
-
-            var pactProviderMock = pact.GetMockProvider();
-
-            pactProviderMock.UponReceiving("A POST request to create a new event")
+            _pactProviderMock.UponReceiving("A POST request to create a new event")
                 .With(new PactProviderRequest
                 {
                     Method = HttpVerb.Post,
@@ -115,9 +112,7 @@ namespace Consumer.Tests
             var consumer = new EventsApiClient(_mockServerBaseUri);
 
             //Act
-            pact.StartServer();
             consumer.CreateEvent(eventId);
-            pact.StopServer();
         }
     }
 }

@@ -26,6 +26,7 @@ namespace PactNet
         public PactProvider With(PactProviderRequest request)
         {
             _request = request;
+            PactNancyRequestDispatcher.Set(request);
 
             return this;
         }
@@ -33,21 +34,22 @@ namespace PactNet
         public PactProvider WillRespondWith(PactProviderResponse response)
         {
             _response = response;
+            PactNancyRequestDispatcher.Set(response);
 
             return this;
         }
 
-        public void Start()
+        internal void Start()
         {
-            PactNancyRequestDispatcher.Set(_request, _response);
-
             var hostConfig = new HostConfiguration { UrlReservations = { CreateAutomatically = true }, AllowChunkedEncoding = false };
             _host = new NancyHost(new PactNancyBootstrapper(), hostConfig, new Uri(_baseUri));
 
             _host.Start();
+
+            PactNancyRequestDispatcher.Reset();
         }
 
-        public void Stop()
+        internal void Stop()
         {
             _host.Stop();
 

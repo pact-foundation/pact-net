@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Nancy;
 using Nancy.Bootstrapper;
+using Nancy.Diagnostics;
+using Nancy.TinyIoc;
 
 namespace PactNet
 {
@@ -20,6 +22,15 @@ namespace PactNet
                     c.RequestDispatcher = typeof(PactNancyRequestDispatcher);
                 });
             }
+        }
+
+        protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
+        {
+            DiagnosticsHook.Disable(pipelines);
+        }
+
+        protected override void ConfigureApplicationContainer(TinyIoCContainer container)
+        {
         }
     }
 }
