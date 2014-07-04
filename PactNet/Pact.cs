@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
@@ -17,9 +18,13 @@ namespace PactNet
     {
         private string _consumerName;
         private string _providerName;
+        private IDictionary<string, Action> _providerStates;
+        private string _pactUri;
+
         private IMockProviderService _mockProviderService;
         private const string PactFileDirectory = "../../pacts/";
-        private HttpClient _client;
+        private HttpClient _httpClient;
+        
 
         private string PactFilePath
         {
@@ -29,15 +34,6 @@ namespace PactNet
         private string PactFileName
         {
             get { return String.Format("{0}-{1}.json", _consumerName, _providerName).Replace(' ', '_').ToLower(); }
-        }
-
-        public Pact()
-        {
-        }
-
-        public Pact(HttpClient client)
-        {
-            _client = client;
         }
 
         public IPactConsumer ServiceConsumer(string consumerName)
@@ -63,9 +59,18 @@ namespace PactNet
             return _mockProviderService;
         }
 
-        public IPactProvider ServiceProvider(string providerName)
+        public IPactProvider ProviderStatesFor(string consumerName, IDictionary<string, Action> providerStates)
+        {
+            _consumerName = consumerName;
+            _providerStates = providerStates;
+
+            return this;
+        }
+
+        public IPactProvider ServiceProvider(string providerName, HttpClient httpClient)
         {
             _providerName = providerName;
+            _httpClient = httpClient;
 
             return this;
         }
@@ -79,18 +84,45 @@ namespace PactNet
 
         public IPactProvider PactUri(string uri)
         {
+            _pactUri = uri;
+
+            return this;
+        }
+
+        public void Execute()
+        {
+            //TODO: Change the spec matching criteria for de-dupe of json items
+
+            if (_httpClient == null)
+            {
+                throw new InvalidOperationException("httpClient has not been set, please supply a HttpClient using the ServiceProvider method.");
+            }
+
+            PactFile pactFile;
+
             try
             {
-                var pactFileJson = File.ReadAllText(uri);
-                var pactFile = JsonConvert.DeserializeObject<PactFile>(pactFileJson, JsonConfig.SerializerSettings);
-                pactFile.VerifyProvider(_client);
+                var pactFileJson = File.ReadAllText(_pactUri);
+                pactFile = JsonConvert.DeserializeObject<PactFile>(pactFileJson, JsonConfig.SerializerSettings);
             }
             catch (IOException)
             {
-                throw new PactAssertException(String.Format("Json Pact file could not be retrieved using uri \'{0}\'", uri));
+                throw new PactAssertException(String.Format("Json Pact file could not be retrieved using uri \'{0}\'.", _pactUri));
             }
 
-            return this;
+            if (pactFile.Interactions != null && pactFile.Interactions.Any())
+            {
+                foreach (var providerState in pactFile.Interactions.Where(x => x.ProviderState != null).Select(x => x.ProviderState))
+                {
+                    if (_providerStates == null || !_providerStates.Any() || !_providerStates.ContainsKey(providerState))
+                    {
+                        throw new PactAssertException(String.Format("No provider state has been supplied for \"{0}\" as defined in the json Pact file. Please use ProviderStatesFor method when defining the Provider Pact.", providerState));
+                    }
+                    _providerStates[providerState].Invoke();
+                }
+            }
+
+            pactFile.VerifyProvider(_httpClient);
         }
 
         public void Dispose()

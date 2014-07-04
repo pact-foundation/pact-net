@@ -32,7 +32,8 @@ namespace Consumer.Tests
         [Fact]
         public void GetAllEvents_WhenCalled_ReturnsAllEvents()
         {
-            _mockProvider.UponReceiving("A GET request to retrieve all events")
+            _mockProvider.Given("There are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
+                .UponReceiving("A GET request to retrieve all events")
                 .With(new PactProviderRequest
                 {
                     Method = HttpVerb.Get,

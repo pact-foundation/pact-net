@@ -6,15 +6,23 @@ namespace PactNet.Consumer.Mocks.MockService
 {
     public class MockProviderService : IMockProviderService
     {
-        private NancyHost _host;
         private readonly string _baseUri;
+        private string _providerState;
         private string _description;
         private PactProviderRequest _request;
         private PactProviderResponse _response;
+        private NancyHost _host;
 
         public MockProviderService(int port)
         {
             _baseUri = String.Format("http://localhost:{0}", port);
+        }
+
+        public IMockProvider Given(string providerState)
+        {
+            _providerState = providerState;
+
+            return this;
         }
 
         public IMockProvider UponReceiving(string description)
@@ -62,6 +70,7 @@ namespace PactNet.Consumer.Mocks.MockService
             return new PactInteraction
                        {
                            Description = _description,
+                           ProviderState = _providerState,
                            Request = _request,
                            Response = _response
                        };

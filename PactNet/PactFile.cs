@@ -136,9 +136,11 @@ namespace PactNet
         {
             _interactions = _interactions ?? new List<PactInteraction>();
 
-            if (_interactions.Any(x => x.Description == interation.Description))
+            if (_interactions.Any(x => x.Description.Equals(interation.Description) && 
+                x.ProviderState != null &&
+                x.ProviderState.Equals(interation.ProviderState)))
             {
-                var interactionToReplace = _interactions.Single(x => x.Description == interation.Description);
+                var interactionToReplace = _interactions.Single(x => x.Description.Equals(interation.Description) && x.ProviderState.Equals(interation.ProviderState));
                 _interactions[_interactions.IndexOf(interactionToReplace)] = interation;
             }
             else
