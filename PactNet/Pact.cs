@@ -91,8 +91,6 @@ namespace PactNet
 
         public void Execute()
         {
-            //TODO: Change the spec matching criteria for de-dupe of json items
-
             if (_httpClient == null)
             {
                 throw new InvalidOperationException("httpClient has not been set, please supply a HttpClient using the ServiceProvider method.");
@@ -129,8 +127,11 @@ namespace PactNet
         {
             PersistPactFile();
 
-            _mockProviderService.Stop();
-            _mockProviderService.Dispose();
+            if (_mockProviderService != null)
+            {
+                _mockProviderService.Stop();
+                _mockProviderService.Dispose();
+            }
         }
 
         private void PersistPactFile()

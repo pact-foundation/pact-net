@@ -32,6 +32,7 @@ namespace Provider.Api.Web.Tests
         [Fact]
         public void EnsureEventApiHonoursPactWithConsumer()
         {
+            //Arrange / Act / Assert
             _pact.ServiceProvider("Event API", _testServer.HttpClient)
                 .HonoursPactWith("Consumer")
                 .PactUri("../../../Consumer.Tests/pacts/consumer-event_api.json")

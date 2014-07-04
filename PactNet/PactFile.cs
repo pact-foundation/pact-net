@@ -104,7 +104,7 @@ namespace PactNet
                     actualResponse.Body = JsonConvert.DeserializeObject<dynamic>(responseContent);
                 }
 
-                PactAssert.Equal(interaction.Response, actualResponse);
+                new PactAssert().Equal(interaction.Response, actualResponse);
                 interationNumber++;
             }
         }
@@ -136,12 +136,13 @@ namespace PactNet
         {
             _interactions = _interactions ?? new List<PactInteraction>();
 
-            if (_interactions.Any(x => x.Description.Equals(interation.Description) && 
-                x.ProviderState != null &&
-                x.ProviderState.Equals(interation.ProviderState)))
+            var duplicateInteraction = _interactions
+                .FirstOrDefault(x => x.Description.Equals(interation.Description) && 
+                    ((x.ProviderState == null && interation.ProviderState == null) || x.ProviderState.Equals(interation.ProviderState)));
+
+            if (duplicateInteraction != null)
             {
-                var interactionToReplace = _interactions.Single(x => x.Description.Equals(interation.Description) && x.ProviderState.Equals(interation.ProviderState));
-                _interactions[_interactions.IndexOf(interactionToReplace)] = interation;
+                _interactions[_interactions.IndexOf(duplicateInteraction)] = interation;
             }
             else
             {

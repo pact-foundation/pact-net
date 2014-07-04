@@ -7,8 +7,6 @@ namespace PactNet.Tests
 {
     public class PactAssertPactProviderResponseTests
     {
-        //NOTE: For testing the .Body property only use ExpandoObject as that implements GetDynamicMemberNames, however dynamic does not!
-
         [Fact]
         public void Equal_WithMatchingStatusCodes_NoExceptionsAreThrown()
         {
@@ -22,7 +20,7 @@ namespace PactNet.Tests
                 Status = 201
             };
 
-            PactAssert.Equal(expected, actual);
+            new PactAssert().Equal(expected, actual);
         }
 
         [Fact]
@@ -38,7 +36,7 @@ namespace PactNet.Tests
                 Status = 400
             };
 
-            Assert.Throws<PactAssertException>(() => PactAssert.Equal(expected, actual));
+            Assert.Throws<PactAssertException>(() => new PactAssert().Equal(expected, actual));
         }
 
         [Fact]
@@ -62,7 +60,7 @@ namespace PactNet.Tests
                 }
             };
 
-            PactAssert.Equal(expected, actual);
+            new PactAssert().Equal(expected, actual);
         }
 
         [Fact]
@@ -86,11 +84,11 @@ namespace PactNet.Tests
                 }
             };
 
-            Assert.Throws<PactAssertException>(() => PactAssert.Equal(expected, actual));
+            Assert.Throws<PactAssertException>(() => new PactAssert().Equal(expected, actual));
         }
 
         [Fact]
-        public void Equal_WithMatchingHeadersButWithDifferentCasingOnValue_NoExceptionsAreThrown()
+        public void Equal_WithMatchingHeadersButWithDifferentCasingOnValue_ThrowsPactAssertException()
         {
             var expected = new PactProviderResponse
             {
@@ -110,7 +108,7 @@ namespace PactNet.Tests
                 }
             };
 
-            PactAssert.Equal(expected, actual);
+            Assert.Throws<PactAssertException>(() => new PactAssert().Equal(expected, actual));
         }
 
         [Fact]
@@ -121,7 +119,7 @@ namespace PactNet.Tests
                 Status = 201,
                 Headers = new Dictionary<string, string>
                 {
-                    { "Content-Type", "Application/Json" }
+                    { "Content-Type", "application/json" }
                 }
             };
 
@@ -136,7 +134,7 @@ namespace PactNet.Tests
                 }
             };
 
-            PactAssert.Equal(expected, actual);
+            new PactAssert().Equal(expected, actual);
         }
 
         [Fact]
@@ -160,7 +158,7 @@ namespace PactNet.Tests
                 }
             };
 
-            Assert.Throws<PactAssertException>(() => PactAssert.Equal(expected, actual));
+            Assert.Throws<PactAssertException>(() => new PactAssert().Equal(expected, actual));
         }
 
         [Fact]
@@ -184,7 +182,7 @@ namespace PactNet.Tests
                 }
             };
 
-            Assert.Throws<PactAssertException>(() => PactAssert.Equal(expected, actual));
+            Assert.Throws<PactAssertException>(() => new PactAssert().Equal(expected, actual));
         }
 
         [Fact]
@@ -204,7 +202,7 @@ namespace PactNet.Tests
                 Status = 201
             };
 
-            Assert.Throws<PactAssertException>(() => PactAssert.Equal(expected, actual));
+            Assert.Throws<PactAssertException>(() => new PactAssert().Equal(expected, actual));
         }
 
         [Fact]
@@ -213,24 +211,26 @@ namespace PactNet.Tests
             var expected = new PactProviderResponse
             {
                 Status = 201,
-                Body = new ExpandoObject()
+                Body = new
+                {
+                    myString = "Tester",
+                    myInt = 1,
+                    myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")
+                }
             };
-
-            expected.Body.MyString = "Tester";
-            expected.Body.MyInt = 1;
-            expected.Body.MyGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C");
 
             var actual = new PactProviderResponse
             {
                 Status = 201,
-                Body = new ExpandoObject()
+                Body = new
+                {
+                    myString = "Tester",
+                    myInt = 1,
+                    myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")
+                }
             };
 
-            actual.Body.MyString = "Tester";
-            actual.Body.MyInt = 1;
-            actual.Body.MyGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C");
-
-            PactAssert.Equal(expected, actual);
+            new PactAssert().Equal(expected, actual);
         }
 
         [Fact]
@@ -239,24 +239,26 @@ namespace PactNet.Tests
             var expected = new PactProviderResponse
             {
                 Status = 201,
-                Body = new ExpandoObject()
+                Body = new
+                {
+                    myString = "Tester",
+                    myInt = 1,
+                    myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")
+                }
             };
-
-            expected.Body.MyString = "Tester";
-            expected.Body.MyInt = 1;
-            expected.Body.MyGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C");
 
             var actual = new PactProviderResponse
             {
                 Status = 201,
-                Body = new ExpandoObject()
+                Body = new
+                {
+                    myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C"),
+                    myInt = 1,
+                    myString = "Tester"
+                }
             };
 
-            actual.Body.MyGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C");
-            actual.Body.MyInt = 1;
-            actual.Body.MyString = "Tester";
-
-            PactAssert.Equal(expected, actual);
+            new PactAssert().Equal(expected, actual);
         }
 
         [Fact]
@@ -265,25 +267,27 @@ namespace PactNet.Tests
             var expected = new PactProviderResponse
             {
                 Status = 201,
-                Body = new ExpandoObject()
+                Body = new
+                {
+                    myString = "Tester",
+                    myInt = 1,
+                    myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")
+                }
             };
-
-            expected.Body.MyString = "Tester";
-            expected.Body.MyInt = 1;
-            expected.Body.MyGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C");
 
             var actual = new PactProviderResponse
             {
                 Status = 201,
-                Body = new ExpandoObject()
+                Body = new
+                {
+                    myString = "Tester",
+                    myInt = 1,
+                    myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C"),
+                    additional = "Hello"
+                }
             };
 
-            actual.Body.MyString = "Tester";
-            actual.Body.MyInt = 1;
-            actual.Body.MyGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C");
-            actual.Body.Additional = "Hello";
-            
-            PactAssert.Equal(expected, actual);
+            new PactAssert().Equal(expected, actual);
         }
 
         [Fact]
@@ -292,25 +296,27 @@ namespace PactNet.Tests
             var expected = new PactProviderResponse
             {
                 Status = 201,
-                Body = new ExpandoObject()
+                Body = new
+                {
+                    myString = "Tester",
+                    myInt = 1,
+                    myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C"),
+                    myDouble = 2.0
+                }
             };
-
-            expected.Body.MyString = "Tester";
-            expected.Body.MyInt = 1;
-            expected.Body.MyGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C");
-            expected.Body.MyDouble = 2.0;
 
             var actual = new PactProviderResponse
             {
                 Status = 201,
-                Body = new ExpandoObject()
+                Body = new
+                {
+                    myString = "Tester",
+                    MyInt = 1,
+                    MyGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")
+                }
             };
 
-            actual.Body.MyString = "Tester";
-            actual.Body.MyInt = 1;
-            actual.Body.MyGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C");
-
-            Assert.Throws<PactAssertException>(() => PactAssert.Equal(expected, actual));
+            Assert.Throws<PactAssertException>(() => new PactAssert().Equal(expected, actual));
         }
 
         [Fact]
@@ -319,24 +325,54 @@ namespace PactNet.Tests
             var expected = new PactProviderResponse
             {
                 Status = 201,
-                Body = new ExpandoObject()
+                Body = new
+                {
+                    myString = "Tester",
+                    myInt = 1,
+                    myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")
+                }
             };
-
-            expected.Body.MyString = "Tester";
-            expected.Body.MyInt = 1;
-            expected.Body.MyGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C");
 
             var actual = new PactProviderResponse
             {
                 Status = 201,
-                Body = new ExpandoObject()
+                Body = new
+                {
+                    myString = "Tester2",
+                    myInt = 1,
+                    myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")
+                }
             };
 
-            actual.Body.MyString = "Tester2";
-            actual.Body.MyInt = 1;
-            actual.Body.MyGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C");
+            Assert.Throws<PactAssertException>(() => new PactAssert().Equal(expected, actual));
+        }
 
-            Assert.Throws<PactAssertException>(() => PactAssert.Equal(expected, actual));
+        [Fact]
+        public void Equal_WithMatchingObjectHoweverPropertyNameCasingIsDifferent_ThrowsPactAssertException()
+        {
+            var expected = new PactProviderResponse
+            {
+                Status = 201,
+                Body = new
+                {
+                    MyString = "Tester",
+                    MyInt = 1,
+                    MyGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")
+                }
+            };
+
+            var actual = new PactProviderResponse
+            {
+                Status = 201,
+                Body = new
+                {
+                    myString = "Tester",
+                    myInt = 1,
+                    myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")
+                }
+            };
+
+            Assert.Throws<PactAssertException>(() => new PactAssert().Equal(expected, actual));
         }
 
         [Fact]
@@ -345,19 +381,20 @@ namespace PactNet.Tests
             var expected = new PactProviderResponse
             {
                 Status = 201,
-                Body = new ExpandoObject()
+                Body = new
+                {
+                    myString = "Tester",
+                    myInt = 1,
+                    myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")
+                }
             };
-
-            expected.Body.MyString = "Tester";
-            expected.Body.MyInt = 1;
-            expected.Body.MyGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C");
 
             var actual = new PactProviderResponse
             {
                 Status = 201
             };
 
-            Assert.Throws<PactAssertException>(() => PactAssert.Equal(expected, actual));
+            Assert.Throws<PactAssertException>(() => new PactAssert().Equal(expected, actual));
         }
 
         [Fact]
@@ -366,28 +403,32 @@ namespace PactNet.Tests
             var expected = new PactProviderResponse
             {
                 Status = 201,
-                Body = new List<dynamic>()
+                Body = new List<dynamic>
+                {
+                    new 
+                    {
+                        myString = "Tester",
+                        myInt = 1,
+                        myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")
+                    }
+                }
             };
-
-            dynamic expectedBodyItem = new ExpandoObject();
-            expectedBodyItem.MyString = "Tester";
-            expectedBodyItem.MyInt = 1;
-            expectedBodyItem.MyGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C");
-            expected.Body.Add(expectedBodyItem);
 
             var actual = new PactProviderResponse
             {
                 Status = 201,
-                Body = new List<dynamic>()
+                Body = new List<dynamic>
+                {
+                    new 
+                    {
+                        myString = "Tester",
+                        myInt = 1,
+                        myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")
+                    }
+                }
             };
 
-            dynamic actualBodyItem = new ExpandoObject();
-            actualBodyItem.MyString = "Tester";
-            actualBodyItem.MyInt = 1;
-            actualBodyItem.MyGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C");
-            actual.Body.Add(actualBodyItem);
-
-            PactAssert.Equal(expected, actual);
+            new PactAssert().Equal(expected, actual);
         }
 
         [Fact]
@@ -396,28 +437,32 @@ namespace PactNet.Tests
             var expected = new PactProviderResponse
             {
                 Status = 201,
-                Body = new List<dynamic>()
+                Body = new List<dynamic>
+                {
+                    new 
+                    {
+                        myString = "Tester",
+                        myInt = 1,
+                        myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")
+                    }
+                }
             };
-
-            dynamic expectedBodyItem = new ExpandoObject();
-            expectedBodyItem.MyString = "Tester";
-            expectedBodyItem.MyInt = 1;
-            expectedBodyItem.MyGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C");
-            expected.Body.Add(expectedBodyItem);
 
             var actual = new PactProviderResponse
             {
                 Status = 201,
-                Body = new List<dynamic>()
+                Body = new List<dynamic>
+                {
+                    new 
+                    {
+                        myString = "Tester2",
+                        myInt = 1,
+                        myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")
+                    }
+                }
             };
 
-            dynamic actualBodyItem = new ExpandoObject();
-            actualBodyItem.MyString = "Tester2";
-            actualBodyItem.MyInt = 1;
-            actualBodyItem.MyGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C");
-            actual.Body.Add(actualBodyItem);
-
-            Assert.Throws<PactAssertException>(() => PactAssert.Equal(expected, actual));
+            Assert.Throws<PactAssertException>(() => new PactAssert().Equal(expected, actual));
         }
     }
 }

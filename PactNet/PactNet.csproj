@@ -33,9 +33,6 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Dynamitey">
-      <HintPath>..\packages\Dynamitey.1.0.2.0\lib\net40\Dynamitey.dll</HintPath>
-    </Reference>
     <Reference Include="Nancy">
       <HintPath>..\packages\Nancy.0.23.0\lib\net40\Nancy.dll</HintPath>
     </Reference>
@@ -76,6 +73,10 @@
     <Compile Include="PactProviderResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Provider\IPactProvider.cs" />
+    <Compile Include="Validators\BodyValidator.cs" />
+    <Compile Include="Validators\IBodyValidator.cs" />
+    <Compile Include="Validators\IPactProviderRequestValidator.cs" />
+    <Compile Include="Validators\PactProviderRequestValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -68,12 +68,12 @@ namespace PactNet.Consumer.Mocks.MockService
         public PactInteraction DescribeInteraction()
         {
             return new PactInteraction
-                       {
-                           Description = _description,
-                           ProviderState = _providerState,
-                           Request = _request,
-                           Response = _response
-                       };
+            {
+                Description = _description,
+                ProviderState = _providerState,
+                Request = _request,
+                Response = _response
+            };
         }
 
         public void Dispose()

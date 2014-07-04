@@ -7,6 +7,7 @@ namespace PactNet
         public PactAssertException(string message)
             :base(String.Format("[Failure] {0}", message))
         {
+            Console.WriteLine("[Failure] {0}", message);
         }
 
         public PactAssertException(object expected, object actual)
