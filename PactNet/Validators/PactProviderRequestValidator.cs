@@ -6,19 +6,20 @@ using System.Text;
 using Nancy;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using PactNet.Configuration.Json;
 
 namespace PactNet.Validators
 {
     //TODO: This will need to be refactored
     public class PactProviderRequestValidator : IPactProviderRequestValidator
     {
+        private readonly IHeaderValidator _headerValidator;
         private readonly IBodyValidator _bodyValidator;
-        private const string MessagePrefix = "\t- Request";
 
+        private const string MessagePrefix = "\t- Request";
 
         public PactProviderRequestValidator()
         {
+            _headerValidator = new HeaderValidator(MessagePrefix);
             _bodyValidator = new BodyValidator(MessagePrefix);
         }
 
@@ -48,33 +49,16 @@ namespace PactNet.Validators
             {
                 if (actualRequest.Headers == null)
                 {
-                    throw new PactAssertException("Headers are null in request");
+                    throw new PactAssertException("Headers are null");
                 }
 
-                foreach (var expectedRequestHeader in expectedRequest.Headers)
+                var actualRequestHeaders = new Dictionary<string, string>();
+                if (actualRequest.Headers != null && actualRequest.Headers.Any())
                 {
-                    Console.WriteLine("{0} includes header {1} with value {2}", MessagePrefix, expectedRequestHeader.Key, expectedRequestHeader.Value);
-
-                    var actualRequestHeaders = new Dictionary<string, string>();
-                    if (actualRequest.Headers != null && actualRequest.Headers.Any())
-                    {
-                        actualRequestHeaders = actualRequest.Headers.ToDictionary(x => x.Key, x => String.Join("; ", x.Value));
-                    }
-
-                    string headerValue;
-
-                    if (actualRequestHeaders.TryGetValue(expectedRequestHeader.Key, out headerValue))
-                    {
-                        if (!expectedRequestHeader.Value.Equals(headerValue))
-                        {
-                            throw new PactAssertException(expectedRequestHeader.Value, headerValue);
-                        }
-                    }
-                    else
-                    {
-                        throw new PactAssertException("Header does not exist in request");
-                    }
+                    actualRequestHeaders = actualRequest.Headers.ToDictionary(x => x.Key, x => String.Join("; ", x.Value));
                 }
+
+                _headerValidator.Validate(expectedRequest.Headers, actualRequestHeaders);
             }
 
             if (expectedRequest.Body != null)

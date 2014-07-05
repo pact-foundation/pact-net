@@ -2,22 +2,23 @@
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using PactNet.Configuration.Json;
-using PactNet.Validators;
 
-namespace PactNet
+namespace PactNet.Validators
 {
-    public class PactAssert
+    public class PactProviderResponseValidator : IPactProviderResponseValidator
     {
+        private readonly IHeaderValidator _headerValidator;
         private readonly IBodyValidator _bodyValidator;
+
         private const string MessagePrefix = "\t- Returns a response which";
 
-        public PactAssert()
+        public PactProviderResponseValidator()
         {
+            _headerValidator = new HeaderValidator(MessagePrefix);
             _bodyValidator = new BodyValidator(MessagePrefix);
         }
 
-        public void Equal(PactProviderResponse expectedResponse, PactProviderResponse actualResponse)
+        public void Validate(PactProviderResponse expectedResponse, PactProviderResponse actualResponse)
         {
             if (expectedResponse == null)
             {
@@ -32,29 +33,7 @@ namespace PactNet
 
             if (expectedResponse.Headers != null && expectedResponse.Headers.Any())
             {
-                if (actualResponse.Headers == null)
-                {
-                    throw new PactAssertException("Headers are null in response");
-                }
-
-                foreach (var header in expectedResponse.Headers)
-                {
-                    Console.WriteLine("{0} includes header {1} with value {2}", MessagePrefix, header.Key, header.Value);
-
-                    string headerValue;
-
-                    if (actualResponse.Headers.TryGetValue(header.Key, out headerValue))
-                    {
-                        if (!header.Value.Equals(headerValue))
-                        {
-                            throw new PactAssertException(header.Value, headerValue);
-                        }
-                    }
-                    else
-                    {
-                        throw new PactAssertException("Header does not exist in response");
-                    }
-                }
+                _headerValidator.Validate(expectedResponse.Headers, actualResponse.Headers);
             }
 
             if (expectedResponse.Body != null)

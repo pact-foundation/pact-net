@@ -42,7 +42,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PactAssertPactProviderResponseTests.cs" />
+    <Compile Include="Validators\PactAssertPactProviderResponseTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

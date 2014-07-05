@@ -6,11 +6,14 @@ using System.Net.Http.Headers;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using PactNet.Validators;
 
 namespace PactNet
 {
     public class PactFile
     {
+        private readonly IPactProviderResponseValidator _responseValidator;
+
         private IList<PactInteraction> _interactions;
 
         public PactParty Provider { get; set; }
@@ -26,6 +29,8 @@ namespace PactNet
 
         public PactFile()
         {
+            _responseValidator = new PactProviderResponseValidator();
+
             Metadata = new
             {
                 PactSpecificationVersion = "1.0.0"
@@ -104,7 +109,8 @@ namespace PactNet
                     actualResponse.Body = JsonConvert.DeserializeObject<dynamic>(responseContent);
                 }
 
-                new PactAssert().Equal(interaction.Response, actualResponse);
+                _responseValidator.Validate(interaction.Response, actualResponse);
+
                 interationNumber++;
             }
         }
