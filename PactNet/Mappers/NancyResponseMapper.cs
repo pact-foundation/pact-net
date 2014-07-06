@@ -4,7 +4,7 @@ using Nancy;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace PactNet.Consumer.Mocks.MockService.Nancy
+namespace PactNet.Mappers
 {
     public class NancyResponseMapper
     {

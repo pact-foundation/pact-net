@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using Nancy;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PactNet.Mappers;
 
 namespace PactNet.Validators
 {
@@ -23,20 +21,17 @@ namespace PactNet.Validators
             _bodyValidator = new BodyValidator(MessagePrefix);
         }
 
-        public void Validate(PactProviderRequest expectedRequest, Request actualRequest)
+        public void Validate(PactProviderRequest expectedRequest, PactProviderRequest actualRequest)
         {
             if (expectedRequest == null)
             {
                 throw new PactAssertException("Expected request cannot be null");
             }
 
-            var expectedRequestMethod = expectedRequest.Method.ToString().ToLower();
-            var actualRequestMethod = actualRequest.Method.ToLower();
-
-            Console.WriteLine("{0} has method set to {1}", MessagePrefix, expectedRequestMethod);
-            if (!expectedRequestMethod.Equals(actualRequestMethod))
+            Console.WriteLine("{0} has method set to {1}", MessagePrefix, expectedRequest.Method);
+            if (!expectedRequest.Method.Equals(actualRequest.Method))
             {
-                throw new PactAssertException(expectedRequestMethod, actualRequestMethod);
+                throw new PactAssertException(expectedRequest.Method, actualRequest.Method);
             }
 
             Console.WriteLine("{0} has path set to {1}", MessagePrefix, expectedRequest.Path);
@@ -52,34 +47,20 @@ namespace PactNet.Validators
                     throw new PactAssertException("Headers are null");
                 }
 
-                var actualRequestHeaders = new Dictionary<string, string>();
-                if (actualRequest.Headers != null && actualRequest.Headers.Any())
-                {
-                    actualRequestHeaders = actualRequest.Headers.ToDictionary(x => x.Key, x => String.Join("; ", x.Value));
-                }
-
-                _headerValidator.Validate(expectedRequest.Headers, actualRequestHeaders);
+                _headerValidator.Validate(expectedRequest.Headers, actualRequest.Headers);
             }
 
             if (expectedRequest.Body != null)
             {
                 string expectedRequestBodyJson = JsonConvert.SerializeObject(expectedRequest.Body);
+                string actualRequestBodyJson = JsonConvert.SerializeObject(actualRequest.Body);
 
-                var actualRequestBody = JsonConvert.DeserializeObject<JToken>(ConvertToJsonString(actualRequest.Body));
+
+                var actualRequestBody = JsonConvert.DeserializeObject<JToken>(actualRequestBodyJson);
                 var expectedRequestBody = JsonConvert.DeserializeObject<JToken>(expectedRequestBodyJson);
 
                 _bodyValidator.Validate(actualRequestBody, expectedRequestBody);
             }
         }
-
-        private string ConvertToJsonString(Stream stream)
-        {
-            using (var reader = new StreamReader(stream, Encoding.UTF8))
-            {
-                var body = reader.ReadToEnd();
-                return body;
-            }
-        }
-
     }
 }

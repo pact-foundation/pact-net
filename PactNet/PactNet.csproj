@@ -59,9 +59,10 @@
     <Compile Include="Consumer\Mocks\IMockProvider.cs" />
     <Compile Include="Consumer\Mocks\MockService\IMockProviderService.cs" />
     <Compile Include="Consumer\Mocks\MockService\MockProviderService.cs" />
-    <Compile Include="Consumer\Mocks\MockService\Nancy\NancyResponseMapper.cs" />
-    <Compile Include="Consumer\Mocks\MockService\Nancy\PactNancyBootstrapper.cs" />
-    <Compile Include="Consumer\Mocks\MockService\Nancy\PactNancyRequestDispatcher.cs" />
+    <Compile Include="Mappers\NancyResponseMapper.cs" />
+    <Compile Include="Consumer\Mocks\MockService\PactNancyBootstrapper.cs" />
+    <Compile Include="Consumer\Mocks\MockService\PactNancyRequestDispatcher.cs" />
+    <Compile Include="Mappers\PactProviderRequestMapper.cs" />
     <Compile Include="HttpVerb.cs" />
     <Compile Include="Validators\IPactProviderResponseValidator.cs" />
     <Compile Include="Validators\PactProviderResponseValidator.cs" />

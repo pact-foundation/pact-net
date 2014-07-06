@@ -43,7 +43,7 @@ namespace PactNet
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        private Dictionary<HttpVerb, HttpMethod> _httpVerbMap = new Dictionary<HttpVerb, HttpMethod>
+        private static readonly Dictionary<HttpVerb, HttpMethod> HttpVerbMap = new Dictionary<HttpVerb, HttpMethod>
         {
             { HttpVerb.Get, HttpMethod.Get },
             { HttpVerb.Post, HttpMethod.Post },
@@ -60,7 +60,7 @@ namespace PactNet
             {
                 Console.WriteLine("{0}) Verifying a Pact between {1} and {2} - {3}.", interationNumber, Consumer.Name, Provider.Name, interaction.Description);
 
-                var request = new HttpRequestMessage(_httpVerbMap[interaction.Request.Method], interaction.Request.Path);
+                var request = new HttpRequestMessage(HttpVerbMap[interaction.Request.Method], interaction.Request.Path);
 
                 if (interaction.Request.Body != null)
                 {

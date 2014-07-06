@@ -1,9 +1,7 @@
-﻿using Nancy;
-
-namespace PactNet.Validators
+﻿namespace PactNet.Validators
 {
     public interface IPactProviderRequestValidator
     {
-        void Validate(PactProviderRequest expectedRequest, Request actualRequest);
+        void Validate(PactProviderRequest expectedRequest, PactProviderRequest actualRequest);
     }
 }

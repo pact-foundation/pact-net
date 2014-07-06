@@ -3,9 +3,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Nancy;
 using Nancy.Routing;
+using PactNet.Mappers;
 using PactNet.Validators;
 
-namespace PactNet.Consumer.Mocks.MockService.Nancy
+namespace PactNet.Consumer.Mocks.MockService
 {
     public class PactNancyRequestDispatcher : IRequestDispatcher
     {
@@ -50,7 +51,7 @@ namespace PactNet.Consumer.Mocks.MockService.Nancy
 
         private Response HandleRequest(Request request)
         {
-            _requestValidator.Validate(_request, request);
+            _requestValidator.Validate(_request, new PactProviderRequestMapper().Convert(request));
             return GenerateResponse();
         }
 

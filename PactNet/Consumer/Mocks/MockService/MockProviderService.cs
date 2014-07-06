@@ -1,6 +1,5 @@
 ﻿using System;
 using Nancy.Hosting.Self;
-using PactNet.Consumer.Mocks.MockService.Nancy;
 
 namespace PactNet.Consumer.Mocks.MockService
 {

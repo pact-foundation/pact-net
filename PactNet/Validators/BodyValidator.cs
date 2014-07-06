@@ -72,6 +72,7 @@ namespace PactNet.Validators
                     throw new PactAssertException(String.Format("Body.{0} does not exist", leftItem.Path));
                 }
 
+                //TODO: Work on these comparisons
                 if(!JToken.DeepEquals(leftItem, rightItem))
                 {
                     throw new PactAssertException(String.Format("Body.{0}", leftItem.Path), leftItem, rightItem);

@@ -50,7 +50,7 @@
         },
         "body": {
           "eventId": "1f587704-2dcc-4313-a233-7b62b4b469db",
-          "timestamp": "2011-07-01T01:41:03.0000000",
+          "timestamp": "2011-07-01T01:41:03",
           "eventType": "JobDetailsView"
         }
       },
