@@ -6,7 +6,6 @@ namespace PactNet.Configuration.Json
     public static class JsonConfig
     {
         private static JsonSerializerSettings _serializerSettings;
-
         public static JsonSerializerSettings SerializerSettings 
         {
             get

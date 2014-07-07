@@ -2,41 +2,32 @@
 using System.Collections.Generic;
 using Microsoft.Owin.Testing;
 using PactNet;
-using PactNet.Provider;
 using Xunit;
 
 namespace Provider.Api.Web.Tests
 {
-    public class EventApiTests : IDisposable
+    public class EventApiTests
     {
-        private readonly TestServer _testServer;
-        private readonly IPactProvider _pact;
-
-        public EventApiTests()
+        [Fact]
+        public void EnsureEventApiHonoursPactWithConsumer()
         {
-            _testServer = TestServer.Create<Startup>();
+            //Arrange
+            var testServer = TestServer.Create<Startup>();
 
-            _pact = new Pact()
-                .ProviderStatesFor("Consumer", 
+            var pact = new Pact()
+                .ProviderStatesFor("Consumer",
                 new Dictionary<string, Action>
                 {
                     { "There are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'", InsertEventsIntoDatabaseIfTheyDontExist }
                 });
-        }
 
-        public void Dispose()
-        {
-            _testServer.Dispose();
-        }
-
-        [Fact]
-        public void EnsureEventApiHonoursPactWithConsumer()
-        {
-            //Arrange / Act / Assert
-            _pact.ServiceProvider("Event API", _testServer.HttpClient)
+            //Act / Assert
+            pact.ServiceProvider("Event API", testServer.HttpClient)
                 .HonoursPactWith("Consumer")
                 .PactUri("../../../Consumer.Tests/pacts/consumer-event_api.json")
                 .Execute();
+
+            testServer.Dispose();
         }
 
         private void InsertEventsIntoDatabaseIfTheyDontExist()

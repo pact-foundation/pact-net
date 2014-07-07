@@ -1,11 +1,8 @@
-using System;
-
 namespace PactNet.Consumer.Mocks.MockService
 {
-    public interface IMockProviderService : IMockProvider, IDisposable
+    public interface IMockProviderService : IMockProvider
     {
         void Start();
         void Stop();
-        PactInteraction DescribeInteraction();
     }
 }

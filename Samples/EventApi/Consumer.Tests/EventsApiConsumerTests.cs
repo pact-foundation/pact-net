@@ -2,38 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using PactNet;
-using PactNet.Consumer;
-using PactNet.Consumer.Mocks;
 using Xunit;
 
 namespace Consumer.Tests
 {
-    public class EventsApiConsumerTests : IDisposable
+    public class EventsApiConsumerTests : IUseFixture<ConsumerEventApiPact>
     {
-        private const int MockServerPort = 1234;
-        private readonly string _mockServerBaseUri = String.Format("http://localhost:{0}", MockServerPort);
-
-        private readonly IPactConsumer _pact;
-        private readonly IMockProvider _mockProvider;
-
-        public EventsApiConsumerTests()
+        private ConsumerEventApiPact _data;
+            
+        public void SetFixture(ConsumerEventApiPact data)
         {
-            _pact = new Pact().ServiceConsumer("Consumer")
-                .HasPactWith("Event API");
-
-            _mockProvider = _pact.MockService(MockServerPort);
+            _data = data;
         }
-
-        public void Dispose()
-        {
-            _pact.Dispose();
-        }
-
+        
         [Fact]
         public void GetAllEvents_WhenCalled_ReturnsAllEvents()
         {
             //Arrange
-            _mockProvider.Given("There are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
+            _data.MockProvider.Given("There are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
                 .UponReceiving("A GET request to retrieve all events")
                 .With(new PactProviderRequest
                 {
@@ -72,9 +58,10 @@ namespace Consumer.Tests
                             eventType = "JobSearchView"
                         }
                     }
-                });
+                })
+                .Register();
 
-            var consumer = new EventsApiClient(_mockServerBaseUri);
+            var consumer = new EventsApiClient(_data.MockServerBaseUri);
 
             //Act
             var events = consumer.GetAllEvents();
@@ -92,7 +79,7 @@ namespace Consumer.Tests
             var dateTime = new DateTime(2011, 07, 01, 01, 41, 03);
             DateTimeFactory.Now = () => dateTime;
 
-            _mockProvider.UponReceiving("A POST request to create a new event")
+            _data.MockProvider.UponReceiving("A POST request to create a new event")
                 .With(new PactProviderRequest
                 {
                     Method = HttpVerb.Post,
@@ -111,9 +98,10 @@ namespace Consumer.Tests
                 .WillRespondWith(new PactProviderResponse
                 {
                     Status = 201
-                });
+                })
+                .Register();
 
-            var consumer = new EventsApiClient(_mockServerBaseUri);
+            var consumer = new EventsApiClient(_data.MockServerBaseUri);
 
             //Act / Assert
             consumer.CreateEvent(eventId);

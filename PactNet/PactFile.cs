@@ -10,11 +10,11 @@ using PactNet.Validators;
 
 namespace PactNet
 {
-    public class PactFile
+    internal class PactFile
     {
         private readonly IPactProviderResponseValidator _responseValidator;
 
-        private IList<PactInteraction> _interactions;
+        private readonly IList<PactInteraction> _interactions;
 
         public PactParty Provider { get; set; }
         public PactParty Consumer { get; set; }
@@ -22,13 +22,13 @@ namespace PactNet
         public IEnumerable<PactInteraction> Interactions
         {
             get { return _interactions; }
-            set { _interactions = value.ToList(); }
         }
 
-        public dynamic Metadata { get; set; }
+        public dynamic Metadata { get; private set; }
 
         public PactFile()
         {
+            _interactions = new List<PactInteraction>();
             _responseValidator = new PactProviderResponseValidator();
 
             Metadata = new
@@ -138,21 +138,27 @@ namespace PactNet
             return headers;
         }
 
-        public void AddInteraction(PactInteraction interation)
+        public void AddInteraction(PactInteraction interaction)
         {
-            _interactions = _interactions ?? new List<PactInteraction>();
-
-            var duplicateInteraction = _interactions
-                .FirstOrDefault(x => x.Description.Equals(interation.Description) && 
-                    ((x.ProviderState == null && interation.ProviderState == null) || x.ProviderState.Equals(interation.ProviderState)));
-
-            if (duplicateInteraction != null)
+            if (interaction == null)
             {
-                _interactions[_interactions.IndexOf(duplicateInteraction)] = interation;
+                return;
             }
-            else
+
+            _interactions.Add(interaction);
+        }
+
+        public void AddInteractions(IEnumerable<PactInteraction> interactions)
+        {
+            //TODO: Maybe order in a predictable way, so that the file doesn't always change in git?
+            if (interactions == null || !interactions.Any())
             {
-                _interactions.Add(interation);
+                return;
+            }
+
+            foreach (var interaction in interactions)
+            {
+                AddInteraction(interaction);
             }
         }
     }
