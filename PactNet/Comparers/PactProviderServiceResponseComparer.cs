@@ -2,33 +2,34 @@
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PactNet.Validators;
 
-namespace PactNet.Validators
+namespace PactNet.Comparers
 {
-    public class PactProviderServiceResponseValidator : IPactProviderServiceResponseValidator
+    public class PactProviderServiceResponseComparer : IPactProviderServiceResponseComparer
     {
         private readonly IHeaderValidator _headerValidator;
         private readonly IBodyValidator _bodyValidator;
 
         private const string MessagePrefix = "\t- Returns a response which";
 
-        public PactProviderServiceResponseValidator()
+        public PactProviderServiceResponseComparer()
         {
             _headerValidator = new HeaderValidator(MessagePrefix);
             _bodyValidator = new BodyValidator(MessagePrefix);
         }
 
-        public void Validate(PactProviderServiceResponse expectedResponse, PactProviderServiceResponse actualResponse)
+        public void Compare(PactProviderServiceResponse expectedResponse, PactProviderServiceResponse actualResponse)
         {
             if (expectedResponse == null)
             {
-                throw new PactAssertException("Expected response cannot be null");
+                throw new PactComparisonFailed("Expected response cannot be null");
             }
 
             Console.WriteLine("{0} has status code of {1}", MessagePrefix, expectedResponse.Status);
             if (!expectedResponse.Status.Equals(actualResponse.Status))
             {
-                throw new PactAssertException(expectedResponse.Status, actualResponse.Status);
+                throw new PactComparisonFailed(expectedResponse.Status, actualResponse.Status);
             }
 
             if (expectedResponse.Headers != null && expectedResponse.Headers.Any())

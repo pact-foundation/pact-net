@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using NSubstitute;
+using PactNet.Comparers;
 using PactNet.Mappers;
 using PactNet.Tests.Fakes;
 using PactNet.Validators;
@@ -108,7 +109,7 @@ namespace PactNet.Tests.Validators
                 Consumer = new PactParty { Name = "My client" },
                 Provider = new PactParty { Name = "My Provider" }
             };
-            var mockProviderServiceResponseValidator = Substitute.For<IPactProviderServiceResponseValidator>();
+            var mockProviderServiceResponseValidator = Substitute.For<IPactProviderServiceResponseComparer>();
             var fakeHttpClient = new FakeHttpClient();
             var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
             var mockPactProviderServiceResponseMapper = Substitute.For<IPactProviderServiceResponseMapper>();
@@ -121,7 +122,7 @@ namespace PactNet.Tests.Validators
 
             providerServiceValidator.Validate(pact);
 
-            mockProviderServiceResponseValidator.Received(0).Validate(Arg.Any<PactProviderServiceResponse>(), Arg.Any<PactProviderServiceResponse>());
+            mockProviderServiceResponseValidator.Received(0).Compare(Arg.Any<PactProviderServiceResponse>(), Arg.Any<PactProviderServiceResponse>());
             Assert.Equal(0, fakeHttpClient.SendAsyncCallCount);
             mockHttpRequestMessageMapper.Received(0).Convert(Arg.Any<PactServiceInteraction>());
             mockPactProviderServiceResponseMapper.Received(0).Convert(Arg.Any<HttpResponseMessage>());
@@ -136,7 +137,7 @@ namespace PactNet.Tests.Validators
                 Provider = new PactParty { Name = "My Provider" },
                 Interactions = new List<PactServiceInteraction>()
             };
-            var mockProviderServiceResponseValidator = Substitute.For<IPactProviderServiceResponseValidator>();
+            var mockProviderServiceResponseValidator = Substitute.For<IPactProviderServiceResponseComparer>();
             var fakeHttpClient = new FakeHttpClient();
             var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
             var mockPactProviderServiceResponseMapper = Substitute.For<IPactProviderServiceResponseMapper>();
@@ -149,7 +150,7 @@ namespace PactNet.Tests.Validators
 
             providerServiceValidator.Validate(pact);
             Assert.Equal(0, fakeHttpClient.SendAsyncCallCount);
-            mockProviderServiceResponseValidator.Received(0).Validate(Arg.Any<PactProviderServiceResponse>(), Arg.Any<PactProviderServiceResponse>());
+            mockProviderServiceResponseValidator.Received(0).Compare(Arg.Any<PactProviderServiceResponse>(), Arg.Any<PactProviderServiceResponse>());
             mockHttpRequestMessageMapper.Received(0).Convert(Arg.Any<PactServiceInteraction>());
             mockPactProviderServiceResponseMapper.Received(0).Convert(Arg.Any<HttpResponseMessage>());
         }
@@ -169,7 +170,7 @@ namespace PactNet.Tests.Validators
                     }
                 }
             };
-            var mockProviderServiceResponseValidator = Substitute.For<IPactProviderServiceResponseValidator>();
+            var mockProviderServiceResponseValidator = Substitute.For<IPactProviderServiceResponseComparer>();
             var fakeHttpClient = new FakeHttpClient();
             var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
             var mockPactProviderServiceResponseMapper = Substitute.For<IPactProviderServiceResponseMapper>();
@@ -200,7 +201,7 @@ namespace PactNet.Tests.Validators
                     }
                 }
             };
-            var mockProviderServiceResponseValidator = Substitute.For<IPactProviderServiceResponseValidator>();
+            var mockProviderServiceResponseValidator = Substitute.For<IPactProviderServiceResponseComparer>();
             var fakeHttpClient = new FakeHttpClient();
             var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
             var mockPactProviderServiceResponseMapper = Substitute.For<IPactProviderServiceResponseMapper>();
@@ -231,7 +232,7 @@ namespace PactNet.Tests.Validators
                     }
                 }
             };
-            var mockProviderServiceResponseValidator = Substitute.For<IPactProviderServiceResponseValidator>();
+            var mockProviderServiceResponseValidator = Substitute.For<IPactProviderServiceResponseComparer>();
             var fakeHttpClient = new FakeHttpClient();
             var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
             var mockPactProviderServiceResponseMapper = Substitute.For<IPactProviderServiceResponseMapper>();
@@ -244,7 +245,7 @@ namespace PactNet.Tests.Validators
 
             providerServiceValidator.Validate(pact);
 
-            mockProviderServiceResponseValidator.Received(1).Validate(Arg.Any<PactProviderServiceResponse>(), Arg.Any<PactProviderServiceResponse>());
+            mockProviderServiceResponseValidator.Received(1).Compare(Arg.Any<PactProviderServiceResponse>(), Arg.Any<PactProviderServiceResponse>());
         }
 
     }

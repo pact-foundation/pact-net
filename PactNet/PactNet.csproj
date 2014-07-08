@@ -82,9 +82,9 @@
     <Compile Include="PactServiceInteraction.cs" />
     <Compile Include="Validators\IProviderServiceValidator.cs" />
     <Compile Include="Validators\ProviderServiceValidator.cs" />
-    <Compile Include="Validators\IPactProviderServiceResponseValidator.cs" />
-    <Compile Include="Validators\PactProviderServiceResponseValidator.cs" />
-    <Compile Include="PactAssertException.cs" />
+    <Compile Include="Comparers\IPactProviderServiceResponseComparer.cs" />
+    <Compile Include="Comparers\PactProviderServiceResponseComparer.cs" />
+    <Compile Include="Comparers\PactComparisonFailed.cs" />
     <Compile Include="ServicePactFile.cs" />
     <Compile Include="PactInteraction.cs" />
     <Compile Include="PactParty.cs" />

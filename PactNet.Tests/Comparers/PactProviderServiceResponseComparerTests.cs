@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using PactNet.Validators;
+using PactNet.Comparers;
 using Xunit;
 
-namespace PactNet.Tests.Validators
+namespace PactNet.Tests.Comparers
 {
-    public class PactProviderServiceResponseValidatorTests
+    public class PactProviderServiceResponseComparerTests
     {
-        private IPactProviderServiceResponseValidator GetSubject()
+        private IPactProviderServiceResponseComparer GetSubject()
         {
-            return new PactProviderServiceResponseValidator();
+            return new PactProviderServiceResponseComparer();
         }
 
         [Fact]
-        public void Validate_WithMatchingStatusCodes_NoExceptionsAreThrown()
+        public void Compare_WithMatchingStatusCodes_NoExceptionsAreThrown()
         {
             var expected = new PactProviderServiceResponse
             {
@@ -25,13 +25,13 @@ namespace PactNet.Tests.Validators
                 Status = 201
             };
 
-            var pactProviderResponseValidator = GetSubject();
+            var pactProviderServiceResponseComparer = GetSubject();
 
-            pactProviderResponseValidator.Validate(expected, actual);
+            pactProviderServiceResponseComparer.Compare(expected, actual);
         }
 
         [Fact]
-        public void Validate_WithNonMatchingStatusCodes_ThrowsPactAssertException()
+        public void Compare_WithNonMatchingStatusCodes_ThrowsPactAssertException()
         {
             var expected = new PactProviderServiceResponse
             {
@@ -43,13 +43,13 @@ namespace PactNet.Tests.Validators
                 Status = 400
             };
 
-            var pactProviderResponseValidator = GetSubject();
+            var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<PactAssertException>(() => pactProviderResponseValidator.Validate(expected, actual));
+            Assert.Throws<PactComparisonFailed>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
 
         [Fact]
-        public void Validate_WithMatchingHeaders_NoExceptionsAreThrown()
+        public void Compare_WithMatchingHeaders_NoExceptionsAreThrown()
         {
             var expected = new PactProviderServiceResponse
             {
@@ -69,13 +69,13 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var pactProviderResponseValidator = GetSubject();
+            var pactProviderServiceResponseComparer = GetSubject();
 
-            pactProviderResponseValidator.Validate(expected, actual);
+            pactProviderServiceResponseComparer.Compare(expected, actual);
         }
 
         [Fact]
-        public void Validate_WithMatchingHeadersButWithDifferentCasingOnName_ThrowsPactAssertException()
+        public void Compare_WithMatchingHeadersButWithDifferentCasingOnName_ThrowsPactAssertException()
         {
             var expected = new PactProviderServiceResponse
             {
@@ -95,13 +95,13 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var pactProviderResponseValidator = GetSubject();
+            var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<PactAssertException>(() => pactProviderResponseValidator.Validate(expected, actual));
+            Assert.Throws<PactComparisonFailed>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
 
         [Fact]
-        public void Validate_WithMatchingHeadersButWithDifferentCasingOnValue_ThrowsPactAssertException()
+        public void Compare_WithMatchingHeadersButWithDifferentCasingOnValue_ThrowsPactAssertException()
         {
             var expected = new PactProviderServiceResponse
             {
@@ -121,13 +121,13 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var pactProviderResponseValidator = GetSubject();
+            var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<PactAssertException>(() => pactProviderResponseValidator.Validate(expected, actual));
+            Assert.Throws<PactComparisonFailed>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
 
         [Fact]
-        public void Validate_WithMatchingHeadersButResponseHasAdditionalHeaders_NoExceptionsAreThrown()
+        public void Compare_WithMatchingHeadersButResponseHasAdditionalHeaders_NoExceptionsAreThrown()
         {
             var expected = new PactProviderServiceResponse
             {
@@ -149,13 +149,13 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var pactProviderResponseValidator = GetSubject();
+            var pactProviderServiceResponseComparer = GetSubject();
 
-            pactProviderResponseValidator.Validate(expected, actual);
+            pactProviderServiceResponseComparer.Compare(expected, actual);
         }
 
         [Fact]
-        public void Validate_WithNonMatchingHeadersValues_ThrowsPactAssertException()
+        public void Compare_WithNonMatchingHeadersValues_ThrowsPactAssertException()
         {
             var expected = new PactProviderServiceResponse
             {
@@ -175,13 +175,13 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var pactProviderResponseValidator = GetSubject();
+            var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<PactAssertException>(() => pactProviderResponseValidator.Validate(expected, actual));
+            Assert.Throws<PactComparisonFailed>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
 
         [Fact]
-        public void Validate_WithNonMatchingHeaderNames_ThrowsPactAssertException()
+        public void Compare_WithNonMatchingHeaderNames_ThrowsPactAssertException()
         {
             var expected = new PactProviderServiceResponse
             {
@@ -201,13 +201,13 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var pactProviderResponseValidator = GetSubject();
+            var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<PactAssertException>(() => pactProviderResponseValidator.Validate(expected, actual));
+            Assert.Throws<PactComparisonFailed>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
 
         [Fact]
-        public void Validate_WithResponseThatHasNoHeaders_ThrowsPactAssertException()
+        public void Compare_WithResponseThatHasNoHeaders_ThrowsPactAssertException()
         {
             var expected = new PactProviderServiceResponse
             {
@@ -223,13 +223,13 @@ namespace PactNet.Tests.Validators
                 Status = 201
             };
 
-            var pactProviderResponseValidator = GetSubject();
+            var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<PactAssertException>(() => pactProviderResponseValidator.Validate(expected, actual));
+            Assert.Throws<PactComparisonFailed>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
 
         [Fact]
-        public void Validate_WithMatchingObjectBody_NoExceptionsAreThrown()
+        public void Compare_WithMatchingObjectBody_NoExceptionsAreThrown()
         {
             var expected = new PactProviderServiceResponse
             {
@@ -253,13 +253,13 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var pactProviderResponseValidator = GetSubject();
+            var pactProviderServiceResponseComparer = GetSubject();
 
-            pactProviderResponseValidator.Validate(expected, actual);
+            pactProviderServiceResponseComparer.Compare(expected, actual);
         }
 
         [Fact]
-        public void Validate_WithMatchingObjectBodyOutOfOrder_NoExceptionsAreThrown()
+        public void Compare_WithMatchingObjectBodyOutOfOrder_NoExceptionsAreThrown()
         {
             var expected = new PactProviderServiceResponse
             {
@@ -283,13 +283,13 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var pactProviderResponseValidator = GetSubject();
+            var pactProviderServiceResponseComparer = GetSubject();
 
-            pactProviderResponseValidator.Validate(expected, actual);
+            pactProviderServiceResponseComparer.Compare(expected, actual);
         }
 
         [Fact]
-        public void Validate_WithMatchingObjectBodyButResponseHasAdditionalProperties_NoExceptionsAreThrown()
+        public void Compare_WithMatchingObjectBodyButResponseHasAdditionalProperties_NoExceptionsAreThrown()
         {
             var expected = new PactProviderServiceResponse
             {
@@ -314,13 +314,13 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var pactProviderResponseValidator = GetSubject();
+            var pactProviderServiceResponseComparer = GetSubject();
 
-            pactProviderResponseValidator.Validate(expected, actual);
+            pactProviderServiceResponseComparer.Compare(expected, actual);
         }
 
         [Fact]
-        public void Validate_WithNonMatchingObject_ThrowsPactAssertException()
+        public void Compare_WithNonMatchingObject_ThrowsPactAssertException()
         {
             var expected = new PactProviderServiceResponse
             {
@@ -345,13 +345,13 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var pactProviderResponseValidator = GetSubject();
+            var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<PactAssertException>(() => pactProviderResponseValidator.Validate(expected, actual));
+            Assert.Throws<PactComparisonFailed>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
 
         [Fact]
-        public void Validate_WithMatchingObjectAndANonMatchingValue_ThrowsPactAssertException()
+        public void Compare_WithMatchingObjectAndANonMatchingValue_ThrowsPactAssertException()
         {
             var expected = new PactProviderServiceResponse
             {
@@ -375,13 +375,13 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var pactProviderResponseValidator = GetSubject();
+            var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<PactAssertException>(() => pactProviderResponseValidator.Validate(expected, actual));
+            Assert.Throws<PactComparisonFailed>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
 
         [Fact]
-        public void Validate_WithMatchingObjectHoweverPropertyNameCasingIsDifferent_ThrowsPactAssertException()
+        public void Compare_WithMatchingObjectHoweverPropertyNameCasingIsDifferent_ThrowsPactAssertException()
         {
             var expected = new PactProviderServiceResponse
             {
@@ -405,13 +405,13 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var pactProviderResponseValidator = GetSubject();
+            var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<PactAssertException>(() => pactProviderResponseValidator.Validate(expected, actual));
+            Assert.Throws<PactComparisonFailed>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
 
         [Fact]
-        public void Validate_WithNullBodyInResponse_ThrowsPactAssertException()
+        public void Compare_WithNullBodyInResponse_ThrowsPactAssertException()
         {
             var expected = new PactProviderServiceResponse
             {
@@ -429,13 +429,13 @@ namespace PactNet.Tests.Validators
                 Status = 201
             };
 
-            var pactProviderResponseValidator = GetSubject();
+            var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<PactAssertException>(() => pactProviderResponseValidator.Validate(expected, actual));
+            Assert.Throws<PactComparisonFailed>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
 
         [Fact]
-        public void Validate_WithMatchingCollection_NoExceptionsAreThrown()
+        public void Compare_WithMatchingCollection_NoExceptionsAreThrown()
         {
             var expected = new PactProviderServiceResponse
             {
@@ -465,13 +465,13 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var pactProviderResponseValidator = GetSubject();
+            var pactProviderServiceResponseComparer = GetSubject();
 
-            pactProviderResponseValidator.Validate(expected, actual);
+            pactProviderServiceResponseComparer.Compare(expected, actual);
         }
 
         [Fact]
-        public void Validate_WithNonMatchingCollection_ThrowsPactAssertException()
+        public void Compare_WithNonMatchingCollection_ThrowsPactAssertException()
         {
             var expected = new PactProviderServiceResponse
             {
@@ -501,9 +501,9 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var pactProviderResponseValidator = GetSubject();
+            var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<PactAssertException>(() => pactProviderResponseValidator.Validate(expected, actual));
+            Assert.Throws<PactComparisonFailed>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
     }
 }

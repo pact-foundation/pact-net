@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using PactNet.Comparers;
 
 namespace PactNet.Validators
 {
@@ -21,7 +22,7 @@ namespace PactNet.Validators
 
                 if (right == null || !right.Any())
                 {
-                    throw new PactAssertException("Body is null or empty");
+                    throw new PactComparisonFailed("Body is null or empty");
                 }
 
                 for (var i = 0; i < left.Count(); i++)
@@ -40,14 +41,14 @@ namespace PactNet.Validators
             {
                 if (!left.Equals(right))
                 {
-                    throw new PactAssertException(left, right);
+                    throw new PactComparisonFailed(left, right);
                 }
             }
             else if (left.Type == JTokenType.String)
             {
                 if (!left.Equals(right))
                 {
-                    throw new PactAssertException(left, right);
+                    throw new PactComparisonFailed(left, right);
                 }
             }
             else
@@ -60,7 +61,7 @@ namespace PactNet.Validators
         {
             if (right == null || !right.Any())
             {
-                throw new PactAssertException("Body is null");
+                throw new PactComparisonFailed("Body is null");
             }
 
             foreach (var leftItem in left)
@@ -69,13 +70,13 @@ namespace PactNet.Validators
 
                 if (rightItem == null)
                 {
-                    throw new PactAssertException(String.Format("Body.{0} does not exist", leftItem.Path));
+                    throw new PactComparisonFailed(String.Format("Body.{0} does not exist", leftItem.Path));
                 }
 
                 //TODO: Work on these comparisons
                 if(!JToken.DeepEquals(leftItem, rightItem))
                 {
-                    throw new PactAssertException(String.Format("Body.{0}", leftItem.Path), leftItem, rightItem);
+                    throw new PactComparisonFailed(String.Format("Body.{0}", leftItem.Path), leftItem, rightItem);
                 }
             }
         }

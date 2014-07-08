@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using PactNet.Comparers;
 
 namespace PactNet.Validators
 {
@@ -16,7 +17,7 @@ namespace PactNet.Validators
         {
             if (actual == null)
             {
-                throw new PactAssertException("Headers are null");
+                throw new PactComparisonFailed("Headers are null");
             }
 
             foreach (var header in expected)
@@ -29,12 +30,12 @@ namespace PactNet.Validators
                 {
                     if (!header.Value.Equals(headerValue))
                     {
-                        throw new PactAssertException(header.Value, headerValue);
+                        throw new PactComparisonFailed(header.Value, headerValue);
                     }
                 }
                 else
                 {
-                    throw new PactAssertException("Header does not exist");
+                    throw new PactComparisonFailed("Header does not exist");
                 }
             }
         }

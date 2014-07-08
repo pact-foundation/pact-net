@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Net.Http;
 using NSubstitute;
+using PactNet.Comparers;
 using PactNet.Provider;
 using PactNet.Validators;
 using Xunit;
@@ -263,7 +264,7 @@ namespace PactNet.Tests
                 .HonoursPactWith(serviceConsumer)
                 .PactUri(pactUri);
 
-            Assert.Throws<PactAssertException>(() => pact.VerifyProviderService());
+            Assert.Throws<PactComparisonFailed>(() => pact.VerifyProviderService());
 
             mockFileSystem.File.Received(1).ReadAllText(pactUri);
         }

@@ -2,32 +2,33 @@
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
+using PactNet.Comparers;
 using PactNet.Mappers;
 
 namespace PactNet.Validators
 {
     public class ProviderServiceValidator : IProviderServiceValidator
     {
-        private readonly IPactProviderServiceResponseValidator _providerServiceResponseValidator;
+        private readonly IPactProviderServiceResponseComparer _providerServiceResponseComparer;
         private readonly HttpClient _httpClient;
         private readonly IHttpRequestMessageMapper _httpRequestMessageMapper;
         private readonly IPactProviderServiceResponseMapper _pactProviderServiceResponseMapper;
         
         [Obsolete("For testing only.")]
         public ProviderServiceValidator(
-            IPactProviderServiceResponseValidator providerServiceResponseValidator, 
+            IPactProviderServiceResponseComparer providerServiceResponseComparer, 
             HttpClient httpClient, 
             IHttpRequestMessageMapper httpRequestMessageMapper,
             IPactProviderServiceResponseMapper pactProviderServiceResponseMapper)
         {
-            _providerServiceResponseValidator = providerServiceResponseValidator;
+            _providerServiceResponseComparer = providerServiceResponseComparer;
             _httpClient = httpClient;
             _httpRequestMessageMapper = httpRequestMessageMapper;
             _pactProviderServiceResponseMapper = pactProviderServiceResponseMapper;
         }
 
         public ProviderServiceValidator(HttpClient httpClient) : this(
-            new PactProviderServiceResponseValidator(), 
+            new PactProviderServiceResponseComparer(), 
             httpClient,
             new HttpRequestMessageMapper(),
             new PactProviderServiceResponseMapper())
@@ -72,7 +73,7 @@ namespace PactNet.Validators
             var expectedResponse = interaction.Response;
             var actualResponse = _pactProviderServiceResponseMapper.Convert(response);
 
-            _providerServiceResponseValidator.Validate(expectedResponse, actualResponse);
+            _providerServiceResponseComparer.Compare(expectedResponse, actualResponse);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using PactNet.Validators;
+﻿using PactNet.Comparers;
+using PactNet.Validators;
 
 namespace PactNet.Tests.Specification.Models
 {
@@ -22,7 +23,7 @@ namespace PactNet.Tests.Specification.Models
             {
                 _requestValidator.Validate(Expected, Actual);
             }
-            catch (PactAssertException)
+            catch (PactComparisonFailed)
             {
                 if (Match)
                 {
