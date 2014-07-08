@@ -7,11 +7,11 @@ namespace PactNet.Tests
     public class PactFileTests
     {
         [Fact]
-        public void Interactions_WithNoInteractions_ReturnsCountOfZero()
+        public void Interactions_WithNoInteractions_ReturnsNull()
         {
             var pactFile = new PactFile();
 
-            Assert.Equal(0, pactFile.Interactions.Count());
+            Assert.Null(pactFile.Interactions);
         }
 
         [Fact]
@@ -102,7 +102,7 @@ namespace PactNet.Tests
 
             pactFile.AddInteractions(null);
 
-            Assert.Equal(0, pactFile.Interactions.Count());
+            Assert.Null(pactFile.Interactions);
         }
 
         [Fact]
@@ -112,7 +112,7 @@ namespace PactNet.Tests
 
             pactFile.AddInteractions(new List<PactInteraction>());
 
-            Assert.Equal(0, pactFile.Interactions.Count());
+            Assert.Null(pactFile.Interactions);
         }
     }
 }

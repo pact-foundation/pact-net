@@ -3,20 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using Newtonsoft.Json;
-using PactNet.Configuration.Json;
 using PactNet.Provider;
 
 namespace PactNet
 {
     public partial class Pact : IPactProvider
     {
-        private IDictionary<string, Action> _providerStates;
-        private string _pactUri;
+        private Dictionary<string, Action> _providerStates;
+        public IReadOnlyDictionary<string, Action> ProviderStates { get { return _providerStates; } }
 
-        private HttpClient _httpClient;
+        public HttpClient HttpClient { get; private set; }
 
-        public IPactProvider ProviderStatesFor(string consumerName, IDictionary<string, Action> providerStates)
+        public IPactProvider ProviderStatesFor(string consumerName, Dictionary<string, Action> providerStates)
         {
+            if (String.IsNullOrEmpty(consumerName))
+            {
+                throw new ArgumentException("Please supply a non null or empty consumerName");
+            }
+
+            if (providerStates == null || !providerStates.Any())
+            {
+                throw new ArgumentException("Please supply a non null or empty dictionary of providerStates");
+            }
+
+            if (!String.IsNullOrEmpty(ConsumerName) && !ConsumerName.Equals(consumerName))
+            {
+                throw new ArgumentException("Please supply the same consumerName that was defined when calling the HonoursPactWith method");
+            }
+
             ConsumerName = consumerName;
             _providerStates = providerStates;
 
@@ -25,14 +39,34 @@ namespace PactNet
 
         public IPactProvider ServiceProvider(string providerName, HttpClient httpClient)
         {
+            if (String.IsNullOrEmpty(providerName))
+            {
+                throw new ArgumentException("Please supply a non null or empty providerName");
+            }
+
+            if (httpClient == null)
+            {
+                throw new ArgumentException("Please supply a non null httpClient");
+            }
+
             ProviderName = providerName;
-            _httpClient = httpClient;
+            HttpClient = httpClient;
 
             return this;
         }
 
         public IPactProvider HonoursPactWith(string consumerName)
         {
+            if (String.IsNullOrEmpty(consumerName))
+            {
+                throw new ArgumentException("Please supply a non null or empty consumerName");
+            }
+
+            if (!String.IsNullOrEmpty(ConsumerName) && !ConsumerName.Equals(consumerName))
+            {
+                throw new ArgumentException("Please supply the same consumerName that was defined when calling the ProviderStatesFor method");
+            }
+
             ConsumerName = consumerName;
 
             return this;
@@ -40,27 +74,37 @@ namespace PactNet
 
         public IPactProvider PactUri(string uri)
         {
-            _pactUri = uri;
+            if (String.IsNullOrEmpty(uri))
+            {
+                throw new ArgumentException("Please supply a non null or empty consumerName");
+            }
+
+            PactFileUri = uri;
 
             return this;
         }
 
-        public void Execute()
+        public void Verify()
         {
-            if (_httpClient == null)
+            if (HttpClient == null)
             {
-                throw new InvalidOperationException("httpClient has not been set, please supply a HttpClient using the ServiceProvider method.");
+                throw new InvalidOperationException("HttpClient has not been set, please supply a HttpClient using the ServiceProvider method.");
+            }
+
+            if (String.IsNullOrEmpty(PactFileUri) || String.IsNullOrEmpty(_pactFileUri))
+            {
+                throw new InvalidOperationException("PactFileUri has not been set, please supply a uri using the PactUri method.");
             }
 
             PactFile pactFile;
             try
             {
-                var pactFileJson = _fileSystem.File.ReadAllText(_pactUri);
-                pactFile = JsonConvert.DeserializeObject<PactFile>(pactFileJson, JsonConfig.SerializerSettings);
+                var pactFileJson = _fileSystem.File.ReadAllText(PactFileUri);
+                pactFile = JsonConvert.DeserializeObject<PactFile>(pactFileJson);
             }
             catch (System.IO.IOException)
             {
-                throw new PactAssertException(String.Format("Json Pact file could not be retrieved using uri \'{0}\'.", _pactUri));
+                throw new PactAssertException(String.Format("Json Pact file could not be retrieved using uri \'{0}\'.", PactFileUri));
             }
 
             if (pactFile.Interactions != null && pactFile.Interactions.Any())
@@ -75,7 +119,7 @@ namespace PactNet
                 }
             }
 
-            pactFile.VerifyProvider(_httpClient);
+            pactFile.VerifyProvider(HttpClient);
         }
     }
 }

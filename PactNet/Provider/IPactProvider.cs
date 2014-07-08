@@ -8,10 +8,13 @@ namespace PactNet.Provider
     {
         string ConsumerName { get; }
         string ProviderName { get; }
-        IPactProvider ProviderStatesFor(string consumerName, IDictionary<string, Action> providerStates);
+        string PactFileUri { get; }
+        HttpClient HttpClient { get; }
+        IReadOnlyDictionary<string, Action> ProviderStates { get; }
+        IPactProvider ProviderStatesFor(string consumerName, Dictionary<string, Action> providerStates);
         IPactProvider ServiceProvider(string providerName, HttpClient httpClient);
         IPactProvider HonoursPactWith(string consumerName);
         IPactProvider PactUri(string uri);
-        void Execute();
+        void Verify();
     }
 }

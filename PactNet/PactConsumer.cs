@@ -13,14 +13,24 @@ namespace PactNet
         private IMockProviderService _mockProviderService;
         private const string PactFileDirectory = "../../pacts/";
 
-        public string PactFilePath
-        {
-            get { return _fileSystem.Path.Combine(PactFileDirectory, PactFileName); }
-        }
-
         private string PactFileName
         {
             get { return String.Format("{0}-{1}.json", ConsumerName, ProviderName).Replace(' ', '_').ToLower(); }
+        }
+
+        private string _pactFileUri;
+        public string PactFileUri
+        {
+            private set { _pactFileUri = value; }
+            get
+            {
+                if (String.IsNullOrEmpty(_pactFileUri))
+                {
+                    return _fileSystem.Path.Combine(PactFileDirectory, PactFileName);
+                }
+
+                return _pactFileUri;
+            }
         }
 
         public IPactConsumer ServiceConsumer(string consumerName)
@@ -63,16 +73,26 @@ namespace PactNet
 
         public void Dispose()
         {
-            PersistPactFile();
-
             if (_mockProviderService != null)
             {
                 _mockProviderService.Stop();
             }
+
+            PersistPactFile();
         }
 
         private void PersistPactFile()
         {
+            if (String.IsNullOrEmpty(ConsumerName))
+            {
+                throw new InvalidOperationException("ConsumerName has not been set, please supply a provider name using the ServiceConsumer method.");
+            }
+
+            if (String.IsNullOrEmpty(ProviderName))
+            {
+                throw new InvalidOperationException("ProviderName has not been set, please supply a provider name using the HasPactWith method.");
+            }
+
             var pactFile = new PactFile
             {
                 Provider = new PactParty { Name = ProviderName },
@@ -88,12 +108,12 @@ namespace PactNet
 
             try
             {
-                _fileSystem.File.WriteAllText(PactFilePath, pactFileJson);
+                _fileSystem.File.WriteAllText(PactFileUri, pactFileJson);
             }
             catch (System.IO.DirectoryNotFoundException)
             {
                 _fileSystem.Directory.CreateDirectory(PactFileDirectory);
-                _fileSystem.File.WriteAllText(PactFilePath, pactFileJson);
+                _fileSystem.File.WriteAllText(PactFileUri, pactFileJson);
             }
         }
     }

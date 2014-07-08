@@ -11,6 +11,7 @@ namespace PactNet
         public string ConsumerName { get; private set; }
         public string ProviderName { get; private set; }
 
+        [Obsolete("For testing purposes only")]
         public Pact(Func<int, IMockProviderService> mockProviderServiceFactory, IFileSystem fileSystem)
         {
             _mockProviderServiceFactory = mockProviderServiceFactory;

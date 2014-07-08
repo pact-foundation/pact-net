@@ -14,7 +14,7 @@ namespace PactNet
     {
         private readonly IPactProviderResponseValidator _responseValidator;
 
-        private readonly IList<PactInteraction> _interactions;
+        private IList<PactInteraction> _interactions;
 
         public PactParty Provider { get; set; }
         public PactParty Consumer { get; set; }
@@ -28,7 +28,6 @@ namespace PactNet
 
         public PactFile()
         {
-            _interactions = new List<PactInteraction>();
             _responseValidator = new PactProviderResponseValidator();
 
             Metadata = new
@@ -55,6 +54,11 @@ namespace PactNet
 
         public void VerifyProvider(HttpClient client)
         {
+            if (Interactions == null || !Interactions.Any())
+            {
+                return;
+            }
+
             var interationNumber = 1;
             foreach (var interaction in Interactions)
             {
@@ -140,6 +144,8 @@ namespace PactNet
 
         public void AddInteraction(PactInteraction interaction)
         {
+            _interactions = _interactions ?? new List<PactInteraction>();
+
             if (interaction == null)
             {
                 return;
