@@ -1,6 +1,8 @@
 using System;
 using System.IO.Abstractions;
+using System.Net.Http;
 using PactNet.Consumer.Mocks.MockService;
+using PactNet.Validators;
 
 namespace PactNet
 {
@@ -11,11 +13,22 @@ namespace PactNet
         public string ConsumerName { get; private set; }
         public string ProviderName { get; private set; }
 
-        [Obsolete("For testing purposes only")]
-        public Pact(Func<int, IMockProviderService> mockProviderServiceFactory, IFileSystem fileSystem)
+        [Obsolete("For PactProvider testing only.")]
+        public Pact(Func<int, IMockProviderService> mockProviderServiceFactory, IFileSystem fileSystem, Func<HttpClient, IProviderServiceValidator> providerServiceValidatorFactory)
         {
             _mockProviderServiceFactory = mockProviderServiceFactory;
             _fileSystem = fileSystem;
+            _providerServiceValidatorFactory = providerServiceValidatorFactory;
+        }
+
+        [Obsolete("For PactConsumer testing only.")]
+        public Pact(Func<int, IMockProviderService> mockProviderServiceFactory, IFileSystem fileSystem)
+            : this(
+                mockProviderServiceFactory,
+                fileSystem,
+                httpClient => new ProviderServiceValidator(httpClient)
+            )
+        {
         }
 
         public Pact()

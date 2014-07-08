@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace PactNet.Mappers
 {
-    public class PactProviderRequestMapper
+    public class PactProviderServiceRequestMapper
     {
         private static readonly IDictionary<string, HttpVerb> HttpMethodMap = new Dictionary<string, HttpVerb>
         {
@@ -20,12 +20,12 @@ namespace PactNet.Mappers
             { "PATCH", HttpVerb.Patch }
         };
 
-        public PactProviderRequest Convert(Request from)
+        public PactProviderServiceRequest Convert(Request from)
         {
             if (from == null)
                 return null;
 
-            var to = new PactProviderRequest
+            var to = new PactProviderServiceRequest
                          {
                              Method = HttpMethodMap[from.Method.ToUpper()],
                              Path = from.Path

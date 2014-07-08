@@ -4,11 +4,13 @@ using System.Linq;
 using System.Net.Http;
 using Newtonsoft.Json;
 using PactNet.Provider;
+using PactNet.Validators;
 
 namespace PactNet
 {
     public partial class Pact : IPactProvider
     {
+        private readonly Func<HttpClient, IProviderServiceValidator> _providerServiceValidatorFactory;
         private Dictionary<string, Action> _providerStates;
         public IReadOnlyDictionary<string, Action> ProviderStates { get { return _providerStates; } }
 
@@ -84,7 +86,7 @@ namespace PactNet
             return this;
         }
 
-        public void Verify()
+        public void VerifyProviderService()
         {
             if (HttpClient == null)
             {
@@ -96,30 +98,30 @@ namespace PactNet
                 throw new InvalidOperationException("PactFileUri has not been set, please supply a uri using the PactUri method.");
             }
 
-            PactFile pactFile;
+            ServicePactFile pactFile;
             try
             {
                 var pactFileJson = _fileSystem.File.ReadAllText(PactFileUri);
-                pactFile = JsonConvert.DeserializeObject<PactFile>(pactFileJson);
+                pactFile = JsonConvert.DeserializeObject<ServicePactFile>(pactFileJson);
             }
             catch (System.IO.IOException)
             {
                 throw new PactAssertException(String.Format("Json Pact file could not be retrieved using uri \'{0}\'.", PactFileUri));
             }
 
-            if (pactFile.Interactions != null && pactFile.Interactions.Any())
+            if (pactFile.Interactions != null && pactFile.Interactions.Any(x => x.ProviderState != null))
             {
                 foreach (var providerState in pactFile.Interactions.Where(x => x.ProviderState != null).Select(x => x.ProviderState))
                 {
                     if (_providerStates == null || !_providerStates.Any() || !_providerStates.ContainsKey(providerState))
                     {
-                        throw new PactAssertException(String.Format("No provider state has been supplied for \"{0}\" as defined in the json Pact file. Please use ProviderStatesFor method when defining the Provider Pact.", providerState));
+                        throw new InvalidOperationException(String.Format("providerState \"{0}\" could not be found, please supply the provider state using the ProviderStatesFor method.", providerState));
                     }
                     _providerStates[providerState].Invoke();
                 }
             }
 
-            pactFile.VerifyProvider(HttpClient);
+            _providerServiceValidatorFactory(HttpClient).Validate(pactFile);
         }
     }
 }

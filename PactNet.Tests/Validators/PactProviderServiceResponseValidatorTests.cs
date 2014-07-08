@@ -5,22 +5,22 @@ using Xunit;
 
 namespace PactNet.Tests.Validators
 {
-    public class PactAssertPactProviderResponseTests
+    public class PactProviderServiceResponseValidatorTests
     {
-        private IPactProviderResponseValidator GetSubject()
+        private IPactProviderServiceResponseValidator GetSubject()
         {
-            return new PactProviderResponseValidator();
+            return new PactProviderServiceResponseValidator();
         }
 
         [Fact]
         public void Validate_WithMatchingStatusCodes_NoExceptionsAreThrown()
         {
-            var expected = new PactProviderResponse
+            var expected = new PactProviderServiceResponse
             {
                 Status = 201
             };
 
-            var actual = new PactProviderResponse
+            var actual = new PactProviderServiceResponse
             {
                 Status = 201
             };
@@ -33,12 +33,12 @@ namespace PactNet.Tests.Validators
         [Fact]
         public void Validate_WithNonMatchingStatusCodes_ThrowsPactAssertException()
         {
-            var expected = new PactProviderResponse
+            var expected = new PactProviderServiceResponse
             {
                 Status = 201
             };
 
-            var actual = new PactProviderResponse
+            var actual = new PactProviderServiceResponse
             {
                 Status = 400
             };
@@ -51,7 +51,7 @@ namespace PactNet.Tests.Validators
         [Fact]
         public void Validate_WithMatchingHeaders_NoExceptionsAreThrown()
         {
-            var expected = new PactProviderResponse
+            var expected = new PactProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -60,7 +60,7 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var actual = new PactProviderResponse
+            var actual = new PactProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -77,7 +77,7 @@ namespace PactNet.Tests.Validators
         [Fact]
         public void Validate_WithMatchingHeadersButWithDifferentCasingOnName_ThrowsPactAssertException()
         {
-            var expected = new PactProviderResponse
+            var expected = new PactProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -86,7 +86,7 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var actual = new PactProviderResponse
+            var actual = new PactProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -103,7 +103,7 @@ namespace PactNet.Tests.Validators
         [Fact]
         public void Validate_WithMatchingHeadersButWithDifferentCasingOnValue_ThrowsPactAssertException()
         {
-            var expected = new PactProviderResponse
+            var expected = new PactProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -112,7 +112,7 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var actual = new PactProviderResponse
+            var actual = new PactProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -129,7 +129,7 @@ namespace PactNet.Tests.Validators
         [Fact]
         public void Validate_WithMatchingHeadersButResponseHasAdditionalHeaders_NoExceptionsAreThrown()
         {
-            var expected = new PactProviderResponse
+            var expected = new PactProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -138,7 +138,7 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var actual = new PactProviderResponse
+            var actual = new PactProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -157,7 +157,7 @@ namespace PactNet.Tests.Validators
         [Fact]
         public void Validate_WithNonMatchingHeadersValues_ThrowsPactAssertException()
         {
-            var expected = new PactProviderResponse
+            var expected = new PactProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -166,7 +166,7 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var actual = new PactProviderResponse
+            var actual = new PactProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -183,7 +183,7 @@ namespace PactNet.Tests.Validators
         [Fact]
         public void Validate_WithNonMatchingHeaderNames_ThrowsPactAssertException()
         {
-            var expected = new PactProviderResponse
+            var expected = new PactProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -192,7 +192,7 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var actual = new PactProviderResponse
+            var actual = new PactProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -209,7 +209,7 @@ namespace PactNet.Tests.Validators
         [Fact]
         public void Validate_WithResponseThatHasNoHeaders_ThrowsPactAssertException()
         {
-            var expected = new PactProviderResponse
+            var expected = new PactProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -218,7 +218,7 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var actual = new PactProviderResponse
+            var actual = new PactProviderServiceResponse
             {
                 Status = 201
             };
@@ -231,7 +231,7 @@ namespace PactNet.Tests.Validators
         [Fact]
         public void Validate_WithMatchingObjectBody_NoExceptionsAreThrown()
         {
-            var expected = new PactProviderResponse
+            var expected = new PactProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -242,7 +242,7 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var actual = new PactProviderResponse
+            var actual = new PactProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -261,7 +261,7 @@ namespace PactNet.Tests.Validators
         [Fact]
         public void Validate_WithMatchingObjectBodyOutOfOrder_NoExceptionsAreThrown()
         {
-            var expected = new PactProviderResponse
+            var expected = new PactProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -272,7 +272,7 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var actual = new PactProviderResponse
+            var actual = new PactProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -291,7 +291,7 @@ namespace PactNet.Tests.Validators
         [Fact]
         public void Validate_WithMatchingObjectBodyButResponseHasAdditionalProperties_NoExceptionsAreThrown()
         {
-            var expected = new PactProviderResponse
+            var expected = new PactProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -302,7 +302,7 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var actual = new PactProviderResponse
+            var actual = new PactProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -322,7 +322,7 @@ namespace PactNet.Tests.Validators
         [Fact]
         public void Validate_WithNonMatchingObject_ThrowsPactAssertException()
         {
-            var expected = new PactProviderResponse
+            var expected = new PactProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -334,7 +334,7 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var actual = new PactProviderResponse
+            var actual = new PactProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -353,7 +353,7 @@ namespace PactNet.Tests.Validators
         [Fact]
         public void Validate_WithMatchingObjectAndANonMatchingValue_ThrowsPactAssertException()
         {
-            var expected = new PactProviderResponse
+            var expected = new PactProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -364,7 +364,7 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var actual = new PactProviderResponse
+            var actual = new PactProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -383,7 +383,7 @@ namespace PactNet.Tests.Validators
         [Fact]
         public void Validate_WithMatchingObjectHoweverPropertyNameCasingIsDifferent_ThrowsPactAssertException()
         {
-            var expected = new PactProviderResponse
+            var expected = new PactProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -394,7 +394,7 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var actual = new PactProviderResponse
+            var actual = new PactProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -413,7 +413,7 @@ namespace PactNet.Tests.Validators
         [Fact]
         public void Validate_WithNullBodyInResponse_ThrowsPactAssertException()
         {
-            var expected = new PactProviderResponse
+            var expected = new PactProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -424,7 +424,7 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var actual = new PactProviderResponse
+            var actual = new PactProviderServiceResponse
             {
                 Status = 201
             };
@@ -437,7 +437,7 @@ namespace PactNet.Tests.Validators
         [Fact]
         public void Validate_WithMatchingCollection_NoExceptionsAreThrown()
         {
-            var expected = new PactProviderResponse
+            var expected = new PactProviderServiceResponse
             {
                 Status = 201,
                 Body = new List<dynamic>
@@ -451,7 +451,7 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var actual = new PactProviderResponse
+            var actual = new PactProviderServiceResponse
             {
                 Status = 201,
                 Body = new List<dynamic>
@@ -473,7 +473,7 @@ namespace PactNet.Tests.Validators
         [Fact]
         public void Validate_WithNonMatchingCollection_ThrowsPactAssertException()
         {
-            var expected = new PactProviderResponse
+            var expected = new PactProviderServiceResponse
             {
                 Status = 201,
                 Body = new List<dynamic>
@@ -487,7 +487,7 @@ namespace PactNet.Tests.Validators
                 }
             };
 
-            var actual = new PactProviderResponse
+            var actual = new PactProviderServiceResponse
             {
                 Status = 201,
                 Body = new List<dynamic>

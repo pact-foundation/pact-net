@@ -5,20 +5,20 @@ using Newtonsoft.Json.Linq;
 
 namespace PactNet.Validators
 {
-    public class PactProviderResponseValidator : IPactProviderResponseValidator
+    public class PactProviderServiceResponseValidator : IPactProviderServiceResponseValidator
     {
         private readonly IHeaderValidator _headerValidator;
         private readonly IBodyValidator _bodyValidator;
 
         private const string MessagePrefix = "\t- Returns a response which";
 
-        public PactProviderResponseValidator()
+        public PactProviderServiceResponseValidator()
         {
             _headerValidator = new HeaderValidator(MessagePrefix);
             _bodyValidator = new BodyValidator(MessagePrefix);
         }
 
-        public void Validate(PactProviderResponse expectedResponse, PactProviderResponse actualResponse)
+        public void Validate(PactProviderServiceResponse expectedResponse, PactProviderServiceResponse actualResponse)
         {
             if (expectedResponse == null)
             {

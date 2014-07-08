@@ -25,7 +25,7 @@ namespace Provider.Api.Web.Tests
             pact.ServiceProvider("Event API", testServer.HttpClient)
                 .HonoursPactWith("Consumer")
                 .PactUri("../../../Consumer.Tests/pacts/consumer-event_api.json")
-                .Verify();
+                .VerifyProviderService();
 
             testServer.Dispose();
         }

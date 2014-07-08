@@ -6,8 +6,8 @@ namespace PactNet.Consumer.Mocks
     {
         IMockProvider Given(string providerState);
         IMockProvider UponReceiving(string description);
-        IMockProvider With(PactProviderRequest request);
-        IMockProvider WillRespondWith(PactProviderResponse response);
+        IMockProvider With(PactProviderServiceRequest request);
+        IMockProvider WillRespondWith(PactProviderServiceResponse response);
         IEnumerable<PactInteraction> Interactions { get; }
         void Register();
     }

@@ -166,13 +166,13 @@ namespace PactNet.Tests
             var pactFilePath = pact.PactFileUri;
 
             mockFileSystem.File.ReadAllText(pactFilePath).Returns(x => { throw new System.IO.FileNotFoundException(); });
-            mockMockProviderService.Interactions.Returns(new List<PactInteraction>
+            mockMockProviderService.Interactions.Returns(new List<PactServiceInteraction>
             {
-                new PactInteraction
+                new PactServiceInteraction
                 {
                     Description = "My interaction",
-                    Request = new PactProviderRequest(),
-                    Response = new PactProviderResponse()
+                    Request = new PactProviderServiceRequest(),
+                    Response = new PactProviderServiceResponse()
                 }
             });
 

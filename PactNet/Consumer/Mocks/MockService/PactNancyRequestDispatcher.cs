@@ -10,11 +10,11 @@ namespace PactNet.Consumer.Mocks.MockService
 {
     public class PactNancyRequestDispatcher : IRequestDispatcher
     {
-        private static PactProviderRequest _request;
-        private static PactProviderResponse _response;
-        private readonly IPactProviderRequestValidator _requestValidator;
+        private static PactProviderServiceRequest _request;
+        private static PactProviderServiceResponse _response;
+        private readonly IPactProviderServiceRequestValidator _requestValidator;
 
-        public PactNancyRequestDispatcher(IPactProviderRequestValidator requestValidator)
+        public PactNancyRequestDispatcher(IPactProviderServiceRequestValidator requestValidator)
         {
             _requestValidator = requestValidator;
         }
@@ -39,19 +39,19 @@ namespace PactNet.Consumer.Mocks.MockService
             return tcs.Task;
         }
 
-        public static void Set(PactProviderRequest request)
+        public static void Set(PactProviderServiceRequest request)
         {
             _request = request;
         }
 
-        public static void Set(PactProviderResponse response)
+        public static void Set(PactProviderServiceResponse response)
         {
             _response = response;
         }
 
         private Response HandleRequest(Request request)
         {
-            _requestValidator.Validate(_request, new PactProviderRequestMapper().Convert(request));
+            _requestValidator.Validate(_request, new PactProviderServiceRequestMapper().Convert(request));
             return GenerateResponse();
         }
 

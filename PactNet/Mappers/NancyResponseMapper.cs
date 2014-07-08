@@ -8,7 +8,7 @@ namespace PactNet.Mappers
 {
     public class NancyResponseMapper
     {
-        public Response Convert(PactProviderResponse from)
+        public Response Convert(PactProviderServiceResponse from)
         {
             if (from == null)
                 return null;

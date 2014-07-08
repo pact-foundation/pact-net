@@ -54,12 +54,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PactConsumerTests.cs" />
-    <Compile Include="PactFileTests.cs" />
+    <Compile Include="ServicePactFileTests.cs" />
     <Compile Include="PactProviderTests.cs" />
     <Compile Include="Specification\Models\RequestTestCase.cs" />
     <Compile Include="Specification\SpecificationTests.cs" />
-    <Compile Include="Validators\PactAssertPactProviderResponseTests.cs" />
+    <Compile Include="Validators\PactProviderServiceResponseValidatorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Validators\ProviderServiceValidatorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

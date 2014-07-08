@@ -4,7 +4,7 @@ using PactNet.Configuration.Json.Converters;
 
 namespace PactNet
 {
-    public class PactProviderResponse
+    public class PactProviderServiceResponse
     {
         public int Status { get; set; }
 

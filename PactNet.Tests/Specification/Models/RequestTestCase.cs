@@ -4,16 +4,16 @@ namespace PactNet.Tests.Specification.Models
 {
     public class RequestTestCase
     {
-        private readonly IPactProviderRequestValidator _requestValidator;
+        private readonly IPactProviderServiceRequestValidator _requestValidator;
 
         public bool Match { get; set; }
         public string Comment { get; set; }
-        public PactProviderRequest Expected { get; set; }
-        public PactProviderRequest Actual { get; set; }
+        public PactProviderServiceRequest Expected { get; set; }
+        public PactProviderServiceRequest Actual { get; set; }
 
         public RequestTestCase()
         {
-            _requestValidator = new PactProviderRequestValidator();
+            _requestValidator = new PactProviderServiceRequestValidator();
         }
 
         public bool Verify()

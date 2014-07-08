@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
 using PactNet.Consumer;
@@ -93,7 +94,7 @@ namespace PactNet
                 throw new InvalidOperationException("ProviderName has not been set, please supply a provider name using the HasPactWith method.");
             }
 
-            var pactFile = new PactFile
+            var pactFile = new ServicePactFile
             {
                 Provider = new PactParty { Name = ProviderName },
                 Consumer = new PactParty { Name = ConsumerName }
@@ -101,7 +102,7 @@ namespace PactNet
 
             if (_mockProviderService != null)
             {
-                pactFile.AddInteractions(_mockProviderService.Interactions);
+                pactFile.Interactions = _mockProviderService.Interactions as IEnumerable<PactServiceInteraction>;
             }
 
             var pactFileJson = JsonConvert.SerializeObject(pactFile, JsonConfig.SerializerSettings);

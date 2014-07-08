@@ -1,27 +1,25 @@
 ﻿using System;
 using System.Linq;
-using Nancy;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using PactNet.Mappers;
 
 namespace PactNet.Validators
 {
     //TODO: This will need to be refactored
-    public class PactProviderRequestValidator : IPactProviderRequestValidator
+    public class PactProviderServiceRequestValidator : IPactProviderServiceRequestValidator
     {
         private readonly IHeaderValidator _headerValidator;
         private readonly IBodyValidator _bodyValidator;
 
         private const string MessagePrefix = "\t- Request";
 
-        public PactProviderRequestValidator()
+        public PactProviderServiceRequestValidator()
         {
             _headerValidator = new HeaderValidator(MessagePrefix);
             _bodyValidator = new BodyValidator(MessagePrefix);
         }
 
-        public void Validate(PactProviderRequest expectedRequest, PactProviderRequest actualRequest)
+        public void Validate(PactProviderServiceRequest expectedRequest, PactProviderServiceRequest actualRequest)
         {
             if (expectedRequest == null)
             {

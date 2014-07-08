@@ -27,7 +27,7 @@ namespace PactNet.Consumer.Mocks.MockService
 
         protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
         {
-            container.Register(typeof (IPactProviderRequestValidator), typeof (PactProviderRequestValidator));
+            container.Register(typeof (IPactProviderServiceRequestValidator), typeof (PactProviderServiceRequestValidator));
 
             DiagnosticsHook.Disable(pipelines);
         }

@@ -4,7 +4,7 @@ using PactNet.Configuration.Json.Converters;
 
 namespace PactNet
 {
-    public class PactProviderRequest
+    public class PactProviderServiceRequest
     {
         [JsonConverter(typeof(LowercaseStringEnumConverter))]
         public HttpVerb Method { get; set; }

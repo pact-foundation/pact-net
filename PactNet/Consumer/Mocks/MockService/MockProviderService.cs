@@ -12,10 +12,10 @@ namespace PactNet.Consumer.Mocks.MockService
 
         private string _providerState;
         private string _description;
-        private PactProviderRequest _request;
-        private PactProviderResponse _response;
+        private PactProviderServiceRequest _request;
+        private PactProviderServiceResponse _response;
 
-        private readonly IList<PactInteraction> _interactions;
+        private readonly IList<PactServiceInteraction> _interactions;
         public IEnumerable<PactInteraction> Interactions
         {
             get { return _interactions; }
@@ -24,7 +24,7 @@ namespace PactNet.Consumer.Mocks.MockService
         public MockProviderService(int port)
         {
             _baseUri = String.Format("http://localhost:{0}", port);
-            _interactions = new List<PactInteraction>();
+            _interactions = new List<PactServiceInteraction>();
         }
 
         public IMockProvider Given(string providerState)
@@ -41,14 +41,14 @@ namespace PactNet.Consumer.Mocks.MockService
             return this;
         }
 
-        public IMockProvider With(PactProviderRequest request)
+        public IMockProvider With(PactProviderServiceRequest request)
         {
             _request = request;
             
             return this;
         }
 
-        public IMockProvider WillRespondWith(PactProviderResponse response)
+        public IMockProvider WillRespondWith(PactProviderServiceResponse response)
         {
             _response = response;
             
@@ -57,7 +57,7 @@ namespace PactNet.Consumer.Mocks.MockService
 
         public void Register()
         {
-            var interaction = new PactInteraction
+            var interaction = new PactServiceInteraction
             {
                 Description = _description,
                 ProviderState = _providerState,
