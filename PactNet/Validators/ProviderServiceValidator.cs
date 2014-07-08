@@ -1,28 +1,29 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using PactNet.Mappers;
 
 namespace PactNet.Validators
 {
     public class ProviderServiceValidator : IProviderServiceValidator
     {
-        private readonly IPactProviderServiceResponseValidator _providerResponseValidator;
+        private readonly IPactProviderServiceResponseValidator _providerServiceResponseValidator;
         private readonly HttpClient _httpClient;
         private readonly IHttpRequestMessageMapper _httpRequestMessageMapper;
-        private readonly IPactProviderServiceResponseMapper _pactProviderResponseMapper;
+        private readonly IPactProviderServiceResponseMapper _pactProviderServiceResponseMapper;
         
         [Obsolete("For testing only.")]
         public ProviderServiceValidator(
-            IPactProviderServiceResponseValidator providerResponseValidator, 
+            IPactProviderServiceResponseValidator providerServiceResponseValidator, 
             HttpClient httpClient, 
             IHttpRequestMessageMapper httpRequestMessageMapper,
-            IPactProviderServiceResponseMapper pactProviderResponseMapper)
+            IPactProviderServiceResponseMapper pactProviderServiceResponseMapper)
         {
-            _providerResponseValidator = providerResponseValidator;
+            _providerServiceResponseValidator = providerServiceResponseValidator;
             _httpClient = httpClient;
             _httpRequestMessageMapper = httpRequestMessageMapper;
-            _pactProviderResponseMapper = pactProviderResponseMapper;
+            _pactProviderServiceResponseMapper = pactProviderServiceResponseMapper;
         }
 
         public ProviderServiceValidator(HttpClient httpClient) : this(
@@ -37,7 +38,17 @@ namespace PactNet.Validators
         {
             if (pactFile == null)
             {
-                throw new InvalidOperationException("Please supply a non null pactFile");
+                throw new ArgumentException("Please supply a non null pactFile");
+            }
+
+            if (pactFile.Consumer == null || String.IsNullOrEmpty(pactFile.Consumer.Name))
+            {
+                throw new ArgumentException("Please supply a non null or empty Consumer name in the pactFile");
+            }
+
+            if (pactFile.Provider == null || String.IsNullOrEmpty(pactFile.Provider.Name))
+            {
+                throw new ArgumentException("Please supply a non null or empty Provider name in the pactFile");
             }
 
             if (pactFile.Interactions != null && pactFile.Interactions.Any())
@@ -56,12 +67,12 @@ namespace PactNet.Validators
         {
             var request = _httpRequestMessageMapper.Convert(interaction);
 
-            var response = _httpClient.SendAsync(request).Result;
+            var response = _httpClient.SendAsync(request, CancellationToken.None).Result;
 
             var expectedResponse = interaction.Response;
-            var actualResponse = _pactProviderResponseMapper.Convert(response);
+            var actualResponse = _pactProviderServiceResponseMapper.Convert(response);
 
-            _providerResponseValidator.Validate(expectedResponse, actualResponse);
+            _providerServiceResponseValidator.Validate(expectedResponse, actualResponse);
         }
     }
 }
