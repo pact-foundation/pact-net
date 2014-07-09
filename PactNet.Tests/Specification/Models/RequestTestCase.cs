@@ -30,6 +30,7 @@ namespace PactNet.Tests.Specification.Models
                     return false;
                     //throw;
                 }
+                return true;
             }
 
             if (!Match)

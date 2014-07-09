@@ -44,12 +44,6 @@ namespace PactNet.Tests.Specification
                 Console.WriteLine(failedTestCase);
             }
 
-            Console.WriteLine("### PASSED ###");
-            foreach (var passedTestCase in passedTestCases)
-            {
-                Console.WriteLine(passedTestCase);
-            }
-
             Assert.Equal(0, failedTestCases.Count);
         }
     }

@@ -16,19 +16,34 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
         public void Validate(dynamic body1, dynamic body2)
         {
+            if (body1 == null)
+            {
+                return;
+            }
+
+            if (body1 != null && body2 == null)
+            {
+                throw new CompareFailedException("Body is null");
+            }
+
             string body1Json = JsonConvert.SerializeObject(body1);
             string body2Json = JsonConvert.SerializeObject(body2);
             var httpBody1 = JsonConvert.DeserializeObject<JToken>(body1Json);
             var httpBody2 = JsonConvert.DeserializeObject<JToken>(body2Json);
 
+            if (httpBody1 == null)
+            {
+                return;
+            }
+
+            if (httpBody1 != null && (httpBody2 == null || !httpBody2.Any()))
+            {
+                throw new CompareFailedException("Body is null or empty");
+            }
+
             if (httpBody1.Type == JTokenType.Array)
             {
                 Console.WriteLine("{0} has a matching body", _messagePrefix);
-
-                if (httpBody2 == null || !httpBody2.Any())
-                {
-                    throw new CompareFailedException("Body is null or empty");
-                }
 
                 for (var i = 0; i < httpBody1.Count(); i++)
                 {
@@ -58,30 +73,27 @@ namespace PactNet.Mocks.MockHttpService.Comparers
             }
             else
             {
-                throw new NotSupportedException("Type has not been implemented for comparison");
+                if (!JToken.DeepEquals(httpBody1, httpBody2))
+                {
+                    throw new CompareFailedException(httpBody1, httpBody2);
+                }
             }
         }
 
         private static void AssertPropertyValuesMatch(JToken httpBody1, JToken httpBody2)
         {
-            if (httpBody2 == null || !httpBody2.Any())
+            foreach (var item1 in httpBody1)
             {
-                throw new CompareFailedException("Body is null");
-            }
+                var item2 = httpBody2.FirstOrDefault(x => x.Path == item1.Path);
 
-            foreach (var leftItem in httpBody1)
-            {
-                var rightItem = httpBody2.FirstOrDefault(x => x.Path == leftItem.Path);
-
-                if (rightItem == null)
+                if (item2 == null)
                 {
-                    throw new CompareFailedException(String.Format("Body.{0} does not exist", leftItem.Path));
+                    throw new CompareFailedException(String.Format("Body.{0} does not exist", item1.Path));
                 }
 
-                //TODO: Work on these comparisons
-                if(!JToken.DeepEquals(leftItem, rightItem))
+                if(!JToken.DeepEquals(item1, item2))
                 {
-                    throw new CompareFailedException(String.Format("Body.{0}", leftItem.Path), leftItem, rightItem);
+                    throw new CompareFailedException(String.Format("Body.{0}", item1.Path), item1, item2);
                 }
             }
         }
