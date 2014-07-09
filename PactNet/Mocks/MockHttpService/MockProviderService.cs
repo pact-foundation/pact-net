@@ -75,15 +75,16 @@ namespace PactNet.Mocks.MockHttpService
             _interactions.Add(interaction);
 
             //TODO: Register for all tests instead?
-            PactNancyRequestDispatcher.Set(interaction.Request);
-            PactNancyRequestDispatcher.Set(interaction.Response);
+            MockProviderNancyRequestDispatcher.Set(interaction.Request);
+            MockProviderNancyRequestDispatcher.Set(interaction.Response);
         }
 
         public void Start()
         {
-            PactNancyRequestDispatcher.Reset();
+            MockProviderNancyRequestDispatcher.Reset();
 
-            _host = new NancyHost(new PactNancyBootstrapper(), NancyConfig.HostConfiguration, new Uri(_baseUri));
+            _host = new NancyHost(new MockProviderNancyBootstrapper(), NancyConfig.HostConfiguration, new Uri(_baseUri));
+
             _host.Start();
         }
 
@@ -93,7 +94,7 @@ namespace PactNet.Mocks.MockHttpService
             {
                 _host.Stop();
                 _host.Dispose();
-                PactNancyRequestDispatcher.Reset(); //TODO: Can potentially get rid of this
+                MockProviderNancyRequestDispatcher.Reset(); //TODO: Can potentially get rid of this
             }
         }
     }

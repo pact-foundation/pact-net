@@ -46,7 +46,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<ComparisonFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
 
         [Fact]
@@ -98,7 +98,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<ComparisonFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
 
         [Fact]
@@ -124,7 +124,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<ComparisonFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
 
         [Fact]
@@ -178,7 +178,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<ComparisonFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
 
         [Fact]
@@ -204,7 +204,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<ComparisonFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
 
         [Fact]
@@ -226,7 +226,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<ComparisonFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
 
         [Fact]
@@ -348,7 +348,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<ComparisonFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
 
         [Fact]
@@ -378,7 +378,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<ComparisonFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
 
         [Fact]
@@ -408,7 +408,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<ComparisonFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
 
         [Fact]
@@ -432,7 +432,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<ComparisonFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
 
         [Fact]
@@ -504,7 +504,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<ComparisonFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
         }
     }
 }

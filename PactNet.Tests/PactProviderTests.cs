@@ -263,7 +263,7 @@ namespace PactNet.Tests
                 .HonoursPactWith(serviceConsumer)
                 .PactUri(pactUri);
 
-            Assert.Throws<ComparisonFailedException>(() => pact.VerifyProviderService());
+            Assert.Throws<CompareFailedException>(() => pact.VerifyProviderService());
 
             mockFileSystem.File.Received(1).ReadAllText(pactUri);
         }

@@ -16,7 +16,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
         {
             if (headers2 == null)
             {
-                throw new ComparisonFailedException("Headers are null");
+                throw new CompareFailedException("Headers are null");
             }
 
             foreach (var header in headers1)
@@ -29,12 +29,12 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                 {
                     if (!header.Value.Equals(headerValue))
                     {
-                        throw new ComparisonFailedException(header.Value, headerValue);
+                        throw new CompareFailedException(header.Value, headerValue);
                     }
                 }
                 else
                 {
-                    throw new ComparisonFailedException("Header does not exist");
+                    throw new CompareFailedException("Header does not exist");
                 }
             }
         }

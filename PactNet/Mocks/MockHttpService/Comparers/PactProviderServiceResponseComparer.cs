@@ -23,13 +23,13 @@ namespace PactNet.Mocks.MockHttpService.Comparers
         {
             if (response1 == null)
             {
-                throw new ComparisonFailedException("Expected response cannot be null");
+                throw new CompareFailedException("Expected response cannot be null");
             }
 
             Console.WriteLine("{0} has status code of {1}", MessagePrefix, response1.Status);
             if (!response1.Status.Equals(response2.Status))
             {
-                throw new ComparisonFailedException(response1.Status, response2.Status);
+                throw new CompareFailedException(response1.Status, response2.Status);
             }
 
             if (response1.Headers != null && response1.Headers.Any())

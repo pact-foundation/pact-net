@@ -14,7 +14,10 @@ namespace PactNet
         public string ProviderName { get; private set; }
 
         [Obsolete("For PactProvider testing only.")]
-        public Pact(Func<int, IMockProviderService> mockProviderServiceFactory, IFileSystem fileSystem, Func<HttpClient, IProviderServiceValidator> providerServiceValidatorFactory)
+        public Pact(
+            Func<int, IMockProviderService> mockProviderServiceFactory, 
+            IFileSystem fileSystem, 
+            Func<HttpClient, IProviderServiceValidator> providerServiceValidatorFactory)
         {
             _mockProviderServiceFactory = mockProviderServiceFactory;
             _fileSystem = fileSystem;
@@ -22,7 +25,9 @@ namespace PactNet
         }
 
         [Obsolete("For PactConsumer testing only.")]
-        public Pact(Func<int, IMockProviderService> mockProviderServiceFactory, IFileSystem fileSystem)
+        public Pact(
+            Func<int, IMockProviderService> mockProviderServiceFactory, 
+            IFileSystem fileSystem)
             : this(
                 mockProviderServiceFactory,
                 fileSystem,

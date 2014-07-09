@@ -87,7 +87,7 @@ namespace PactNet
         {
             if (String.IsNullOrEmpty(ConsumerName))
             {
-                throw new InvalidOperationException("ConsumerName has not been set, please supply a provider name using the ServiceConsumer method.");
+                throw new InvalidOperationException("ConsumerName has not been set, please supply a consumer name using the ServiceConsumer method.");
             }
 
             if (String.IsNullOrEmpty(ProviderName))

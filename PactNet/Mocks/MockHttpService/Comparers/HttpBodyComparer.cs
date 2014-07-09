@@ -27,7 +27,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
                 if (httpBody2 == null || !httpBody2.Any())
                 {
-                    throw new ComparisonFailedException("Body is null or empty");
+                    throw new CompareFailedException("Body is null or empty");
                 }
 
                 for (var i = 0; i < httpBody1.Count(); i++)
@@ -46,14 +46,14 @@ namespace PactNet.Mocks.MockHttpService.Comparers
             {
                 if (!httpBody1.Equals(httpBody2))
                 {
-                    throw new ComparisonFailedException(httpBody1, httpBody2);
+                    throw new CompareFailedException(httpBody1, httpBody2);
                 }
             }
             else if (httpBody1.Type == JTokenType.String)
             {
                 if (!httpBody1.Equals(httpBody2))
                 {
-                    throw new ComparisonFailedException(httpBody1, httpBody2);
+                    throw new CompareFailedException(httpBody1, httpBody2);
                 }
             }
             else
@@ -66,7 +66,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
         {
             if (httpBody2 == null || !httpBody2.Any())
             {
-                throw new ComparisonFailedException("Body is null");
+                throw new CompareFailedException("Body is null");
             }
 
             foreach (var leftItem in httpBody1)
@@ -75,13 +75,13 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
                 if (rightItem == null)
                 {
-                    throw new ComparisonFailedException(String.Format("Body.{0} does not exist", leftItem.Path));
+                    throw new CompareFailedException(String.Format("Body.{0} does not exist", leftItem.Path));
                 }
 
                 //TODO: Work on these comparisons
                 if(!JToken.DeepEquals(leftItem, rightItem))
                 {
-                    throw new ComparisonFailedException(String.Format("Body.{0}", leftItem.Path), leftItem, rightItem);
+                    throw new CompareFailedException(String.Format("Body.{0}", leftItem.Path), leftItem, rightItem);
                 }
             }
         }

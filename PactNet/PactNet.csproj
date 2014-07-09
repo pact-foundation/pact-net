@@ -75,8 +75,8 @@
     <Compile Include="Mocks\MockHttpService\Mappers\IHttpRequestMessageMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\IPactProviderServiceResponseMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\NancyResponseMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\PactNancyBootstrapper.cs" />
-    <Compile Include="Mocks\MockHttpService\PactNancyRequestDispatcher.cs" />
+    <Compile Include="Mocks\MockHttpService\MockProviderNancyBootstrapper.cs" />
+    <Compile Include="Mocks\MockHttpService\MockProviderNancyRequestDispatcher.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\PactProviderServiceRequestMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Models\HttpVerb.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\PactProviderServiceResponseMapper.cs" />
@@ -88,7 +88,7 @@
     <Compile Include="Mocks\MockHttpService\Models\PactServiceInteraction.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\IPactProviderServiceResponseComparer.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\PactProviderServiceResponseComparer.cs" />
-    <Compile Include="ComparisonFailedException.cs" />
+    <Compile Include="CompareFailedException.cs" />
     <Compile Include="Mocks\MockHttpService\Models\ServicePactFile.cs" />
     <Compile Include="Models\PactInteraction.cs" />
     <Compile Include="Models\PactParty.cs" />

@@ -23,7 +23,7 @@ namespace PactNet.Tests.Specification.Models
             {
                 _requestComparer.Compare(Expected, Actual);
             }
-            catch (ComparisonFailedException)
+            catch (CompareFailedException)
             {
                 if (Match)
                 {

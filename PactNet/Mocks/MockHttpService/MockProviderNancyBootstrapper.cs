@@ -2,12 +2,14 @@ using System.Collections.Generic;
 using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Diagnostics;
+using Nancy.Routing;
 using Nancy.TinyIoc;
 using PactNet.Mocks.MockHttpService.Comparers;
+using PactNet.Mocks.MockHttpService.Mappers;
 
 namespace PactNet.Mocks.MockHttpService
 {
-    public class PactNancyBootstrapper : DefaultNancyBootstrapper
+    public class MockProviderNancyBootstrapper : DefaultNancyBootstrapper
     {
         protected override IEnumerable<ModuleRegistration> Modules
         {
@@ -20,20 +22,29 @@ namespace PactNet.Mocks.MockHttpService
             {
                 return NancyInternalConfiguration.WithOverrides(c =>
                 {
-                    c.RequestDispatcher = typeof(PactNancyRequestDispatcher);
+                    c.RequestDispatcher = typeof(MockProviderNancyRequestDispatcher);
                 });
             }
         }
 
         protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
         {
-            container.Register(typeof (IPactProviderServiceRequestComparer), typeof (PactProviderServiceRequestComparer));
+            RegisterDependenciesWithNancyContainer(container);
 
             DiagnosticsHook.Disable(pipelines);
         }
 
         protected override void ConfigureApplicationContainer(TinyIoCContainer container)
         {
+        }
+
+        private void RegisterDependenciesWithNancyContainer(TinyIoCContainer container)
+        {
+            container.Register(typeof(IPactProviderServiceRequestComparer), typeof(PactProviderServiceRequestComparer));
+            container.Register(typeof(IPactProviderServiceRequestMapper), typeof(PactProviderServiceRequestMapper));
+            container.Register(typeof(INancyResponseMapper), typeof(NancyResponseMapper));
+
+            //Func that returns current registrations
         }
     }
 }

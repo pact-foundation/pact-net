@@ -106,7 +106,7 @@ namespace PactNet
             }
             catch (System.IO.IOException)
             {
-                throw new ComparisonFailedException(String.Format("Json Pact file could not be retrieved using uri \'{0}\'.", PactFileUri));
+                throw new CompareFailedException(String.Format("Json Pact file could not be retrieved using uri \'{0}\'.", PactFileUri));
             }
 
             if (pactFile.Interactions != null && pactFile.Interactions.Any(x => x.ProviderState != null))

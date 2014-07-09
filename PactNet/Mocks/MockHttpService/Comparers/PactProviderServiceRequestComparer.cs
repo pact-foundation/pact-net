@@ -21,26 +21,26 @@ namespace PactNet.Mocks.MockHttpService.Comparers
         {
             if (request1 == null)
             {
-                throw new ComparisonFailedException("Expected request cannot be null");
+                throw new CompareFailedException("Expected request cannot be null");
             }
 
             Console.WriteLine("{0} has method set to {1}", MessagePrefix, request1.Method);
             if (!request1.Method.Equals(request2.Method))
             {
-                throw new ComparisonFailedException(request1.Method, request2.Method);
+                throw new CompareFailedException(request1.Method, request2.Method);
             }
 
             Console.WriteLine("{0} has path set to {1}", MessagePrefix, request1.Path);
             if (!request1.Path.Equals(request2.Path))
             {
-                throw new ComparisonFailedException(request1.Path, request2.Path);
+                throw new CompareFailedException(request1.Path, request2.Path);
             }
 
             if (request1.Headers != null && request1.Headers.Any())
             {
                 if (request2.Headers == null)
                 {
-                    throw new ComparisonFailedException("Headers are null");
+                    throw new CompareFailedException("Headers are null");
                 }
 
                 _httpHeaderComparer.Compare(request1.Headers, request2.Headers);
