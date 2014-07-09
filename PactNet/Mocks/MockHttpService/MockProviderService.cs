@@ -74,9 +74,7 @@ namespace PactNet.Mocks.MockHttpService
 
             _interactions.Add(interaction);
 
-            //TODO: Register for all tests instead?
-            MockProviderNancyRequestDispatcher.Set(interaction.Request);
-            MockProviderNancyRequestDispatcher.Set(interaction.Response);
+            MockProviderNancyRequestDispatcher.Set(interaction.Request, interaction.Response);
         }
 
         public void Start()
@@ -94,7 +92,7 @@ namespace PactNet.Mocks.MockHttpService
             {
                 _host.Stop();
                 _host.Dispose();
-                MockProviderNancyRequestDispatcher.Reset(); //TODO: Can potentially get rid of this
+                MockProviderNancyRequestDispatcher.Reset();
             }
         }
     }

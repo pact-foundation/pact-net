@@ -59,13 +59,9 @@ namespace PactNet.Mocks.MockHttpService
             return tcs.Task;
         }
 
-        public static void Set(PactProviderServiceRequest request)
+        public static void Set(PactProviderServiceRequest request, PactProviderServiceResponse response)
         {
             _expectedRequest = request;
-        }
-
-        public static void Set(PactProviderServiceResponse response)
-        {
             _expectedResponse = response;
         }
 
