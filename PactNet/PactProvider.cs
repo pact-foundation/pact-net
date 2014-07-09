@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using Newtonsoft.Json;
-using PactNet.Comparers;
-using PactNet.Provider;
-using PactNet.Validators;
+using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Mocks.MockHttpService.Validators;
 
 namespace PactNet
 {
@@ -107,7 +106,7 @@ namespace PactNet
             }
             catch (System.IO.IOException)
             {
-                throw new PactComparisonFailed(String.Format("Json Pact file could not be retrieved using uri \'{0}\'.", PactFileUri));
+                throw new ComparisonFailedException(String.Format("Json Pact file could not be retrieved using uri \'{0}\'.", PactFileUri));
             }
 
             if (pactFile.Interactions != null && pactFile.Interactions.Any(x => x.ProviderState != null))

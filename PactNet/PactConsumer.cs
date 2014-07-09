@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
-using PactNet.Consumer;
-using PactNet.Consumer.Mocks.MockService;
+using PactNet.Mocks.MockHttpService;
+using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Models;
 
 namespace PactNet
 {

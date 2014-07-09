@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using PactNet;
+using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
 
 namespace Consumer.Tests
@@ -19,7 +19,7 @@ namespace Consumer.Tests
         public void GetAllEvents_WhenCalled_ReturnsAllEvents()
         {
             //Arrange
-            _data.MockProvider.Given("There are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
+            _data.MockProviderService.Given("There are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
                 .UponReceiving("A GET request to retrieve all events")
                 .With(new PactProviderServiceRequest
                 {
@@ -79,7 +79,7 @@ namespace Consumer.Tests
             var dateTime = new DateTime(2011, 07, 01, 01, 41, 03);
             DateTimeFactory.Now = () => dateTime;
 
-            _data.MockProvider.UponReceiving("A POST request to create a new event")
+            _data.MockProviderService.UponReceiving("A POST request to create a new event")
                 .With(new PactProviderServiceRequest
                 {
                     Method = HttpVerb.Post,

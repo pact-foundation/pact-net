@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using PactNet.Models;
 
 namespace PactNet.Mappers
 {

@@ -1,8 +1,8 @@
 using System;
 using System.IO.Abstractions;
 using System.Net.Http;
-using PactNet.Consumer.Mocks.MockService;
-using PactNet.Validators;
+using PactNet.Mocks.MockHttpService;
+using PactNet.Mocks.MockHttpService.Validators;
 
 namespace PactNet
 {

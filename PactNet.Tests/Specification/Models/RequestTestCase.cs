@@ -1,5 +1,5 @@
-﻿using PactNet.Comparers;
-using PactNet.Validators;
+﻿using PactNet.Mocks.MockHttpService.Comparers;
+using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Tests.Specification.Models
 {
@@ -21,9 +21,9 @@ namespace PactNet.Tests.Specification.Models
         {
             try
             {
-                _requestComparer.Validate(Expected, Actual);
+                _requestComparer.Compare(Expected, Actual);
             }
-            catch (PactComparisonFailed)
+            catch (ComparisonFailedException)
             {
                 if (Match)
                 {

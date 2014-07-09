@@ -55,54 +55,60 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Comparers\IComparer.cs" />
     <Compile Include="Configuration\Json\Converters\DictionaryConverter.cs" />
     <Compile Include="Configuration\Json\Converters\LowercaseStringEnumConverter.cs" />
     <Compile Include="Configuration\Json\JsonConfig.cs" />
-    <Compile Include="Configuration\Nancy\NancyConfig.cs" />
-    <Compile Include="Consumer\IPactConsumer.cs" />
-    <Compile Include="Consumer\Mocks\IMockProvider.cs" />
-    <Compile Include="Consumer\Mocks\MockService\IMockProviderService.cs" />
-    <Compile Include="Consumer\Mocks\MockService\MockProviderService.cs" />
-    <Compile Include="Mappers\HttpContentMapper.cs" />
-    <Compile Include="Mappers\HttpMethodMapper.cs" />
-    <Compile Include="Mappers\HttpRequestMessageMapper.cs" />
-    <Compile Include="Mappers\IHttpContentMapper.cs" />
-    <Compile Include="Mappers\IHttpMethodMapper.cs" />
-    <Compile Include="Mappers\IHttpRequestMessageMapper.cs" />
-    <Compile Include="Mappers\IPactProviderServiceResponseMapper.cs" />
-    <Compile Include="Mappers\NancyResponseMapper.cs" />
-    <Compile Include="Consumer\Mocks\MockService\PactNancyBootstrapper.cs" />
-    <Compile Include="Consumer\Mocks\MockService\PactNancyRequestDispatcher.cs" />
-    <Compile Include="Mappers\PactProviderServiceRequestMapper.cs" />
-    <Compile Include="HttpVerb.cs" />
-    <Compile Include="Mappers\PactProviderServiceResponseMapper.cs" />
+    <Compile Include="IPactConsumer.cs" />
+    <Compile Include="Mappers\IMapper.cs" />
+    <Compile Include="Mocks\IMockProvider.cs" />
+    <Compile Include="Mocks\MockHttpService\Configuration\NancyConfig.cs" />
+    <Compile Include="Mocks\MockHttpService\IMockProviderService.cs" />
+    <Compile Include="Mocks\MockHttpService\Mappers\INancyResponseMapper.cs" />
+    <Compile Include="Mocks\MockHttpService\Mappers\IPactProviderServiceRequestMapper.cs" />
+    <Compile Include="Mocks\MockHttpService\MockProviderService.cs" />
+    <Compile Include="Mocks\MockHttpService\Mappers\HttpContentMapper.cs" />
+    <Compile Include="Mocks\MockHttpService\Mappers\HttpMethodMapper.cs" />
+    <Compile Include="Mocks\MockHttpService\Mappers\HttpRequestMessageMapper.cs" />
+    <Compile Include="Mocks\MockHttpService\Mappers\IHttpContentMapper.cs" />
+    <Compile Include="Mocks\MockHttpService\Mappers\IHttpMethodMapper.cs" />
+    <Compile Include="Mocks\MockHttpService\Mappers\IHttpRequestMessageMapper.cs" />
+    <Compile Include="Mocks\MockHttpService\Mappers\IPactProviderServiceResponseMapper.cs" />
+    <Compile Include="Mocks\MockHttpService\Mappers\NancyResponseMapper.cs" />
+    <Compile Include="Mocks\MockHttpService\PactNancyBootstrapper.cs" />
+    <Compile Include="Mocks\MockHttpService\PactNancyRequestDispatcher.cs" />
+    <Compile Include="Mocks\MockHttpService\Mappers\PactProviderServiceRequestMapper.cs" />
+    <Compile Include="Mocks\MockHttpService\Models\HttpVerb.cs" />
+    <Compile Include="Mocks\MockHttpService\Mappers\PactProviderServiceResponseMapper.cs" />
+    <Compile Include="Mocks\MockHttpService\Validators\IProviderServiceValidator.cs" />
+    <Compile Include="Mocks\MockHttpService\Validators\ProviderServiceValidator.cs" />
     <Compile Include="Pact.cs" />
-    <Compile Include="PactFile.cs" />
+    <Compile Include="Models\PactFile.cs" />
     <Compile Include="PactProvider.cs" />
-    <Compile Include="PactServiceInteraction.cs" />
-    <Compile Include="Validators\IProviderServiceValidator.cs" />
-    <Compile Include="Validators\ProviderServiceValidator.cs" />
-    <Compile Include="Comparers\IPactProviderServiceResponseComparer.cs" />
-    <Compile Include="Comparers\PactProviderServiceResponseComparer.cs" />
-    <Compile Include="Comparers\PactComparisonFailed.cs" />
-    <Compile Include="ServicePactFile.cs" />
-    <Compile Include="PactInteraction.cs" />
-    <Compile Include="PactParty.cs" />
+    <Compile Include="Mocks\MockHttpService\Models\PactServiceInteraction.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\IPactProviderServiceResponseComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\PactProviderServiceResponseComparer.cs" />
+    <Compile Include="ComparisonFailedException.cs" />
+    <Compile Include="Mocks\MockHttpService\Models\ServicePactFile.cs" />
+    <Compile Include="Models\PactInteraction.cs" />
+    <Compile Include="Models\PactParty.cs" />
     <Compile Include="PactConsumer.cs" />
-    <Compile Include="PactProviderServiceRequest.cs" />
-    <Compile Include="PactProviderServiceResponse.cs" />
+    <Compile Include="Mocks\MockHttpService\Models\PactProviderServiceRequest.cs" />
+    <Compile Include="Mocks\MockHttpService\Models\PactProviderServiceResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Provider\IPactProvider.cs" />
-    <Compile Include="Comparers\HttpBodyComparer.cs" />
-    <Compile Include="Comparers\HttpHeaderComparer.cs" />
-    <Compile Include="Comparers\IHttpBodyComparer.cs" />
-    <Compile Include="Comparers\IHttpHeaderComparer.cs" />
-    <Compile Include="Comparers\IPactProviderServiceRequestComparer.cs" />
-    <Compile Include="Comparers\PactProviderServiceRequestComparer.cs" />
+    <Compile Include="IPactProvider.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\HttpBodyComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\HttpHeaderComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\IHttpBodyComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\IHttpHeaderComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\IPactProviderServiceRequestComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\PactProviderServiceRequestComparer.cs" />
+    <Compile Include="Validators\IPactValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

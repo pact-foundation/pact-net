@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using NSubstitute;
-using PactNet.Consumer;
-using PactNet.Consumer.Mocks.MockService;
+using PactNet.Mocks.MockHttpService;
+using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
 
 namespace PactNet.Tests
