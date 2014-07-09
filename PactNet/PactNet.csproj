@@ -93,12 +93,12 @@
     <Compile Include="PactProviderServiceResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Provider\IPactProvider.cs" />
-    <Compile Include="Validators\BodyValidator.cs" />
-    <Compile Include="Validators\HeaderValidator.cs" />
-    <Compile Include="Validators\IBodyValidator.cs" />
-    <Compile Include="Validators\IHeaderValidator.cs" />
-    <Compile Include="Validators\IPactProviderServiceRequestValidator.cs" />
-    <Compile Include="Validators\PactProviderServiceRequestValidator.cs" />
+    <Compile Include="Comparers\HttpBodyComparer.cs" />
+    <Compile Include="Comparers\HttpHeaderComparer.cs" />
+    <Compile Include="Comparers\IHttpBodyComparer.cs" />
+    <Compile Include="Comparers\IHttpHeaderComparer.cs" />
+    <Compile Include="Comparers\IPactProviderServiceRequestComparer.cs" />
+    <Compile Include="Comparers\PactProviderServiceRequestComparer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

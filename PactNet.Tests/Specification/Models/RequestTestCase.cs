@@ -5,7 +5,7 @@ namespace PactNet.Tests.Specification.Models
 {
     public class RequestTestCase
     {
-        private readonly IPactProviderServiceRequestValidator _requestValidator;
+        private readonly IPactProviderServiceRequestComparer _requestComparer;
 
         public bool Match { get; set; }
         public string Comment { get; set; }
@@ -14,14 +14,14 @@ namespace PactNet.Tests.Specification.Models
 
         public RequestTestCase()
         {
-            _requestValidator = new PactProviderServiceRequestValidator();
+            _requestComparer = new PactProviderServiceRequestComparer();
         }
 
         public bool Verify()
         {
             try
             {
-                _requestValidator.Validate(Expected, Actual);
+                _requestComparer.Validate(Expected, Actual);
             }
             catch (PactComparisonFailed)
             {

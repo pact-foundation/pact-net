@@ -3,7 +3,7 @@ using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Diagnostics;
 using Nancy.TinyIoc;
-using PactNet.Validators;
+using PactNet.Comparers;
 
 namespace PactNet.Consumer.Mocks.MockService
 {
@@ -27,7 +27,7 @@ namespace PactNet.Consumer.Mocks.MockService
 
         protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
         {
-            container.Register(typeof (IPactProviderServiceRequestValidator), typeof (PactProviderServiceRequestValidator));
+            container.Register(typeof (IPactProviderServiceRequestComparer), typeof (PactProviderServiceRequestComparer));
 
             DiagnosticsHook.Disable(pipelines);
         }

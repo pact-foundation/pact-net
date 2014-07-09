@@ -2,6 +2,6 @@
 {
     public interface IPactProviderServiceResponseComparer
     {
-        void Compare(PactProviderServiceResponse expectedResponse, PactProviderServiceResponse actualResponse);
+        void Compare(PactProviderServiceResponse response1, PactProviderServiceResponse response2);
     }
 }

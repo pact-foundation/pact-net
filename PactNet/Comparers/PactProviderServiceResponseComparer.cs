@@ -2,49 +2,48 @@
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using PactNet.Validators;
 
 namespace PactNet.Comparers
 {
     public class PactProviderServiceResponseComparer : IPactProviderServiceResponseComparer
     {
-        private readonly IHeaderValidator _headerValidator;
-        private readonly IBodyValidator _bodyValidator;
+        private readonly IHttpHeaderComparer _httpHeaderComparer;
+        private readonly IHttpBodyComparer _httpBodyComparer;
 
         private const string MessagePrefix = "\t- Returns a response which";
 
         public PactProviderServiceResponseComparer()
         {
-            _headerValidator = new HeaderValidator(MessagePrefix);
-            _bodyValidator = new BodyValidator(MessagePrefix);
+            _httpHeaderComparer = new HttpHeaderComparer(MessagePrefix);
+            _httpBodyComparer = new HttpBodyComparer(MessagePrefix);
         }
 
-        public void Compare(PactProviderServiceResponse expectedResponse, PactProviderServiceResponse actualResponse)
+        public void Compare(PactProviderServiceResponse response1, PactProviderServiceResponse response2)
         {
-            if (expectedResponse == null)
+            if (response1 == null)
             {
                 throw new PactComparisonFailed("Expected response cannot be null");
             }
 
-            Console.WriteLine("{0} has status code of {1}", MessagePrefix, expectedResponse.Status);
-            if (!expectedResponse.Status.Equals(actualResponse.Status))
+            Console.WriteLine("{0} has status code of {1}", MessagePrefix, response1.Status);
+            if (!response1.Status.Equals(response2.Status))
             {
-                throw new PactComparisonFailed(expectedResponse.Status, actualResponse.Status);
+                throw new PactComparisonFailed(response1.Status, response2.Status);
             }
 
-            if (expectedResponse.Headers != null && expectedResponse.Headers.Any())
+            if (response1.Headers != null && response1.Headers.Any())
             {
-                _headerValidator.Validate(expectedResponse.Headers, actualResponse.Headers);
+                _httpHeaderComparer.Validate(response1.Headers, response2.Headers);
             }
 
-            if (expectedResponse.Body != null)
+            if (response1.Body != null)
             {
-                string expectedResponseBodyJson = JsonConvert.SerializeObject(expectedResponse.Body);
-                string actualResponseBodyJson = JsonConvert.SerializeObject(actualResponse.Body);
+                string expectedResponseBodyJson = JsonConvert.SerializeObject(response1.Body);
+                string actualResponseBodyJson = JsonConvert.SerializeObject(response2.Body);
                 var actualResponseBody = JsonConvert.DeserializeObject<JToken>(actualResponseBodyJson);
                 var expectedResponseBody = JsonConvert.DeserializeObject<JToken>(expectedResponseBodyJson);
 
-                _bodyValidator.Validate(expectedResponseBody, actualResponseBody);
+                _httpBodyComparer.Validate(expectedResponseBody, actualResponseBody);
             }
         }
     }

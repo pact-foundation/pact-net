@@ -3,8 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Nancy;
 using Nancy.Routing;
+using PactNet.Comparers;
 using PactNet.Mappers;
-using PactNet.Validators;
 
 namespace PactNet.Consumer.Mocks.MockService
 {
@@ -12,11 +12,11 @@ namespace PactNet.Consumer.Mocks.MockService
     {
         private static PactProviderServiceRequest _request;
         private static PactProviderServiceResponse _response;
-        private readonly IPactProviderServiceRequestValidator _requestValidator;
+        private readonly IPactProviderServiceRequestComparer _requestComparer;
 
-        public PactNancyRequestDispatcher(IPactProviderServiceRequestValidator requestValidator)
+        public PactNancyRequestDispatcher(IPactProviderServiceRequestComparer requestComparer)
         {
-            _requestValidator = requestValidator;
+            _requestComparer = requestComparer;
         }
 
         public Task<Response> Dispatch(NancyContext context, CancellationToken cancellationToken)
@@ -51,7 +51,7 @@ namespace PactNet.Consumer.Mocks.MockService
 
         private Response HandleRequest(Request request)
         {
-            _requestValidator.Validate(_request, new PactProviderServiceRequestMapper().Convert(request));
+            _requestComparer.Validate(_request, new PactProviderServiceRequestMapper().Convert(request));
             return GenerateResponse();
         }
 
