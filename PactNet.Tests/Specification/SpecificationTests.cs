@@ -43,7 +43,7 @@ namespace PactNet.Tests.Specification
                 }
             }
 
-            Assert.Equal(0, failedTestCases.Count);
+            Assert.Empty(failedTestCases);
         }
     }
 }

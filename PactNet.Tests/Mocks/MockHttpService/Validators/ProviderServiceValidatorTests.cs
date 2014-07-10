@@ -250,5 +250,37 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
             mockProviderServiceResponseValidator.Received(1).Compare(Arg.Any<PactProviderServiceResponse>(), Arg.Any<PactProviderServiceResponse>());
         }
 
+        [Fact]
+        public void Validate_WhenProviderServiceResponseValidatorThrowsACompareFailedException_ThrowsACompareFailedException()
+        {
+            var pact = new ServicePactFile
+            {
+                Consumer = new PactParty { Name = "My client" },
+                Provider = new PactParty { Name = "My Provider" },
+                Interactions = new List<PactServiceInteraction>
+                {
+                    new PactServiceInteraction
+                    {
+                        Description = "My interaction"
+                    }
+                }
+            };
+            var mockProviderServiceResponseValidator = Substitute.For<IPactProviderServiceResponseComparer>();
+            var fakeHttpClient = new FakeHttpClient();
+            var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
+            var mockPactProviderServiceResponseMapper = Substitute.For<IPactProviderServiceResponseMapper>();
+
+            mockProviderServiceResponseValidator
+                .When(x => x.Compare(Arg.Any<PactProviderServiceResponse>(), Arg.Any<PactProviderServiceResponse>()))
+                .Do(x => { throw new CompareFailedException("Expected response cannot be null"); });
+
+            var providerServiceValidator = new ProviderServiceValidator(
+                mockProviderServiceResponseValidator,
+                fakeHttpClient,
+                mockHttpRequestMessageMapper,
+                mockPactProviderServiceResponseMapper);
+
+            Assert.Throws<CompareFailedException>(() => providerServiceValidator.Validate(pact));
+        }
     }
 }

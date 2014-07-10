@@ -59,7 +59,7 @@ namespace Consumer.Tests
                         }
                     }
                 })
-                .Register();
+                .RegisterInteraction();
 
             var consumer = new EventsApiClient(_data.MockServerBaseUri);
 
@@ -99,7 +99,7 @@ namespace Consumer.Tests
                 {
                     Status = 201
                 })
-                .Register();
+                .RegisterInteraction();
 
             var consumer = new EventsApiClient(_data.MockServerBaseUri);
 

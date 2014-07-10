@@ -103,7 +103,11 @@ namespace PactNet
 
             if (_mockProviderService != null)
             {
-                pactFile.Interactions = _mockProviderService.Interactions as IEnumerable<PactServiceInteraction>;
+                var interactions = _mockProviderService.Interactions;
+                if (interactions != null)
+                {
+                    pactFile.Interactions = interactions as IEnumerable<PactServiceInteraction>;
+                }
             }
 
             var pactFileJson = JsonConvert.SerializeObject(pactFile, JsonConfig.SerializerSettings);

@@ -9,7 +9,8 @@ namespace PactNet.Mocks.MockHttpService
 {
     public class MockProviderService : IMockProviderService
     {
-        private readonly string _baseUri;
+        private readonly Func<Uri, NancyHost> _nancyHostFactory;
+
         private NancyHost _host;
 
         private string _providerState;
@@ -17,20 +18,33 @@ namespace PactNet.Mocks.MockHttpService
         private PactProviderServiceRequest _request;
         private PactProviderServiceResponse _response;
 
-        private readonly IList<PactServiceInteraction> _interactions;
+        private IList<PactServiceInteraction> _interactions;
         public IEnumerable<PactInteraction> Interactions
         {
             get { return _interactions; }
         }
 
-        public MockProviderService(int port)
+        public string BaseUri { get; private set; }
+
+        [Obsolete("For testing only.")]
+        public MockProviderService(Func<Uri, NancyHost> nancyHostFactory, int port)
         {
-            _baseUri = String.Format("http://localhost:{0}", port);
-            _interactions = new List<PactServiceInteraction>();
+            _nancyHostFactory = nancyHostFactory;
+            BaseUri = String.Format("http://localhost:{0}", port);
+        }
+
+        public MockProviderService(int port)
+            : this(baseUri => new NancyHost(new MockProviderNancyBootstrapper(), NancyConfig.HostConfiguration, baseUri), port)
+        {
         }
 
         public IMockProviderService Given(string providerState)
         {
+            if (String.IsNullOrEmpty(providerState))
+            {
+                throw new ArgumentException("Please supply a non null or empty providerState");
+            }
+
             _providerState = providerState;
 
             return this;
@@ -38,6 +52,11 @@ namespace PactNet.Mocks.MockHttpService
 
         public IMockProviderService UponReceiving(string description)
         {
+            if (String.IsNullOrEmpty(description))
+            {
+                throw new ArgumentException("Please supply a non null or empty description");
+            }
+
             _description = description;
 
             return this;
@@ -45,6 +64,11 @@ namespace PactNet.Mocks.MockHttpService
 
         public IMockProviderService With(PactProviderServiceRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentException("Please supply a non null request");
+            }
+
             _request = request;
             
             return this;
@@ -52,17 +76,37 @@ namespace PactNet.Mocks.MockHttpService
 
         public IMockProviderService WillRespondWith(PactProviderServiceResponse response)
         {
+            if (response == null)
+            {
+                throw new ArgumentException("Please supply a non null response");
+            }
+
             _response = response;
             
             return this;
         }
 
-        public void Register()
+        public void RegisterInteraction()
         {
+            if (String.IsNullOrEmpty(_description))
+            {
+                throw new InvalidOperationException("description has not been set, please supply using the UponReceiving method.");
+            }
+
+            if (_request == null)
+            {
+                throw new InvalidOperationException("request has not been set, please supply using the With method.");
+            }
+
+            if (_response == null)
+            {
+                throw new InvalidOperationException("response has not been set, please supply using the WillRespondWith method.");
+            }
+
             var interaction = new PactServiceInteraction
             {
-                Description = _description,
                 ProviderState = _providerState,
+                Description = _description,
                 Request = _request,
                 Response = _response
             };
@@ -72,21 +116,21 @@ namespace PactNet.Mocks.MockHttpService
             _request = null;
             _response = null;
 
+            _interactions = _interactions ?? new List<PactServiceInteraction>();
             _interactions.Add(interaction);
 
-            MockProviderNancyRequestDispatcher.Set(interaction.Request, interaction.Response);
+            MockProviderNancyRequestDispatcher.Set(interaction.Request, interaction.Response); //TODO: Can't test this nicely
         }
 
-        public void Start()
+        public void Start() //TODO: Can't test this nicely
         {
             MockProviderNancyRequestDispatcher.Reset();
 
-            _host = new NancyHost(new MockProviderNancyBootstrapper(), NancyConfig.HostConfiguration, new Uri(_baseUri));
-
+            _host = _nancyHostFactory(new Uri(BaseUri));
             _host.Start();
         }
 
-        public void Stop()
+        public void Stop() //TODO: Can't test this nicely
         {
             if (_host != null)
             {
