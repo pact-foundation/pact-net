@@ -11,9 +11,11 @@ namespace PactNet.Mocks.MockHttpService.Models
 
         public string Path { get; set; }
 
+        public string Query { get; set; }
+
         [JsonConverter(typeof(DictionaryConverter))]
         public Dictionary<string, string> Headers { get; set; }
 
-        public dynamic Body { get; set; } //TODO: Handle different Json Formatters CamelCase or PascalCase
+        public dynamic Body { get; set; }
     }
 }
