@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
 using PactNet.Tests.Specification.Models;
 using Xunit;
@@ -15,7 +16,6 @@ namespace PactNet.Tests.Specification
         public void Request()
         {
             var failedTestCases = new List<string>();
-            var passedTestCases = new List<string>();
 
             foreach (var testCaseSubDirectory in Directory.EnumerateDirectories(RequestTestCaseBasePath))
             {
@@ -27,21 +27,20 @@ namespace PactNet.Tests.Specification
                     var testCaseJson = File.ReadAllText(testCaseFileName);
                     var testCase = JsonConvert.DeserializeObject<RequestTestCase>(testCaseJson);
 
-                    if (testCase.Verify())
-                    {
-                        passedTestCases.Add(String.Format("[Passed] {0}", testCaseFileName));
-                    }
-                    else
+                    if (!testCase.Verify())
                     {
                         failedTestCases.Add(String.Format("[Failed] {0}", testCaseFileName));
                     }
                 }
             }
 
-            Console.WriteLine("### FAILED ###");
-            foreach (var failedTestCase in failedTestCases)
+            if (failedTestCases.Any())
             {
-                Console.WriteLine(failedTestCase);
+                Console.WriteLine("### FAILED ###");
+                foreach (var failedTestCase in failedTestCases)
+                {
+                    Console.WriteLine(failedTestCase);
+                }
             }
 
             Assert.Equal(0, failedTestCases.Count);
