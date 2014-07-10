@@ -62,6 +62,12 @@
     <Compile Include="IPactConsumer.cs" />
     <Compile Include="Mappers\IMapper.cs" />
     <Compile Include="Mocks\IMockProvider.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\HttpMethodComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\HttpPathComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\HttpQueryStringComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\IHttpMethodComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\IHttpPathComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\IHttpQueryStringComparer.cs" />
     <Compile Include="Mocks\MockHttpService\Configuration\NancyConfig.cs" />
     <Compile Include="Mocks\MockHttpService\IMockProviderService.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\INancyResponseMapper.cs" />

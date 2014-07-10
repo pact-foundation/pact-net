@@ -1,11 +1,13 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
     public class PactProviderServiceRequestComparer : IPactProviderServiceRequestComparer
     {
+        private readonly IHttpMethodComparer _httpMethodComparer;
+        private readonly IHttpPathComparer _httpPathComparer;
+        private readonly IHttpQueryStringComparer _httpQueryStringComparer;
         private readonly IHttpHeaderComparer _httpHeaderComparer;
         private readonly IHttpBodyComparer _httpBodyComparer;
 
@@ -13,6 +15,9 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
         public PactProviderServiceRequestComparer()
         {
+            _httpMethodComparer = new HttpMethodComparer(MessagePrefix);
+            _httpPathComparer = new HttpPathComparer(MessagePrefix);
+            _httpQueryStringComparer = new HttpQueryStringComparer(MessagePrefix);
             _httpHeaderComparer = new HttpHeaderComparer(MessagePrefix);
             _httpBodyComparer = new HttpBodyComparer(MessagePrefix);
         }
@@ -24,17 +29,11 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                 throw new CompareFailedException("Expected request cannot be null");
             }
 
-            Console.WriteLine("{0} has method set to {1}", MessagePrefix, request1.Method);
-            if (!request1.Method.Equals(request2.Method))
-            {
-                throw new CompareFailedException(request1.Method, request2.Method);
-            }
+            _httpMethodComparer.Compare(request1.Method, request2.Method);
 
-            Console.WriteLine("{0} has path set to {1}", MessagePrefix, request1.Path);
-            if (!request1.Path.Equals(request2.Path))
-            {
-                throw new CompareFailedException(request1.Path, request2.Path);
-            }
+            _httpPathComparer.Compare(request1.Path, request2.Path);
+
+            _httpQueryStringComparer.Compare(request1.Query, request2.Query);
 
             if (request1.Headers != null && request1.Headers.Any())
             {

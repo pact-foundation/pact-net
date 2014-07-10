@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="Fakes\FakeHttpClient.cs" />
     <Compile Include="Mocks\MockHttpService\MockProviderNancyRequestDispatcherTests.cs" />
+    <Compile Include="Mocks\MockHttpService\Models\PactProviderServiceRequestTests.cs" />
     <Compile Include="Models\PactFileTests.cs" />
     <Compile Include="PactConsumerTests.cs" />
     <Compile Include="ServicePactFileTests.cs" />

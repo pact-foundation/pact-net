@@ -36,7 +36,8 @@ namespace PactNet.Mocks.MockHttpService.Mappers
             Encoding encoding = null; //TODO: Handle request encoding and charset
 
             //Map headers
-            var to = new HttpRequestMessage(_httpMethodMapper.Convert(from.Request.Method), from.Request.Path);
+            var to = new HttpRequestMessage(_httpMethodMapper.Convert(from.Request.Method), from.Request.PathWithQuery());
+
             if (from.Request.Headers != null && from.Request.Headers.Any())
             {
                 foreach (var requestHeader in from.Request.Headers)

@@ -76,7 +76,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         }
 
         [Fact]
-        public void Compare_WithMatchingHeadersButWithDifferentCasingOnName_ThrowsPactAssertException()
+        public void Compare_WithMatchingHeadersButWithDifferentCasingOnName_NoExceptionsAreThrown()
         {
             var expected = new PactProviderServiceResponse
             {
@@ -98,7 +98,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var pactProviderServiceResponseComparer = GetSubject();
 
-            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            pactProviderServiceResponseComparer.Compare(expected, actual);
         }
 
         [Fact]

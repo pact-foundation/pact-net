@@ -29,7 +29,8 @@ namespace PactNet.Mocks.MockHttpService.Mappers
             var to = new PactProviderServiceRequest
                          {
                              Method = HttpMethodMap[from.Method.ToUpper()],
-                             Path = from.Path
+                             Path = from.Path,
+                             Query = from.Url.Query.TrimStart('?')
                          };
 
             if (from.Headers != null && from.Headers.Any())
