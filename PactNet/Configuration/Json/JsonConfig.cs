@@ -25,9 +25,10 @@ namespace PactNet.Configuration.Json
             {
                 _apiRequestSerializerSettings = _apiRequestSerializerSettings ?? new JsonSerializerSettings
                 {
-                    NullValueHandling = NullValueHandling.Ignore
+                    NullValueHandling = NullValueHandling.Ignore,
+                    Formatting = Formatting.None
                 };
-                return _serializerSettings;
+                return _apiRequestSerializerSettings;
             }
         }
     }

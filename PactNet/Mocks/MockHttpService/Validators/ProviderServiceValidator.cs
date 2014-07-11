@@ -67,7 +67,7 @@ namespace PactNet.Mocks.MockHttpService.Validators
 
         private void ValidateInteraction(PactServiceInteraction interaction)
         {
-            var request = _httpRequestMessageMapper.Convert(interaction);
+            var request = _httpRequestMessageMapper.Convert(interaction.Request);
 
             var response = _httpClient.SendAsync(request, CancellationToken.None).Result;
 

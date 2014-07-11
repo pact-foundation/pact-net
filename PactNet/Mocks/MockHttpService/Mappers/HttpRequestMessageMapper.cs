@@ -10,22 +10,27 @@ namespace PactNet.Mocks.MockHttpService.Mappers
     {
         private readonly IHttpMethodMapper _httpMethodMapper;
         private readonly IHttpContentMapper _httpContentMapper;
+        private readonly IEncodingMapper _encodingMapper;
 
+        [Obsolete("For testing only.")]
         public HttpRequestMessageMapper(
             IHttpMethodMapper httpMethodMapper,
-            IHttpContentMapper httpContentMapper)
+            IHttpContentMapper httpContentMapper,
+            IEncodingMapper encodingMapper)
         {
             _httpMethodMapper = httpMethodMapper;
             _httpContentMapper = httpContentMapper;
+            _encodingMapper = encodingMapper;
         }
 
         public HttpRequestMessageMapper() : this(
             new HttpMethodMapper(),
-            new HttpContentMapper())
+            new HttpContentMapper(),
+            new EncodingMapper())
         {
         }
 
-        public HttpRequestMessage Convert(PactServiceInteraction from)
+        public HttpRequestMessage Convert(PactProviderServiceRequest from)
         {
             if (from == null)
             {
@@ -33,14 +38,16 @@ namespace PactNet.Mocks.MockHttpService.Mappers
             }
 
             string contentType = null;
-            Encoding encoding = null; //TODO: Handle request encoding and charset
+            Encoding encoding = null;
 
-            //Map headers
-            var to = new HttpRequestMessage(_httpMethodMapper.Convert(from.Request.Method), from.Request.PathWithQuery());
+            var requestHttpMethod = _httpMethodMapper.Convert(from.Method);
+            var requestPath = from.PathWithQuery();
 
-            if (from.Request.Headers != null && from.Request.Headers.Any())
+            var to = new HttpRequestMessage(requestHttpMethod, requestPath);
+
+            if (from.Headers != null && from.Headers.Any())
             {
-                foreach (var requestHeader in from.Request.Headers)
+                foreach (var requestHeader in from.Headers)
                 {
                     //TODO: Check if there are any other headers which need special treatment
                     //Handle the content-type header as little differently, as they need to be attached to the content when using a HttpRequestMessage
@@ -48,7 +55,20 @@ namespace PactNet.Mocks.MockHttpService.Mappers
                     {
                         var contentTypeHeaderSplit = requestHeader.Value.Split(';');
 
-                        contentType = contentTypeHeaderSplit.First();
+                        contentType = contentTypeHeaderSplit.First().Trim();
+
+                        var encodingString = contentTypeHeaderSplit.FirstOrDefault(x => x.Contains("charset="));
+                        if (!String.IsNullOrEmpty(encodingString))
+                        {
+                            encodingString = encodingString.Trim().Replace("charset=", "");
+                            encoding = _encodingMapper.Convert(encodingString);
+                        }
+                        continue;
+                    }
+
+                    //Strip the Content-Length header as is automatically attached to the request
+                    if (requestHeader.Key.Equals("Content-Length", StringComparison.InvariantCultureIgnoreCase))
+                    {
                         continue;
                     }
 
@@ -56,7 +76,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
                 }
             }
 
-            to.Content = _httpContentMapper.Convert(from.Request.Body, encoding, contentType);
+            to.Content = _httpContentMapper.Convert(from.Body, encoding, contentType);
 
             return to;
         }

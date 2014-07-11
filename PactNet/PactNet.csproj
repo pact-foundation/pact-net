@@ -69,6 +69,8 @@
     <Compile Include="Mocks\MockHttpService\Comparers\IHttpQueryStringComparer.cs" />
     <Compile Include="Mocks\MockHttpService\Configuration\NancyConfig.cs" />
     <Compile Include="Mocks\MockHttpService\IMockProviderService.cs" />
+    <Compile Include="Mocks\MockHttpService\Mappers\EncodingMapper.cs" />
+    <Compile Include="Mocks\MockHttpService\Mappers\IEncodingMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\INancyResponseMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\IPactProviderServiceRequestMapper.cs" />
     <Compile Include="Mocks\MockHttpService\MockProviderService.cs" />

@@ -37,7 +37,7 @@ namespace Consumer.Tests
                     {
                         { "Content-Type", "application/json; charset=utf-8" }
                     },
-                    Body = new List<dynamic>
+                    Body = new []
                     {
                         new 
                         {

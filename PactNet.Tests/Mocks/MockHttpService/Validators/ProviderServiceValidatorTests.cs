@@ -126,7 +126,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
 
             mockProviderServiceResponseValidator.Received(0).Compare(Arg.Any<PactProviderServiceResponse>(), Arg.Any<PactProviderServiceResponse>());
             Assert.Equal(0, fakeHttpClient.SendAsyncCallCount);
-            mockHttpRequestMessageMapper.Received(0).Convert(Arg.Any<PactServiceInteraction>());
+            mockHttpRequestMessageMapper.Received(0).Convert(Arg.Any<PactProviderServiceRequest>());
             mockPactProviderServiceResponseMapper.Received(0).Convert(Arg.Any<HttpResponseMessage>());
         }
 
@@ -153,7 +153,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
             providerServiceValidator.Validate(pact);
             Assert.Equal(0, fakeHttpClient.SendAsyncCallCount);
             mockProviderServiceResponseValidator.Received(0).Compare(Arg.Any<PactProviderServiceResponse>(), Arg.Any<PactProviderServiceResponse>());
-            mockHttpRequestMessageMapper.Received(0).Convert(Arg.Any<PactServiceInteraction>());
+            mockHttpRequestMessageMapper.Received(0).Convert(Arg.Any<PactProviderServiceRequest>());
             mockPactProviderServiceResponseMapper.Received(0).Convert(Arg.Any<HttpResponseMessage>());
         }
 
@@ -185,7 +185,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
 
             providerServiceValidator.Validate(pact);
 
-            mockHttpRequestMessageMapper.Received(1).Convert(Arg.Any<PactServiceInteraction>());
+            mockHttpRequestMessageMapper.Received(1).Convert(Arg.Any<PactProviderServiceRequest>());
         }
 
         [Fact]
