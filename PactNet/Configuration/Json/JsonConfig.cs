@@ -17,5 +17,18 @@ namespace PactNet.Configuration.Json
                 return _serializerSettings;
             }
         }
+
+        private static JsonSerializerSettings _apiRequestSerializerSettings;
+        public static JsonSerializerSettings ApiRequestSerializerSettings
+        {
+            get
+            {
+                _apiRequestSerializerSettings = _apiRequestSerializerSettings ?? new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore
+                };
+                return _serializerSettings;
+            }
+        }
     }
 }

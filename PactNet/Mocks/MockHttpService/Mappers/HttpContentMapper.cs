@@ -2,16 +2,12 @@
 using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
+using PactNet.Configuration.Json;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
     public class HttpContentMapper : IHttpContentMapper
     {
-        private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
-        {
-            NullValueHandling = NullValueHandling.Ignore
-        };
-
         public HttpContent Convert(dynamic from, Encoding encoding, string contentType)
         {
             if (from == null)
@@ -19,27 +15,22 @@ namespace PactNet.Mocks.MockHttpService.Mappers
                 return null;
             }
 
-            StringContent to;
-            var jsonRequestBody = JsonConvert.SerializeObject(from, JsonSettings);
-
-            if (encoding != null && !String.IsNullOrEmpty(contentType))
+            if (encoding == null)
             {
-                to = new StringContent(jsonRequestBody, encoding, contentType);
-            }
-            else if (encoding != null && String.IsNullOrEmpty(contentType))
-            {
-                to = new StringContent(jsonRequestBody, encoding);
-            }
-            else if ((encoding == null && !String.IsNullOrEmpty(contentType)))
-            {
-                to = new StringContent(jsonRequestBody, Encoding.UTF8, contentType);
-            }
-            else
-            {
-                to = new StringContent(jsonRequestBody);
+                encoding = Encoding.UTF8;
             }
 
-            return to;
+            if (String.IsNullOrEmpty(contentType))
+            {
+                contentType = "text/plain";
+            }
+
+            var body = !String.IsNullOrEmpty(contentType) &&
+                       contentType.Equals("application/json", StringComparison.InvariantCultureIgnoreCase)
+                ? JsonConvert.SerializeObject(from, JsonConfig.ApiRequestSerializerSettings)
+                : from;
+
+            return new StringContent(body, encoding, contentType);
         }
     }
 }
