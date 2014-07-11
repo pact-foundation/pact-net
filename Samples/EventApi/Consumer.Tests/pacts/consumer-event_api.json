@@ -7,24 +7,6 @@
   },
   "interactions": [
     {
-      "description": "A POST request to create a new event",
-      "request": {
-        "method": "post",
-        "path": "/events",
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": {
-          "eventId": "1f587704-2dcc-4313-a233-7b62b4b469db",
-          "timestamp": "2011-07-01T01:41:03.0000000",
-          "eventType": "JobDetailsView"
-        }
-      },
-      "response": {
-        "status": 201
-      }
-    },
-    {
       "description": "A GET request to retrieve all events",
       "providerState": "There are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'",
       "request": {
@@ -56,6 +38,24 @@
             "eventType": "JobSearchView"
           }
         ]
+      }
+    },
+    {
+      "description": "A POST request to create a new event",
+      "request": {
+        "method": "post",
+        "path": "/events",
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": {
+          "eventId": "1f587704-2dcc-4313-a233-7b62b4b469db",
+          "timestamp": "2011-07-01T01:41:03.0000000",
+          "eventType": "JobDetailsView"
+        }
+      },
+      "response": {
+        "status": 201
       }
     }
   ],

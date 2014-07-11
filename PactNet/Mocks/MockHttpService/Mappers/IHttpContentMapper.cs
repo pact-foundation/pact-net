@@ -1,10 +1,10 @@
 ﻿using System.Net.Http;
-using System.Text;
+using PactNet.Mappers;
+using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
-    public interface IHttpContentMapper
+    public interface IHttpContentMapper : IMapper<HttpBodyContent, HttpContent>
     {
-        HttpContent Convert(dynamic from, Encoding encoding, string contentType);
     }
 }

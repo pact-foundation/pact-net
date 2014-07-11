@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -38,14 +38,14 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
             var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
             var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
-            var mockEncodingMapper = Substitute.For<IEncodingMapper>();
+            var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
 
             mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
 
             IHttpRequestMessageMapper mapper = new HttpRequestMessageMapper(
                 mockHttpMethodMapper, 
                 mockHttpContentMapper, 
-                mockEncodingMapper);
+                mockHttpBodyContentMapper);
 
             mapper.Convert(request);
 
@@ -67,14 +67,15 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
             var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
             var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
-            var mockEncodingMapper = Substitute.For<IEncodingMapper>();
+            var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
 
             mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
+            mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(new HttpBodyContent());
 
             IHttpRequestMessageMapper mapper = new HttpRequestMessageMapper(
                 mockHttpMethodMapper,
                 mockHttpContentMapper,
-                mockEncodingMapper);
+                mockHttpBodyContentMapper);
 
             var result = mapper.Convert(request);
 
@@ -85,157 +86,195 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         [Fact]
         public void Convert_WithPlainContentTypeHeader_HeaderIsNotAddedToHttpRequestMessageAndHttpContentMapperIsCalledWithContentType()
         {
+            const string contentTypeString = "text/plain";
             var request = new PactProviderServiceRequest
             {
                 Method = HttpVerb.Post,
                 Path = "/events",
                 Headers = new Dictionary<string, string>
                 {
-                    { "Content-Type", "text/plain" }
+                    { "Content-Type", contentTypeString }
                 },
                 Body = new {}
+            };
+            var httpBodyContent = new HttpBodyContent
+            {
+                ContentType = contentTypeString,
+                Content = String.Empty
             };
 
             var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
             var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
-            var mockEncodingMapper = Substitute.For<IEncodingMapper>();
+            var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
 
             mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
+            mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(httpBodyContent);
 
             IHttpRequestMessageMapper mapper = new HttpRequestMessageMapper(
                 mockHttpMethodMapper,
                 mockHttpContentMapper,
-                mockEncodingMapper);
+                mockHttpBodyContentMapper);
 
             var result = mapper.Convert(request);
 
             Assert.Empty(result.Headers);
-            mockHttpContentMapper.Received(1).Convert(request.Body, null, "text/plain");
+            mockHttpContentMapper.Received(1).Convert(httpBodyContent);
         }
 
         [Fact]
         public void Convert_WithPlainContentTypeHeaderLowercased_HeaderIsNotAddedToHttpRequestMessageAndHttpContentMapperIsCalledWithContentType()
         {
+            const string contentTypeString = "text/plain";
             var request = new PactProviderServiceRequest
             {
                 Method = HttpVerb.Post,
                 Path = "/events",
                 Headers = new Dictionary<string, string>
                 {
-                    { "content-type", "text/plain" }
+                    { "content-type", contentTypeString }
                 },
                 Body = new { }
+            };
+            var httpBodyContent = new HttpBodyContent
+            {
+                ContentType = contentTypeString,
+                Content = String.Empty
             };
 
             var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
             var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
-            var mockEncodingMapper = Substitute.For<IEncodingMapper>();
+            var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
 
             mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
+            mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(httpBodyContent);
 
             IHttpRequestMessageMapper mapper = new HttpRequestMessageMapper(
                 mockHttpMethodMapper,
                 mockHttpContentMapper,
-                mockEncodingMapper);
+                mockHttpBodyContentMapper);
 
             var result = mapper.Convert(request);
 
             Assert.Empty(result.Headers);
-            mockEncodingMapper.Received(0).Convert(Arg.Any<string>());
-            mockHttpContentMapper.Received(1).Convert(request.Body, null, "text/plain");
+            mockHttpContentMapper.Received(1).Convert(httpBodyContent);
         }
 
         [Fact]
         public void Convert_WithPlainContentTypeAndUtf8CharsetHeader_HeaderIsNotAddedToHttpRequestMessageAndHttpContentMapperIsCalledWithEncodingAndContentType()
         {
+            const string contentTypeString = "text/plain";
+            const string encodingString = "utf-8";
+            var encoding = Encoding.UTF8;
             var request = new PactProviderServiceRequest
             {
                 Method = HttpVerb.Post,
                 Path = "/events",
                 Headers = new Dictionary<string, string>
                 {
-                    { "Content-Type", "text/plain; charset=utf-8" }
+                    { "Content-Type", contentTypeString + "; charset=" + encodingString }
                 },
                 Body = new { }
+            };
+            var httpBodyContent = new HttpBodyContent
+            {
+                ContentType = contentTypeString,
+                Encoding = encoding,
+                Content = String.Empty
             };
 
             var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
             var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
-            var mockEncodingMapper = Substitute.For<IEncodingMapper>();
+            var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
 
             mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
-            mockEncodingMapper.Convert("utf-8").Returns(Encoding.UTF8);
+            mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(httpBodyContent);
 
             IHttpRequestMessageMapper mapper = new HttpRequestMessageMapper(
                 mockHttpMethodMapper,
                 mockHttpContentMapper,
-                mockEncodingMapper);
+                mockHttpBodyContentMapper);
 
             var result = mapper.Convert(request);
 
             Assert.Empty(result.Headers);
-            mockEncodingMapper.Received(1).Convert("utf-8");
-            mockHttpContentMapper.Received(1).Convert(request.Body, Encoding.UTF8, "text/plain");
+            mockHttpBodyContentMapper.Received(1).Convert(request.Body, request.Headers);
+            mockHttpContentMapper.Received(1).Convert(httpBodyContent);
         }
 
         [Fact]
         public void Convert_WithJsonContentTypeAndUnicodeCharsetHeader_HeaderIsNotAddedToHttpRequestMessageAndHttpContentMapperIsCalledWithEncodingAndContentType()
         {
+            const string contentTypeString = "application/json";
+            const string encodingString = "utf-16";
+            var encoding = Encoding.Unicode;
             var request = new PactProviderServiceRequest
             {
                 Method = HttpVerb.Post,
                 Path = "/events",
                 Headers = new Dictionary<string, string>
                 {
-                    { "Content-Type", "application/json; charset=utf-16" }
+                    { "Content-Type", contentTypeString + "; charset=" + encodingString }
                 },
                 Body = new { }
+            };
+            var httpBodyContent = new HttpBodyContent
+            {
+                ContentType = contentTypeString,
+                Encoding = encoding,
+                Content = String.Empty
             };
 
             var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
             var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
-            var mockEncodingMapper = Substitute.For<IEncodingMapper>();
+            var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
 
             mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
-            mockEncodingMapper.Convert("utf-16").Returns(Encoding.UTF8);
+            mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(httpBodyContent);
 
             IHttpRequestMessageMapper mapper = new HttpRequestMessageMapper(
                 mockHttpMethodMapper,
                 mockHttpContentMapper,
-                mockEncodingMapper);
+                mockHttpBodyContentMapper);
 
             var result = mapper.Convert(request);
 
             Assert.Empty(result.Headers);
-            mockEncodingMapper.Received(1).Convert("utf-16");
-            mockHttpContentMapper.Received(1).Convert(request.Body, Encoding.UTF8, "application/json");
+            mockHttpBodyContentMapper.Received(1).Convert(request.Body, request.Headers);
+            mockHttpContentMapper.Received(1).Convert(httpBodyContent);
         }
 
         [Fact]
         public void Convert_WithContentTypeAndCustomHeader_OnlyCustomHeadersIsAddedToHttpRequestMessage()
         {
+            const string contentTypeString = "text/plain";
             var request = new PactProviderServiceRequest
             {
                 Method = HttpVerb.Post,
                 Path = "/events",
                 Headers = new Dictionary<string, string>
                 {
-                    { "Content-Type", "text/plain" },
+                    { "Content-Type", contentTypeString },
                     { "X-Custom", "My Custom header" }
                 },
                 Body = new { }
             };
+            var httpBodyContent = new HttpBodyContent
+            {
+                ContentType = contentTypeString,
+                Content = String.Empty
+            };
 
             var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
             var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
-            var mockEncodingMapper = Substitute.For<IEncodingMapper>();
+            var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
 
             mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
+            mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(httpBodyContent);
 
             IHttpRequestMessageMapper mapper = new HttpRequestMessageMapper(
                 mockHttpMethodMapper,
                 mockHttpContentMapper,
-                mockEncodingMapper);
+                mockHttpBodyContentMapper);
 
             var result = mapper.Convert(request);
 
@@ -258,18 +297,18 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
             var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
             var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
-            var mockEncodingMapper = Substitute.For<IEncodingMapper>();
+            var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
 
             mockHttpMethodMapper.Convert(HttpVerb.Get).Returns(HttpMethod.Get);
 
             IHttpRequestMessageMapper mapper = new HttpRequestMessageMapper(
                 mockHttpMethodMapper,
                 mockHttpContentMapper,
-                mockEncodingMapper);
+                mockHttpBodyContentMapper);
 
             mapper.Convert(request);
 
-            mockHttpContentMapper.Received(1).Convert(request.Body, null, null);
+            mockHttpBodyContentMapper.Received(1).Convert(request.Body, request.Headers);
         }
 
         [Fact]
@@ -296,19 +335,25 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                     Testing = 1
                 }
             };
+            var httpBodyContent = new HttpBodyContent
+            {
+                ContentType = contentTypeString,
+                Encoding = encoding,
+                Content = bodyJson
+            };
 
             var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
             var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
-            var mockEncodingMapper = Substitute.For<IEncodingMapper>();
+            var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
 
             mockHttpMethodMapper.Convert(HttpVerb.Get).Returns(HttpMethod.Get);
-            mockHttpContentMapper.Convert(Arg.Any<object>(), encoding, contentTypeString).Returns(new StringContent(bodyJson, encoding, contentTypeString));
-            mockEncodingMapper.Convert(encodingString).Returns(Encoding.UTF8);
+            mockHttpContentMapper.Convert(httpBodyContent).Returns(new StringContent(bodyJson, encoding, contentTypeString));
+            mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(httpBodyContent);
 
             IHttpRequestMessageMapper mapper = new HttpRequestMessageMapper(
                 mockHttpMethodMapper,
                 mockHttpContentMapper,
-                mockEncodingMapper);
+                mockHttpBodyContentMapper);
 
             var result = mapper.Convert(request);
             var requestContent = result.Content.ReadAsStringAsync().Result;

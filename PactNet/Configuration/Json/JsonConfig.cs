@@ -19,7 +19,7 @@ namespace PactNet.Configuration.Json
         }
 
         private static JsonSerializerSettings _apiRequestSerializerSettings;
-        public static JsonSerializerSettings ApiRequestSerializerSettings
+        public static JsonSerializerSettings ApiSerializerSettings
         {
             get
             {

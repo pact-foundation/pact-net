@@ -1,36 +1,44 @@
-﻿using System.Collections.Generic;
-using System.Text;
+﻿using System;
+using System.Collections.Generic;
 using Nancy;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
     public class NancyResponseMapper : INancyResponseMapper
     {
+        private readonly IHttpBodyContentMapper _httpBodyContentMapper;
+
+        [Obsolete("For testing only.")]
+        public NancyResponseMapper(IHttpBodyContentMapper httpBodyContentMapper)
+        {
+            _httpBodyContentMapper = httpBodyContentMapper;
+        }
+        public NancyResponseMapper() : this(
+            new HttpBodyContentMapper())
+        {
+        }
+
         public Response Convert(PactProviderServiceResponse from)
         {
             if (from == null)
+            {
                 return null;
+            }
 
             var to = new Response
             {
                 StatusCode = (HttpStatusCode) from.Status,
                 Headers = from.Headers
             };
-            
 
             if (from.Body != null)
             {
-                var jsonSettings = new JsonSerializerSettings
-                {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
-                };
-                string jsonBody = JsonConvert.SerializeObject(from.Body, jsonSettings);
+                HttpBodyContent bodyContent = _httpBodyContentMapper.Convert(from.Body, to.Headers);
+
                 to.Contents = s =>
                 {
-                    byte[] bytes = Encoding.UTF8.GetBytes(jsonBody);
+                    byte[] bytes = bodyContent.ContentBytes;
                     s.Write(bytes, 0, bytes.Length);
                     s.Flush();
                 };
@@ -38,7 +46,15 @@ namespace PactNet.Mocks.MockHttpService.Mappers
             else
             {
                 to.Headers = to.Headers ?? new Dictionary<string, string>();
-                to.Headers.Add("Content-Length", "0");
+
+                if (!to.Headers.ContainsKey("Content-Length"))
+                {
+                    to.Headers.Add("Content-Length", "0");
+                }
+                else
+                {
+                    to.Headers["Content-Length"] = "0";
+                }
             }
 
             return to;

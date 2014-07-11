@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
@@ -10,23 +9,23 @@ namespace PactNet.Mocks.MockHttpService.Mappers
     {
         private readonly IHttpMethodMapper _httpMethodMapper;
         private readonly IHttpContentMapper _httpContentMapper;
-        private readonly IEncodingMapper _encodingMapper;
+        private readonly IHttpBodyContentMapper _httpBodyContentMapper;
 
         [Obsolete("For testing only.")]
         public HttpRequestMessageMapper(
             IHttpMethodMapper httpMethodMapper,
             IHttpContentMapper httpContentMapper,
-            IEncodingMapper encodingMapper)
+            IHttpBodyContentMapper httpBodyContentMapper)
         {
             _httpMethodMapper = httpMethodMapper;
             _httpContentMapper = httpContentMapper;
-            _encodingMapper = encodingMapper;
+            _httpBodyContentMapper = httpBodyContentMapper;
         }
 
         public HttpRequestMessageMapper() : this(
             new HttpMethodMapper(),
             new HttpContentMapper(),
-            new EncodingMapper())
+            new HttpBodyContentMapper())
         {
         }
 
@@ -36,9 +35,6 @@ namespace PactNet.Mocks.MockHttpService.Mappers
             {
                 return null;
             }
-
-            string contentType = null;
-            Encoding encoding = null;
 
             var requestHttpMethod = _httpMethodMapper.Convert(from.Method);
             var requestPath = from.PathWithQuery();
@@ -51,23 +47,9 @@ namespace PactNet.Mocks.MockHttpService.Mappers
                 {
                     //TODO: Check if there are any other headers which need special treatment
                     //Handle the content-type header as little differently, as they need to be attached to the content when using a HttpRequestMessage
-                    if (requestHeader.Key.Equals("Content-Type", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        var contentTypeHeaderSplit = requestHeader.Value.Split(';');
-
-                        contentType = contentTypeHeaderSplit.First().Trim();
-
-                        var encodingString = contentTypeHeaderSplit.FirstOrDefault(x => x.Contains("charset="));
-                        if (!String.IsNullOrEmpty(encodingString))
-                        {
-                            encodingString = encodingString.Trim().Replace("charset=", "");
-                            encoding = _encodingMapper.Convert(encodingString);
-                        }
-                        continue;
-                    }
-
                     //Strip the Content-Length header as is automatically attached to the request
-                    if (requestHeader.Key.Equals("Content-Length", StringComparison.InvariantCultureIgnoreCase))
+                    if (requestHeader.Key.Equals("Content-Type", StringComparison.InvariantCultureIgnoreCase) || 
+                        requestHeader.Key.Equals("Content-Length", StringComparison.InvariantCultureIgnoreCase))
                     {
                         continue;
                     }
@@ -76,7 +58,11 @@ namespace PactNet.Mocks.MockHttpService.Mappers
                 }
             }
 
-            to.Content = _httpContentMapper.Convert(from.Body, encoding, contentType);
+            if (from.Body != null)
+            {
+                HttpBodyContent bodyContent = _httpBodyContentMapper.Convert(from.Body, from.Headers);
+                to.Content = _httpContentMapper.Convert(bodyContent);
+            }
 
             return to;
         }

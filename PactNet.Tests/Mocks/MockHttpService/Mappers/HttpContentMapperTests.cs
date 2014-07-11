@@ -1,6 +1,7 @@
-﻿using System.Linq;
+﻿using System;
 using System.Text;
 using PactNet.Mocks.MockHttpService.Mappers;
+using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
 
 namespace PactNet.Tests.Mocks.MockHttpService.Mappers
@@ -13,141 +14,45 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         }
 
         [Fact]
-        public void Convert_WithNullBody_ReturnsNull()
+        public void Convert_WithNullHttpBodyContent_ReturnsNull()
         {
             var mapper = GetSubject();
 
-            var mappedBody = mapper.Convert(null, null, null);
+            var result = mapper.Convert(null);
 
-            Assert.Null(mappedBody);
+            Assert.Null(result);
         }
 
         [Fact]
-        public void Convert_WithBodyAndNullEncodingAndNullContentType_ReturnsPlaintextUtf8HttpContent()
+        public void Convert_WithNullContent_ReturnsNull()
         {
-            var body = "Just a simple plaintext body";
-            var mapper = GetSubject();
-
-            var mappedBody = mapper.Convert(body, null, null);
-
-            var plainTextBody = mappedBody.ReadAsStringAsync().Result;
-            var contentTypeHeader = mappedBody.Headers.First(x => x.Key.Equals("Content-Type"));
-            var contentLengthHeader = mappedBody.Headers.FirstOrDefault(x => x.Key.Equals("Content-Length"));
-
-            Assert.Equal(body, plainTextBody);
-            Assert.Equal("text/plain; charset=utf-8", contentTypeHeader.Value.First());
-            Assert.NotNull(contentLengthHeader);
-        }
-
-        [Fact]
-        public void Convert_WithUtf8Encoding_ReturnsPlaintextUtf8HttpContent()
-        {
-            var body = "Just a simple plaintext body";
-            var mapper = GetSubject();
-
-            var mappedBody = mapper.Convert(body, Encoding.UTF8, null);
-
-            var plainTextBody = mappedBody.ReadAsStringAsync().Result;
-            var contentTypeHeader = mappedBody.Headers.First(x => x.Key.Equals("Content-Type"));
-            var contentLengthHeader = mappedBody.Headers.FirstOrDefault(x => x.Key.Equals("Content-Length"));
-
-            Assert.Equal(body, plainTextBody);
-            Assert.Equal("text/plain; charset=utf-8", contentTypeHeader.Value.First());
-            Assert.NotNull(contentLengthHeader);
-        }
-
-        [Fact]
-        public void Convert_WithAsciiEncoding_ReturnsPlaintextAsciiHttpContent()
-        {
-            var body = "Just a simple plaintext body";
-            var mapper = GetSubject();
-
-            var mappedBody = mapper.Convert(body, Encoding.ASCII, null);
-
-            var plainTextBody = mappedBody.ReadAsStringAsync().Result;
-            var contentTypeHeader = mappedBody.Headers.First(x => x.Key.Equals("Content-Type"));
-            var contentLengthHeader = mappedBody.Headers.FirstOrDefault(x => x.Key.Equals("Content-Length"));
-
-            Assert.Equal(body, plainTextBody);
-            Assert.Equal("text/plain; charset=us-ascii", contentTypeHeader.Value.First());
-            Assert.NotNull(contentLengthHeader);
-        }
-
-        [Fact]
-        public void Convert_WithUtf32Encoding_ReturnsPlaintextUtf32HttpContent()
-        {
-            var body = "Just a simple plaintext body";
-            var mapper = GetSubject();
-
-            var mappedBody = mapper.Convert(body, Encoding.UTF32, null);
-
-            var plainTextBody = mappedBody.ReadAsStringAsync().Result;
-            var contentTypeHeader = mappedBody.Headers.First(x => x.Key.Equals("Content-Type"));
-            var contentLengthHeader = mappedBody.Headers.FirstOrDefault(x => x.Key.Equals("Content-Length"));
-
-            Assert.Equal(body, plainTextBody);
-            Assert.Equal("text/plain; charset=utf-32", contentTypeHeader.Value.First());
-            Assert.NotNull(contentLengthHeader);
-        }
-
-        [Fact]
-        public void Convert_WithPlaintextContentType_ReturnsPlaintextUtf8HttpContent()
-        {
-            var body = "Just a simple plaintext body";
-            var mapper = GetSubject();
-
-            var mappedBody = mapper.Convert(body, Encoding.UTF8, "text/plain");
-
-            var plainTextBody = mappedBody.ReadAsStringAsync().Result;
-            var contentTypeHeader = mappedBody.Headers.First(x => x.Key.Equals("Content-Type"));
-            var contentLengthHeader = mappedBody.Headers.FirstOrDefault(x => x.Key.Equals("Content-Length"));
-
-            Assert.Equal(body, plainTextBody);
-            Assert.Equal("text/plain; charset=utf-8", contentTypeHeader.Value.First());
-            Assert.NotNull(contentLengthHeader);
-        }
-
-        [Fact]
-        public void Convert_WithJsonBodyAndJsonContentType_ReturnsJsonUtf8HttpContent()
-        {
-            var body = new
+            var httpBodyContent = new HttpBodyContent
             {
-                Test1 = "Hi",
-                Test2 = 3
+                Content = null,
+                ContentType = "text/plain",
+                Encoding = Encoding.UTF8
             };
             var mapper = GetSubject();
 
-            var mappedBody = mapper.Convert(body, Encoding.UTF8, "application/json");
+            var result = mapper.Convert(httpBodyContent);
 
-            var jsonBody = mappedBody.ReadAsStringAsync().Result;
-            var contentTypeHeader = mappedBody.Headers.First(x => x.Key.Equals("Content-Type"));
-            var contentLengthHeader = mappedBody.Headers.FirstOrDefault(x => x.Key.Equals("Content-Length"));
-
-            Assert.Equal("{\"Test1\":\"Hi\",\"Test2\":3}", jsonBody);
-            Assert.Equal("application/json; charset=utf-8", contentTypeHeader.Value.First());
-            Assert.NotNull(contentLengthHeader);
+            Assert.Null(result);
         }
 
         [Fact]
-        public void Convert_WithMixedCasePropertyNamesInJsonBodyAndJsonContentType_ReturnsJsonUtf8HttpContentWithoutPropertyNamesBeingNormalised()
+        public void Convert_WithEmptyContent_ReturnsNull()
         {
-            var body = new
+            var httpBodyContent = new HttpBodyContent
             {
-                Test1 = "Hi",
-                test2 = 3,
-                TesT3 = new { IteM = "yaaR" }
+                Content = String.Empty,
+                ContentType = "text/plain",
+                Encoding = Encoding.UTF8
             };
             var mapper = GetSubject();
 
-            var mappedBody = mapper.Convert(body, Encoding.UTF8, "application/json");
+            var result = mapper.Convert(httpBodyContent);
 
-            var jsonBody = mappedBody.ReadAsStringAsync().Result;
-            var contentTypeHeader = mappedBody.Headers.First(x => x.Key.Equals("Content-Type"));
-            var contentLengthHeader = mappedBody.Headers.FirstOrDefault(x => x.Key.Equals("Content-Length"));
-
-            Assert.Equal("{\"Test1\":\"Hi\",\"test2\":3,\"TesT3\":{\"IteM\":\"yaaR\"}}", jsonBody);
-            Assert.Equal("application/json; charset=utf-8", contentTypeHeader.Value.First());
-            Assert.NotNull(contentLengthHeader);
+            Assert.Empty(result.ReadAsStringAsync().Result);
         }
     }
 }
