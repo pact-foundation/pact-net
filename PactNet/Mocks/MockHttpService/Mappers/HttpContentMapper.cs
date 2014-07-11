@@ -2,16 +2,13 @@
 using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
     public class HttpContentMapper : IHttpContentMapper
     {
-        //TODO: Supply API Json Serialiser settings
         private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
         {
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
             NullValueHandling = NullValueHandling.Ignore
         };
 

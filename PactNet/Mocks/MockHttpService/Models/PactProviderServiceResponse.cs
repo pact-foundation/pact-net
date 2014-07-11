@@ -1,16 +1,17 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-using PactNet.Configuration.Json.Converters;
 
 namespace PactNet.Mocks.MockHttpService.Models
 {
     public class PactProviderServiceResponse
     {
+        [JsonProperty(PropertyName = "status")]
         public int Status { get; set; }
 
-        [JsonConverter(typeof(DictionaryConverter))]
+        [JsonProperty(PropertyName = "headers")]
         public Dictionary<string, string> Headers { get; set; }
-        
+
+        [JsonProperty(PropertyName = "body")]
         public dynamic Body { get; set; }
     }
 }

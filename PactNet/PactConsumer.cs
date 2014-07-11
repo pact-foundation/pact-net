@@ -110,7 +110,7 @@ namespace PactNet
                 }
             }
 
-            var pactFileJson = JsonConvert.SerializeObject(pactFile, JsonConfig.SerializerSettings);
+            var pactFileJson = JsonConvert.SerializeObject(pactFile, JsonConfig.PactFileSerializerSettings);
 
             try
             {

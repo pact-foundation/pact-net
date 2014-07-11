@@ -7,16 +7,20 @@ namespace PactNet.Mocks.MockHttpService.Models
 {
     public class PactProviderServiceRequest
     {
+        [JsonProperty(PropertyName = "method")]
         [JsonConverter(typeof(LowercaseStringEnumConverter))]
         public HttpVerb Method { get; set; }
 
+        [JsonProperty(PropertyName = "path")]
         public string Path { get; set; }
 
+        [JsonProperty(PropertyName = "query")]
         public string Query { get; set; }
 
-        [JsonConverter(typeof(DictionaryConverter))]
+        [JsonProperty(PropertyName = "headers")]
         public Dictionary<string, string> Headers { get; set; }
 
+        [JsonProperty(PropertyName = "body")]
         public dynamic Body { get; set; }
 
         public string PathWithQuery()

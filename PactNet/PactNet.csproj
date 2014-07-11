@@ -56,7 +56,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Comparers\IComparer.cs" />
-    <Compile Include="Configuration\Json\Converters\DictionaryConverter.cs" />
     <Compile Include="Configuration\Json\Converters\LowercaseStringEnumConverter.cs" />
     <Compile Include="Configuration\Json\JsonConfig.cs" />
     <Compile Include="IPactConsumer.cs" />
