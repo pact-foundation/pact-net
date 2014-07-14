@@ -7,7 +7,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
     {
         public HttpContent Convert(HttpBodyContent from)
         {
-            if (from == null || from.Content == null)
+            if (from == null)
             {
                 return null;
             }

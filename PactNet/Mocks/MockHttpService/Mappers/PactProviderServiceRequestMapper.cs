@@ -1,37 +1,47 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using Nancy;
-using Newtonsoft.Json;
 using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
     public class PactProviderServiceRequestMapper : IPactProviderServiceRequestMapper
     {
-        private static readonly IDictionary<string, HttpVerb> HttpMethodMap = new Dictionary<string, HttpVerb>
+        private readonly IHttpVerbMapper _httpVerbMapper;
+        private readonly IHttpBodyContentMapper _httpBodyContentMapper;
+
+        [Obsolete("For testing only.")]
+        public PactProviderServiceRequestMapper(
+            IHttpVerbMapper httpVerbMapper,
+            IHttpBodyContentMapper httpBodyContentMapper)
         {
-            { "GET", HttpVerb.Get },
-            { "POST", HttpVerb.Post },
-            { "PUT", HttpVerb.Put },
-            { "DELETE", HttpVerb.Delete },
-            { "HEAD", HttpVerb.Head },
-            { "PATCH", HttpVerb.Patch }
-        };
+            _httpVerbMapper = httpVerbMapper;
+            _httpBodyContentMapper = httpBodyContentMapper;
+        }
+
+        public PactProviderServiceRequestMapper() : this(
+            new HttpVerbMapper(),
+            new HttpBodyContentMapper())
+        {
+        }
 
         public PactProviderServiceRequest Convert(Request from)
         {
             if (from == null)
+            {
                 return null;
+            }
+                
+            var httpVerb = _httpVerbMapper.Convert(from.Method.ToUpper());
 
             var to = new PactProviderServiceRequest
-                         {
-                             Method = HttpMethodMap[from.Method.ToUpper()],
-                             Path = from.Path,
-                             Query = from.Url.Query.TrimStart('?')
-                         };
+            {
+                Method = httpVerb,
+                Path = from.Path,
+                Query = from.Url.Query.TrimStart('?')
+            };
 
             if (from.Headers != null && from.Headers.Any())
             {
@@ -39,15 +49,18 @@ namespace PactNet.Mocks.MockHttpService.Mappers
                 to.Headers = fromHeaders;
             }
 
-            if (from.Body != null)
+            if (from.Body != null && from.Body.Length > 0)
             {
-                to.Body = JsonConvert.DeserializeObject<dynamic>(ConvertToJsonString(from.Body));
+                var content = ConvertStreamToString(from.Body);
+                var httpBodyContent = _httpBodyContentMapper.Convert(content, to.Headers);
+
+                to.Body = httpBodyContent.Body;
             }
 
             return to;
         }
 
-        private string ConvertToJsonString(Stream stream)
+        private string ConvertStreamToString(Stream stream)
         {
             using (var reader = new StreamReader(stream, Encoding.UTF8))
             {

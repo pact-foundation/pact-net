@@ -102,11 +102,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = "This is a plain body"
             };
-            var httpBodyContent = new HttpBodyContent
-            {
-                Content = response.Body,
-                ContentType = contentTypeString
-            };
+            var httpBodyContent = new HttpBodyContent(response.Body, contentTypeString, null);
 
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
 
@@ -150,11 +146,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 }
             };
             var jsonBody = "{\"Test\":\"tester\",\"Test2\":1}";
-            var httpBodyContent = new HttpBodyContent
-            {
-                Content = jsonBody,
-                ContentType = contentTypeString
-            };
+            var httpBodyContent = new HttpBodyContent(jsonBody, contentTypeString, null);
 
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
 

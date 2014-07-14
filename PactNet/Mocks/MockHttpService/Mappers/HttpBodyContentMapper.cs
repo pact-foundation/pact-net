@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
-using PactNet.Configuration.Json;
+using System.Text;
 using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
@@ -29,7 +28,28 @@ namespace PactNet.Mocks.MockHttpService.Mappers
                 return null;
             }
 
-            var content = new HttpBodyContent();
+            var contentInfo = ParseContentHeaders(headers);
+
+            return new HttpBodyContent(body, contentInfo.Item1, contentInfo.Item2);
+        }
+
+        public HttpBodyContent Convert(string content, IDictionary<string, string> headers)
+        {
+            if (content == null)
+            {
+                return null;
+            }
+
+            var contentInfo = ParseContentHeaders(headers);
+
+            return new HttpBodyContent(content, contentInfo.Item1, contentInfo.Item2);
+        }
+
+        private Tuple<string, Encoding> ParseContentHeaders(IDictionary<string, string> headers)
+        {
+            string contentType = null;
+            Encoding encoding = null;
+
             if (headers != null && headers.Any())
             {
                 foreach (var header in headers)
@@ -37,24 +57,20 @@ namespace PactNet.Mocks.MockHttpService.Mappers
                     if (header.Key.Equals("Content-Type", StringComparison.InvariantCultureIgnoreCase))
                     {
                         var contentTypeHeaderSplit = header.Value.Split(';');
-                        content.ContentType = contentTypeHeaderSplit.First().Trim().ToLower();
+                        contentType = contentTypeHeaderSplit.First().Trim().ToLower();
 
                         var encodingString = contentTypeHeaderSplit.FirstOrDefault(x => x.Contains("charset="));
                         if (!String.IsNullOrEmpty(encodingString))
                         {
                             encodingString = encodingString.Trim().Replace("charset=", "").ToLower();
-                            content.Encoding = _encodingMapper.Convert(encodingString);
+                            encoding = _encodingMapper.Convert(encodingString);
                         }
                         break;
                     }
                 }
             }
 
-            content.Content = content.ContentType.Equals("application/json")
-                                  ? JsonConvert.SerializeObject(body, JsonConfig.ApiSerializerSettings)
-                                  : body.ToString();
-
-            return content;
+            return new Tuple<string, Encoding>(contentType, encoding);
         }
     }
 }

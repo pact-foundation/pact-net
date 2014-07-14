@@ -24,30 +24,9 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         }
 
         [Fact]
-        public void Convert_WithNullContent_ReturnsNull()
-        {
-            var httpBodyContent = new HttpBodyContent
-            {
-                Content = null,
-                ContentType = "text/plain",
-                Encoding = Encoding.UTF8
-            };
-            var mapper = GetSubject();
-
-            var result = mapper.Convert(httpBodyContent);
-
-            Assert.Null(result);
-        }
-
-        [Fact]
         public void Convert_WithEmptyContent_ReturnsNull()
         {
-            var httpBodyContent = new HttpBodyContent
-            {
-                Content = String.Empty,
-                ContentType = "text/plain",
-                Encoding = Encoding.UTF8
-            };
+            var httpBodyContent = new HttpBodyContent(String.Empty, "text/plain", Encoding.UTF8);
             var mapper = GetSubject();
 
             var result = mapper.Convert(httpBodyContent);

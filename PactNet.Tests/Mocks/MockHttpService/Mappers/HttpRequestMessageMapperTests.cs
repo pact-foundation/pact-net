@@ -70,7 +70,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
 
             mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
-            mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(new HttpBodyContent());
+            mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(new HttpBodyContent(String.Empty, null, null));
 
             IHttpRequestMessageMapper mapper = new HttpRequestMessageMapper(
                 mockHttpMethodMapper,
@@ -97,11 +97,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = new {}
             };
-            var httpBodyContent = new HttpBodyContent
-            {
-                ContentType = contentTypeString,
-                Content = String.Empty
-            };
+            var httpBodyContent = new HttpBodyContent(String.Empty, contentTypeString, null);
 
             var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
             var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
@@ -135,11 +131,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = new { }
             };
-            var httpBodyContent = new HttpBodyContent
-            {
-                ContentType = contentTypeString,
-                Content = String.Empty
-            };
+            var httpBodyContent = new HttpBodyContent(String.Empty, contentTypeString, null);
 
             var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
             var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
@@ -175,12 +167,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = new { }
             };
-            var httpBodyContent = new HttpBodyContent
-            {
-                ContentType = contentTypeString,
-                Encoding = encoding,
-                Content = String.Empty
-            };
+            var httpBodyContent = new HttpBodyContent(String.Empty, contentTypeString, encoding);
 
             var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
             var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
@@ -217,12 +204,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = new { }
             };
-            var httpBodyContent = new HttpBodyContent
-            {
-                ContentType = contentTypeString,
-                Encoding = encoding,
-                Content = String.Empty
-            };
+            var httpBodyContent = new HttpBodyContent(String.Empty, contentTypeString, encoding);
 
             var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
             var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
@@ -258,11 +240,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = new { }
             };
-            var httpBodyContent = new HttpBodyContent
-            {
-                ContentType = contentTypeString,
-                Content = String.Empty
-            };
+            var httpBodyContent = new HttpBodyContent(String.Empty, contentTypeString, null);
 
             var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
             var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
@@ -335,12 +313,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                     Testing = 1
                 }
             };
-            var httpBodyContent = new HttpBodyContent
-            {
-                ContentType = contentTypeString,
-                Encoding = encoding,
-                Content = bodyJson
-            };
+            var httpBodyContent = new HttpBodyContent(bodyJson, contentTypeString, encoding);
 
             var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
             var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();

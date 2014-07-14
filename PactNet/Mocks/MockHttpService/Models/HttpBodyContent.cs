@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Dynamic;
 using System.Text;
+using Newtonsoft.Json;
+using PactNet.Configuration.Json;
 
 namespace PactNet.Mocks.MockHttpService.Models
 {
@@ -8,7 +11,8 @@ namespace PactNet.Mocks.MockHttpService.Models
         private readonly string _defaultContentType = "text/plain";
         private readonly Encoding _defaultEncoding = Encoding.UTF8;
 
-        public string Content { get; set; }
+        public dynamic Body { get; private set; }
+        public string Content { get; private set; }
 
         public byte[] ContentBytes
         {
@@ -29,14 +33,44 @@ namespace PactNet.Mocks.MockHttpService.Models
                 }
                 return _contentType;
             }
-            set { _contentType = value; }
         }
 
         private Encoding _encoding;
         public Encoding Encoding
         {
             get { return _encoding ?? (_encoding = _defaultEncoding); }
-            set { _encoding = value; }
+        }
+
+        public HttpBodyContent(dynamic body, string contentType, Encoding encoding)
+        {
+            if (body == null)
+            {
+                throw new ArgumentException("body cannot be null");
+            }
+
+            _contentType = contentType;
+            _encoding = encoding;
+
+            Body = body;
+            Content = ContentType.Equals("application/json")
+                ? JsonConvert.SerializeObject(body, JsonConfig.ApiSerializerSettings)
+                : body.ToString();
+        }
+
+        public HttpBodyContent(string content, string contentType, Encoding encoding)
+        {
+            if (content == null)
+            {
+                throw new ArgumentException("content cannot be null");
+            }
+
+            _contentType = contentType;
+            _encoding = encoding;
+
+            Content = content;
+            Body = ContentType.Equals("application/json")
+                ? JsonConvert.DeserializeObject<ExpandoObject>(content)
+                : content as dynamic;
         }
     }
 }

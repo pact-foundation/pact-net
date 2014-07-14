@@ -6,5 +6,6 @@ namespace PactNet.Mocks.MockHttpService.Mappers
     public interface IHttpBodyContentMapper
     {
         HttpBodyContent Convert(dynamic body, IDictionary<string, string> headers);
+        HttpBodyContent Convert(string content, IDictionary<string, string> headers);
     }
 }

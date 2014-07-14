@@ -67,7 +67,9 @@
     <Compile Include="Mocks\MockHttpService\Mappers\HttpContentMapperTests.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\HttpMethodMapperTests.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\HttpRequestMessageMapperTests.cs" />
+    <Compile Include="Mocks\MockHttpService\Mappers\HttpVerbMapperTests.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\NancyResponseMapperTests.cs" />
+    <Compile Include="Mocks\MockHttpService\Mappers\PactProviderServiceRequestMapperTests.cs" />
     <Compile Include="Mocks\MockHttpService\MockProviderNancyRequestDispatcherTests.cs" />
     <Compile Include="Mocks\MockHttpService\MockProviderServiceTests.cs" />
     <Compile Include="Mocks\MockHttpService\Models\PactProviderServiceRequestTests.cs" />
