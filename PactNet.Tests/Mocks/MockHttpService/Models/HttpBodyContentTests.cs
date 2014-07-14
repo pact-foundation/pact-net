@@ -3,7 +3,7 @@ using System.Text;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
 
-namespace PactNet.Tests.Models
+namespace PactNet.Tests.Mocks.MockHttpService.Models
 {
     public class HttpBodyContentTests
     {

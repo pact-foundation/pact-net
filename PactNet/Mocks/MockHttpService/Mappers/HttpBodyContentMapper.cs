@@ -37,12 +37,12 @@ namespace PactNet.Mocks.MockHttpService.Mappers
                     if (header.Key.Equals("Content-Type", StringComparison.InvariantCultureIgnoreCase))
                     {
                         var contentTypeHeaderSplit = header.Value.Split(';');
-                        content.ContentType = contentTypeHeaderSplit.First().Trim();
+                        content.ContentType = contentTypeHeaderSplit.First().Trim().ToLower();
 
                         var encodingString = contentTypeHeaderSplit.FirstOrDefault(x => x.Contains("charset="));
                         if (!String.IsNullOrEmpty(encodingString))
                         {
-                            encodingString = encodingString.Trim().Replace("charset=", "");
+                            encodingString = encodingString.Trim().Replace("charset=", "").ToLower();
                             content.Encoding = _encodingMapper.Convert(encodingString);
                         }
                         break;
@@ -50,8 +50,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
                 }
             }
 
-            content.Content = !String.IsNullOrEmpty(content.ContentType) &&
-                              content.ContentType.Equals("application/json", StringComparison.InvariantCultureIgnoreCase)
+            content.Content = content.ContentType.Equals("application/json")
                                   ? JsonConvert.SerializeObject(body, JsonConfig.ApiSerializerSettings)
                                   : body.ToString();
 

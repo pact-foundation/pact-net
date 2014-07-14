@@ -61,6 +61,16 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         }
 
         [Fact]
+        public void Convert_WithBigEndianUnicodeLowercaseString_ReturnBigEndianUnicodeEncoding()
+        {
+            var mapper = GetSubject();
+
+            var result = mapper.Convert("utf-16be");
+
+            Assert.Equal(Encoding.BigEndianUnicode, result);
+        }
+
+        [Fact]
         public void Convert_WithAsciiString_ReturnAsciiEncoding()
         {
             var mapper = GetSubject();

@@ -13,6 +13,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
             { "utf-16", Encoding.Unicode },
             { "utf-32", Encoding.UTF32 },
             { "utf-16BE", Encoding.BigEndianUnicode },
+            { "utf-16be", Encoding.BigEndianUnicode },
             { "us-ascii", Encoding.ASCII }
         }; 
 
