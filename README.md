@@ -1,7 +1,12 @@
 # PactNet
 A .NET implementation of the Ruby consumer driven contract library, [Pact](https://github.com/realestate-com-au/pact).  
 Pact is based off the specification found at https://github.com/bethesque/pact_specification.  
-PactNet is aiming to be Version 1 compliant (Version 2 is a WIP).
+
+PactNet primarily provides a fluent .NET DSL for describing HTTP requests that will be made to a service provider and the HTTP responses the consumer expects back to function correctly.  
+In documenting the consumer interactions, we can replay them on the provider and ensure the provider responds as expected. This basically gives us complete test symmetry and removes the basic need for integrated tests.  
+PactNet also has the ability to support other mock providers should we see fit.
+
+PactNet is aiming to be Pact Specification Version 1 compliant (Version 2 is a WIP).  
 
 From the [Pact Specification repo] (https://github.com/bethesque/pact_specification)
 
@@ -54,8 +59,8 @@ public class SomethingApiClient
 ```
 
 #### 2. Describe and configure the pact as a service consumer with a mock service
-Create a new test case within your service consumer test project, using whatever unit test framework you like (in this case we used xUnit).  
-This only should be instantiated once for all the current consumer tests.
+Create a new test case within your service consumer test project, using whatever test framework you like (in this case we used xUnit).  
+This should only be instantiated once for the consumer you are testing.
 
 ```c#
 public class ConsumerMyApiPact : IDisposable
@@ -92,6 +97,8 @@ public class SomethingApiConsumerTests : IUseFixture<ConsumerMyApiPact>
 ```
 
 #### 3. Write your test
+Create a new test case and implement it.
+
 
 ```c#
 public class SomethingApiConsumerTests : IUseFixture<ConsumerMyApiPact>
@@ -150,11 +157,11 @@ Likely you will be creating a skeleton client, describing the pact, write the fa
 ### Service Provider
 
 #### 1. Create the API
-You can create the API using whatever framework you like, however we recommend using ASP.NET Web API 2 using Owin as it allows you to use the Microsoft.Owin.Testing Nuget package.  
+You can create the API using whatever framework you like, however we recommend using ASP.NET Web API 2 with Owin as it allows you to use the Microsoft.Owin.Testing Nuget package.  
 Using the Microsoft.Owin.Testing package allows you to create an in memory version of your API to test against, which removes the pain of deployment and configuration when running the tests.
 
 #### 2. Tell the provider it needs to honour the pact
-Create a new test case within your service provider test project, using whatever unit test framework you like (in this case we used xUnit).
+Create a new test case within your service provider test project, using whatever test framework you like (in this case we used xUnit).
 
 **a)** If using an Owin compatible API, like ASP.NET Web API 2 and using the Microsoft.Owin.Testing Nuget package **(preferred)**
 ```c#
@@ -192,7 +199,7 @@ public class SomethingApiTests
 or
 
 
-**b)** If using a non Owin compatible API, you can provide your own HttpClient and points to the deployed API.
+**b)** If using a non Owin compatible API, you can provide your own HttpClient and point to the deployed API.
 ```c#
 public class SomethingApiTests
 {
