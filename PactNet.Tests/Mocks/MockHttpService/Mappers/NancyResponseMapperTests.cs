@@ -106,7 +106,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
 
-            mockHttpBodyContentMapper.Convert(Arg.Any<object>(), response.Headers)
+            mockHttpBodyContentMapper.Convert(body: Arg.Any<object>(), headers: response.Headers)
                 .Returns(httpBodyContent);
 
             var mapper = new NancyResponseMapper(mockHttpBodyContentMapper);
@@ -125,7 +125,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             }
 
             Assert.Equal(response.Body, content);
-            mockHttpBodyContentMapper.Received(1).Convert(Arg.Any<object>(), response.Headers);
+            mockHttpBodyContentMapper.Received(1).Convert(body: Arg.Any<object>(), headers: response.Headers);
         }
 
         [Fact]
@@ -150,7 +150,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
 
-            mockHttpBodyContentMapper.Convert(Arg.Any<object>(), response.Headers)
+            mockHttpBodyContentMapper.Convert(body: Arg.Any<object>(), headers: response.Headers)
                 .Returns(httpBodyContent);
 
             var mapper = new NancyResponseMapper(mockHttpBodyContentMapper);
@@ -169,7 +169,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             }
 
             Assert.Equal(jsonBody, content);
-            mockHttpBodyContentMapper.Received(1).Convert(Arg.Any<object>(), response.Headers);
+            mockHttpBodyContentMapper.Received(1).Convert(body: Arg.Any<object>(), headers: response.Headers);
         }
     }
 }

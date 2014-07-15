@@ -82,8 +82,8 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
             var httpBodyContent = new HttpBodyContent(content: content, contentType: "application/json", encoding: null);
 
             Assert.Equal(content, httpBodyContent.Content);
-            Assert.Equal(body.Test, httpBodyContent.Body.Test);
-            Assert.Equal(body.tesTer, httpBodyContent.Body.tesTer);
+            Assert.Equal(body.Test, (string)httpBodyContent.Body.Test);
+            Assert.Equal(body.tesTer, (int)httpBodyContent.Body.tesTer);
         }
 
         [Fact]

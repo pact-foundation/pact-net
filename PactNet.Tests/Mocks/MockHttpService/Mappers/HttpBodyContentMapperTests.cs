@@ -146,8 +146,8 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
             var result = mapper.Convert(content: content, headers: headers);
 
-            Assert.Equal(body.Test, result.Body.Test);
-            Assert.Equal(body.tesT2, result.Body.tesT2);
+            Assert.Equal(body.Test, (string)result.Body.Test);
+            Assert.Equal(body.tesT2, (int)result.Body.tesT2);
             Assert.Equal(Encoding.UTF8, result.Encoding);
             Assert.Equal("application/json", result.ContentType);
         }
