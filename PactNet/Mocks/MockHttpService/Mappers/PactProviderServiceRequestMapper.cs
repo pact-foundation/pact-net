@@ -45,7 +45,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
 
             if (from.Headers != null && from.Headers.Any())
             {
-                var fromHeaders = from.Headers.ToDictionary(x => x.Key, x => String.Join("; ", x.Value));
+                var fromHeaders = from.Headers.ToDictionary(x => x.Key, x => String.Join(", ", x.Value));
                 to.Headers = fromHeaders;
             }
 

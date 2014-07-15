@@ -109,7 +109,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
             var result = mapper.Convert(request);
 
-            Assert.Equal(contentType + "; " + contentEncoding, result.Headers["Content-Type"]);
+            Assert.Equal(contentType + ", " + contentEncoding, result.Headers["Content-Type"]);
             Assert.Equal(customHeaderValue, result.Headers["X-Custom"]);
         }
 
@@ -158,8 +158,8 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
             var result = mapper.Convert(request);
 
-            Assert.Equal(body.Test, result.Body.Test);
-            Assert.Equal(body.test2, result.Body.test2);
+            Assert.Equal(body.Test, (string)result.Body.Test);
+            Assert.Equal(body.test2, (int)result.Body.test2);
             mockHttpBodyContentMapper.Received(1).Convert(content: content, headers: Arg.Any<IDictionary<string, string>>());
         }
 

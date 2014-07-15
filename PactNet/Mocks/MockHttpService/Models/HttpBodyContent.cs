@@ -69,8 +69,8 @@ namespace PactNet.Mocks.MockHttpService.Models
 
             Content = content;
             Body = ContentType.Equals("application/json")
-                ? JsonConvert.DeserializeObject<ExpandoObject>(content)
-                : content as dynamic;
+                ? JsonConvert.DeserializeObject<dynamic>(content)
+                : content;
         }
     }
 }

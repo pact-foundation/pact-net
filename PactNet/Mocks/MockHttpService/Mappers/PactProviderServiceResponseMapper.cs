@@ -10,6 +10,20 @@ namespace PactNet.Mocks.MockHttpService.Mappers
 {
     public class PactProviderServiceResponseMapper : IPactProviderServiceResponseMapper
     {
+        private readonly IHttpBodyContentMapper _httpBodyContentMapper;
+
+        [Obsolete("For testing only.")]
+        public PactProviderServiceResponseMapper(IHttpBodyContentMapper httpBodyContentMapper)
+        {
+            _httpBodyContentMapper = httpBodyContentMapper;
+        }
+
+        public PactProviderServiceResponseMapper() : this(
+            new HttpBodyContentMapper())
+        {
+            
+        }
+
         public PactProviderServiceResponse Convert(HttpResponseMessage from)
         {
             if (from == null)
@@ -20,23 +34,27 @@ namespace PactNet.Mocks.MockHttpService.Mappers
             var to = new PactProviderServiceResponse
             {
                 Status = (int) from.StatusCode,
-                Headers = ConvertHeaders(from.Headers, from.Content.Headers)
+                Headers = ConvertHeaders(from.Headers, from.Content)
             };
 
-            var responseContent = from.Content.ReadAsStringAsync().Result;
-            if (!String.IsNullOrEmpty(responseContent))
+            if(from.Content != null)
             {
-                to.Body = JsonConvert.DeserializeObject<dynamic>(responseContent);
+                var responseContent = from.Content.ReadAsStringAsync().Result;
+                if (responseContent != null)
+                {
+                    var httpBodyContent = _httpBodyContentMapper.Convert(responseContent, to.Headers);
+
+                    to.Body = httpBodyContent.Body;
+                }
             }
 
             return to;
         }
 
-        //TODO: This can be split out into a seperate mapper
-        private Dictionary<string, string> ConvertHeaders(HttpResponseHeaders responseHeaders, HttpContentHeaders contentHeaders)
+        private Dictionary<string, string> ConvertHeaders(HttpResponseHeaders responseHeaders, HttpContent httpContent)
         {
             if ((responseHeaders == null || !responseHeaders.Any()) &&
-                (contentHeaders == null || !contentHeaders.Any()))
+                (httpContent == null || (httpContent.Headers == null || !httpContent.Headers.Any())))
             {
                 return null;
             }
@@ -47,15 +65,15 @@ namespace PactNet.Mocks.MockHttpService.Mappers
             {
                 foreach (var responseHeader in responseHeaders)
                 {
-                    headers.Add(responseHeader.Key, responseHeader.Value.First());
+                    headers.Add(responseHeader.Key, String.Join(", ", responseHeader.Value.Select(x => x)));
                 }
             }
 
-            if (contentHeaders != null && contentHeaders.Any())
+            if (httpContent != null && httpContent.Headers != null && httpContent.Headers.Any())
             {
-                foreach (var contentHeader in contentHeaders)
+                foreach (var contentHeader in httpContent.Headers)
                 {
-                    headers.Add(contentHeader.Key, contentHeader.Value.First());
+                    headers.Add(contentHeader.Key, String.Join(", ", contentHeader.Value.Select(x => x)));
                 }
             }
 
