@@ -144,13 +144,14 @@ public class SomethingApiConsumerTests : IUseFixture<ConsumerMyApiPact>
 #### 4. Run the test
 Everything should be green
 
-Note: we advise using a TDD approach when using this library, however we will leave it up to you.
+Note: we advise using a TDD approach when using this library, however we will leave it up to you.  
 Likely you will be creating a skeleton client, describing the pact, write the failing test, implement the skeleton client, run the test to make sure it passes, then rinse and repeat.
 
 ### Service Provider
 
 #### 1. Create the API
-...
+You can create the API using whatever framework you like, however we recommend using ASP.NET Web API 2 using Owin as it allows you to use the Microsoft.Owin.Testing Nuget package.  
+Using the Microsoft.Owin.Testing package allows you to create an in memory version of your API to test against, which removes the pain of deployment and configuration when running the tests.
 
 #### 2. Tell the provider it needs to honour the pact
 Create a new test case within your service provider test project, using whatever unit test framework you like (in this case we used xUnit).
@@ -191,7 +192,7 @@ public class SomethingApiTests
 or
 
 
-**b)** If using a non Owin compatible API, you can provide your own HttpClient and point to the deployed API.
+**b)** If using a non Owin compatible API, you can provide your own HttpClient and points to the deployed API.
 ```c#
 public class SomethingApiTests
 {
