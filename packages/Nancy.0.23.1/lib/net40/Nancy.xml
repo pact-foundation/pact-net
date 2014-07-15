@@ -734,7 +734,7 @@
             <summary>
             Configuration class for Nancy's internals.
             Contains implementation types/configuration for Nancy that usually
-            remain do not require overriding in "general use".
+            do not require overriding in "general use".
             </summary>
         </member>
         <member name="M:Nancy.Bootstrapper.NancyInternalConfiguration.WithOverrides(System.Action{Nancy.Bootstrapper.NancyInternalConfiguration})">
@@ -2246,7 +2246,7 @@
             Wires up the diagnostics support at application startup.
             </summary>
         </member>
-        <member name="M:Nancy.Diagnostics.DefaultDiagnostics.#ctor(Nancy.Diagnostics.DiagnosticsConfiguration,System.Collections.Generic.IEnumerable{Nancy.Diagnostics.IDiagnosticsProvider},Nancy.IRootPathProvider,Nancy.Diagnostics.IRequestTracing,Nancy.Bootstrapper.NancyInternalConfiguration,Nancy.ModelBinding.IModelBinderLocator,System.Collections.Generic.IEnumerable{Nancy.Responses.Negotiation.IResponseProcessor},System.Collections.Generic.IEnumerable{Nancy.Routing.Constraints.IRouteSegmentConstraint},Nancy.Culture.ICultureService,Nancy.Diagnostics.IRequestTraceFactory,System.Collections.Generic.IEnumerable{Nancy.Routing.IRouteMetadataProvider})">
+        <member name="M:Nancy.Diagnostics.DefaultDiagnostics.#ctor(Nancy.Diagnostics.DiagnosticsConfiguration,System.Collections.Generic.IEnumerable{Nancy.Diagnostics.IDiagnosticsProvider},Nancy.IRootPathProvider,Nancy.Diagnostics.IRequestTracing,Nancy.Bootstrapper.NancyInternalConfiguration,Nancy.ModelBinding.IModelBinderLocator,System.Collections.Generic.IEnumerable{Nancy.Responses.Negotiation.IResponseProcessor},System.Collections.Generic.IEnumerable{Nancy.Routing.Constraints.IRouteSegmentConstraint},Nancy.Culture.ICultureService,Nancy.Diagnostics.IRequestTraceFactory,System.Collections.Generic.IEnumerable{Nancy.Routing.IRouteMetadataProvider},Nancy.Localization.ITextResource)">
             <summary>
             Creates a new instance of the <see cref="T:Nancy.Diagnostics.DefaultDiagnostics"/> class.
             </summary>
@@ -2260,6 +2260,8 @@
             <param name="routeSegmentConstraints"></param>
             <param name="cultureService"></param>
             <param name="requestTraceFactory"></param>
+            <param name="routeMetadataProviders"></param>
+            <param name="textResource"></param>
         </member>
         <member name="M:Nancy.Diagnostics.DefaultDiagnostics.Initialize(Nancy.Bootstrapper.IPipelines)">
             <summary>
@@ -2321,6 +2323,13 @@
             Used to return string values
             </summary>
         </member>
+        <member name="P:Nancy.Localization.ITextResource.Item(System.String,Nancy.NancyContext)">
+            <summary>
+            Gets a translation based on the provided key.
+            </summary>
+            <param name="key">The key to look up the translation for.</param>
+            <param name="context">The current <see cref="T:Nancy.NancyContext"/> instance.</param>
+        </member>
         <member name="T:Nancy.Helpers.CacheHelpers">
             <summary>
             Helper class for caching related functions
@@ -2361,6 +2370,12 @@
             Gets the <see cref="T:Nancy.Localization.ITextResource"/> that is being used to locate texts.
             </summary>
             <value>An <see cref="T:Nancy.Localization.ITextResource"/> instance.</value>
+        </member>
+        <member name="P:Nancy.Localization.TextResourceFinder.Item(System.String)">
+            <summary>
+            Gets a translation based on the provided key.
+            </summary>
+            <param name="key">The key to look up the translation for.</param>
         </member>
         <member name="T:Nancy.ModelBinding.BindingConfig">
             <summary>
@@ -2688,6 +2703,135 @@
             <param name="statusCode">The status code that should be used.</param>
             <returns>Updated negotiator object</returns>
         </member>
+        <member name="T:Nancy.Owin.DelegateExtensions">
+            <summary>
+            OWIN extensions for the delegate-based approach.
+            </summary>
+        </member>
+        <member name="M:Nancy.Owin.DelegateExtensions.UseNancy(System.Action{System.Func{System.Func{System.Collections.Generic.IDictionary{System.String,System.Object},System.Threading.Tasks.Task},System.Func{System.Collections.Generic.IDictionary{System.String,System.Object},System.Threading.Tasks.Task}}},System.Action{Nancy.Owin.NancyOptions})">
+            <summary>
+            Adds Nancy to the OWIN pipeline.
+            </summary>
+            <param name="builder">The application builder delegate.</param>
+            <param name="action">A configuration builder action.</param>
+            <returns>The application builder delegate.</returns>
+        </member>
+        <member name="M:Nancy.Owin.DelegateExtensions.UseNancy(System.Action{System.Func{System.Func{System.Collections.Generic.IDictionary{System.String,System.Object},System.Threading.Tasks.Task},System.Func{System.Collections.Generic.IDictionary{System.String,System.Object},System.Threading.Tasks.Task}}},Nancy.Owin.NancyOptions)">
+            <summary>
+            Adds Nancy to the OWIN pipeline.
+            </summary>
+            <param name="builder">The application builder delegate.</param>
+            <param name="options">The Nancy options.</param>
+            <returns>The application builder delegate.</returns>
+        </member>
+        <member name="T:Nancy.Owin.NancyContextExtensions">
+            <summary>
+            OWIN extensions for the NancyContext.
+            </summary>
+        </member>
+        <member name="M:Nancy.Owin.NancyContextExtensions.GetOwinEnvironment(Nancy.NancyContext)">
+            <summary>
+            Gets the OWIN environment dictionary.
+            </summary>
+            <param name="context">The Nancy context.</param>
+            <returns>The OWIN environment dictionary.</returns>
+        </member>
+        <member name="T:Nancy.Owin.NancyOptions">
+            <summary>
+            Options for hosting Nancy with OWIN.
+            </summary>
+        </member>
+        <member name="P:Nancy.Owin.NancyOptions.Bootstrapper">
+            <summary>
+            Gets or sets the bootstrapper. If none is set, NancyBootstrapperLocator.Bootstrapper is used.
+            </summary>
+        </member>
+        <member name="P:Nancy.Owin.NancyOptions.PerformPassThrough">
+            <summary>
+            Gets or sets the delegate that determines if NancyMiddleware performs pass through.
+            </summary>
+        </member>
+        <member name="P:Nancy.Owin.NancyOptions.EnableClientCertificates">
+            <summary>
+            Gets or sets a value indicating whether to request a client certificate or not.
+            Defaults to false.
+            </summary>
+        </member>
+        <member name="T:Nancy.Owin.NancyOptionsExtensions">
+            <summary>
+            Extensions for the NancyOptions class.
+            </summary>
+        </member>
+        <member name="M:Nancy.Owin.NancyOptionsExtensions.PassThroughWhenStatusCodesAre(Nancy.Owin.NancyOptions,Nancy.HttpStatusCode[])">
+            <summary>
+            Tells the NancyMiddleware to pass through when 
+            response has one of the given status codes.
+            </summary>
+            <param name="nancyOptions">The Nancy options.</param>
+            <param name="httpStatusCode">The HTTP status code.</param>
+        </member>
+        <member name="T:Nancy.Owin.NancyMiddleware">
+            <summary>
+            Nancy middleware for OWIN.
+            </summary>
+        </member>
+        <member name="F:Nancy.Owin.NancyMiddleware.RequestEnvironmentKey">
+            <summary>
+            The request environment key
+            </summary>
+        </member>
+        <member name="M:Nancy.Owin.NancyMiddleware.UseNancy(System.Action{Nancy.Owin.NancyOptions})">
+            <summary>
+            Use Nancy in an OWIN pipeline
+            </summary>
+            <param name="configuration">A delegate to configure the <see cref="T:Nancy.Owin.NancyOptions"/>.</param>
+            <returns>An OWIN middleware delegate.</returns>
+        </member>
+        <member name="M:Nancy.Owin.NancyMiddleware.UseNancy(Nancy.Owin.NancyOptions)">
+            <summary>
+            Use Nancy in an OWIN pipeline
+            </summary>
+            <param name="options">An <see cref="T:Nancy.Owin.NancyOptions"/> to configure the Nancy middleware</param>
+            <returns>An OWIN middleware delegate.</returns>
+        </member>
+        <member name="M:Nancy.Owin.NancyMiddleware.RequestComplete(System.Collections.Generic.IDictionary{System.String,System.Object},System.Func{Nancy.NancyContext,System.Boolean},System.Func{System.Collections.Generic.IDictionary{System.String,System.Object},System.Threading.Tasks.Task},System.Threading.Tasks.TaskCompletionSource{System.Int32})">
+            <summary>
+            Gets a delegate to handle converting a nancy response
+            to the format required by OWIN and signals that the we are
+            now complete.
+            </summary>
+            <param name="environment">OWIN environment.</param>
+            <param name="next">The next stage in the OWIN pipeline.</param>
+            <param name="tcs">The task completion source to signal.</param>
+            <param name="performPassThrough">A predicate that will allow the caller to determine if the request passes through to the 
+            next stage in the owin pipeline.</param>
+            <returns>Delegate</returns>
+        </member>
+        <member name="M:Nancy.Owin.NancyMiddleware.RequestErrored(System.Threading.Tasks.TaskCompletionSource{System.Int32})">
+            <summary>
+            Gets a delegate to handle request errors
+            </summary>
+            <param name="tcs">Completion source to signal</param>
+            <returns>Delegate</returns>
+        </member>
+        <member name="M:Nancy.Owin.NancyMiddleware.CreateUrl(System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            Creates the Nancy URL
+            </summary>
+            <param name="owinRequestHost">OWIN Hostname</param>
+            <param name="owinRequestScheme">OWIN Scheme</param>
+            <param name="owinRequestPathBase">OWIN Base path</param>
+            <param name="owinRequestPath">OWIN Path</param>
+            <param name="owinRequestQueryString">OWIN Querystring</param>
+            <returns></returns>
+        </member>
+        <member name="M:Nancy.Owin.NancyMiddleware.StoreEnvironment(System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            Gets a delegate to store the OWIN environment into the NancyContext
+            </summary>
+            <param name="environment">OWIN Environment</param>
+            <returns>Delegate</returns>
+        </member>
         <member name="T:Nancy.Response">
             <summary>
             Encapsulates HTTP-response information from an Nancy operation.
@@ -2702,6 +2846,14 @@
             <summary>
             Initializes a new instance of the <see cref="T:Nancy.Response"/> class.
             </summary>
+        </member>
+        <member name="M:Nancy.Response.PreExecute(Nancy.NancyContext)">
+            <summary>
+            Executes at the end of the nancy execution pipeline and before control is passed back to the hosting.
+            Can be used to pre-render/validate views while still inside the main pipeline/error handling.
+            </summary>
+            <param name="context">Nancy context</param>
+            <returns>Task for completion/erroring</returns>
         </member>
         <member name="M:Nancy.Response.AddCookie(System.String,System.String)">
             <summary>
@@ -3174,6 +3326,12 @@
             <summary>
             Represents a media range from an accept header
             </summary>
+        </member>
+        <member name="M:Nancy.Responses.Negotiation.MediaRange.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nancy.Responses.Negotiation.MediaRange"/> class from a string representation of a media range
+            </summary>
+            <param name="contentType">the content type</param>
         </member>
         <member name="M:Nancy.Responses.Negotiation.MediaRange.#ctor">
             <summary>
@@ -5269,12 +5427,13 @@
             </summary>
             <returns>NancyContext instance</returns>
         </member>
-        <member name="M:Nancy.DefaultNancyContextFactory.#ctor(Nancy.Culture.ICultureService,Nancy.Diagnostics.IRequestTraceFactory)">
+        <member name="M:Nancy.DefaultNancyContextFactory.#ctor(Nancy.Culture.ICultureService,Nancy.Diagnostics.IRequestTraceFactory,Nancy.Localization.ITextResource)">
             <summary>
             Creates a new instance of the <see cref="T:Nancy.DefaultNancyContextFactory"/> class.
             </summary>
             <param name="cultureService">An <see cref="T:Nancy.Culture.ICultureService"/> instance.</param>
             <param name="requestTraceFactory">An <see cref="T:Nancy.Diagnostics.IRequestTraceFactory"/> instance.</param>
+            <param name="textResource">An <see cref="T:Nancy.Localization.ITextResource"/> instance.</param>
         </member>
         <member name="M:Nancy.DefaultNancyContextFactory.Create(Nancy.Request)">
             <summary>
@@ -9460,6 +9619,11 @@
             Context of content negotiation (if relevent)
             </summary>
         </member>
+        <member name="P:Nancy.NancyContext.Text">
+            <summary>
+            Gets or sets the dynamic object used to locate text resources.
+            </summary>
+        </member>
         <member name="M:Nancy.AfterPipeline.Wrap(Nancy.PipelineItem{System.Action{Nancy.NancyContext}})">
             <summary>
             Wraps a sync delegate into it's async form
@@ -9754,7 +9918,7 @@
             Default implementation for building a full configured <see cref="T:Nancy.INancyModule"/> instance.
             </summary>
         </member>
-        <member name="M:Nancy.Routing.DefaultNancyModuleBuilder.#ctor(Nancy.ViewEngines.IViewFactory,Nancy.IResponseFormatterFactory,Nancy.ModelBinding.IModelBinderLocator,Nancy.Validation.IModelValidatorLocator,Nancy.Localization.ITextResource)">
+        <member name="M:Nancy.Routing.DefaultNancyModuleBuilder.#ctor(Nancy.ViewEngines.IViewFactory,Nancy.IResponseFormatterFactory,Nancy.ModelBinding.IModelBinderLocator,Nancy.Validation.IModelValidatorLocator)">
             <summary>
             Initializes a new instance of the <see cref="T:Nancy.Routing.DefaultNancyModuleBuilder"/> class.
             </summary>
