@@ -106,5 +106,31 @@ namespace Consumer.Tests
             //Act / Assert
             consumer.CreateEvent(eventId);
         }
+
+        [Fact]
+        public void IsAlive_WhenApiIsAlive_Suceeds()
+        {
+            //Arrange
+            _data.MockProviderService.UponReceiving("A GET request to check the api status")
+                .With(new PactProviderServiceRequest
+                {
+                    Method = HttpVerb.Get,
+                    Path = "/stats/status"
+                })
+                .WillRespondWith(new PactProviderServiceResponse
+                {
+                    Status = 200,
+                    Body = "alive"
+                })
+                .RegisterInteraction();
+
+            var consumer = new EventsApiClient(_data.MockServerBaseUri);
+
+            //Act
+            var result = consumer.IsAlive();
+
+            //Assert
+            Assert.Equal(true, result);
+        }
     }
 }

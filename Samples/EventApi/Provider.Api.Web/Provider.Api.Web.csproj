@@ -103,9 +103,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\EventsController.cs" />
-    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Controllers\StatsController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

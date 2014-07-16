@@ -29,12 +29,13 @@ namespace PactNet.Mocks.MockHttpService.Mappers
             var to = new Response
             {
                 StatusCode = (HttpStatusCode) from.Status,
-                Headers = from.Headers
+                Headers = from.Headers ?? new Dictionary<string, string>()
             };
 
             if (from.Body != null)
             {
                 HttpBodyContent bodyContent = _httpBodyContentMapper.Convert(body: from.Body, headers: from.Headers);
+                to.ContentType = bodyContent.ContentType;
 
                 to.Contents = s =>
                 {
@@ -45,8 +46,6 @@ namespace PactNet.Mocks.MockHttpService.Mappers
             }
             else
             {
-                to.Headers = to.Headers ?? new Dictionary<string, string>();
-
                 if (!to.Headers.ContainsKey("Content-Length"))
                 {
                     to.Headers.Add("Content-Length", "0");

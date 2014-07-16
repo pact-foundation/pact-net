@@ -14,7 +14,7 @@ namespace Consumer
 
         public EventsApiClient(string baseUri = null)
         {
-            BaseUri = baseUri ?? "http://infra.api/v2/capture";
+            BaseUri = baseUri ?? "http://my.api/v2/capture";
         }
 
         private readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
@@ -22,6 +22,26 @@ namespace Consumer
             ContractResolver = new CamelCasePropertyNamesContractResolver(),
             NullValueHandling = NullValueHandling.Ignore
         };
+
+        public bool IsAlive()
+        {
+            var client = new HttpClient();
+            client.BaseAddress = new Uri(BaseUri);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, "/stats/status");
+
+            var response = client.SendAsync(request);
+
+            var content = response.Result.Content.ReadAsStringAsync().Result;
+            var status = response.Result.StatusCode;
+
+            if (status == HttpStatusCode.OK && content.Equals("alive"))
+            {
+                return true;
+            }
+
+            return false;
+        }
 
         public IEnumerable<dynamic> GetAllEvents()
         {

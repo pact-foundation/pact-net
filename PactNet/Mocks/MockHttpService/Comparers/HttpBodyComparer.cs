@@ -36,9 +36,9 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                 return;
             }
 
-            if (httpBody1 != null && (httpBody2 == null || !httpBody2.Any()))
+            if (httpBody1 != null && httpBody2 == null)
             {
-                throw new CompareFailedException("Body is null or empty");
+                throw new CompareFailedException("Body is null");
             }
 
             if (httpBody1.Type == JTokenType.Array)

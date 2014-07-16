@@ -29,7 +29,7 @@ namespace Provider.Api.Web
 
             var builder = new ContainerBuilder();
             
-            builder.RegisterApiControllers(typeof(TestController).Assembly);
+            builder.RegisterApiControllers(typeof(EventsController).Assembly);
             var container = builder.Build();
 
             app.UseAutofacMiddleware(container);
