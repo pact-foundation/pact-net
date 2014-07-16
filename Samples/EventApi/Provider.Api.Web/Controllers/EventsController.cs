@@ -19,7 +19,13 @@ namespace Provider.Api.Web.Controllers
         [Route("events/{id}")]
         public Event GetById(Guid id)
         {
-            return GetEventFromRepoById(id);
+            return GetAllEventsFromRepo().First(x => x.EventId == id);
+        }
+
+        [Route("events")]
+        public IEnumerable<Event> GetByType(string type)
+        {
+            return GetAllEventsFromRepo().Where(x => x.EventType.Equals(type, StringComparison.InvariantCultureIgnoreCase));
         }
 
         [Route("events")]
@@ -31,11 +37,6 @@ namespace Provider.Api.Web.Controllers
             }
 
             return new HttpResponseMessage(HttpStatusCode.Created);
-        }
-
-        private dynamic GetEventFromRepoById(Guid id)
-        {
-            return GetAllEventsFromRepo().First(x => x.EventId == id);
         }
 
         private IEnumerable<Event> GetAllEventsFromRepo()

@@ -7,8 +7,19 @@
   },
   "interactions": [
     {
-      "description": "A GET request to retrieve event with id '83F9262F-28F1-4703-AB1A-8CFD9E8249C9'",
-      "providerState": "There is an event with id '83F9262F-28F1-4703-AB1A-8CFD9E8249C9'",
+      "description": "A GET request to check the api status",
+      "request": {
+        "method": "get",
+        "path": "/stats/status"
+      },
+      "response": {
+        "status": 200,
+        "body": "alive"
+      }
+    },
+    {
+      "description": "A GET request to retrieve event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
+      "providerState": "There is an event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
       "request": {
         "method": "get",
         "path": "/events/83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
@@ -27,21 +38,26 @@
       }
     },
     {
-      "description": "A POST request to create a new event",
+      "description": "A GET request to retrieve events with type 'SearchView'",
+      "providerState": "There is at least one even with type 'SearchView'",
       "request": {
-        "method": "post",
+        "method": "get",
         "path": "/events",
+        "query": "type=SearchView",
         "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": {
-          "eventId": "1f587704-2dcc-4313-a233-7b62b4b469db",
-          "timestamp": "2011-07-01T01:41:03.0000000",
-          "eventType": "DetailsView"
+          "Accept": "application/json"
         }
       },
       "response": {
-        "status": 201
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": [
+          {
+            "eventType": "SearchView"
+          }
+        ]
       }
     },
     {
@@ -79,14 +95,21 @@
       }
     },
     {
-      "description": "A GET request to check the api status",
+      "description": "A POST request to create a new event",
       "request": {
-        "method": "get",
-        "path": "/stats/status"
+        "method": "post",
+        "path": "/events",
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": {
+          "eventId": "1f587704-2dcc-4313-a233-7b62b4b469db",
+          "timestamp": "2011-07-01T01:41:03.0000000",
+          "eventType": "DetailsView"
+        }
       },
       "response": {
-        "status": 200,
-        "body": "alive"
+        "status": 201
       }
     }
   ],

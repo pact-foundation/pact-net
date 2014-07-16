@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Consumer.Models;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
 
@@ -134,12 +135,12 @@ namespace Consumer.Tests
         }
 
         [Fact]
-        public void GetEventById_WhenTheEventExists_ReturnsEvents()
+        public void GetEventById_WhenTheEventExists_ReturnsEvent()
         {
             //Arrange
             var eventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9");
-            _data.MockProviderService.Given("There is an event with id '83F9262F-28F1-4703-AB1A-8CFD9E8249C9'")
-                .UponReceiving("A GET request to retrieve event with id '83F9262F-28F1-4703-AB1A-8CFD9E8249C9'")
+            _data.MockProviderService.Given(String.Format("There is an event with id '{0}'", eventId))
+                .UponReceiving(String.Format("A GET request to retrieve event with id '{0}'", eventId))
                 .With(new PactProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
@@ -170,6 +171,49 @@ namespace Consumer.Tests
 
             //Assert
             Assert.Equal(eventId, result.EventId);
+        }
+
+        [Fact]
+        public void GetEventsByType_WhenEventsWithTheTypeExists_ReturnsEvents()
+        {
+            //Arrange
+            const string eventType = "SearchView";
+            _data.MockProviderService.Given(String.Format("There is at least one even with type '{0}'", eventType))
+                .UponReceiving(String.Format("A GET request to retrieve events with type '{0}'", eventType))
+                .With(new PactProviderServiceRequest
+                {
+                    Method = HttpVerb.Get,
+                    Path = "/events",
+                    Query = "type=" + eventType,
+                    Headers = new Dictionary<string, string>
+                    {
+                        { "Accept", "application/json" }
+                    }
+                })
+                .WillRespondWith(new PactProviderServiceResponse
+                {
+                    Status = 200,
+                    Headers = new Dictionary<string, string>
+                    {
+                        { "Content-Type", "application/json; charset=utf-8" }
+                    },
+                    Body = new []
+                    {
+                         new
+                         {
+                             eventType = eventType
+                         }
+                    }
+                })
+                .RegisterInteraction();
+
+            var consumer = new EventsApiClient(_data.MockServerBaseUri);
+
+            //Act
+            var result = consumer.GetEventsByType(eventType);
+
+            //Assert
+            Assert.Equal(eventType, result.First().EventType);
         }
     }
 }

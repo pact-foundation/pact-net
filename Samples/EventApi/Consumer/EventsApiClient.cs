@@ -88,7 +88,28 @@ namespace Consumer
             throw new ArgumentException(String.Format("Event with id '{0}' could not be found", id));
         }
 
-        public void CreateEvent(Guid eventId)
+        public IEnumerable<Event> GetEventsByType(string eventType)
+        {
+            var client = new HttpClient();
+            client.BaseAddress = new Uri(BaseUri);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, String.Format("/events?type={0}", eventType));
+            request.Headers.Add("Accept", "application/json");
+
+            var response = client.SendAsync(request);
+
+            var content = response.Result.Content.ReadAsStringAsync().Result;
+            var status = response.Result.StatusCode;
+
+            if (status == HttpStatusCode.OK)
+            {
+                return JsonConvert.DeserializeObject<IEnumerable<Event>>(content, _jsonSettings);
+            }
+
+            throw new ArgumentException(String.Format("Event with type '{0}' could not be found", eventType));
+        }
+
+        public void CreateEvent(Guid eventId, string eventType = "DetailsView")
         {
             var client = new HttpClient();
             client.BaseAddress = new Uri(BaseUri);
@@ -97,7 +118,7 @@ namespace Consumer
             {
                 EventId = eventId,
                 Timestamp = DateTimeFactory.Now().ToString("O"),
-                EventType = "DetailsView"
+                EventType = eventType
             };
 
             var eventJson = JsonConvert.SerializeObject(@event, _jsonSettings);
