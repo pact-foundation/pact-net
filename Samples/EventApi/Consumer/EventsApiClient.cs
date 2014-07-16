@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using Consumer.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -43,7 +44,7 @@ namespace Consumer
             return false;
         }
 
-        public IEnumerable<dynamic> GetAllEvents()
+        public IEnumerable<Event> GetAllEvents()
         {
             var client = new HttpClient();
             client.BaseAddress = new Uri(BaseUri);
@@ -58,12 +59,33 @@ namespace Consumer
 
             if (status == HttpStatusCode.OK)
             {
-                return !String.IsNullOrEmpty(content) ? 
-                    JsonConvert.DeserializeObject<IEnumerable<dynamic>>(content, _jsonSettings)
-                    : new List<dynamic>();
+                return !String.IsNullOrEmpty(content) ?
+                    JsonConvert.DeserializeObject<IEnumerable<Event>>(content, _jsonSettings)
+                    : new List<Event>();
             }
 
             throw new Exception("Server responded with a non 200 status code");
+        }
+
+        public Event GetEventById(Guid id)
+        {
+            var client = new HttpClient();
+            client.BaseAddress = new Uri(BaseUri);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, String.Format("/events/{0}", id));
+            request.Headers.Add("Accept", "application/json");
+
+            var response = client.SendAsync(request);
+
+            var content = response.Result.Content.ReadAsStringAsync().Result;
+            var status = response.Result.StatusCode;
+
+            if (status == HttpStatusCode.OK)
+            {
+                return JsonConvert.DeserializeObject<Event>(content, _jsonSettings);
+            }
+
+            throw new ArgumentException(String.Format("Event with id '{0}' could not be found", id));
         }
 
         public void CreateEvent(Guid eventId)
@@ -75,7 +97,7 @@ namespace Consumer
             {
                 EventId = eventId,
                 Timestamp = DateTimeFactory.Now().ToString("O"),
-                EventType = "JobDetailsView"
+                EventType = "DetailsView"
             };
 
             var eventJson = JsonConvert.SerializeObject(@event, _jsonSettings);

@@ -18,7 +18,8 @@ namespace Provider.Api.Web.Tests
                 .ProviderStatesFor("Consumer",
                 new Dictionary<string, Action>
                 {
-                    { "There are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'", InsertEventsIntoDatabaseIfTheyDontExist }
+                    { "There are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'", InsertEventsIntoDatabaseIfTheyDontExist },
+                    { "There is an event with id '83F9262F-28F1-4703-AB1A-8CFD9E8249C9'", InsertEventIntoDatabaseIfItDoesntExist }
                 });
 
             //Act / Assert
@@ -33,6 +34,11 @@ namespace Provider.Api.Web.Tests
         private void InsertEventsIntoDatabaseIfTheyDontExist()
         {
             //Logic to do database inserts or events api calls to create data
+        }
+
+        private void InsertEventIntoDatabaseIfItDoesntExist()
+        {
+            //Logic to do database inserts for event with id 83F9262F-28F1-4703-AB1A-8CFD9E8249C9
         }
     }
 }

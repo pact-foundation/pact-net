@@ -42,20 +42,20 @@ namespace Consumer.Tests
                         new 
                         {
                             eventId = Guid.Parse("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5"),
-                            timestamp = "2014-06-30T01:37:41.0660548Z",
-                            eventType = "JobSearchView"
+                            timestamp = "2014-06-30T01:37:41.0660548",
+                            eventType = "SearchView"
                         },
                         new
                         {
                             eventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9"),
-                            timestamp = "2014-06-30T01:37:52.2618864Z",
-                            eventType = "JobDetailsView"
+                            timestamp = "2014-06-30T01:37:52.2618864",
+                            eventType = "DetailsView"
                         },
                         new
                         {
                             eventId = Guid.Parse("3E83A96B-2A0C-49B1-9959-26DF23F83AEB"),
-                            timestamp = "2014-06-30T01:38:00.8518952Z",
-                            eventType = "JobSearchView"
+                            timestamp = "2014-06-30T01:38:00.8518952",
+                            eventType = "SearchView"
                         }
                     }
                 })
@@ -72,7 +72,7 @@ namespace Consumer.Tests
         }
 
         [Fact]
-        public void CreateEvent_WhenCalledWithEvent_Suceeds()
+        public void CreateEvent_WhenCalledWithEvent_Succeeds()
         {
             //Arrange
             var eventId = Guid.Parse("1F587704-2DCC-4313-A233-7B62B4B469DB");
@@ -92,7 +92,7 @@ namespace Consumer.Tests
                     {
                         eventId,
                         timestamp = dateTime.ToString("O"),
-                        eventType = "JobDetailsView"
+                        eventType = "DetailsView"
                     }
                 })
                 .WillRespondWith(new PactProviderServiceResponse
@@ -108,7 +108,7 @@ namespace Consumer.Tests
         }
 
         [Fact]
-        public void IsAlive_WhenApiIsAlive_Suceeds()
+        public void IsAlive_WhenApiIsAlive_ReturnsTrue()
         {
             //Arrange
             _data.MockProviderService.UponReceiving("A GET request to check the api status")
@@ -131,6 +131,45 @@ namespace Consumer.Tests
 
             //Assert
             Assert.Equal(true, result);
+        }
+
+        [Fact]
+        public void GetEventById_WhenTheEventExists_ReturnsEvents()
+        {
+            //Arrange
+            var eventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9");
+            _data.MockProviderService.Given("There is an event with id '83F9262F-28F1-4703-AB1A-8CFD9E8249C9'")
+                .UponReceiving("A GET request to retrieve event with id '83F9262F-28F1-4703-AB1A-8CFD9E8249C9'")
+                .With(new PactProviderServiceRequest
+                {
+                    Method = HttpVerb.Get,
+                    Path = "/events/" + eventId,
+                    Headers = new Dictionary<string, string>
+                    {
+                        { "Accept", "application/json" }
+                    }
+                })
+                .WillRespondWith(new PactProviderServiceResponse
+                {
+                    Status = 200,
+                    Headers = new Dictionary<string, string>
+                    {
+                        { "Content-Type", "application/json; charset=utf-8" }
+                    },
+                    Body = new
+                    {
+                        eventId = eventId
+                    }
+                })
+                .RegisterInteraction();
+
+            var consumer = new EventsApiClient(_data.MockServerBaseUri);
+
+            //Act
+            var result = consumer.GetEventById(eventId);
+
+            //Assert
+            Assert.Equal(eventId, result.EventId);
         }
     }
 }
