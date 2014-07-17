@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>PactNet</id>
+    <version>$version$</version>
+    <authors>seek.com.au</authors>
+    <owners>seek.com.au</owners>
+    <licenseUrl>https://github.com/SEEK-Jobs/pact-net/blob/master/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/SEEK-Jobs/pact-net</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A .NET version of Pact, which enables consumer driven contract testing.</description>
+  </metadata>
+</package>

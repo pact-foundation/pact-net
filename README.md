@@ -71,7 +71,7 @@ public class ConsumerMyApiPact : IDisposable
 	public int MockServerPort { get { return 1234; } }
 	public string MockServerBaseUri { get { return String.Format("http://localhost:{0}", MockServerPort); } }
 
-	public ConsumerEventApiPact()
+	public ConsumerMyApiPact()
 	{
 		Pact = new Pact().ServiceConsumer("Consumer")
 			.HasPactWith("Something API");
@@ -106,7 +106,7 @@ public class SomethingApiConsumerTests : IUseFixture<ConsumerMyApiPact>
 	//As above...
 	
 	[Fact]
-	public void GetAllEvents_WhenCalled_ReturnsAllEvents()
+	public void GetSomething_WhenTheTesterSomethingExists_ReturnsTheSomething()
 	{
 		//Arrange
 		_data.MockProviderService
@@ -128,11 +128,11 @@ public class SomethingApiConsumerTests : IUseFixture<ConsumerMyApiPact>
 				{
 					{ "Content-Type", "application/json; charset=utf-8" }
 				},
-				Body = new
+				Body = new //Note the case sensitivity here, the body will be serialised as per the casing defined
 				{
 					id = "tester",
-					FirstName = "Totally",
-					LastName = "Awesome"
+					firstName = "Totally",
+					lastName = "Awesome"
 				}
 			})
 			.RegisterInteraction();
@@ -143,7 +143,7 @@ public class SomethingApiConsumerTests : IUseFixture<ConsumerMyApiPact>
 		var result = consumer.GetSomething("tester");
 		
 		//Assert
-		Assert.Equal("tester", something.Id);
+		Assert.Equal("tester", result.id);
 	}
 }
 ```

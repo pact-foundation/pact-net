@@ -3,6 +3,7 @@ Thumbs.db
 #Ignore files build by Visual Studio
 *.obj
 *.exe
+!Build/.nuget/Nuget.exe
 *.pdb
 *.user
 *.aps
@@ -39,3 +40,4 @@ local.scalpel.environment.txt
 scalpel.log*
 TestResults/*
 _TeamCity*/
+Build/PactNet*.nupkg
