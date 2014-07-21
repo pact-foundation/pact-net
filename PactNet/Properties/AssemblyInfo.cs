@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("PactNet")]
-[assembly: AssemblyDescription(".NET version of Pact, which enables consumer driven contract testing")]
+[assembly: AssemblyDescription("A .NET version of Pact, which enables consumer driven contract testing.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("seek.com.au")]
 [assembly: AssemblyProduct("PactNet")]

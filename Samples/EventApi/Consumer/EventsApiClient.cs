@@ -98,8 +98,9 @@ namespace Consumer
 
             var response = client.SendAsync(request);
 
-            var content = response.Result.Content.ReadAsStringAsync().Result;
-            var status = response.Result.StatusCode;
+            var result = response.Result;
+            var content = result.Content.ReadAsStringAsync().Result;
+            var status = result.StatusCode;
 
             if (status == HttpStatusCode.OK)
             {
@@ -133,7 +134,7 @@ namespace Consumer
 
             if (result.StatusCode != HttpStatusCode.Created)
             {
-                throw new Exception("Server responded with a non 201 status code");
+                throw new Exception(result.ReasonPhrase);
             }
         }
     }

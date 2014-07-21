@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Diagnostics;
-using Nancy.Routing;
 using Nancy.TinyIoc;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Mappers;
@@ -43,8 +42,6 @@ namespace PactNet.Mocks.MockHttpService
             container.Register(typeof(IPactProviderServiceRequestComparer), typeof(PactProviderServiceRequestComparer));
             container.Register(typeof(IPactProviderServiceRequestMapper), typeof(PactProviderServiceRequestMapper));
             container.Register(typeof(INancyResponseMapper), typeof(NancyResponseMapper));
-
-            //Func that returns current registrations
         }
     }
 }

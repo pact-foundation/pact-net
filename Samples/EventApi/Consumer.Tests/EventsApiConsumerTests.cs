@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Consumer.Models;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
 

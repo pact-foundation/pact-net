@@ -32,28 +32,40 @@ namespace PactNet.Mocks.MockHttpService
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (_expectedRequest == null)
-            {
-                throw new InvalidOperationException("expected request has not been set, please supply using the MockProviderNancyRequestDispatcher.Set static method.");
-            }
-
-            if (_expectedResponse == null)
-            {
-                throw new InvalidOperationException("expected response has not been set, please supply using the MockProviderNancyRequestDispatcher.Set static method.");
-            }
-
             var tcs = new TaskCompletionSource<Response>();
 
             try
             {
+                if (_expectedRequest == null)
+                {
+                    throw new InvalidOperationException("Expected request has not been set. Please ensure With() has been called with your expected request and RegisterInteraction() has also called on the Pact.");
+                }
+
+                if (_expectedResponse == null)
+                {
+                    throw new InvalidOperationException("Expected response has not been set. Please ensure WillRespondWith() has been called with your expected response and RegisterInteraction() has also called on the Pact.");
+                }
+
                 var response = HandleRequest(context.Request);
                 context.Response = response;
                 tcs.SetResult(context.Response);
             }
             catch (Exception ex)
             {
-                context.Response = null;
-                tcs.SetException(ex);
+                var errorResponse = new PactProviderServiceResponse
+                {
+                    Status = 500,
+                    Body = new
+                    {
+                        ErrorMessage = ex.Message,
+                        StackTrace = ex.StackTrace
+                    }
+                };
+                var response = _responseMapper.Convert(errorResponse);
+                response.ReasonPhrase = ex.Message;
+
+                context.Response = response;
+                tcs.SetResult(context.Response);
             }
 
             return tcs.Task;
