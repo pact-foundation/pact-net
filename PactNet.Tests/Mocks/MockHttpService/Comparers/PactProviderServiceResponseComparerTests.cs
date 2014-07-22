@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
@@ -19,12 +18,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         {
             var expected = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created
+                Status = 201
             };
 
             var actual = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created
+                Status = 201
             };
 
             var pactProviderServiceResponseComparer = GetSubject();
@@ -37,12 +36,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         {
             var expected = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created
+                Status = 201
             };
 
             var actual = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.BadRequest
+                Status = 400
             };
 
             var pactProviderServiceResponseComparer = GetSubject();
@@ -55,7 +54,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         {
             var expected = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Headers = new Dictionary<string, string>
                 {
                     { "Content-Type", "application/json" }
@@ -64,7 +63,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var actual = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Headers = new Dictionary<string, string>
                 {
                     { "Content-Type", "application/json" }
@@ -81,7 +80,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         {
             var expected = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Headers = new Dictionary<string, string>
                 {
                     { "content-Type", "application/json" }
@@ -90,7 +89,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var actual = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Headers = new Dictionary<string, string>
                 {
                     { "Content-Type", "application/json" }
@@ -107,7 +106,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         {
             var expected = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Headers = new Dictionary<string, string>
                 {
                     { "Content-Type", "Application/Json" }
@@ -116,7 +115,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var actual = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Headers = new Dictionary<string, string>
                 {
                     { "Content-Type", "application/json" }
@@ -133,7 +132,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         {
             var expected = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Headers = new Dictionary<string, string>
                 {
                     { "Content-Type", "application/json" }
@@ -142,7 +141,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var actual = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Headers = new Dictionary<string, string>
                 {
                     { "X-Test", "MyCustomThing" },
@@ -161,7 +160,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         {
             var expected = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Headers = new Dictionary<string, string>
                 {
                     { "Content-Type", "application/json" }
@@ -170,7 +169,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var actual = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Headers = new Dictionary<string, string>
                 {
                     { "Content-Type", "text/plain" }
@@ -187,7 +186,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         {
             var expected = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Headers = new Dictionary<string, string>
                 {
                     {"Content-Type", "application/json"}
@@ -196,7 +195,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var actual = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Headers = new Dictionary<string, string>
                 {
                     {"X-Test", "Tester"}
@@ -213,7 +212,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         {
             var expected = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Headers = new Dictionary<string, string>
                 {
                     {"Content-Type", "application/json"}
@@ -222,7 +221,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var actual = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created
+                Status = 201
             };
 
             var pactProviderServiceResponseComparer = GetSubject();
@@ -235,7 +234,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         {
             var expected = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Body = new
                 {
                     myString = "Tester",
@@ -246,7 +245,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var actual = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Body = new
                 {
                     myString = "Tester",
@@ -265,7 +264,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         {
             var expected = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Body = new
                 {
                     myString = "Tester",
@@ -276,7 +275,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var actual = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Body = new
                 {
                     myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C"),
@@ -295,7 +294,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         {
             var expected = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Body = new
                 {
                     myString = "Tester",
@@ -306,7 +305,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var actual = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Body = new
                 {
                     myString = "Tester",
@@ -326,7 +325,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         {
             var expected = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Body = new
                 {
                     myString = "Tester",
@@ -338,7 +337,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var actual = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Body = new
                 {
                     myString = "Tester",
@@ -357,7 +356,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         {
             var expected = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Body = new
                 {
                     myString = "Tester",
@@ -368,7 +367,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var actual = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Body = new
                 {
                     myString = "Tester2",
@@ -387,7 +386,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         {
             var expected = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Body = new
                 {
                     MyString = "Tester",
@@ -398,7 +397,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var actual = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Body = new
                 {
                     myString = "Tester",
@@ -417,7 +416,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         {
             var expected = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Body = new
                 {
                     myString = "Tester",
@@ -428,7 +427,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var actual = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created
+                Status = 201
             };
 
             var pactProviderServiceResponseComparer = GetSubject();
@@ -441,7 +440,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         {
             var expected = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Body = new List<dynamic>
                 {
                     new 
@@ -455,7 +454,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var actual = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Body = new List<dynamic>
                 {
                     new 
@@ -477,7 +476,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         {
             var expected = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Body = new List<dynamic>
                 {
                     new 
@@ -491,7 +490,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var actual = new PactProviderServiceResponse
             {
-                Status = HttpStatusCode.Created,
+                Status = 201,
                 Body = new List<dynamic>
                 {
                     new 

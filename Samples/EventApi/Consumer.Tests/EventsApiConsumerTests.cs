@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
 
@@ -33,7 +32,7 @@ namespace Consumer.Tests
                 })
                 .WillRespondWith(new PactProviderServiceResponse
                 {
-                    Status = HttpStatusCode.OK,
+                    Status = 200,
                     Headers = new Dictionary<string, string>
                     {
                         { "Content-Type", "application/json; charset=utf-8" }
@@ -98,7 +97,7 @@ namespace Consumer.Tests
                 })
                 .WillRespondWith(new PactProviderServiceResponse
                 {
-                    Status = HttpStatusCode.Created
+                    Status = 201
                 })
                 .RegisterInteraction();
 
@@ -120,7 +119,7 @@ namespace Consumer.Tests
                 })
                 .WillRespondWith(new PactProviderServiceResponse
                 {
-                    Status = HttpStatusCode.OK,
+                    Status = 200,
                     Body = "alive"
                 })
                 .RegisterInteraction();
@@ -152,7 +151,7 @@ namespace Consumer.Tests
                 })
                 .WillRespondWith(new PactProviderServiceResponse
                 {
-                    Status = HttpStatusCode.OK,
+                    Status = 200,
                     Headers = new Dictionary<string, string>
                     {
                         { "Content-Type", "application/json; charset=utf-8" }
@@ -192,7 +191,7 @@ namespace Consumer.Tests
                 })
                 .WillRespondWith(new PactProviderServiceResponse
                 {
-                    Status = HttpStatusCode.OK,
+                    Status = 200,
                     Headers = new Dictionary<string, string>
                     {
                         { "Content-Type", "application/json; charset=utf-8" }

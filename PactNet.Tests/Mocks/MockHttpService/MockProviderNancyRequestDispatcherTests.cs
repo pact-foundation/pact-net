@@ -19,7 +19,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void Dispatch_WhenExpectedRequestHasNotBeenSet_ResponseMapperIsCalledAndReturnsInternalServerErrorResponse()
+        public void Dispatch_WhenExpectedRequestHasNotBeenSet_ResponseMapperIsCalledAndReturns500Response()
         {
             var nancyContext = new NancyContext
             {
@@ -39,12 +39,12 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             var result = requestDispatcher.Dispatch(nancyContext, CancellationToken.None).Result;
 
-            mockNancyResponseMapper.Received(1).Convert(Arg.Is<PactProviderServiceResponse>(x => x.Status == System.Net.HttpStatusCode.InternalServerError));
+            mockNancyResponseMapper.Received(1).Convert(Arg.Is<PactProviderServiceResponse>(x => x.Status == 500));
             Assert.Equal(HttpStatusCode.InternalServerError, result.StatusCode);
         }
 
         [Fact]
-        public void Dispatch_WhenExpectedResponseHasNotBeenSet_ResponseMapperIsCalledAndReturnsInternalServerErrorResponse()
+        public void Dispatch_WhenExpectedResponseHasNotBeenSet_ResponseMapperIsCalledAndReturns500Response()
         {
             var nancyContext = new NancyContext
             {
@@ -64,12 +64,12 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             var result = requestDispatcher.Dispatch(nancyContext, CancellationToken.None).Result;
 
-            mockNancyResponseMapper.Received(1).Convert(Arg.Is<PactProviderServiceResponse>(x => x.Status == System.Net.HttpStatusCode.InternalServerError));
+            mockNancyResponseMapper.Received(1).Convert(Arg.Is<PactProviderServiceResponse>(x => x.Status == 500));
             Assert.Equal(HttpStatusCode.InternalServerError, result.StatusCode);
         }
 
         [Fact]
-        public void Dispatch_WithCanceledCancellationToken_ResponseMapperIsCalledAndReturnsInternalServerErrorResponse()
+        public void Dispatch_WithCanceledCancellationToken_ResponseMapperIsCalledAndReturns500Response()
         {
             var nancyContext = new NancyContext
             {
@@ -89,7 +89,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             var result = requestDispatcher.Dispatch(nancyContext, CancellationToken.None).Result;
 
-            mockNancyResponseMapper.Received(1).Convert(Arg.Is<PactProviderServiceResponse>(x => x.Status == System.Net.HttpStatusCode.InternalServerError));
+            mockNancyResponseMapper.Received(1).Convert(Arg.Is<PactProviderServiceResponse>(x => x.Status == 500));
             Assert.Equal(HttpStatusCode.InternalServerError, result.StatusCode);
         }
 
@@ -191,7 +191,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 Method = HttpVerb.Get,
                 Path = "/Test"
             };
-            var expectedResponse = new PactProviderServiceResponse { Status = System.Net.HttpStatusCode.OK };
+            var expectedResponse = new PactProviderServiceResponse { Status = 200 };
             var nancyResponse = new Response { StatusCode = HttpStatusCode.OK };
 
             var mockRequestComparer = Substitute.For<IPactProviderServiceRequestComparer>();
@@ -217,7 +217,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void Dispatch_WithNancyContextRequestThatDoesNotMatchExpectedRequest_ResponseMapperIsCalledAndReturnsInternalServerErrorResponse()
+        public void Dispatch_WithNancyContextRequestThatDoesNotMatchExpectedRequest_ResponseMapperIsCalledAndReturns500Response()
         {
             var nancyContext = new NancyContext
             {
@@ -233,7 +233,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 Method = HttpVerb.Put,
                 Path = "/Test"
             };
-            var expectedResponse = new PactProviderServiceResponse { Status = System.Net.HttpStatusCode.OK };
+            var expectedResponse = new PactProviderServiceResponse { Status = 200 };
             var nancyResponse = new Response { StatusCode = HttpStatusCode.OK };
             var compareException = new CompareFailedException(expectedRequest.Method, actualRequest.Method);
 
@@ -263,7 +263,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             var response = requestDispatcher.Dispatch(nancyContext, CancellationToken.None).Result;
 
-            mockResponseMapper.Received(1).Convert(Arg.Is<PactProviderServiceResponse>(x => x.Status == System.Net.HttpStatusCode.InternalServerError));
+            mockResponseMapper.Received(1).Convert(Arg.Is<PactProviderServiceResponse>(x => x.Status == 500));
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         }
     }
