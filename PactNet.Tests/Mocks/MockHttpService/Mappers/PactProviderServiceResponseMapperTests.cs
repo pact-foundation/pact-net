@@ -30,7 +30,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
             var result = mapper.Convert(message);
 
-            Assert.Equal(202, result.Status);
+            Assert.Equal(message.StatusCode, result.Status);
         }
 
         [Fact]

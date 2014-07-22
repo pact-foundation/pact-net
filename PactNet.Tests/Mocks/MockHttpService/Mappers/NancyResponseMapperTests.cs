@@ -31,7 +31,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         {
             var response = new PactProviderServiceResponse
             {
-                Status = 200
+                Status = System.Net.HttpStatusCode.OK
             };
 
             var mapper = GetSubject();
@@ -46,7 +46,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         {
             var response = new PactProviderServiceResponse
             {
-                Status = 200,
+                Status = System.Net.HttpStatusCode.OK,
                 Headers = new Dictionary<string, string>
                 {
                     { "X-Test", "Tester" }
@@ -69,7 +69,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         {
             var response = new PactProviderServiceResponse
             {
-                Status = 200,
+                Status = System.Net.HttpStatusCode.OK,
                 Headers = new Dictionary<string, string>
                 {
                     { "Content-Length", "100" }
@@ -95,7 +95,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             const string contentTypeString = "text/plain";
             var response = new PactProviderServiceResponse
             {
-                Status = 200,
+                Status = System.Net.HttpStatusCode.OK,
                 Headers = new Dictionary<string, string>
                 {
                     { "Content-Type", contentTypeString }
@@ -134,7 +134,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             const string contentTypeString = "application/json";
             var response = new PactProviderServiceResponse
             {
-                Status = 200,
+                Status = System.Net.HttpStatusCode.OK,
                 Headers = new Dictionary<string, string>
                 {
                     { "Content-Type", contentTypeString }

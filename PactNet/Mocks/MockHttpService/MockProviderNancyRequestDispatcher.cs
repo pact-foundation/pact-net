@@ -9,6 +9,8 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService
 {
+    using System.Net;
+
     public class MockProviderNancyRequestDispatcher : IRequestDispatcher, IDisposable
     {
         private readonly IPactProviderServiceRequestComparer _requestComparer;
@@ -54,7 +56,7 @@ namespace PactNet.Mocks.MockHttpService
             {
                 var errorResponse = new PactProviderServiceResponse
                 {
-                    Status = 500,
+                    Status = (HttpStatusCode)500,
                     Body = new
                     {
                         ErrorMessage = ex.Message,

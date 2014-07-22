@@ -33,7 +33,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
 
             var to = new PactProviderServiceResponse
             {
-                Status = (int) from.StatusCode,
+                Status = from.StatusCode,
                 Headers = ConvertHeaders(from.Headers, from.Content)
             };
 
