@@ -10,29 +10,10 @@ namespace PactNet.Tests.Specification
 {
     public class SpecificationTests
     {
-        private const string RequestTestCaseBasePath = "..\\..\\Specification\\testcases\\request";
-
         [Fact]
         public void Request()
         {
-            var failedTestCases = new List<string>();
-
-            foreach (var testCaseSubDirectory in Directory.EnumerateDirectories(RequestTestCaseBasePath))
-            {
-                var testCaseFileNames = Directory.GetFiles(testCaseSubDirectory);
-                foreach (var testCaseFileName in testCaseFileNames)
-                {
-                    Console.WriteLine();
-
-                    var testCaseJson = File.ReadAllText(testCaseFileName);
-                    var testCase = JsonConvert.DeserializeObject<RequestTestCase>(testCaseJson);
-
-                    if (!testCase.Verify())
-                    {
-                        failedTestCases.Add(String.Format("[Failed] {0}", testCaseFileName));
-                    }
-                }
-            }
+            var failedTestCases = RunPactSpecificationTests<RequestTestCase>("..\\..\\Specification\\testcases\\request");
 
             if (failedTestCases.Any())
             {
@@ -44,6 +25,48 @@ namespace PactNet.Tests.Specification
             }
 
             Assert.Empty(failedTestCases);
+        }
+
+        [Fact]
+        public void Response()
+        {
+            var failedTestCases = RunPactSpecificationTests<ResponseTestCase>("..\\..\\Specification\\testcases\\response");
+
+            if (failedTestCases.Any())
+            {
+                Console.WriteLine("### FAILED ###");
+                foreach (var failedTestCase in failedTestCases)
+                {
+                    Console.WriteLine(failedTestCase);
+                }
+            }
+
+            Assert.Empty(failedTestCases);
+        }
+
+        private IEnumerable<string> RunPactSpecificationTests<T>(string pathToTestCases)
+            where T : class, IVerifiable
+        {
+            var failedTestCases = new List<string>();
+
+            foreach (var testCaseSubDirectory in Directory.EnumerateDirectories(pathToTestCases))
+            {
+                var testCaseFileNames = Directory.GetFiles(testCaseSubDirectory);
+                foreach (var testCaseFileName in testCaseFileNames)
+                {
+                    Console.WriteLine();
+
+                    var testCaseJson = File.ReadAllText(testCaseFileName);
+                    var testCase = (T)JsonConvert.DeserializeObject(testCaseJson, typeof(T));
+
+                    if (!testCase.Verified())
+                    {
+                        failedTestCases.Add(String.Format("[Failed] {0}", testCaseFileName));
+                    }
+                }
+            }
+
+           return failedTestCases;
         }
     }
 }

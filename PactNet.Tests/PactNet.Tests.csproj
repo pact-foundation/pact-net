@@ -79,7 +79,9 @@
     <Compile Include="PactConsumerTests.cs" />
     <Compile Include="ServicePactFileTests.cs" />
     <Compile Include="PactProviderTests.cs" />
+    <Compile Include="Specification\Models\IVerifiable.cs" />
     <Compile Include="Specification\Models\RequestTestCase.cs" />
+    <Compile Include="Specification\Models\ResponseTestCase.cs" />
     <Compile Include="Specification\SpecificationTests.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\PactProviderServiceResponseComparerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
