@@ -12,6 +12,13 @@ namespace PactNet.Mocks.MockHttpService
 {
     public class MockProviderNancyBootstrapper : DefaultNancyBootstrapper
     {
+        private readonly IMockContextService _mockContextService;
+
+        public MockProviderNancyBootstrapper(IMockContextService mockContextService)
+        {
+            _mockContextService = mockContextService;
+        }
+
         protected override IEnumerable<ModuleRegistration> Modules
         {
             get { return new List<ModuleRegistration>(); }
@@ -23,7 +30,7 @@ namespace PactNet.Mocks.MockHttpService
             {
                 return NancyInternalConfiguration.WithOverrides(c =>
                 {
-                   // c.ContextFactory = typeof (PactAwareContextFactory);
+                    c.ContextFactory = typeof (PactAwareContextFactory);
                     c.RequestDispatcher = typeof(MockProviderNancyRequestDispatcher);
                 });
             }
@@ -45,18 +52,7 @@ namespace PactNet.Mocks.MockHttpService
             container.Register(typeof(IPactProviderServiceRequestComparer), typeof(PactProviderServiceRequestComparer));
             container.Register(typeof(IPactProviderServiceRequestMapper), typeof(PactProviderServiceRequestMapper));
             container.Register(typeof(INancyResponseMapper), typeof(NancyResponseMapper));
-            
-        }
-    }
-
-    public class PactAwareContextFactory : INancyContextFactory
-    {
-        public NancyContext Create(Request request)
-        {
-            return new NancyContext()
-            {
-                Request = request,
-            };
+            container.Register(typeof (IMockContextService), _mockContextService);
         }
     }
 }

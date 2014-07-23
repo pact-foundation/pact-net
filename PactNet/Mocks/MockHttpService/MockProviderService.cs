@@ -9,7 +9,7 @@ namespace PactNet.Mocks.MockHttpService
 {
     public class MockProviderService : IMockProviderService
     {
-        private readonly Func<Uri, NancyHost> _nancyHostFactory;
+        private readonly Func<Uri, IMockContextService, NancyHost> _nancyHostFactory;
 
         private NancyHost _host;
 
@@ -27,14 +27,14 @@ namespace PactNet.Mocks.MockHttpService
         public string BaseUri { get; private set; }
 
         [Obsolete("For testing only.")]
-        public MockProviderService(Func<Uri, NancyHost> nancyHostFactory, int port)
+        public MockProviderService(Func<Uri, IMockContextService, NancyHost> nancyHostFactory, int port)
         {
             _nancyHostFactory = nancyHostFactory;
             BaseUri = String.Format("http://localhost:{0}", port);
         }
 
         public MockProviderService(int port)
-            : this(baseUri => new NancyHost(new MockProviderNancyBootstrapper(), NancyConfig.HostConfiguration, baseUri), port)
+            : this((baseUri, mockContextService) => new NancyHost(new MockProviderNancyBootstrapper(mockContextService), NancyConfig.HostConfiguration, baseUri), port)
         {
         }
 
@@ -122,9 +122,8 @@ namespace PactNet.Mocks.MockHttpService
 
         public void Start() //TODO: Can't test this nicely
         {
-            MockProviderNancyRequestDispatcher.Reset();
-
-            _host = _nancyHostFactory(new Uri(BaseUri));
+            _host = _nancyHostFactory(new Uri(BaseUri), 
+                                      new MockContextService(() => _request, () => _response));
             _host.Start();
         }
 
@@ -134,7 +133,6 @@ namespace PactNet.Mocks.MockHttpService
             {
                 _host.Stop();
                 _host.Dispose();
-                MockProviderNancyRequestDispatcher.Reset();
             }
         }
     }

@@ -9,7 +9,7 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService
 {
-    public class MockProviderNancyRequestDispatcher : IRequestDispatcher, IDisposable
+    public class MockProviderNancyRequestDispatcher : IRequestDispatcher
     {
         private readonly IPactProviderServiceRequestComparer _requestComparer;
         private readonly IPactProviderServiceRequestMapper _requestMapper;
@@ -71,12 +71,6 @@ namespace PactNet.Mocks.MockHttpService
             return tcs.Task;
         }
 
-        public static void Set(PactProviderServiceRequest request, PactProviderServiceResponse response)
-        {
-            _expectedRequest = request;
-            _expectedResponse = response;
-        }
-
         private Response HandleRequest(Request request)
         {
             var actualRequest = _requestMapper.Convert(request);
@@ -84,17 +78,6 @@ namespace PactNet.Mocks.MockHttpService
             _requestComparer.Compare(_expectedRequest, actualRequest);
 
             return _responseMapper.Convert(_expectedResponse);
-        }
-
-        public static void Reset()
-        {
-            _expectedRequest = null;
-            _expectedResponse = null;
-        }
-
-        public void Dispose()
-        {
-            Reset();
         }
     }
 }
