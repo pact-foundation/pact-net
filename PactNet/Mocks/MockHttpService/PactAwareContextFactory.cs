@@ -1,3 +1,4 @@
+using System.Dynamic;
 using Nancy;
 
 namespace PactNet.Mocks.MockHttpService
@@ -13,14 +14,15 @@ namespace PactNet.Mocks.MockHttpService
 
         public NancyContext Create(Request request)
         {
-            return new NancyContext()
+            var nancyContext = new NancyContext()
             {
                 Request = request,
-                Parameters = { 
-                    ExpectedRequest = _mockContextService.GetExpectedRequest(), 
-                    ExpectedResponse = _mockContextService.GetExpectedResponse() 
-                }
+                Parameters = new ExpandoObject()
             };
+            nancyContext.Parameters.ExpectedRequest = _mockContextService.GetExpectedRequest();
+            nancyContext.Parameters.ExpectedResponse = _mockContextService.GetExpectedResponse();
+
+            return nancyContext;
         }
     }
 }

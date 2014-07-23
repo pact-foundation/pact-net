@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Dynamic;
 using System.Threading;
 using Nancy;
 using Nancy.Routing;
@@ -19,8 +20,10 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var nancyContext = new NancyContext
             {
                 Request = new Request("GET", "/", "HTTP"),
-                Parameters = { ExpectedRequest = null, ExpectedResponse = new PactProviderServiceResponse() }
+                Parameters = new ExpandoObject()
             };
+            nancyContext.Parameters.ExpectedRequest = default(PactProviderServiceRequest);
+            nancyContext.Parameters.ExpectedResponse = new PactProviderServiceResponse();
 
             var mockNancyResponseMapper = Substitute.For<INancyResponseMapper>();
             mockNancyResponseMapper.Convert(Arg.Any<PactProviderServiceResponse>())
@@ -43,8 +46,10 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var nancyContext = new NancyContext
             {
                 Request = new Request("GET", "/", "HTTP"),
-                Parameters = { ExpectedRequest = new PactProviderServiceRequest(), ExpectedResponse = null }
+                Parameters = new ExpandoObject()
             };
+            nancyContext.Parameters.ExpectedRequest = new PactProviderServiceRequest();
+            nancyContext.Parameters.ExpectedResponse = null;
 
             var mockNancyResponseMapper = Substitute.For<INancyResponseMapper>();
             mockNancyResponseMapper.Convert(Arg.Any<PactProviderServiceResponse>())
@@ -67,8 +72,10 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var nancyContext = new NancyContext
             {
                 Request = new Request("GET", "/", "HTTP"),
-                Parameters = { ExpectedRequest = new PactProviderServiceRequest(), ExpectedResponse =  new PactProviderServiceResponse()}
+                Parameters = new ExpandoObject()
             };
+            nancyContext.Parameters.ExpectedRequest = new PactProviderServiceRequest();
+            nancyContext.Parameters.ExpectedResponse = new PactProviderServiceResponse();
 
             var mockNancyResponseMapper = Substitute.For<INancyResponseMapper>();
             mockNancyResponseMapper.Convert(Arg.Any<PactProviderServiceResponse>())
@@ -98,8 +105,10 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var nancyContext = new NancyContext
             {
                 Request = new Request("GET", "/", "HTTP"),
-                Parameters = {  ExpectedRequest = expectedRequest, ExpectedResponse = expectedResponse }
+                Parameters = new ExpandoObject()
             };
+            nancyContext.Parameters.ExpectedRequest = expectedRequest;
+            nancyContext.Parameters.ExpectedResponse = expectedResponse;
 
             IRequestDispatcher requestDispatcher = new MockProviderNancyRequestDispatcher(
                 mockRequestComparer,
@@ -125,8 +134,10 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var nancyContext = new NancyContext
             {
                 Request = new Request("GET", "/", "HTTP"),
-                Parameters = { ExpectedRequest = expectedRequest, ExpectedResponse = expectedResponse }
+                Parameters = new ExpandoObject()
             };
+            nancyContext.Parameters.ExpectedRequest = expectedRequest;
+            nancyContext.Parameters.ExpectedResponse = expectedResponse;
 
             mockRequestMapper.Convert(nancyContext.Request).Returns(actualRequest);
 
@@ -153,8 +164,10 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var nancyContext = new NancyContext
             {
                 Request = new Request("GET", "/", "HTTP"),
-                Parameters = { ExpectedRequest = expectedRequest, ExpectedResponse = expectedResponse }
+                Parameters = new ExpandoObject()
             };
+            nancyContext.Parameters.ExpectedRequest = expectedRequest;
+            nancyContext.Parameters.ExpectedResponse = expectedResponse;
 
             IRequestDispatcher requestDispatcher = new MockProviderNancyRequestDispatcher(
                 mockRequestComparer,
@@ -190,8 +203,10 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var nancyContext = new NancyContext
             {
                 Request = new Request("GET", "/Test", "HTTP"),
-                Parameters = { ExpectedRequest = expectedRequest, ExpectedResponse = expectedResponse }
+                Parameters = new ExpandoObject()
             };
+            nancyContext.Parameters.ExpectedRequest = expectedRequest;
+            nancyContext.Parameters.ExpectedResponse = expectedResponse;
 
             mockRequestMapper.Convert(nancyContext.Request).Returns(actualRequest);
             //mockRequestComparer.Compare Doesnt throw any exceptions
@@ -233,8 +248,10 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var nancyContext = new NancyContext
             {
                 Request = new Request("GET", "/Test", "HTTP"),
-                Parameters = { ExpectedRequest = expectedRequest, ExpectedResponse = expectedResponse }
+                Parameters = new ExpandoObject()
             };
+            nancyContext.Parameters.ExpectedRequest = expectedRequest;
+            nancyContext.Parameters.ExpectedResponse = expectedResponse;
 
             mockRequestMapper.Convert(nancyContext.Request).Returns(actualRequest);
             mockRequestComparer

@@ -111,11 +111,6 @@ namespace PactNet.Mocks.MockHttpService
                 Response = _response
             };
 
-            _providerState = null;
-            _description = null;
-            _request = null;
-            _response = null;
-
             _interactions = _interactions ?? new List<PactServiceInteraction>();
             _interactions.Add(interaction);
         }
@@ -123,7 +118,7 @@ namespace PactNet.Mocks.MockHttpService
         public void Start() //TODO: Can't test this nicely
         {
             _host = _nancyHostFactory(new Uri(BaseUri), 
-                                      new MockContextService(() => _request, () => _response));
+                                      new MockContextService(() => this._request, () => this._response));
             _host.Start();
         }
 
