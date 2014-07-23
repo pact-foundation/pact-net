@@ -231,25 +231,25 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void VerifyProviderService_WhenHttpClientIsNull_ThrowsInvalidOperationException()
+        public void Verify_WhenHttpClientIsNull_ThrowsInvalidOperationException()
         {
             var pact = GetSubject();
             pact.PactUri("../../../Consumer.Tests/pacts/my_client-event_api.json");
 
-            Assert.Throws<InvalidOperationException>(() => pact.VerifyProviderService());
+            Assert.Throws<InvalidOperationException>(() => pact.Verify());
         }
 
         [Fact]
-        public void VerifyProviderService_WhenPactFileUriIsNull_ThrowsInvalidOperationException()
+        public void Verify_WhenPactFileUriIsNull_ThrowsInvalidOperationException()
         {
             var pact = GetSubject();
             pact.ServiceProvider("Event API", new HttpClient());
 
-            Assert.Throws<InvalidOperationException>(() => pact.VerifyProviderService());
+            Assert.Throws<InvalidOperationException>(() => pact.Verify());
         }
 
         [Fact]
-        public void VerifyProviderService_WhenFileDoesNotExistOnFileSystem_ThrowsPactAssertException()
+        public void Verify_WhenFileDoesNotExistOnFileSystem_ThrowsPactAssertException()
         {
             var serviceProvider = "Event API";
             var serviceConsumer = "My client";
@@ -263,13 +263,13 @@ namespace PactNet.Tests
                 .HonoursPactWith(serviceConsumer)
                 .PactUri(pactUri);
 
-            Assert.Throws<CompareFailedException>(() => pact.VerifyProviderService());
+            Assert.Throws<CompareFailedException>(() => pact.Verify());
 
             mockFileSystem.File.Received(1).ReadAllText(pactUri);
         }
 
         [Fact]
-        public void VerifyProviderService_WhenPactFileWithNoInteractionsExistOnFileSystem_CallsPactProviderValidator()
+        public void Verify_WhenPactFileWithNoInteractionsExistOnFileSystem_CallsPactProviderValidator()
         {
             var serviceProvider = "Event API";
             var serviceConsumer = "My client";
@@ -286,14 +286,14 @@ namespace PactNet.Tests
                 .HonoursPactWith(serviceConsumer)
                 .PactUri(pactUri);
 
-            pact.VerifyProviderService();
+            pact.Verify();
 
             mockFileSystem.File.Received(1).ReadAllText(pactUri);
             mockPactProviderServiceValidator.Received(1).Validate(Arg.Any<ServicePactFile>());
         }
 
         [Fact]
-        public void VerifyProviderService_WhenPactFileWithAnInteractionThatHasAProviderState_ProviderStateIsInvoked()
+        public void Verify_WhenPactFileWithAnInteractionThatHasAProviderState_ProviderStateIsInvoked()
         {
             var serviceProvider = "Event API";
             var serviceConsumer = "My client";
@@ -316,7 +316,7 @@ namespace PactNet.Tests
                 .HonoursPactWith(serviceConsumer)
                 .PactUri(pactUri);
 
-            pact.VerifyProviderService();
+            pact.Verify();
 
             mockFileSystem.File.Received(1).ReadAllText(pactUri);
             mockPactProviderServiceValidator.Received(1).Validate(Arg.Any<ServicePactFile>());
@@ -324,7 +324,7 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void VerifyProviderService_WhenPactFileWithAnInteractionThatHasAProviderStateButNoProviderStateIsSupplied_ThrowsInvalidOperationException()
+        public void Verify_WhenPactFileWithAnInteractionThatHasAProviderStateButNoProviderStateIsSupplied_ThrowsInvalidOperationException()
         {
             var serviceProvider = "Event API";
             var serviceConsumer = "My client";
@@ -341,7 +341,7 @@ namespace PactNet.Tests
                 .HonoursPactWith(serviceConsumer)
                 .PactUri(pactUri);
 
-            Assert.Throws<InvalidOperationException>(() => pact.VerifyProviderService());
+            Assert.Throws<InvalidOperationException>(() => pact.Verify());
 
             mockFileSystem.File.Received(1).ReadAllText(pactUri);
         }

@@ -86,7 +86,7 @@ namespace PactNet
             return this;
         }
 
-        public void VerifyProviderService()
+        public void Verify()
         {
             if (HttpClient == null)
             {
