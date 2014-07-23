@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
+using System.Linq;
 using System.Net.Http;
 using NSubstitute;
 using PactNet.Mocks.MockHttpService.Models;
@@ -344,6 +345,114 @@ namespace PactNet.Tests
             Assert.Throws<InvalidOperationException>(() => pact.Verify());
 
             mockFileSystem.File.Received(1).ReadAllText(pactUri);
+        }
+
+        [Fact]
+        public void Verify_WithNoProviderDescriptionOrProviderStateSupplied_CallsProviderServiceValidatorWithAll3Interactions()
+        {
+            var pactUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
+            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"providerState\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"providerState\": \"My Provider State\" }, { \"description\": \"My Description\", \"providerState\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
+            var httpClient = new HttpClient();
+
+            var mockFileSystem = Substitute.For<IFileSystem>();
+            var mockPactProviderServiceValidator = Substitute.For<IProviderServiceValidator>();
+            mockFileSystem.File.ReadAllText(pactUri).Returns(pactFileJson);
+
+            var pact = new Pact(null, mockFileSystem, client => mockPactProviderServiceValidator)
+                .ProviderStatesFor("My client", new Dictionary<string, Action>
+                                                    {
+                                                        { "My Provider State", () => { } },
+                                                        { "My Provider State 2", () => { } }
+                                                    })
+                .ServiceProvider("Event API", httpClient)
+                .HonoursPactWith("My client")
+                .PactUri(pactUri);
+
+            pact.Verify();
+
+            mockPactProviderServiceValidator.Received(1).Validate(Arg.Is<ServicePactFile>(x => x.Interactions.Count() == 3));
+        }
+
+        [Fact]
+        public void Verify_WithProviderDescription_CallsProviderServiceValidatorWith2FilteredInteractions()
+        {
+            var description = "My Description";
+            var pactUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
+            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"providerState\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"providerState\": \"My Provider State\" }, { \"description\": \"My Description\", \"providerState\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
+            var httpClient = new HttpClient();
+
+            var mockFileSystem = Substitute.For<IFileSystem>();
+            var mockPactProviderServiceValidator = Substitute.For<IProviderServiceValidator>();
+            mockFileSystem.File.ReadAllText(pactUri).Returns(pactFileJson);
+
+            var pact = new Pact(null, mockFileSystem, client => mockPactProviderServiceValidator)
+                .ProviderStatesFor("My client", new Dictionary<string, Action>
+                                                    {
+                                                        { "My Provider State", () => { } },
+                                                        { "My Provider State 2", () => { } }
+                                                    })
+                .ServiceProvider("Event API", httpClient)
+                .HonoursPactWith("My client")
+                .PactUri(pactUri);
+
+            pact.Verify(providerDescription: description);
+
+            mockPactProviderServiceValidator.Received(1).Validate(Arg.Is<ServicePactFile>(x => x.Interactions.Count() == 2 && x.Interactions.All(i => i.Description.Equals(description))));
+        }
+
+        [Fact]
+        public void Verify_WithProviderState_CallsProviderServiceValidatorWith2FilteredInteractions()
+        {
+            var providerState = "My Provider State";
+            var pactUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
+            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"providerState\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"providerState\": \"My Provider State\" }, { \"description\": \"My Description\", \"providerState\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
+            var httpClient = new HttpClient();
+
+            var mockFileSystem = Substitute.For<IFileSystem>();
+            var mockPactProviderServiceValidator = Substitute.For<IProviderServiceValidator>();
+            mockFileSystem.File.ReadAllText(pactUri).Returns(pactFileJson);
+
+            var pact = new Pact(null, mockFileSystem, client => mockPactProviderServiceValidator)
+                .ProviderStatesFor("My client", new Dictionary<string, Action>
+                                                    {
+                                                        { "My Provider State", () => { } },
+                                                        { "My Provider State 2", () => { } }
+                                                    })
+                .ServiceProvider("Event API", httpClient)
+                .HonoursPactWith("My client")
+                .PactUri(pactUri);
+
+            pact.Verify(providerState: providerState);
+
+            mockPactProviderServiceValidator.Received(1).Validate(Arg.Is<ServicePactFile>(x => x.Interactions.Count() == 2 && x.Interactions.All(i => i.ProviderState.Equals(providerState))));
+        }
+
+        [Fact]
+        public void Verify_WithDescriptionAndProviderState_CallsProviderServiceValidatorWith1FilteredInteractions()
+        {
+            var description = "My Description";
+            var providerState = "My Provider State";
+            var pactUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
+            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"providerState\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"providerState\": \"My Provider State\" }, { \"description\": \"My Description\", \"providerState\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
+            var httpClient = new HttpClient();
+
+            var mockFileSystem = Substitute.For<IFileSystem>();
+            var mockPactProviderServiceValidator = Substitute.For<IProviderServiceValidator>();
+            mockFileSystem.File.ReadAllText(pactUri).Returns(pactFileJson);
+
+            var pact = new Pact(null, mockFileSystem, client => mockPactProviderServiceValidator)
+                .ProviderStatesFor("My client", new Dictionary<string, Action>
+                                                    {
+                                                        { "My Provider State", () => { } },
+                                                        { "My Provider State 2", () => { } }
+                                                    })
+                .ServiceProvider("Event API", httpClient)
+                .HonoursPactWith("My client")
+                .PactUri(pactUri);
+
+            pact.Verify(providerDescription: description, providerState: providerState);
+
+            mockPactProviderServiceValidator.Received(1).Validate(Arg.Is<ServicePactFile>(x => x.Interactions.Count() == 1 && x.Interactions.All(i => i.ProviderState.Equals(providerState) && i.Description.Equals(description))));
         }
     }
 }

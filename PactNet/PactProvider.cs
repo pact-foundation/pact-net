@@ -86,7 +86,7 @@ namespace PactNet
             return this;
         }
 
-        public void Verify()
+        public void Verify(string providerDescription = null, string providerState = null)
         {
             if (HttpClient == null)
             {
@@ -109,15 +109,27 @@ namespace PactNet
                 throw new CompareFailedException(String.Format("Json Pact file could not be retrieved using uri \'{0}\'.", PactFileUri));
             }
 
+            //Filter interactions
+            if (providerDescription != null)
+            {
+                pactFile.Interactions = pactFile.Interactions.Where(x => x.Description.Equals(providerDescription));
+            }
+
+            if (providerState != null)
+            {
+                pactFile.Interactions = pactFile.Interactions.Where(x => x.ProviderState.Equals(providerState));
+            }
+
+            //Invoke provide state on interactions
             if (pactFile.Interactions != null && pactFile.Interactions.Any(x => x.ProviderState != null))
             {
-                foreach (var providerState in pactFile.Interactions.Where(x => x.ProviderState != null).Select(x => x.ProviderState))
+                foreach (var interactionProviderState in pactFile.Interactions.Where(x => x.ProviderState != null).Select(x => x.ProviderState))
                 {
-                    if (_providerStates == null || !_providerStates.Any() || !_providerStates.ContainsKey(providerState))
+                    if (_providerStates == null || !_providerStates.Any() || !_providerStates.ContainsKey(interactionProviderState))
                     {
-                        throw new InvalidOperationException(String.Format("providerState \"{0}\" could not be found, please supply the provider state using the ProviderStatesFor method.", providerState));
+                        throw new InvalidOperationException(String.Format("providerState \"{0}\" could not be found, please supply the provider state using the ProviderStatesFor method.", interactionProviderState));
                     }
-                    _providerStates[providerState].Invoke();
+                    _providerStates[interactionProviderState].Invoke();
                 }
             }
 
