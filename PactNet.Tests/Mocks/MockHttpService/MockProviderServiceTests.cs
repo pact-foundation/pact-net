@@ -33,8 +33,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 .Given(providerState)
                 .UponReceiving("My description")
                 .With(new PactProviderServiceRequest())
-                .WillRespondWith(new PactProviderServiceResponse())
-                .RegisterInteraction();
+                .WillRespondWith(new PactProviderServiceResponse());
 
             var interaction = mockService.Interactions.First() as PactServiceInteraction;
             Assert.Equal(providerState, interaction.ProviderState);
@@ -64,8 +63,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.UponReceiving(description)
                 .With(new PactProviderServiceRequest())
-                .WillRespondWith(new PactProviderServiceResponse())
-                .RegisterInteraction();
+                .WillRespondWith(new PactProviderServiceResponse());
 
             var interaction = mockService.Interactions.First() as PactServiceInteraction;
             Assert.Equal(description, interaction.Description);
@@ -95,8 +93,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.UponReceiving("My description")
                 .With(request)
-                .WillRespondWith(new PactProviderServiceResponse())
-                .RegisterInteraction();
+                .WillRespondWith(new PactProviderServiceResponse());
             
             var interaction = mockService.Interactions.First() as PactServiceInteraction;
             Assert.Equal(request, interaction.Request);
@@ -118,8 +115,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.UponReceiving("My description")
                 .With(new PactProviderServiceRequest())
-                .WillRespondWith(response)
-                .RegisterInteraction();
+                .WillRespondWith(response);
 
             var interaction = mockService.Interactions.First() as PactServiceInteraction;
             Assert.Equal(response, interaction.Response);
@@ -149,56 +145,40 @@ namespace PactNet.Tests.Mocks.MockHttpService
             mockService
                 .UponReceiving("My description")
                 .With(new PactProviderServiceRequest())
-                .WillRespondWith(new PactProviderServiceResponse())
-                .RegisterInteraction();
+                .WillRespondWith(new PactProviderServiceResponse());
 
             mockService
                 .UponReceiving("My next description")
                 .With(new PactProviderServiceRequest())
-                .WillRespondWith(new PactProviderServiceResponse())
-                .RegisterInteraction();
+                .WillRespondWith(new PactProviderServiceResponse());
 
             Assert.Equal(2, mockService.Interactions.Count());
         }
 
         [Fact]
-        public void RegisterInteraction_WithNullDescription_ThrowsInvalidOperationException()
+        public void WillRespondWith_WithNullDescription_ThrowsInvalidOperationException()
         {
             var mockService = GetSubject();
 
             mockService
-                .With(new PactProviderServiceRequest())
-                .WillRespondWith(new PactProviderServiceResponse());
-
-            Assert.Throws<InvalidOperationException>(() => mockService.RegisterInteraction());
-        }
-
-        [Fact]
-        public void RegisterInteraction_WithNullRequest_ThrowsInvalidOperationException()
-        {
-            var mockService = GetSubject();
-
-            mockService
-                .UponReceiving("My description")
-                .WillRespondWith(new PactProviderServiceResponse());
-
-            Assert.Throws<InvalidOperationException>(() => mockService.RegisterInteraction());
-        }
-
-        [Fact]
-        public void RegisterInteraction_WithNullResponse_ThrowsInvalidOperationException()
-        {
-            var mockService = GetSubject();
-
-            mockService
-                .UponReceiving("My description")
                 .With(new PactProviderServiceRequest());
 
-            Assert.Throws<InvalidOperationException>(() => mockService.RegisterInteraction());
+            Assert.Throws<InvalidOperationException>(() => mockService.WillRespondWith(new PactProviderServiceResponse()));
         }
 
         [Fact]
-        public void RegisterInteraction_WithValidInteraction_InteractionIsAdded()
+        public void WillRespondWith_WithNullRequest_ThrowsInvalidOperationException()
+        {
+            var mockService = GetSubject();
+
+            mockService
+                .UponReceiving("My description");
+
+            Assert.Throws<InvalidOperationException>(() => mockService.WillRespondWith(new PactProviderServiceResponse()));
+        }
+
+        [Fact]
+        public void WillRespondWith_WithValidInteraction_InteractionIsAdded()
         {
             var providerState = "My provider state";
             var description = "My description";
@@ -210,10 +190,10 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 .Given(providerState)
                 .UponReceiving(description)
                 .With(request)
-                .WillRespondWith(response)
-                .RegisterInteraction();
+                .WillRespondWith(response);
 
             var interaction = mockService.Interactions.First() as PactServiceInteraction;
+
             Assert.Equal(1, mockService.Interactions.Count());
             Assert.Equal(providerState, interaction.ProviderState);
             Assert.Equal(description, interaction.Description);
@@ -222,7 +202,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void RegisterInteraction_WhenExistingInteractionExistAndWeHaveAnotherValidInteraction_InteractionIsAdded()
+        public void WillRespondWith_WhenExistingInteractionExistAndWeHaveAnotherValidInteraction_InteractionIsAdded()
         {
             var providerState = "My provider state";
             var description = "My description";
@@ -233,17 +213,16 @@ namespace PactNet.Tests.Mocks.MockHttpService
             mockService
                 .UponReceiving("My previous description")
                 .With(new PactProviderServiceRequest())
-                .WillRespondWith(new PactProviderServiceResponse())
-                .RegisterInteraction();
+                .WillRespondWith(new PactProviderServiceResponse());
 
             mockService
                 .Given(providerState)
                 .UponReceiving(description)
                 .With(request)
-                .WillRespondWith(response)
-                .RegisterInteraction();
+                .WillRespondWith(response);
 
             var interaction = mockService.Interactions.Last() as PactServiceInteraction;
+
             Assert.Equal(2, mockService.Interactions.Count());
             Assert.Equal(providerState, interaction.ProviderState);
             Assert.Equal(description, interaction.Description);

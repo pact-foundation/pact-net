@@ -134,8 +134,7 @@ public class SomethingApiConsumerTests : IUseFixture<ConsumerMyApiPact>
 					firstName = "Totally",
 					lastName = "Awesome"
 				}
-			})
-			.RegisterInteraction();
+			}); //WillResponseWith call must come last as it will register the interaction
 			
 		var consumer = new SomethingApiClient(_data.MockServerBaseUri);
 		

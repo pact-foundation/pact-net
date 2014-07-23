@@ -58,8 +58,7 @@ namespace Consumer.Tests
                             eventType = "SearchView"
                         }
                     }
-                })
-                .RegisterInteraction();
+                });
 
             var consumer = new EventsApiClient(_data.MockServerBaseUri);
 
@@ -98,8 +97,7 @@ namespace Consumer.Tests
                 .WillRespondWith(new PactProviderServiceResponse
                 {
                     Status = 201
-                })
-                .RegisterInteraction();
+                });
 
             var consumer = new EventsApiClient(_data.MockServerBaseUri);
 
@@ -121,8 +119,7 @@ namespace Consumer.Tests
                 {
                     Status = 200,
                     Body = "alive"
-                })
-                .RegisterInteraction();
+                });
 
             var consumer = new EventsApiClient(_data.MockServerBaseUri);
 
@@ -160,8 +157,7 @@ namespace Consumer.Tests
                     {
                         eventId = eventId
                     }
-                })
-                .RegisterInteraction();
+                });
 
             var consumer = new EventsApiClient(_data.MockServerBaseUri);
 
@@ -203,8 +199,7 @@ namespace Consumer.Tests
                              eventType = eventType
                          }
                     }
-                })
-                .RegisterInteraction();
+                });
 
             var consumer = new EventsApiClient(_data.MockServerBaseUri);
 

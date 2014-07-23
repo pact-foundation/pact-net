@@ -74,7 +74,7 @@ namespace PactNet.Mocks.MockHttpService
             return this;
         }
 
-        public IMockProviderService WillRespondWith(PactProviderServiceResponse response)
+        public void WillRespondWith(PactProviderServiceResponse response)
         {
             if (response == null)
             {
@@ -82,11 +82,11 @@ namespace PactNet.Mocks.MockHttpService
             }
 
             _response = response;
-            
-            return this;
+
+            RegisterInteraction();
         }
 
-        public void RegisterInteraction()
+        private void RegisterInteraction()
         {
             if (String.IsNullOrEmpty(_description))
             {

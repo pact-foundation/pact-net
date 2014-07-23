@@ -6,7 +6,7 @@ namespace PactNet.Mocks.MockHttpService
     {
         string BaseUri { get; }
         IMockProviderService With(PactProviderServiceRequest request);
-        IMockProviderService WillRespondWith(PactProviderServiceResponse response);
+        void WillRespondWith(PactProviderServiceResponse response);
         void Start();
         void Stop();
     }

@@ -120,7 +120,7 @@ namespace PactNet
                 pactFile.Interactions = pactFile.Interactions.Where(x => x.ProviderState.Equals(providerState));
             }
 
-            //Invoke provide state on interactions
+            //Invoke specified provider state for interactions
             if (pactFile.Interactions != null && pactFile.Interactions.Any(x => x.ProviderState != null))
             {
                 foreach (var interactionProviderState in pactFile.Interactions.Where(x => x.ProviderState != null).Select(x => x.ProviderState))

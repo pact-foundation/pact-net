@@ -360,10 +360,10 @@ namespace PactNet.Tests
 
             var pact = new Pact(null, mockFileSystem, client => mockPactProviderServiceValidator)
                 .ProviderStatesFor("My client", new Dictionary<string, Action>
-                                                    {
-                                                        { "My Provider State", () => { } },
-                                                        { "My Provider State 2", () => { } }
-                                                    })
+                {
+                    { "My Provider State", () => { } },
+                    { "My Provider State 2", () => { } }
+                })
                 .ServiceProvider("Event API", httpClient)
                 .HonoursPactWith("My client")
                 .PactUri(pactUri);
@@ -387,10 +387,10 @@ namespace PactNet.Tests
 
             var pact = new Pact(null, mockFileSystem, client => mockPactProviderServiceValidator)
                 .ProviderStatesFor("My client", new Dictionary<string, Action>
-                                                    {
-                                                        { "My Provider State", () => { } },
-                                                        { "My Provider State 2", () => { } }
-                                                    })
+                {
+                    { "My Provider State", () => { } },
+                    { "My Provider State 2", () => { } }
+                })
                 .ServiceProvider("Event API", httpClient)
                 .HonoursPactWith("My client")
                 .PactUri(pactUri);
@@ -414,10 +414,10 @@ namespace PactNet.Tests
 
             var pact = new Pact(null, mockFileSystem, client => mockPactProviderServiceValidator)
                 .ProviderStatesFor("My client", new Dictionary<string, Action>
-                                                    {
-                                                        { "My Provider State", () => { } },
-                                                        { "My Provider State 2", () => { } }
-                                                    })
+                {
+                    { "My Provider State", () => { } },
+                    { "My Provider State 2", () => { } }
+                })
                 .ServiceProvider("Event API", httpClient)
                 .HonoursPactWith("My client")
                 .PactUri(pactUri);
@@ -442,10 +442,10 @@ namespace PactNet.Tests
 
             var pact = new Pact(null, mockFileSystem, client => mockPactProviderServiceValidator)
                 .ProviderStatesFor("My client", new Dictionary<string, Action>
-                                                    {
-                                                        { "My Provider State", () => { } },
-                                                        { "My Provider State 2", () => { } }
-                                                    })
+                {
+                    { "My Provider State", () => { } },
+                    { "My Provider State 2", () => { } }
+                })
                 .ServiceProvider("Event API", httpClient)
                 .HonoursPactWith("My client")
                 .PactUri(pactUri);
