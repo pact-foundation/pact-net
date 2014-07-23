@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Nancy;
 using Nancy.Bootstrapper;
@@ -5,6 +6,7 @@ using Nancy.Diagnostics;
 using Nancy.TinyIoc;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Mappers;
+using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService
 {
@@ -21,6 +23,7 @@ namespace PactNet.Mocks.MockHttpService
             {
                 return NancyInternalConfiguration.WithOverrides(c =>
                 {
+                   // c.ContextFactory = typeof (PactAwareContextFactory);
                     c.RequestDispatcher = typeof(MockProviderNancyRequestDispatcher);
                 });
             }
@@ -42,6 +45,18 @@ namespace PactNet.Mocks.MockHttpService
             container.Register(typeof(IPactProviderServiceRequestComparer), typeof(PactProviderServiceRequestComparer));
             container.Register(typeof(IPactProviderServiceRequestMapper), typeof(PactProviderServiceRequestMapper));
             container.Register(typeof(INancyResponseMapper), typeof(NancyResponseMapper));
+            
+        }
+    }
+
+    public class PactAwareContextFactory : INancyContextFactory
+    {
+        public NancyContext Create(Request request)
+        {
+            return new NancyContext()
+            {
+                Request = request,
+            };
         }
     }
 }

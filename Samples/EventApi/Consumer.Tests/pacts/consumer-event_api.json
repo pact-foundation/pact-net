@@ -18,6 +18,40 @@
       }
     },
     {
+      "description": "A GET request to retrieve all events",
+      "providerState": "There are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'",
+      "request": {
+        "method": "get",
+        "path": "/events",
+        "headers": {
+          "Accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": [
+          {
+            "eventId": "45d80d13-d5a2-48d7-8353-cbb4c0eaabf5",
+            "timestamp": "2014-06-30T01:37:41.0660548",
+            "eventType": "SearchView"
+          },
+          {
+            "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
+            "timestamp": "2014-06-30T01:37:52.2618864",
+            "eventType": "DetailsView"
+          },
+          {
+            "eventId": "3e83a96b-2a0c-49b1-9959-26df23f83aeb",
+            "timestamp": "2014-06-30T01:38:00.8518952",
+            "eventType": "SearchView"
+          }
+        ]
+      }
+    },
+    {
       "description": "A GET request to retrieve event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
       "providerState": "There is an event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
       "request": {
@@ -55,40 +89,6 @@
         },
         "body": [
           {
-            "eventType": "SearchView"
-          }
-        ]
-      }
-    },
-    {
-      "description": "A GET request to retrieve all events",
-      "providerState": "There are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'",
-      "request": {
-        "method": "get",
-        "path": "/events",
-        "headers": {
-          "Accept": "application/json"
-        }
-      },
-      "response": {
-        "status": 200,
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": [
-          {
-            "eventId": "45d80d13-d5a2-48d7-8353-cbb4c0eaabf5",
-            "timestamp": "2014-06-30T01:37:41.0660548",
-            "eventType": "SearchView"
-          },
-          {
-            "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
-            "timestamp": "2014-06-30T01:37:52.2618864",
-            "eventType": "DetailsView"
-          },
-          {
-            "eventId": "3e83a96b-2a0c-49b1-9959-26df23f83aeb",
-            "timestamp": "2014-06-30T01:38:00.8518952",
             "eventType": "SearchView"
           }
         ]

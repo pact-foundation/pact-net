@@ -118,8 +118,6 @@ namespace PactNet.Mocks.MockHttpService
 
             _interactions = _interactions ?? new List<PactServiceInteraction>();
             _interactions.Add(interaction);
-
-            MockProviderNancyRequestDispatcher.Set(interaction.Request, interaction.Response); //TODO: Can't test this nicely
         }
 
         public void Start() //TODO: Can't test this nicely
