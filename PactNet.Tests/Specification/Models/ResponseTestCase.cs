@@ -3,25 +3,25 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Tests.Specification.Models
 {
-    public class RequestTestCase : IVerifiable
+    public class ResponseTestCase : IVerifiable
     {
-        private readonly IPactProviderServiceRequestComparer _requestComparer;
+        private readonly IPactProviderServiceResponseComparer _responseComparer;
 
         public bool Match { get; set; }
         public string Comment { get; set; }
-        public PactProviderServiceRequest Expected { get; set; }
-        public PactProviderServiceRequest Actual { get; set; }
+        public PactProviderServiceResponse Expected { get; set; }
+        public PactProviderServiceResponse Actual { get; set; }
 
-        public RequestTestCase()
+        public ResponseTestCase()
         {
-            _requestComparer = new PactProviderServiceRequestComparer();
+            _responseComparer = new PactProviderServiceResponseComparer();
         }
 
         public bool Verified()
         {
             try
             {
-                _requestComparer.Compare(Expected, Actual);
+                _responseComparer.Compare(Expected, Actual);
             }
             catch (CompareFailedException)
             {
