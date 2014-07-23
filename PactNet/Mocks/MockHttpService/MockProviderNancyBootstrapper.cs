@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Nancy;
 using Nancy.Bootstrapper;
@@ -6,7 +5,6 @@ using Nancy.Diagnostics;
 using Nancy.TinyIoc;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Mappers;
-using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService
 {

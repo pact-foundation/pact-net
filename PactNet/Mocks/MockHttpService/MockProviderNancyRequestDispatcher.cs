@@ -29,8 +29,8 @@ namespace PactNet.Mocks.MockHttpService
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var expectedRequest = context.Parameters.ExpectedRequest;
-            var expectedResponse = context.Parameters.ExpectedResponse;
+            var expectedRequest = context.GetMockRequest();
+            var expectedResponse = context.GetMockResponse();
 
             var tcs = new TaskCompletionSource<Response>();
 
@@ -38,12 +38,12 @@ namespace PactNet.Mocks.MockHttpService
             {
                 if (expectedRequest == null)
                 {
-                    throw new InvalidOperationException("Expected request has not been set. Please ensure With() has been called with your expected request and RegisterInteraction() has also called on the Pact.");
+                    throw new InvalidOperationException("Expected request has not been set.");
                 }
 
                 if (expectedResponse == null)
                 {
-                    throw new InvalidOperationException("Expected response has not been set. Please ensure WillRespondWith() has been called with your expected response and RegisterInteraction() has also called on the Pact.");
+                    throw new InvalidOperationException("Expected response has not been set.");
                 }
 
                 var response = HandleRequest(context.Request, expectedRequest, expectedResponse);
