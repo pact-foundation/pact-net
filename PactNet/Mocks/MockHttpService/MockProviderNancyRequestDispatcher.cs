@@ -9,14 +9,11 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService
 {
-    public class MockProviderNancyRequestDispatcher : IRequestDispatcher, IDisposable
+    public class MockProviderNancyRequestDispatcher : IRequestDispatcher
     {
         private readonly IPactProviderServiceRequestComparer _requestComparer;
         private readonly IPactProviderServiceRequestMapper _requestMapper;
         private readonly INancyResponseMapper _responseMapper;
-
-        private static PactProviderServiceRequest _expectedRequest;
-        private static PactProviderServiceResponse _expectedResponse;
         
         public MockProviderNancyRequestDispatcher(
             IPactProviderServiceRequestComparer requestComparer,
@@ -32,21 +29,24 @@ namespace PactNet.Mocks.MockHttpService
         {
             cancellationToken.ThrowIfCancellationRequested();
 
+            var expectedRequest = context.GetMockRequest();
+            var expectedResponse = context.GetMockResponse();
+
             var tcs = new TaskCompletionSource<Response>();
 
             try
             {
-                if (_expectedRequest == null)
+                if (expectedRequest == null)
                 {
-                    throw new InvalidOperationException("Expected request has not been set. Please ensure With() has been called with your expected request and RegisterInteraction() has also called on the Pact.");
+                    throw new InvalidOperationException("Expected request has not been set.");
                 }
 
-                if (_expectedResponse == null)
+                if (expectedResponse == null)
                 {
-                    throw new InvalidOperationException("Expected response has not been set. Please ensure WillRespondWith() has been called with your expected response and RegisterInteraction() has also called on the Pact.");
+                    throw new InvalidOperationException("Expected response has not been set.");
                 }
 
-                var response = HandleRequest(context.Request);
+                var response = HandleRequest(context.Request, expectedRequest, expectedResponse);
                 context.Response = response;
                 tcs.SetResult(context.Response);
             }
@@ -71,30 +71,13 @@ namespace PactNet.Mocks.MockHttpService
             return tcs.Task;
         }
 
-        public static void Set(PactProviderServiceRequest request, PactProviderServiceResponse response)
-        {
-            _expectedRequest = request;
-            _expectedResponse = response;
-        }
-
-        private Response HandleRequest(Request request)
+        private Response HandleRequest(Request request, PactProviderServiceRequest expectedRequest, PactProviderServiceResponse expectedResponse)
         {
             var actualRequest = _requestMapper.Convert(request);
 
-            _requestComparer.Compare(_expectedRequest, actualRequest);
+            _requestComparer.Compare(expectedRequest, actualRequest);
 
-            return _responseMapper.Convert(_expectedResponse);
-        }
-
-        public static void Reset()
-        {
-            _expectedRequest = null;
-            _expectedResponse = null;
-        }
-
-        public void Dispose()
-        {
-            Reset();
+            return _responseMapper.Convert(expectedResponse);
         }
     }
 }

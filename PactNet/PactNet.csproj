@@ -74,6 +74,7 @@
     <Compile Include="Mocks\MockHttpService\Mappers\EncodingMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\HttpVerbMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\IHttpVerbMapper.cs" />
+    <Compile Include="Mocks\MockHttpService\MockContextService.cs" />
     <Compile Include="Mocks\MockHttpService\Models\HttpBodyContent.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\HttpBodyContentMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\IEncodingMapper.cs" />
@@ -94,8 +95,11 @@
     <Compile Include="Mocks\MockHttpService\Mappers\PactProviderServiceRequestMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Models\HttpVerb.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\PactProviderServiceResponseMapper.cs" />
+    <Compile Include="Mocks\MockHttpService\IMockContextService.cs" />
+    <Compile Include="Mocks\MockHttpService\PactAwareContextFactory.cs" />
     <Compile Include="Mocks\MockHttpService\Validators\IProviderServiceValidator.cs" />
     <Compile Include="Mocks\MockHttpService\Validators\ProviderServiceValidator.cs" />
+    <Compile Include="NancyContextExtensions.cs" />
     <Compile Include="Pact.cs" />
     <Compile Include="Models\PactFile.cs" />
     <Compile Include="PactProvider.cs" />

@@ -6,16 +6,11 @@ using Xunit;
 
 namespace PactNet.Tests.Mocks.MockHttpService
 {
-    public class MockProviderServiceTests : IDisposable
+    public class MockProviderServiceTests
     {
         private IMockProviderService GetSubject(int port = 1234)
         {
             return new MockProviderService(port);
-        }
-
-        public void Dispose()
-        {
-            MockProviderNancyRequestDispatcher.Reset();
         }
 
         [Fact]
