@@ -65,6 +65,25 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         }
 
         [Fact]
+        public void Convert_WithPathAndEmptyQuery_QueryIsSetToNull()
+        {
+            const string path = "/events";
+
+            const HttpVerb httpVerb = HttpVerb.Get;
+            var request = new Request("GET", path, "Http");
+
+            var mockHttpVerbMapper = Substitute.For<IHttpVerbMapper>();
+            var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
+            mockHttpVerbMapper.Convert("GET").Returns(httpVerb);
+
+            var mapper = new PactProviderServiceRequestMapper(mockHttpVerbMapper, mockHttpBodyContentMapper);
+
+            var result = mapper.Convert(request);
+
+            Assert.Null(result.Query);
+        }
+
+        [Fact]
         public void Convert_WithPathAndQuery_CorrectlySetsPathAndQuery()
         {
             const string path = "/events";

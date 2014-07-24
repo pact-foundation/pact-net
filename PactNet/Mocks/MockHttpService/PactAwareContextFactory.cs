@@ -25,14 +25,13 @@ namespace PactNet.Mocks.MockHttpService
             var nancyContext = new NancyContext
             {
                 Request = request, 
-                Trace = this._requestTraceFactory.Create(request)
+                Trace = _requestTraceFactory.Create(request)
             };
 
-            nancyContext.Culture = this._cultureService.DetermineCurrentCulture(nancyContext);
-            nancyContext.Text = new TextResourceFinder(this._textResource, nancyContext);
-            
-            nancyContext.SetMockRequest(_mockContextService.GetExpectedRequest());
-            nancyContext.SetMockResponse(_mockContextService.GetExpectedResponse());
+            nancyContext.Culture = _cultureService.DetermineCurrentCulture(nancyContext);
+            nancyContext.Text = new TextResourceFinder(_textResource, nancyContext);
+
+            nancyContext.SetMockRequestResponsePairs(_mockContextService.GetExpectedRequestResponsePairs());
 
             return nancyContext;
         }

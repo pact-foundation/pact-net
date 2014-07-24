@@ -1,27 +1,21 @@
 using System;
+using System.Collections.Generic;
 using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService
 {
     public class MockContextService : IMockContextService
     {
-        private readonly Func<PactProviderServiceRequest> _getPactRequest;
-        private readonly Func<PactProviderServiceResponse> _getPactResponse;
+        private readonly Func<IEnumerable<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>>> _requestResponsePairsFactory;
 
-        public MockContextService(Func<PactProviderServiceRequest> getPactRequest, Func<PactProviderServiceResponse> getPactResponse)
+        public MockContextService(Func<IEnumerable<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>>> requestResponsePairsFactory)
         {
-            _getPactRequest = getPactRequest;
-            _getPactResponse = getPactResponse;
+            _requestResponsePairsFactory = requestResponsePairsFactory;
         }
 
-        public PactProviderServiceRequest GetExpectedRequest()
+        public IEnumerable<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>> GetExpectedRequestResponsePairs()
         {
-            return _getPactRequest();
-        }
-
-        public PactProviderServiceResponse GetExpectedResponse()
-        {
-            return _getPactResponse();
+            return _requestResponsePairsFactory();
         }
     }
 }

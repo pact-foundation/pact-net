@@ -40,7 +40,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
             {
                 Method = httpVerb,
                 Path = from.Path,
-                Query = from.Url.Query.TrimStart('?')
+                Query = !String.IsNullOrEmpty(from.Url.Query) ? from.Url.Query.TrimStart('?') : null
             };
 
             if (from.Headers != null && from.Headers.Any())

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Dynamic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using Nancy;
 using Nancy.Routing;
@@ -21,8 +20,14 @@ namespace PactNet.Tests.Mocks.MockHttpService
             {
                 Request = new Request("GET", "/", "HTTP")
             };
-            nancyContext.SetMockRequest(null);
-            nancyContext.SetMockResponse(new PactProviderServiceResponse());
+
+            var requestResponsePairs = new List<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>>
+            {
+                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(null, new PactProviderServiceResponse())
+            };
+
+            nancyContext.SetMockRequestResponsePairs(requestResponsePairs);
+
 
             var mockNancyResponseMapper = Substitute.For<INancyResponseMapper>();
             mockNancyResponseMapper.Convert(Arg.Any<PactProviderServiceResponse>())
@@ -46,8 +51,13 @@ namespace PactNet.Tests.Mocks.MockHttpService
             {
                 Request = new Request("GET", "/", "HTTP")
             };
-            nancyContext.SetMockRequest( new PactProviderServiceRequest());
-            nancyContext.SetMockResponse( null);
+
+            var requestResponsePairs = new List<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>>
+            {
+                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(new PactProviderServiceRequest(), null)
+            };
+
+            nancyContext.SetMockRequestResponsePairs(requestResponsePairs);
 
             var mockNancyResponseMapper = Substitute.For<INancyResponseMapper>();
             mockNancyResponseMapper.Convert(Arg.Any<PactProviderServiceResponse>())
@@ -71,8 +81,13 @@ namespace PactNet.Tests.Mocks.MockHttpService
             {
                 Request = new Request("GET", "/", "HTTP")
             };
-            nancyContext.SetMockRequest( new PactProviderServiceRequest());
-            nancyContext.SetMockResponse( new PactProviderServiceResponse());
+
+            var requestResponsePairs = new List<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>>
+            {
+                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(new PactProviderServiceRequest(), new PactProviderServiceResponse())
+            };
+
+            nancyContext.SetMockRequestResponsePairs(requestResponsePairs);
 
             var mockNancyResponseMapper = Substitute.For<INancyResponseMapper>();
             mockNancyResponseMapper.Convert(Arg.Any<PactProviderServiceResponse>())
@@ -92,19 +107,29 @@ namespace PactNet.Tests.Mocks.MockHttpService
         [Fact]
         public void Dispatch_WithNancyContext_ConvertIsCalledOnThePactProviderServiceRequestMapper()
         {
-            var expectedRequest = new PactProviderServiceRequest();
+            var expectedRequest = new PactProviderServiceRequest
+            {
+                Method = HttpVerb.Get,
+                Path = "/"
+            };
             var expectedResponse = new PactProviderServiceResponse();
+            var nancyContext = new NancyContext
+            {
+                Request = new Request("GET", "/", "HTTP")
+            };
 
             var mockRequestComparer = Substitute.For<IPactProviderServiceRequestComparer>();
             var mockRequestMapper = Substitute.For<IPactProviderServiceRequestMapper>();
             var mockResponseMapper = Substitute.For<INancyResponseMapper>();
 
-            var nancyContext = new NancyContext
+            mockRequestMapper.Convert(nancyContext.Request).Returns(expectedRequest);
+
+            var requestResponsePairs = new List<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>>
             {
-                Request = new Request("GET", "/", "HTTP")
+                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(expectedRequest, expectedResponse)
             };
-            nancyContext.SetMockRequest( expectedRequest);
-            nancyContext.SetMockResponse( expectedResponse);
+
+            nancyContext.SetMockRequestResponsePairs(requestResponsePairs);
 
             IRequestDispatcher requestDispatcher = new MockProviderNancyRequestDispatcher(
                 mockRequestComparer,
@@ -131,8 +156,13 @@ namespace PactNet.Tests.Mocks.MockHttpService
             {
                 Request = new Request("GET", "/", "HTTP")
             };
-            nancyContext.SetMockRequest( expectedRequest);
-            nancyContext.SetMockResponse( expectedResponse);
+
+            var requestResponsePairs = new List<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>>
+            {
+                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(expectedRequest, expectedResponse)
+            };
+
+            nancyContext.SetMockRequestResponsePairs(requestResponsePairs);
 
             mockRequestMapper.Convert(nancyContext.Request).Returns(actualRequest);
 
@@ -149,19 +179,29 @@ namespace PactNet.Tests.Mocks.MockHttpService
         [Fact]
         public void Dispatch_WithNancyContext_ConvertIsCalledOnTheNancyResponseMapper()
         {   
-            var expectedRequest = new PactProviderServiceRequest();
+            var expectedRequest = new PactProviderServiceRequest
+            {
+                Method = HttpVerb.Get,
+                Path = "/"
+            };
             var expectedResponse = new PactProviderServiceResponse();
+            var nancyContext = new NancyContext
+            {
+                Request = new Request("GET", "/", "HTTP")
+            };
 
             var mockRequestComparer = Substitute.For<IPactProviderServiceRequestComparer>();
             var mockRequestMapper = Substitute.For<IPactProviderServiceRequestMapper>();
             var mockResponseMapper = Substitute.For<INancyResponseMapper>();
 
-            var nancyContext = new NancyContext
+            mockRequestMapper.Convert(nancyContext.Request).Returns(expectedRequest);
+
+            var requestResponsePairs = new List<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>>
             {
-                Request = new Request("GET", "/", "HTTP")
+                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(expectedRequest, expectedResponse)
             };
-            nancyContext.SetMockRequest( expectedRequest);
-            nancyContext.SetMockResponse( expectedResponse);
+
+            nancyContext.SetMockRequestResponsePairs(requestResponsePairs);
 
             IRequestDispatcher requestDispatcher = new MockProviderNancyRequestDispatcher(
                 mockRequestComparer,
@@ -198,8 +238,13 @@ namespace PactNet.Tests.Mocks.MockHttpService
             {
                 Request = new Request("GET", "/Test", "HTTP")
             };
-            nancyContext.SetMockRequest( expectedRequest);
-            nancyContext.SetMockResponse( expectedResponse);
+
+            var requestResponsePairs = new List<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>>
+            {
+                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(expectedRequest, expectedResponse)
+            };
+
+            nancyContext.SetMockRequestResponsePairs(requestResponsePairs);
 
             mockRequestMapper.Convert(nancyContext.Request).Returns(actualRequest);
             //mockRequestComparer.Compare Doesnt throw any exceptions
@@ -242,8 +287,13 @@ namespace PactNet.Tests.Mocks.MockHttpService
             {
                 Request = new Request("GET", "/Test", "HTTP")
             };
-            nancyContext.SetMockRequest( expectedRequest);
-            nancyContext.SetMockResponse( expectedResponse);
+
+            var requestResponsePairs = new List<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>>
+            {
+                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(expectedRequest, expectedResponse)
+            };
+
+            nancyContext.SetMockRequestResponsePairs(requestResponsePairs);
 
             mockRequestMapper.Convert(nancyContext.Request).Returns(actualRequest);
             mockRequestComparer

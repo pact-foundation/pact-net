@@ -32,9 +32,11 @@ namespace Consumer
             var request = new HttpRequestMessage(HttpMethod.Get, "/stats/status");
 
             var response = client.SendAsync(request);
+            var result = response.Result;
+            var content = result.Content.ReadAsStringAsync().Result;
+            var status = result.StatusCode;
 
-            var content = response.Result.Content.ReadAsStringAsync().Result;
-            var status = response.Result.StatusCode;
+            result.EnsureSuccessStatusCode();
 
             if (status == HttpStatusCode.OK && content.Equals("alive"))
             {
@@ -53,9 +55,11 @@ namespace Consumer
             request.Headers.Add("Accept", "application/json");
 
             var response = client.SendAsync(request);
+            var result = response.Result;
+            var content = result.Content.ReadAsStringAsync().Result;
+            var status = result.StatusCode;
 
-            var content = response.Result.Content.ReadAsStringAsync().Result;
-            var status = response.Result.StatusCode;
+            result.EnsureSuccessStatusCode();
 
             if (status == HttpStatusCode.OK)
             {
@@ -76,9 +80,11 @@ namespace Consumer
             request.Headers.Add("Accept", "application/json");
 
             var response = client.SendAsync(request);
+            var result = response.Result;
+            var content = result.Content.ReadAsStringAsync().Result;
+            var status = result.StatusCode;
 
-            var content = response.Result.Content.ReadAsStringAsync().Result;
-            var status = response.Result.StatusCode;
+            result.EnsureSuccessStatusCode();
 
             if (status == HttpStatusCode.OK)
             {
@@ -97,10 +103,11 @@ namespace Consumer
             request.Headers.Add("Accept", "application/json");
 
             var response = client.SendAsync(request);
-
             var result = response.Result;
             var content = result.Content.ReadAsStringAsync().Result;
             var status = result.StatusCode;
+
+            result.EnsureSuccessStatusCode();
 
             if (status == HttpStatusCode.OK)
             {
@@ -131,6 +138,8 @@ namespace Consumer
 
             var response = client.SendAsync(request);
             var result = response.Result;
+
+            result.EnsureSuccessStatusCode();
 
             if (result.StatusCode != HttpStatusCode.Created)
             {

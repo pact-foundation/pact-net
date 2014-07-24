@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Nancy.Hosting.Self;
 using PactNet.Mocks.MockHttpService.Configuration;
 using PactNet.Mocks.MockHttpService.Models;
@@ -113,12 +114,21 @@ namespace PactNet.Mocks.MockHttpService
 
             _interactions = _interactions ?? new List<PactServiceInteraction>();
             _interactions.Add(interaction);
+
+            ClearTrasientState();
+        }
+
+        private void ClearTrasientState()
+        {
+            _request = null;
+            _response = null;
+            _providerState = null;
+            _description = null;
         }
 
         public void Start() //TODO: Can't test this nicely
         {
-            _host = _nancyHostFactory(new Uri(BaseUri), 
-                                      new MockContextService(() => this._request, () => this._response));
+            _host = _nancyHostFactory(new Uri(BaseUri), new MockContextService(GetMockInteractionRequestResponsePairs));
             _host.Start();
         }
 
@@ -129,6 +139,17 @@ namespace PactNet.Mocks.MockHttpService
                 _host.Stop();
                 _host.Dispose();
             }
+            _interactions = null;
+        }
+
+        private IEnumerable<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>> GetMockInteractionRequestResponsePairs()
+        {
+            if (_interactions == null || !_interactions.Any())
+            {
+                return null;
+            }
+
+            return _interactions.Select(x => new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(x.Request, x.Response));
         }
     }
 }

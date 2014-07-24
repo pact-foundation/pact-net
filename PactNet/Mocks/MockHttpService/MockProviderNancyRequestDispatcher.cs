@@ -29,24 +29,11 @@ namespace PactNet.Mocks.MockHttpService
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var expectedRequest = context.GetMockRequest();
-            var expectedResponse = context.GetMockResponse();
-
             var tcs = new TaskCompletionSource<Response>();
 
             try
             {
-                if (expectedRequest == null)
-                {
-                    throw new InvalidOperationException("Expected request has not been set.");
-                }
-
-                if (expectedResponse == null)
-                {
-                    throw new InvalidOperationException("Expected response has not been set.");
-                }
-
-                var response = HandleRequest(context.Request, expectedRequest, expectedResponse);
+                var response = HandleRequest(context);
                 context.Response = response;
                 tcs.SetResult(context.Response);
             }
@@ -71,9 +58,24 @@ namespace PactNet.Mocks.MockHttpService
             return tcs.Task;
         }
 
-        private Response HandleRequest(Request request, PactProviderServiceRequest expectedRequest, PactProviderServiceResponse expectedResponse)
+        private Response HandleRequest(NancyContext context)
         {
-            var actualRequest = _requestMapper.Convert(request);
+            var actualRequest = _requestMapper.Convert(context.Request);
+
+            var matchingRequestResponsePair = context.GetMatchingMockRequestResponsePair(actualRequest.Method, actualRequest.Path, actualRequest.Query);
+            var expectedRequest = matchingRequestResponsePair.Key;
+            var expectedResponse = matchingRequestResponsePair.Value;
+
+            //TODO:NC Check if this is still required (will write a test for this)
+            if (expectedRequest == null)
+            {
+                throw new InvalidOperationException("Expected request has not been set.");
+            }
+
+            if (expectedResponse == null)
+            {
+                throw new InvalidOperationException("Expected response has not been set.");
+            }
 
             _requestComparer.Compare(expectedRequest, actualRequest);
 

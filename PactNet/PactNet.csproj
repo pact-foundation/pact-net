@@ -99,7 +99,7 @@
     <Compile Include="Mocks\MockHttpService\PactAwareContextFactory.cs" />
     <Compile Include="Mocks\MockHttpService\Validators\IProviderServiceValidator.cs" />
     <Compile Include="Mocks\MockHttpService\Validators\ProviderServiceValidator.cs" />
-    <Compile Include="NancyContextExtensions.cs" />
+    <Compile Include="Mocks\MockHttpService\NancyContextExtensions.cs" />
     <Compile Include="Pact.cs" />
     <Compile Include="Models\PactFile.cs" />
     <Compile Include="PactProvider.cs" />
