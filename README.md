@@ -183,7 +183,7 @@ public class SomethingApiTests
 		pact.ServiceProvider("Something API", testServer.HttpClient)
 			.HonoursPactWith("Consumer")
 			.PactUri("../../../Consumer.Tests/pacts/consumer-something_api.json")
-			.VerifyProviderService();
+			.Verify(); //Optionally you can control what interactions are verified by specifying a providerDescription and/or providerState
 
 		testServer.Dispose();
 	}
@@ -219,7 +219,7 @@ public class SomethingApiTests
 		pact.ServiceProvider("Something API", client)
 			.HonoursPactWith("Consumer")
 			.PactUri("../../../Consumer.Tests/pacts/consumer-something_api.json")
-			.VerifyProviderService();
+			.Verify(); //Optionally you can control what interactions are verified by specifying a providerDescription and/or providerState
 
 		testServer.Dispose();
 	}
