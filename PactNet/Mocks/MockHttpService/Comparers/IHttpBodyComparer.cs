@@ -2,6 +2,6 @@
 {
     public interface IHttpBodyComparer
     {
-        void Validate(dynamic body1, dynamic body2);
+        void Validate(dynamic body1, dynamic body2, bool useStrict = false);
     }
 }

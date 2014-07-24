@@ -59,8 +59,8 @@ namespace PactNet.Tests.Specification
                     Console.WriteLine();
 
                     var testCaseJson = File.ReadAllText(testCaseFileName);
-                    var testCase = (T)JsonConvert.DeserializeObject(testCaseJson, typeof(T));
-
+                    var testCase = (T) JsonConvert.DeserializeObject(testCaseJson, typeof (T));
+                    
                     if (!testCase.Verified())
                     {
                         failedTestCases.Add(String.Format("[Failed] {0}", testCaseFileName));
