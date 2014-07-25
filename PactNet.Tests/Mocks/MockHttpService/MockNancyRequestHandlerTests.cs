@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
 using Nancy;
-using Nancy.Routing;
 using NSubstitute;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Comparers;
@@ -27,7 +25,6 @@ namespace PactNet.Tests.Mocks.MockHttpService
             };
 
             nancyContext.SetMockRequestResponsePairs(requestResponsePairs);
-
 
             var mockNancyResponseMapper = Substitute.For<INancyResponseMapper>();
             mockNancyResponseMapper.Convert(Arg.Any<PactProviderServiceResponse>())

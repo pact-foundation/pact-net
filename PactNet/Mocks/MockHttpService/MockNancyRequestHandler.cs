@@ -61,6 +61,7 @@ namespace PactNet.Mocks.MockHttpService
             var expectedResponse = matchingRequestResponsePair.Value;
 
             //TODO:NC Check if this is still required (will write a test for this)
+            // it can be removed once the logic in NancyExtensions are unit tested (PK)
             if (expectedRequest == null)
             {
                 throw new InvalidOperationException("Expected request has not been set.");
