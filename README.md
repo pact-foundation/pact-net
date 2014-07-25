@@ -18,6 +18,9 @@ Please also note that this project is still a work in progress, so there will li
 Please feel free to contribute, we do accept pull requests.
 
 ## Usage
+Below are some samples of usage.  
+We have also written some `//NOTE:` comments inline in the code to help explain what certains calls do.
+
 ### Service Consumer
 
 #### 1. Build your client
@@ -76,12 +79,12 @@ public class ConsumerMyApiPact : IDisposable
 		Pact = new Pact().ServiceConsumer("Consumer")
 			.HasPactWith("Something API");
 
-		MockProviderService = Pact.MockService(MockServerPort); //Configure the in memory http mock server
+		MockProviderService = Pact.MockService(MockServerPort); //Configure the http mock server
 	}
 
 	public void Dispose()
 	{
-		Pact.Dispose(); //Will save the pact file once finished
+		Pact.Dispose(); //NOTE: Will save the pact file once finished
 	}
 }
 
@@ -92,6 +95,7 @@ public class SomethingApiConsumerTests : IUseFixture<ConsumerMyApiPact>
 	public void SetFixture(ConsumerMyApiPact data)
 	{
 		_data = data;
+		_data.MockProviderService.ClearTestScopedInteractions(); //NOTE: Clears the interactions registered by the test after it has been run
 	}
 }
 ```
@@ -103,7 +107,13 @@ Create a new test case and implement it.
 ```c#
 public class SomethingApiConsumerTests : IUseFixture<ConsumerMyApiPact>
 {
-	//As above...
+	private ConsumerMyApiPact _data;
+		
+	public void SetFixture(ConsumerMyApiPact data)
+	{
+		_data = data;
+		_data.MockProviderService.ClearTestScopedInteractions(); //NOTE: Clears the interactions registered by the test after it has been run
+	}
 	
 	[Fact]
 	public void GetSomething_WhenTheTesterSomethingExists_ReturnsTheSomething()
@@ -128,13 +138,13 @@ public class SomethingApiConsumerTests : IUseFixture<ConsumerMyApiPact>
 				{
 					{ "Content-Type", "application/json; charset=utf-8" }
 				},
-				Body = new //Note the case sensitivity here, the body will be serialised as per the casing defined
+				Body = new //NOTE: Note the case sensitivity here, the body will be serialised as per the casing defined
 				{
 					id = "tester",
 					firstName = "Totally",
 					lastName = "Awesome"
 				}
-			}); //WillResponseWith call must come last as it will register the interaction
+			}); //NOTE: WillResponseWith call must come last as it will register the interaction
 			
 		var consumer = new SomethingApiClient(_data.MockServerBaseUri);
 		
@@ -170,7 +180,7 @@ public class SomethingApiTests
 	public void EnsureSomethingApiHonoursPactWithConsumer()
 	{
 		//Arrange
-		var testServer = TestServer.Create<Startup>(); //Using the Microsoft.Owin.Testing nuget package
+		var testServer = TestServer.Create<Startup>(); //NOTE: Using the Microsoft.Owin.Testing nuget package
 
 		var pact = new Pact()
 			.ProviderStatesFor("Consumer",
@@ -183,7 +193,7 @@ public class SomethingApiTests
 		pact.ServiceProvider("Something API", testServer.HttpClient)
 			.HonoursPactWith("Consumer")
 			.PactUri("../../../Consumer.Tests/pacts/consumer-something_api.json")
-			.Verify(); //Optionally you can control what interactions are verified by specifying a providerDescription and/or providerState
+			.Verify(); //NOTE: Optionally you can control what interactions are verified by specifying a providerDescription and/or providerState
 
 		testServer.Dispose();
 	}
@@ -219,7 +229,7 @@ public class SomethingApiTests
 		pact.ServiceProvider("Something API", client)
 			.HonoursPactWith("Consumer")
 			.PactUri("../../../Consumer.Tests/pacts/consumer-something_api.json")
-			.Verify(); //Optionally you can control what interactions are verified by specifying a providerDescription and/or providerState
+			.Verify(); //NOTE: Optionally you can control what interactions are verified by specifying a providerDescription and/or providerState
 
 		testServer.Dispose();
 	}

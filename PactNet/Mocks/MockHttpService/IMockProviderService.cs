@@ -9,5 +9,6 @@ namespace PactNet.Mocks.MockHttpService
         void WillRespondWith(PactProviderServiceResponse response);
         void Start();
         void Stop();
+        void ClearTestScopedInteractions();
     }
 }

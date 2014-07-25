@@ -75,12 +75,12 @@ namespace PactNet
 
         public void Dispose()
         {
+            PersistPactFile();
+
             if (_mockProviderService != null)
             {
                 _mockProviderService.Stop();
             }
-
-            PersistPactFile();
         }
 
         private void PersistPactFile()

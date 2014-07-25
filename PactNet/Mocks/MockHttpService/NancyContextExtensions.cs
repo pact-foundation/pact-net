@@ -10,7 +10,7 @@ namespace PactNet.Mocks.MockHttpService
     {
         private const string PactMockRequestResponsePairsKey = "PactMockRequestResponsePairs";
 
-        public static KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse> GetMatchingMockRequestResponsePair(this NancyContext context, HttpVerb method, string path, string query)
+        public static KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse> GetMatchingMockRequestResponsePair(this NancyContext context, HttpVerb method, string path)
         {
             if (!context.Items.ContainsKey(PactMockRequestResponsePairsKey))
             {
@@ -21,8 +21,7 @@ namespace PactNet.Mocks.MockHttpService
 
             var matchingRequestResponsePairs = requestResponsePairs.Where(x =>
                 x.Key.Method == method &&
-                x.Key.Path == path &&
-                x.Key.Query == query).ToList();
+                x.Key.Path == path).ToList();
 
             if (matchingRequestResponsePairs == null || !matchingRequestResponsePairs.Any())
             {

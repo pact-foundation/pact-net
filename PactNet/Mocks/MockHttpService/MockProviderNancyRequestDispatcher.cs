@@ -62,7 +62,7 @@ namespace PactNet.Mocks.MockHttpService
         {
             var actualRequest = _requestMapper.Convert(context.Request);
 
-            var matchingRequestResponsePair = context.GetMatchingMockRequestResponsePair(actualRequest.Method, actualRequest.Path, actualRequest.Query);
+            var matchingRequestResponsePair = context.GetMatchingMockRequestResponsePair(actualRequest.Method, actualRequest.Path);
             var expectedRequest = matchingRequestResponsePair.Key;
             var expectedResponse = matchingRequestResponsePair.Value;
 
