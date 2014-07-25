@@ -47,7 +47,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
             if (request1.Body != null)
             {
-                _httpBodyComparer.Validate(request2.Body, request1.Body);
+                _httpBodyComparer.Validate(request2.Body, request1.Body, true);
             }
         }
     }
