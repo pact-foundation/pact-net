@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Nancy.Hosting.Self;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
@@ -228,6 +229,21 @@ namespace PactNet.Tests.Mocks.MockHttpService
             Assert.Equal(description, interaction.Description);
             Assert.Equal(request, interaction.Request);
             Assert.Equal(response, interaction.Response);
+        }
+
+        [Fact]
+        public void Stop_WhenCalled_InteractionsIsNull()
+        {
+            var mockService = GetSubject();
+
+            mockService
+                .UponReceiving("My interaction")
+                .With(new PactProviderServiceRequest())
+                .WillRespondWith(new PactProviderServiceResponse());
+
+            mockService.Stop();
+
+            Assert.Null(mockService.Interactions);
         }
     }
 }

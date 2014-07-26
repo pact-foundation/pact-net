@@ -119,13 +119,13 @@ namespace PactNet.Mocks.MockHttpService
             ClearTrasientState();
         }
 
-        public void Start() //TODO: Can't test this nicely
+        public void Start()
         {
             _host = _nancyHostFactory(new Uri(BaseUri), new MockContextService(GetMockInteractionRequestResponsePairs));
             _host.Start();
         }
 
-        public void Stop() //TODO: Can't test this nicely
+        public void Stop()
         {
             if (_host != null)
             {
