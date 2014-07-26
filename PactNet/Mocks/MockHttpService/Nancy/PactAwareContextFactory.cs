@@ -3,7 +3,7 @@ using Nancy.Culture;
 using Nancy.Diagnostics;
 using Nancy.Localization;
 
-namespace PactNet.Mocks.MockHttpService
+namespace PactNet.Mocks.MockHttpService.Nancy
 {
     public class PactAwareContextFactory : INancyContextFactory
     {

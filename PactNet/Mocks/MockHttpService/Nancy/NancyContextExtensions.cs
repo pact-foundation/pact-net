@@ -4,7 +4,7 @@ using System.Linq;
 using Nancy;
 using PactNet.Mocks.MockHttpService.Models;
 
-namespace PactNet.Mocks.MockHttpService
+namespace PactNet.Mocks.MockHttpService.Nancy
 {
     public static class NancyContextExtensions
     {

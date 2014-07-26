@@ -4,6 +4,7 @@ using System.Linq;
 using Nancy.Hosting.Self;
 using PactNet.Mocks.MockHttpService.Configuration;
 using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Mocks.MockHttpService.Nancy;
 using PactNet.Models;
 
 namespace PactNet.Mocks.MockHttpService

@@ -6,7 +6,7 @@ using Nancy.TinyIoc;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Mappers;
 
-namespace PactNet.Mocks.MockHttpService
+namespace PactNet.Mocks.MockHttpService.Nancy
 {
     public class MockProviderNancyBootstrapper : DefaultNancyBootstrapper
     {

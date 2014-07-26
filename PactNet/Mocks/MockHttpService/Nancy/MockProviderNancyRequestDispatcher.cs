@@ -7,7 +7,7 @@ using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 
-namespace PactNet.Mocks.MockHttpService
+namespace PactNet.Mocks.MockHttpService.Nancy
 {
     public class MockProviderNancyRequestDispatcher : IRequestDispatcher
     {
