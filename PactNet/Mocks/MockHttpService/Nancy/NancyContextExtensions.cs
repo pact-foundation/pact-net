@@ -10,6 +10,11 @@ namespace PactNet.Mocks.MockHttpService.Nancy
     {
         private const string PactMockRequestResponsePairsKey = "PactMockRequestResponsePairs";
 
+        public static void SetMockRequestResponsePairs(this NancyContext context, IEnumerable<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>> mockRequestResponsePairs)
+        {
+            context.Items[PactMockRequestResponsePairsKey] = mockRequestResponsePairs;
+        }
+
         public static KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse> GetMatchingMockRequestResponsePair(this NancyContext context, HttpVerb method, string path)
         {
             if (!context.Items.ContainsKey(PactMockRequestResponsePairsKey))
@@ -25,20 +30,15 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
             if (matchingRequestResponsePairs == null || !matchingRequestResponsePairs.Any())
             {
-                throw new InvalidOperationException("No matching mock request/response pair has been registered for the current request");
+                throw new ArgumentException("No matching mock request/response pair has been registered for the current request");
             }
 
             if (matchingRequestResponsePairs.Count() > 1)
             {
-                throw new InvalidOperationException("More than one matching mock request/response pair has been registered for the current request");
+                throw new ArgumentException("More than one matching mock request/response pair has been registered for the current request");
             }
 
             return matchingRequestResponsePairs.Single();
-        }
-
-        public static void SetMockRequestResponsePairs(this NancyContext context, IEnumerable<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>> mockRequestResponsePairs)
-        {
-            context.Items[PactMockRequestResponsePairsKey] = mockRequestResponsePairs;
         }
     }
 }

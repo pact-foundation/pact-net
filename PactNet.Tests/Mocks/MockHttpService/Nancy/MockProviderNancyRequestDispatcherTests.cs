@@ -3,14 +3,13 @@ using System.Threading;
 using Nancy;
 using Nancy.Routing;
 using NSubstitute;
-using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Nancy;
 using Xunit;
 
-namespace PactNet.Tests.Mocks.MockHttpService
+namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 {
     public class MockProviderNancyRequestDispatcherTests
     {
