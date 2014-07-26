@@ -71,11 +71,13 @@
     <Compile Include="Mocks\MockHttpService\Mappers\NancyResponseMapperTests.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\PactProviderServiceRequestMapperTests.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\PactProviderServiceResponseMapperTests.cs" />
+    <Compile Include="Mocks\MockHttpService\MockContextServiceTests.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\MockProviderNancyRequestDispatcherTests.cs" />
     <Compile Include="Mocks\MockHttpService\MockProviderServiceTests.cs" />
     <Compile Include="Mocks\MockHttpService\Models\PactProviderServiceRequestTests.cs" />
     <Compile Include="Mocks\MockHttpService\Models\HttpBodyContentTests.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\NancyContextExtensionsTests.cs" />
+    <Compile Include="Mocks\MockHttpService\Nancy\PactAwareContextFactoryTests.cs" />
     <Compile Include="Models\PactFileTests.cs" />
     <Compile Include="PactConsumerTests.cs" />
     <Compile Include="ServicePactFileTests.cs" />
