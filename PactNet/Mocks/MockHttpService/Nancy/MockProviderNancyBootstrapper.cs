@@ -51,6 +51,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             container.Register(typeof(IPactProviderServiceRequestMapper), typeof(PactProviderServiceRequestMapper));
             container.Register(typeof(INancyResponseMapper), typeof(NancyResponseMapper));
             container.Register(typeof (IMockContextService), _mockContextService);
+            container.Register(typeof(IMockProviderNancyRequestHandler), typeof(MockProviderNancyRequestHandler));
         }
     }
 }

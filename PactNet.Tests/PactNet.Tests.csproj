@@ -71,6 +71,7 @@
     <Compile Include="Mocks\MockHttpService\Mappers\NancyResponseMapperTests.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\PactProviderServiceRequestMapperTests.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\PactProviderServiceResponseMapperTests.cs" />
+    <Compile Include="Mocks\MockHttpService\Nancy\MockProviderNancyRequestHandlerTests.cs" />
     <Compile Include="Mocks\MockHttpService\MockContextServiceTests.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\MockProviderNancyRequestDispatcherTests.cs" />
     <Compile Include="Mocks\MockHttpService\MockProviderServiceTests.cs" />

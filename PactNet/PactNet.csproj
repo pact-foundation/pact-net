@@ -70,11 +70,13 @@
     <Compile Include="Mocks\MockHttpService\Comparers\IHttpPathComparer.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\IHttpQueryStringComparer.cs" />
     <Compile Include="Mocks\MockHttpService\Configuration\NancyConfig.cs" />
+    <Compile Include="Mocks\MockHttpService\Nancy\IMockProviderNancyRequestHandler.cs" />
     <Compile Include="Mocks\MockHttpService\IMockProviderService.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\EncodingMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\HttpVerbMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\IHttpVerbMapper.cs" />
     <Compile Include="Mocks\MockHttpService\MockContextService.cs" />
+    <Compile Include="Mocks\MockHttpService\Nancy\MockProviderNancyRequestHandler.cs" />
     <Compile Include="Mocks\MockHttpService\Models\HttpBodyContent.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\HttpBodyContentMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\IEncodingMapper.cs" />
