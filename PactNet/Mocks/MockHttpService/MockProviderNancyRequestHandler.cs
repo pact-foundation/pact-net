@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Nancy;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Mappers;
@@ -7,30 +6,27 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService
 {
-    public class MockNancyRequestHandler : IMockNancyRequestHandler
+    public class MockProviderNancyRequestHandler : IMockProviderNancyRequestHandler
     {
         private readonly INancyResponseMapper _responseMapper;
         private readonly IPactProviderServiceRequestComparer _requestComparer;
         private readonly IPactProviderServiceRequestMapper _requestMapper;
 
-        public MockNancyRequestHandler(IPactProviderServiceRequestComparer requestComparer, 
-                                    IPactProviderServiceRequestMapper requestMapper, 
-                                    INancyResponseMapper responseMapper)
+        public MockProviderNancyRequestHandler(IPactProviderServiceRequestComparer requestComparer, 
+            IPactProviderServiceRequestMapper requestMapper, 
+            INancyResponseMapper responseMapper)
         {
             _requestComparer = requestComparer;
             _requestMapper = requestMapper;
             _responseMapper = responseMapper;
         }
 
-        public Task<Response> Handle(NancyContext context)
+        public Response Handle(NancyContext context)
         {
-            var tcs = new TaskCompletionSource<Response>();
-
             try
             {
-                var response = HandleCore(context);
-                context.Response = response;
-                tcs.SetResult(context.Response);
+                var response = HandlePactRequest(context);
+                return response;
             }
             catch (Exception ex)
             {
@@ -39,20 +35,18 @@ namespace PactNet.Mocks.MockHttpService
                     Status = 500,
                     Body = new
                     {
-                        ErrorMessage = ex.Message, ex.StackTrace
+                        ErrorMessage = ex.Message,
+                        ex.StackTrace
                     }
                 };
                 var response = _responseMapper.Convert(errorResponse);
                 response.ReasonPhrase = ex.Message;
 
-                context.Response = response;
-                tcs.SetResult(context.Response);
+                return response;
             }
-
-            return tcs.Task;
         }
 
-        private Response HandleCore(NancyContext context)
+        private Response HandlePactRequest(NancyContext context)
         {
             var actualRequest = _requestMapper.Convert(context.Request);
 

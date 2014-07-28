@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Nancy;
 using Nancy.Routing;
@@ -7,18 +8,35 @@ namespace PactNet.Mocks.MockHttpService
 {
     public class MockProviderNancyRequestDispatcher : IRequestDispatcher
     {
-        private readonly MockNancyRequestHandler _mockNancyRequestHandler;
+        private readonly IMockProviderNancyRequestHandler _requestHandler;
 
-        public MockProviderNancyRequestDispatcher(MockNancyRequestHandler _mockNancyRequestHandler)
+        public MockProviderNancyRequestDispatcher(IMockProviderNancyRequestHandler requestHandler)
         {
-            this._mockNancyRequestHandler = _mockNancyRequestHandler;
+            _requestHandler = requestHandler;
         }
 
         public Task<Response> Dispatch(NancyContext context, CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            
-            return _mockNancyRequestHandler.Handle(context);
+            var tcs = new TaskCompletionSource<Response>();
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                tcs.SetException(new OperationCanceledException());
+                return tcs.Task;
+            }
+
+            if (context == null)
+            {
+                tcs.SetException(new ArgumentException("context is null"));
+                return tcs.Task;
+            }
+
+            var response = _requestHandler.Handle(context);
+
+            context.Response = response;
+            tcs.SetResult(context.Response);
+
+            return tcs.Task;
         }
     }
 }
