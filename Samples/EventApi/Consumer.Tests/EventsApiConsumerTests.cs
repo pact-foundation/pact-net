@@ -171,11 +171,11 @@ namespace Consumer.Tests
         }
 
         [Fact]
-        public void GetEventsByType_WhenEventsWithTheTypeExists_ReturnsEvents()
+        public void GetEventsByType_WhenOneEventWithTheTypeExists_ReturnsEvent()
         {
             //Arrange
-            const string eventType = "SearchView";
-            _data.MockProviderService.Given(String.Format("There is at least one even with type '{0}'", eventType))
+            const string eventType = "DetailsView";
+            _data.MockProviderService.Given(String.Format("There is one event with type '{0}'", eventType))
                 .UponReceiving(String.Format("A GET request to retrieve events with type '{0}'", eventType))
                 .With(new PactProviderServiceRequest
                 {

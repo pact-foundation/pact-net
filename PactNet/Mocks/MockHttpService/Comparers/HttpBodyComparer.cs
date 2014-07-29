@@ -44,32 +44,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                 return;
             }
 
-            if (httpBody1.Type == JTokenType.Array)
-            {
-                foreach (var element1 in httpBody1)
-                {
-                    foreach (var element2 in httpBody2)
-                    {
-                        try
-                        {
-                            AssertPropertyValuesMatch(element1, element2);
-                            element2.Remove();
-                            break;
-                        }
-                        catch (CompareFailedException)
-                        {
-                            if (element2 == httpBody2.Last)
-                            {
-                                throw new CompareFailedException(httpBody1, httpBody2);
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                AssertPropertyValuesMatch(httpBody1, httpBody2);
-            }
+            AssertPropertyValuesMatch(httpBody1, httpBody2);
         }
 
        
