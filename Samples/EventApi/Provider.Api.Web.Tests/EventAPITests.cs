@@ -18,9 +18,9 @@ namespace Provider.Api.Web.Tests
                 .ProviderStatesFor("Consumer",
                 new Dictionary<string, Action>
                 {
-                    { "There are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'", InsertEventsIntoDatabaseIfTheyDontExist },
-                    { "There is an event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'", InsertEventIntoDatabaseIfItDoesntExist },
-                    { "There is at least one even with type 'SearchView'", EnsureASearchViewEventExists }
+                    { "There are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'", InsertEventsIntoDatabase },
+                    { "There is an event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'", InsertEventIntoDatabase },
+                    { "There is one event with type 'DetailsView'", EnsureOneDetailsViewEventExists }
                 });
 
             //Act / Assert
@@ -32,17 +32,17 @@ namespace Provider.Api.Web.Tests
             testServer.Dispose();
         }
 
-        private void EnsureASearchViewEventExists()
+        private void EnsureOneDetailsViewEventExists()
         {
-            //Logic to check and insert a search view event
+            //Logic to check and insert a details view event
         }
 
-        private void InsertEventsIntoDatabaseIfTheyDontExist()
+        private void InsertEventsIntoDatabase()
         {
             //Logic to do database inserts or events api calls to create data
         }
 
-        private void InsertEventIntoDatabaseIfItDoesntExist()
+        private void InsertEventIntoDatabase()
         {
             //Logic to do database inserts for event with id 83F9262F-28F1-4703-AB1A-8CFD9E8249C9
         }
