@@ -44,17 +44,6 @@ namespace PactNet.Mocks.MockHttpService.Mappers
                     s.Flush();
                 };
             }
-            else
-            {
-                if (!to.Headers.ContainsKey("Content-Length"))
-                {
-                    to.Headers.Add("Content-Length", "0");
-                }
-                else
-                {
-                    to.Headers["Content-Length"] = "0";
-                }
-            }
 
             return to;
         }

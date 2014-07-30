@@ -42,7 +42,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         }
 
         [Fact]
-        public void Convert_WithResponseWithHeader_ReturnsNancyResponseWithHeaderAndAdditionalEmptyContentLengthHeader()
+        public void Convert_WithResponseThatHasANullBodyAndACustomHeader_ReturnsNancyResponseWithHeaderAndDoesNotAddAContentLengthHeader()
         {
             var response = new PactProviderServiceResponse
             {
@@ -59,13 +59,11 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
             Assert.Equal(response.Headers.First().Key, result.Headers.First().Key);
             Assert.Equal(response.Headers.First().Value, result.Headers.First().Value);
-
-            Assert.Equal("Content-Length", result.Headers.Last().Key);
-            Assert.Equal("0", result.Headers.Last().Value);
+            Assert.Equal(1, result.Headers.Count());
         }
 
         [Fact]
-        public void Convert_WithResponseThatHasANullBodyAndAContentLengthHeader_ReturnsNancyResponseWithNullBodyAndZeroContentLengthHeader()
+        public void Convert_WithResponseThatHasANullBodyAndAContentLengthHeader_ReturnsNancyResponseWithNullBodyAndContentLengthHeader()
         {
             var response = new PactProviderServiceResponse
             {
@@ -84,7 +82,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             result.Contents(stream);
             Assert.Equal(0, stream.Length);
             Assert.Equal("Content-Length", result.Headers.Last().Key);
-            Assert.Equal("0", result.Headers.Last().Value);
+            Assert.Equal("100", result.Headers.Last().Value);
             stream.Close();
             stream.Dispose();
         }
