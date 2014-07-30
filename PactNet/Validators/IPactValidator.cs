@@ -4,6 +4,6 @@ namespace PactNet.Validators
 {
     public interface IPactValidator<in TPactFile> where TPactFile : PactFile
     {
-        void Validate(TPactFile pactFile);
+        void Validate(TPactFile pactFile, ProviderStates providerStates);
     }
 }

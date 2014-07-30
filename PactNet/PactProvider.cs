@@ -1,31 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using Newtonsoft.Json;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Validators;
+using PactNet.Models;
 
 namespace PactNet
 {
-    public partial class Pact : IPactProvider
+    public partial class Pact : IPactProvider, IProviderStates
     {
         private readonly Func<HttpClient, IProviderServiceValidator> _providerServiceValidatorFactory;
-        private Dictionary<string, Action> _providerStates;
-        public IReadOnlyDictionary<string, Action> ProviderStates { get { return _providerStates; } }
 
+        public ProviderStates ProviderStates { get; private set; }
         public HttpClient HttpClient { get; private set; }
 
-        public IPactProvider ProviderStatesFor(string consumerName, Dictionary<string, Action> providerStates)
+        public IProviderStates ProviderStatesFor(string consumerName, Action setUp = null, Action tearDown = null)
         {
             if (String.IsNullOrEmpty(consumerName))
             {
                 throw new ArgumentException("Please supply a non null or empty consumerName");
-            }
-
-            if (providerStates == null || !providerStates.Any())
-            {
-                throw new ArgumentException("Please supply a non null or empty dictionary of providerStates");
             }
 
             if (!String.IsNullOrEmpty(ConsumerName) && !ConsumerName.Equals(consumerName))
@@ -34,7 +28,25 @@ namespace PactNet
             }
 
             ConsumerName = consumerName;
-            _providerStates = providerStates;
+            ProviderStates = new ProviderStates(setUp, tearDown);
+
+            return this;
+        }
+
+        public IProviderStates ProviderState(string providerState, Action setUp = null, Action tearDown = null)
+        {
+            if (ProviderStates == null)
+            {
+                throw new InvalidOperationException("Please intitialise the provider states by first calling the ProviderStatesFor method");
+            }
+
+            if (String.IsNullOrEmpty(providerState))
+            {
+                throw new ArgumentException("Please supply a non null or empty providerState");
+            }
+
+            var providerStateItem = new ProviderState(providerState, setUp, tearDown);
+            ProviderStates.Add(providerStateItem);
 
             return this;
         }
@@ -120,20 +132,7 @@ namespace PactNet
                 pactFile.Interactions = pactFile.Interactions.Where(x => x.ProviderState.Equals(providerState));
             }
 
-            //Invoke specified provider state for interactions
-            if (pactFile.Interactions != null && pactFile.Interactions.Any(x => x.ProviderState != null))
-            {
-                foreach (var interactionProviderState in pactFile.Interactions.Where(x => x.ProviderState != null).Select(x => x.ProviderState))
-                {
-                    if (_providerStates == null || !_providerStates.Any() || !_providerStates.ContainsKey(interactionProviderState))
-                    {
-                        throw new InvalidOperationException(String.Format("providerState \"{0}\" could not be found, please supply the provider state using the ProviderStatesFor method.", interactionProviderState));
-                    }
-                    _providerStates[interactionProviderState].Invoke();
-                }
-            }
-
-            _providerServiceValidatorFactory(HttpClient).Validate(pactFile);
+            _providerServiceValidatorFactory(HttpClient).Validate(pactFile, ProviderStates);
         }
     }
 }

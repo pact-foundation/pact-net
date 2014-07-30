@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 
 namespace PactNet
@@ -10,8 +9,7 @@ namespace PactNet
         string ProviderName { get; }
         string PactFileUri { get; }
         HttpClient HttpClient { get; }
-        IReadOnlyDictionary<string, Action> ProviderStates { get; }
-        IPactProvider ProviderStatesFor(string consumerName, Dictionary<string, Action> providerStates);
+        IProviderStates ProviderStatesFor(string consumerName, Action setUp = null, Action tearDown = null);
         IPactProvider ServiceProvider(string providerName, HttpClient httpClient);
         IPactProvider HonoursPactWith(string consumerName);
         IPactProvider PactUri(string uri);

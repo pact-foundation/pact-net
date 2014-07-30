@@ -61,6 +61,7 @@
     <Compile Include="Configuration\Json\Converters\LowercaseStringEnumConverter.cs" />
     <Compile Include="Configuration\Json\JsonConfig.cs" />
     <Compile Include="IPactConsumer.cs" />
+    <Compile Include="IProviderStates.cs" />
     <Compile Include="Mappers\IMapper.cs" />
     <Compile Include="Mocks\IMockProvider.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\HttpMethodComparer.cs" />
@@ -123,6 +124,8 @@
     <Compile Include="Mocks\MockHttpService\Comparers\IHttpHeaderComparer.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\IPactProviderServiceRequestComparer.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\PactProviderServiceRequestComparer.cs" />
+    <Compile Include="Models\ProviderState.cs" />
+    <Compile Include="Models\ProviderStates.cs" />
     <Compile Include="Validators\IPactValidator.cs" />
   </ItemGroup>
   <ItemGroup>
