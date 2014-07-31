@@ -217,12 +217,11 @@ public class SomethingApiTests
 		//Arrange
 		var client = new HttpClient { BaseAddress = new Uri("http://api-address:9999") };
 
-		var pact = new Pact()
-			.ProviderStatesFor("Consumer",
-			new Dictionary<string, Action>
-			{
-				{ "There is a something with id 'tester'", AddTesterIfItDoesntExist }
-			});
+		var pact = new Pact();
+		
+		pact.ProviderStatesFor("Consumer") //NOTE: You can supply setUp and tearDown, which will run before starting and after completing the verifications.
+			.ProviderState("There is a something with id 'tester'",
+				setUp: AddTesterIfItDoesntExist); //NOTE: We also have tearDown
 
 		//Act / Assert
 		pact.ServiceProvider("Something API", client)
