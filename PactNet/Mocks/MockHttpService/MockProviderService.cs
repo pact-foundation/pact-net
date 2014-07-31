@@ -135,7 +135,7 @@ namespace PactNet.Mocks.MockHttpService
             ClearAllState();
         }
 
-        public void ClearTestScopedInteractions()
+        public void ClearInteractions()
         {
             _testScopedInteractions = null;
         }
@@ -143,7 +143,7 @@ namespace PactNet.Mocks.MockHttpService
         private void ClearAllState()
         {
             ClearTrasientState();
-            ClearTestScopedInteractions();
+            ClearInteractions();
             _interactions = null;
         }
 

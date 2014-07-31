@@ -14,7 +14,7 @@ namespace Consumer.Tests
         public void SetFixture(ConsumerEventApiPact data)
         {
             _data = data;
-            _data.MockProviderService.ClearTestScopedInteractions();
+            _data.MockProviderService.ClearInteractions();
         }
 
         [Fact]

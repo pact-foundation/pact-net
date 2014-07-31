@@ -95,7 +95,7 @@ public class SomethingApiConsumerTests : IUseFixture<ConsumerMyApiPact>
 	public void SetFixture(ConsumerMyApiPact data)
 	{
 		_data = data;
-		_data.MockProviderService.ClearTestScopedInteractions(); //NOTE: Clears the interactions registered by the test after it has been run
+		_data.MockProviderService.ClearInteractions(); //NOTE: Clears any previously registered interactions before the test is run
 	}
 }
 ```
@@ -112,7 +112,7 @@ public class SomethingApiConsumerTests : IUseFixture<ConsumerMyApiPact>
 	public void SetFixture(ConsumerMyApiPact data)
 	{
 		_data = data;
-		_data.MockProviderService.ClearTestScopedInteractions(); //NOTE: Clears the interactions registered by the test after it has been run
+		_data.MockProviderService.ClearInteractions(); //NOTE: Clears any previously registered interactions before the test is run
 	}
 	
 	[Fact]
