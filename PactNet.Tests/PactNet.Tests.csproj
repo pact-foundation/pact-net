@@ -80,6 +80,8 @@
     <Compile Include="Mocks\MockHttpService\Nancy\NancyContextExtensionsTests.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\PactAwareContextFactoryTests.cs" />
     <Compile Include="Models\PactFileTests.cs" />
+    <Compile Include="Models\ProviderStatesTests.cs" />
+    <Compile Include="Models\ProviderStateTests.cs" />
     <Compile Include="PactConsumerTests.cs" />
     <Compile Include="ServicePactFileTests.cs" />
     <Compile Include="PactProviderTests.cs" />

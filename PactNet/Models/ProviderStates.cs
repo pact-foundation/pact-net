@@ -19,16 +19,19 @@ namespace PactNet.Models
 
         public void Add(ProviderState providerState)
         {
-            //TODO: Ensure no duplicate provider states
-
             _providerStates = _providerStates ?? new List<ProviderState>();
+
+            if (_providerStates.Any(x => x.ProviderStateDescription == providerState.ProviderStateDescription))
+            {
+                throw new ArgumentException(String.Format("providerState \"{0}\" has already been added", providerState.ProviderStateDescription));
+            }
 
             _providerStates.Add(providerState);
         }
 
         public ProviderState Find(string providerState)
         {
-            if (String.IsNullOrEmpty(providerState))
+            if (providerState == null)
             {
                 throw new ArgumentException("Please supply a non null or empty providerState");
             }
