@@ -2,7 +2,7 @@
 
 namespace PactNet.Models
 {
-    public class PactInteraction
+    public class Interaction
     {
         [JsonProperty(Order = -3, PropertyName = "description")]
         public string Description { get; set; }

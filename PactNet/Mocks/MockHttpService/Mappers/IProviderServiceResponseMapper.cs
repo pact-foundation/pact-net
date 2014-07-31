@@ -1,10 +1,10 @@
-﻿using Nancy;
+﻿using System.Net.Http;
 using PactNet.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
-    public interface IPactProviderServiceRequestMapper : IMapper<Request, PactProviderServiceRequest>
+    public interface IProviderServiceResponseMapper : IMapper<HttpResponseMessage, ProviderServiceResponse>
     {
     }
 }

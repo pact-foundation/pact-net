@@ -11,11 +11,11 @@ using Xunit;
 
 namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 {
-    public class PactProviderServiceRequestMapperTests
+    public class ProviderServiceRequestMapperTests
     {
-        private IPactProviderServiceRequestMapper GetSubject()
+        private IProviderServiceRequestMapper GetSubject()
         {
-            return new PactProviderServiceRequestMapper();
+            return new ProviderServiceRequestMapper();
         }
 
         [Fact]
@@ -38,7 +38,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
             mockHttpVerbMapper.Convert("GET").Returns(httpVerb);
 
-            var mapper = new PactProviderServiceRequestMapper(mockHttpVerbMapper, mockHttpBodyContentMapper);
+            var mapper = new ProviderServiceRequestMapper(mockHttpVerbMapper, mockHttpBodyContentMapper);
 
             var result = mapper.Convert(request);
 
@@ -57,7 +57,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
             mockHttpVerbMapper.Convert("GET").Returns(httpVerb);
 
-            var mapper = new PactProviderServiceRequestMapper(mockHttpVerbMapper, mockHttpBodyContentMapper);
+            var mapper = new ProviderServiceRequestMapper(mockHttpVerbMapper, mockHttpBodyContentMapper);
 
             var result = mapper.Convert(request);
 
@@ -76,7 +76,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
             mockHttpVerbMapper.Convert("GET").Returns(httpVerb);
 
-            var mapper = new PactProviderServiceRequestMapper(mockHttpVerbMapper, mockHttpBodyContentMapper);
+            var mapper = new ProviderServiceRequestMapper(mockHttpVerbMapper, mockHttpBodyContentMapper);
 
             var result = mapper.Convert(request);
 
@@ -97,7 +97,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
             mockHttpVerbMapper.Convert("GET").Returns(httpVerb);
 
-            var mapper = new PactProviderServiceRequestMapper(mockHttpVerbMapper, mockHttpBodyContentMapper);
+            var mapper = new ProviderServiceRequestMapper(mockHttpVerbMapper, mockHttpBodyContentMapper);
 
             var result = mapper.Convert(request);
 
@@ -124,7 +124,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
             mockHttpVerbMapper.Convert("GET").Returns(HttpVerb.Get);
 
-            var mapper = new PactProviderServiceRequestMapper(mockHttpVerbMapper, mockHttpBodyContentMapper);
+            var mapper = new ProviderServiceRequestMapper(mockHttpVerbMapper, mockHttpBodyContentMapper);
 
             var result = mapper.Convert(request);
 
@@ -144,7 +144,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             mockHttpVerbMapper.Convert("GET").Returns(HttpVerb.Get);
             mockHttpBodyContentMapper.Convert(content: content, headers: null).Returns(httpBodyContent);
 
-            var mapper = new PactProviderServiceRequestMapper(mockHttpVerbMapper, mockHttpBodyContentMapper);
+            var mapper = new ProviderServiceRequestMapper(mockHttpVerbMapper, mockHttpBodyContentMapper);
 
             var result = mapper.Convert(request);
 
@@ -173,7 +173,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             mockHttpVerbMapper.Convert("GET").Returns(HttpVerb.Get);
             mockHttpBodyContentMapper.Convert(content: content, headers: Arg.Any<IDictionary<string, string>>()).Returns(httpBodyContent);
 
-            var mapper = new PactProviderServiceRequestMapper(mockHttpVerbMapper, mockHttpBodyContentMapper);
+            var mapper = new ProviderServiceRequestMapper(mockHttpVerbMapper, mockHttpBodyContentMapper);
 
             var result = mapper.Convert(request);
 

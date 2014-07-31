@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace PactNet.Mocks.MockHttpService.Models
 {
-    public class PactProviderServiceResponse
+    public class ProviderServiceResponse
     {
         [JsonProperty(PropertyName = "status")]
         public int Status { get; set; }

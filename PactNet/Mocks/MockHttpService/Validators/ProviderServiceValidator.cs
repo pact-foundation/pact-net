@@ -11,33 +11,33 @@ namespace PactNet.Mocks.MockHttpService.Validators
 {
     public class ProviderServiceValidator : IProviderServiceValidator
     {
-        private readonly IPactProviderServiceResponseComparer _providerServiceResponseComparer;
+        private readonly IProviderServiceResponseComparer _providerServiceResponseComparer;
         private readonly HttpClient _httpClient;
         private readonly IHttpRequestMessageMapper _httpRequestMessageMapper;
-        private readonly IPactProviderServiceResponseMapper _pactProviderServiceResponseMapper;
+        private readonly IProviderServiceResponseMapper _providerServiceResponseMapper;
         
         [Obsolete("For testing only.")]
         public ProviderServiceValidator(
-            IPactProviderServiceResponseComparer providerServiceResponseComparer, 
+            IProviderServiceResponseComparer providerServiceResponseComparer, 
             HttpClient httpClient, 
             IHttpRequestMessageMapper httpRequestMessageMapper,
-            IPactProviderServiceResponseMapper pactProviderServiceResponseMapper)
+            IProviderServiceResponseMapper providerServiceResponseMapper)
         {
             _providerServiceResponseComparer = providerServiceResponseComparer;
             _httpClient = httpClient;
             _httpRequestMessageMapper = httpRequestMessageMapper;
-            _pactProviderServiceResponseMapper = pactProviderServiceResponseMapper;
+            _providerServiceResponseMapper = providerServiceResponseMapper;
         }
 
         public ProviderServiceValidator(HttpClient httpClient) : this(
-            new PactProviderServiceResponseComparer(), 
+            new ProviderServiceResponseComparer(), 
             httpClient,
             new HttpRequestMessageMapper(),
-            new PactProviderServiceResponseMapper())
+            new ProviderServiceResponseMapper())
         {
         }
 
-        public void Validate(ServicePactFile pactFile, ProviderStates providerStates)
+        public void Validate(ProviderServicePactFile pactFile, ProviderStates providerStates)
         {
             if (pactFile == null)
             {
@@ -105,14 +105,14 @@ namespace PactNet.Mocks.MockHttpService.Validators
             }
         }
 
-        private void ValidateInteraction(PactServiceInteraction interaction)
+        private void ValidateInteraction(ProviderServiceInteraction interaction)
         {
             var request = _httpRequestMessageMapper.Convert(interaction.Request);
 
             var response = _httpClient.SendAsync(request, CancellationToken.None).Result;
 
             var expectedResponse = interaction.Response;
-            var actualResponse = _pactProviderServiceResponseMapper.Convert(response);
+            var actualResponse = _providerServiceResponseMapper.Convert(response);
 
             _providerServiceResponseComparer.Compare(expectedResponse, actualResponse);
         }

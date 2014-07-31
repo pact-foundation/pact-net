@@ -6,53 +6,53 @@ using Xunit;
 
 namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 {
-    public class PactProviderServiceResponseComparerTests
+    public class ProviderServiceResponseComparerTests
     {
-        private IPactProviderServiceResponseComparer GetSubject()
+        private IProviderServiceResponseComparer GetSubject()
         {
-            return new PactProviderServiceResponseComparer();
+            return new ProviderServiceResponseComparer();
         }
 
         [Fact]
         public void Compare_WithMatchingStatusCodes_NoExceptionsAreThrown()
         {
-            var expected = new PactProviderServiceResponse
+            var expected = new ProviderServiceResponse
             {
                 Status = 201
             };
 
-            var actual = new PactProviderServiceResponse
+            var actual = new ProviderServiceResponse
             {
                 Status = 201
             };
 
-            var pactProviderServiceResponseComparer = GetSubject();
+            var comparer = GetSubject();
 
-            pactProviderServiceResponseComparer.Compare(expected, actual);
+            comparer.Compare(expected, actual);
         }
 
         [Fact]
         public void Compare_WithNonMatchingStatusCodes_ThrowsPactAssertException()
         {
-            var expected = new PactProviderServiceResponse
+            var expected = new ProviderServiceResponse
             {
                 Status = 201
             };
 
-            var actual = new PactProviderServiceResponse
+            var actual = new ProviderServiceResponse
             {
                 Status = 400
             };
 
-            var pactProviderServiceResponseComparer = GetSubject();
+            var comparer = GetSubject();
 
-            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            Assert.Throws<CompareFailedException>(() => comparer.Compare(expected, actual));
         }
 
         [Fact]
         public void Compare_WithMatchingHeaders_NoExceptionsAreThrown()
         {
-            var expected = new PactProviderServiceResponse
+            var expected = new ProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -61,7 +61,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var actual = new PactProviderServiceResponse
+            var actual = new ProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -70,15 +70,15 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var pactProviderServiceResponseComparer = GetSubject();
+            var comparer = GetSubject();
 
-            pactProviderServiceResponseComparer.Compare(expected, actual);
+            comparer.Compare(expected, actual);
         }
 
         [Fact]
         public void Compare_WithMatchingHeadersButWithDifferentCasingOnName_NoExceptionsAreThrown()
         {
-            var expected = new PactProviderServiceResponse
+            var expected = new ProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -87,7 +87,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var actual = new PactProviderServiceResponse
+            var actual = new ProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -96,15 +96,15 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var pactProviderServiceResponseComparer = GetSubject();
+            var comparer = GetSubject();
 
-            pactProviderServiceResponseComparer.Compare(expected, actual);
+            comparer.Compare(expected, actual);
         }
 
         [Fact]
         public void Compare_WithMatchingHeadersButWithDifferentCasingOnValue_ThrowsPactAssertException()
         {
-            var expected = new PactProviderServiceResponse
+            var expected = new ProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -113,7 +113,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var actual = new PactProviderServiceResponse
+            var actual = new ProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -122,15 +122,15 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var pactProviderServiceResponseComparer = GetSubject();
+            var comparer = GetSubject();
 
-            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            Assert.Throws<CompareFailedException>(() => comparer.Compare(expected, actual));
         }
 
         [Fact]
         public void Compare_WithMatchingHeadersButResponseHasAdditionalHeaders_NoExceptionsAreThrown()
         {
-            var expected = new PactProviderServiceResponse
+            var expected = new ProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -139,7 +139,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var actual = new PactProviderServiceResponse
+            var actual = new ProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -150,15 +150,15 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var pactProviderServiceResponseComparer = GetSubject();
+            var comparer = GetSubject();
 
-            pactProviderServiceResponseComparer.Compare(expected, actual);
+            comparer.Compare(expected, actual);
         }
 
         [Fact]
         public void Compare_WithNonMatchingHeadersValues_ThrowsPactAssertException()
         {
-            var expected = new PactProviderServiceResponse
+            var expected = new ProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -167,7 +167,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var actual = new PactProviderServiceResponse
+            var actual = new ProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -176,15 +176,15 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var pactProviderServiceResponseComparer = GetSubject();
+            var comparer = GetSubject();
 
-            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            Assert.Throws<CompareFailedException>(() => comparer.Compare(expected, actual));
         }
 
         [Fact]
         public void Compare_WithNonMatchingHeaderNames_ThrowsPactAssertException()
         {
-            var expected = new PactProviderServiceResponse
+            var expected = new ProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -193,7 +193,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var actual = new PactProviderServiceResponse
+            var actual = new ProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -202,15 +202,15 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var pactProviderServiceResponseComparer = GetSubject();
+            var comparer = GetSubject();
 
-            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            Assert.Throws<CompareFailedException>(() => comparer.Compare(expected, actual));
         }
 
         [Fact]
         public void Compare_WithResponseThatHasNoHeaders_ThrowsPactAssertException()
         {
-            var expected = new PactProviderServiceResponse
+            var expected = new ProviderServiceResponse
             {
                 Status = 201,
                 Headers = new Dictionary<string, string>
@@ -219,20 +219,20 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var actual = new PactProviderServiceResponse
+            var actual = new ProviderServiceResponse
             {
                 Status = 201
             };
 
-            var pactProviderServiceResponseComparer = GetSubject();
+            var comparer = GetSubject();
 
-            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            Assert.Throws<CompareFailedException>(() => comparer.Compare(expected, actual));
         }
 
         [Fact]
         public void Compare_WithMatchingObjectBody_NoExceptionsAreThrown()
         {
-            var expected = new PactProviderServiceResponse
+            var expected = new ProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -243,7 +243,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var actual = new PactProviderServiceResponse
+            var actual = new ProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -254,15 +254,15 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var pactProviderServiceResponseComparer = GetSubject();
+            var comparer = GetSubject();
 
-            pactProviderServiceResponseComparer.Compare(expected, actual);
+            comparer.Compare(expected, actual);
         }
 
         [Fact]
         public void Compare_WithMatchingObjectBodyOutOfOrder_NoExceptionsAreThrown()
         {
-            var expected = new PactProviderServiceResponse
+            var expected = new ProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -273,7 +273,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var actual = new PactProviderServiceResponse
+            var actual = new ProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -284,15 +284,15 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var pactProviderServiceResponseComparer = GetSubject();
+            var comparer = GetSubject();
 
-            pactProviderServiceResponseComparer.Compare(expected, actual);
+            comparer.Compare(expected, actual);
         }
 
         [Fact]
         public void Compare_WithMatchingObjectBodyButResponseHasAdditionalProperties_NoExceptionsAreThrown()
         {
-            var expected = new PactProviderServiceResponse
+            var expected = new ProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -303,7 +303,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var actual = new PactProviderServiceResponse
+            var actual = new ProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -315,15 +315,15 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var pactProviderServiceResponseComparer = GetSubject();
+            var comparer = GetSubject();
 
-            pactProviderServiceResponseComparer.Compare(expected, actual);
+            comparer.Compare(expected, actual);
         }
 
         [Fact]
         public void Compare_WithNonMatchingObject_ThrowsPactAssertException()
         {
-            var expected = new PactProviderServiceResponse
+            var expected = new ProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -335,7 +335,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var actual = new PactProviderServiceResponse
+            var actual = new ProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -346,15 +346,15 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var pactProviderServiceResponseComparer = GetSubject();
+            var comparer = GetSubject();
 
-            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            Assert.Throws<CompareFailedException>(() => comparer.Compare(expected, actual));
         }
 
         [Fact]
         public void Compare_WithMatchingObjectAndANonMatchingValue_ThrowsPactAssertException()
         {
-            var expected = new PactProviderServiceResponse
+            var expected = new ProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -365,7 +365,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var actual = new PactProviderServiceResponse
+            var actual = new ProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -376,15 +376,15 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var pactProviderServiceResponseComparer = GetSubject();
+            var comparer = GetSubject();
 
-            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            Assert.Throws<CompareFailedException>(() => comparer.Compare(expected, actual));
         }
 
         [Fact]
         public void Compare_WithMatchingObjectHoweverPropertyNameCasingIsDifferent_ThrowsPactAssertException()
         {
-            var expected = new PactProviderServiceResponse
+            var expected = new ProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -395,7 +395,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var actual = new PactProviderServiceResponse
+            var actual = new ProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -406,15 +406,15 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var pactProviderServiceResponseComparer = GetSubject();
+            var comparer = GetSubject();
 
-            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            Assert.Throws<CompareFailedException>(() => comparer.Compare(expected, actual));
         }
 
         [Fact]
         public void Compare_WithNullBodyInResponse_ThrowsPactAssertException()
         {
-            var expected = new PactProviderServiceResponse
+            var expected = new ProviderServiceResponse
             {
                 Status = 201,
                 Body = new
@@ -425,20 +425,20 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var actual = new PactProviderServiceResponse
+            var actual = new ProviderServiceResponse
             {
                 Status = 201
             };
 
-            var pactProviderServiceResponseComparer = GetSubject();
+            var comparer = GetSubject();
 
-            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            Assert.Throws<CompareFailedException>(() => comparer.Compare(expected, actual));
         }
 
         [Fact]
         public void Compare_WithMatchingCollection_NoExceptionsAreThrown()
         {
-            var expected = new PactProviderServiceResponse
+            var expected = new ProviderServiceResponse
             {
                 Status = 201,
                 Body = new List<dynamic>
@@ -452,7 +452,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var actual = new PactProviderServiceResponse
+            var actual = new ProviderServiceResponse
             {
                 Status = 201,
                 Body = new List<dynamic>
@@ -466,15 +466,15 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var pactProviderServiceResponseComparer = GetSubject();
+            var comparer = GetSubject();
 
-            pactProviderServiceResponseComparer.Compare(expected, actual);
+            comparer.Compare(expected, actual);
         }
 
         [Fact]
         public void Compare_WithNonMatchingCollection_ThrowsPactAssertException()
         {
-            var expected = new PactProviderServiceResponse
+            var expected = new ProviderServiceResponse
             {
                 Status = 201,
                 Body = new List<dynamic>
@@ -488,7 +488,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var actual = new PactProviderServiceResponse
+            var actual = new ProviderServiceResponse
             {
                 Status = 201,
                 Body = new List<dynamic>
@@ -502,9 +502,9 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
                 }
             };
 
-            var pactProviderServiceResponseComparer = GetSubject();
+            var comparer = GetSubject();
 
-            Assert.Throws<CompareFailedException>(() => pactProviderServiceResponseComparer.Compare(expected, actual));
+            Assert.Throws<CompareFailedException>(() => comparer.Compare(expected, actual));
         }
     }
 }

@@ -10,19 +10,19 @@ namespace PactNet.Mocks.MockHttpService.Nancy
     {
         private const string PactMockRequestResponsePairsKey = "PactMockRequestResponsePairs";
 
-        public static void SetMockRequestResponsePairs(this NancyContext context, IEnumerable<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>> mockRequestResponsePairs)
+        public static void SetMockRequestResponsePairs(this NancyContext context, IEnumerable<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>> mockRequestResponsePairs)
         {
             context.Items[PactMockRequestResponsePairsKey] = mockRequestResponsePairs;
         }
 
-        public static KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse> GetMatchingMockRequestResponsePair(this NancyContext context, HttpVerb method, string path)
+        public static KeyValuePair<ProviderServiceRequest, ProviderServiceResponse> GetMatchingMockRequestResponsePair(this NancyContext context, HttpVerb method, string path)
         {
             if (!context.Items.ContainsKey(PactMockRequestResponsePairsKey))
             {
                 throw new InvalidOperationException("No mock request/response pairs have been registered");
             }
 
-            var requestResponsePairs = (IEnumerable<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>>)context.Items[PactMockRequestResponsePairsKey];
+            var requestResponsePairs = (IEnumerable<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>)context.Items[PactMockRequestResponsePairsKey];
 
             var matchingRequestResponsePairs = requestResponsePairs.Where(x =>
                 x.Key.Method == method &&

@@ -38,10 +38,10 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         public void Create_WithRequest_CallsMockContentServiceAndAssignsRequestResponsePairsOnNancyContextItem()
         {
             var request = new Request("GET", "/events", "HTTP");
-            var requestResponsePairs = new List<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>>
+            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
             {
-                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(new PactProviderServiceRequest { Method = HttpVerb.Get, Path = "/events" }, new PactProviderServiceResponse()),
-                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(new PactProviderServiceRequest { Method = HttpVerb.Post, Path = "/events" }, new PactProviderServiceResponse()),
+                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest { Method = HttpVerb.Get, Path = "/events" }, new ProviderServiceResponse()),
+                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest { Method = HttpVerb.Post, Path = "/events" }, new ProviderServiceResponse()),
             };
 
             var mockMockContextService = Substitute.For<IMockContextService>();

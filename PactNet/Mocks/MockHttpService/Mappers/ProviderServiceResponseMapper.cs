@@ -3,35 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using Newtonsoft.Json;
 using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
-    public class PactProviderServiceResponseMapper : IPactProviderServiceResponseMapper
+    public class ProviderServiceResponseMapper : IProviderServiceResponseMapper
     {
         private readonly IHttpBodyContentMapper _httpBodyContentMapper;
 
         [Obsolete("For testing only.")]
-        public PactProviderServiceResponseMapper(IHttpBodyContentMapper httpBodyContentMapper)
+        public ProviderServiceResponseMapper(IHttpBodyContentMapper httpBodyContentMapper)
         {
             _httpBodyContentMapper = httpBodyContentMapper;
         }
 
-        public PactProviderServiceResponseMapper() : this(
+        public ProviderServiceResponseMapper() : this(
             new HttpBodyContentMapper())
         {
             
         }
 
-        public PactProviderServiceResponse Convert(HttpResponseMessage from)
+        public ProviderServiceResponse Convert(HttpResponseMessage from)
         {
             if (from == null)
             {
                 return null;
             }
 
-            var to = new PactProviderServiceResponse
+            var to = new ProviderServiceResponse
             {
                 Status = (int) from.StatusCode,
                 Headers = ConvertHeaders(from.Headers, from.Content)

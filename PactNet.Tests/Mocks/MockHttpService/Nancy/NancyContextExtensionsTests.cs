@@ -17,9 +17,9 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         {
             var context = new NancyContext();
             
-            var requestResponsePairs = new List<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>>
+            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
             {
-                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(new PactProviderServiceRequest(), new PactProviderServiceResponse())
+                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest(), new ProviderServiceResponse())
             };
 
             context.SetMockRequestResponsePairs(requestResponsePairs);
@@ -34,10 +34,10 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             var context = new NancyContext();
             context.Items.Add(new KeyValuePair<string, object>("test", "tester"));
             
-            var requestResponsePairs = new List<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>>
+            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
             {
-                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(new PactProviderServiceRequest(), new PactProviderServiceResponse()),
-                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(new PactProviderServiceRequest(), new PactProviderServiceResponse())
+                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest(), new ProviderServiceResponse()),
+                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest(), new ProviderServiceResponse())
             };
 
             context.SetMockRequestResponsePairs(requestResponsePairs);
@@ -50,16 +50,16 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         public void SetMockRequestResponsePairs_WithRequestResponsePairsAndExistingRequestResponsePairsInNancyContext_OverwritesRequestResponsePairsInNancyContextItem()
         {
             var context = new NancyContext();
-            context.Items.Add(new KeyValuePair<string, object>(PactMockRequestResponsePairsKey, new List<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>>
+            context.Items.Add(new KeyValuePair<string, object>(PactMockRequestResponsePairsKey, new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
             {
-                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(new PactProviderServiceRequest(), new PactProviderServiceResponse()),
-                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(new PactProviderServiceRequest(), new PactProviderServiceResponse())
+                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest(), new ProviderServiceResponse()),
+                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest(), new ProviderServiceResponse())
             }));
 
-            var requestResponsePairs = new List<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>>
+            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
             {
-                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(new PactProviderServiceRequest(), new PactProviderServiceResponse()),
-                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(new PactProviderServiceRequest(), new PactProviderServiceResponse())
+                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest(), new ProviderServiceResponse()),
+                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest(), new ProviderServiceResponse())
             };
 
             context.SetMockRequestResponsePairs(requestResponsePairs);
@@ -79,9 +79,9 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         [Fact]
         public void GetMatchingMockRequestResponsePair_WithNoMatchingRequestResponsePair_ThrowsArgumentException()
         {
-            var requestResponsePairs = new List<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>>
+            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
             {
-                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(new PactProviderServiceRequest { Method = HttpVerb.Get, Path = "/hello" }, new PactProviderServiceResponse())
+                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest { Method = HttpVerb.Get, Path = "/hello" }, new ProviderServiceResponse())
             }; 
 
             var context = new NancyContext();
@@ -93,10 +93,10 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         [Fact]
         public void GetMatchingMockRequestResponsePair_WithMoreThanOneMatchingRequestResponsePair_ThrowsArgumentException()
         {
-            var requestResponsePairs = new List<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>>
+            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
             {
-                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(new PactProviderServiceRequest { Method = HttpVerb.Get, Path = "/events" }, new PactProviderServiceResponse()),
-                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(new PactProviderServiceRequest { Method = HttpVerb.Get, Path = "/events" }, new PactProviderServiceResponse()),
+                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest { Method = HttpVerb.Get, Path = "/events" }, new ProviderServiceResponse()),
+                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest { Method = HttpVerb.Get, Path = "/events" }, new ProviderServiceResponse()),
             };
 
             var context = new NancyContext();
@@ -108,10 +108,10 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         [Fact]
         public void GetMatchingMockRequestResponsePair_WithOneMatchingRequestResponsePair_ReturnsRequestResponsePair()
         {
-            var requestResponsePairs = new List<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>>
+            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
             {
-                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(new PactProviderServiceRequest { Method = HttpVerb.Get, Path = "/events" }, new PactProviderServiceResponse()),
-                new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(new PactProviderServiceRequest { Method = HttpVerb.Post, Path = "/events" }, new PactProviderServiceResponse()),
+                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest { Method = HttpVerb.Get, Path = "/events" }, new ProviderServiceResponse()),
+                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest { Method = HttpVerb.Post, Path = "/events" }, new ProviderServiceResponse()),
             };
 
             var context = new NancyContext();

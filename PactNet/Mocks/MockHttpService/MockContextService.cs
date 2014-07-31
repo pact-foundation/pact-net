@@ -6,14 +6,14 @@ namespace PactNet.Mocks.MockHttpService
 {
     public class MockContextService : IMockContextService
     {
-        private readonly Func<IEnumerable<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>>> _requestResponsePairsFactory;
+        private readonly Func<IEnumerable<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>> _requestResponsePairsFactory;
 
-        public MockContextService(Func<IEnumerable<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>>> requestResponsePairsFactory)
+        public MockContextService(Func<IEnumerable<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>> requestResponsePairsFactory)
         {
             _requestResponsePairsFactory = requestResponsePairsFactory;
         }
 
-        public IEnumerable<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>> GetExpectedRequestResponsePairs()
+        public IEnumerable<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>> GetExpectedRequestResponsePairs()
         {
             return _requestResponsePairsFactory();
         }

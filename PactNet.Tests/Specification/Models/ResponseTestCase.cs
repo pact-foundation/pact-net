@@ -5,16 +5,16 @@ namespace PactNet.Tests.Specification.Models
 {
     public class ResponseTestCase : IVerifiable
     {
-        private readonly IPactProviderServiceResponseComparer _responseComparer;
+        private readonly IProviderServiceResponseComparer _responseComparer;
 
         public bool Match { get; set; }
         public string Comment { get; set; }
-        public PactProviderServiceResponse Expected { get; set; }
-        public PactProviderServiceResponse Actual { get; set; }
+        public ProviderServiceResponse Expected { get; set; }
+        public ProviderServiceResponse Actual { get; set; }
 
         public ResponseTestCase()
         {
-            _responseComparer = new PactProviderServiceResponseComparer();
+            _responseComparer = new ProviderServiceResponseComparer();
         }
 
         public bool Verified()

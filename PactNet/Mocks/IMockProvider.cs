@@ -7,6 +7,6 @@ namespace PactNet.Mocks
     {
         TMockProviderInterface Given(string providerState);
         TMockProviderInterface UponReceiving(string description);
-        IEnumerable<PactInteraction> Interactions { get; }
+        IEnumerable<Interaction> Interactions { get; }
     }
 }

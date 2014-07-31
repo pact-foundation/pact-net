@@ -2,7 +2,7 @@
 
 namespace PactNet.Models
 {
-    public class PactParty
+    public class Party
     {
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }

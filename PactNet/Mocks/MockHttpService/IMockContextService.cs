@@ -5,6 +5,6 @@ namespace PactNet.Mocks.MockHttpService
 {
     public interface IMockContextService
     {
-        IEnumerable<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>> GetExpectedRequestResponsePairs();
+        IEnumerable<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>> GetExpectedRequestResponsePairs();
     }
 }

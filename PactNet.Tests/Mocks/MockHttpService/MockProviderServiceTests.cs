@@ -33,10 +33,10 @@ namespace PactNet.Tests.Mocks.MockHttpService
             mockService
                 .Given(providerState)
                 .UponReceiving("My description")
-                .With(new PactProviderServiceRequest())
-                .WillRespondWith(new PactProviderServiceResponse());
+                .With(new ProviderServiceRequest())
+                .WillRespondWith(new ProviderServiceResponse());
 
-            var interaction = mockService.Interactions.First() as PactServiceInteraction;
+            var interaction = mockService.Interactions.First() as ProviderServiceInteraction;
             Assert.Equal(providerState, interaction.ProviderState);
         }
 
@@ -63,10 +63,10 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var mockService = GetSubject();
 
             mockService.UponReceiving(description)
-                .With(new PactProviderServiceRequest())
-                .WillRespondWith(new PactProviderServiceResponse());
+                .With(new ProviderServiceRequest())
+                .WillRespondWith(new ProviderServiceResponse());
 
-            var interaction = mockService.Interactions.First() as PactServiceInteraction;
+            var interaction = mockService.Interactions.First() as ProviderServiceInteraction;
             Assert.Equal(description, interaction.Description);
         }
 
@@ -89,14 +89,14 @@ namespace PactNet.Tests.Mocks.MockHttpService
         [Fact]
         public void With_WithRequest_SetsRequest()
         {
-            var request = new PactProviderServiceRequest();
+            var request = new ProviderServiceRequest();
             var mockService = GetSubject();
 
             mockService.UponReceiving("My description")
                 .With(request)
-                .WillRespondWith(new PactProviderServiceResponse());
+                .WillRespondWith(new ProviderServiceResponse());
             
-            var interaction = mockService.Interactions.First() as PactServiceInteraction;
+            var interaction = mockService.Interactions.First() as ProviderServiceInteraction;
             Assert.Equal(request, interaction.Request);
         }
 
@@ -111,14 +111,14 @@ namespace PactNet.Tests.Mocks.MockHttpService
         [Fact]
         public void WillRespondWith_WithResponse_SetsResponse()
         {
-            var response = new PactProviderServiceResponse();
+            var response = new ProviderServiceResponse();
             var mockService = GetSubject();
 
             mockService.UponReceiving("My description")
-                .With(new PactProviderServiceRequest())
+                .With(new ProviderServiceRequest())
                 .WillRespondWith(response);
 
-            var interaction = mockService.Interactions.First() as PactServiceInteraction;
+            var interaction = mockService.Interactions.First() as ProviderServiceInteraction;
             Assert.Equal(response, interaction.Response);
         }
 
@@ -145,13 +145,13 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService
                 .UponReceiving("My description")
-                .With(new PactProviderServiceRequest())
-                .WillRespondWith(new PactProviderServiceResponse());
+                .With(new ProviderServiceRequest())
+                .WillRespondWith(new ProviderServiceResponse());
 
             mockService
                 .UponReceiving("My next description")
-                .With(new PactProviderServiceRequest())
-                .WillRespondWith(new PactProviderServiceResponse());
+                .With(new ProviderServiceRequest())
+                .WillRespondWith(new ProviderServiceResponse());
 
             Assert.Equal(2, mockService.Interactions.Count());
         }
@@ -162,9 +162,9 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var mockService = GetSubject();
 
             mockService
-                .With(new PactProviderServiceRequest());
+                .With(new ProviderServiceRequest());
 
-            Assert.Throws<InvalidOperationException>(() => mockService.WillRespondWith(new PactProviderServiceResponse()));
+            Assert.Throws<InvalidOperationException>(() => mockService.WillRespondWith(new ProviderServiceResponse()));
         }
 
         [Fact]
@@ -175,7 +175,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             mockService
                 .UponReceiving("My description");
 
-            Assert.Throws<InvalidOperationException>(() => mockService.WillRespondWith(new PactProviderServiceResponse()));
+            Assert.Throws<InvalidOperationException>(() => mockService.WillRespondWith(new ProviderServiceResponse()));
         }
 
         [Fact]
@@ -183,8 +183,8 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             var providerState = "My provider state";
             var description = "My description";
-            var request = new PactProviderServiceRequest();
-            var response = new PactProviderServiceResponse();
+            var request = new ProviderServiceRequest();
+            var response = new ProviderServiceResponse();
             var mockService = GetSubject();
 
             mockService
@@ -193,7 +193,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 .With(request)
                 .WillRespondWith(response);
 
-            var interaction = mockService.Interactions.First() as PactServiceInteraction;
+            var interaction = mockService.Interactions.First() as ProviderServiceInteraction;
 
             Assert.Equal(1, mockService.Interactions.Count());
             Assert.Equal(providerState, interaction.ProviderState);
@@ -207,14 +207,14 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             var providerState = "My provider state";
             var description = "My description";
-            var request = new PactProviderServiceRequest();
-            var response = new PactProviderServiceResponse();
+            var request = new ProviderServiceRequest();
+            var response = new ProviderServiceResponse();
             var mockService = GetSubject();
 
             mockService
                 .UponReceiving("My previous description")
-                .With(new PactProviderServiceRequest())
-                .WillRespondWith(new PactProviderServiceResponse());
+                .With(new ProviderServiceRequest())
+                .WillRespondWith(new ProviderServiceResponse());
 
             mockService
                 .Given(providerState)
@@ -222,7 +222,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 .With(request)
                 .WillRespondWith(response);
 
-            var interaction = mockService.Interactions.Last() as PactServiceInteraction;
+            var interaction = mockService.Interactions.Last() as ProviderServiceInteraction;
 
             Assert.Equal(2, mockService.Interactions.Count());
             Assert.Equal(providerState, interaction.ProviderState);
@@ -238,8 +238,8 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService
                 .UponReceiving("My interaction")
-                .With(new PactProviderServiceRequest())
-                .WillRespondWith(new PactProviderServiceResponse());
+                .With(new ProviderServiceRequest())
+                .WillRespondWith(new ProviderServiceResponse());
 
             mockService.Stop();
 

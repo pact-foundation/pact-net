@@ -19,7 +19,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
         {
         }
 
-        public Response Convert(PactProviderServiceResponse from)
+        public Response Convert(ProviderServiceResponse from)
         {
             if (from == null)
             {

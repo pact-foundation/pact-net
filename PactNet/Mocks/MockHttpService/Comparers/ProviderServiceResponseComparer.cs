@@ -6,20 +6,20 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
-    public class PactProviderServiceResponseComparer : IPactProviderServiceResponseComparer
+    public class ProviderServiceResponseComparer : IProviderServiceResponseComparer
     {
         private readonly IHttpHeaderComparer _httpHeaderComparer;
         private readonly IHttpBodyComparer _httpBodyComparer;
 
         private const string MessagePrefix = "\t- Returns a response which";
 
-        public PactProviderServiceResponseComparer()
+        public ProviderServiceResponseComparer()
         {
             _httpHeaderComparer = new HttpHeaderComparer(MessagePrefix);
             _httpBodyComparer = new HttpBodyComparer(MessagePrefix);
         }
 
-        public void Compare(PactProviderServiceResponse response1, PactProviderServiceResponse response2)
+        public void Compare(ProviderServiceResponse response1, ProviderServiceResponse response2)
         {
             if (response1 == null)
             {

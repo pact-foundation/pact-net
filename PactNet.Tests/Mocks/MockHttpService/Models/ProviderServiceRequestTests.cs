@@ -4,12 +4,13 @@ using Xunit;
 
 namespace PactNet.Tests.Mocks.MockHttpService.Models
 {
-    public class PactProviderServiceRequestTests
+    public class 
+        ProviderServiceRequestTests
     {
         [Fact]
         public void PathWithQuery_WithNullPathAndQuery_ReturnsNull()
         {
-            var request = new PactProviderServiceRequest();
+            var request = new ProviderServiceRequest();
 
             var uri = request.PathWithQuery();
 
@@ -19,7 +20,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
         [Fact]
         public void PathWithQuery_WithJustPath_ReturnsPath()
         {
-            var request = new PactProviderServiceRequest
+            var request = new ProviderServiceRequest
             {
                 Path = "/events"
             };
@@ -32,7 +33,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
         [Fact]
         public void PathWithQuery_WithJustQuery_ThrowsInvalidOperationException()
         {
-            var request = new PactProviderServiceRequest
+            var request = new ProviderServiceRequest
             {
                 Query = "test1=1&test2=2"
             };
@@ -43,7 +44,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
         [Fact]
         public void PathWithQuery_WithPathAndQuery_ReturnsPathWithQuery()
         {
-            var request = new PactProviderServiceRequest
+            var request = new ProviderServiceRequest
             {
                 Path = "/events",
                 Query = "test1=1&test2=2"

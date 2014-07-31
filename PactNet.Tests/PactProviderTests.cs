@@ -283,7 +283,7 @@ namespace PactNet.Tests
             pact.Verify();
 
             mockFileSystem.File.Received(1).ReadAllText(pactUri);
-            mockPactProviderServiceValidator.Received(1).Validate(Arg.Any<ServicePactFile>(), Arg.Any<ProviderStates>());
+            mockPactProviderServiceValidator.Received(1).Validate(Arg.Any<ProviderServicePactFile>(), Arg.Any<ProviderStates>());
         }
 
         [Fact]
@@ -310,7 +310,7 @@ namespace PactNet.Tests
             pact.Verify();
 
             mockPactProviderServiceValidator.Received(1).Validate(
-                Arg.Is<ServicePactFile>(x => x.Interactions.Count() == 3),
+                Arg.Is<ProviderServicePactFile>(x => x.Interactions.Count() == 3),
                 Arg.Any<ProviderStates>());
         }
 
@@ -339,7 +339,7 @@ namespace PactNet.Tests
             pact.Verify(providerDescription: description);
 
             mockPactProviderServiceValidator.Received(1).Validate(
-                Arg.Is<ServicePactFile>(x => x.Interactions.Count() == 2 && x.Interactions.All(i => i.Description.Equals(description))),
+                Arg.Is<ProviderServicePactFile>(x => x.Interactions.Count() == 2 && x.Interactions.All(i => i.Description.Equals(description))),
                 Arg.Any<ProviderStates>());
         }
 
@@ -368,7 +368,7 @@ namespace PactNet.Tests
             pact.Verify(providerState: providerState);
 
             mockPactProviderServiceValidator.Received(1).Validate(
-                Arg.Is<ServicePactFile>(x => x.Interactions.Count() == 2 && x.Interactions.All(i => i.ProviderState.Equals(providerState))), 
+                Arg.Is<ProviderServicePactFile>(x => x.Interactions.Count() == 2 && x.Interactions.All(i => i.ProviderState.Equals(providerState))), 
                 Arg.Any<ProviderStates>());
         }
 
@@ -398,7 +398,7 @@ namespace PactNet.Tests
             pact.Verify(providerDescription: description, providerState: providerState);
 
             mockPactProviderServiceValidator.Received(1).Validate(
-                Arg.Is<ServicePactFile>(x => x.Interactions.Count() == 1 && x.Interactions.All(i => i.ProviderState.Equals(providerState) && i.Description.Equals(description))), 
+                Arg.Is<ProviderServicePactFile>(x => x.Interactions.Count() == 1 && x.Interactions.All(i => i.ProviderState.Equals(providerState) && i.Description.Equals(description))), 
                 Arg.Any<ProviderStates>());
         }
 
@@ -424,7 +424,7 @@ namespace PactNet.Tests
             pact.Verify();
 
             mockPactProviderServiceValidator.Received(1).Validate(
-                Arg.Any<ServicePactFile>(),
+                Arg.Any<ProviderServicePactFile>(),
                 pact.ProviderStates);
         }
     }

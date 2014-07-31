@@ -95,10 +95,10 @@ namespace PactNet
                 throw new InvalidOperationException("ProviderName has not been set, please supply a provider name using the HasPactWith method.");
             }
 
-            var pactFile = new ServicePactFile
+            var pactFile = new ProviderServicePactFile
             {
-                Provider = new PactParty { Name = ProviderName },
-                Consumer = new PactParty { Name = ConsumerName }
+                Provider = new Party { Name = ProviderName },
+                Consumer = new Party { Name = ConsumerName }
             };
 
             if (_mockProviderService != null)
@@ -106,7 +106,7 @@ namespace PactNet
                 var interactions = _mockProviderService.Interactions;
                 if (interactions != null)
                 {
-                    pactFile.Interactions = interactions as IEnumerable<PactServiceInteraction>;
+                    pactFile.Interactions = interactions as IEnumerable<ProviderServiceInteraction>;
                 }
             }
 

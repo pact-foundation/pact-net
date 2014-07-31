@@ -23,7 +23,7 @@ namespace Consumer.Tests
             //Arrange
             _data.MockProviderService.Given("There are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
                 .UponReceiving("A GET request to retrieve all events")
-                .With(new PactProviderServiceRequest
+                .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
                     Path = "/events",
@@ -32,7 +32,7 @@ namespace Consumer.Tests
                         { "Accept", "application/json" }
                     }
                 })
-                .WillRespondWith(new PactProviderServiceResponse
+                .WillRespondWith(new ProviderServiceResponse
                 {
                     Status = 200,
                     Headers = new Dictionary<string, string>
@@ -81,7 +81,7 @@ namespace Consumer.Tests
             DateTimeFactory.Now = () => dateTime;
 
             _data.MockProviderService.UponReceiving("A POST request to create a new event")
-                .With(new PactProviderServiceRequest
+                .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Post,
                     Path = "/events",
@@ -96,7 +96,7 @@ namespace Consumer.Tests
                         eventType = "DetailsView"
                     }
                 })
-                .WillRespondWith(new PactProviderServiceResponse
+                .WillRespondWith(new ProviderServiceResponse
                 {
                     Status = 201
                 });
@@ -112,12 +112,12 @@ namespace Consumer.Tests
         {
             //Arrange
             _data.MockProviderService.UponReceiving("A GET request to check the api status")
-                .With(new PactProviderServiceRequest
+                .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
                     Path = "/stats/status"
                 })
-                .WillRespondWith(new PactProviderServiceResponse
+                .WillRespondWith(new ProviderServiceResponse
                 {
                     Status = 200,
                     Body = "alive"
@@ -139,7 +139,7 @@ namespace Consumer.Tests
             var eventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9");
             _data.MockProviderService.Given(String.Format("There is an event with id '{0}'", eventId))
                 .UponReceiving(String.Format("A GET request to retrieve event with id '{0}'", eventId))
-                .With(new PactProviderServiceRequest
+                .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
                     Path = "/events/" + eventId,
@@ -148,7 +148,7 @@ namespace Consumer.Tests
                         { "Accept", "application/json" }
                     }
                 })
-                .WillRespondWith(new PactProviderServiceResponse
+                .WillRespondWith(new ProviderServiceResponse
                 {
                     Status = 200,
                     Headers = new Dictionary<string, string>
@@ -177,7 +177,7 @@ namespace Consumer.Tests
             const string eventType = "DetailsView";
             _data.MockProviderService.Given(String.Format("There is one event with type '{0}'", eventType))
                 .UponReceiving(String.Format("A GET request to retrieve events with type '{0}'", eventType))
-                .With(new PactProviderServiceRequest
+                .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
                     Path = "/events",
@@ -187,7 +187,7 @@ namespace Consumer.Tests
                         { "Accept", "application/json" }
                     }
                 })
-                .WillRespondWith(new PactProviderServiceResponse
+                .WillRespondWith(new ProviderServiceResponse
                 {
                     Status = 200,
                     Headers = new Dictionary<string, string>

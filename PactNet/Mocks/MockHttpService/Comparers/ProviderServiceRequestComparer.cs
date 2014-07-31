@@ -3,7 +3,7 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
-    public class PactProviderServiceRequestComparer : IPactProviderServiceRequestComparer
+    public class ProviderServiceRequestComparer : IProviderServiceRequestComparer
     {
         private readonly IHttpMethodComparer _httpMethodComparer;
         private readonly IHttpPathComparer _httpPathComparer;
@@ -13,7 +13,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
         private const string MessagePrefix = "\t- Request";
 
-        public PactProviderServiceRequestComparer()
+        public ProviderServiceRequestComparer()
         {
             _httpMethodComparer = new HttpMethodComparer(MessagePrefix);
             _httpPathComparer = new HttpPathComparer(MessagePrefix);
@@ -22,7 +22,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
             _httpBodyComparer = new HttpBodyComparer(MessagePrefix);
         }
 
-        public void Compare(PactProviderServiceRequest request1, PactProviderServiceRequest request2)
+        public void Compare(ProviderServiceRequest request1, ProviderServiceRequest request2)
         {
             if (request1 == null)
             {

@@ -110,11 +110,11 @@ namespace PactNet
                 throw new InvalidOperationException("PactFileUri has not been set, please supply a uri using the PactUri method.");
             }
 
-            ServicePactFile pactFile;
+            ProviderServicePactFile pactFile;
             try
             {
                 var pactFileJson = _fileSystem.File.ReadAllText(PactFileUri);
-                pactFile = JsonConvert.DeserializeObject<ServicePactFile>(pactFileJson);
+                pactFile = JsonConvert.DeserializeObject<ProviderServicePactFile>(pactFileJson);
             }
             catch (System.IO.IOException)
             {

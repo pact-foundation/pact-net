@@ -7,13 +7,13 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
-    public class PactProviderServiceRequestMapper : IPactProviderServiceRequestMapper
+    public class ProviderServiceRequestMapper : IProviderServiceRequestMapper
     {
         private readonly IHttpVerbMapper _httpVerbMapper;
         private readonly IHttpBodyContentMapper _httpBodyContentMapper;
 
         [Obsolete("For testing only.")]
-        public PactProviderServiceRequestMapper(
+        public ProviderServiceRequestMapper(
             IHttpVerbMapper httpVerbMapper,
             IHttpBodyContentMapper httpBodyContentMapper)
         {
@@ -21,13 +21,13 @@ namespace PactNet.Mocks.MockHttpService.Mappers
             _httpBodyContentMapper = httpBodyContentMapper;
         }
 
-        public PactProviderServiceRequestMapper() : this(
+        public ProviderServiceRequestMapper() : this(
             new HttpVerbMapper(),
             new HttpBodyContentMapper())
         {
         }
 
-        public PactProviderServiceRequest Convert(Request from)
+        public ProviderServiceRequest Convert(Request from)
         {
             if (from == null)
             {
@@ -36,7 +36,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
                 
             var httpVerb = _httpVerbMapper.Convert(from.Method.ToUpper());
 
-            var to = new PactProviderServiceRequest
+            var to = new ProviderServiceRequest
             {
                 Method = httpVerb,
                 Path = from.Path,

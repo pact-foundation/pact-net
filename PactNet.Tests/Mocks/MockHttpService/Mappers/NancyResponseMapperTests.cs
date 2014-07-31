@@ -29,7 +29,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         [Fact]
         public void Convert_WithResponseWithStatusCode_ReturnsNancyResponseWithStatusCode()
         {
-            var response = new PactProviderServiceResponse
+            var response = new ProviderServiceResponse
             {
                 Status = 200
             };
@@ -44,7 +44,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         [Fact]
         public void Convert_WithResponseThatHasANullBodyAndACustomHeader_ReturnsNancyResponseWithHeaderAndDoesNotAddAContentLengthHeader()
         {
-            var response = new PactProviderServiceResponse
+            var response = new ProviderServiceResponse
             {
                 Status = 200,
                 Headers = new Dictionary<string, string>
@@ -65,7 +65,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         [Fact]
         public void Convert_WithResponseThatHasANullBodyAndAContentLengthHeader_ReturnsNancyResponseWithNullBodyAndContentLengthHeader()
         {
-            var response = new PactProviderServiceResponse
+            var response = new ProviderServiceResponse
             {
                 Status = 200,
                 Headers = new Dictionary<string, string>
@@ -91,7 +91,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         public void Convert_WithPlainTextBody_CallsConvertOnHttpBodyContentMapperAndAssignsContents()
         {
             const string contentTypeString = "text/plain";
-            var response = new PactProviderServiceResponse
+            var response = new ProviderServiceResponse
             {
                 Status = 200,
                 Headers = new Dictionary<string, string>
@@ -130,7 +130,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         public void Convert_WithJsonBody_CallsConvertOnHttpBodyContentMapperAndAssignsContents()
         {
             const string contentTypeString = "application/json";
-            var response = new PactProviderServiceResponse
+            var response = new ProviderServiceResponse
             {
                 Status = 200,
                 Headers = new Dictionary<string, string>

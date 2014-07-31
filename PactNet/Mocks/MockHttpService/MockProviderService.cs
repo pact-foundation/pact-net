@@ -17,12 +17,12 @@ namespace PactNet.Mocks.MockHttpService
 
         private string _providerState;
         private string _description;
-        private PactProviderServiceRequest _request;
-        private PactProviderServiceResponse _response;
-        private IList<PactServiceInteraction> _testScopedInteractions;
+        private ProviderServiceRequest _request;
+        private ProviderServiceResponse _response;
+        private IList<ProviderServiceInteraction> _testScopedInteractions;
 
-        private IList<PactServiceInteraction> _interactions;
-        public IEnumerable<PactInteraction> Interactions
+        private IList<ProviderServiceInteraction> _interactions;
+        public IEnumerable<Interaction> Interactions
         {
             get { return _interactions; }
         }
@@ -65,7 +65,7 @@ namespace PactNet.Mocks.MockHttpService
             return this;
         }
 
-        public IMockProviderService With(PactProviderServiceRequest request)
+        public IMockProviderService With(ProviderServiceRequest request)
         {
             if (request == null)
             {
@@ -77,7 +77,7 @@ namespace PactNet.Mocks.MockHttpService
             return this;
         }
 
-        public void WillRespondWith(PactProviderServiceResponse response)
+        public void WillRespondWith(ProviderServiceResponse response)
         {
             if (response == null)
             {
@@ -106,7 +106,7 @@ namespace PactNet.Mocks.MockHttpService
                 throw new InvalidOperationException("response has not been set, please supply using the WillRespondWith method.");
             }
 
-            var interaction = new PactServiceInteraction
+            var interaction = new ProviderServiceInteraction
             {
                 ProviderState = _providerState,
                 Description = _description,
@@ -155,23 +155,23 @@ namespace PactNet.Mocks.MockHttpService
             _description = null;
         }
 
-        private void AddInteraction(PactServiceInteraction interaction)
+        private void AddInteraction(ProviderServiceInteraction interaction)
         {
-            _interactions = _interactions ?? new List<PactServiceInteraction>();
-            _testScopedInteractions = _testScopedInteractions ?? new List<PactServiceInteraction>();
+            _interactions = _interactions ?? new List<ProviderServiceInteraction>();
+            _testScopedInteractions = _testScopedInteractions ?? new List<ProviderServiceInteraction>();
 
             _interactions.Add(interaction);
             _testScopedInteractions.Add(interaction);
         }
 
-        private IEnumerable<KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>> GetMockInteractionRequestResponsePairs()
+        private IEnumerable<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>> GetMockInteractionRequestResponsePairs()
         {
             if (_testScopedInteractions == null || !_testScopedInteractions.Any())
             {
                 return null;
             }
 
-            return _testScopedInteractions.Select(x => new KeyValuePair<PactProviderServiceRequest, PactProviderServiceResponse>(x.Request, x.Response));
+            return _testScopedInteractions.Select(x => new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(x.Request, x.Response));
         }
     }
 }

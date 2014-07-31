@@ -69,13 +69,13 @@
     <Compile Include="Mocks\MockHttpService\Mappers\HttpRequestMessageMapperTests.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\HttpVerbMapperTests.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\NancyResponseMapperTests.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\PactProviderServiceRequestMapperTests.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\PactProviderServiceResponseMapperTests.cs" />
+    <Compile Include="Mocks\MockHttpService\Mappers\ProviderServiceRequestMapperTests.cs" />
+    <Compile Include="Mocks\MockHttpService\Mappers\ProviderServiceResponseMapperTests.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\MockProviderNancyRequestHandlerTests.cs" />
     <Compile Include="Mocks\MockHttpService\MockContextServiceTests.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\MockProviderNancyRequestDispatcherTests.cs" />
     <Compile Include="Mocks\MockHttpService\MockProviderServiceTests.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\PactProviderServiceRequestTests.cs" />
+    <Compile Include="Mocks\MockHttpService\Models\ProviderServiceRequestTests.cs" />
     <Compile Include="Mocks\MockHttpService\Models\HttpBodyContentTests.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\NancyContextExtensionsTests.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\PactAwareContextFactoryTests.cs" />
@@ -83,13 +83,13 @@
     <Compile Include="Models\ProviderStatesTests.cs" />
     <Compile Include="Models\ProviderStateTests.cs" />
     <Compile Include="PactConsumerTests.cs" />
-    <Compile Include="ServicePactFileTests.cs" />
+    <Compile Include="ProviderServicePactFileTests.cs" />
     <Compile Include="PactProviderTests.cs" />
     <Compile Include="Specification\Models\IVerifiable.cs" />
     <Compile Include="Specification\Models\RequestTestCase.cs" />
     <Compile Include="Specification\Models\ResponseTestCase.cs" />
     <Compile Include="Specification\SpecificationTests.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\PactProviderServiceResponseComparerTests.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\ProviderServiceResponseComparerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Mocks\MockHttpService\Validators\ProviderServiceValidatorTests.cs" />
   </ItemGroup>

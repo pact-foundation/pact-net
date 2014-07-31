@@ -5,16 +5,16 @@ namespace PactNet.Tests.Specification.Models
 {
     public class RequestTestCase : IVerifiable
     {
-        private readonly IPactProviderServiceRequestComparer _requestComparer;
+        private readonly IProviderServiceRequestComparer _requestComparer;
 
         public bool Match { get; set; }
         public string Comment { get; set; }
-        public PactProviderServiceRequest Expected { get; set; }
-        public PactProviderServiceRequest Actual { get; set; }
+        public ProviderServiceRequest Expected { get; set; }
+        public ProviderServiceRequest Actual { get; set; }
 
         public RequestTestCase()
         {
-            _requestComparer = new PactProviderServiceRequestComparer();
+            _requestComparer = new ProviderServiceRequestComparer();
         }
 
         public bool Verified()

@@ -5,7 +5,7 @@ using PactNet.Configuration.Json.Converters;
 
 namespace PactNet.Mocks.MockHttpService.Models
 {
-    public class PactProviderServiceRequest
+    public class ProviderServiceRequest
     {
         [JsonProperty(PropertyName = "method")]
         [JsonConverter(typeof(LowercaseStringEnumConverter))]

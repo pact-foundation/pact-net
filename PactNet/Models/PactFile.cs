@@ -5,10 +5,10 @@ namespace PactNet.Models
     public class PactFile
     {
         [JsonProperty(Order = -3, PropertyName = "provider")]
-        public PactParty Provider { get; set; }
+        public Party Provider { get; set; }
 
         [JsonProperty(Order = -2, PropertyName = "consumer")]
-        public PactParty Consumer { get; set; }
+        public Party Consumer { get; set; }
 
         [JsonProperty(PropertyName = "metadata")]
         public dynamic Metadata { get; private set; }

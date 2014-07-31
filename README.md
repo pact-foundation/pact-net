@@ -122,7 +122,7 @@ public class SomethingApiConsumerTests : IUseFixture<ConsumerMyApiPact>
 		_data.MockProviderService
 			.Given("There is a something with id 'tester'")
 			.UponReceiving("A GET request to retrieve the something")
-			.With(new PactProviderServiceRequest
+			.With(new ProviderServiceRequest
 			{
 				Method = HttpVerb.Get,
 				Path = "/somethings/tester",
@@ -131,7 +131,7 @@ public class SomethingApiConsumerTests : IUseFixture<ConsumerMyApiPact>
 					{ "Accept", "application/json" }
 				}
 			})
-			.WillRespondWith(new PactProviderServiceResponse
+			.WillRespondWith(new ProviderServiceResponse
 			{
 				Status = 200,
 				Headers = new Dictionary<string, string>

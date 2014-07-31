@@ -47,8 +47,8 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
         private void RegisterDependenciesWithNancyContainer(TinyIoCContainer container)
         {
-            container.Register(typeof(IPactProviderServiceRequestComparer), typeof(PactProviderServiceRequestComparer));
-            container.Register(typeof(IPactProviderServiceRequestMapper), typeof(PactProviderServiceRequestMapper));
+            container.Register(typeof(IProviderServiceRequestComparer), typeof(ProviderServiceRequestComparer));
+            container.Register(typeof(IProviderServiceRequestMapper), typeof(ProviderServiceRequestMapper));
             container.Register(typeof(INancyResponseMapper), typeof(NancyResponseMapper));
             container.Register(typeof (IMockContextService), _mockContextService);
             container.Register(typeof(IMockProviderNancyRequestHandler), typeof(MockProviderNancyRequestHandler));

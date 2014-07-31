@@ -9,11 +9,11 @@ namespace PactNet.Mocks.MockHttpService.Nancy
     public class MockProviderNancyRequestHandler : IMockProviderNancyRequestHandler
     {
         private readonly INancyResponseMapper _responseMapper;
-        private readonly IPactProviderServiceRequestComparer _requestComparer;
-        private readonly IPactProviderServiceRequestMapper _requestMapper;
+        private readonly IProviderServiceRequestComparer _requestComparer;
+        private readonly IProviderServiceRequestMapper _requestMapper;
 
-        public MockProviderNancyRequestHandler(IPactProviderServiceRequestComparer requestComparer, 
-            IPactProviderServiceRequestMapper requestMapper, 
+        public MockProviderNancyRequestHandler(IProviderServiceRequestComparer requestComparer, 
+            IProviderServiceRequestMapper requestMapper, 
             INancyResponseMapper responseMapper)
         {
             _requestComparer = requestComparer;
@@ -30,7 +30,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             }
             catch (Exception ex)
             {
-                var errorResponse = new PactProviderServiceResponse
+                var errorResponse = new ProviderServiceResponse
                 {
                     Status = 500,
                     Body = new

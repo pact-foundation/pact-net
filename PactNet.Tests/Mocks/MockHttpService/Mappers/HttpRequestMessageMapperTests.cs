@@ -30,7 +30,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         [Fact]
         public void Convert_WithRequest_CallsHttpMethodMapper()
         {
-            var request = new PactProviderServiceRequest
+            var request = new ProviderServiceRequest
             {
                 Method = HttpVerb.Post,
                 Path = "/events"
@@ -55,7 +55,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         [Fact]
         public void Convert_WithHeader_HeaderIsAddedToHttpRequestMessage()
         {
-            var request = new PactProviderServiceRequest
+            var request = new ProviderServiceRequest
             {
                 Method = HttpVerb.Post,
                 Path = "/events",
@@ -87,7 +87,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         public void Convert_WithPlainContentTypeHeader_HeaderIsNotAddedToHttpRequestMessageAndHttpContentMapperIsCalledWithContentType()
         {
             const string contentTypeString = "text/plain";
-            var request = new PactProviderServiceRequest
+            var request = new ProviderServiceRequest
             {
                 Method = HttpVerb.Post,
                 Path = "/events",
@@ -121,7 +121,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         public void Convert_WithPlainContentTypeHeaderLowercased_HeaderIsNotAddedToHttpRequestMessageAndHttpContentMapperIsCalledWithContentType()
         {
             const string contentTypeString = "text/plain";
-            var request = new PactProviderServiceRequest
+            var request = new ProviderServiceRequest
             {
                 Method = HttpVerb.Post,
                 Path = "/events",
@@ -157,7 +157,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             const string contentTypeString = "text/plain";
             const string encodingString = "utf-8";
             var encoding = Encoding.UTF8;
-            var request = new PactProviderServiceRequest
+            var request = new ProviderServiceRequest
             {
                 Method = HttpVerb.Post,
                 Path = "/events",
@@ -194,7 +194,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             const string contentTypeString = "application/json";
             const string encodingString = "utf-16";
             var encoding = Encoding.Unicode;
-            var request = new PactProviderServiceRequest
+            var request = new ProviderServiceRequest
             {
                 Method = HttpVerb.Post,
                 Path = "/events",
@@ -229,7 +229,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         public void Convert_WithContentTypeAndCustomHeader_OnlyCustomHeadersIsAddedToHttpRequestMessage()
         {
             const string contentTypeString = "text/plain";
-            var request = new PactProviderServiceRequest
+            var request = new ProviderServiceRequest
             {
                 Method = HttpVerb.Post,
                 Path = "/events",
@@ -263,7 +263,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         [Fact]
         public void Convert_WithBody_HttpContentMapperIsCalled()
         {
-            var request = new PactProviderServiceRequest
+            var request = new ProviderServiceRequest
             {
                 Method = HttpVerb.Get,
                 Path = "/events",
@@ -297,7 +297,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             const string contentTypeString = "application/json";
             const string bodyJson = "{\"Test\":\"tester\",\"Testing\":1}";
 
-            var request = new PactProviderServiceRequest
+            var request = new ProviderServiceRequest
             {
                 Method = HttpVerb.Get,
                 Path = "/events",
