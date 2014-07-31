@@ -5,10 +5,6 @@ namespace PactNet
 {
     public interface IPactProvider
     {
-        string ConsumerName { get; }
-        string ProviderName { get; }
-        string PactFileUri { get; }
-        HttpClient HttpClient { get; }
         IProviderStates ProviderStatesFor(string consumerName, Action setUp = null, Action tearDown = null);
         IPactProvider ServiceProvider(string providerName, HttpClient httpClient);
         IPactProvider HonoursPactWith(string consumerName);

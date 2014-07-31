@@ -52,7 +52,7 @@ namespace PactNet.Tests
 
             pact.ProviderStatesFor(consumerName);
 
-            Assert.Equal(consumerName, pact.ConsumerName);
+            Assert.Equal(consumerName, ((Pact)pact).ConsumerName);
         }
 
         [Fact]
@@ -145,7 +145,7 @@ namespace PactNet.Tests
 
             pact.ServiceProvider(providerName, new HttpClient());
 
-            Assert.Equal(providerName, pact.ProviderName);
+            Assert.Equal(providerName, ((Pact)pact).ProviderName);
         }
 
         [Fact]
@@ -156,7 +156,7 @@ namespace PactNet.Tests
 
             pact.ServiceProvider("Event API", httpClient);
 
-            Assert.Equal(httpClient, pact.HttpClient);
+            Assert.Equal(httpClient, ((Pact)pact).HttpClient);
         }
 
         [Fact]
@@ -183,7 +183,7 @@ namespace PactNet.Tests
 
             pact.HonoursPactWith(consumerName);
 
-            Assert.Equal(consumerName, pact.ConsumerName);
+            Assert.Equal(consumerName, ((Pact)pact).ConsumerName);
         }
 
         [Fact]
@@ -221,7 +221,7 @@ namespace PactNet.Tests
 
             pact.PactUri(pactFileUri);
 
-            Assert.Equal(pactFileUri, pact.PactFileUri);
+            Assert.Equal(pactFileUri, ((Pact)pact).PactFileUri);
         }
 
         [Fact]

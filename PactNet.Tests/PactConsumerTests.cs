@@ -23,7 +23,7 @@ namespace PactNet.Tests
 
             pact.ServiceConsumer(consumerName);
 
-            Assert.Equal(consumerName, pact.ConsumerName);
+            Assert.Equal(consumerName, ((Pact)pact).ConsumerName);
         }
 
         [Fact]
@@ -50,7 +50,7 @@ namespace PactNet.Tests
 
             pact.HasPactWith(providerName);
 
-            Assert.Equal(providerName, pact.ProviderName);
+            Assert.Equal(providerName, ((Pact)pact).ProviderName);
         }
 
         [Fact]
@@ -73,7 +73,7 @@ namespace PactNet.Tests
         public void PactFileUri_WhenCalledBeforeConsumerAndProviderNamesHaveBeenSet_ReturnsFileSystemPathWithNoConsumerAndProviderNameAndDoesNotThrow()
         {
             var pact = GetSubject();
-            var uri = pact.PactFileUri;
+            var uri = ((Pact)pact).PactFileUri;
 
             Assert.Equal("../../pacts/-.json", uri);
         }
@@ -85,7 +85,7 @@ namespace PactNet.Tests
                 .ServiceConsumer("My Client")
                 .HasPactWith("My Service");
 
-            var uri = pact.PactFileUri;
+            var uri = ((Pact)pact).PactFileUri;
 
             Assert.Equal("../../pacts/my_client-my_service.json", uri);
         }
@@ -144,7 +144,7 @@ namespace PactNet.Tests
                 .ServiceConsumer("Event Client")
                 .HasPactWith("Event API");
 
-            var pactFilePath = pact.PactFileUri;
+            var pactFilePath = ((Pact)pact).PactFileUri;
 
             pact.Dispose();
 
@@ -163,7 +163,7 @@ namespace PactNet.Tests
 
             pact.MockService(1234);
 
-            var pactFilePath = pact.PactFileUri;
+            var pactFilePath = ((Pact)pact).PactFileUri;
 
             mockFileSystem.File.ReadAllText(pactFilePath).Returns(x => { throw new System.IO.FileNotFoundException(); });
             mockMockProviderService.Interactions.Returns(new List<PactServiceInteraction>
@@ -190,7 +190,8 @@ namespace PactNet.Tests
             IPactConsumer pact = new Pact(null, mockFileSystem)
                 .ServiceConsumer("Event Client")
                 .HasPactWith("Event API");
-            var pactFilePath = pact.PactFileUri;
+
+            var pactFilePath = ((Pact)pact).PactFileUri;
 
             var callCount = 0;
             mockFileSystem.File
@@ -218,7 +219,8 @@ namespace PactNet.Tests
             IPactConsumer pact = new Pact(port => mockMockProviderService, mockFileSystem)
                 .ServiceConsumer("Event Client")
                 .HasPactWith("Event API");
-            var pactFilePath = pact.PactFileUri;
+
+            var pactFilePath = ((Pact)pact).PactFileUri;
 
             pact.MockService(1234);
 
