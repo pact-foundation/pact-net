@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Nancy.Hosting.Self;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
@@ -21,7 +20,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var expectedBaseUri = String.Format("http://localhost:{0}", port);
             var mockService = GetSubject(port);
 
-            Assert.Equal(expectedBaseUri, mockService.BaseUri);
+            Assert.Equal(expectedBaseUri, ((MockProviderService)mockService).BaseUri);
         }
 
         [Fact]
