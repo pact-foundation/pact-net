@@ -36,8 +36,6 @@ _ReSharper*/
 [Oo]bj/
 [Oo]utput/
 [Ee]nvironment/
-local.scalpel.environment.txt
-scalpel.log*
 TestResults/*
 _TeamCity*/
 Build/PactNet*.nupkg

@@ -8,13 +8,12 @@ using Xunit;
 
 namespace PactNet.Tests.Specification
 {
-    //TODO: Move and rename these as they are actually MockHttpServiceSpecificationTests
-    public class SpecificationTests
+    public class MockHttpServiceSpecificationTests
     {
         [Fact]
-        public void Request()
+        public void ValidateRequestSpecification()
         {
-            var failedTestCases = RunPactSpecificationTests<RequestTestCase>("..\\..\\Specification\\testcases\\request");
+            var failedTestCases = RunPactSpecificationTests<RequestTestCase>("..\\..\\Specification\\pact-specification\\testcases\\request");
 
             if (failedTestCases.Any())
             {
@@ -29,10 +28,9 @@ namespace PactNet.Tests.Specification
         }
 
         [Fact]
-        public void Response()
+        public void ValidateResponseSpecification()
         {
-            return; //TODO: Remove. For now there are no response tests
-            var failedTestCases = RunPactSpecificationTests<ResponseTestCase>("..\\..\\Specification\\testcases\\response");
+            var failedTestCases = RunPactSpecificationTests<ResponseTestCase>("..\\..\\Specification\\pact-specification\\testcases\\response");
 
             if (failedTestCases.Any())
             {
