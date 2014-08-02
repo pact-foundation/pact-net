@@ -49,6 +49,11 @@ namespace PactNet.Tests.Specification
         {
             var failedTestCases = new List<string>();
 
+            if (!Directory.Exists(pathToTestCases))
+            {
+                throw new InvalidOperationException(String.Format("Specification tests not found in path \"{0}\". Please ensure pact-specification git submodule has been pulled.", pathToTestCases));
+            }
+
             foreach (var testCaseSubDirectory in Directory.EnumerateDirectories(pathToTestCases))
             {
                 var testCaseFileNames = Directory.GetFiles(testCaseSubDirectory);
