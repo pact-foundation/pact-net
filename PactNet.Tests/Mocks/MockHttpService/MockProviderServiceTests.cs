@@ -231,6 +231,80 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
+        public void WillRespondWith_WhenADuplicateInteractionIsAdded_ThrowsInvalidOperationException()
+        {
+            var providerState = "My provider state";
+            var description = "My description";
+            var request = new ProviderServiceRequest();
+            var response = new ProviderServiceResponse();
+            var mockService = GetSubject();
+
+            mockService
+                .Given(providerState)
+                .UponReceiving(description)
+                .With(request)
+                .WillRespondWith(response);
+
+            mockService
+                .Given(providerState)
+                .UponReceiving(description)
+                .With(request);
+
+            Assert.Throws<InvalidOperationException>(() => mockService.WillRespondWith(response));
+        }
+
+        [Fact]
+        public void WillRespondWith_WhenADuplicateInteractionIsAddedWithNoProviderState_ThrowsInvalidOperationException()
+        {
+            var description = "My description";
+            var request = new ProviderServiceRequest();
+            var response = new ProviderServiceResponse();
+            var mockService = GetSubject();
+
+            mockService
+                .UponReceiving(description)
+                .With(request)
+                .WillRespondWith(response);
+
+            mockService
+                .UponReceiving(description)
+                .With(request);
+
+            Assert.Throws<InvalidOperationException>(() => mockService.WillRespondWith(response));
+        }
+
+        [Fact]
+        public void WillRespondWith_WhenAddingADuplicateInteractionAfterClearingInteractions_TheDuplicateInteractionIsNotAdded()
+        {
+           var providerState = "My provider state";
+            var description = "My description";
+            var request = new ProviderServiceRequest();
+            var response = new ProviderServiceResponse();
+            var mockService = GetSubject();
+
+            mockService
+                .Given(providerState)
+                .UponReceiving(description)
+                .With(request)
+                .WillRespondWith(response);
+
+            var expectedInteractions = mockService.Interactions;
+
+            mockService.ClearInteractions();
+
+            mockService
+                .Given(providerState)
+                .UponReceiving(description)
+                .With(request)
+                .WillRespondWith(response);
+
+            var actualIneractions = mockService.Interactions;
+
+            Assert.Equal(1, actualIneractions.Count());
+            Assert.Equal(expectedInteractions.First(), actualIneractions.First());
+        }
+
+        [Fact]
         public void Stop_WhenCalled_InteractionsIsNull()
         {
             var mockService = GetSubject();

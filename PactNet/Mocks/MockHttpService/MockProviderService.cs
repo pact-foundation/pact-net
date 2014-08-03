@@ -114,7 +114,22 @@ namespace PactNet.Mocks.MockHttpService
                 Response = _response
             };
 
-            AddInteraction(interaction);
+            _testScopedInteractions = _testScopedInteractions ?? new List<ProviderServiceInteraction>();
+            _interactions = _interactions ?? new List<ProviderServiceInteraction>();
+
+            if (_testScopedInteractions.Any(x => x.Description == interaction.Description &&
+                x.ProviderState == interaction.ProviderState))
+            {
+                throw new InvalidOperationException(String.Format("An interaction already exists with the description \"{0}\" and provider state \"{1}\". Please supply a different description or provider state.", interaction.Description, interaction.ProviderState));
+            }
+
+            if (!_interactions.Any(x => x.Description == interaction.Description &&
+                x.ProviderState == interaction.ProviderState))
+            {
+                _interactions.Add(interaction);
+            }
+
+            _testScopedInteractions.Add(interaction);
 
             ClearTrasientState();
         }
@@ -153,15 +168,6 @@ namespace PactNet.Mocks.MockHttpService
             _response = null;
             _providerState = null;
             _description = null;
-        }
-
-        private void AddInteraction(ProviderServiceInteraction interaction)
-        {
-            _interactions = _interactions ?? new List<ProviderServiceInteraction>();
-            _testScopedInteractions = _testScopedInteractions ?? new List<ProviderServiceInteraction>();
-
-            _interactions.Add(interaction);
-            _testScopedInteractions.Add(interaction);
         }
 
         private IEnumerable<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>> GetMockInteractionRequestResponsePairs()
