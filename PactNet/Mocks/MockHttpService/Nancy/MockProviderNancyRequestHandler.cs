@@ -50,13 +50,13 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         {
             var actualRequest = _requestMapper.Convert(context.Request);
 
-            var matchingRequestResponsePair = context.GetMatchingMockRequestResponsePair(actualRequest.Method, actualRequest.Path);
-            var expectedRequest = matchingRequestResponsePair.Key;
-            var expectedResponse = matchingRequestResponsePair.Value;
+            var matchingInteraction = context.GetMatchingInteraction(actualRequest.Method, actualRequest.Path);
+            
+            matchingInteraction.IncrementUsage();
 
-            _requestComparer.Compare(expectedRequest, actualRequest);
+            _requestComparer.Compare(matchingInteraction.Request, actualRequest);
 
-            return _responseMapper.Convert(expectedResponse);
+            return _responseMapper.Convert(matchingInteraction.Response);
         }
     }
 }

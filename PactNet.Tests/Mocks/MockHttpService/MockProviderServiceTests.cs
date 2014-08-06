@@ -20,7 +20,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var expectedBaseUri = String.Format("http://localhost:{0}", port);
             var mockService = GetSubject(port);
 
-            Assert.Equal(expectedBaseUri, ((MockProviderService)mockService).BaseUri);
+            Assert.Equal(expectedBaseUri, ((MockProviderService) mockService).BaseUri);
         }
 
         [Fact]
@@ -94,7 +94,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             mockService.UponReceiving("My description")
                 .With(request)
                 .WillRespondWith(new ProviderServiceResponse());
-            
+
             var interaction = mockService.Interactions.First() as ProviderServiceInteraction;
             Assert.Equal(request, interaction.Request);
         }
@@ -274,9 +274,10 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void WillRespondWith_WhenAddingADuplicateInteractionAfterClearingInteractions_TheDuplicateInteractionIsNotAdded()
+        public void
+            WillRespondWith_WhenAddingADuplicateInteractionAfterClearingInteractions_TheDuplicateInteractionIsNotAdded()
         {
-           var providerState = "My provider state";
+            var providerState = "My provider state";
             var description = "My description";
             var request = new ProviderServiceRequest();
             var response = new ProviderServiceResponse();
@@ -317,6 +318,84 @@ namespace PactNet.Tests.Mocks.MockHttpService
             mockService.Stop();
 
             Assert.Null(mockService.Interactions);
+        }
+
+        [Fact]
+        public void VerifyInteractions_InteractionHasNotBeenUsed_ThrowsCompareFailedException()
+        {
+            var mockService = GetSubject();
+            var request = new ProviderServiceRequest();
+
+            mockService
+                .UponReceiving("My interaction")
+                .With(request)
+                .WillRespondWith(new ProviderServiceResponse());
+
+            Assert.Throws<CompareFailedException>(() => mockService.VerifyInteractions());
+        }
+
+        [Fact]
+        public void VerifyInteractions_InteractionHasBeenUsedMultipleTimes_ThrowsCompareFailedException()
+        {
+            var mockService = GetSubject();
+            var request = new ProviderServiceRequest();
+
+            mockService
+                .UponReceiving("My interaction")
+                .With(request)
+                .WillRespondWith(new ProviderServiceResponse());
+
+            ((ProviderServiceInteraction)mockService.Interactions.First()).IncrementUsage();
+            ((ProviderServiceInteraction)mockService.Interactions.First()).IncrementUsage();
+
+            Assert.Throws<CompareFailedException>(() => mockService.VerifyInteractions());
+        }
+
+        [Fact]
+        public void VerifyInteractions_WithInteractionsThatHaveBeenUsedMultipleTimesAndNotUsedAtAll_ThrowsCompareFailedException()
+        {
+            var mockService = GetSubject();
+            var request = new ProviderServiceRequest();
+
+            mockService
+                .UponReceiving("My interaction")
+                .With(request)
+                .WillRespondWith(new ProviderServiceResponse());
+
+            mockService
+                .Given("My provider state")
+                .UponReceiving("My interaction 2")
+                .With(request)
+                .WillRespondWith(new ProviderServiceResponse());
+
+            ((ProviderServiceInteraction)mockService.Interactions.First()).IncrementUsage();
+            ((ProviderServiceInteraction)mockService.Interactions.First()).IncrementUsage();
+
+            Assert.Throws<CompareFailedException>(() => mockService.VerifyInteractions());
+        }
+
+        [Fact]
+        public void VerifyInteractions_InteractionHasBeenUsed_DoesNotThrow()
+        {
+            var mockService = GetSubject();
+            var request = new ProviderServiceRequest();
+
+            mockService
+                .UponReceiving("My interaction")
+                .With(request)
+                .WillRespondWith(new ProviderServiceResponse());
+
+            ((ProviderServiceInteraction) mockService.Interactions.First()).IncrementUsage();
+
+            mockService.VerifyInteractions();
+        }
+
+        [Fact]
+        public void VerifyInteractions_WithNoInteractions_DoesNotThrow()
+        {
+            var mockService = GetSubject();
+
+            mockService.VerifyInteractions();
         }
     }
 }

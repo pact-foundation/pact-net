@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 
 namespace PactNet.Models
 {
@@ -9,5 +10,15 @@ namespace PactNet.Models
 
         [JsonProperty(Order = -2, PropertyName = "provider_state")]
         public string ProviderState { get; set; }
+
+        public string Summary()
+        {
+            if (!String.IsNullOrEmpty(Description) && !String.IsNullOrEmpty(ProviderState))
+            {
+                return String.Format("{0} - {1}", Description, ProviderState);
+            }
+
+            return Description;
+        }
     }
 }

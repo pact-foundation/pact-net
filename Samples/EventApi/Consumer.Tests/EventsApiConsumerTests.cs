@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using PactNet.Mocks.MockHttpService;
@@ -73,6 +72,9 @@ namespace Consumer.Tests
             //Assert
             Assert.NotEmpty(events);
             Assert.Equal(3, events.Count());
+
+
+            _mockProviderService.VerifyInteractions();
         }
 
         [Fact]
@@ -108,6 +110,8 @@ namespace Consumer.Tests
 
             //Act / Assert
             consumer.CreateEvent(eventId);
+
+            _mockProviderService.VerifyInteractions();
         }
 
         [Fact]
@@ -133,6 +137,8 @@ namespace Consumer.Tests
 
             //Assert
             Assert.Equal(true, result);
+
+            _mockProviderService.VerifyInteractions();
         }
 
         [Fact]
@@ -171,6 +177,8 @@ namespace Consumer.Tests
 
             //Assert
             Assert.Equal(eventId, result.EventId);
+
+            _mockProviderService.VerifyInteractions();
         }
 
         [Fact]
@@ -213,6 +221,8 @@ namespace Consumer.Tests
 
             //Assert
             Assert.Equal(eventType, result.First().EventType);
+
+            _mockProviderService.VerifyInteractions();
         }
     }
 }

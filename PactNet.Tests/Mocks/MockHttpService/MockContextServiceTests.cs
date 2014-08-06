@@ -10,17 +10,17 @@ namespace PactNet.Tests.Mocks.MockHttpService
         [Fact]
         public void GetExpectedRequestResponsePairs_With_ReturnsRequestResponsePairs()
         {
-            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
+            var interactions = new List<ProviderServiceInteraction>()
             {
-                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest { Method = HttpVerb.Get, Path = "/events" }, new ProviderServiceResponse()),
-                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest { Method = HttpVerb.Post, Path = "/events" }, new ProviderServiceResponse()),
+                new ProviderServiceInteraction() { Request = new ProviderServiceRequest { Method = HttpVerb.Get, Path = "/events" }, Response = new ProviderServiceResponse()},
+                new ProviderServiceInteraction() { Request = new ProviderServiceRequest { Method = HttpVerb.Post, Path = "/events" }, Response = new ProviderServiceResponse()},
             };
 
-            IMockContextService mockContextService = new MockContextService(() => requestResponsePairs);
+            IMockContextService mockContextService = new MockContextService(() => interactions);
 
             var result = mockContextService.GetExpectedRequestResponsePairs();
 
-            Assert.Equal(requestResponsePairs, result);
+            Assert.Equal(interactions, result);
         }
     }
 }
