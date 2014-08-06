@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Reporters;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
@@ -10,16 +11,18 @@ namespace PactNet.Mocks.MockHttpService.Comparers
         private readonly IHttpQueryStringComparer _httpQueryStringComparer;
         private readonly IHttpHeaderComparer _httpHeaderComparer;
         private readonly IHttpBodyComparer _httpBodyComparer;
+        private readonly IReporter _reporter;
 
         private const string MessagePrefix = "\t- Request";
 
-        public ProviderServiceRequestComparer()
+        public ProviderServiceRequestComparer(IReporter reporter)
         {
-            _httpMethodComparer = new HttpMethodComparer(MessagePrefix);
-            _httpPathComparer = new HttpPathComparer(MessagePrefix);
-            _httpQueryStringComparer = new HttpQueryStringComparer(MessagePrefix);
-            _httpHeaderComparer = new HttpHeaderComparer(MessagePrefix);
-            _httpBodyComparer = new HttpBodyComparer(MessagePrefix);
+            _reporter = reporter;
+            _httpMethodComparer = new HttpMethodComparer(MessagePrefix, _reporter);
+            _httpPathComparer = new HttpPathComparer(MessagePrefix, _reporter);
+            _httpQueryStringComparer = new HttpQueryStringComparer(MessagePrefix, _reporter);
+            _httpHeaderComparer = new HttpHeaderComparer(MessagePrefix, _reporter);
+            _httpBodyComparer = new HttpBodyComparer(MessagePrefix, _reporter);
         }
 
         public void Compare(ProviderServiceRequest request1, ProviderServiceRequest request2)

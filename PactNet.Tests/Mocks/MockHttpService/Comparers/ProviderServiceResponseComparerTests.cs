@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using NSubstitute;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Reporters;
 using Xunit;
 
 namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 {
     public class ProviderServiceResponseComparerTests
     {
+        private IReporter _mockReporter;
+
         private IProviderServiceResponseComparer GetSubject()
         {
-            return new ProviderServiceResponseComparer();
+            _mockReporter = Substitute.For<IReporter>();
+            return new ProviderServiceResponseComparer(_mockReporter);
         }
 
         [Fact]
@@ -32,7 +37,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         }
 
         [Fact]
-        public void Compare_WithNonMatchingStatusCodes_ThrowsPactAssertException()
+        public void Compare_WithNonMatchingStatusCodes_ReportErrorIsCalled()
         {
             var expected = new ProviderServiceResponse
             {
@@ -46,7 +51,8 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            Assert.Throws<CompareFailedException>(() => comparer.Compare(expected, actual));
+            comparer.Compare(expected, actual);
+            _mockReporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
         }
 
         [Fact]
@@ -102,7 +108,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         }
 
         [Fact]
-        public void Compare_WithMatchingHeadersButWithDifferentCasingOnValue_ThrowsPactAssertException()
+        public void Compare_WithMatchingHeadersButWithDifferentCasingOnValue_ReportErrorIsCalled()
         {
             var expected = new ProviderServiceResponse
             {
@@ -124,7 +130,8 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            Assert.Throws<CompareFailedException>(() => comparer.Compare(expected, actual));
+            comparer.Compare(expected, actual);
+            _mockReporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
         }
 
         [Fact]
@@ -156,7 +163,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         }
 
         [Fact]
-        public void Compare_WithNonMatchingHeadersValues_ThrowsPactAssertException()
+        public void Compare_WithNonMatchingHeadersValues_ReportErrorIsCalled()
         {
             var expected = new ProviderServiceResponse
             {
@@ -178,11 +185,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            Assert.Throws<CompareFailedException>(() => comparer.Compare(expected, actual));
+            comparer.Compare(expected, actual);
+            _mockReporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
         }
 
         [Fact]
-        public void Compare_WithNonMatchingHeaderNames_ThrowsPactAssertException()
+        public void Compare_WithNonMatchingHeaderNames_ReportErrorIsCalled()
         {
             var expected = new ProviderServiceResponse
             {
@@ -204,11 +212,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            Assert.Throws<CompareFailedException>(() => comparer.Compare(expected, actual));
+            comparer.Compare(expected, actual);
+            _mockReporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
         }
 
         [Fact]
-        public void Compare_WithResponseThatHasNoHeaders_ThrowsPactAssertException()
+        public void Compare_WithResponseThatHasNoHeaders_ReportErrorIsCalled()
         {
             var expected = new ProviderServiceResponse
             {
@@ -226,7 +235,8 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            Assert.Throws<CompareFailedException>(() => comparer.Compare(expected, actual));
+            comparer.Compare(expected, actual);
+            _mockReporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
         }
 
         [Fact]
@@ -321,7 +331,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         }
 
         [Fact]
-        public void Compare_WithNonMatchingObject_ThrowsPactAssertException()
+        public void Compare_WithNonMatchingObject_ReportErrorIsCalled()
         {
             var expected = new ProviderServiceResponse
             {
@@ -348,11 +358,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            Assert.Throws<CompareFailedException>(() => comparer.Compare(expected, actual));
+            comparer.Compare(expected, actual);
+            _mockReporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
         }
 
         [Fact]
-        public void Compare_WithMatchingObjectAndANonMatchingValue_ThrowsPactAssertException()
+        public void Compare_WithMatchingObjectAndANonMatchingValue_ReportErrorIsCalled()
         {
             var expected = new ProviderServiceResponse
             {
@@ -378,11 +389,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            Assert.Throws<CompareFailedException>(() => comparer.Compare(expected, actual));
+            comparer.Compare(expected, actual);
+            _mockReporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
         }
 
         [Fact]
-        public void Compare_WithMatchingObjectHoweverPropertyNameCasingIsDifferent_ThrowsPactAssertException()
+        public void Compare_WithMatchingObjectHoweverPropertyNameCasingIsDifferent_ReportErrorIsCalled()
         {
             var expected = new ProviderServiceResponse
             {
@@ -408,11 +420,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            Assert.Throws<CompareFailedException>(() => comparer.Compare(expected, actual));
+            comparer.Compare(expected, actual);
+            _mockReporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
         }
 
         [Fact]
-        public void Compare_WithNullBodyInResponse_ThrowsPactAssertException()
+        public void Compare_WithNullBodyInResponse_ReportErrorIsCalled()
         {
             var expected = new ProviderServiceResponse
             {
@@ -432,7 +445,8 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            Assert.Throws<CompareFailedException>(() => comparer.Compare(expected, actual));
+            comparer.Compare(expected, actual);
+            _mockReporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
         }
 
         [Fact]
@@ -472,7 +486,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         }
 
         [Fact]
-        public void Compare_WithNonMatchingCollection_ThrowsPactAssertException()
+        public void Compare_WithNonMatchingCollection_ReportErrorIsCalled()
         {
             var expected = new ProviderServiceResponse
             {
@@ -504,7 +518,8 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            Assert.Throws<CompareFailedException>(() => comparer.Compare(expected, actual));
+            comparer.Compare(expected, actual);
+            _mockReporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
         }
     }
 }

@@ -85,6 +85,7 @@
     <Compile Include="PactBuilderTests.cs" />
     <Compile Include="ProviderServicePactFileTests.cs" />
     <Compile Include="PactVerifierTests.cs" />
+    <Compile Include="Reporters\ReporterTests.cs" />
     <Compile Include="Specification\Models\IVerifiable.cs" />
     <Compile Include="Specification\Models\RequestTestCase.cs" />
     <Compile Include="Specification\Models\ResponseTestCase.cs" />

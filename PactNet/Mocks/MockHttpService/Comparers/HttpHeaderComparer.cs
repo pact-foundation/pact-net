@@ -1,30 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using PactNet.Reporters;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
     public class HttpHeaderComparer : IHttpHeaderComparer
     {
         private readonly string _messagePrefix;
+        private readonly IReporter _reporter;
 
-        public HttpHeaderComparer(string messagePrefix)
+        public HttpHeaderComparer(string messagePrefix, IReporter reporter)
         {
             _messagePrefix = messagePrefix;
+            _reporter = reporter;
         }
 
         public void Compare(IDictionary<string, string> headers1, IDictionary<string, string> headers2)
         {
             if (headers2 == null)
             {
-                throw new CompareFailedException("Headers are null");
+                _reporter.ReportError("Headers are null");
+                return;
             }
 
             headers2 = MakeDictionaryCaseInsensitive(headers2);
 
             foreach (var header in headers1)
             {
-                Console.WriteLine("{0} includes header {1} with value {2}", _messagePrefix, header.Key, header.Value);
+                _reporter.ReportInfo(String.Format("{0} includes header {1} with value {2}", _messagePrefix, header.Key, header.Value));
 
                 string value2;
 
@@ -37,7 +41,8 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                     {
                         if (!header.Value.Equals(value2))
                         {
-                            throw new CompareFailedException(header.Value, value2);
+                            _reporter.ReportError(header.Value, value2);
+                            return;
                         }
                     }
                     else
@@ -48,14 +53,16 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
                         if (!value1SplitJoined.Equals(value2SplitJoined))
                         {
-                            throw new CompareFailedException(header.Value, value2);
+                            _reporter.ReportError(header.Value, value2);
+                            return;
                         }
                     }
                     
                 }
                 else
                 {
-                    throw new CompareFailedException("Header does not exist");
+                    _reporter.ReportError("Header does not exist");
+                    return;
                 }
             }
         }

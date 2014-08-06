@@ -1,5 +1,4 @@
-﻿using System.Net.Http;
-using Microsoft.Owin.Testing;
+﻿using Microsoft.Owin.Testing;
 using PactNet;
 using Xunit;
 

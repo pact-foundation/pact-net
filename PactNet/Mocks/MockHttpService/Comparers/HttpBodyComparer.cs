@@ -1,18 +1,20 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PactNet.Reporters;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
     public class HttpBodyComparer : IHttpBodyComparer
     {
         private readonly string _messagePrefix;
+        private readonly IReporter _reporter;
         private int _comparisonPasses;
 
-        public HttpBodyComparer(string messagePrefix)
+        public HttpBodyComparer(string messagePrefix, IReporter reporter)
         {
             _messagePrefix = messagePrefix;
+            _reporter = reporter;
         }
 
         //TODO: Remove boolean and add "matching" functionality
@@ -27,7 +29,8 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
             if (body1 != null && body2 == null)
             {
-                throw new CompareFailedException("Body is null");
+                _reporter.ReportError("Body is null");
+                return;
             }
 
             string body1Json = JsonConvert.SerializeObject(body1);
@@ -39,7 +42,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
             {
                 if (!JToken.DeepEquals(httpBody1, httpBody2))
                 {
-                    throw new CompareFailedException(httpBody1, httpBody2);
+                    _reporter.ReportError(expected: httpBody1, actual: httpBody2);
                 }
                 return;
             }
@@ -48,64 +51,103 @@ namespace PactNet.Mocks.MockHttpService.Comparers
         }
 
        
-        private void AssertPropertyValuesMatch(JToken httpBody1, JToken httpBody2)
+        private bool AssertPropertyValuesMatch(JToken httpBody1, JToken httpBody2)
         {
             _comparisonPasses++;
             if (_comparisonPasses > 200)
             {
-                throw new CompareFailedException("Too many passes required to compare objects.");
-            }
-
-            if (httpBody1 == null)
-            {
-                return;
-            }
-            if (httpBody1 != null && httpBody2 == null)
-            {
-                throw new CompareFailedException(httpBody1, "");
+                _reporter.ReportError("Too many passes required to compare objects.");
+                return false;
             }
 
             switch (httpBody1.Type)
             {
-                case JTokenType.Array:
-                    if (httpBody1.Count() != httpBody2.Count())
+                case JTokenType.Array: 
                     {
-                        throw new CompareFailedException(httpBody1, httpBody2);
-                    }
+                        if (httpBody1.Count() != httpBody2.Count())
+                        {
+                            _reporter.ReportError(expected: httpBody1.Root, actual: httpBody2.Root);
+                            return false;
+                        }
 
-                    for (var i = 0; i < httpBody1.Count(); i++)
-                    {
-                        AssertPropertyValuesMatch(httpBody1[i], httpBody2[i]);
+                        for (var i = 0; i < httpBody1.Count(); i++)
+                        {
+                            if (httpBody2.Count() > i)
+                            {
+                                var isMatch = AssertPropertyValuesMatch(httpBody1[i], httpBody2[i]);
+                                if (!isMatch)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                        break;
                     }
-                    break;
-                
                 case JTokenType.Object:
-                    foreach (JProperty item1 in httpBody1)
                     {
-                        var item2 = httpBody2.Cast<JProperty>().SingleOrDefault(x => x.Name == item1.Name);
-                        AssertPropertyValuesMatch(item1, item2);
-                    }
-                    break;
-            
-                case JTokenType.Property:
-                    AssertPropertyValuesMatch(httpBody1.SingleOrDefault(), httpBody2.SingleOrDefault());
-                    break;
+                        foreach (JProperty item1 in httpBody1)
+                        {
+                            var item2 = httpBody2.Cast<JProperty>().SingleOrDefault(x => x.Name == item1.Name);
 
+                            if (item2 != null)
+                            {
+                                var isMatch = AssertPropertyValuesMatch(item1, item2);
+                                if (!isMatch)
+                                {
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                _reporter.ReportError(expected: httpBody1.Root, actual: httpBody2.Root);
+                                return false;
+                            }
+                        }
+                        break;
+                    }
+                case JTokenType.Property: 
+                    {
+                        var httpBody2Item = httpBody2.SingleOrDefault();
+                        var httpBody1Item = httpBody1.SingleOrDefault();
+
+                        if (httpBody2Item == null && httpBody1Item == null)
+                        {
+                            return true;
+                        }
+
+                        if (httpBody2Item != null && httpBody1Item != null)
+                        {
+                            AssertPropertyValuesMatch(httpBody1Item, httpBody2Item);
+                        }
+                        else
+                        {
+                            _reporter.ReportError(expected: httpBody1.Root, actual: httpBody2.Root);
+                            return false;
+                        }
+                        break;
+                    }
                 case JTokenType.Integer:
-                case JTokenType.String:
-                    if (!httpBody1.Equals(httpBody2))
+                case JTokenType.String: 
                     {
-                        throw new CompareFailedException(httpBody1, httpBody2);
+                        if (!httpBody1.Equals(httpBody2))
+                        {
+                            _reporter.ReportError(expected: httpBody1.Root, actual: httpBody2.Root);
+                            return false;
+                        }
+                        break;
                     }
-                    break;
-                
                 default:
-                    if (!JToken.DeepEquals(httpBody1, httpBody2))
                     {
-                        throw new CompareFailedException(httpBody1, httpBody2);
+                        if (!JToken.DeepEquals(httpBody1, httpBody2))
+                        {
+                            _reporter.ReportError(expected: httpBody1.Root, actual: httpBody2.Root);
+                            return false;
+                        }
+                        break;
                     }
-                    break;
             }
+
+            return true;
         }
     }
 }

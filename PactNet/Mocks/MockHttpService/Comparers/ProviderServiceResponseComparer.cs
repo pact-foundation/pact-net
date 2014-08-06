@@ -3,6 +3,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Reporters;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
@@ -10,26 +11,29 @@ namespace PactNet.Mocks.MockHttpService.Comparers
     {
         private readonly IHttpHeaderComparer _httpHeaderComparer;
         private readonly IHttpBodyComparer _httpBodyComparer;
+        private readonly IReporter _reporter;
 
         private const string MessagePrefix = "\t- Returns a response which";
 
-        public ProviderServiceResponseComparer()
+        public ProviderServiceResponseComparer(IReporter reporter)
         {
-            _httpHeaderComparer = new HttpHeaderComparer(MessagePrefix);
-            _httpBodyComparer = new HttpBodyComparer(MessagePrefix);
+            _reporter = reporter;
+            _httpHeaderComparer = new HttpHeaderComparer(MessagePrefix, _reporter);
+            _httpBodyComparer = new HttpBodyComparer(MessagePrefix, _reporter); //TODO: MessagePrefix isn't real nice
         }
 
         public void Compare(ProviderServiceResponse response1, ProviderServiceResponse response2)
         {
             if (response1 == null)
             {
-                throw new CompareFailedException("Expected response cannot be null");
+                _reporter.ReportError("Expected response cannot be null");
+                return;
             }
 
-            Console.WriteLine("{0} has status code of {1}", MessagePrefix, response1.Status);
+            _reporter.ReportInfo(String.Format("{0} has status code of {1}", MessagePrefix, response1.Status));
             if (!response1.Status.Equals(response2.Status))
             {
-                throw new CompareFailedException(response1.Status, response2.Status);
+                _reporter.ReportError(expected: response1.Status, actual: response2.Status);
             }
 
             if (response1.Headers != null && response1.Headers.Any())

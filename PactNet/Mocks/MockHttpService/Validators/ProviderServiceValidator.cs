@@ -6,6 +6,7 @@ using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
+using PactNet.Reporters;
 
 namespace PactNet.Mocks.MockHttpService.Validators
 {
@@ -15,25 +16,29 @@ namespace PactNet.Mocks.MockHttpService.Validators
         private readonly HttpClient _httpClient;
         private readonly IHttpRequestMessageMapper _httpRequestMessageMapper;
         private readonly IProviderServiceResponseMapper _providerServiceResponseMapper;
+        private readonly IReporter _reporter;
         
         [Obsolete("For testing only.")]
         public ProviderServiceValidator(
             IProviderServiceResponseComparer providerServiceResponseComparer, 
             HttpClient httpClient, 
             IHttpRequestMessageMapper httpRequestMessageMapper,
-            IProviderServiceResponseMapper providerServiceResponseMapper)
+            IProviderServiceResponseMapper providerServiceResponseMapper,
+            IReporter reporter)
         {
             _providerServiceResponseComparer = providerServiceResponseComparer;
             _httpClient = httpClient;
             _httpRequestMessageMapper = httpRequestMessageMapper;
             _providerServiceResponseMapper = providerServiceResponseMapper;
+            _reporter = reporter;
         }
 
-        public ProviderServiceValidator(HttpClient httpClient) : this(
-            new ProviderServiceResponseComparer(), 
+        public ProviderServiceValidator(HttpClient httpClient, IReporter reporter) : this(
+            new ProviderServiceResponseComparer(reporter),
             httpClient,
             new HttpRequestMessageMapper(),
-            new ProviderServiceResponseMapper())
+            new ProviderServiceResponseMapper(),
+            reporter)
         {
         }
 
@@ -84,7 +89,7 @@ namespace PactNet.Mocks.MockHttpService.Validators
 
                         InvokeInteractionSetUpIfApplicable(providerStateItem);
 
-                        Console.WriteLine("{0}) Verifying a Pact between {1} and {2} - {3}.", interationNumber, pactFile.Consumer.Name, pactFile.Provider.Name, interaction.Description);
+                        _reporter.ReportInfo(String.Format("{0}) Verifying a Pact between {1} and {2} - {3}.", interationNumber, pactFile.Consumer.Name, pactFile.Provider.Name, interaction.Description));
 
                         try
                         {
@@ -97,6 +102,8 @@ namespace PactNet.Mocks.MockHttpService.Validators
                         
                         interationNumber++;
                     }
+
+                    _reporter.ThrowIfAnyErrors();
                 }
                 finally 
                 {

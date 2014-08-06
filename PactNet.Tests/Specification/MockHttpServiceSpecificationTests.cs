@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using NSubstitute.Exceptions;
 using Newtonsoft.Json;
 using PactNet.Tests.Specification.Models;
 using Xunit;
@@ -59,12 +60,14 @@ namespace PactNet.Tests.Specification
                 var testCaseFileNames = Directory.GetFiles(testCaseSubDirectory);
                 foreach (var testCaseFileName in testCaseFileNames)
                 {
-                    Console.WriteLine();
-
                     var testCaseJson = File.ReadAllText(testCaseFileName);
-                    var testCase = (T) JsonConvert.DeserializeObject(testCaseJson, typeof (T));
-                    
-                    if (!testCase.Verified())
+                    var testCase = (T)JsonConvert.DeserializeObject(testCaseJson, typeof(T));
+
+                    try
+                    {
+                        testCase.Verify();
+                    }
+                    catch (SubstituteException)
                     {
                         failedTestCases.Add(String.Format("[Failed] {0}", testCaseFileName));
                     }

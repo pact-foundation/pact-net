@@ -1,14 +1,17 @@
 ﻿using System;
+using PactNet.Reporters;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
     public class HttpQueryStringComparer : IHttpQueryStringComparer
     {
         private readonly string _messagePrefix;
+        private readonly IReporter _reporter;
 
-        public HttpQueryStringComparer(string messagePrefix)
+        public HttpQueryStringComparer(string messagePrefix, IReporter reporter)
         {
             _messagePrefix = messagePrefix;
+            _reporter = reporter;
         }
 
         public void Compare(string query1, string query2)
@@ -18,11 +21,12 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                 return;
             }
 
-            Console.WriteLine("{0} has path set to {1}", _messagePrefix, query1);
+            _reporter.ReportInfo(String.Format("{0} has path set to {1}", _messagePrefix, query1));
             
             if (!query1.Equals(query2))
             {
-                throw new CompareFailedException(query1, query2);
+                _reporter.ReportError(query1, query2);
+                return;
             }
         }
     }

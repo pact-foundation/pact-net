@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Validators;
 using PactNet.Models;
+using PactNet.Reporters;
 
 namespace PactNet
 {
@@ -30,7 +31,7 @@ namespace PactNet
 
         public PactVerifier() : this(
             new FileSystem(),
-            httpClient => new ProviderServiceValidator(httpClient))
+            httpClient => new ProviderServiceValidator(httpClient, new Reporter()))
         {
         }
 

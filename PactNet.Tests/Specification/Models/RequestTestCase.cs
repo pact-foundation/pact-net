@@ -1,11 +1,14 @@
-﻿using PactNet.Mocks.MockHttpService.Comparers;
+﻿using NSubstitute;
+using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Reporters;
 
 namespace PactNet.Tests.Specification.Models
 {
     public class RequestTestCase : IVerifiable
     {
         private readonly IProviderServiceRequestComparer _requestComparer;
+        private readonly IReporter _reporter;
 
         public bool Match { get; set; }
         public string Comment { get; set; }
@@ -14,30 +17,22 @@ namespace PactNet.Tests.Specification.Models
 
         public RequestTestCase()
         {
-            _requestComparer = new ProviderServiceRequestComparer();
+            _reporter = Substitute.For<IReporter>();
+            _requestComparer = new ProviderServiceRequestComparer(_reporter);
         }
 
-        public bool Verified()
+        public void Verify()
         {
-            try
-            {
-                _requestComparer.Compare(Expected, Actual);
-            }
-            catch (CompareFailedException)
-            {
-                if (Match)
-                {
-                    return false;
-                }
-                return true;
-            }
+            _requestComparer.Compare(Expected, Actual);
 
-            if (!Match)
+            if (Match)
             {
-                return false;
+                _reporter.DidNotReceive().ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
             }
-
-            return true;
+            else
+            {
+                _reporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
+            }
         }
     }
 }

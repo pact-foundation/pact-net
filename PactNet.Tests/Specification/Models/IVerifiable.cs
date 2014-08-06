@@ -2,6 +2,6 @@
 {
     public interface IVerifiable
     {
-        bool Verified();
+        void Verify();
     }
 }

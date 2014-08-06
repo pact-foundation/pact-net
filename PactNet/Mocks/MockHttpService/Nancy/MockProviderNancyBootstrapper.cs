@@ -5,6 +5,7 @@ using Nancy.Diagnostics;
 using Nancy.TinyIoc;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Mappers;
+using PactNet.Reporters;
 
 namespace PactNet.Mocks.MockHttpService.Nancy
 {
@@ -52,6 +53,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             container.Register(typeof(INancyResponseMapper), typeof(NancyResponseMapper));
             container.Register(typeof (IMockContextService), _mockContextService);
             container.Register(typeof(IMockProviderNancyRequestHandler), typeof(MockProviderNancyRequestHandler));
+            container.Register(typeof(IReporter), typeof(Reporter));
         }
     }
 }

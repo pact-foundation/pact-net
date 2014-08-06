@@ -229,7 +229,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             };
             var expectedResponse = new ProviderServiceResponse { Status = 200 };
             var nancyResponse = new Response { StatusCode = HttpStatusCode.OK };
-            var compareException = new CompareFailedException(expectedRequest.Method, actualRequest.Method);
+            var compareException = new CompareFailedException("Something failed");
 
             var mockRequestComparer = Substitute.For<IProviderServiceRequestComparer>();
             var mockRequestMapper = Substitute.For<IProviderServiceRequestMapper>();
