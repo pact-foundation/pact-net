@@ -290,7 +290,7 @@ namespace PactNet.Tests
         public void Verify_WithNoProviderDescriptionOrProviderStateSupplied_CallsProviderServiceValidatorWithAll3Interactions()
         {
             var pactUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
-            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"providerState\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"providerState\": \"My Provider State\" }, { \"description\": \"My Description\", \"providerState\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
+            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description\", \"provider_state\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
             var httpClient = new HttpClient();
 
             var mockFileSystem = Substitute.For<IFileSystem>();
@@ -319,7 +319,7 @@ namespace PactNet.Tests
         {
             var description = "My Description";
             var pactUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
-            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"providerState\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"providerState\": \"My Provider State\" }, { \"description\": \"My Description\", \"providerState\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
+            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description\", \"provider_state\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
             var httpClient = new HttpClient();
 
             var mockFileSystem = Substitute.For<IFileSystem>();
@@ -348,7 +348,7 @@ namespace PactNet.Tests
         {
             var providerState = "My Provider State";
             var pactUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
-            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"providerState\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"providerState\": \"My Provider State\" }, { \"description\": \"My Description\", \"providerState\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
+            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description\", \"provider_state\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
             var httpClient = new HttpClient();
 
             var mockFileSystem = Substitute.For<IFileSystem>();
@@ -378,7 +378,7 @@ namespace PactNet.Tests
             var description = "My Description";
             var providerState = "My Provider State";
             var pactUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
-            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"providerState\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"providerState\": \"My Provider State\" }, { \"description\": \"My Description\", \"providerState\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
+            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description\", \"provider_state\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
             var httpClient = new HttpClient();
 
             var mockFileSystem = Substitute.For<IFileSystem>();

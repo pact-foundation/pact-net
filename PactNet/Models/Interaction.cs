@@ -7,7 +7,7 @@ namespace PactNet.Models
         [JsonProperty(Order = -3, PropertyName = "description")]
         public string Description { get; set; }
 
-        [JsonProperty(Order = -2, PropertyName = "providerState")]
+        [JsonProperty(Order = -2, PropertyName = "provider_state")]
         public string ProviderState { get; set; }
     }
 }
