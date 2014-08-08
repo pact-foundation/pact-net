@@ -82,9 +82,9 @@
     <Compile Include="Models\PactFileTests.cs" />
     <Compile Include="Models\ProviderStatesTests.cs" />
     <Compile Include="Models\ProviderStateTests.cs" />
-    <Compile Include="PactConsumerTests.cs" />
+    <Compile Include="PactBuilderTests.cs" />
     <Compile Include="ProviderServicePactFileTests.cs" />
-    <Compile Include="PactProviderTests.cs" />
+    <Compile Include="PactVerifierTests.cs" />
     <Compile Include="Specification\Models\IVerifiable.cs" />
     <Compile Include="Specification\Models\RequestTestCase.cs" />
     <Compile Include="Specification\Models\ResponseTestCase.cs" />

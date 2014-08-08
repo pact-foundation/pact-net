@@ -38,25 +38,32 @@ public class SomethingApiClient
 	
 	public Something GetSomething(string id)
 	{
-		var client = new HttpClient();
-		client.BaseAddress = new Uri(BaseUri);
+		string reasonPhrase;
 		
-		var request = new HttpRequestMessage(HttpMethod.Get, "/somethings/" + id);
-		request.Headers.Add("Accept", "application/json");
-
-		var response = client.SendAsync(request);
-
-		var content = response.Result.Content.ReadAsStringAsync().Result;
-		var status = response.Result.StatusCode;
-
-		if (status == HttpStatusCode.OK)
+		using (var client = new HttpClient { BaseAddress = new Uri(BaseUri) })
 		{
-			return !String.IsNullOrEmpty(content) ? 
-				JsonConvert.DeserializeObject<Something>(content)
-				: null;
+			var request = new HttpRequestMessage(HttpMethod.Get, "/somethings/" + id);
+			request.Headers.Add("Accept", "application/json");
+
+			var response = client.SendAsync(request);
+
+			var content = response.Result.Content.ReadAsStringAsync().Result;
+			var status = response.Result.StatusCode;
+
+			reasonPhrase = response.Result.ReasonPhrase; //NOTE: any Pact mock provider errors will be returned here and in the response body
+			
+			request.Dispose();
+			response.Dispose();
+			
+			if (status == HttpStatusCode.OK)
+			{
+				return !String.IsNullOrEmpty(content) ? 
+					JsonConvert.DeserializeObject<Something>(content)
+					: null;
+			}
 		}
 
-		throw new Exception("Server responded with a non 200 status code");
+		throw new Exception(reasonPhrase); 
 	}
 }
 ```
@@ -68,34 +75,37 @@ This should only be instantiated once for the consumer you are testing.
 ```c#
 public class ConsumerMyApiPact : IDisposable
 {
-	public IPactConsumer Pact { get; private set; }
+	public IPactBuilder PactBuilder { get; private set; }
 	public IMockProviderService MockProviderService { get; private set; }
 
 	public int MockServerPort { get { return 1234; } }
-	public string MockServerBaseUri { get { return String.Format("http://localhost:{0}", MockServerPort); } }
+	public string MockProviderServiceBaseUri { get { return String.Format("http://localhost:{0}", MockServerPort); } }
 
 	public ConsumerMyApiPact()
 	{
-		Pact = new Pact().ServiceConsumer("Consumer")
+		PactBuilder = new PactBuilder()
+			.ServiceConsumer("Consumer")
 			.HasPactWith("Something API");
 
-		MockProviderService = Pact.MockService(MockServerPort); //Configure the http mock server
+		MockProviderService = PactBuilder.MockService(MockServerPort); //Configure the http mock server
 	}
 
 	public void Dispose()
 	{
-		Pact.Dispose(); //NOTE: Will save the pact file once finished
+		PactBuilder.Build(); //NOTE: Will save the pact file once finished
 	}
 }
 
 public class SomethingApiConsumerTests : IUseFixture<ConsumerMyApiPact>
 {
-	private ConsumerMyApiPact _data;
+	private IMockProviderService _mockProviderService;
+	private string _mockProviderServiceBaseUri;
 		
 	public void SetFixture(ConsumerMyApiPact data)
 	{
-		_data = data;
-		_data.MockProviderService.ClearInteractions(); //NOTE: Clears any previously registered interactions before the test is run
+		_mockProviderService = data.MockProviderService;
+        _mockProviderServiceBaseUri = data.MockProviderServiceBaseUri;
+		data.MockProviderService.ClearInteractions(); //NOTE: Clears any previously registered interactions before the test is run
 	}
 }
 ```
@@ -107,19 +117,21 @@ Create a new test case and implement it.
 ```c#
 public class SomethingApiConsumerTests : IUseFixture<ConsumerMyApiPact>
 {
-	private ConsumerMyApiPact _data;
+	private IMockProviderService _mockProviderService;
+	private string _mockProviderServiceBaseUri;
 		
 	public void SetFixture(ConsumerMyApiPact data)
 	{
-		_data = data;
-		_data.MockProviderService.ClearInteractions(); //NOTE: Clears any previously registered interactions before the test is run
+		_mockProviderService = data.MockProviderService;
+        _mockProviderServiceBaseUri = data.MockProviderServiceBaseUri;
+		data.MockProviderService.ClearInteractions(); //NOTE: Clears any previously registered interactions before the test is run
 	}
 	
 	[Fact]
 	public void GetSomething_WhenTheTesterSomethingExists_ReturnsTheSomething()
 	{
 		//Arrange
-		_data.MockProviderService
+		_mockProviderService
 			.Given("There is a something with id 'tester'")
 			.UponReceiving("A GET request to retrieve the something")
 			.With(new ProviderServiceRequest
@@ -146,7 +158,7 @@ public class SomethingApiConsumerTests : IUseFixture<ConsumerMyApiPact>
 				}
 			}); //NOTE: WillRespondWith call must come last as it will register the interaction
 			
-		var consumer = new SomethingApiClient(_data.MockServerBaseUri);
+		var consumer = new SomethingApiClient(_mockProviderServiceBaseUri);
 		
 		//Act
 		var result = consumer.GetSomething("tester");
@@ -180,21 +192,22 @@ public class SomethingApiTests
 	public void EnsureSomethingApiHonoursPactWithConsumer()
 	{
 		//Arrange
-		var testServer = TestServer.Create<Startup>(); //NOTE: Using the Microsoft.Owin.Testing nuget package
-
-		var pact = new Pact();
+		var pactVerifier = new PactVerifier();
 		
-		pact.ProviderStatesFor("Consumer") //NOTE: You can supply setUp and tearDown, which will run before starting and after completing the verifications.
+		pactVerifier
+			.ProviderStatesFor("Consumer") //NOTE: You can supply setUp and tearDown, which will run before starting and after completing the verifications.
 			.ProviderState("There is a something with id 'tester'",
 				setUp: AddTesterIfItDoesntExist); //NOTE: We also have tearDown
 
 		//Act / Assert
-		pact.ServiceProvider("Something API", testServer.HttpClient)
-			.HonoursPactWith("Consumer")
-			.PactUri("../../../Consumer.Tests/pacts/consumer-something_api.json")
-			.Verify(); //NOTE: Optionally you can control what interactions are verified by specifying a providerDescription and/or providerState
-
-		testServer.Dispose();
+		using (var testServer = TestServer.Create<Startup>()) //NOTE: This is using the Microsoft.Owin.Testing nuget package
+		{
+			pactVerifier
+				.ServiceProvider("Something API", testServer.HttpClient)
+				.HonoursPactWith("Consumer")
+				.PactUri("../../../Consumer.Tests/pacts/consumer-something_api.json")
+				.Verify(); //NOTE: Optionally you can control what interactions are verified by specifying a providerDescription and/or providerState
+		}
 	}
 
 	private void AddTesterIfItDoesntExist()
@@ -215,21 +228,22 @@ public class SomethingApiTests
 	public void EnsureSomethingApiHonoursPactWithConsumer()
 	{
 		//Arrange
-		var client = new HttpClient { BaseAddress = new Uri("http://api-address:9999") };
-
-		var pact = new Pact();
+		var pactVerifier = new PactVerifier();
 		
-		pact.ProviderStatesFor("Consumer") //NOTE: You can supply setUp and tearDown, which will run before starting and after completing the verifications.
+		pactVerifier
+			.ProviderStatesFor("Consumer") //NOTE: You can supply setUp and tearDown, which will run before starting and after completing the verifications.
 			.ProviderState("There is a something with id 'tester'",
 				setUp: AddTesterIfItDoesntExist); //NOTE: We also have tearDown
 
 		//Act / Assert
-		pact.ServiceProvider("Something API", client)
-			.HonoursPactWith("Consumer")
-			.PactUri("../../../Consumer.Tests/pacts/consumer-something_api.json")
-			.Verify(); //NOTE: Optionally you can control what interactions are verified by specifying a providerDescription and/or providerState
-
-		testServer.Dispose();
+		using (var client = new HttpClient { BaseAddress = new Uri("http://api-address:9999") })
+		{
+			pactVerifier
+				.ServiceProvider("Something API", client)
+				.HonoursPactWith("Consumer")
+				.PactUri("../../../Consumer.Tests/pacts/consumer-something_api.json")
+				.Verify(); //NOTE: Optionally you can control what interactions are verified by specifying a providerDescription and/or providerState
+		}
 	}
 
 	private void AddTesterIfItDoesntExist()

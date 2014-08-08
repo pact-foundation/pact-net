@@ -8,38 +8,38 @@ using Xunit;
 
 namespace PactNet.Tests
 {
-    public class PactConsumerTests
+    public class PactBuilderTests
     {
-        public IPactConsumer GetSubject()
+        public IPactBuilder GetSubject()
         {
-            return new Pact();
+            return new PactBuilder();
         }
 
         [Fact]
         public void ServiceConsumer_WithConsumerName_SetsConsumerName()
         {
             const string consumerName = "My Service Consumer";
-            var pact = GetSubject();
+            var pactBuilder = GetSubject();
 
-            pact.ServiceConsumer(consumerName);
+            pactBuilder.ServiceConsumer(consumerName);
 
-            Assert.Equal(consumerName, ((Pact)pact).ConsumerName);
+            Assert.Equal(consumerName, ((PactBuilder)pactBuilder).ConsumerName);
         }
 
         [Fact]
         public void ServiceConsumer_WithNullConsumerName_ThrowsArgumentException()
         {
-            var pact = GetSubject();
+            var pactBuilder = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => pact.ServiceConsumer(null));
+            Assert.Throws<ArgumentException>(() => pactBuilder.ServiceConsumer(null));
         }
 
         [Fact]
         public void ServiceConsumer_WithEmptyConsumerName_ThrowsArgumentException()
         {
-            var pact = GetSubject();
+            var pactBuilder = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => pact.ServiceConsumer(String.Empty));
+            Assert.Throws<ArgumentException>(() => pactBuilder.ServiceConsumer(String.Empty));
         }
 
         [Fact]
@@ -50,30 +50,30 @@ namespace PactNet.Tests
 
             pact.HasPactWith(providerName);
 
-            Assert.Equal(providerName, ((Pact)pact).ProviderName);
+            Assert.Equal(providerName, ((PactBuilder)pact).ProviderName);
         }
 
         [Fact]
         public void HasPactWith_WithNullProviderName_ThrowsArgumentException()
         {
-            var pact = GetSubject();
+            var pactBuilder = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => pact.HasPactWith(null));
+            Assert.Throws<ArgumentException>(() => pactBuilder.HasPactWith(null));
         }
 
         [Fact]
         public void HasPactWith_WithEmptyProviderName_ThrowsArgumentException()
         {
-            var pact = GetSubject();
+            var pactBuilder = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => pact.HasPactWith(String.Empty));
+            Assert.Throws<ArgumentException>(() => pactBuilder.HasPactWith(String.Empty));
         }
 
         [Fact]
         public void PactFileUri_WhenCalledBeforeConsumerAndProviderNamesHaveBeenSet_ReturnsFileSystemPathWithNoConsumerAndProviderNameAndDoesNotThrow()
         {
-            var pact = GetSubject();
-            var uri = ((Pact)pact).PactFileUri;
+            var pactBuilder = GetSubject();
+            var uri = ((PactBuilder)pactBuilder).PactFileUri;
 
             Assert.Equal("../../pacts/-.json", uri);
         }
@@ -81,11 +81,11 @@ namespace PactNet.Tests
         [Fact]
         public void PactFileUri_WhenConsumerAndProviderNamesHaveBeenSet_ReturnsFileSystemPathWithCorrectNamesLowercaseAndWithSpacedReplacedWithUnderscores()
         {
-            var pact = GetSubject()
+            var pactBuilder = GetSubject()
                 .ServiceConsumer("My Client")
                 .HasPactWith("My Service");
 
-            var uri = ((Pact)pact).PactFileUri;
+            var uri = ((PactBuilder)pactBuilder).PactFileUri;
 
             Assert.Equal("../../pacts/my_client-my_service.json", uri);
         }
@@ -95,9 +95,9 @@ namespace PactNet.Tests
         {
             var mockMockProviderService = Substitute.For<IMockProviderService>();
 
-            IPactConsumer pact = new Pact(port => mockMockProviderService, null);
+            IPactBuilder pactBuilder = new PactBuilder(port => mockMockProviderService, null);
 
-            var mockProviderService = pact.MockService(1234);
+            var mockProviderService = pactBuilder.MockService(1234);
 
             mockMockProviderService.Received(1).Start();
             Assert.Equal(mockMockProviderService, mockProviderService);
@@ -108,62 +108,62 @@ namespace PactNet.Tests
         {
             var mockMockProviderService = Substitute.For<IMockProviderService>();
 
-            IPactConsumer pact = new Pact(port => mockMockProviderService, null);
+            IPactBuilder pactBuilder = new PactBuilder(port => mockMockProviderService, null);
 
-            pact.MockService(1234);
+            pactBuilder.MockService(1234);
             mockMockProviderService.Received(0).Stop();
 
-            pact.MockService(1234);
+            pactBuilder.MockService(1234);
             mockMockProviderService.Received(1).Stop();
         }
 
         [Fact]
-        public void Dispose_WhenCalledWithoutConsumerNameSet_ThrowsInvalidOperationException()
+        public void Build_WhenCalledWithoutConsumerNameSet_ThrowsInvalidOperationException()
         {
-            IPactConsumer pact = new Pact(null, null)
+            IPactBuilder pactBuilder = new PactBuilder(null, null)
                 .HasPactWith("Event API");
 
-            Assert.Throws<InvalidOperationException>(() => pact.Dispose());
+            Assert.Throws<InvalidOperationException>(() => pactBuilder.Build());
         }
 
         [Fact]
-        public void Dispose_WhenCalledWithoutProviderNameSet_ThrowsInvalidOperationException()
+        public void Build_WhenCalledWithoutProviderNameSet_ThrowsInvalidOperationException()
         {
-            IPactConsumer pact = new Pact(null, null)
+            IPactBuilder pact = new PactBuilder(null, null)
                 .ServiceConsumer("Event Client");
 
-            Assert.Throws<InvalidOperationException>(() => pact.Dispose());
+            Assert.Throws<InvalidOperationException>(() => pact.Build());
         }
 
         [Fact]
-        public void Dispose_WhenCalledWithNoMockProviderService_NewPactFileIsSavedWithNoInteractions()
+        public void Build_WhenCalledWithNoMockProviderService_NewPactFileIsSavedWithNoInteractions()
         {
             var mockFileSystem = Substitute.For<IFileSystem>();
 
-            IPactConsumer pact = new Pact(null, mockFileSystem)
+            IPactBuilder pactBuilder = new PactBuilder(null, mockFileSystem)
                 .ServiceConsumer("Event Client")
                 .HasPactWith("Event API");
 
-            var pactFilePath = ((Pact)pact).PactFileUri;
+            var pactFilePath = ((PactBuilder)pactBuilder).PactFileUri;
 
-            pact.Dispose();
+            pactBuilder.Build();
 
             mockFileSystem.File.Received(1).WriteAllText(pactFilePath, Arg.Any<string>());
         }
 
         [Fact]
-        public void Dispose_WhenCalledWithAnInteractionOnTheMockProviderService_NewPactFileIsSavedWithTheInteraction()
+        public void Build_WhenCalledWithAnInteractionOnTheMockProviderService_NewPactFileIsSavedWithTheInteraction()
         {
             var mockMockProviderService = Substitute.For<IMockProviderService>();
             var mockFileSystem = Substitute.For<IFileSystem>();
 
-            IPactConsumer pact = new Pact(port => mockMockProviderService, mockFileSystem)
+            IPactBuilder pactBuilder = new PactBuilder(port => mockMockProviderService, mockFileSystem)
                 .ServiceConsumer("Event Client")
                 .HasPactWith("Event API");
 
-            pact.MockService(1234);
+            pactBuilder.MockService(1234);
 
-            var pactFilePath = ((Pact)pact).PactFileUri;
+            var pactFilePath = ((PactBuilder)pactBuilder).PactFileUri;
 
             mockFileSystem.File.ReadAllText(pactFilePath).Returns(x => { throw new System.IO.FileNotFoundException(); });
             mockMockProviderService.Interactions.Returns(new List<ProviderServiceInteraction>
@@ -176,22 +176,22 @@ namespace PactNet.Tests
                 }
             });
 
-            pact.Dispose();
+            pactBuilder.Build();
 
             var pactInteractions = mockMockProviderService.Received(1).Interactions;
             mockFileSystem.File.Received(1).WriteAllText(pactFilePath, Arg.Any<string>());
         }
 
         [Fact]
-        public void Dispose_WhenCalledAndDirectoryDoesNotExist_DirectoryIsCreatedThenFileIsCreated()
+        public void Build_WhenCalledAndDirectoryDoesNotExist_DirectoryIsCreatedThenFileIsCreated()
         {
             var mockFileSystem = Substitute.For<IFileSystem>();
 
-            IPactConsumer pact = new Pact(null, mockFileSystem)
+            IPactBuilder pactBuilder = new PactBuilder(null, mockFileSystem)
                 .ServiceConsumer("Event Client")
                 .HasPactWith("Event API");
 
-            var pactFilePath = ((Pact)pact).PactFileUri;
+            var pactFilePath = ((PactBuilder)pactBuilder).PactFileUri;
 
             var callCount = 0;
             mockFileSystem.File
@@ -204,25 +204,25 @@ namespace PactNet.Tests
                     }
                 });
 
-            pact.Dispose();
+            pactBuilder.Build();
 
             mockFileSystem.File.Received(2).WriteAllText(pactFilePath, Arg.Any<string>());
             mockFileSystem.Directory.Received(1).CreateDirectory(Arg.Any<string>());
         }
 
         [Fact]
-        public void Dispose_WhenCalledWithAnInitialisedMockProviderService_StopIsCallOnTheMockServiceProvider()
+        public void Build_WhenCalledWithAnInitialisedMockProviderService_StopIsCallOnTheMockServiceProvider()
         {
             var mockMockProviderService = Substitute.For<IMockProviderService>();
             var mockFileSystem = Substitute.For<IFileSystem>();
 
-            IPactConsumer pact = new Pact(port => mockMockProviderService, mockFileSystem)
+            IPactBuilder pactBuilder = new PactBuilder(port => mockMockProviderService, mockFileSystem)
                 .ServiceConsumer("Event Client")
                 .HasPactWith("Event API");
 
-            var pactFilePath = ((Pact)pact).PactFileUri;
+            var pactFilePath = ((PactBuilder)pactBuilder).PactFileUri;
 
-            pact.MockService(1234);
+            pactBuilder.MockService(1234);
 
             var callCount = 0;
             mockFileSystem.File
@@ -235,7 +235,7 @@ namespace PactNet.Tests
                     }
                 });
 
-            pact.Dispose();
+            pactBuilder.Build();
 
             mockMockProviderService.Received(1).Stop();
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Net.Http;
 using Newtonsoft.Json;
@@ -8,12 +9,30 @@ using PactNet.Models;
 
 namespace PactNet
 {
-    public partial class Pact : IPactProvider, IProviderStates
+    public class PactVerifier : IPactVerifier, IProviderStates
     {
+        private readonly IFileSystem _fileSystem;
         private readonly Func<HttpClient, IProviderServiceValidator> _providerServiceValidatorFactory;
 
+        public string ConsumerName { get; private set; }
+        public string ProviderName { get; private set; }
         public ProviderStates ProviderStates { get; private set; }
         public HttpClient HttpClient { get; private set; }
+        public string PactFileUri { get; private set; }
+
+        [Obsolete("For PactProvider testing only.")]
+        public PactVerifier(IFileSystem fileSystem, 
+            Func<HttpClient, IProviderServiceValidator> providerServiceValidatorFactory)
+        {
+            _fileSystem = fileSystem;
+            _providerServiceValidatorFactory = providerServiceValidatorFactory;
+        }
+
+        public PactVerifier() : this(
+            new FileSystem(),
+            httpClient => new ProviderServiceValidator(httpClient))
+        {
+        }
 
         public IProviderStates ProviderStatesFor(string consumerName, Action setUp = null, Action tearDown = null)
         {
@@ -51,7 +70,7 @@ namespace PactNet
             return this;
         }
 
-        public IPactProvider ServiceProvider(string providerName, HttpClient httpClient)
+        public IPactVerifier ServiceProvider(string providerName, HttpClient httpClient)
         {
             if (String.IsNullOrEmpty(providerName))
             {
@@ -69,7 +88,7 @@ namespace PactNet
             return this;
         }
 
-        public IPactProvider HonoursPactWith(string consumerName)
+        public IPactVerifier HonoursPactWith(string consumerName)
         {
             if (String.IsNullOrEmpty(consumerName))
             {
@@ -86,7 +105,7 @@ namespace PactNet
             return this;
         }
 
-        public IPactProvider PactUri(string uri)
+        public IPactVerifier PactUri(string uri)
         {
             if (String.IsNullOrEmpty(uri))
             {
@@ -105,7 +124,7 @@ namespace PactNet
                 throw new InvalidOperationException("HttpClient has not been set, please supply a HttpClient using the ServiceProvider method.");
             }
 
-            if (String.IsNullOrEmpty(PactFileUri) || String.IsNullOrEmpty(_pactFileUri))
+            if (String.IsNullOrEmpty(PactFileUri))
             {
                 throw new InvalidOperationException("PactFileUri has not been set, please supply a uri using the PactUri method.");
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Abstractions;
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
 using PactNet.Mocks.MockHttpService;
@@ -9,8 +10,11 @@ using PactNet.Models;
 namespace PactNet
 {
     //TODO: Implement a Pact file broker
-    public partial class Pact : IPactConsumer
+    public class PactBuilder : IPactBuilder
     {
+        public string ConsumerName { get; private set; }
+        public string ProviderName { get; private set; }
+        private readonly IFileSystem _fileSystem;
         private readonly Func<int, IMockProviderService> _mockProviderServiceFactory;
         private IMockProviderService _mockProviderService;
         private const string PactFileDirectory = "../../pacts/";
@@ -23,7 +27,6 @@ namespace PactNet
         private string _pactFileUri;
         public string PactFileUri
         {
-            private set { _pactFileUri = value; }
             get
             {
                 if (String.IsNullOrEmpty(_pactFileUri))
@@ -35,7 +38,23 @@ namespace PactNet
             }
         }
 
-        public IPactConsumer ServiceConsumer(string consumerName)
+        [Obsolete("For PactConsumer testing only.")]
+        public PactBuilder(
+            Func<int, IMockProviderService> mockProviderServiceFactory, 
+            IFileSystem fileSystem)
+        {
+            _mockProviderServiceFactory = mockProviderServiceFactory;
+            _fileSystem = fileSystem;
+        }
+
+        public PactBuilder()
+            : this(
+                port => new MockProviderService(port),
+                new FileSystem())
+        {
+        }
+
+        public IPactBuilder ServiceConsumer(string consumerName)
         {
             if (String.IsNullOrEmpty(consumerName))
             {
@@ -47,7 +66,7 @@ namespace PactNet
             return this;
         }
 
-        public IPactConsumer HasPactWith(string providerName)
+        public IPactBuilder HasPactWith(string providerName)
         {
             if (String.IsNullOrEmpty(providerName))
             {
@@ -73,7 +92,7 @@ namespace PactNet
             return _mockProviderService;
         }
 
-        public void Dispose()
+        public void Build()
         {
             PersistPactFile();
 

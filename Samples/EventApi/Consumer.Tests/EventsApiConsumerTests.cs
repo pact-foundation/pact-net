@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
 
@@ -9,19 +10,21 @@ namespace Consumer.Tests
 {
     public class EventsApiConsumerTests : IUseFixture<ConsumerEventApiPact>
     {
-        private ConsumerEventApiPact _data;
+        private IMockProviderService _mockProviderService;
+        private string _mockProviderServiceBaseUri;
             
         public void SetFixture(ConsumerEventApiPact data)
         {
-            _data = data;
-            _data.MockProviderService.ClearInteractions();
+            _mockProviderService = data.MockProviderService;
+            _mockProviderServiceBaseUri = data.MockProviderServiceBaseUri;
+            _mockProviderService.ClearInteractions();
         }
 
         [Fact]
         public void GetAllEvents_WhenCalled_ReturnsAllEvents()
         {
             //Arrange
-            _data.MockProviderService.Given("There are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
+            _mockProviderService.Given("There are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
                 .UponReceiving("A GET request to retrieve all events")
                 .With(new ProviderServiceRequest
                 {
@@ -62,7 +65,7 @@ namespace Consumer.Tests
                     }
                 });
 
-            var consumer = new EventsApiClient(_data.MockServerBaseUri);
+            var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
 
             //Act
             var events = consumer.GetAllEvents();
@@ -80,7 +83,7 @@ namespace Consumer.Tests
             var dateTime = new DateTime(2011, 07, 01, 01, 41, 03);
             DateTimeFactory.Now = () => dateTime;
 
-            _data.MockProviderService.UponReceiving("A POST request to create a new event")
+            _mockProviderService.UponReceiving("A POST request to create a new event")
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Post,
@@ -101,7 +104,7 @@ namespace Consumer.Tests
                     Status = 201
                 });
 
-            var consumer = new EventsApiClient(_data.MockServerBaseUri);
+            var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
 
             //Act / Assert
             consumer.CreateEvent(eventId);
@@ -111,7 +114,7 @@ namespace Consumer.Tests
         public void IsAlive_WhenApiIsAlive_ReturnsTrue()
         {
             //Arrange
-            _data.MockProviderService.UponReceiving("A GET request to check the api status")
+            _mockProviderService.UponReceiving("A GET request to check the api status")
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
@@ -123,7 +126,7 @@ namespace Consumer.Tests
                     Body = "alive"
                 });
 
-            var consumer = new EventsApiClient(_data.MockServerBaseUri);
+            var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
 
             //Act
             var result = consumer.IsAlive();
@@ -137,7 +140,7 @@ namespace Consumer.Tests
         {
             //Arrange
             var eventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9");
-            _data.MockProviderService.Given(String.Format("There is an event with id '{0}'", eventId))
+            _mockProviderService.Given(String.Format("There is an event with id '{0}'", eventId))
                 .UponReceiving(String.Format("A GET request to retrieve event with id '{0}'", eventId))
                 .With(new ProviderServiceRequest
                 {
@@ -161,7 +164,7 @@ namespace Consumer.Tests
                     }
                 });
 
-            var consumer = new EventsApiClient(_data.MockServerBaseUri);
+            var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
 
             //Act
             var result = consumer.GetEventById(eventId);
@@ -175,7 +178,7 @@ namespace Consumer.Tests
         {
             //Arrange
             const string eventType = "DetailsView";
-            _data.MockProviderService.Given(String.Format("There is one event with type '{0}'", eventType))
+            _mockProviderService.Given(String.Format("There is one event with type '{0}'", eventType))
                 .UponReceiving(String.Format("A GET request to retrieve events with type '{0}'", eventType))
                 .With(new ProviderServiceRequest
                 {
@@ -203,7 +206,7 @@ namespace Consumer.Tests
                     }
                 });
 
-            var consumer = new EventsApiClient(_data.MockServerBaseUri);
+            var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
 
             //Act
             var result = consumer.GetEventsByType(eventType);

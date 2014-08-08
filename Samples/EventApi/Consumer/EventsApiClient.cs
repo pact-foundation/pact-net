@@ -26,21 +26,23 @@ namespace Consumer
 
         public bool IsAlive()
         {
-            var client = new HttpClient();
-            client.BaseAddress = new Uri(BaseUri);
-
-            var request = new HttpRequestMessage(HttpMethod.Get, "/stats/status");
-
-            var response = client.SendAsync(request);
-            var result = response.Result;
-            var content = result.Content.ReadAsStringAsync().Result;
-            var status = result.StatusCode;
-
-            result.EnsureSuccessStatusCode();
-
-            if (status == HttpStatusCode.OK && content.Equals("alive"))
+            using (var client = HttpClient())
             {
-                return true;
+                var request = new HttpRequestMessage(HttpMethod.Get, "/stats/status");
+                var response = client.SendAsync(request);
+
+                var result = response.Result;
+                var content = result.Content.ReadAsStringAsync().Result;
+                var status = result.StatusCode;
+
+                if (status == HttpStatusCode.OK && content.Equals("alive"))
+                {
+                    return true;
+                }
+
+                request.Dispose();
+                response.Dispose();
+                result.Dispose();
             }
 
             return false;
@@ -48,103 +50,131 @@ namespace Consumer
 
         public IEnumerable<Event> GetAllEvents()
         {
-            var client = new HttpClient();
-            client.BaseAddress = new Uri(BaseUri);
-            
-            var request = new HttpRequestMessage(HttpMethod.Get, "/events");
-            request.Headers.Add("Accept", "application/json");
-
-            var response = client.SendAsync(request);
-            var result = response.Result;
-            var content = result.Content.ReadAsStringAsync().Result;
-            var status = result.StatusCode;
-
-            result.EnsureSuccessStatusCode();
-
-            if (status == HttpStatusCode.OK)
+            string reasonPhrase;
+            using (var client = HttpClient())
             {
-                return !String.IsNullOrEmpty(content) ?
-                    JsonConvert.DeserializeObject<IEnumerable<Event>>(content, _jsonSettings)
-                    : new List<Event>();
+                var request = new HttpRequestMessage(HttpMethod.Get, "/events");
+                request.Headers.Add("Accept", "application/json");
+
+                var response = client.SendAsync(request);
+                var result = response.Result;
+                var content = result.Content.ReadAsStringAsync().Result;
+                var status = result.StatusCode;
+
+                reasonPhrase = result.ReasonPhrase;
+
+                if (status == HttpStatusCode.OK)
+                {
+                    return !String.IsNullOrEmpty(content)
+                               ? JsonConvert.DeserializeObject<IEnumerable<Event>>(content, _jsonSettings)
+                               : new List<Event>();
+                }
+
+                request.Dispose();
+                response.Dispose();
+                result.Dispose();
             }
 
-            throw new Exception("Server responded with a non 200 status code");
+            throw new InvalidOperationException(reasonPhrase);
         }
 
         public Event GetEventById(Guid id)
         {
-            var client = new HttpClient();
-            client.BaseAddress = new Uri(BaseUri);
-
-            var request = new HttpRequestMessage(HttpMethod.Get, String.Format("/events/{0}", id));
-            request.Headers.Add("Accept", "application/json");
-
-            var response = client.SendAsync(request);
-            var result = response.Result;
-            var content = result.Content.ReadAsStringAsync().Result;
-            var status = result.StatusCode;
-
-            result.EnsureSuccessStatusCode();
-
-            if (status == HttpStatusCode.OK)
+            string reasonPhrase;
+            using (var client = HttpClient())
             {
-                return JsonConvert.DeserializeObject<Event>(content, _jsonSettings);
+                var request = new HttpRequestMessage(HttpMethod.Get, String.Format("/events/{0}", id));
+                request.Headers.Add("Accept", "application/json");
+
+                var response = client.SendAsync(request);
+                var result = response.Result;
+                var content = result.Content.ReadAsStringAsync().Result;
+                var status = result.StatusCode;
+
+                reasonPhrase = result.ReasonPhrase;
+
+                if (status == HttpStatusCode.OK)
+                {
+                    return JsonConvert.DeserializeObject<Event>(content, _jsonSettings);
+                }
+
+                request.Dispose();
+                response.Dispose();
+                result.Dispose();
             }
 
-            throw new ArgumentException(String.Format("Event with id '{0}' could not be found", id));
+            throw new InvalidOperationException(reasonPhrase);
         }
 
         public IEnumerable<Event> GetEventsByType(string eventType)
         {
-            var client = new HttpClient();
-            client.BaseAddress = new Uri(BaseUri);
-
-            var request = new HttpRequestMessage(HttpMethod.Get, String.Format("/events?type={0}", eventType));
-            request.Headers.Add("Accept", "application/json");
-
-            var response = client.SendAsync(request);
-            var result = response.Result;
-            var content = result.Content.ReadAsStringAsync().Result;
-            var status = result.StatusCode;
-
-            result.EnsureSuccessStatusCode();
-
-            if (status == HttpStatusCode.OK)
+            string reasonPhrase;
+            using (var client = HttpClient())
             {
-                return JsonConvert.DeserializeObject<IEnumerable<Event>>(content, _jsonSettings);
+                var request = new HttpRequestMessage(HttpMethod.Get, String.Format("/events?type={0}", eventType));
+                request.Headers.Add("Accept", "application/json");
+
+                var response = client.SendAsync(request);
+                var result = response.Result;
+                var content = result.Content.ReadAsStringAsync().Result;
+                var status = result.StatusCode;
+
+                reasonPhrase = result.ReasonPhrase;
+
+                if (status == HttpStatusCode.OK)
+                {
+                    return JsonConvert.DeserializeObject<IEnumerable<Event>>(content, _jsonSettings);
+                }
+
+                request.Dispose();
+                response.Dispose();
+                result.Dispose();
             }
 
-            throw new ArgumentException(String.Format("Event with type '{0}' could not be found", eventType));
+            throw new InvalidOperationException(reasonPhrase);
         }
 
         public void CreateEvent(Guid eventId, string eventType = "DetailsView")
         {
-            var client = new HttpClient();
-            client.BaseAddress = new Uri(BaseUri);
+            HttpStatusCode statusCode;
+            string reasonPhrase;
 
-            var @event = new
+            using (var client = HttpClient())
             {
-                EventId = eventId,
-                Timestamp = DateTimeFactory.Now().ToString("O"),
-                EventType = eventType
-            };
+                var @event = new
+                {
+                    EventId = eventId,
+                    Timestamp = DateTimeFactory.Now().ToString("O"),
+                    EventType = eventType
+                };
 
-            var eventJson = JsonConvert.SerializeObject(@event, _jsonSettings);
+                var eventJson = JsonConvert.SerializeObject(@event, _jsonSettings);
 
-            var requestContent = new StringContent(eventJson, Encoding.UTF8, "application/json");
+                var requestContent = new StringContent(eventJson, Encoding.UTF8, "application/json");
 
-            var request = new HttpRequestMessage(HttpMethod.Post, "/events");
-            request.Content = requestContent;
+                var request = new HttpRequestMessage(HttpMethod.Post, "/events");
+                request.Content = requestContent;
 
-            var response = client.SendAsync(request);
-            var result = response.Result;
+                var response = client.SendAsync(request);
+                var result = response.Result;
+                statusCode = result.StatusCode;
+                reasonPhrase = result.ReasonPhrase;
 
-            result.EnsureSuccessStatusCode();
-
-            if (result.StatusCode != HttpStatusCode.Created)
-            {
-                throw new Exception(result.ReasonPhrase);
+                request.Dispose();
+                response.Dispose();
+                result.Dispose();
             }
+
+            if (statusCode != HttpStatusCode.Created)
+            {
+                throw new InvalidOperationException(reasonPhrase);
+            }
+            
         }
+
+        private HttpClient HttpClient()
+        {
+            return new HttpClient { BaseAddress = new Uri(BaseUri) };
+        } 
     }
 }

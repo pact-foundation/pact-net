@@ -60,7 +60,7 @@
     <Compile Include="Comparers\IComparer.cs" />
     <Compile Include="Configuration\Json\Converters\LowercaseStringEnumConverter.cs" />
     <Compile Include="Configuration\Json\JsonConfig.cs" />
-    <Compile Include="IPactConsumer.cs" />
+    <Compile Include="IPactBuilder.cs" />
     <Compile Include="IProviderStates.cs" />
     <Compile Include="Mappers\IMapper.cs" />
     <Compile Include="Mocks\IMockProvider.cs" />
@@ -103,9 +103,8 @@
     <Compile Include="Mocks\MockHttpService\Validators\IProviderServiceValidator.cs" />
     <Compile Include="Mocks\MockHttpService\Validators\ProviderServiceValidator.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\NancyContextExtensions.cs" />
-    <Compile Include="Pact.cs" />
     <Compile Include="Models\PactFile.cs" />
-    <Compile Include="PactProvider.cs" />
+    <Compile Include="PactVerifier.cs" />
     <Compile Include="Mocks\MockHttpService\Models\ProviderServiceInteraction.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\IProviderServiceResponseComparer.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\ProviderServiceResponseComparer.cs" />
@@ -113,11 +112,11 @@
     <Compile Include="Mocks\MockHttpService\Models\ProviderServicePactFile.cs" />
     <Compile Include="Models\Interaction.cs" />
     <Compile Include="Models\Party.cs" />
-    <Compile Include="PactConsumer.cs" />
+    <Compile Include="PactBuilder.cs" />
     <Compile Include="Mocks\MockHttpService\Models\ProviderServiceRequest.cs" />
     <Compile Include="Mocks\MockHttpService\Models\ProviderServiceResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="IPactProvider.cs" />
+    <Compile Include="IPactVerifier.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\HttpBodyComparer.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\HttpHeaderComparer.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\IHttpBodyComparer.cs" />

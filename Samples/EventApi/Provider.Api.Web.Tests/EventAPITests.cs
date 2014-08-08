@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin.Testing;
+﻿using System.Net.Http;
+using Microsoft.Owin.Testing;
 using PactNet;
 using Xunit;
 
@@ -10,11 +11,10 @@ namespace Provider.Api.Web.Tests
         public void EnsureEventApiHonoursPactWithConsumer()
         {
             //Arrange
-            var testServer = TestServer.Create<Startup>();
+            var pactVerifier = new PactVerifier();
 
-            var pact = new Pact();
-
-            pact.ProviderStatesFor("Consumer")
+            pactVerifier
+                .ProviderStatesFor("Consumer")
                 .ProviderState("There are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'",
                     setUp: InsertEventsIntoDatabase)
                 .ProviderState("There is an event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
@@ -23,12 +23,14 @@ namespace Provider.Api.Web.Tests
                     setUp: EnsureOneDetailsViewEventExists);
 
             //Act / Assert
-            pact.ServiceProvider("Event API", testServer.HttpClient)
-                .HonoursPactWith("Consumer")
-                .PactUri("../../../Consumer.Tests/pacts/consumer-event_api.json")
-                .Verify();
-
-            testServer.Dispose();
+            using (var testServer = TestServer.Create<Startup>())
+            {
+                pactVerifier
+                   .ServiceProvider("Event API", testServer.HttpClient)
+                   .HonoursPactWith("Consumer")
+                   .PactUri("../../../Consumer.Tests/pacts/consumer-event_api.json")
+                   .Verify();
+            }
         }
 
         private void EnsureOneDetailsViewEventExists()
