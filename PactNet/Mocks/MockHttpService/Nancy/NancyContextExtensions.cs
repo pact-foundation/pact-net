@@ -24,6 +24,11 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
             var requestResponsePairs = (IEnumerable<ProviderServiceInteraction>)context.Items[PactMockInteractionsKey];
 
+            if (requestResponsePairs == null)
+            {
+                throw new ArgumentException("No matching mock interaction has been registered for the current request");
+            }
+
             var matchingRequestResponsePairs = requestResponsePairs.Where(x =>
                 x.Request.Method == method &&
                 x.Request.Path == path).ToList();

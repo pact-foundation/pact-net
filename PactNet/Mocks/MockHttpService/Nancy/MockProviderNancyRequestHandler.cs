@@ -30,17 +30,15 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             }
             catch (Exception ex)
             {
+                var exceptionMessage = ex.Message.Replace("\r", " ").Replace("\n", "").Replace("\t", " ");
+
                 var errorResponse = new ProviderServiceResponse
                 {
                     Status = 500,
-                    Body = new
-                    {
-                        ErrorMessage = ex.Message,
-                        ex.StackTrace
-                    }
+                    Body = exceptionMessage
                 };
                 var response = _responseMapper.Convert(errorResponse);
-                response.ReasonPhrase = ex.Message;
+                response.ReasonPhrase = exceptionMessage;
 
                 return response;
             }
