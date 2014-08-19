@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using Nancy;
 using NSubstitute;
 using PactNet.Mocks.MockHttpService.Comparers;
@@ -21,7 +22,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             var interactions = new List<ProviderServiceInteraction>
             {
-                new ProviderServiceInteraction() { Request =  null, Response = new ProviderServiceResponse()}
+                new ProviderServiceInteraction { Request =  null, Response = new ProviderServiceResponse()}
             };
 
             nancyContext.SetMockInteraction(interactions);
@@ -51,7 +52,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             var interactions = new List<ProviderServiceInteraction>
             {
-                new ProviderServiceInteraction() { Request = new ProviderServiceRequest(), Response = null }
+                new ProviderServiceInteraction { Request = new ProviderServiceRequest(), Response = null }
             };
 
             nancyContext.SetMockInteraction(interactions);
@@ -93,7 +94,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             var interactions = new List<ProviderServiceInteraction>
             {
-                new ProviderServiceInteraction() { Request = expectedRequest, Response = expectedResponse}
+                new ProviderServiceInteraction { Request = expectedRequest, Response = expectedResponse}
             };
 
             nancyContext.SetMockInteraction(interactions);
@@ -123,7 +124,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             var interactions = new List<ProviderServiceInteraction>
             {
-                new ProviderServiceInteraction() { Request = expectedRequest, Response = expectedResponse }
+                new ProviderServiceInteraction { Request = expectedRequest, Response = expectedResponse }
             };
 
             nancyContext.SetMockInteraction(interactions);
@@ -159,7 +160,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             var interactions = new List<ProviderServiceInteraction>
             {
-                new ProviderServiceInteraction() { Request = expectedRequest, Response = expectedResponse}
+                new ProviderServiceInteraction { Request = expectedRequest, Response = expectedResponse}
             };
 
             nancyContext.SetMockInteraction(interactions);
@@ -198,7 +199,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             var interactions = new List<ProviderServiceInteraction>
             {
-                new ProviderServiceInteraction() { Request = expectedRequest, Response = expectedResponse }
+                new ProviderServiceInteraction { Request = expectedRequest, Response = expectedResponse }
             };
 
             nancyContext.SetMockInteraction(interactions);
@@ -242,7 +243,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             var interactions = new List<ProviderServiceInteraction>
             {
-                new ProviderServiceInteraction() { Request = expectedRequest, Response = expectedResponse }
+                new ProviderServiceInteraction { Request = expectedRequest, Response = expectedResponse }
             };
 
             nancyContext.SetMockInteraction(interactions);
@@ -266,6 +267,55 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             mockResponseMapper.Received(1).Convert(Arg.Is<ProviderServiceResponse>(x => x.Status == 500));
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+            Assert.NotEmpty(response.ReasonPhrase);
+        }
+
+        [Fact]
+        public void Handle_WhenExpectionIsThrownHandlingRequest_ReasonPhraseAndBodyContentIsSetWithoutBackSlashes()
+        {
+            var nancyResponse = new Response { StatusCode = HttpStatusCode.OK };
+            var compareException = new CompareFailedException("Something\r\n \t \\ failed");
+            const string expectedMessage = "Something     failed";
+
+            var mockRequestComparer = Substitute.For<IProviderServiceRequestComparer>();
+            var mockRequestMapper = Substitute.For<IProviderServiceRequestMapper>();
+            var mockResponseMapper = Substitute.For<INancyResponseMapper>();
+
+            var nancyContext = new NancyContext
+            {
+                Request = new Request("GET", "/Test", "HTTP")
+            };
+
+            mockRequestMapper
+                .When(x => x.Convert(Arg.Any<Request>()))
+                .Do(x => { throw compareException; });
+
+            mockResponseMapper
+                .Convert(Arg.Any<ProviderServiceResponse>())
+                .Returns(nancyResponse);
+
+            mockResponseMapper.Convert(Arg.Any<ProviderServiceResponse>())
+                .Returns(new Response
+                {
+                    StatusCode = HttpStatusCode.InternalServerError
+                });
+
+            IMockProviderNancyRequestHandler handler = new MockProviderNancyRequestHandler(mockRequestComparer, mockRequestMapper, mockResponseMapper);
+
+            var response = handler.Handle(nancyContext);
+
+            Assert.Equal(expectedMessage, response.ReasonPhrase);
+            mockResponseMapper.Received(1).Convert(Arg.Is<ProviderServiceResponse>(x => BodyContentMatches(x, expectedMessage)));
+        }
+
+        private bool BodyContentMatches(ProviderServiceResponse response, string expectedBody)
+        {
+            if (response.Body == expectedBody)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

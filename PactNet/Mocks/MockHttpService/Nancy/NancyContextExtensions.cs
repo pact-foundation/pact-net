@@ -22,28 +22,28 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                 throw new InvalidOperationException("No mock interactions have been registered");
             }
 
-            var requestResponsePairs = (IEnumerable<ProviderServiceInteraction>)context.Items[PactMockInteractionsKey];
+            var interactions = (IEnumerable<ProviderServiceInteraction>)context.Items[PactMockInteractionsKey];
 
-            if (requestResponsePairs == null)
+            if (interactions == null)
             {
                 throw new ArgumentException("No matching mock interaction has been registered for the current request");
             }
 
-            var matchingRequestResponsePairs = requestResponsePairs.Where(x =>
+            var matchingInteractions = interactions.Where(x =>
                 x.Request.Method == method &&
                 x.Request.Path == path).ToList();
 
-            if (matchingRequestResponsePairs == null || !matchingRequestResponsePairs.Any())
+            if (matchingInteractions == null || !matchingInteractions.Any())
             {
                 throw new ArgumentException("No matching mock interaction has been registered for the current request");
             }
 
-            if (matchingRequestResponsePairs.Count() > 1)
+            if (matchingInteractions.Count() > 1)
             {
                 throw new ArgumentException("More than one matching mock interaction has been registered for the current request");
             }
 
-            return matchingRequestResponsePairs.Single();
+            return matchingInteractions.Single();
         }
     }
 }
