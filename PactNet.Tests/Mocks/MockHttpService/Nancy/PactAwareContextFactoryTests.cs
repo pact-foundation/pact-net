@@ -38,10 +38,10 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         public void Create_WithRequest_CallsMockContentServiceAndAssignsRequestResponsePairsOnNancyContextItem()
         {
             var request = new Request("GET", "/events", "HTTP");
-            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
+            var requestResponsePairs = new List<ProviderServiceInteraction>
             {
-                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest { Method = HttpVerb.Get, Path = "/events" }, new ProviderServiceResponse()),
-                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest { Method = HttpVerb.Post, Path = "/events" }, new ProviderServiceResponse()),
+                new ProviderServiceInteraction() { Request = new ProviderServiceRequest { Method = HttpVerb.Get, Path = "/events" }, Response = new ProviderServiceResponse() },
+                new ProviderServiceInteraction() { Request = new ProviderServiceRequest { Method = HttpVerb.Post, Path = "/events" }, Response = new ProviderServiceResponse() },
             };
 
             var mockMockContextService = Substitute.For<IMockContextService>();
@@ -59,7 +59,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             var context = nancyContextFactory.Create(request);
 
-            Assert.Equal(requestResponsePairs, context.Items["PactMockRequestResponsePairs"]);
+            Assert.Equal(requestResponsePairs, context.Items["PactMockInteractions"]);
             mockMockContextService.Received(1).GetExpectedRequestResponsePairs();
         }
     }

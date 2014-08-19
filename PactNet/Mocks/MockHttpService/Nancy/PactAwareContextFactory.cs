@@ -31,7 +31,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             nancyContext.Culture = _cultureService.DetermineCurrentCulture(nancyContext);
             nancyContext.Text = new TextResourceFinder(_textResource, nancyContext);
 
-            nancyContext.SetMockRequestResponsePairs(_mockContextService.GetExpectedRequestResponsePairs());
+            nancyContext.SetMockInteraction(_mockContextService.GetExpectedRequestResponsePairs());
 
             return nancyContext;
         }

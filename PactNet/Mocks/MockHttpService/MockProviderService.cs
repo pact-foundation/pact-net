@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.XPath;
 using Nancy.Hosting.Self;
 using PactNet.Mocks.MockHttpService.Configuration;
 using PactNet.Mocks.MockHttpService.Models;
@@ -89,6 +90,37 @@ namespace PactNet.Mocks.MockHttpService
             RegisterInteraction();
         }
 
+        public void VerifyInteractions()
+        {
+            if (_testScopedInteractions == null)
+            {
+                return;
+            }
+
+            var unUsedInteractions = _testScopedInteractions.Where(interaction => interaction.UsageCount < 1).ToList();
+            var unUsedInteractionsErrorMessage = "";
+
+            if (unUsedInteractions.Any())
+            {
+                unUsedInteractionsErrorMessage = "The following interactions were not used by the test: " + String.Join(", ",
+                    unUsedInteractions.Select(interaction => String.Format("{0}", interaction.Summary()))) + ". ";
+            }
+
+            var multiUsedInteractions = _testScopedInteractions.Where(interaction => interaction.UsageCount > 1).ToList();
+            var multiUsedInteractionsErrorMessage = "";
+
+            if (multiUsedInteractions.Any())
+            {
+                multiUsedInteractionsErrorMessage = "The following interactions were called more than once by the test: " + String.Join(", ",
+                    multiUsedInteractions.Select(interaction => String.Format("{0} [{1} time/s]", interaction.Summary(), interaction.UsageCount))) + ". ";
+            }
+
+            if (unUsedInteractions.Any() || multiUsedInteractions.Any())
+            {
+                throw new CompareFailedException(unUsedInteractionsErrorMessage + multiUsedInteractionsErrorMessage);
+            }
+        }
+
         private void RegisterInteraction()
         {
             if (String.IsNullOrEmpty(_description))
@@ -136,7 +168,7 @@ namespace PactNet.Mocks.MockHttpService
 
         public void Start()
         {
-            _host = _nancyHostFactory(new Uri(BaseUri), new MockContextService(GetMockInteractionRequestResponsePairs));
+            _host = _nancyHostFactory(new Uri(BaseUri), new MockContextService(GetMockInteractions));
             _host.Start();
         }
 
@@ -170,14 +202,14 @@ namespace PactNet.Mocks.MockHttpService
             _description = null;
         }
 
-        private IEnumerable<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>> GetMockInteractionRequestResponsePairs()
+        private IEnumerable<ProviderServiceInteraction> GetMockInteractions()
         {
             if (_testScopedInteractions == null || !_testScopedInteractions.Any())
             {
                 return null;
             }
 
-            return _testScopedInteractions.Select(x => new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(x.Request, x.Response));
+            return _testScopedInteractions;
         }
     }
 }

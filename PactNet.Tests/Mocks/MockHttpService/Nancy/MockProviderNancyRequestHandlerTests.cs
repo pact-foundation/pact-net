@@ -19,12 +19,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
                 Request = new Request("GET", "/", "HTTP")
             };
 
-            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
+            var interactions = new List<ProviderServiceInteraction>
             {
-                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(null, new ProviderServiceResponse())
+                new ProviderServiceInteraction() { Request =  null, Response = new ProviderServiceResponse()}
             };
 
-            nancyContext.SetMockRequestResponsePairs(requestResponsePairs);
+            nancyContext.SetMockInteraction(interactions);
 
             var mockNancyResponseMapper = Substitute.For<INancyResponseMapper>();
             mockNancyResponseMapper.Convert(Arg.Any<ProviderServiceResponse>())
@@ -49,12 +49,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
                 Request = new Request("GET", "/", "HTTP")
             };
 
-            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
+            var interactions = new List<ProviderServiceInteraction>
             {
-                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest(), null)
+                new ProviderServiceInteraction() { Request = new ProviderServiceRequest(), Response = null }
             };
 
-            nancyContext.SetMockRequestResponsePairs(requestResponsePairs);
+            nancyContext.SetMockInteraction(interactions);
 
             var mockNancyResponseMapper = Substitute.For<INancyResponseMapper>();
             mockNancyResponseMapper.Convert(Arg.Any<ProviderServiceResponse>())
@@ -91,12 +91,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             mockRequestMapper.Convert(nancyContext.Request).Returns(expectedRequest);
 
-            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
+            var interactions = new List<ProviderServiceInteraction>
             {
-                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(expectedRequest, expectedResponse)
+                new ProviderServiceInteraction() { Request = expectedRequest, Response = expectedResponse}
             };
 
-            nancyContext.SetMockRequestResponsePairs(requestResponsePairs);
+            nancyContext.SetMockInteraction(interactions);
 
             IMockProviderNancyRequestHandler handler = new MockProviderNancyRequestHandler(mockRequestComparer, mockRequestMapper, mockResponseMapper);
 
@@ -121,12 +121,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
                 Request = new Request("GET", "/", "HTTP")
             };
 
-            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
+            var interactions = new List<ProviderServiceInteraction>
             {
-                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(expectedRequest, expectedResponse)
+                new ProviderServiceInteraction() { Request = expectedRequest, Response = expectedResponse }
             };
 
-            nancyContext.SetMockRequestResponsePairs(requestResponsePairs);
+            nancyContext.SetMockInteraction(interactions);
 
             mockRequestMapper.Convert(nancyContext.Request).Returns(actualRequest);
 
@@ -157,12 +157,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             mockRequestMapper.Convert(nancyContext.Request).Returns(expectedRequest);
 
-            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
+            var interactions = new List<ProviderServiceInteraction>
             {
-                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(expectedRequest, expectedResponse)
+                new ProviderServiceInteraction() { Request = expectedRequest, Response = expectedResponse}
             };
 
-            nancyContext.SetMockRequestResponsePairs(requestResponsePairs);
+            nancyContext.SetMockInteraction(interactions);
 
             IMockProviderNancyRequestHandler handler = new MockProviderNancyRequestHandler(mockRequestComparer, mockRequestMapper, mockResponseMapper);
 
@@ -196,12 +196,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
                 Request = new Request("GET", "/Test", "HTTP")
             };
 
-            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
+            var interactions = new List<ProviderServiceInteraction>
             {
-                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(expectedRequest, expectedResponse)
+                new ProviderServiceInteraction() { Request = expectedRequest, Response = expectedResponse }
             };
 
-            nancyContext.SetMockRequestResponsePairs(requestResponsePairs);
+            nancyContext.SetMockInteraction(interactions);
 
             mockRequestMapper.Convert(nancyContext.Request).Returns(actualRequest);
             //mockRequestComparer.Compare Doesnt throw any exceptions
@@ -240,12 +240,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
                 Request = new Request("GET", "/Test", "HTTP")
             };
 
-            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
+            var interactions = new List<ProviderServiceInteraction>
             {
-                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(expectedRequest, expectedResponse)
+                new ProviderServiceInteraction() { Request = expectedRequest, Response = expectedResponse }
             };
 
-            nancyContext.SetMockRequestResponsePairs(requestResponsePairs);
+            nancyContext.SetMockInteraction(interactions);
 
             mockRequestMapper.Convert(nancyContext.Request).Returns(actualRequest);
             mockRequestComparer

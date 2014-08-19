@@ -30,17 +30,15 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             }
             catch (Exception ex)
             {
+                var exceptionMessage = ex.Message.Replace("\r", " ").Replace("\n", "").Replace("\t", " ");
+
                 var errorResponse = new ProviderServiceResponse
                 {
                     Status = 500,
-                    Body = new
-                    {
-                        ErrorMessage = ex.Message,
-                        ex.StackTrace
-                    }
+                    Body = exceptionMessage
                 };
                 var response = _responseMapper.Convert(errorResponse);
-                response.ReasonPhrase = ex.Message;
+                response.ReasonPhrase = exceptionMessage;
 
                 return response;
             }
@@ -50,13 +48,13 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         {
             var actualRequest = _requestMapper.Convert(context.Request);
 
-            var matchingRequestResponsePair = context.GetMatchingMockRequestResponsePair(actualRequest.Method, actualRequest.Path);
-            var expectedRequest = matchingRequestResponsePair.Key;
-            var expectedResponse = matchingRequestResponsePair.Value;
+            var matchingInteraction = context.GetMatchingInteraction(actualRequest.Method, actualRequest.Path);
+            
+            matchingInteraction.IncrementUsage();
 
-            _requestComparer.Compare(expectedRequest, actualRequest);
+            _requestComparer.Compare(matchingInteraction.Request, actualRequest);
 
-            return _responseMapper.Convert(expectedResponse);
+            return _responseMapper.Convert(matchingInteraction.Response);
         }
     }
 }

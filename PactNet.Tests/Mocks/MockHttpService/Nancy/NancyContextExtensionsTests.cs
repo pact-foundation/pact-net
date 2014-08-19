@@ -10,22 +10,22 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 {
     public class NancyContextExtensionsTests
     {
-        private const string PactMockRequestResponsePairsKey = "PactMockRequestResponsePairs";
+        private const string PactPactMockInteractionsKey = "PactMockInteractions";
 
         [Fact]
         public void SetMockRequestResponsePairs_WithRequestResponsePairsAndNoExistingItemsInNancyContext_AddsRequestResponsePairsToNancyContextItems()
         {
             var context = new NancyContext();
             
-            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
+            var interactions = new List<ProviderServiceInteraction>
             {
-                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest(), new ProviderServiceResponse())
+                new ProviderServiceInteraction() { Request = new ProviderServiceRequest(), Response = new ProviderServiceResponse() }
             };
 
-            context.SetMockRequestResponsePairs(requestResponsePairs);
+            context.SetMockInteraction(interactions);
 
             Assert.Equal(1, context.Items.Count);
-            Assert.Equal(requestResponsePairs, context.Items[PactMockRequestResponsePairsKey]);
+            Assert.Equal(interactions, context.Items[PactPactMockInteractionsKey]);
         }
 
         [Fact]
@@ -33,39 +33,39 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         {
             var context = new NancyContext();
             context.Items.Add(new KeyValuePair<string, object>("test", "tester"));
-            
-            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
+
+            var interactions = new List<ProviderServiceInteraction>
             {
-                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest(), new ProviderServiceResponse()),
-                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest(), new ProviderServiceResponse())
+                new ProviderServiceInteraction() { Request = new ProviderServiceRequest(), Response = new ProviderServiceResponse() },
+                new ProviderServiceInteraction() { Request = new ProviderServiceRequest(), Response = new ProviderServiceResponse() }
             };
 
-            context.SetMockRequestResponsePairs(requestResponsePairs);
+            context.SetMockInteraction(interactions);
 
             Assert.Equal(2, context.Items.Count);
-            Assert.Equal(requestResponsePairs, context.Items[PactMockRequestResponsePairsKey]);
+            Assert.Equal(interactions, context.Items[PactPactMockInteractionsKey]);
         }
 
         [Fact]
         public void SetMockRequestResponsePairs_WithRequestResponsePairsAndExistingRequestResponsePairsInNancyContext_OverwritesRequestResponsePairsInNancyContextItem()
         {
             var context = new NancyContext();
-            context.Items.Add(new KeyValuePair<string, object>(PactMockRequestResponsePairsKey, new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
+            context.Items.Add(new KeyValuePair<string, object>(PactPactMockInteractionsKey, new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
             {
                 new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest(), new ProviderServiceResponse()),
                 new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest(), new ProviderServiceResponse())
             }));
 
-            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
+            var interactions = new List<ProviderServiceInteraction>()
             {
-                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest(), new ProviderServiceResponse()),
-                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest(), new ProviderServiceResponse())
+                new ProviderServiceInteraction() { Request = new ProviderServiceRequest(), Response = new ProviderServiceResponse()},
+                new ProviderServiceInteraction() { Request = new ProviderServiceRequest(), Response = new ProviderServiceResponse()}
             };
 
-            context.SetMockRequestResponsePairs(requestResponsePairs);
+            context.SetMockInteraction(interactions);
 
             Assert.Equal(1, context.Items.Count);
-            Assert.Equal(requestResponsePairs, context.Items[PactMockRequestResponsePairsKey]);
+            Assert.Equal(interactions, context.Items[PactPactMockInteractionsKey]);
         }
 
         [Fact]
@@ -73,53 +73,53 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         {
             var context = new NancyContext();
 
-            Assert.Throws<InvalidOperationException>(() => context.GetMatchingMockRequestResponsePair(HttpVerb.Get, "/events"));
+            Assert.Throws<InvalidOperationException>(() => context.GetMatchingInteraction(HttpVerb.Get, "/events"));
         }
 
         [Fact]
         public void GetMatchingMockRequestResponsePair_WithNoMatchingRequestResponsePair_ThrowsArgumentException()
         {
-            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
+            var interactions = new List<ProviderServiceInteraction>
             {
-                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest { Method = HttpVerb.Get, Path = "/hello" }, new ProviderServiceResponse())
+                new ProviderServiceInteraction() { Request = new ProviderServiceRequest { Method = HttpVerb.Get, Path = "/hello" }, Response = new ProviderServiceResponse()}
             }; 
 
             var context = new NancyContext();
-            context.SetMockRequestResponsePairs(requestResponsePairs);
+            context.SetMockInteraction(interactions);
 
-            Assert.Throws<ArgumentException>(() => context.GetMatchingMockRequestResponsePair(HttpVerb.Get, "/events"));
+            Assert.Throws<ArgumentException>(() => context.GetMatchingInteraction(HttpVerb.Get, "/events"));
         }
 
         [Fact]
         public void GetMatchingMockRequestResponsePair_WithMoreThanOneMatchingRequestResponsePair_ThrowsArgumentException()
         {
-            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
+            var requestResponsePairs = new List<ProviderServiceInteraction>
             {
-                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest { Method = HttpVerb.Get, Path = "/events" }, new ProviderServiceResponse()),
-                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest { Method = HttpVerb.Get, Path = "/events" }, new ProviderServiceResponse()),
+                new ProviderServiceInteraction() { Request = new ProviderServiceRequest { Method = HttpVerb.Get, Path = "/events" }, Response = new ProviderServiceResponse() },
+                new ProviderServiceInteraction() { Request = new ProviderServiceRequest { Method = HttpVerb.Get, Path = "/events" }, Response = new ProviderServiceResponse()},
             };
 
             var context = new NancyContext();
-            context.SetMockRequestResponsePairs(requestResponsePairs);
+            context.SetMockInteraction(requestResponsePairs);
 
-            Assert.Throws<ArgumentException>(() => context.GetMatchingMockRequestResponsePair(HttpVerb.Get, "/events"));
+            Assert.Throws<ArgumentException>(() => context.GetMatchingInteraction(HttpVerb.Get, "/events"));
         }
 
         [Fact]
         public void GetMatchingMockRequestResponsePair_WithOneMatchingRequestResponsePair_ReturnsRequestResponsePair()
         {
-            var requestResponsePairs = new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
+            var interactions = new List<ProviderServiceInteraction>
             {
-                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest { Method = HttpVerb.Get, Path = "/events" }, new ProviderServiceResponse()),
-                new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest { Method = HttpVerb.Post, Path = "/events" }, new ProviderServiceResponse()),
+                new ProviderServiceInteraction() { Request = new ProviderServiceRequest { Method = HttpVerb.Get, Path = "/events" }, Response = new ProviderServiceResponse()},
+                new ProviderServiceInteraction() { Request = new ProviderServiceRequest { Method = HttpVerb.Post, Path = "/events" }, Response = new ProviderServiceResponse()},
             };
 
             var context = new NancyContext();
-            context.SetMockRequestResponsePairs(requestResponsePairs);
+            context.SetMockInteraction(interactions);
 
-            var result = context.GetMatchingMockRequestResponsePair(HttpVerb.Get, "/events");
+            var result = context.GetMatchingInteraction(HttpVerb.Get, "/events");
 
-            Assert.Equal(requestResponsePairs.First(), result);
+            Assert.Equal(interactions.First(), result);
         }
     }
 }
