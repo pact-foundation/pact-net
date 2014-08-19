@@ -53,5 +53,10 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                 _httpBodyComparer.Validate(request2.Body, request1.Body, true);
             }
         }
+
+        public IReporter GetReporter()
+        {
+            return _reporter;
+        }
     }
 }

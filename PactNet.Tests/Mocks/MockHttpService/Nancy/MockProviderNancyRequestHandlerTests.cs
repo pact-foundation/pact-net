@@ -27,18 +27,22 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             nancyContext.SetMockInteraction(interactions);
 
-            var mockNancyResponseMapper = Substitute.For<INancyResponseMapper>();
-            mockNancyResponseMapper.Convert(Arg.Any<ProviderServiceResponse>())
+
+            var mockRequestComparer = Substitute.For<IProviderServiceRequestComparer>();
+            var mockRequestMapper = Substitute.For<IProviderServiceRequestMapper>();
+            var mockResponseMapper = Substitute.For<INancyResponseMapper>();
+
+            mockResponseMapper.Convert(Arg.Any<ProviderServiceResponse>())
                 .Returns(new Response
                 {
                     StatusCode = HttpStatusCode.InternalServerError
                 });
 
-            IMockProviderNancyRequestHandler handler = new MockProviderNancyRequestHandler(null, null, mockNancyResponseMapper);
+            IMockProviderNancyRequestHandler handler = new MockProviderNancyRequestHandler(mockRequestComparer, mockRequestMapper, mockResponseMapper);
 
             var result = handler.Handle(nancyContext);
 
-            mockNancyResponseMapper.Received(1).Convert(Arg.Is<ProviderServiceResponse>(x => x.Status == 500));
+            mockResponseMapper.Received(1).Convert(Arg.Is<ProviderServiceResponse>(x => x.Status == 500));
             Assert.Equal(HttpStatusCode.InternalServerError, result.StatusCode);
         }
 
@@ -57,18 +61,21 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             nancyContext.SetMockInteraction(interactions);
 
-            var mockNancyResponseMapper = Substitute.For<INancyResponseMapper>();
-            mockNancyResponseMapper.Convert(Arg.Any<ProviderServiceResponse>())
+            var mockRequestComparer = Substitute.For<IProviderServiceRequestComparer>();
+            var mockRequestMapper = Substitute.For<IProviderServiceRequestMapper>();
+            var mockResponseMapper = Substitute.For<INancyResponseMapper>();
+
+            mockResponseMapper.Convert(Arg.Any<ProviderServiceResponse>())
                 .Returns(new Response
                 {
                     StatusCode = HttpStatusCode.InternalServerError
                 });
 
-            IMockProviderNancyRequestHandler handler = new MockProviderNancyRequestHandler(null, null, mockNancyResponseMapper);
+            IMockProviderNancyRequestHandler handler = new MockProviderNancyRequestHandler(mockRequestComparer, mockRequestMapper, mockResponseMapper);
 
             var result = handler.Handle(nancyContext);
 
-            mockNancyResponseMapper.Received(1).Convert(Arg.Is<ProviderServiceResponse>(x => x.Status == 500));
+            mockResponseMapper.Received(1).Convert(Arg.Is<ProviderServiceResponse>(x => x.Status == 500));
             Assert.Equal(HttpStatusCode.InternalServerError, result.StatusCode);
         }
 
