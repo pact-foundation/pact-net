@@ -25,7 +25,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
             
             if (!query1.Equals(query2))
             {
-                _reporter.ReportError(query1, query2);
+                _reporter.ReportError(expected: query1, actual: query2);
                 return;
             }
         }
