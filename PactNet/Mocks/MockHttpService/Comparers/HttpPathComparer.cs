@@ -25,7 +25,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
             if (!path1.Equals(path2))
             {
-                _reporter.ReportError(path1, path2);
+                _reporter.ReportError(expected: path1, actual: path2);
                 return;
             }
         }

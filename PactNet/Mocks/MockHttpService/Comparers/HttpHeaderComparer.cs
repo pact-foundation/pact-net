@@ -41,7 +41,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                     {
                         if (!header.Value.Equals(value2))
                         {
-                            _reporter.ReportError(header.Value, value2);
+                            _reporter.ReportError(expected: header.Value, actual: value2);
                             return;
                         }
                     }
@@ -53,7 +53,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
                         if (!value1SplitJoined.Equals(value2SplitJoined))
                         {
-                            _reporter.ReportError(header.Value, value2);
+                            _reporter.ReportError(expected: header.Value, actual: value2);
                             return;
                         }
                     }
