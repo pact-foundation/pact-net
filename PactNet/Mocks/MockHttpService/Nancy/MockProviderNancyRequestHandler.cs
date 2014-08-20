@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Nancy;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Mappers;
@@ -35,8 +36,23 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             _responseMapper = responseMapper;
         }
 
+        private bool IsAdminRequest(Request request)
+        {
+            return request.Headers != null && 
+                   request.Headers.Any(x => x.Key == "X-Pact-Mock-Service");
+        }
+
+        private void HandleAdminRequest(NancyContext context)
+        {
+        }
+
         public Response Handle(NancyContext context)
         {
+            if (IsAdminRequest(context.Request))
+            {
+                HandleAdminRequest(context);
+            }
+
             //TODO: This is a hack and should probably go in VerifyInteractions()
             if (!_injected)
             {

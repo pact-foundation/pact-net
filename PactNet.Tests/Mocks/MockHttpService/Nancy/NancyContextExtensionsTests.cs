@@ -77,16 +77,16 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         }
 
         [Fact]
-        public void GetMatchingInteraction_WithInteractionsNull_ThrowsArgumentException()
+        public void GetMatchingInteraction_WithInteractionsNull_ThrowsInvalidOperationException()
         {
             var context = new NancyContext();
             context.Items[PactMockInteractionsKey] = null;
 
-            Assert.Throws<ArgumentException>(() => context.GetMatchingInteraction(HttpVerb.Get, "/events"));
+            Assert.Throws<InvalidOperationException>(() => context.GetMatchingInteraction(HttpVerb.Get, "/events"));
         }
 
         [Fact]
-        public void GetMatchingInteraction_WithNoMatchingInteraction_ThrowsArgumentException()
+        public void GetMatchingInteraction_WithNoMatchingInteraction_ThrowsInvalidOperationException()
         {
             var interactions = new List<ProviderServiceInteraction>
             {
@@ -96,11 +96,11 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             var context = new NancyContext();
             context.SetMockInteraction(interactions);
 
-            Assert.Throws<ArgumentException>(() => context.GetMatchingInteraction(HttpVerb.Get, "/events"));
+            Assert.Throws<InvalidOperationException>(() => context.GetMatchingInteraction(HttpVerb.Get, "/events"));
         }
 
         [Fact]
-        public void GetMatchingInteraction_WithMoreThanOneMatchingInteraction_ThrowsArgumentException()
+        public void GetMatchingInteraction_WithMoreThanOneMatchingInteraction_ThrowsInvalidOperationException()
         {
             var requestResponsePairs = new List<ProviderServiceInteraction>
             {
@@ -111,7 +111,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             var context = new NancyContext();
             context.SetMockInteraction(requestResponsePairs);
 
-            Assert.Throws<ArgumentException>(() => context.GetMatchingInteraction(HttpVerb.Get, "/events"));
+            Assert.Throws<InvalidOperationException>(() => context.GetMatchingInteraction(HttpVerb.Get, "/events"));
         }
 
         [Fact]

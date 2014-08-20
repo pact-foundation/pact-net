@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.XPath;
+using System.Net.Http;
 using Nancy.Hosting.Self;
 using PactNet.Mocks.MockHttpService.Configuration;
 using PactNet.Mocks.MockHttpService.Models;
@@ -117,7 +117,7 @@ namespace PactNet.Mocks.MockHttpService
 
             if (unUsedInteractions.Any() || multiUsedInteractions.Any())
             {
-                throw new CompareFailedException(unUsedInteractionsErrorMessage + multiUsedInteractionsErrorMessage);
+                throw new InvalidOperationException(unUsedInteractionsErrorMessage + multiUsedInteractionsErrorMessage);
             }
         }
 
@@ -185,6 +185,16 @@ namespace PactNet.Mocks.MockHttpService
         public void ClearInteractions()
         {
             _testScopedInteractions = null;
+
+            var client = new HttpClient();
+            client.BaseAddress = new Uri(BaseUri);
+
+            //mock_service_client_spec.rb
+            // /interactions/verification
+            var request = new HttpRequestMessage(HttpMethod.Delete, "/interactions");
+            request.Headers.Add("X-Pact-Mock-Service", "");
+
+            var test = client.SendAsync(request);
         }
 
         private void ClearAllState()

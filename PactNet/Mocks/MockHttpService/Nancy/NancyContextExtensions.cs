@@ -26,7 +26,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
             if (interactions == null)
             {
-                throw new ArgumentException("No matching mock interaction has been registered for the current request");
+                throw new InvalidOperationException("No matching mock interaction has been registered for the current request");
             }
 
             var matchingInteractions = interactions.Where(x =>
@@ -35,12 +35,12 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
             if (matchingInteractions == null || !matchingInteractions.Any())
             {
-                throw new ArgumentException("No matching mock interaction has been registered for the current request");
+                throw new InvalidOperationException("No matching mock interaction has been registered for the current request");
             }
 
             if (matchingInteractions.Count() > 1)
             {
-                throw new ArgumentException("More than one matching mock interaction has been registered for the current request");
+                throw new InvalidOperationException("More than one matching mock interaction has been registered for the current request");
             }
 
             return matchingInteractions.Single();

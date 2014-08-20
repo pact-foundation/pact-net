@@ -9,6 +9,9 @@ namespace PactNet.Mocks.MockHttpService.Nancy
     public class MockProviderNancyRequestDispatcher : IRequestDispatcher
     {
         private readonly IMockProviderNancyRequestHandler _requestHandler;
+        //TODO: Inject a db here
+        //TODO: Have a Admin http request, which queries the data
+        //TODO: Have an Admin http request, which clears the state
 
         public MockProviderNancyRequestDispatcher(IMockProviderNancyRequestHandler requestHandler)
         {
