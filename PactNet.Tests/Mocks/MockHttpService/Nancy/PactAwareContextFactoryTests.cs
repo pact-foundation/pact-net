@@ -59,7 +59,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             var context = nancyContextFactory.Create(request);
 
-            Assert.Equal(requestResponsePairs, context.Items["PactMockInteractions"]);
+            Assert.Equal(requestResponsePairs, context.Items[Constants.PactMockInteractionsKey]);
             mockMockContextService.Received(1).GetExpectedRequestResponsePairs();
         }
     }

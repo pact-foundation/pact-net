@@ -1,16 +1,27 @@
 ﻿using System;
 using System.Linq;
+using Nancy.Hosting.Self;
 using PactNet.Mocks.MockHttpService;
+using PactNet.Mocks.MockHttpService.Configuration;
 using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Mocks.MockHttpService.Nancy;
+using PactNet.Tests.Fakes;
 using Xunit;
 
 namespace PactNet.Tests.Mocks.MockHttpService
 {
     public class MockProviderServiceTests
     {
+        private FakeHttpClient _fakeHttpClient;
+
         private IMockProviderService GetSubject(int port = 1234)
         {
-            return new MockProviderService(port);
+            _fakeHttpClient = new FakeHttpClient();
+
+            return new MockProviderService(
+                (baseUri, mockContextService) => new NancyHost(new MockProviderNancyBootstrapper(mockContextService), NancyConfig.HostConfiguration, baseUri),
+                port,
+                baseUri => _fakeHttpClient);
         }
 
         [Fact]
@@ -321,7 +332,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void VerifyInteractions_InteractionHasNotBeenUsed_ThrowsCompareFailedException()
+        public void VerifyInteractions_InteractionHasNotBeenUsed_ThrowsInvalidOperationException()
         {
             var mockService = GetSubject();
             var request = new ProviderServiceRequest();
@@ -331,11 +342,11 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 .With(request)
                 .WillRespondWith(new ProviderServiceResponse());
 
-            Assert.Throws<CompareFailedException>(() => mockService.VerifyInteractions());
+            Assert.Throws<InvalidOperationException>(() => mockService.VerifyInteractions());
         }
 
         [Fact]
-        public void VerifyInteractions_InteractionHasBeenUsedMultipleTimes_ThrowsCompareFailedException()
+        public void VerifyInteractions_InteractionHasBeenUsedMultipleTimes_ThrowsInvalidOperationException()
         {
             var mockService = GetSubject();
             var request = new ProviderServiceRequest();
@@ -348,11 +359,11 @@ namespace PactNet.Tests.Mocks.MockHttpService
             ((ProviderServiceInteraction)mockService.Interactions.First()).IncrementUsage();
             ((ProviderServiceInteraction)mockService.Interactions.First()).IncrementUsage();
 
-            Assert.Throws<CompareFailedException>(() => mockService.VerifyInteractions());
+            Assert.Throws<InvalidOperationException>(() => mockService.VerifyInteractions());
         }
 
         [Fact]
-        public void VerifyInteractions_WithInteractionsThatHaveBeenUsedMultipleTimesAndNotUsedAtAll_ThrowsCompareFailedException()
+        public void VerifyInteractions_WithInteractionsThatHaveBeenUsedMultipleTimesAndNotUsedAtAll_ThrowsInvalidOperationException()
         {
             var mockService = GetSubject();
             var request = new ProviderServiceRequest();
@@ -371,7 +382,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             ((ProviderServiceInteraction)mockService.Interactions.First()).IncrementUsage();
             ((ProviderServiceInteraction)mockService.Interactions.First()).IncrementUsage();
 
-            Assert.Throws<CompareFailedException>(() => mockService.VerifyInteractions());
+            Assert.Throws<InvalidOperationException>(() => mockService.VerifyInteractions());
         }
 
         [Fact]

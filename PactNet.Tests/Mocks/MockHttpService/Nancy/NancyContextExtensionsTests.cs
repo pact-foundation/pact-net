@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Nancy;
+using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Nancy;
 using Xunit;
@@ -10,8 +11,6 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 {
     public class NancyContextExtensionsTests
     {
-        private const string PactMockInteractionsKey = "PactMockInteractions";
-
         [Fact]
         public void SetMockInteraction_WithInteractionAndNoExistingItemsInNancyContext_AddsInteractionToNancyContextItems()
         {
@@ -25,7 +24,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             context.SetMockInteraction(interactions);
 
             Assert.Equal(1, context.Items.Count);
-            Assert.Equal(interactions, context.Items[PactMockInteractionsKey]);
+            Assert.Equal(interactions, context.Items[Constants.PactMockInteractionsKey]);
         }
 
         [Fact]
@@ -43,14 +42,14 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             context.SetMockInteraction(interactions);
 
             Assert.Equal(2, context.Items.Count);
-            Assert.Equal(interactions, context.Items[PactMockInteractionsKey]);
+            Assert.Equal(interactions, context.Items[Constants.PactMockInteractionsKey]);
         }
 
         [Fact]
         public void SetMockInteraction_WithInteractionAndExistingInteractionsInNancyContext_OverwritesInteractionsInNancyContextItem()
         {
             var context = new NancyContext();
-            context.Items.Add(new KeyValuePair<string, object>(PactMockInteractionsKey, new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
+            context.Items.Add(new KeyValuePair<string, object>(Constants.PactMockInteractionsKey, new List<KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>>
             {
                 new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest(), new ProviderServiceResponse()),
                 new KeyValuePair<ProviderServiceRequest, ProviderServiceResponse>(new ProviderServiceRequest(), new ProviderServiceResponse())
@@ -65,7 +64,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             context.SetMockInteraction(interactions);
 
             Assert.Equal(1, context.Items.Count);
-            Assert.Equal(interactions, context.Items[PactMockInteractionsKey]);
+            Assert.Equal(interactions, context.Items[Constants.PactMockInteractionsKey]);
         }
 
         [Fact]
@@ -80,7 +79,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         public void GetMatchingInteraction_WithInteractionsNull_ThrowsInvalidOperationException()
         {
             var context = new NancyContext();
-            context.Items[PactMockInteractionsKey] = null;
+            context.Items[Constants.PactMockInteractionsKey] = null;
 
             Assert.Throws<InvalidOperationException>(() => context.GetMatchingInteraction(HttpVerb.Get, "/events"));
         }

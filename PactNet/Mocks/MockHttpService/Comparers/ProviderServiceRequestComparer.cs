@@ -29,7 +29,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
         {
             if (request1 == null)
             {
-                throw new CompareFailedException("Expected request cannot be null");
+                _reporter.ReportError("Expected request cannot be null");
             }
 
             _httpMethodComparer.Compare(request1.Method, request2.Method);
@@ -42,7 +42,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
             {
                 if (request2.Headers == null)
                 {
-                    throw new CompareFailedException("Headers are null");
+                    _reporter.ReportError("Headers are null");
                 }
 
                 _httpHeaderComparer.Compare(request1.Headers, request2.Headers);
@@ -52,11 +52,6 @@ namespace PactNet.Mocks.MockHttpService.Comparers
             {
                 _httpBodyComparer.Validate(request2.Body, request1.Body, true);
             }
-        }
-
-        public IReporter GetReporter()
-        {
-            return _reporter;
         }
     }
 }

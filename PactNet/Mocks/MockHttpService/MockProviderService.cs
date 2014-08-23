@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using Nancy.Hosting.Self;
 using PactNet.Mocks.MockHttpService.Configuration;
 using PactNet.Mocks.MockHttpService.Models;
@@ -13,8 +14,8 @@ namespace PactNet.Mocks.MockHttpService
     public class MockProviderService : IMockProviderService
     {
         private readonly Func<Uri, IMockContextService, NancyHost> _nancyHostFactory;
-
         private NancyHost _host;
+        private readonly Func<string, HttpClient> _httpClientFactory; 
 
         private string _providerState;
         private string _description;
@@ -31,14 +32,21 @@ namespace PactNet.Mocks.MockHttpService
         public string BaseUri { get; private set; }
 
         [Obsolete("For testing only.")]
-        public MockProviderService(Func<Uri, IMockContextService, NancyHost> nancyHostFactory, int port)
+        public MockProviderService(
+            Func<Uri, IMockContextService, NancyHost> nancyHostFactory, 
+            int port,
+            Func<string, HttpClient> httpClientFactory)
         {
             _nancyHostFactory = nancyHostFactory;
             BaseUri = String.Format("http://localhost:{0}", port);
+            _httpClientFactory = httpClientFactory;
         }
 
         public MockProviderService(int port)
-            : this((baseUri, mockContextService) => new NancyHost(new MockProviderNancyBootstrapper(mockContextService), NancyConfig.HostConfiguration, baseUri), port)
+            : this(
+            (baseUri, mockContextService) => new NancyHost(new MockProviderNancyBootstrapper(mockContextService), NancyConfig.HostConfiguration, baseUri), 
+            port,
+            baseUri => new HttpClient { BaseAddress = new Uri(baseUri) })
         {
         }
 
@@ -95,6 +103,19 @@ namespace PactNet.Mocks.MockHttpService
             if (_testScopedInteractions == null)
             {
                 return;
+            }
+
+            if (_host != null)
+            {
+                var client = _httpClientFactory(BaseUri);
+                var request = new HttpRequestMessage(HttpMethod.Get, "/interactions/verification");
+                request.Headers.Add(Constants.AdministrativeRequestHeaderKey, "");
+                var response = client.SendAsync(request, CancellationToken.None).Result;
+                response.EnsureSuccessStatusCode();
+            }
+            else
+            {
+                throw new InvalidOperationException("Unable to verify interactions because the mock provider service is not running.");
             }
 
             var unUsedInteractions = _testScopedInteractions.Where(interaction => interaction.UsageCount < 1).ToList();
@@ -174,27 +195,31 @@ namespace PactNet.Mocks.MockHttpService
 
         public void Stop()
         {
+            ClearAllState();
             if (_host != null)
             {
                 _host.Stop();
                 _host.Dispose();
             }
-            ClearAllState();
         }
 
         public void ClearInteractions()
         {
             _testScopedInteractions = null;
 
-            var client = new HttpClient();
-            client.BaseAddress = new Uri(BaseUri);
-
-            //mock_service_client_spec.rb
-            // /interactions/verification
-            var request = new HttpRequestMessage(HttpMethod.Delete, "/interactions");
-            request.Headers.Add("X-Pact-Mock-Service", "");
-
-            var test = client.SendAsync(request);
+            if (_host != null)
+            {
+                var client = _httpClientFactory(BaseUri);
+                var request = new HttpRequestMessage(HttpMethod.Delete, "/interactions");
+                request.Headers.Add(Constants.AdministrativeRequestHeaderKey, "");
+                var response = client.SendAsync(request, CancellationToken.None).Result;
+                response.EnsureSuccessStatusCode();
+            }
+            else
+            {
+                //Maybe this is ok??
+                throw new InvalidOperationException("Unable to clear interactions because the mock provider service is not running.");
+            }
         }
 
         private void ClearAllState()

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Nancy;
@@ -8,14 +9,15 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 {
     public class MockProviderNancyRequestDispatcher : IRequestDispatcher
     {
-        private readonly IMockProviderNancyRequestHandler _requestHandler;
-        //TODO: Inject a db here
-        //TODO: Have a Admin http request, which queries the data
-        //TODO: Have an Admin http request, which clears the state
+        private readonly IMockProviderRequestHandler _requestHandler;
+        private readonly IMockProviderAdminRequestHandler _adminRequestHandler;
 
-        public MockProviderNancyRequestDispatcher(IMockProviderNancyRequestHandler requestHandler)
+        public MockProviderNancyRequestDispatcher(
+            IMockProviderRequestHandler requestHandler,
+            IMockProviderAdminRequestHandler adminRequestHandler)
         {
             _requestHandler = requestHandler;
+            _adminRequestHandler = adminRequestHandler;
         }
 
         public Task<Response> Dispatch(NancyContext context, CancellationToken cancellationToken)
@@ -34,12 +36,20 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                 return tcs.Task;
             }
 
-            var response = _requestHandler.Handle(context);
+            var response = IsAdminRequest(context.Request) ?
+                                    _adminRequestHandler.Handle(context) :
+                                    _requestHandler.Handle(context);
 
             context.Response = response;
             tcs.SetResult(context.Response);
 
             return tcs.Task;
+        }
+
+        private bool IsAdminRequest(Request request)
+        {
+            return request.Headers != null &&
+                   request.Headers.Any(x => x.Key == Constants.AdministrativeRequestHeaderKey);
         }
     }
 }

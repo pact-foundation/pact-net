@@ -4,7 +4,6 @@ using System.Threading;
 using NSubstitute;
 using Nancy;
 using Nancy.Routing;
-using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Nancy;
 using Xunit;
 
@@ -20,10 +19,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
                 Request = new Request("GET", "/Test", "HTTP")
             };
 
-            var mockRequestHandler = Substitute.For<IMockProviderNancyRequestHandler>();
+            var mockRequestHandler = Substitute.For<IMockProviderRequestHandler>();
+            var mockAdminRequestHandler = Substitute.For<IMockProviderAdminRequestHandler>();
+
             mockRequestHandler.Handle(nancyContext).Returns(new Response());
 
-            IRequestDispatcher requestDispatcher = new MockProviderNancyRequestDispatcher(mockRequestHandler);
+            IRequestDispatcher requestDispatcher = new MockProviderNancyRequestDispatcher(mockRequestHandler, mockAdminRequestHandler);
 
             requestDispatcher.Dispatch(nancyContext, CancellationToken.None);
 
@@ -33,7 +34,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         [Fact]
         public void Dispatch_WithNullNancyContext_ArgumentExceptionIsSetOnTask()
         {
-            IRequestDispatcher requestDispatcher = new MockProviderNancyRequestDispatcher(null);
+            IRequestDispatcher requestDispatcher = new MockProviderNancyRequestDispatcher(null, null);
 
             var response = requestDispatcher.Dispatch(null, CancellationToken.None);
 
@@ -53,10 +54,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
                 StatusCode = HttpStatusCode.OK
             };
 
-            var mockRequestHandler = Substitute.For<IMockProviderNancyRequestHandler>();
+            var mockRequestHandler = Substitute.For<IMockProviderRequestHandler>();
+            var mockAdminRequestHandler = Substitute.For<IMockProviderAdminRequestHandler>();
+
             mockRequestHandler.Handle(nancyContext).Returns(nancyResponse);
 
-            IRequestDispatcher requestDispatcher = new MockProviderNancyRequestDispatcher(mockRequestHandler);
+            IRequestDispatcher requestDispatcher = new MockProviderNancyRequestDispatcher(mockRequestHandler, mockAdminRequestHandler);
 
             requestDispatcher.Dispatch(nancyContext, CancellationToken.None);
 
@@ -76,10 +79,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
                 StatusCode = HttpStatusCode.OK
             };
 
-            var mockRequestHandler = Substitute.For<IMockProviderNancyRequestHandler>();
+            var mockRequestHandler = Substitute.For<IMockProviderRequestHandler>();
+            var mockAdminRequestHandler = Substitute.For<IMockProviderAdminRequestHandler>();
+
             mockRequestHandler.Handle(nancyContext).Returns(nancyResponse);
 
-            IRequestDispatcher requestDispatcher = new MockProviderNancyRequestDispatcher(mockRequestHandler);
+            IRequestDispatcher requestDispatcher = new MockProviderNancyRequestDispatcher(mockRequestHandler, mockAdminRequestHandler);
 
             var response = requestDispatcher.Dispatch(nancyContext, CancellationToken.None);
 
@@ -99,10 +104,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
                 StatusCode = HttpStatusCode.OK
             };
 
-            var mockRequestHandler = Substitute.For<IMockProviderNancyRequestHandler>();
+            var mockRequestHandler = Substitute.For<IMockProviderRequestHandler>();
+            var mockAdminRequestHandler = Substitute.For<IMockProviderAdminRequestHandler>();
+
             mockRequestHandler.Handle(nancyContext).Returns(nancyResponse);
 
-            IRequestDispatcher requestDispatcher = new MockProviderNancyRequestDispatcher(mockRequestHandler);
+            IRequestDispatcher requestDispatcher = new MockProviderNancyRequestDispatcher(mockRequestHandler, mockAdminRequestHandler);
 
             var response = requestDispatcher.Dispatch(nancyContext, CancellationToken.None);
 
@@ -124,10 +131,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             var cancellationToken = new CancellationToken(true);
 
-            var mockRequestHandler = Substitute.For<IMockProviderNancyRequestHandler>();
+            var mockRequestHandler = Substitute.For<IMockProviderRequestHandler>();
+            var mockAdminRequestHandler = Substitute.For<IMockProviderAdminRequestHandler>();
+
             mockRequestHandler.Handle(nancyContext).Returns(nancyResponse);
 
-            IRequestDispatcher requestDispatcher = new MockProviderNancyRequestDispatcher(mockRequestHandler);
+            IRequestDispatcher requestDispatcher = new MockProviderNancyRequestDispatcher(mockRequestHandler, mockAdminRequestHandler);
 
             var response = requestDispatcher.Dispatch(nancyContext, cancellationToken);
 

@@ -33,7 +33,10 @@ namespace PactNet.Mocks.MockHttpService.Validators
             _reporter = reporter;
         }
 
-        public ProviderServiceValidator(HttpClient httpClient, IReporter reporter) : this(
+        public ProviderServiceValidator(
+            HttpClient httpClient, 
+            IReporter reporter) 
+            : this(
             new ProviderServiceResponseComparer(reporter),
             httpClient,
             new HttpRequestMessageMapper(),

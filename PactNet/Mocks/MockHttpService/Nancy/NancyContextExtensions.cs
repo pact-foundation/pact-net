@@ -8,21 +8,19 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 {
     public static class NancyContextExtensions
     {
-        private const string PactMockInteractionsKey = "PactMockInteractions";
-
         public static void SetMockInteraction(this NancyContext context, IEnumerable<ProviderServiceInteraction> interactions)
         {
-            context.Items[PactMockInteractionsKey] = interactions;
+            context.Items[Constants.PactMockInteractionsKey] = interactions;
         }
 
         public static ProviderServiceInteraction GetMatchingInteraction(this NancyContext context, HttpVerb method, string path)
         {
-            if (!context.Items.ContainsKey(PactMockInteractionsKey))
+            if (!context.Items.ContainsKey(Constants.PactMockInteractionsKey))
             {
                 throw new InvalidOperationException("No mock interactions have been registered");
             }
 
-            var interactions = (IEnumerable<ProviderServiceInteraction>)context.Items[PactMockInteractionsKey];
+            var interactions = (IEnumerable<ProviderServiceInteraction>)context.Items[Constants.PactMockInteractionsKey];
 
             if (interactions == null)
             {
