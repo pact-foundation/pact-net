@@ -57,7 +57,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
             _mockProviderRepository.AddHandledRequest(new HandledRequest(actualRequest, matchingInteraction));
 
-            matchingInteraction.IncrementUsage(); //TODO: Remove this as well!
+            matchingInteraction.IncrementUsage(); //TODO: Eventually we want to remove this
 
             return _responseMapper.Convert(matchingInteraction.Response);
         }

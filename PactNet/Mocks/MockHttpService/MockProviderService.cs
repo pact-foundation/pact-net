@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using Nancy.Hosting.Self;
@@ -102,11 +103,7 @@ namespace PactNet.Mocks.MockHttpService
         {
             if (_host != null)
             {
-                var client = _httpClientFactory(BaseUri);
-                var request = new HttpRequestMessage(HttpMethod.Get, "/interactions/verification");
-                request.Headers.Add(Constants.AdministrativeRequestHeaderKey, "");
-                var response = client.SendAsync(request, CancellationToken.None).Result;
-                response.EnsureSuccessStatusCode();
+                PerformAdminHttpRequest(HttpMethod.Get, "/interactions/verification");
             }
             else
             {
@@ -242,9 +239,13 @@ namespace PactNet.Mocks.MockHttpService
         {
             var client = _httpClientFactory(BaseUri);
             var request = new HttpRequestMessage(httpMethod, path);
-            request.Headers.Add(Constants.AdministrativeRequestHeaderKey, "");
+            request.Headers.Add(Constants.AdministrativeRequestHeaderKey, "true");
             var response = client.SendAsync(request, CancellationToken.None).Result;
-            response.EnsureSuccessStatusCode();
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                throw new InvalidOperationException(response.ReasonPhrase);
+            }
         }
     }
 }

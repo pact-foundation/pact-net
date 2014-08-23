@@ -39,6 +39,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                 return GenerateResponse(HttpStatusCode.OK, "Successfully cleared the handled requests");
             }
 
+            //TODO: Add tests for this
             if (context.Request.Method.Equals("GET", StringComparison.InvariantCultureIgnoreCase) &&
                 context.Request.Path == "/interactions/verification")
             {
@@ -52,9 +53,8 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
                 if (_mockProviderRepository.HandledRequests != null && _mockProviderRepository.HandledRequests.Any())
                 {
-                    //Check number of calls
+                    //TODO: Check number of calls
 
-                    //Check actual request against matching request
                     foreach (var stat in _mockProviderRepository.HandledRequests)
                     {
                         _requestComparer.Compare(stat.MatchedInteraction.Request, stat.ActualRequest);
@@ -63,20 +63,14 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
                 try
                 {
-                    _reporter.ThrowIfAnyErrors(); //TODO: Change this to return a http based error
+                    _reporter.ThrowIfAnyErrors();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    return new Response
-                    {
-                        StatusCode = HttpStatusCode.InternalServerError
-                    };
+                    return GenerateResponse(HttpStatusCode.InternalServerError, ex.Message);
                 }
 
-                return new Response
-                {
-                    StatusCode = HttpStatusCode.OK
-                };
+                return GenerateResponse(HttpStatusCode.OK, "Successfully verified mock provider interactions");
             }
 
             return GenerateResponse(HttpStatusCode.NotFound, 
@@ -85,11 +79,17 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
         private Response GenerateResponse(HttpStatusCode statusCode, string message)
         {
+            var responseMessage = message
+                .Replace("\r", " ")
+                .Replace("\n", "")
+                .Replace("\t", " ")
+                .Replace(@"\", "");
+
             return new Response
             {
                 StatusCode = statusCode,
-                ReasonPhrase = message,
-                Contents = s => SetContent(message, s)
+                ReasonPhrase = responseMessage,
+                Contents = s => SetContent(responseMessage, s)
             };
         }
 
