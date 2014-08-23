@@ -3,6 +3,7 @@ using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Diagnostics;
 using Nancy.TinyIoc;
+using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Reporters;
 
@@ -48,11 +49,12 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         private void RegisterDependenciesWithNancyContainer(TinyIoCContainer container)
         {
             container.Register<IProviderServiceRequestMapper, ProviderServiceRequestMapper>().AsMultiInstance();
+            container.Register<IProviderServiceRequestComparer, ProviderServiceRequestComparer>().AsMultiInstance();
             container.Register<INancyResponseMapper, NancyResponseMapper>().AsMultiInstance();
             container.Register(typeof(IMockContextService), _mockContextService);
             container.Register<IMockProviderRequestHandler, MockProviderRequestHandler>().AsMultiInstance();
             container.Register<IMockProviderAdminRequestHandler, MockProviderAdminRequestHandler>().AsMultiInstance();
-            container.Register<IStatsProvider, StatsProvider>().AsSingleton();
+            container.Register<IMockProviderRepository, MockProviderRepository>().AsSingleton();
             container.Register<IReporter, Reporter>().AsMultiInstance();
         }
     }

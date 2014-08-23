@@ -100,11 +100,6 @@ namespace PactNet.Mocks.MockHttpService
 
         public void VerifyInteractions()
         {
-            if (_testScopedInteractions == null)
-            {
-                return;
-            }
-
             if (_host != null)
             {
                 var client = _httpClientFactory(BaseUri);
@@ -116,6 +111,11 @@ namespace PactNet.Mocks.MockHttpService
             else
             {
                 throw new InvalidOperationException("Unable to verify interactions because the mock provider service is not running.");
+            }
+
+            if (_testScopedInteractions == null)
+            {
+                return;
             }
 
             var unUsedInteractions = _testScopedInteractions.Where(interaction => interaction.UsageCount < 1).ToList();
@@ -209,16 +209,7 @@ namespace PactNet.Mocks.MockHttpService
 
             if (_host != null)
             {
-                var client = _httpClientFactory(BaseUri);
-                var request = new HttpRequestMessage(HttpMethod.Delete, "/interactions");
-                request.Headers.Add(Constants.AdministrativeRequestHeaderKey, "");
-                var response = client.SendAsync(request, CancellationToken.None).Result;
-                response.EnsureSuccessStatusCode();
-            }
-            else
-            {
-                //Maybe this is ok??
-                throw new InvalidOperationException("Unable to clear interactions because the mock provider service is not running.");
+                PerformAdminHttpRequest(HttpMethod.Delete, "/interactions");
             }
         }
 
@@ -245,6 +236,15 @@ namespace PactNet.Mocks.MockHttpService
             }
 
             return _testScopedInteractions;
+        }
+
+        private void PerformAdminHttpRequest(HttpMethod httpMethod, string path)
+        {
+            var client = _httpClientFactory(BaseUri);
+            var request = new HttpRequestMessage(httpMethod, path);
+            request.Headers.Add(Constants.AdministrativeRequestHeaderKey, "");
+            var response = client.SendAsync(request, CancellationToken.None).Result;
+            response.EnsureSuccessStatusCode();
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Text;
 using Nancy;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Reporters;
@@ -8,28 +10,18 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 {
     public class MockProviderAdminRequestHandler : IMockProviderAdminRequestHandler
     {
-        private readonly IStatsProvider _statsProvider;
+        private readonly IMockProviderRepository _mockProviderRepository;
         private readonly IProviderServiceRequestComparer _requestComparer;
-        private readonly IReporter _reporter = new Reporter();
+        private readonly IReporter _reporter;
 
-        [Obsolete("For testing only.")]
         public MockProviderAdminRequestHandler(
-            IStatsProvider statsProvider,
+            IMockProviderRepository mockProviderRepository,
             IReporter reporter,
             IProviderServiceRequestComparer requestComparer)
         {
-            _statsProvider = statsProvider;
+            _mockProviderRepository = mockProviderRepository;
             _reporter = reporter;
             _requestComparer = requestComparer;
-        }
-
-        public MockProviderAdminRequestHandler(
-            IStatsProvider statsProvider,
-            IReporter reporter)
-            : this(statsProvider,
-                   reporter,
-                   new ProviderServiceRequestComparer(reporter))
-        {
         }
 
         public Response Handle(NancyContext context)
@@ -42,18 +34,15 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             if (context.Request.Method.Equals("DELETE", StringComparison.InvariantCultureIgnoreCase) &&
                 context.Request.Path == "/interactions")
             {
-                _statsProvider.Clear();
+                _mockProviderRepository.ClearHandledRequests();
 
-                return new Response
-                {
-                    StatusCode = HttpStatusCode.OK
-                };
+                return GenerateResponse(HttpStatusCode.OK, "Successfully cleared the handled requests");
             }
 
             if (context.Request.Method.Equals("GET", StringComparison.InvariantCultureIgnoreCase) &&
                 context.Request.Path == "/interactions/verification")
             {
-                if (_statsProvider == null)
+                if (_mockProviderRepository == null)
                 {
                     return new Response
                     {
@@ -61,12 +50,12 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                     };
                 }
 
-                if (_statsProvider.Stats != null && _statsProvider.Stats.Any())
+                if (_mockProviderRepository.HandledRequests != null && _mockProviderRepository.HandledRequests.Any())
                 {
                     //Check number of calls
 
                     //Check actual request against matching request
-                    foreach (var stat in _statsProvider.Stats)
+                    foreach (var stat in _mockProviderRepository.HandledRequests)
                     {
                         _requestComparer.Compare(stat.MatchedInteraction.Request, stat.ActualRequest);
                     }
@@ -90,10 +79,26 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                 };
             }
 
+            return GenerateResponse(HttpStatusCode.NotFound, 
+                String.Format("The {0} request for path {1}, does not have a matching mock provider admin action.", context.Request.Method, context.Request.Path));
+        }
+
+        private Response GenerateResponse(HttpStatusCode statusCode, string message)
+        {
             return new Response
             {
-                StatusCode = HttpStatusCode.InternalServerError
+                StatusCode = statusCode,
+                ReasonPhrase = message,
+                Contents = s => SetContent(message, s)
             };
+        }
+
+        private void SetContent(string content, Stream stream)
+        {
+            var contentBytes = Encoding.UTF8.GetBytes(content);
+            stream.Position = 0;
+            stream.Write(contentBytes, 0, contentBytes.Length);
+            stream.Flush();
         }
     }
 }

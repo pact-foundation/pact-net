@@ -36,7 +36,6 @@ namespace PactNet.Mocks.MockHttpService.Mappers
             {
                 HttpBodyContent bodyContent = _httpBodyContentMapper.Convert(body: from.Body, headers: from.Headers);
                 to.ContentType = bodyContent.ContentType;
-
                 to.Contents = s =>
                 {
                     byte[] bytes = bodyContent.ContentBytes;

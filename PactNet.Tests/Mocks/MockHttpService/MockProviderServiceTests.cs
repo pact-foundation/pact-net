@@ -285,8 +285,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void
-            WillRespondWith_WhenAddingADuplicateInteractionAfterClearingInteractions_TheDuplicateInteractionIsNotAdded()
+        public void WillRespondWith_WhenAddingADuplicateInteractionAfterClearingInteractions_TheDuplicateInteractionIsNotAdded()
         {
             var providerState = "My provider state";
             var description = "My description";
@@ -407,6 +406,26 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var mockService = GetSubject();
 
             mockService.VerifyInteractions();
+        }
+
+        [Fact]
+        public void ClearInteractions_WhenCalledWithNullHost_DoesNotPerformAdminInteractionsDeleteRequest()
+        {
+            var mockService = GetSubject();
+
+            mockService.ClearInteractions();
+
+            Assert.Equal(0, _fakeHttpClient.SendAsyncCallCount);
+        }
+
+        [Fact]
+        public void ClearInteractions_WhenCalledInitialisedHost_PerformsAdminInteractionsDeleteRequest()
+        {
+            var mockService = GetSubject();
+
+            mockService.ClearInteractions();
+
+            Assert.Equal(1, _fakeHttpClient.SendAsyncCallCount);
         }
     }
 }

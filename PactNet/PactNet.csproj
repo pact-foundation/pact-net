@@ -80,7 +80,7 @@
     <Compile Include="Mocks\MockHttpService\Mappers\IHttpVerbMapper.cs" />
     <Compile Include="Mocks\MockHttpService\MockContextService.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\IMockProviderRequestHandler.cs" />
-    <Compile Include="Mocks\MockHttpService\IStatsProvider.cs" />
+    <Compile Include="Mocks\MockHttpService\IMockProviderRepository.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\MockProviderAdminRequestHandler.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\MockProviderRequestHandler.cs" />
     <Compile Include="Mocks\MockHttpService\Models\HttpBodyContent.cs" />
@@ -105,8 +105,8 @@
     <Compile Include="Mocks\MockHttpService\Mappers\ProviderServiceResponseMapper.cs" />
     <Compile Include="Mocks\MockHttpService\IMockContextService.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\PactAwareContextFactory.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\Stat.cs" />
-    <Compile Include="Mocks\MockHttpService\StatsProvider.cs" />
+    <Compile Include="Mocks\MockHttpService\Models\HandledRequest.cs" />
+    <Compile Include="Mocks\MockHttpService\MockProviderRepository.cs" />
     <Compile Include="Mocks\MockHttpService\Validators\IProviderServiceValidator.cs" />
     <Compile Include="Mocks\MockHttpService\Validators\ProviderServiceValidator.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\NancyContextExtensions.cs" />

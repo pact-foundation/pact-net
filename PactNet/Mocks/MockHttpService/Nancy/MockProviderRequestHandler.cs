@@ -9,16 +9,16 @@ namespace PactNet.Mocks.MockHttpService.Nancy
     {
         private readonly INancyResponseMapper _responseMapper;
         private readonly IProviderServiceRequestMapper _requestMapper;
-        private readonly IStatsProvider _statsProvider;
+        private readonly IMockProviderRepository _mockProviderRepository;
 
         public MockProviderRequestHandler(
             IProviderServiceRequestMapper requestMapper,
             INancyResponseMapper responseMapper,
-            IStatsProvider statsProvider)
+            IMockProviderRepository mockProviderRepository)
         {
             _requestMapper = requestMapper;
             _responseMapper = responseMapper;
-            _statsProvider = statsProvider;
+            _mockProviderRepository = mockProviderRepository;
         }
 
         public Response Handle(NancyContext context)
@@ -55,7 +55,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
             var matchingInteraction = context.GetMatchingInteraction(actualRequest.Method, actualRequest.Path);
 
-            _statsProvider.AddStat(new Stat(actualRequest, matchingInteraction));
+            _mockProviderRepository.AddHandledRequest(new HandledRequest(actualRequest, matchingInteraction));
 
             matchingInteraction.IncrementUsage(); //TODO: Remove this as well!
 
