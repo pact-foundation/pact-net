@@ -20,7 +20,12 @@ namespace PactNet.Mocks.MockHttpService
         private string _description;
         private ProviderServiceRequest _request;
         private ProviderServiceResponse _response;
+
         private IList<ProviderServiceInteraction> _testScopedInteractions;
+        public IEnumerable<Interaction> TestScopedInteractions
+        {
+            get { return _testScopedInteractions; }
+        }
 
         private IList<ProviderServiceInteraction> _interactions;
         public IEnumerable<Interaction> Interactions

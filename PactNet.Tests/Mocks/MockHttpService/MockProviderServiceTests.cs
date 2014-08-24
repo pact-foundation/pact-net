@@ -125,28 +125,6 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void WillRespondWith_WithResponse_SetsResponse()
-        {
-            var response = new ProviderServiceResponse();
-            var mockService = GetSubject();
-
-            mockService.UponReceiving("My description")
-                .With(new ProviderServiceRequest())
-                .WillRespondWith(response);
-
-            var interaction = mockService.Interactions.First() as ProviderServiceInteraction;
-            Assert.Equal(response, interaction.Response);
-        }
-
-        [Fact]
-        public void WillRespondWith_WithNullResponse_ThrowsArgumentException()
-        {
-            var mockService = GetSubject();
-
-            Assert.Throws<ArgumentException>(() => mockService.WillRespondWith(null));
-        }
-
-        [Fact]
         public void Interactions_WithNoInteractions_ReturnsNull()
         {
             var mockService = GetSubject();
@@ -170,6 +148,42 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 .WillRespondWith(new ProviderServiceResponse());
 
             Assert.Equal(2, mockService.Interactions.Count());
+        }
+
+        [Fact]
+        public void WillRespondWith_WithResponse_SetsInteractionResponse()
+        {
+            var response = new ProviderServiceResponse();
+            var mockService = GetSubject();
+
+            mockService.UponReceiving("My description")
+                .With(new ProviderServiceRequest())
+                .WillRespondWith(response);
+
+            var interaction = mockService.Interactions.First() as ProviderServiceInteraction;
+            Assert.Equal(response, interaction.Response);
+        }
+
+        [Fact]
+        public void WillRespondWith_WithResponse_SetsTestScopedInteractionResponse()
+        {
+            var response = new ProviderServiceResponse();
+            var mockService = GetSubject();
+
+            mockService.UponReceiving("My description")
+                .With(new ProviderServiceRequest())
+                .WillRespondWith(response);
+
+            var interaction = ((MockProviderService)mockService).Interactions.First() as ProviderServiceInteraction;
+            Assert.Equal(response, interaction.Response);
+        }
+
+        [Fact]
+        public void WillRespondWith_WithNullResponse_ThrowsArgumentException()
+        {
+            var mockService = GetSubject();
+
+            Assert.Throws<ArgumentException>(() => mockService.WillRespondWith(null));
         }
 
         [Fact]
@@ -359,6 +373,20 @@ namespace PactNet.Tests.Mocks.MockHttpService
             mockService.VerifyInteractions();
 
             Assert.Equal(1, _fakeHttpClient.SendAsyncCallCount);
+        }
+
+        [Fact]
+        public void ClearInteractions_WhenCalled_SetsTestScopedInteractionsNull()
+        {
+            var mockService = GetSubject();
+
+            mockService.UponReceiving("My description")
+                .With(new ProviderServiceRequest())
+                .WillRespondWith(new ProviderServiceResponse());
+
+            mockService.ClearInteractions();
+
+            Assert.Null(((MockProviderService)mockService).TestScopedInteractions);
         }
 
         [Fact]
