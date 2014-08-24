@@ -31,7 +31,16 @@ namespace PactNet.Reporters
 
         public void ReportError(string errorMessage = null, object expected = null, object actual = null)
         {
-            var errorMsg = String.Format("{0} Expected: {1}, Actual: {2}", errorMessage, expected, actual);
+            string errorMsg;
+            if (expected != null && actual != null)
+            {
+                errorMsg = String.Format("{0} Expected: {1}, Actual: {2}", errorMessage, expected, actual);
+            }
+            else
+            {
+                errorMsg = errorMessage;
+            }
+
             _outputter.WriteError("[Failure] {0}", errorMsg);
             _errors.Add(errorMsg);
         }

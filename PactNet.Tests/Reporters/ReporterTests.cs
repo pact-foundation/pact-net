@@ -1,4 +1,5 @@
-﻿using NSubstitute;
+﻿using System.Linq;
+using NSubstitute;
 using PactNet.Reporters;
 using Xunit;
 
@@ -38,6 +39,19 @@ namespace PactNet.Tests.Reporters
             reporter.ReportError();
 
             mockOutputter.Received(1).WriteError(Arg.Any<string>(), Arg.Any<object[]>());
+        }
+
+        [Fact]
+        public void ReportError_WithOnlyErrorMessageParameters_ErrorIsAdded()
+        {
+            var errorMessage = "My error message about something that went wrong";
+            var mockOutputter = Substitute.For<IReportOutputter>();
+            var reporter = new Reporter(mockOutputter);
+
+            reporter.ReportError(errorMessage);
+
+            Assert.NotEmpty(reporter.Errors);
+            Assert.Equal(errorMessage, reporter.Errors.First());
         }
 
         [Fact]
