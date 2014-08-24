@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,20 +8,23 @@ namespace PactNet.Tests.Fakes
 {
     public class FakeHttpClient : HttpClient
     {
-        public int SendAsyncCallCount { get; private set; }
-        private readonly HttpResponseMessage _response;
+        private readonly IList<HttpRequestMessage> _callInfo;
+        public IEnumerable<HttpRequestMessage> CallInfo { get { return _callInfo; } }
+
+        public HttpResponseMessage Response { get; set; }
 
         public FakeHttpClient(HttpResponseMessage response = null)
         {
-            _response = response ?? new HttpResponseMessage(HttpStatusCode.OK);
+            Response = response ?? new HttpResponseMessage(HttpStatusCode.OK);
+            _callInfo = new List<HttpRequestMessage>();
         }
 
         public override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            SendAsyncCallCount++;
+            _callInfo.Add(request);
 
             var tcs = new TaskCompletionSource<HttpResponseMessage>();
-            tcs.SetResult(_response);
+            tcs.SetResult(Response);
 
             return tcs.Task;
         }

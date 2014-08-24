@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using NSubstitute;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
@@ -360,7 +362,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             {
             }
 
-            Assert.Equal(0, _fakeHttpClient.SendAsyncCallCount);
+            Assert.Equal(0, _fakeHttpClient.CallInfo.Count());
         }
 
         [Fact]
@@ -372,7 +374,21 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.VerifyInteractions();
 
-            Assert.Equal(1, _fakeHttpClient.SendAsyncCallCount);
+            Assert.Equal(1, _fakeHttpClient.CallInfo.Count());
+            Assert.Equal(HttpMethod.Get, _fakeHttpClient.CallInfo.First().Method);
+            Assert.Equal("/interactions/verification", _fakeHttpClient.CallInfo.First().RequestUri.ToString());
+        }
+
+        [Fact]
+        public void VerifyInteractions_WhenResponseFromHostIsNotOk_ThrowsInvalidOperationException()
+        {
+            var mockService = GetSubject();
+
+            _fakeHttpClient.Response = new HttpResponseMessage(HttpStatusCode.Forbidden);
+
+            mockService.Start();
+
+            Assert.Throws<InvalidOperationException>(() => mockService.VerifyInteractions());
         }
 
         [Fact]
@@ -398,7 +414,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.ClearInteractions();
 
-            Assert.Equal(0, _fakeHttpClient.SendAsyncCallCount);
+            Assert.Equal(0, _fakeHttpClient.CallInfo.Count());
         }
 
         [Fact]
@@ -410,7 +426,21 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.ClearInteractions();
 
-            Assert.Equal(1, _fakeHttpClient.SendAsyncCallCount);
+            Assert.Equal(1, _fakeHttpClient.CallInfo.Count());
+            Assert.Equal(HttpMethod.Delete, _fakeHttpClient.CallInfo.First().Method);
+            Assert.Equal("/interactions", _fakeHttpClient.CallInfo.First().RequestUri.ToString());
+        }
+
+        [Fact]
+        public void ClearInteractions_WhenResponseFromHostIsNotOk_ThrowsInvalidOperationException()
+        {
+            var mockService = GetSubject();
+
+            _fakeHttpClient.Response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
+
+            mockService.Start();
+
+            Assert.Throws<InvalidOperationException>(() => mockService.ClearInteractions());
         }
 
         [Fact]
