@@ -51,7 +51,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                 return (IEnumerable<ProviderServiceInteraction>)context.Items[Constants.PactMockInteractionsKey];
             }
 
-            return null;
+            return new List<ProviderServiceInteraction>();
         }
     }
 }

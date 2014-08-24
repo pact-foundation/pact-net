@@ -129,5 +129,33 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             Assert.Equal(interactions.First(), result);
         }
+
+        [Fact]
+        public void GetMockInteractions_WithRegisteredInteractions_ReturnsInteractions()
+        {
+            var interactions = new List<ProviderServiceInteraction>
+            {
+                new ProviderServiceInteraction { Request = new ProviderServiceRequest { Method = HttpVerb.Get, Path = "/events" }, Response = new ProviderServiceResponse()},
+                new ProviderServiceInteraction { Request = new ProviderServiceRequest { Method = HttpVerb.Post, Path = "/events" }, Response = new ProviderServiceResponse()},
+            };
+
+            var context = new NancyContext();
+            context.SetMockInteraction(interactions);
+
+            var result = context.GetMockInteractions().ToList();
+
+            Assert.Equal(2, result.Count());
+            Assert.Equal(interactions.First(), result.First());
+            Assert.Equal(interactions.Last(), result.Last());
+        }
+
+        [Fact]
+        public void GetMockInteractions_WithNoRegisteredInteractions_ReturnsEmptyList()
+        {
+            var context = new NancyContext();
+            var result = context.GetMockInteractions();
+
+            Assert.Empty(result);
+        }
     }
 }

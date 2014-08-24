@@ -4,7 +4,6 @@ using PactNet.Mocks.MockHttpService.Configuration;
 
 namespace PactNet.Mocks.MockHttpService.Nancy
 {
-    //TODO: Test this
     public class NancyHttpHost : IHttpHost
     {
         private readonly Uri _baseUri;

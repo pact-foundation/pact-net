@@ -81,5 +81,30 @@ namespace PactNet.Tests.Reporters
 
             Assert.Throws<CompareFailedException>(() => reporter.ThrowIfAnyErrors());
         }
+
+        [Fact]
+        public void ClearErrors_WithNoErrors_ErrorsIsEmpty()
+        {
+            var mockOutputter = Substitute.For<IReportOutputter>();
+            var reporter = new Reporter(mockOutputter);
+
+            reporter.ClearErrors();
+
+            Assert.Empty(reporter.Errors);
+        }
+
+        [Fact]
+        public void ClearErrors_WithErrors_ErrorsIsEmpty()
+        {
+            var mockOutputter = Substitute.For<IReportOutputter>();
+            var reporter = new Reporter(mockOutputter);
+
+            reporter.ReportError("something broke");
+            reporter.ReportError("something broke 2");
+
+            reporter.ClearErrors();
+
+            Assert.Empty(reporter.Errors);
+        }
     }
 }

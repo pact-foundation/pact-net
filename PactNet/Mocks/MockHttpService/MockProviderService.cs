@@ -218,14 +218,28 @@ namespace PactNet.Mocks.MockHttpService
 
         private void PerformAdminHttpRequest(HttpMethod httpMethod, string path)
         {
-            var client = _httpClientFactory(BaseUri);
-            var request = new HttpRequestMessage(httpMethod, path);
-            request.Headers.Add(Constants.AdministrativeRequestHeaderKey, "true");
-            var response = client.SendAsync(request, CancellationToken.None).Result;
+            HttpStatusCode responseStatusCode;
+            var responseContent = String.Empty;
 
-            if (response.StatusCode != HttpStatusCode.OK)
+            using (var client = _httpClientFactory(BaseUri))
             {
-                throw new InvalidOperationException(response.ReasonPhrase);
+                var request = new HttpRequestMessage(httpMethod, path);
+                request.Headers.Add(Constants.AdministrativeRequestHeaderKey, "true");
+                var response = client.SendAsync(request, CancellationToken.None).Result;
+                responseStatusCode = response.StatusCode;
+                
+                if (response.Content != null)
+                {
+                    responseContent = response.Content.ReadAsStringAsync().Result;
+                }
+
+                request.Dispose();
+                response.Dispose();
+            }
+
+            if (responseStatusCode != HttpStatusCode.OK)
+            {
+                throw new InvalidOperationException(responseContent);
             }
         }
     }

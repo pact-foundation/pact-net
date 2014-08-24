@@ -26,90 +26,85 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
         public Response Handle(NancyContext context)
         {
-            return HandleAdminRequest(context);
-        }
-
-        private Response HandleAdminRequest(NancyContext context)
-        {
             if (context.Request.Method.Equals("DELETE", StringComparison.InvariantCultureIgnoreCase) &&
                 context.Request.Path == "/interactions")
             {
-                _mockProviderRepository.ClearHandledRequests();
-
-                return GenerateResponse(HttpStatusCode.OK, "Successfully cleared the handled requests.");
+                return HandleDeleteInteractions();
             }
 
-            //TODO: Add tests for this
             if (context.Request.Method.Equals("GET", StringComparison.InvariantCultureIgnoreCase) &&
                 context.Request.Path == "/interactions/verification")
             {
-                if (_mockProviderRepository == null)
+                return HandleGetInteractionsVerificationRequest(context);
+            }
+
+            return GenerateResponse(HttpStatusCode.NotFound,
+                String.Format("The {0} request for path {1}, does not have a matching mock provider admin action.", context.Request.Method, context.Request.Path));
+        }
+
+        private Response HandleDeleteInteractions()
+        {
+            _mockProviderRepository.ClearHandledRequests();
+            return GenerateResponse(HttpStatusCode.OK, "Successfully cleared the handled requests.");
+        }
+
+        private Response HandleGetInteractionsVerificationRequest(NancyContext context)
+        {
+            //Check all registered interactions have been used once and only once
+            var registeredInteractions = context.GetMockInteractions().ToList();
+            if (registeredInteractions.Any())
+            {
+                foreach (var registeredInteraction in registeredInteractions)
                 {
-                    return new Response
-                    {
-                        StatusCode = HttpStatusCode.InternalServerError
-                    };
-                }
-
-                //Check when no interactions, registered but there have been some calls made (should never happed)
-                //Check when interactions 
-
-                var interactions = context.GetMockInteractions();
-
-                //Need to handle nulls etc here
-                foreach (var interaction in interactions)
-                {
-                    var interactionUsages = _mockProviderRepository.HandledRequests.Where(x => x.MatchedInteraction == interaction).ToList();
+                    var interactionUsages = _mockProviderRepository.HandledRequests.Where(x => x.MatchedInteraction == registeredInteraction).ToList();
 
                     if (interactionUsages == null || !interactionUsages.Any())
                     {
-                        _reporter.ReportError(String.Format("Interaction with description '{0}' and provider state '{1}', was not used by the test.", interaction.Description, interaction.ProviderState));
+                        _reporter.ReportError(String.Format("Registered mock interaction with description '{0}' and provider state '{1}', was not used by the test.", registeredInteraction.Description, registeredInteraction.ProviderState));
                     }
-
-                    if (interactionUsages.Count() > 1)
+                    else if (interactionUsages.Count() > 1)
                     {
-                        _reporter.ReportError(String.Format("Interaction with description '{0}' and provider state '{1}', was used {2} time/s by the test.", interaction.Description, interaction.ProviderState, interactionUsages.Count()));
+                        _reporter.ReportError(String.Format("Registered mock interaction with description '{0}' and provider state '{1}', was used {2} time/s by the test.", registeredInteraction.Description, registeredInteraction.ProviderState, interactionUsages.Count()));
                     }
                 }
-
-                if (_mockProviderRepository.HandledRequests != null &&
-                    _mockProviderRepository.HandledRequests.Any())
+            }
+            else
+            {
+                if (_mockProviderRepository.HandledRequests != null && _mockProviderRepository.HandledRequests.Any())
                 {
-                    foreach (var stat in _mockProviderRepository.HandledRequests)
-                    {
-                        _requestComparer.Compare(stat.MatchedInteraction.Request, stat.ActualRequest);
-                    }
+                    _reporter.ReportError("No mock interactions were registered, however the mock provider service was called.");
                 }
-
-                try
-                {
-                    _reporter.ThrowIfAnyErrors();
-                }
-                catch (Exception ex)
-                {
-                    return GenerateResponse(HttpStatusCode.InternalServerError, ex.Message);
-                }
-
-                return GenerateResponse(HttpStatusCode.OK, "Successfully verified mock provider interactions.");
             }
 
-            return GenerateResponse(HttpStatusCode.NotFound, 
-                String.Format("The {0} request for path {1}, does not have a matching mock provider admin action.", context.Request.Method, context.Request.Path));
+            //Check all handled requests actually match the registered interaction
+            if (_mockProviderRepository.HandledRequests != null &&
+                _mockProviderRepository.HandledRequests.Any())
+            {
+                foreach (var handledRequest in _mockProviderRepository.HandledRequests)
+                {
+                    _requestComparer.Compare(handledRequest.MatchedInteraction.Request, handledRequest.ActualRequest);
+                }
+            }
+
+            try
+            {
+                _reporter.ThrowIfAnyErrors();
+            }
+            catch (Exception ex)
+            {
+                _reporter.ClearErrors();
+                return GenerateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+
+            return GenerateResponse(HttpStatusCode.OK, "Successfully verified mock provider interactions.");
         }
 
         private Response GenerateResponse(HttpStatusCode statusCode, string message)
         {
-            var responseMessage = message
-                .Replace("\r", " ")
-                .Replace("\n", "")
-                .Replace("\t", " ")
-                .Replace(@"\", "");
-
             return new Response
             {
                 StatusCode = statusCode,
-                ReasonPhrase = responseMessage,
-                Contents = s => SetContent(responseMessage, s)
+                Contents = s => SetContent(message, s)
             };
         }
 
