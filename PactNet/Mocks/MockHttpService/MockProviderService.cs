@@ -4,8 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
-using Nancy.Hosting.Self;
-using PactNet.Mocks.MockHttpService.Configuration;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Nancy;
 using PactNet.Models;
@@ -14,8 +12,8 @@ namespace PactNet.Mocks.MockHttpService
 {
     public class MockProviderService : IMockProviderService
     {
-        private readonly Func<Uri, IMockContextService, NancyHost> _nancyHostFactory;
-        private NancyHost _host;
+        private readonly Func<Uri, IMockContextService, IHttpHost> _hostFactory;
+        private IHttpHost _host;
         private readonly Func<string, HttpClient> _httpClientFactory; 
 
         private string _providerState;
@@ -34,18 +32,18 @@ namespace PactNet.Mocks.MockHttpService
 
         [Obsolete("For testing only.")]
         public MockProviderService(
-            Func<Uri, IMockContextService, NancyHost> nancyHostFactory, 
+            Func<Uri, IMockContextService, IHttpHost> hostFactory,
             int port,
             Func<string, HttpClient> httpClientFactory)
         {
-            _nancyHostFactory = nancyHostFactory;
+            _hostFactory = hostFactory;
             BaseUri = String.Format("http://localhost:{0}", port);
             _httpClientFactory = httpClientFactory;
         }
 
         public MockProviderService(int port)
             : this(
-            (baseUri, mockContextService) => new NancyHost(new MockProviderNancyBootstrapper(mockContextService), NancyConfig.HostConfiguration, baseUri), 
+            (baseUri, mockContextService) => new NancyHttpHost(baseUri, mockContextService), 
             port,
             baseUri => new HttpClient { BaseAddress = new Uri(baseUri) })
         {
@@ -109,34 +107,6 @@ namespace PactNet.Mocks.MockHttpService
             {
                 throw new InvalidOperationException("Unable to verify interactions because the mock provider service is not running.");
             }
-
-            if (_testScopedInteractions == null)
-            {
-                return;
-            }
-
-            var unUsedInteractions = _testScopedInteractions.Where(interaction => interaction.UsageCount < 1).ToList();
-            var unUsedInteractionsErrorMessage = "";
-
-            if (unUsedInteractions.Any())
-            {
-                unUsedInteractionsErrorMessage = "The following interactions were not used by the test: " + String.Join(", ",
-                    unUsedInteractions.Select(interaction => String.Format("{0}", interaction.Summary()))) + ". ";
-            }
-
-            var multiUsedInteractions = _testScopedInteractions.Where(interaction => interaction.UsageCount > 1).ToList();
-            var multiUsedInteractionsErrorMessage = "";
-
-            if (multiUsedInteractions.Any())
-            {
-                multiUsedInteractionsErrorMessage = "The following interactions were called more than once by the test: " + String.Join(", ",
-                    multiUsedInteractions.Select(interaction => String.Format("{0} [{1} time/s]", interaction.Summary(), interaction.UsageCount))) + ". ";
-            }
-
-            if (unUsedInteractions.Any() || multiUsedInteractions.Any())
-            {
-                throw new InvalidOperationException(unUsedInteractionsErrorMessage + multiUsedInteractionsErrorMessage);
-            }
         }
 
         private void RegisterInteraction()
@@ -170,7 +140,7 @@ namespace PactNet.Mocks.MockHttpService
             if (_testScopedInteractions.Any(x => x.Description == interaction.Description &&
                 x.ProviderState == interaction.ProviderState))
             {
-                throw new InvalidOperationException(String.Format("An interaction already exists with the description \"{0}\" and provider state \"{1}\". Please supply a different description or provider state.", interaction.Description, interaction.ProviderState));
+                throw new InvalidOperationException(String.Format("An interaction already exists with the description '{0}' and provider state '{1}'. Please supply a different description or provider state.", interaction.Description, interaction.ProviderState));
             }
 
             if (!_interactions.Any(x => x.Description == interaction.Description &&
@@ -186,18 +156,15 @@ namespace PactNet.Mocks.MockHttpService
 
         public void Start()
         {
-            _host = _nancyHostFactory(new Uri(BaseUri), new MockContextService(GetMockInteractions));
+            StopRunningHost();
+            _host = _hostFactory(new Uri(BaseUri), new MockContextService(GetMockInteractions));
             _host.Start();
         }
 
         public void Stop()
         {
             ClearAllState();
-            if (_host != null)
-            {
-                _host.Stop();
-                _host.Dispose();
-            }
+            StopRunningHost();
         }
 
         public void ClearInteractions()
@@ -207,6 +174,15 @@ namespace PactNet.Mocks.MockHttpService
             if (_host != null)
             {
                 PerformAdminHttpRequest(HttpMethod.Delete, "/interactions");
+            }
+        }
+
+        private void StopRunningHost()
+        {
+            if (_host != null)
+            {
+                _host.Stop();
+                _host = null;
             }
         }
 

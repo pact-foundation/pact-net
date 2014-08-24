@@ -243,7 +243,7 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void Verify_WhenFileDoesNotExistOnFileSystem_ThrowsPactAssertException()
+        public void Verify_WhenFileDoesNotExistOnFileSystem_ThrowsInvalidOperationException()
         {
             var serviceProvider = "Event API";
             var serviceConsumer = "My client";
@@ -257,7 +257,7 @@ namespace PactNet.Tests
                 .HonoursPactWith(serviceConsumer)
                 .PactUri(pactUri);
 
-            Assert.Throws<CompareFailedException>(() => pactVerifier.Verify());
+            Assert.Throws<InvalidOperationException>(() => pactVerifier.Verify());
 
             mockFileSystem.File.Received(1).ReadAllText(pactUri);
         }

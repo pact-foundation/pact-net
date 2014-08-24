@@ -10,13 +10,5 @@ namespace PactNet.Mocks.MockHttpService.Models
 
         [JsonProperty(PropertyName = "response")]
         public ProviderServiceResponse Response { get; set; }
-
-        [JsonIgnore]
-        public int UsageCount { get; private set; }
-
-        public void IncrementUsage()
-        {
-            UsageCount++;
-        }
     }
 }

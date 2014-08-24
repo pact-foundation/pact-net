@@ -36,7 +36,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             {
                 _mockProviderRepository.ClearHandledRequests();
 
-                return GenerateResponse(HttpStatusCode.OK, "Successfully cleared the handled requests");
+                return GenerateResponse(HttpStatusCode.OK, "Successfully cleared the handled requests.");
             }
 
             //TODO: Add tests for this
@@ -51,10 +51,30 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                     };
                 }
 
-                if (_mockProviderRepository.HandledRequests != null && _mockProviderRepository.HandledRequests.Any())
-                {
-                    //TODO: Check number of calls
+                //Check when no interactions, registered but there have been some calls made (should never happed)
+                //Check when interactions 
 
+                var interactions = context.GetMockInteractions();
+
+                //Need to handle nulls etc here
+                foreach (var interaction in interactions)
+                {
+                    var interactionUsages = _mockProviderRepository.HandledRequests.Where(x => x.MatchedInteraction == interaction).ToList();
+
+                    if (interactionUsages == null || !interactionUsages.Any())
+                    {
+                        _reporter.ReportError(String.Format("Interaction with description '{0}' and provider state '{1}', was not used by the test.", interaction.Description, interaction.ProviderState));
+                    }
+
+                    if (interactionUsages.Count() > 1)
+                    {
+                        _reporter.ReportError(String.Format("Interaction with description '{0}' and provider state '{1}', was used {2} time/s by the test.", interaction.Description, interaction.ProviderState, interactionUsages.Count()));
+                    }
+                }
+
+                if (_mockProviderRepository.HandledRequests != null &&
+                    _mockProviderRepository.HandledRequests.Any())
+                {
                     foreach (var stat in _mockProviderRepository.HandledRequests)
                     {
                         _requestComparer.Compare(stat.MatchedInteraction.Request, stat.ActualRequest);
@@ -70,7 +90,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                     return GenerateResponse(HttpStatusCode.InternalServerError, ex.Message);
                 }
 
-                return GenerateResponse(HttpStatusCode.OK, "Successfully verified mock provider interactions");
+                return GenerateResponse(HttpStatusCode.OK, "Successfully verified mock provider interactions.");
             }
 
             return GenerateResponse(HttpStatusCode.NotFound, 

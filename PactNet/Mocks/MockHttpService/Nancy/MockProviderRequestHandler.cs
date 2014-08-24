@@ -53,11 +53,9 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         {
             var actualRequest = _requestMapper.Convert(context.Request);
 
-            var matchingInteraction = context.GetMatchingInteraction(actualRequest.Method, actualRequest.Path);
+            var matchingInteraction = context.GetMatchingMockInteraction(actualRequest.Method, actualRequest.Path);
 
             _mockProviderRepository.AddHandledRequest(new HandledRequest(actualRequest, matchingInteraction));
-
-            matchingInteraction.IncrementUsage(); //TODO: Eventually we want to remove this
 
             return _responseMapper.Convert(matchingInteraction.Response);
         }

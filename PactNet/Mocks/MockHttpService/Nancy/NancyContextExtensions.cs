@@ -13,7 +13,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             context.Items[Constants.PactMockInteractionsKey] = interactions;
         }
 
-        public static ProviderServiceInteraction GetMatchingInteraction(this NancyContext context, HttpVerb method, string path)
+        public static ProviderServiceInteraction GetMatchingMockInteraction(this NancyContext context, HttpVerb method, string path)
         {
             if (!context.Items.ContainsKey(Constants.PactMockInteractionsKey))
             {
@@ -42,6 +42,16 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             }
 
             return matchingInteractions.Single();
+        }
+
+        public static IEnumerable<ProviderServiceInteraction> GetMockInteractions(this NancyContext context)
+        {
+            if (context.Items.ContainsKey(Constants.PactMockInteractionsKey))
+            {
+                return (IEnumerable<ProviderServiceInteraction>)context.Items[Constants.PactMockInteractionsKey];
+            }
+
+            return null;
         }
     }
 }

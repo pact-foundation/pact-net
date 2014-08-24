@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Linq;
-using Nancy.Hosting.Self;
+using NSubstitute;
 using PactNet.Mocks.MockHttpService;
-using PactNet.Mocks.MockHttpService.Configuration;
 using PactNet.Mocks.MockHttpService.Models;
-using PactNet.Mocks.MockHttpService.Nancy;
 using PactNet.Tests.Fakes;
 using Xunit;
 
@@ -12,14 +10,22 @@ namespace PactNet.Tests.Mocks.MockHttpService
 {
     public class MockProviderServiceTests
     {
+        private IHttpHost _mockHttpHost;
         private FakeHttpClient _fakeHttpClient;
+        private int _mockHttpHostFactoryCallCount;
 
         private IMockProviderService GetSubject(int port = 1234)
         {
+            _mockHttpHost = Substitute.For<IHttpHost>();
             _fakeHttpClient = new FakeHttpClient();
+            _mockHttpHostFactoryCallCount = 0;
 
             return new MockProviderService(
-                (baseUri, mockContextService) => new NancyHost(new MockProviderNancyBootstrapper(mockContextService), NancyConfig.HostConfiguration, baseUri),
+                (baseUri, mockContextService) =>
+                {
+                    _mockHttpHostFactoryCallCount++;
+                    return _mockHttpHost;
+                },
                 port,
                 baseUri => _fakeHttpClient);
         }
@@ -316,6 +322,70 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
+        public void VerifyInteractions_WhenHostIsNull_ThrowsInvalidOperationException()
+        {
+            var mockService = GetSubject();
+
+            mockService.Stop();
+
+            Assert.Throws<InvalidOperationException>(() => mockService.VerifyInteractions());
+        }
+
+        [Fact]
+        public void VerifyInteractions_WhenHostIsNull_DoesNotPerformAdminInteractionsVerificationGetRequest()
+        {
+            var mockService = GetSubject();
+
+            mockService.Stop();
+
+            try
+            {
+                mockService.VerifyInteractions();
+            }
+            catch (Exception)
+            {
+            }
+
+            Assert.Equal(0, _fakeHttpClient.SendAsyncCallCount);
+        }
+
+        [Fact]
+        public void VerifyInteractions_WhenHostIsNotNull_PerformsAdminInteractionsVerificationGetRequest()
+        {
+            var mockService = GetSubject();
+
+            mockService.Start();
+
+            mockService.VerifyInteractions();
+
+            Assert.Equal(1, _fakeHttpClient.SendAsyncCallCount);
+        }
+
+        [Fact]
+        public void ClearInteractions_WhenHostIsNull_DoesNotPerformAdminInteractionsDeleteRequest()
+        {
+            var mockService = GetSubject();
+
+            mockService.Stop();
+
+            mockService.ClearInteractions();
+
+            Assert.Equal(0, _fakeHttpClient.SendAsyncCallCount);
+        }
+
+        [Fact]
+        public void ClearInteractions_WhenHostIsNotNull_PerformsAdminInteractionsDeleteRequest()
+        {
+            var mockService = GetSubject();
+
+            mockService.Start();
+
+            mockService.ClearInteractions();
+
+            Assert.Equal(1, _fakeHttpClient.SendAsyncCallCount);
+        }
+
+        [Fact]
         public void Stop_WhenCalled_InteractionsIsNull()
         {
             var mockService = GetSubject();
@@ -331,101 +401,63 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void VerifyInteractions_InteractionHasNotBeenUsed_ThrowsInvalidOperationException()
+        public void Stop_WithNullHost_DoesNotThrow()
         {
             var mockService = GetSubject();
-            var request = new ProviderServiceRequest();
 
-            mockService
-                .UponReceiving("My interaction")
-                .With(request)
-                .WillRespondWith(new ProviderServiceResponse());
-
-            Assert.Throws<InvalidOperationException>(() => mockService.VerifyInteractions());
+            mockService.Stop();
         }
 
         [Fact]
-        public void VerifyInteractions_InteractionHasBeenUsedMultipleTimes_ThrowsInvalidOperationException()
+        public void Stop_WithNonNullHost_StopIsCalledOnHttpHost()
         {
             var mockService = GetSubject();
-            var request = new ProviderServiceRequest();
 
-            mockService
-                .UponReceiving("My interaction")
-                .With(request)
-                .WillRespondWith(new ProviderServiceResponse());
+            mockService.Start();
 
-            ((ProviderServiceInteraction)mockService.Interactions.First()).IncrementUsage();
-            ((ProviderServiceInteraction)mockService.Interactions.First()).IncrementUsage();
+            mockService.Stop();
 
-            Assert.Throws<InvalidOperationException>(() => mockService.VerifyInteractions());
+            _mockHttpHost.Received(1).Stop();
         }
 
         [Fact]
-        public void VerifyInteractions_WithInteractionsThatHaveBeenUsedMultipleTimesAndNotUsedAtAll_ThrowsInvalidOperationException()
+        public void Start_WithNonNullHost_StopIsCalledOnHttpHost()
         {
             var mockService = GetSubject();
-            var request = new ProviderServiceRequest();
 
-            mockService
-                .UponReceiving("My interaction")
-                .With(request)
-                .WillRespondWith(new ProviderServiceResponse());
+            mockService.Start();
 
-            mockService
-                .Given("My provider state")
-                .UponReceiving("My interaction 2")
-                .With(request)
-                .WillRespondWith(new ProviderServiceResponse());
+            mockService.Start();
 
-            ((ProviderServiceInteraction)mockService.Interactions.First()).IncrementUsage();
-            ((ProviderServiceInteraction)mockService.Interactions.First()).IncrementUsage();
-
-            Assert.Throws<InvalidOperationException>(() => mockService.VerifyInteractions());
+            _mockHttpHost.Received(1).Stop();
         }
 
         [Fact]
-        public void VerifyInteractions_InteractionHasBeenUsed_DoesNotThrow()
+        public void Start_WithNullHost_DoesNotThrow()
         {
             var mockService = GetSubject();
-            var request = new ProviderServiceRequest();
 
-            mockService
-                .UponReceiving("My interaction")
-                .With(request)
-                .WillRespondWith(new ProviderServiceResponse());
-
-            ((ProviderServiceInteraction) mockService.Interactions.First()).IncrementUsage();
-
-            mockService.VerifyInteractions();
+            mockService.Start();
         }
 
         [Fact]
-        public void VerifyInteractions_WithNoInteractions_DoesNotThrow()
+        public void Start_WhenCalled_CallsHostFactory()
         {
             var mockService = GetSubject();
 
-            mockService.VerifyInteractions();
+            mockService.Start();
+
+            Assert.Equal(1, _mockHttpHostFactoryCallCount);
         }
 
         [Fact]
-        public void ClearInteractions_WhenCalledWithNullHost_DoesNotPerformAdminInteractionsDeleteRequest()
+        public void Start_WhenCalled_CallsStartOnHttpHost()
         {
             var mockService = GetSubject();
 
-            mockService.ClearInteractions();
+            mockService.Start();
 
-            Assert.Equal(0, _fakeHttpClient.SendAsyncCallCount);
-        }
-
-        [Fact]
-        public void ClearInteractions_WhenCalledInitialisedHost_PerformsAdminInteractionsDeleteRequest()
-        {
-            var mockService = GetSubject();
-
-            mockService.ClearInteractions();
-
-            Assert.Equal(1, _fakeHttpClient.SendAsyncCallCount);
+            _mockHttpHost.Received(1).Start();
         }
     }
 }

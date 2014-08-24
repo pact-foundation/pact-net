@@ -72,7 +72,6 @@
     <Compile Include="Mocks\MockHttpService\Mappers\NancyResponseMapperTests.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\ProviderServiceRequestMapperTests.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\ProviderServiceResponseMapperTests.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\ProviderServiceInteractionTests.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\MockProviderAdminRequestHandlerTests.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\MockProviderRequestHandlerTests.cs" />
     <Compile Include="Mocks\MockHttpService\MockContextServiceTests.cs" />
@@ -82,7 +81,6 @@
     <Compile Include="Mocks\MockHttpService\Models\HttpBodyContentTests.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\NancyContextExtensionsTests.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\PactAwareContextFactoryTests.cs" />
-    <Compile Include="Models\InteractionTests.cs" />
     <Compile Include="Models\PactFileTests.cs" />
     <Compile Include="Models\ProviderStatesTests.cs" />
     <Compile Include="Models\ProviderStateTests.cs" />

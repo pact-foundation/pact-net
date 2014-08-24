@@ -23,7 +23,7 @@ namespace PactNet.Models
 
             if (_providerStates.Any(x => x.ProviderStateDescription == providerState.ProviderStateDescription))
             {
-                throw new ArgumentException(String.Format("providerState \"{0}\" has already been added", providerState.ProviderStateDescription));
+                throw new ArgumentException(String.Format("providerState '{0}' has already been added", providerState.ProviderStateDescription));
             }
 
             _providerStates.Add(providerState);

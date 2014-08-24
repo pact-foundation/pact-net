@@ -52,7 +52,7 @@ namespace PactNet.Tests.Specification
 
             if (!Directory.Exists(pathToTestCases))
             {
-                throw new InvalidOperationException(String.Format("Specification tests not found in path \"{0}\". Please ensure pact-specification git submodule has been pulled (git submodule update --init).", pathToTestCases));
+                throw new InvalidOperationException(String.Format("Specification tests not found in path '{0}'. Please ensure pact-specification git submodule has been pulled (git submodule update --init).", pathToTestCases));
             }
 
             foreach (var testCaseSubDirectory in Directory.EnumerateDirectories(pathToTestCases))

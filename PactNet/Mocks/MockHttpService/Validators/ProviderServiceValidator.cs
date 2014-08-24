@@ -86,7 +86,7 @@ namespace PactNet.Mocks.MockHttpService.Validators
 
                             if (providerStateItem == null)
                             {
-                                throw new InvalidOperationException(String.Format("providerState \"{0}\" was defined by a consumer, however could not be found. Please supply this provider state.", interaction.ProviderState));
+                                throw new InvalidOperationException(String.Format("providerState '{0}' was defined by a consumer, however could not be found. Please supply this provider state.", interaction.ProviderState));
                             }
                         }
 

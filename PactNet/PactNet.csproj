@@ -72,6 +72,8 @@
     <Compile Include="Mocks\MockHttpService\Comparers\IHttpQueryStringComparer.cs" />
     <Compile Include="Mocks\MockHttpService\Configuration\NancyConfig.cs" />
     <Compile Include="Mocks\MockHttpService\Constants.cs" />
+    <Compile Include="Mocks\MockHttpService\IHttpHost.cs" />
+    <Compile Include="Mocks\MockHttpService\Nancy\NancyHttpHost.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\IMockProviderAdminRequestHandler.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\IMockProviderNancyRequestHandler.cs" />
     <Compile Include="Mocks\MockHttpService\IMockProviderService.cs" />
