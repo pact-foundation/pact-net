@@ -4,17 +4,17 @@ using System.IO;
 using System.Linq;
 using NSubstitute.Exceptions;
 using Newtonsoft.Json;
-using PactNet.Tests.Specification.Models;
+using PactNet.Tests.IntegrationTests.Specification.Models;
 using Xunit;
 
-namespace PactNet.Tests.Specification
+namespace PactNet.Tests.IntegrationTests.Specification
 {
     public class MockHttpServiceSpecificationTests
     {
         [Fact]
         public void ValidateRequestSpecification()
         {
-            var failedTestCases = RunPactSpecificationTests<RequestTestCase>("..\\..\\Specification\\pact-specification\\testcases\\request");
+            var failedTestCases = RunPactSpecificationTests<RequestTestCase>("..\\..\\IntegrationTests\\Specification\\pact-specification\\testcases\\request");
 
             if (failedTestCases.Any())
             {
@@ -31,7 +31,7 @@ namespace PactNet.Tests.Specification
         [Fact]
         public void ValidateResponseSpecification()
         {
-            var failedTestCases = RunPactSpecificationTests<ResponseTestCase>("..\\..\\Specification\\pact-specification\\testcases\\response");
+            var failedTestCases = RunPactSpecificationTests<ResponseTestCase>("..\\..\\IntegrationTests\\Specification\\pact-specification\\testcases\\response");
 
             if (failedTestCases.Any())
             {
@@ -65,6 +65,7 @@ namespace PactNet.Tests.Specification
 
                     try
                     {
+                        Console.WriteLine("Running test: " + testCaseFileName);
                         testCase.Verify();
                     }
                     catch (SubstituteException)

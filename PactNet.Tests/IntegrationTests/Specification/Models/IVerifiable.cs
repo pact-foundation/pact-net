@@ -1,4 +1,4 @@
-﻿namespace PactNet.Tests.Specification.Models
+﻿namespace PactNet.Tests.IntegrationTests.Specification.Models
 {
     public interface IVerifiable
     {

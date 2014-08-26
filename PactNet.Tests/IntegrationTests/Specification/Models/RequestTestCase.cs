@@ -3,7 +3,7 @@ using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Reporters;
 
-namespace PactNet.Tests.Specification.Models
+namespace PactNet.Tests.IntegrationTests.Specification.Models
 {
     public class RequestTestCase : IVerifiable
     {
