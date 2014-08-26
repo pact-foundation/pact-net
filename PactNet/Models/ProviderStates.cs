@@ -33,7 +33,7 @@ namespace PactNet.Models
         {
             if (providerState == null)
             {
-                throw new ArgumentException("Please supply a non null or empty providerState");
+                throw new ArgumentNullException("Please supply a non null providerState");
             }
 
             if (_providerStates != null && _providerStates.Any(x => x.ProviderStateDescription == providerState))

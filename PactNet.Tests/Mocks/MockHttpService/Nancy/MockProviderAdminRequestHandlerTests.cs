@@ -291,7 +291,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             _mockReporter
                 .When(x => x.ThrowIfAnyErrors())
-                .Do(x => { throw new CompareFailedException("Expected request cannot be null"); });
+                .Do(x => { throw new PactFailureException("Expected request cannot be null"); });
 
             var response = handler.Handle(context);
 
@@ -313,7 +313,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             _mockReporter
                 .When(x => x.ThrowIfAnyErrors())
-                .Do(x => { throw new CompareFailedException(exceptionMessage); });
+                .Do(x => { throw new PactFailureException(exceptionMessage); });
 
             var response = handler.Handle(context);
 
@@ -335,7 +335,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             _mockReporter
                 .When(x => x.ThrowIfAnyErrors())
-                .Do(x => { throw new CompareFailedException(exceptionMessage); });
+                .Do(x => { throw new PactFailureException(exceptionMessage); });
 
             var response = handler.Handle(context);
 
@@ -365,7 +365,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             _mockReporter
                 .When(x => x.ThrowIfAnyErrors())
-                .Do(x => { throw new CompareFailedException("Expected request cannot be null"); });
+                .Do(x => { throw new PactFailureException("Expected request cannot be null"); });
 
             handler.Handle(context);
 

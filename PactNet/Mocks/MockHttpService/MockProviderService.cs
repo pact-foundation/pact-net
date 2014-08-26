@@ -239,7 +239,7 @@ namespace PactNet.Mocks.MockHttpService
 
             if (responseStatusCode != HttpStatusCode.OK)
             {
-                throw new InvalidOperationException(responseContent);
+                throw new PactFailureException(responseContent);
             }
         }
     }

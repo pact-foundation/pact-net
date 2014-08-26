@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Nancy;
 using PactNet.Mocks.MockHttpService;
@@ -68,24 +67,24 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         }
 
         [Fact]
-        public void GetMatchingMockInteraction_WithNoInteractions_ThrowsInvalidOperationException()
+        public void GetMatchingMockInteraction_WithNoInteractions_ThrowsPactFailureException()
         {
             var context = new NancyContext();
 
-            Assert.Throws<InvalidOperationException>(() => context.GetMatchingMockInteraction(HttpVerb.Get, "/events"));
+            Assert.Throws<PactFailureException>(() => context.GetMatchingMockInteraction(HttpVerb.Get, "/events"));
         }
 
         [Fact]
-        public void GetMatchingMockInteraction_WithInteractionsNull_ThrowsInvalidOperationException()
+        public void GetMatchingMockInteraction_WithInteractionsNull_ThrowsPactFailureException()
         {
             var context = new NancyContext();
             context.Items[Constants.PactMockInteractionsKey] = null;
 
-            Assert.Throws<InvalidOperationException>(() => context.GetMatchingMockInteraction(HttpVerb.Get, "/events"));
+            Assert.Throws<PactFailureException>(() => context.GetMatchingMockInteraction(HttpVerb.Get, "/events"));
         }
 
         [Fact]
-        public void GetMatchingMockInteraction_WithNoMatchingInteraction_ThrowsInvalidOperationException()
+        public void GetMatchingMockInteraction_WithNoMatchingInteraction_ThrowsPactFailureException()
         {
             var interactions = new List<ProviderServiceInteraction>
             {
@@ -95,11 +94,11 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             var context = new NancyContext();
             context.SetMockInteraction(interactions);
 
-            Assert.Throws<InvalidOperationException>(() => context.GetMatchingMockInteraction(HttpVerb.Get, "/events"));
+            Assert.Throws<PactFailureException>(() => context.GetMatchingMockInteraction(HttpVerb.Get, "/events"));
         }
 
         [Fact]
-        public void GetMatchingMockInteraction_WithMoreThanOneMatchingInteraction_ThrowsInvalidOperationException()
+        public void GetMatchingMockInteraction_WithMoreThanOneMatchingInteraction_ThrowsPactFailureException()
         {
             var requestResponsePairs = new List<ProviderServiceInteraction>
             {
@@ -110,7 +109,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             var context = new NancyContext();
             context.SetMockInteraction(requestResponsePairs);
 
-            Assert.Throws<InvalidOperationException>(() => context.GetMatchingMockInteraction(HttpVerb.Get, "/events"));
+            Assert.Throws<PactFailureException>(() => context.GetMatchingMockInteraction(HttpVerb.Get, "/events"));
         }
 
         [Fact]

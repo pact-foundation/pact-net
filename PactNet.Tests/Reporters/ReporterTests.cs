@@ -86,14 +86,14 @@ namespace PactNet.Tests.Reporters
         }
 
         [Fact]
-        public void ThrowIfAnyErrors_WithErrors_ThrowsCompareFailedException()
+        public void ThrowIfAnyErrors_WithErrors_ThrowsPactFailureException()
         {
             var mockOutputter = Substitute.For<IReportOutputter>();
             var reporter = new Reporter(mockOutputter);
 
             reporter.ReportError("something broke");
 
-            Assert.Throws<CompareFailedException>(() => reporter.ThrowIfAnyErrors());
+            Assert.Throws<PactFailureException>(() => reporter.ThrowIfAnyErrors());
         }
 
         [Fact]

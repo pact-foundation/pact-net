@@ -9,7 +9,6 @@ using PactNet.Models;
 
 namespace PactNet
 {
-    //TODO: Implement a Pact file broker
     public class PactBuilder : IPactBuilder
     {
         public string ConsumerName { get; private set; }
@@ -24,17 +23,11 @@ namespace PactNet
             get { return String.Format("{0}-{1}.json", ConsumerName, ProviderName).Replace(' ', '_').ToLower(); }
         }
 
-        private string _pactFileUri;
         public string PactFileUri
         {
             get
             {
-                if (String.IsNullOrEmpty(_pactFileUri))
-                {
-                    return _fileSystem.Path.Combine(PactFileDirectory, PactFileName);
-                }
-
-                return _pactFileUri;
+                return _fileSystem.Path.Combine(PactFileDirectory, PactFileName);
             }
         }
 

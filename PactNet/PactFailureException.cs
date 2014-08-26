@@ -2,9 +2,9 @@
 
 namespace PactNet
 {
-    public class CompareFailedException : Exception
+    public class PactFailureException : Exception
     {
-        public CompareFailedException(string message)
+        public PactFailureException(string message)
             : base(message)
         {
         }

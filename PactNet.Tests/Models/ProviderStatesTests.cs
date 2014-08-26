@@ -49,6 +49,14 @@ namespace PactNet.Tests.Models
         }
 
         [Fact]
+        public void Find_WithNullProviderState_ThrowsArgumentNullException()
+        {
+            var providerStates = new ProviderStates();
+
+            Assert.Throws<ArgumentNullException>(() => providerStates.Find(null));
+        }
+
+        [Fact]
         public void Find_WithProviderStateThatHasBeenAdded_ReturnsProviderState()
         {
             const string providerStateDescription = "my provider state 2";

@@ -117,7 +117,7 @@
     <Compile Include="Mocks\MockHttpService\Models\ProviderServiceInteraction.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\IProviderServiceResponseComparer.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\ProviderServiceResponseComparer.cs" />
-    <Compile Include="CompareFailedException.cs" />
+    <Compile Include="PactFailureException.cs" />
     <Compile Include="Mocks\MockHttpService\Models\ProviderServicePactFile.cs" />
     <Compile Include="Models\Interaction.cs" />
     <Compile Include="Models\Party.cs" />

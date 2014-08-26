@@ -258,7 +258,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
         }
 
         [Fact]
-        public void Validate_WhenProviderServiceResponseValidatorThrowsACompareFailedException_ThrowsACompareFailedException()
+        public void Validate_WhenProviderServiceResponseValidatorThrowsPactFailureExceptio_ThrowsPactFailureException()
         {
             var pact = new ProviderServicePactFile
             {
@@ -279,7 +279,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
 
             mockProviderServiceResponseComparer
                 .When(x => x.Compare(Arg.Any<ProviderServiceResponse>(), Arg.Any<ProviderServiceResponse>()))
-                .Do(x => { throw new CompareFailedException("Expected response cannot be null"); });
+                .Do(x => { throw new PactFailureException("Expected response cannot be null"); });
 
             var providerServiceValidator = new ProviderServiceValidator(
                 mockProviderServiceResponseComparer,
@@ -288,7 +288,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
                 mockProviderServiceResponseMapper,
                 new Reporter(new NoOpReportOutputter()));
 
-            Assert.Throws<CompareFailedException>(() => providerServiceValidator.Validate(pact, null));
+            Assert.Throws<PactFailureException>(() => providerServiceValidator.Validate(pact, null));
         }
 
         [Fact]
@@ -415,7 +415,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
 
             mockProviderServiceResponseComparer
                 .When(x => x.Compare(Arg.Any<ProviderServiceResponse>(), Arg.Any<ProviderServiceResponse>()))
-                .Do(x => { throw new CompareFailedException("Expected response cannot be null"); });
+                .Do(x => { throw new PactFailureException("Expected response cannot be null"); });
 
             var providerServiceValidator = new ProviderServiceValidator(
                 mockProviderServiceResponseComparer,
@@ -424,7 +424,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
                 mockProviderServiceResponseMapper,
                 new Reporter(new NoOpReportOutputter()));
 
-            Assert.Throws<CompareFailedException>(() => providerServiceValidator.Validate(pact, providerStates));
+            Assert.Throws<PactFailureException>(() => providerServiceValidator.Validate(pact, providerStates));
 
             Assert.True(actionInkoved, "Provider states pact tearDown action is invoked");
         }
@@ -530,7 +530,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
 
             mockProviderServiceResponseComparer
                 .When(x => x.Compare(Arg.Any<ProviderServiceResponse>(), Arg.Any<ProviderServiceResponse>()))
-                .Do(x => { throw new CompareFailedException("Expected response cannot be null"); });
+                .Do(x => { throw new PactFailureException("Expected response cannot be null"); });
 
             var providerServiceValidator = new ProviderServiceValidator(
                 mockProviderServiceResponseComparer,
@@ -539,7 +539,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
                 mockProviderServiceResponseMapper,
                 new Reporter(new NoOpReportOutputter()));
 
-            Assert.Throws<CompareFailedException>(() => providerServiceValidator.Validate(pact, providerStates));
+            Assert.Throws<PactFailureException>(() => providerServiceValidator.Validate(pact, providerStates));
 
             Assert.True(actionInkoved, "Provider state tearDown action is invoked");
         }
@@ -732,7 +732,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
         }
 
         [Fact]
-        public void Validate_WhenReporterHasErrors_ThrowsCompareFailedException()
+        public void Validate_WhenReporterHasErrors_ThrowsPactFailureException()
         {
             var pact = new ProviderServicePactFile
             {
@@ -755,7 +755,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
 
             mockReporter
                 .When(x => x.ThrowIfAnyErrors())
-                .Do(info => { throw new CompareFailedException("Compare failed"); });
+                .Do(info => { throw new PactFailureException("Compare failed"); });
 
             var providerServiceValidator = new ProviderServiceValidator(
                 mockProviderServiceResponseComparer,
@@ -764,7 +764,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
                 mockProviderServiceResponseMapper,
                 mockReporter);
 
-            Assert.Throws<CompareFailedException>(() => providerServiceValidator.Validate(pact, null));
+            Assert.Throws<PactFailureException>(() => providerServiceValidator.Validate(pact, null));
             mockReporter.Received(1).ThrowIfAnyErrors();
         }
     }

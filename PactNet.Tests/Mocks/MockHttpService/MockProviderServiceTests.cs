@@ -380,7 +380,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void VerifyInteractions_WhenResponseFromHostIsNotOk_ThrowsInvalidOperationException()
+        public void VerifyInteractions_WhenResponseFromHostIsNotOk_ThrowsPactFailureException()
         {
             var mockService = GetSubject();
 
@@ -388,7 +388,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.Start();
 
-            Assert.Throws<InvalidOperationException>(() => mockService.VerifyInteractions());
+            Assert.Throws<PactFailureException>(() => mockService.VerifyInteractions());
         }
 
         [Fact]
@@ -432,7 +432,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void ClearInteractions_WhenResponseFromHostIsNotOk_ThrowsInvalidOperationException()
+        public void ClearInteractions_WhenResponseFromHostIsNotOk_ThrowsPactFailureException()
         {
             var mockService = GetSubject();
 
@@ -440,7 +440,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.Start();
 
-            Assert.Throws<InvalidOperationException>(() => mockService.ClearInteractions());
+            Assert.Throws<PactFailureException>(() => mockService.ClearInteractions());
         }
 
         [Fact]

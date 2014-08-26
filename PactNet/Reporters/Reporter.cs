@@ -50,7 +50,7 @@ namespace PactNet.Reporters
             if (_errors.Any())
             {
                 //TODO: Take a look at BDDfy and see what they do with regards to showing errors etc
-                throw new CompareFailedException(String.Join(", ", _errors));
+                throw new PactFailureException(String.Join(", ", _errors));
             }
         }
 

@@ -21,7 +21,7 @@ namespace PactNet.Tests.IntegrationTests
         }
 
         [Fact]
-        public void WhenRegisteringAnInteractionThatIsNeverSent_ThenInvalidOperationExceptionIsThrown()
+        public void WhenRegisteringAnInteractionThatIsNeverSent_ThenPactFailureExceptionIsThrown()
         {
             _mockProviderService
                 .UponReceiving("A POST request to create a new thing")
@@ -44,11 +44,11 @@ namespace PactNet.Tests.IntegrationTests
                     Status = 201
                 });
 
-            Assert.Throws<InvalidOperationException>(() => _mockProviderService.VerifyInteractions());
+            Assert.Throws<PactFailureException>(() => _mockProviderService.VerifyInteractions());
         }
 
         [Fact]
-        public void WhenRegisteringAnInteractionThatIsSentMultipleTimes_ThenInvalidOperationExceptionIsThrown()
+        public void WhenRegisteringAnInteractionThatIsSentMultipleTimes_ThenPactFailureExceptionIsThrown()
         {
             _mockProviderService
                 .UponReceiving("A GET request to retrieve a thing")
@@ -75,11 +75,11 @@ namespace PactNet.Tests.IntegrationTests
                 throw new Exception("Wrong status code was returned");
             }
 
-            Assert.Throws<InvalidOperationException>(() => _mockProviderService.VerifyInteractions());
+            Assert.Throws<PactFailureException>(() => _mockProviderService.VerifyInteractions());
         }
 
         [Fact]
-        public void WhenRegisteringAnInteractionWhereTheRequestDoesNotExactlyMatchTheActualRequest_ThenInvalidOperationExceptionIsThrown()
+        public void WhenRegisteringAnInteractionWhereTheRequestDoesNotExactlyMatchTheActualRequest_ThenPactFailureExceptionIsThrown()
         {
             _mockProviderService
                 .UponReceiving("A GET request to retrieve things by type")
@@ -108,7 +108,7 @@ namespace PactNet.Tests.IntegrationTests
                 throw new Exception("Wrong status code was returned");
             }
 
-            Assert.Throws<InvalidOperationException>(() => _mockProviderService.VerifyInteractions());
+            Assert.Throws<PactFailureException>(() => _mockProviderService.VerifyInteractions());
         }
     }
 }

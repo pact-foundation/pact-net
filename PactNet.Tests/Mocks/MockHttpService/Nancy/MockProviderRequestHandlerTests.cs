@@ -225,7 +225,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         public void Handle_WhenExpectionIsThrownHandlingRequest_ReasonPhraseAndBodyContentIsSetWithoutBackSlashes()
         {
             var nancyResponse = new Response { StatusCode = HttpStatusCode.OK };
-            var compareException = new CompareFailedException("Something\r\n \t \\ failed");
+            var compareException = new PactFailureException("Something\r\n \t \\ failed");
             const string expectedMessage = "Something     failed";
 
             var mockRequestMapper = Substitute.For<IProviderServiceRequestMapper>();
