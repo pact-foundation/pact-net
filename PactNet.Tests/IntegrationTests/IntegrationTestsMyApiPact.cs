@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO.Abstractions;
+using NSubstitute;
 using PactNet.Mocks.MockHttpService;
 
 namespace PactNet.Tests.IntegrationTests
@@ -13,7 +15,7 @@ namespace PactNet.Tests.IntegrationTests
 
         public IntegrationTestsMyApiPact()
         {
-            PactBuilder = new PactBuilder()
+            PactBuilder = new PactBuilder(port => new MockProviderService(port), Substitute.For<IFileSystem>())
                 .ServiceConsumer("IntegrationTests")
                 .HasPactWith("MyApi");
 

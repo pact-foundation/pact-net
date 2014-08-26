@@ -127,11 +127,11 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void Interactions_WithNoInteractions_ReturnsNull()
+        public void Interactions_WithNoInteractions_ReturnsEmpty()
         {
             var mockService = GetSubject();
 
-            Assert.Null(mockService.Interactions);
+            Assert.Empty(mockService.Interactions);
         }
 
         [Fact]
@@ -392,7 +392,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void ClearInteractions_WhenCalled_SetsTestScopedInteractionsNull()
+        public void ClearInteractions_WhenCalled_SetsTestScopedInteractionsEmpty()
         {
             var mockService = GetSubject();
 
@@ -402,7 +402,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.ClearInteractions();
 
-            Assert.Null(((MockProviderService)mockService).TestScopedInteractions);
+            Assert.Empty(((MockProviderService)mockService).TestScopedInteractions);
         }
 
         [Fact]
@@ -444,7 +444,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void Stop_WhenCalled_InteractionsIsNull()
+        public void Stop_WhenCalled_InteractionsIsEmpty()
         {
             var mockService = GetSubject();
 
@@ -455,7 +455,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.Stop();
 
-            Assert.Null(mockService.Interactions);
+            Assert.Empty(mockService.Interactions);
         }
 
         [Fact]

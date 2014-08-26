@@ -21,13 +21,13 @@ namespace PactNet.Mocks.MockHttpService
         private ProviderServiceRequest _request;
         private ProviderServiceResponse _response;
 
-        private IList<ProviderServiceInteraction> _testScopedInteractions;
+        private readonly IList<ProviderServiceInteraction> _testScopedInteractions = new List<ProviderServiceInteraction>();
         public IEnumerable<Interaction> TestScopedInteractions
         {
             get { return _testScopedInteractions; }
         }
 
-        private IList<ProviderServiceInteraction> _interactions;
+        private IList<ProviderServiceInteraction> _interactions = new List<ProviderServiceInteraction>();
         public IEnumerable<Interaction> Interactions
         {
             get { return _interactions; }
@@ -139,9 +139,6 @@ namespace PactNet.Mocks.MockHttpService
                 Response = _response
             };
 
-            _testScopedInteractions = _testScopedInteractions ?? new List<ProviderServiceInteraction>();
-            _interactions = _interactions ?? new List<ProviderServiceInteraction>();
-
             if (_testScopedInteractions.Any(x => x.Description == interaction.Description &&
                 x.ProviderState == interaction.ProviderState))
             {
@@ -174,7 +171,7 @@ namespace PactNet.Mocks.MockHttpService
 
         public void ClearInteractions()
         {
-            _testScopedInteractions = null;
+            _testScopedInteractions.Clear();
 
             if (_host != null)
             {
@@ -195,7 +192,7 @@ namespace PactNet.Mocks.MockHttpService
         {
             ClearTrasientState();
             ClearInteractions();
-            _interactions = null;
+            _interactions.Clear();
         }
 
         private void ClearTrasientState()
@@ -208,7 +205,7 @@ namespace PactNet.Mocks.MockHttpService
 
         private IEnumerable<ProviderServiceInteraction> GetMockInteractions()
         {
-            if (_testScopedInteractions == null || !_testScopedInteractions.Any())
+            if (!_testScopedInteractions.Any())
             {
                 return null;
             }
