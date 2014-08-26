@@ -62,6 +62,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Fakes\FakeHttpClient.cs" />
+    <Compile Include="IntegrationTests\IntegrationTestsMyApiPact.cs" />
+    <Compile Include="IntegrationTests\PactBuilderFailureIntegrationTests.cs" />
     <Compile Include="IntegrationTests\Specification\MockHttpServiceSpecificationTests.cs">
       <SubType>Code</SubType>
     </Compile>

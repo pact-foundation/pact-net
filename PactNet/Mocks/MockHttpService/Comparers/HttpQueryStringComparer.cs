@@ -22,15 +22,14 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                 return;
             }
 
-            var nomalisedExpectedQuery = ConvertUrlEncodingToUpperCase(expectedQuery);
-            var nomalisedActualQuery = ConvertUrlEncodingToUpperCase(actualQuery);
+            var normalisedExpectedQuery = ConvertUrlEncodingToUpperCase(expectedQuery);
+            var normalisedActualQuery = ConvertUrlEncodingToUpperCase(actualQuery);
 
-            _reporter.ReportInfo(String.Format("{0} has query set to {1}", _messagePrefix, nomalisedExpectedQuery));
-            _reporter.ReportInfo(String.Format("Actual query is {0}", nomalisedActualQuery));
+            _reporter.ReportInfo(String.Format("{0} has query set to {1}", _messagePrefix, normalisedExpectedQuery));
 
-            if (nomalisedExpectedQuery != nomalisedActualQuery)
+            if (normalisedExpectedQuery != normalisedActualQuery)
             {
-                _reporter.ReportError(expected: nomalisedExpectedQuery, actual: nomalisedActualQuery);
+                _reporter.ReportError(expected: normalisedExpectedQuery, actual: normalisedActualQuery);
             }
         }
 

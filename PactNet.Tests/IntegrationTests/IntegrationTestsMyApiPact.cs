@@ -1,22 +1,21 @@
 ﻿using System;
-using PactNet;
 using PactNet.Mocks.MockHttpService;
 
-namespace Consumer.Tests
+namespace PactNet.Tests.IntegrationTests
 {
-    public class ConsumerEventApiPact : IDisposable
+    public class IntegrationTestsMyApiPact : IDisposable
     {
         public IPactBuilder PactBuilder { get; private set; }
         public IMockProviderService MockProviderService { get; private set; }
 
-        public int MockServerPort { get { return 1234; } }
+        public int MockServerPort { get { return 4321; } }
         public string MockProviderServiceBaseUri { get { return String.Format("http://localhost:{0}", MockServerPort); } }
 
-        public ConsumerEventApiPact()
+        public IntegrationTestsMyApiPact()
         {
             PactBuilder = new PactBuilder()
-                .ServiceConsumer("Consumer")
-                .HasPactWith("Event API");
+                .ServiceConsumer("IntegrationTests")
+                .HasPactWith("MyApi");
 
             MockProviderService = PactBuilder.MockService(MockServerPort);
         }

@@ -9,7 +9,7 @@ namespace PactNet.Mocks.MockHttpService.Models
         public int Status { get; set; }
 
         [JsonProperty(PropertyName = "headers")]
-        public Dictionary<string, string> Headers { get; set; }
+        public IDictionary<string, string> Headers { get; set; }
 
         [JsonProperty(PropertyName = "body")]
         public dynamic Body { get; set; }
