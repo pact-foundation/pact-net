@@ -18,36 +18,36 @@ namespace PactNet.Mocks.MockHttpService.Comparers
         }
 
         //TODO: Remove boolean and add "matching" functionality
-        public void Validate(dynamic body1, dynamic body2, bool useStrict = false)
+        public void Validate(dynamic expected, dynamic actual, bool useStrict = false)
         {
             _comparisonPasses = 0;
 
-            if (body1 == null)
+            if (expected == null)
             {
                 return;
             }
 
-            if (body1 != null && body2 == null)
+            if (expected != null && actual == null)
             {
                 _reporter.ReportError("Body is null");
                 return;
             }
 
-            string body1Json = JsonConvert.SerializeObject(body1);
-            string body2Json = JsonConvert.SerializeObject(body2);
-            var httpBody1 = JsonConvert.DeserializeObject<JToken>(body1Json);
-            var httpBody2 = JsonConvert.DeserializeObject<JToken>(body2Json);
+            string expectedJson = JsonConvert.SerializeObject(expected);
+            string actualJson = JsonConvert.SerializeObject(actual);
+            var expectedToken = JsonConvert.DeserializeObject<JToken>(expectedJson);
+            var actualToken = JsonConvert.DeserializeObject<JToken>(actualJson);
 
             if (useStrict)
             {
-                if (!JToken.DeepEquals(httpBody1, httpBody2))
+                if (!JToken.DeepEquals(expectedToken, actualToken))
                 {
-                    _reporter.ReportError(expected: httpBody1, actual: httpBody2);
+                    _reporter.ReportError(expected: expectedToken, actual: actualToken);
                 }
                 return;
             }
 
-            AssertPropertyValuesMatch(httpBody1, httpBody2);
+            AssertPropertyValuesMatch(expectedToken, actualToken);
         }
 
        

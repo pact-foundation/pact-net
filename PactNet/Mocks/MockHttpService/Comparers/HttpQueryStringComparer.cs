@@ -15,15 +15,15 @@ namespace PactNet.Mocks.MockHttpService.Comparers
             _reporter = reporter;
         }
 
-        public void Compare(string expectedQuery, string actualQuery)
+        public void Compare(string expected, string actual)
         {
-            if (expectedQuery == null)
+            if (expected == null)
             {
                 return;
             }
 
-            var normalisedExpectedQuery = ConvertUrlEncodingToUpperCase(expectedQuery);
-            var normalisedActualQuery = ConvertUrlEncodingToUpperCase(actualQuery);
+            var normalisedExpectedQuery = ConvertUrlEncodingToUpperCase(expected);
+            var normalisedActualQuery = ConvertUrlEncodingToUpperCase(actual);
 
             _reporter.ReportInfo(String.Format("{0} has query set to {1}", _messagePrefix, normalisedExpectedQuery));
 

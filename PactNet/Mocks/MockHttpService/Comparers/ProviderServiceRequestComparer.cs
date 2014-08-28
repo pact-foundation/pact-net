@@ -25,32 +25,33 @@ namespace PactNet.Mocks.MockHttpService.Comparers
             _httpBodyComparer = new HttpBodyComparer(MessagePrefix, _reporter);
         }
 
-        public void Compare(ProviderServiceRequest request1, ProviderServiceRequest request2)
+        public void Compare(ProviderServiceRequest expected, ProviderServiceRequest actual)
         {
-            if (request1 == null)
+            if (expected == null)
             {
                 _reporter.ReportError("Expected request cannot be null");
+                return;
             }
 
-            _httpMethodComparer.Compare(request1.Method, request2.Method);
+            _httpMethodComparer.Compare(expected.Method, actual.Method);
 
-            _httpPathComparer.Compare(request1.Path, request2.Path);
+            _httpPathComparer.Compare(expected.Path, actual.Path);
 
-            _httpQueryStringComparer.Compare(request1.Query, request2.Query);
+            _httpQueryStringComparer.Compare(expected.Query, actual.Query);
 
-            if (request1.Headers != null && request1.Headers.Any())
+            if (expected.Headers != null && expected.Headers.Any())
             {
-                if (request2.Headers == null)
+                if (actual.Headers == null)
                 {
                     _reporter.ReportError("Headers are null");
                 }
 
-                _httpHeaderComparer.Compare(request1.Headers, request2.Headers);
+                _httpHeaderComparer.Compare(expected.Headers, actual.Headers);
             }
 
-            if (request1.Body != null)
+            if (expected.Body != null)
             {
-                _httpBodyComparer.Validate(request2.Body, request1.Body, true);
+                _httpBodyComparer.Validate(expected.Body, actual.Body, true);
             }
         }
     }

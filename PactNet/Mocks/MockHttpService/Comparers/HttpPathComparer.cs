@@ -14,18 +14,18 @@ namespace PactNet.Mocks.MockHttpService.Comparers
             _reporter = reporter;
         }
 
-        public void Compare(string path1, string path2)
+        public void Compare(string expected, string actual)
         {
-            if (path1 == null)
+            if (expected == null)
             {
                 return;
             }
 
-            _reporter.ReportInfo(String.Format("{0} has path set to {1}", _messagePrefix, path1));
+            _reporter.ReportInfo(String.Format("{0} has path set to {1}", _messagePrefix, expected));
 
-            if (!path1.Equals(path2))
+            if (!expected.Equals(actual))
             {
-                _reporter.ReportError(expected: path1, actual: path2);
+                _reporter.ReportError(expected: expected, actual: actual);
                 return;
             }
         }

@@ -22,29 +22,29 @@ namespace PactNet.Mocks.MockHttpService.Comparers
             _httpBodyComparer = new HttpBodyComparer(MessagePrefix, _reporter); //TODO: MessagePrefix isn't real nice
         }
 
-        public void Compare(ProviderServiceResponse response1, ProviderServiceResponse response2)
+        public void Compare(ProviderServiceResponse expected, ProviderServiceResponse actual)
         {
-            if (response1 == null)
+            if (expected == null)
             {
                 _reporter.ReportError("Expected response cannot be null");
                 return;
             }
 
-            _reporter.ReportInfo(String.Format("{0} has status code of {1}", MessagePrefix, response1.Status));
-            if (!response1.Status.Equals(response2.Status))
+            _reporter.ReportInfo(String.Format("{0} has status code of {1}", MessagePrefix, expected.Status));
+            if (!expected.Status.Equals(actual.Status))
             {
-                _reporter.ReportError(expected: response1.Status, actual: response2.Status);
+                _reporter.ReportError(expected: expected.Status, actual: actual.Status);
             }
 
-            if (response1.Headers != null && response1.Headers.Any())
+            if (expected.Headers != null && expected.Headers.Any())
             {
-                _httpHeaderComparer.Compare(response1.Headers, response2.Headers);
+                _httpHeaderComparer.Compare(expected.Headers, actual.Headers);
             }
 
-            if (response1.Body != null)
+            if (expected.Body != null)
             {
-                string expectedResponseBodyJson = JsonConvert.SerializeObject(response1.Body);
-                string actualResponseBodyJson = JsonConvert.SerializeObject(response2.Body);
+                string expectedResponseBodyJson = JsonConvert.SerializeObject(expected.Body);
+                string actualResponseBodyJson = JsonConvert.SerializeObject(actual.Body);
                 var actualResponseBody = JsonConvert.DeserializeObject<JToken>(actualResponseBodyJson);
                 var expectedResponseBody = JsonConvert.DeserializeObject<JToken>(expectedResponseBodyJson);
 
