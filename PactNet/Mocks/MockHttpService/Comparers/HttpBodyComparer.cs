@@ -9,7 +9,6 @@ namespace PactNet.Mocks.MockHttpService.Comparers
     {
         private readonly string _messagePrefix;
         private readonly IReporter _reporter;
-        private int _comparisonPasses;
 
         public HttpBodyComparer(string messagePrefix, IReporter reporter)
         {
@@ -20,8 +19,6 @@ namespace PactNet.Mocks.MockHttpService.Comparers
         //TODO: Remove boolean and add "matching" functionality
         public void Validate(dynamic expected, dynamic actual, bool useStrict = false)
         {
-            _comparisonPasses = 0;
-
             if (expected == null)
             {
                 return;
@@ -33,6 +30,8 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                 return;
             }
 
+
+            //TODO: Maybe look at changing these to JToken.FromObject(...)
             string expectedJson = JsonConvert.SerializeObject(expected);
             string actualJson = JsonConvert.SerializeObject(actual);
             var expectedToken = JsonConvert.DeserializeObject<JToken>(expectedJson);
@@ -53,13 +52,6 @@ namespace PactNet.Mocks.MockHttpService.Comparers
        
         private bool AssertPropertyValuesMatch(JToken httpBody1, JToken httpBody2)
         {
-            _comparisonPasses++;
-            if (_comparisonPasses > 200)
-            {
-                _reporter.ReportError("Too many passes required to compare objects.");
-                return false;
-            }
-
             switch (httpBody1.Type)
             {
                 case JTokenType.Array: 
