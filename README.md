@@ -21,6 +21,10 @@ Please feel free to contribute, we do accept pull requests.
 Below are some samples of usage.  
 We have also written some `//NOTE:` comments inline in the code to help explain what certains calls do.
 
+### Installing
+
+Via Nuget with [Install-Package PactNet -Pre](http://www.nuget.org/packages/PactNet)
+
 ### Service Consumer
 
 #### 1. Build your client
