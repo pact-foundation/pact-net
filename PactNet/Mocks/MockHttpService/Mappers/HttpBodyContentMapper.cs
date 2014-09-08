@@ -10,14 +10,12 @@ namespace PactNet.Mocks.MockHttpService.Mappers
     {
         private readonly IEncodingMapper _encodingMapper;
 
-        [Obsolete("For testing only.")]
-        public HttpBodyContentMapper(IEncodingMapper encodingMapper)
+        internal HttpBodyContentMapper(IEncodingMapper encodingMapper)
         {
             _encodingMapper = encodingMapper;
         }
 
-        public HttpBodyContentMapper() : this(
-            new EncodingMapper())
+        public HttpBodyContentMapper() : this(new EncodingMapper())
         {
         }
 

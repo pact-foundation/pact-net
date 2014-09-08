@@ -31,8 +31,7 @@ namespace PactNet
             }
         }
 
-        [Obsolete("For PactConsumer testing only.")]
-        public PactBuilder(
+        internal PactBuilder(
             Func<int, IMockProviderService> mockProviderServiceFactory, 
             IFileSystem fileSystem)
         {

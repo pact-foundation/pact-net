@@ -9,13 +9,12 @@ namespace PactNet.Mocks.MockHttpService.Mappers
     {
         private readonly IHttpBodyContentMapper _httpBodyContentMapper;
 
-        [Obsolete("For testing only.")]
-        public NancyResponseMapper(IHttpBodyContentMapper httpBodyContentMapper)
+        internal NancyResponseMapper(IHttpBodyContentMapper httpBodyContentMapper)
         {
             _httpBodyContentMapper = httpBodyContentMapper;
         }
-        public NancyResponseMapper() : this(
-            new HttpBodyContentMapper())
+
+        public NancyResponseMapper() : this(new HttpBodyContentMapper())
         {
         }
 
