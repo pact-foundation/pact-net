@@ -11,8 +11,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
         private readonly IHttpContentMapper _httpContentMapper;
         private readonly IHttpBodyContentMapper _httpBodyContentMapper;
 
-        [Obsolete("For testing only.")]
-        public HttpRequestMessageMapper(
+        internal HttpRequestMessageMapper(
             IHttpMethodMapper httpMethodMapper,
             IHttpContentMapper httpContentMapper,
             IHttpBodyContentMapper httpBodyContentMapper)

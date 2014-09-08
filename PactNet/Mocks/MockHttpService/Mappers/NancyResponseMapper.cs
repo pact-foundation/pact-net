@@ -5,17 +5,16 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
-    public class NancyResponseMapper : INancyResponseMapper
+    internal class NancyResponseMapper : INancyResponseMapper
     {
         private readonly IHttpBodyContentMapper _httpBodyContentMapper;
 
-        [Obsolete("For testing only.")]
-        public NancyResponseMapper(IHttpBodyContentMapper httpBodyContentMapper)
+        internal NancyResponseMapper(IHttpBodyContentMapper httpBodyContentMapper)
         {
             _httpBodyContentMapper = httpBodyContentMapper;
         }
-        public NancyResponseMapper() : this(
-            new HttpBodyContentMapper())
+
+        public NancyResponseMapper() : this(new HttpBodyContentMapper())
         {
         }
 

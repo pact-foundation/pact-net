@@ -6,18 +6,16 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
-    public class HttpBodyContentMapper : IHttpBodyContentMapper
+    internal class HttpBodyContentMapper : IHttpBodyContentMapper
     {
         private readonly IEncodingMapper _encodingMapper;
 
-        [Obsolete("For testing only.")]
-        public HttpBodyContentMapper(IEncodingMapper encodingMapper)
+        internal HttpBodyContentMapper(IEncodingMapper encodingMapper)
         {
             _encodingMapper = encodingMapper;
         }
 
-        public HttpBodyContentMapper() : this(
-            new EncodingMapper())
+        public HttpBodyContentMapper() : this(new EncodingMapper())
         {
         }
 

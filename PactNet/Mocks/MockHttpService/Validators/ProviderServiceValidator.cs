@@ -17,9 +17,8 @@ namespace PactNet.Mocks.MockHttpService.Validators
         private readonly IHttpRequestMessageMapper _httpRequestMessageMapper;
         private readonly IProviderServiceResponseMapper _providerServiceResponseMapper;
         private readonly IReporter _reporter;
-        
-        [Obsolete("For testing only.")]
-        public ProviderServiceValidator(
+
+        internal ProviderServiceValidator(
             IProviderServiceResponseComparer providerServiceResponseComparer, 
             HttpClient httpClient, 
             IHttpRequestMessageMapper httpRequestMessageMapper,

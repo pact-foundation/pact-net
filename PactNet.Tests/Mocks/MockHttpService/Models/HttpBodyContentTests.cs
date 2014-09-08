@@ -22,7 +22,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
         [Fact]
         public void Ctor1_WithContentType_SetsContentType()
         {
-            var contentTypeString = "text/html";
+            const string contentTypeString = "text/html";
             var httpBodyContent = new HttpBodyContent(body: new {}, contentType: contentTypeString, encoding: null);
 
             Assert.Equal(contentTypeString, httpBodyContent.ContentType);
@@ -31,7 +31,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
         [Fact]
         public void Ctor2_WithContentType_SetsContentType()
         {
-            var contentTypeString = "text/html";
+            const string contentTypeString = "text/html";
             var httpBodyContent = new HttpBodyContent(content: String.Empty, contentType: contentTypeString, encoding: null);
 
             Assert.Equal(contentTypeString, httpBodyContent.ContentType);
@@ -71,6 +71,17 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
         }
 
         [Fact]
+        public void Ctor1_WithBinaryBody_SetsBodyAndContent()
+        {
+            var body = new byte[] {1, 2, 3};
+
+            var httpBodyContent = new HttpBodyContent(body, "application/octet-stream", Encoding.UTF8);
+
+            Assert.Equal(body, httpBodyContent.Body);
+            Assert.Equal(Encoding.UTF8.GetString(body), httpBodyContent.Content);
+        }
+
+        [Fact]
         public void Ctor2_WithJsonContent_SetsBodyAndContent()
         {
             var body = new
@@ -82,8 +93,19 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
             var httpBodyContent = new HttpBodyContent(content: content, contentType: "application/json", encoding: null);
 
             Assert.Equal(content, httpBodyContent.Content);
-            Assert.Equal(body.Test, (string)httpBodyContent.Body.Test);
-            Assert.Equal(body.tesTer, (int)httpBodyContent.Body.tesTer);
+            Assert.Equal(body.Test, (string) httpBodyContent.Body.Test);
+            Assert.Equal(body.tesTer, (int) httpBodyContent.Body.tesTer);
+        }
+
+        [Fact]
+        public void Ctor2_WithBinaryContent_SetsBodyAndContent()
+        {
+            const string content = "LOL";
+            var httpBodyContent = new HttpBodyContent(content, "application/octet-stream", Encoding.UTF8);
+
+            Assert.Equal(content, httpBodyContent.Content);
+            Assert.IsType<byte[]>(httpBodyContent.Body);
+            Assert.Equal(new byte[] {76, 79, 76}, httpBodyContent.Body);
         }
 
         [Fact]
@@ -117,7 +139,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
         [Fact]
         public void ContentType_WithNullContentTypeSet_ReturnsPlainContentType()
         {
-            var httpBodyContent = new HttpBodyContent(new { }, null, null);
+            var httpBodyContent = new HttpBodyContent(new {}, null, null);
 
             Assert.Equal("text/plain", httpBodyContent.ContentType);
         }
@@ -125,7 +147,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
         [Fact]
         public void ContentType_WithEmptyContentTypeSet_ReturnsPlainContentType()
         {
-            var httpBodyContent = new HttpBodyContent(new { }, String.Empty, null);
+            var httpBodyContent = new HttpBodyContent(new {}, String.Empty, null);
 
             Assert.Equal("text/plain", httpBodyContent.ContentType);
         }

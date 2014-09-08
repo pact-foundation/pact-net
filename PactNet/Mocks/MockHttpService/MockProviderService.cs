@@ -35,8 +35,7 @@ namespace PactNet.Mocks.MockHttpService
 
         public string BaseUri { get; private set; }
 
-        [Obsolete("For testing only.")]
-        public MockProviderService(
+        internal MockProviderService(
             Func<Uri, IMockContextService, IHttpHost> hostFactory,
             int port,
             Func<string, HttpClient> httpClientFactory)

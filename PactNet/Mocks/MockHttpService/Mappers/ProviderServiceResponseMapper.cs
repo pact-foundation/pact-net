@@ -7,12 +7,11 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
-    public class ProviderServiceResponseMapper : IProviderServiceResponseMapper
+    internal class ProviderServiceResponseMapper : IProviderServiceResponseMapper
     {
         private readonly IHttpBodyContentMapper _httpBodyContentMapper;
 
-        [Obsolete("For testing only.")]
-        public ProviderServiceResponseMapper(IHttpBodyContentMapper httpBodyContentMapper)
+        internal ProviderServiceResponseMapper(IHttpBodyContentMapper httpBodyContentMapper)
         {
             _httpBodyContentMapper = httpBodyContentMapper;
         }

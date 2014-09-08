@@ -21,8 +21,7 @@ namespace PactNet
         public HttpClient HttpClient { get; private set; }
         public string PactFileUri { get; private set; }
 
-        [Obsolete("For PactProvider testing only.")]
-        public PactVerifier(IFileSystem fileSystem, 
+        internal PactVerifier(IFileSystem fileSystem, 
             Func<HttpClient, IProviderServiceValidator> providerServiceValidatorFactory)
         {
             _fileSystem = fileSystem;

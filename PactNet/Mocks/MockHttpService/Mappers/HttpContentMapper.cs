@@ -3,7 +3,7 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
-    public class HttpContentMapper : IHttpContentMapper
+    internal class HttpContentMapper : IHttpContentMapper
     {
         public HttpContent Convert(HttpBodyContent from)
         {
