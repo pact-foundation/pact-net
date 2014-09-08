@@ -39,3 +39,5 @@ _ReSharper*/
 TestResults/*
 _TeamCity*/
 Build/PactNet*.nupkg
+*.ncrunchproject
+*.ncrunchsolution
