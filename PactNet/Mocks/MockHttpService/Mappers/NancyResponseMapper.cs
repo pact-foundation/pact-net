@@ -5,7 +5,7 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
-    public class NancyResponseMapper : INancyResponseMapper
+    internal class NancyResponseMapper : INancyResponseMapper
     {
         private readonly IHttpBodyContentMapper _httpBodyContentMapper;
 

@@ -5,9 +5,9 @@ using PactNet.Configuration.Json;
 
 namespace PactNet.Mocks.MockHttpService.Models
 {
-    public class HttpBodyContent
+    internal class HttpBodyContent
     {
-        private readonly string _defaultContentType = "text/plain";
+        private const string DefaultContentType = "text/plain";
         private readonly Encoding _defaultEncoding = Encoding.UTF8;
 
         public dynamic Body { get; private set; }
@@ -28,7 +28,7 @@ namespace PactNet.Mocks.MockHttpService.Models
             {
                 if (String.IsNullOrEmpty(_contentType))
                 {
-                    _contentType = _defaultContentType;
+                    _contentType = DefaultContentType;
                 }
                 return _contentType;
             }

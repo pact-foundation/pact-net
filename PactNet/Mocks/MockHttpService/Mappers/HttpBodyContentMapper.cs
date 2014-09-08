@@ -6,7 +6,7 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
-    public class HttpBodyContentMapper : IHttpBodyContentMapper
+    internal class HttpBodyContentMapper : IHttpBodyContentMapper
     {
         private readonly IEncodingMapper _encodingMapper;
 

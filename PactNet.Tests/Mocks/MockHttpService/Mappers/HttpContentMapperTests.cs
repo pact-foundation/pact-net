@@ -8,7 +8,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 {
     public class HttpContentMapperTests
     {
-        public IHttpContentMapper GetSubject()
+        private IHttpContentMapper GetSubject()
         {
             return new HttpContentMapper();
         }

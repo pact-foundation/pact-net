@@ -4,7 +4,7 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
-    public interface IHttpContentMapper : IMapper<HttpBodyContent, HttpContent>
+    internal interface IHttpContentMapper : IMapper<HttpBodyContent, HttpContent>
     {
     }
 }
