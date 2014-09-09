@@ -71,6 +71,36 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
         }
 
         [Fact]
+        public void Ctor1_WithJsonBodyAndTitleCasedContentType_SetsBodyAndContent()
+        {
+            var body = new
+            {
+                Test = "tester",
+                tesTer = 1
+            };
+            const string content = "{\"Test\":\"tester\",\"tesTer\":1}";
+            var httpBodyContent = new HttpBodyContent(body: body, contentType: "Application/Json", encoding: null);
+
+            Assert.Equal(content, httpBodyContent.Content);
+            Assert.Equal(body, httpBodyContent.Body);
+        }
+
+        [Fact]
+        public void Ctor1_WithCustomJsonBody_SetsBodyAndContent()
+        {
+            var body = new
+            {
+                Test = "tester",
+                tesTer = 1
+            };
+            const string content = "{\"Test\":\"tester\",\"tesTer\":1}";
+            var httpBodyContent = new HttpBodyContent(body: body, contentType: "application/x-amz-json-1.1", encoding: null);
+
+            Assert.Equal(content, httpBodyContent.Content);
+            Assert.Equal(body, httpBodyContent.Body);
+        }
+
+        [Fact]
         public void Ctor1_WithBinaryBody_SetsBodyAndContent()
         {
             var body = new byte[] {1, 2, 3};
@@ -95,6 +125,22 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
             Assert.Equal(content, httpBodyContent.Content);
             Assert.Equal(body.Test, (string) httpBodyContent.Body.Test);
             Assert.Equal(body.tesTer, (int) httpBodyContent.Body.tesTer);
+        }
+
+        [Fact]
+        public void Ctor2_WithCustomJsonContent_SetsBodyAndContent()
+        {
+            var body = new
+            {
+                Test = "tester",
+                tesTer = 1
+            };
+            const string content = "{\"Test\":\"tester\",\"tesTer\":1}";
+            var httpBodyContent = new HttpBodyContent(content: content, contentType: "application/x-amz-json-1.1", encoding: null);
+
+            Assert.Equal(content, httpBodyContent.Content);
+            Assert.Equal(body.Test, (string)httpBodyContent.Body.Test);
+            Assert.Equal(body.tesTer, (int)httpBodyContent.Body.tesTer);
         }
 
         [Fact]

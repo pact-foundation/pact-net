@@ -70,24 +70,44 @@ namespace PactNet.Mocks.MockHttpService.Models
 
         private string ConvertBodyToContent(dynamic body)
         {
-            if (ContentType.Equals("application/json"))
+            if (IsJsonContentType())
+            {
                 return JsonConvert.SerializeObject(body, JsonConfig.ApiSerializerSettings);
+            }
 
-            if (ContentType.Equals("application/octet-stream"))
+            if (IsBinaryContentType())
+            {
                 return Encoding.GetString(body);
+            }
 
             return body.ToString();
         }
 
         private dynamic ConvertContentToBody(string content)
         {
-            if (ContentType.Equals("application/json")) 
+            if (IsJsonContentType())
+            {
                 return JsonConvert.DeserializeObject<dynamic>(content);
+            }
 
-            if (ContentType.Equals("application/octet-stream"))
+            if (IsBinaryContentType())
+            {
                 return Encoding.GetBytes(content);
-            
+            }
+                
             return content;
+        }
+
+        private bool IsJsonContentType()
+        {
+            return ContentType.IndexOf("application/", StringComparison.InvariantCultureIgnoreCase) == 0 &&
+                ContentType.IndexOf("json", StringComparison.InvariantCultureIgnoreCase) > 0;
+        }
+
+        private bool IsBinaryContentType()
+        {
+            return ContentType.IndexOf("application/", StringComparison.InvariantCultureIgnoreCase) == 0 &&
+                ContentType.IndexOf("octet-stream", StringComparison.InvariantCultureIgnoreCase) > 0;
         }
     }
 }
