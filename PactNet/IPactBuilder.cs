@@ -6,7 +6,7 @@ namespace PactNet
     {
         IPactBuilder ServiceConsumer(string consumerName);
         IPactBuilder HasPactWith(string providerName);
-        IMockProviderService MockService(int port);
+        IMockProviderService MockService(int port, bool enableSsl = false);
         void Build();
     }
 }

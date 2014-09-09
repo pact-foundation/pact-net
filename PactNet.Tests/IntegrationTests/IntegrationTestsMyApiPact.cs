@@ -15,7 +15,7 @@ namespace PactNet.Tests.IntegrationTests
 
         public IntegrationTestsMyApiPact()
         {
-            PactBuilder = new PactBuilder(port => new MockProviderService(port), Substitute.For<IFileSystem>())
+            PactBuilder = new PactBuilder((port, enableSsl) => new MockProviderService(port, enableSsl), Substitute.For<IFileSystem>())
                 .ServiceConsumer("IntegrationTests")
                 .HasPactWith("MyApi");
 

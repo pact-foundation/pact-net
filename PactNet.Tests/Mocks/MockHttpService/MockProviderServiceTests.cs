@@ -16,7 +16,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         private FakeHttpClient _fakeHttpClient;
         private int _mockHttpHostFactoryCallCount;
 
-        private IMockProviderService GetSubject(int port = 1234)
+        private IMockProviderService GetSubject(int port = 1234, bool enableSsl = false)
         {
             _mockHttpHost = Substitute.For<IHttpHost>();
             _fakeHttpClient = new FakeHttpClient();
@@ -29,6 +29,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
                     return _mockHttpHost;
                 },
                 port,
+                enableSsl,
                 baseUri => _fakeHttpClient);
         }
 
@@ -40,6 +41,22 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var mockService = GetSubject(port);
 
             Assert.Equal(expectedBaseUri, ((MockProviderService) mockService).BaseUri);
+        }
+
+        [Fact]
+        public void Ctor_WhenCalledWithEnableSslFalse_SetsBaseUriWithHttpScheme()
+        {
+            var mockService = GetSubject(enableSsl: false);
+
+            Assert.True(((MockProviderService)mockService).BaseUri.StartsWith("http"), "BaseUri has a http scheme");
+        }
+
+        [Fact]
+        public void Ctor_WhenCalledWithEnableSslTrue_SetsBaseUriWithHttpsScheme()
+        {
+            var mockService = GetSubject(enableSsl: true);
+
+            Assert.True(((MockProviderService)mockService).BaseUri.StartsWith("https"), "BaseUri has a https scheme");
         }
 
         [Fact]

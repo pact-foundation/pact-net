@@ -27,7 +27,7 @@ namespace PactNet.Mocks.MockHttpService
             get { return _testScopedInteractions; }
         }
 
-        private IList<ProviderServiceInteraction> _interactions = new List<ProviderServiceInteraction>();
+        private readonly IList<ProviderServiceInteraction> _interactions = new List<ProviderServiceInteraction>();
         public IEnumerable<Interaction> Interactions
         {
             get { return _interactions; }
@@ -38,17 +38,19 @@ namespace PactNet.Mocks.MockHttpService
         internal MockProviderService(
             Func<Uri, IMockContextService, IHttpHost> hostFactory,
             int port,
+            bool enableSsl,
             Func<string, HttpClient> httpClientFactory)
         {
             _hostFactory = hostFactory;
-            BaseUri = String.Format("http://localhost:{0}", port);
+            BaseUri = String.Format("{0}://localhost:{1}", enableSsl ? "https" : "http", port);
             _httpClientFactory = httpClientFactory;
         }
 
-        public MockProviderService(int port)
+        public MockProviderService(int port, bool enableSsl)
             : this(
             (baseUri, mockContextService) => new NancyHttpHost(baseUri, mockContextService), 
             port,
+            enableSsl,
             baseUri => new HttpClient { BaseAddress = new Uri(baseUri) })
         {
         }

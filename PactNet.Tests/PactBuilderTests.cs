@@ -95,7 +95,7 @@ namespace PactNet.Tests
         {
             var mockMockProviderService = Substitute.For<IMockProviderService>();
 
-            IPactBuilder pactBuilder = new PactBuilder(port => mockMockProviderService, null);
+            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl) => mockMockProviderService, null);
 
             var mockProviderService = pactBuilder.MockService(1234);
 
@@ -108,13 +108,64 @@ namespace PactNet.Tests
         {
             var mockMockProviderService = Substitute.For<IMockProviderService>();
 
-            IPactBuilder pactBuilder = new PactBuilder(port => mockMockProviderService, null);
+            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl) => mockMockProviderService, null);
 
             pactBuilder.MockService(1234);
             mockMockProviderService.Received(0).Stop();
 
             pactBuilder.MockService(1234);
             mockMockProviderService.Received(1).Stop();
+        }
+
+        [Fact]
+        public void MockService_WhenCalled_MockProviderServiceFactoryIsInvokedWithSslNotEnabled()
+        {
+            var calledWithSslEnabled = false;
+            var mockMockProviderService = Substitute.For<IMockProviderService>();
+
+            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl) =>
+            {
+                calledWithSslEnabled = enableSsl;
+                return mockMockProviderService;
+            }, null);
+
+            pactBuilder.MockService(1234);
+
+            Assert.False(calledWithSslEnabled);
+        }
+
+        [Fact]
+        public void MockService_WhenCalledWithEnableSslFalse_MockProviderServiceFactoryIsInvokedWithSslNotEnabled()
+        {
+            var calledWithSslEnabled = false;
+            var mockMockProviderService = Substitute.For<IMockProviderService>();
+
+            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl) =>
+            {
+                calledWithSslEnabled = enableSsl;
+                return mockMockProviderService;
+            }, null);
+
+            pactBuilder.MockService(1234, false);
+
+            Assert.False(calledWithSslEnabled);
+        }
+
+        [Fact]
+        public void MockService_WhenCalledWithEnableSslTrue_MockProviderServiceFactoryIsInvokedWithSslEnabled()
+        {
+            var calledWithSslEnabled = false;
+            var mockMockProviderService = Substitute.For<IMockProviderService>();
+
+            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl) =>
+            {
+                calledWithSslEnabled = enableSsl;
+                return mockMockProviderService;
+            }, null);
+
+            pactBuilder.MockService(1234, true);
+
+            Assert.True(calledWithSslEnabled);
         }
 
         [Fact]
@@ -157,7 +208,7 @@ namespace PactNet.Tests
             var mockMockProviderService = Substitute.For<IMockProviderService>();
             var mockFileSystem = Substitute.For<IFileSystem>();
 
-            IPactBuilder pactBuilder = new PactBuilder(port => mockMockProviderService, mockFileSystem)
+            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl) => mockMockProviderService, mockFileSystem)
                 .ServiceConsumer("Event Client")
                 .HasPactWith("Event API");
 
@@ -216,7 +267,7 @@ namespace PactNet.Tests
             var mockMockProviderService = Substitute.For<IMockProviderService>();
             var mockFileSystem = Substitute.For<IFileSystem>();
 
-            IPactBuilder pactBuilder = new PactBuilder(port => mockMockProviderService, mockFileSystem)
+            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl) => mockMockProviderService, mockFileSystem)
                 .ServiceConsumer("Event Client")
                 .HasPactWith("Event API");
 

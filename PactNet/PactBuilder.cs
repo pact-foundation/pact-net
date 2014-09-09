@@ -14,7 +14,7 @@ namespace PactNet
         public string ConsumerName { get; private set; }
         public string ProviderName { get; private set; }
         private readonly IFileSystem _fileSystem;
-        private readonly Func<int, IMockProviderService> _mockProviderServiceFactory;
+        private readonly Func<int, bool, IMockProviderService> _mockProviderServiceFactory;
         private IMockProviderService _mockProviderService;
         private const string PactFileDirectory = "../../pacts/";
 
@@ -32,7 +32,7 @@ namespace PactNet
         }
 
         internal PactBuilder(
-            Func<int, IMockProviderService> mockProviderServiceFactory, 
+            Func<int, bool, IMockProviderService> mockProviderServiceFactory, 
             IFileSystem fileSystem)
         {
             _mockProviderServiceFactory = mockProviderServiceFactory;
@@ -41,7 +41,7 @@ namespace PactNet
 
         public PactBuilder()
             : this(
-                port => new MockProviderService(port),
+                (port, enableSsl) => new MockProviderService(port, enableSsl),
                 new FileSystem())
         {
         }
@@ -70,14 +70,14 @@ namespace PactNet
             return this;
         }
 
-        public IMockProviderService MockService(int port)
+        public IMockProviderService MockService(int port, bool enableSsl = false)
         {
             if (_mockProviderService != null)
             {
                 _mockProviderService.Stop();
             }
 
-            _mockProviderService = _mockProviderServiceFactory(port);
+            _mockProviderService = _mockProviderServiceFactory(port, enableSsl);
 
             _mockProviderService.Start();
 
