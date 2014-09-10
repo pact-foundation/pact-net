@@ -44,11 +44,8 @@ namespace PactNet.Mocks.MockHttpService.Mappers
             {
                 foreach (var requestHeader in from.Headers)
                 {
-                    //TODO: Check if there are any other headers which need special treatment
-                    //Handle the content-type header as little differently, as they need to be attached to the content when using a HttpRequestMessage
-                    //Strip the Content-Length header as is automatically attached to the request
-                    if (requestHeader.Key.Equals("Content-Type", StringComparison.InvariantCultureIgnoreCase) || 
-                        requestHeader.Key.Equals("Content-Length", StringComparison.InvariantCultureIgnoreCase))
+                    //Strip any Content- headers as they need to be attached to Request content when using a HttpRequestMessage
+                    if (requestHeader.Key.IndexOf("Content-", StringComparison.InvariantCultureIgnoreCase) == 0)
                     {
                         continue;
                     }

@@ -12,9 +12,17 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 {
     public class HttpRequestMessageMapperTests
     {
+        IHttpMethodMapper _mockHttpMethodMapper;
+        IHttpContentMapper _mockHttpContentMapper;
+        IHttpBodyContentMapper _mockHttpBodyContentMapper;
+
         public IHttpRequestMessageMapper GetSubject()
         {
-            return new HttpRequestMessageMapper();
+            _mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
+            _mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
+            _mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
+
+            return new HttpRequestMessageMapper(_mockHttpMethodMapper, _mockHttpContentMapper, _mockHttpBodyContentMapper);
         }
 
         [Fact]
@@ -36,20 +44,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 Path = "/events"
             };
 
-            var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
-            var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
-            var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
+            var mapper = GetSubject();
 
-            mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
-
-            IHttpRequestMessageMapper mapper = new HttpRequestMessageMapper(
-                mockHttpMethodMapper, 
-                mockHttpContentMapper, 
-                mockHttpBodyContentMapper);
+            _mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
 
             mapper.Convert(request);
 
-            mockHttpMethodMapper.Received(1).Convert(request.Method);
+            _mockHttpMethodMapper.Received(1).Convert(request.Method);
         }
 
         [Fact]
@@ -65,17 +66,10 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 }
             };
 
-            var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
-            var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
-            var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
+            var mapper = GetSubject();
 
-            mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
-            mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(new HttpBodyContent(String.Empty, null, null));
-
-            IHttpRequestMessageMapper mapper = new HttpRequestMessageMapper(
-                mockHttpMethodMapper,
-                mockHttpContentMapper,
-                mockHttpBodyContentMapper);
+            _mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
+            _mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(new HttpBodyContent(String.Empty, null, null));
 
             var result = mapper.Convert(request);
 
@@ -99,22 +93,15 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             };
             var httpBodyContent = new HttpBodyContent(String.Empty, contentTypeString, null);
 
-            var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
-            var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
-            var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
+            var mapper = GetSubject();
 
-            mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
-            mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(httpBodyContent);
-
-            IHttpRequestMessageMapper mapper = new HttpRequestMessageMapper(
-                mockHttpMethodMapper,
-                mockHttpContentMapper,
-                mockHttpBodyContentMapper);
+            _mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
+            _mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(httpBodyContent);
 
             var result = mapper.Convert(request);
 
             Assert.Empty(result.Headers);
-            mockHttpContentMapper.Received(1).Convert(httpBodyContent);
+            _mockHttpContentMapper.Received(1).Convert(httpBodyContent);
         }
 
         [Fact]
@@ -133,22 +120,15 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             };
             var httpBodyContent = new HttpBodyContent(String.Empty, contentTypeString, null);
 
-            var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
-            var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
-            var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
+            var mapper = GetSubject();
 
-            mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
-            mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(httpBodyContent);
-
-            IHttpRequestMessageMapper mapper = new HttpRequestMessageMapper(
-                mockHttpMethodMapper,
-                mockHttpContentMapper,
-                mockHttpBodyContentMapper);
+            _mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
+            _mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(httpBodyContent);
 
             var result = mapper.Convert(request);
 
             Assert.Empty(result.Headers);
-            mockHttpContentMapper.Received(1).Convert(httpBodyContent);
+            _mockHttpContentMapper.Received(1).Convert(httpBodyContent);
         }
 
         [Fact]
@@ -169,23 +149,16 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             };
             var httpBodyContent = new HttpBodyContent(String.Empty, contentTypeString, encoding);
 
-            var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
-            var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
-            var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
+            var mapper = GetSubject();
 
-            mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
-            mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(httpBodyContent);
-
-            IHttpRequestMessageMapper mapper = new HttpRequestMessageMapper(
-                mockHttpMethodMapper,
-                mockHttpContentMapper,
-                mockHttpBodyContentMapper);
+            _mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
+            _mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(httpBodyContent);
 
             var result = mapper.Convert(request);
 
             Assert.Empty(result.Headers);
-            mockHttpBodyContentMapper.Received(1).Convert(request.Body, request.Headers);
-            mockHttpContentMapper.Received(1).Convert(httpBodyContent);
+            _mockHttpBodyContentMapper.Received(1).Convert(request.Body, request.Headers);
+            _mockHttpContentMapper.Received(1).Convert(httpBodyContent);
         }
 
         [Fact]
@@ -206,23 +179,16 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             };
             var httpBodyContent = new HttpBodyContent(String.Empty, contentTypeString, encoding);
 
-            var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
-            var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
-            var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
+            var mapper = GetSubject();
 
-            mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
-            mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(httpBodyContent);
-
-            IHttpRequestMessageMapper mapper = new HttpRequestMessageMapper(
-                mockHttpMethodMapper,
-                mockHttpContentMapper,
-                mockHttpBodyContentMapper);
+            _mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
+            _mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(httpBodyContent);
 
             var result = mapper.Convert(request);
 
             Assert.Empty(result.Headers);
-            mockHttpBodyContentMapper.Received(1).Convert(request.Body, request.Headers);
-            mockHttpContentMapper.Received(1).Convert(httpBodyContent);
+            _mockHttpBodyContentMapper.Received(1).Convert(request.Body, request.Headers);
+            _mockHttpContentMapper.Received(1).Convert(httpBodyContent);
         }
 
         [Fact]
@@ -242,22 +208,37 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             };
             var httpBodyContent = new HttpBodyContent(String.Empty, contentTypeString, null);
 
-            var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
-            var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
-            var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
+            var mapper = GetSubject();
 
-            mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
-            mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(httpBodyContent);
-
-            IHttpRequestMessageMapper mapper = new HttpRequestMessageMapper(
-                mockHttpMethodMapper,
-                mockHttpContentMapper,
-                mockHttpBodyContentMapper);
+            _mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
+            _mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(httpBodyContent);
 
             var result = mapper.Convert(request);
 
             Assert.Equal(request.Headers.Last().Key, result.Headers.First().Key);
             Assert.Equal(request.Headers.Last().Value, result.Headers.First().Value.First());
+        }
+
+        [Fact]
+        public void Convert_WithContentLengthHeader_ContentLengthHeaderIsNotAdded()
+        {
+            var request = new ProviderServiceRequest
+            {
+                Method = HttpVerb.Post,
+                Path = "/events",
+                Headers = new Dictionary<string, string>
+                {
+                    { "Content-Length", "100" }
+                }
+            };
+
+            var mapper = GetSubject();
+
+            _mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
+
+            var result = mapper.Convert(request);
+
+            Assert.Equal(0, result.Headers.Count());
         }
 
         [Fact]
@@ -273,20 +254,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 }
             };
 
-            var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
-            var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
-            var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
+            var mapper = GetSubject();
 
-            mockHttpMethodMapper.Convert(HttpVerb.Get).Returns(HttpMethod.Get);
-
-            IHttpRequestMessageMapper mapper = new HttpRequestMessageMapper(
-                mockHttpMethodMapper,
-                mockHttpContentMapper,
-                mockHttpBodyContentMapper);
+            _mockHttpMethodMapper.Convert(HttpVerb.Get).Returns(HttpMethod.Get);
 
             mapper.Convert(request);
 
-            mockHttpBodyContentMapper.Received(1).Convert(request.Body, request.Headers);
+            _mockHttpBodyContentMapper.Received(1).Convert(request.Body, request.Headers);
         }
 
         [Fact]
@@ -315,18 +289,11 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             };
             var httpBodyContent = new HttpBodyContent(bodyJson, contentTypeString, encoding);
 
-            var mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
-            var mockHttpContentMapper = Substitute.For<IHttpContentMapper>();
-            var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
+            var mapper = GetSubject();
 
-            mockHttpMethodMapper.Convert(HttpVerb.Get).Returns(HttpMethod.Get);
-            mockHttpContentMapper.Convert(httpBodyContent).Returns(new StringContent(bodyJson, encoding, contentTypeString));
-            mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(httpBodyContent);
-
-            IHttpRequestMessageMapper mapper = new HttpRequestMessageMapper(
-                mockHttpMethodMapper,
-                mockHttpContentMapper,
-                mockHttpBodyContentMapper);
+            _mockHttpMethodMapper.Convert(HttpVerb.Get).Returns(HttpMethod.Get);
+            _mockHttpContentMapper.Convert(httpBodyContent).Returns(new StringContent(bodyJson, encoding, contentTypeString));
+            _mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(httpBodyContent);
 
             var result = mapper.Convert(request);
             var requestContent = result.Content.ReadAsStringAsync().Result;
