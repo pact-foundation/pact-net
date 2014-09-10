@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -13,10 +14,11 @@ namespace PactNet.Tests.Fakes
 
         public HttpResponseMessage Response { get; set; }
 
-        public FakeHttpClient(HttpResponseMessage response = null)
+        public FakeHttpClient(HttpResponseMessage response = null, string baseAddress = "http://localhost")
         {
             Response = response ?? new HttpResponseMessage(HttpStatusCode.OK);
             _requestsRecieved = new List<HttpRequestMessage>();
+            BaseAddress = new Uri(baseAddress);
         }
 
         public override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)

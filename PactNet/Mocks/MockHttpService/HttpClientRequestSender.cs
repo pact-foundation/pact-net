@@ -28,11 +28,38 @@ namespace PactNet.Mocks.MockHttpService
 
         public ProviderServiceResponse Send(ProviderServiceRequest request)
         {
+            //Added because of this http://stackoverflow.com/questions/23438416/why-is-httpclient-baseaddress-not-working
+            if (_httpClient.BaseAddress.OriginalString.EndsWith("/"))
+            {
+                request.Path = request.Path.TrimStart('/');
+            }
+
             var httpRequest = _httpRequestMessageMapper.Convert(request);
 
             var httpResponse = _httpClient.SendAsync(httpRequest, CancellationToken.None).Result;
+            var response = _providerServiceResponseMapper.Convert(httpResponse);
 
-            return _providerServiceResponseMapper.Convert(httpResponse);
+            if (httpRequest != null)
+            {
+                if (httpResponse.Content != null)
+                {
+                    httpRequest.Content.Dispose();
+                }
+
+                httpRequest.Dispose();
+            }
+
+            if (httpResponse != null)
+            {
+                if (httpResponse.Content != null)
+                {
+                    httpResponse.Content.Dispose();
+                }
+
+                httpResponse.Dispose();
+            }
+
+            return response;
         }
     }
 }

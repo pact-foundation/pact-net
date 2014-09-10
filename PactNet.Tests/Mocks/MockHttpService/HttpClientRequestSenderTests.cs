@@ -16,9 +16,9 @@ namespace PactNet.Tests.Mocks.MockHttpService
         private IHttpRequestMessageMapper _mockHttpRequestMessageMapper;
         private IProviderServiceResponseMapper _mockProviderServiceResponseMapper;
 
-        private IHttpRequestSender GetSubject(HttpResponseMessage httpResponseMessage = null)
+        private IHttpRequestSender GetSubject(FakeHttpClient fakeHttpClient = null)
         {
-            _fakeHttpClient = new FakeHttpClient(httpResponseMessage);
+            _fakeHttpClient = fakeHttpClient ?? new FakeHttpClient();
             _mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
             _mockProviderServiceResponseMapper = Substitute.For<IProviderServiceResponseMapper>();
 
@@ -59,7 +59,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         public void Send_WhenCalled_CallsConvertOnProviderServiceResponseMapper()
         {
             var response = new HttpResponseMessage(HttpStatusCode.OK);
-            var requestSender = GetSubject(response);
+            var requestSender = GetSubject(new FakeHttpClient(response));
 
             _mockHttpRequestMessageMapper.Convert(Arg.Any<ProviderServiceRequest>())
                 .Returns(new HttpRequestMessage());
@@ -67,6 +67,39 @@ namespace PactNet.Tests.Mocks.MockHttpService
             requestSender.Send(new ProviderServiceRequest());
 
             _mockProviderServiceResponseMapper.Received(1).Convert(response);
+        }
+
+        [Fact]
+        public void Send_WhenBaseAddressHasATrailingSlash_TheLeadingSlashOnTheRequestPathIsRemoved()
+        {
+            var request = new ProviderServiceRequest
+            {
+                Path = "/testing/hi"
+            };
+
+            var requestSender = GetSubject(new FakeHttpClient(baseAddress: "http://localhost/api/v2/"));
+
+            requestSender.Send(request);
+
+            _mockHttpRequestMessageMapper.Received(1).Convert(Arg.Is<ProviderServiceRequest>(x => x.Path == "testing/hi"));
+            Assert.Equal("testing/hi", request.Path);
+        }
+
+        [Fact]
+        public void Send_WhenBaseAddressDoesNotHaveATrailingSlash_ThePathIsNotAltered()
+        {
+            const string path = "/testing/hi";
+            var request = new ProviderServiceRequest
+            {
+                Path = path
+            };
+
+            var requestSender = GetSubject(new FakeHttpClient(baseAddress: "http://my-hostname:1234"));
+
+            requestSender.Send(request);
+
+            _mockHttpRequestMessageMapper.Received(1).Convert(Arg.Is<ProviderServiceRequest>(x => x.Path == path));
+            Assert.Equal(path, request.Path);
         }
     }
 }
