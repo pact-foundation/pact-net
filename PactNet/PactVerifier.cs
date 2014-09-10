@@ -3,6 +3,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Net.Http;
 using Newtonsoft.Json;
+using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Validators;
 using PactNet.Models;
@@ -13,16 +14,16 @@ namespace PactNet
     public class PactVerifier : IPactVerifier, IProviderStates
     {
         private readonly IFileSystem _fileSystem;
-        private readonly Func<HttpClient, IProviderServiceValidator> _providerServiceValidatorFactory;
+        private readonly Func<IHttpRequestSender, IProviderServiceValidator> _providerServiceValidatorFactory;
+        private IHttpRequestSender _httpRequestSender;
 
         public string ConsumerName { get; private set; }
         public string ProviderName { get; private set; }
         public ProviderStates ProviderStates { get; private set; }
-        public HttpClient HttpClient { get; private set; }
         public string PactFileUri { get; private set; }
 
-        internal PactVerifier(IFileSystem fileSystem, 
-            Func<HttpClient, IProviderServiceValidator> providerServiceValidatorFactory)
+        internal PactVerifier(IFileSystem fileSystem,
+            Func<IHttpRequestSender, IProviderServiceValidator> providerServiceValidatorFactory)
         {
             _fileSystem = fileSystem;
             _providerServiceValidatorFactory = providerServiceValidatorFactory;
@@ -30,7 +31,7 @@ namespace PactNet
 
         public PactVerifier() : this(
             new FileSystem(),
-            httpClient => new ProviderServiceValidator(httpClient, new Reporter()))
+            httpRequestSender => new ProviderServiceValidator(httpRequestSender, new Reporter()))
         {
         }
 
@@ -83,7 +84,25 @@ namespace PactNet
             }
 
             ProviderName = providerName;
-            HttpClient = httpClient;
+            _httpRequestSender = new HttpClientRequestSender(httpClient);
+                
+            return this;
+        }
+
+        public IPactVerifier ServiceProvider(string providerName, Func<ProviderServiceRequest, ProviderServiceResponse> httpRequestSenderFunc)
+        {
+            if (String.IsNullOrEmpty(providerName))
+            {
+                throw new ArgumentException("Please supply a non null or empty providerName");
+            }
+
+            if (httpRequestSenderFunc == null)
+            {
+                throw new ArgumentException("Please supply a non null httpRequestSenderFunc");
+            }
+
+            ProviderName = providerName;
+            _httpRequestSender = new CustomRequestSender(httpRequestSenderFunc);
 
             return this;
         }
@@ -119,9 +138,9 @@ namespace PactNet
 
         public void Verify(string providerDescription = null, string providerState = null)
         {
-            if (HttpClient == null)
+            if (_httpRequestSender == null)
             {
-                throw new InvalidOperationException("HttpClient has not been set, please supply a HttpClient using the ServiceProvider method.");
+                throw new InvalidOperationException("httpRequestSender has not been set, please supply a httpClient or httpRequestSenderFunc using the ServiceProvider method.");
             }
 
             if (String.IsNullOrEmpty(PactFileUri))
@@ -151,7 +170,7 @@ namespace PactNet
                 pactFile.Interactions = pactFile.Interactions.Where(x => x.ProviderState.Equals(providerState));
             }
 
-            _providerServiceValidatorFactory(HttpClient).Validate(pactFile, ProviderStates);
+            _providerServiceValidatorFactory(_httpRequestSender).Validate(pactFile, ProviderStates);
         }
     }
 }

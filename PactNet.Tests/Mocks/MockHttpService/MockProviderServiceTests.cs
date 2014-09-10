@@ -379,7 +379,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             {
             }
 
-            Assert.Equal(0, _fakeHttpClient.CallInfo.Count());
+            Assert.Equal(0, _fakeHttpClient.RequestsRecieved.Count());
         }
 
         [Fact]
@@ -391,9 +391,9 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.VerifyInteractions();
 
-            Assert.Equal(1, _fakeHttpClient.CallInfo.Count());
-            Assert.Equal(HttpMethod.Get, _fakeHttpClient.CallInfo.First().Method);
-            Assert.Equal("/interactions/verification", _fakeHttpClient.CallInfo.First().RequestUri.ToString());
+            Assert.Equal(1, _fakeHttpClient.RequestsRecieved.Count());
+            Assert.Equal(HttpMethod.Get, _fakeHttpClient.RequestsRecieved.First().Method);
+            Assert.Equal("/interactions/verification", _fakeHttpClient.RequestsRecieved.First().RequestUri.ToString());
         }
 
         [Fact]
@@ -431,7 +431,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.ClearInteractions();
 
-            Assert.Equal(0, _fakeHttpClient.CallInfo.Count());
+            Assert.Equal(0, _fakeHttpClient.RequestsRecieved.Count());
         }
 
         [Fact]
@@ -443,9 +443,9 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.ClearInteractions();
 
-            Assert.Equal(1, _fakeHttpClient.CallInfo.Count());
-            Assert.Equal(HttpMethod.Delete, _fakeHttpClient.CallInfo.First().Method);
-            Assert.Equal("/interactions", _fakeHttpClient.CallInfo.First().RequestUri.ToString());
+            Assert.Equal(1, _fakeHttpClient.RequestsRecieved.Count());
+            Assert.Equal(HttpMethod.Delete, _fakeHttpClient.RequestsRecieved.First().Method);
+            Assert.Equal("/interactions", _fakeHttpClient.RequestsRecieved.First().RequestUri.ToString());
         }
 
         [Fact]

@@ -92,6 +92,7 @@ public class ConsumerMyApiPact : IDisposable
 			.HasPactWith("Something API");
 
 		MockProviderService = PactBuilder.MockService(MockServerPort); //Configure the http mock server
+		//NOTE: You can also use SSL by passing true as the second param. This will however require a valid SSL certificate installed and bound with netsh (netsh http add sslcert ipport=0.0.0.0:port certhash=thumbprint appid={app-guid}) on the machine running the test. See https://groups.google.com/forum/#!topic/nancy-web-framework/t75dKyfgzpg
 	}
 
 	public void Dispose()
@@ -245,7 +246,7 @@ public class SomethingApiTests
 		using (var client = new HttpClient { BaseAddress = new Uri("http://api-address:9999") })
 		{
 			pactVerifier
-				.ServiceProvider("Something API", client)
+				.ServiceProvider("Something API", client) //NOTE: You can also use your own client by using the ServiceProvider method which takes a Func<ProviderServiceRequest, ProviderServiceResponse>. You are then responsible for mapping and performing the actual provider verification HTTP request within that Func.
 				.HonoursPactWith("Consumer")
 				.PactUri("../../../Consumer.Tests/pacts/consumer-something_api.json")
 				.Verify(); //NOTE: Optionally you can control what interactions are verified by specifying a providerDescription and/or providerState

@@ -1,45 +1,33 @@
 ﻿using System;
 using System.Linq;
-using System.Net.Http;
-using System.Threading;
 using PactNet.Mocks.MockHttpService.Comparers;
-using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
 using PactNet.Reporters;
 
 namespace PactNet.Mocks.MockHttpService.Validators
 {
-    public class ProviderServiceValidator : IProviderServiceValidator
+    internal class ProviderServiceValidator : IProviderServiceValidator
     {
         private readonly IProviderServiceResponseComparer _providerServiceResponseComparer;
-        private readonly HttpClient _httpClient;
-        private readonly IHttpRequestMessageMapper _httpRequestMessageMapper;
-        private readonly IProviderServiceResponseMapper _providerServiceResponseMapper;
+        private readonly IHttpRequestSender _httpRequestSender;
         private readonly IReporter _reporter;
 
         internal ProviderServiceValidator(
-            IProviderServiceResponseComparer providerServiceResponseComparer, 
-            HttpClient httpClient, 
-            IHttpRequestMessageMapper httpRequestMessageMapper,
-            IProviderServiceResponseMapper providerServiceResponseMapper,
+            IProviderServiceResponseComparer providerServiceResponseComparer,
+            IHttpRequestSender httpRequestSender, 
             IReporter reporter)
         {
             _providerServiceResponseComparer = providerServiceResponseComparer;
-            _httpClient = httpClient;
-            _httpRequestMessageMapper = httpRequestMessageMapper;
-            _providerServiceResponseMapper = providerServiceResponseMapper;
+            _httpRequestSender = httpRequestSender;
             _reporter = reporter;
         }
 
         public ProviderServiceValidator(
-            HttpClient httpClient, 
-            IReporter reporter) 
-            : this(
+            IHttpRequestSender httpRequestSender, 
+            IReporter reporter) : this(
             new ProviderServiceResponseComparer(reporter),
-            httpClient,
-            new HttpRequestMessageMapper(),
-            new ProviderServiceResponseMapper(),
+            httpRequestSender,
             reporter)
         {
         }
@@ -116,12 +104,8 @@ namespace PactNet.Mocks.MockHttpService.Validators
 
         private void ValidateInteraction(ProviderServiceInteraction interaction)
         {
-            var request = _httpRequestMessageMapper.Convert(interaction.Request);
-
-            var response = _httpClient.SendAsync(request, CancellationToken.None).Result;
-
             var expectedResponse = interaction.Response;
-            var actualResponse = _providerServiceResponseMapper.Convert(response);
+            var actualResponse = _httpRequestSender.Send(interaction.Request);
 
             _providerServiceResponseComparer.Compare(expectedResponse, actualResponse);
         }

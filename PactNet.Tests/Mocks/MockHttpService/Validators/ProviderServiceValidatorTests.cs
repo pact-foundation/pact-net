@@ -1,32 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using NSubstitute;
+using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Comparers;
-using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Validators;
 using PactNet.Models;
 using PactNet.Reporters;
-using PactNet.Tests.Fakes;
 using Xunit;
 
 namespace PactNet.Tests.Mocks.MockHttpService.Validators
 {
     public class ProviderServiceValidatorTests
     {
+        private IProviderServiceResponseComparer _mockResponseComparer;
+        private IHttpRequestSender _mockHttpRequestSender;
+        private IReporter _mockReporter;
+
         private IProviderServiceValidator GetSubject()
         {
-            return new ProviderServiceValidator(new HttpClient(), new Reporter(new NoOpReportOutputter()));
+            _mockResponseComparer = Substitute.For<IProviderServiceResponseComparer>();
+            _mockHttpRequestSender = Substitute.For<IHttpRequestSender>();
+            _mockReporter = Substitute.For<IReporter>();
+
+            return new ProviderServiceValidator(_mockResponseComparer, _mockHttpRequestSender, _mockReporter);
         }
 
         [Fact]
         public void Validate_WithNullPactFile_ThrowsArgumentException()
         {
-            var providerServiceValidator = GetSubject();
+            var validator = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => providerServiceValidator.Validate(null, null));
+            Assert.Throws<ArgumentException>(() => validator.Validate(null, null));
         }
 
         [Fact]
@@ -36,9 +42,10 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
             {
                 Provider = new Party { Name = "My Provider" }
             };
-            var providerServiceValidator = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => providerServiceValidator.Validate(pact, null));
+            var validator = GetSubject();
+
+            Assert.Throws<ArgumentException>(() => validator.Validate(pact, null));
         }
 
         [Fact]
@@ -49,9 +56,10 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
                 Consumer = new Party(),
                 Provider = new Party { Name = "My Provider" }
             };
-            var providerServiceValidator = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => providerServiceValidator.Validate(pact, null));
+            var validator = GetSubject();
+
+            Assert.Throws<ArgumentException>(() => validator.Validate(pact, null));
         }
 
         [Fact]
@@ -62,9 +70,10 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
                 Consumer = new Party { Name = String.Empty },
                 Provider = new Party { Name = "My Provider" }
             };
-            var providerServiceValidator = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => providerServiceValidator.Validate(pact, null));
+            var validator = GetSubject();
+
+            Assert.Throws<ArgumentException>(() => validator.Validate(pact, null));
         }
 
         [Fact]
@@ -74,9 +83,10 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
             {
                 Consumer = new Party { Name = "My client" },
             };
-            var providerServiceValidator = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => providerServiceValidator.Validate(pact, null));
+            var validator = GetSubject();
+
+            Assert.Throws<ArgumentException>(() => validator.Validate(pact, null));
         }
 
         [Fact]
@@ -87,9 +97,10 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
                 Consumer = new Party { Name = "My client" },
                 Provider = new Party()
             };
-            var providerServiceValidator = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => providerServiceValidator.Validate(pact, null));
+            var validator = GetSubject();
+
+            Assert.Throws<ArgumentException>(() => validator.Validate(pact, null));
         }
 
         [Fact]
@@ -100,41 +111,31 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
                 Consumer = new Party { Name = "My client" },
                 Provider = new Party { Name = String.Empty },
             };
-            var providerServiceValidator = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => providerServiceValidator.Validate(pact, null));
+            var validator = GetSubject();
+
+            Assert.Throws<ArgumentException>(() => validator.Validate(pact, null));
         }
 
         [Fact]
-        public void Validate_WithNullInteractionsInPactFile_DoesNotCallHttpClientOrAnyOfTheMappersOrValidators()
+        public void Validate_WithNullInteractionsInPactFile_DoesNotCallTheHttpRequestSenderOrRequestComparer()
         {
             var pact = new ProviderServicePactFile
             {
                 Consumer = new Party { Name = "My client" },
                 Provider = new Party { Name = "My Provider" }
             };
-            var mockProviderServiceResponseComparer = Substitute.For<IProviderServiceResponseComparer>();
-            var fakeHttpClient = new FakeHttpClient();
-            var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
-            var mockProviderServiceResponseMapper = Substitute.For<IProviderServiceResponseMapper>();
 
-            var providerServiceValidator = new ProviderServiceValidator(
-                mockProviderServiceResponseComparer,
-                fakeHttpClient, 
-                mockHttpRequestMessageMapper, 
-                mockProviderServiceResponseMapper,
-                new Reporter(new NoOpReportOutputter()));
+            var validator = GetSubject();
 
-            providerServiceValidator.Validate(pact, null);
+            validator.Validate(pact, null);
 
-            mockProviderServiceResponseComparer.Received(0).Compare(Arg.Any<ProviderServiceResponse>(), Arg.Any<ProviderServiceResponse>());
-            Assert.Equal(0, fakeHttpClient.CallInfo.Count());
-            mockHttpRequestMessageMapper.Received(0).Convert(Arg.Any<ProviderServiceRequest>());
-            mockProviderServiceResponseMapper.Received(0).Convert(Arg.Any<HttpResponseMessage>());
+            _mockResponseComparer.Received(0).Compare(Arg.Any<ProviderServiceResponse>(), Arg.Any<ProviderServiceResponse>());
+            _mockHttpRequestSender.Received(0).Send(Arg.Any<ProviderServiceRequest>());
         }
 
         [Fact]
-        public void Validate_WithEmptyInteractionsInPactFile_DoesNotCallHttpClientOrAnyOfTheMappersOrValidators()
+        public void Validate_WithEmptyInteractionsInPactFile_DoesNotCallTheHttpRequestSenderOrRequestComparer()
         {
             var pact = new ProviderServicePactFile
             {
@@ -142,27 +143,67 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
                 Provider = new Party { Name = "My Provider" },
                 Interactions = new List<ProviderServiceInteraction>()
             };
-            var mockProviderServiceResponseComparer = Substitute.For<IProviderServiceResponseComparer>();
-            var fakeHttpClient = new FakeHttpClient();
-            var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
-            var mockProviderServiceResponseMapper = Substitute.For<IProviderServiceResponseMapper>();
 
-            var providerServiceValidator = new ProviderServiceValidator(
-                mockProviderServiceResponseComparer,
-                fakeHttpClient,
-                mockHttpRequestMessageMapper,
-                mockProviderServiceResponseMapper,
-                new Reporter(new NoOpReportOutputter()));
+            var validator = GetSubject();
 
-            providerServiceValidator.Validate(pact, null);
-            Assert.Equal(0, fakeHttpClient.CallInfo.Count());
-            mockProviderServiceResponseComparer.Received(0).Compare(Arg.Any<ProviderServiceResponse>(), Arg.Any<ProviderServiceResponse>());
-            mockHttpRequestMessageMapper.Received(0).Convert(Arg.Any<ProviderServiceRequest>());
-            mockProviderServiceResponseMapper.Received(0).Convert(Arg.Any<HttpResponseMessage>());
+            validator.Validate(pact, null);
+
+            _mockResponseComparer.Received(0).Compare(Arg.Any<ProviderServiceResponse>(), Arg.Any<ProviderServiceResponse>());
+            _mockHttpRequestSender.Received(0).Send(Arg.Any<ProviderServiceRequest>());
         }
 
         [Fact]
-        public void Validate_WithInteractionsInPactFile_CallsConvertOnTheHttpRequestMessageMapper()
+        public void Validate_WithInteractionsInPactFile_CallsSendOnHttpRequestSender()
+        {
+            var pact = new ProviderServicePactFile
+            {
+                Consumer = new Party { Name = "My client" },
+                Provider = new Party { Name = "My Provider" },
+                Interactions = new List<ProviderServiceInteraction>
+                {
+                    new ProviderServiceInteraction
+                    {
+                        Description = "My interaction",
+                        Request = new ProviderServiceRequest(),
+                        Response = new ProviderServiceResponse()
+                    }
+                }
+            };
+
+            var validator = GetSubject();
+
+            validator.Validate(pact, null);
+
+            _mockHttpRequestSender.Received(1).Send(pact.Interactions.First().Request);
+        }
+
+        [Fact]
+        public void Validate_WithInteractionsInPactFile_CallsCompareOnTheProviderServiceResponseComparer()
+        {
+            var pact = new ProviderServicePactFile
+            {
+                Consumer = new Party { Name = "My client" },
+                Provider = new Party { Name = "My Provider" },
+                Interactions = new List<ProviderServiceInteraction>
+                {
+                    new ProviderServiceInteraction
+                    {
+                        Description = "My interaction",
+                        Request = new ProviderServiceRequest(),
+                        Response = new ProviderServiceResponse()
+                    }
+                }
+            };
+
+            var validator = GetSubject();
+
+            validator.Validate(pact, null);
+
+            _mockResponseComparer.Received(1).Compare(pact.Interactions.First().Response, Arg.Any<ProviderServiceResponse>());
+        }
+
+        [Fact]
+        public void Validate_WhenProviderServiceResponseComparerThrowsPactFailureException_ThrowsPactFailureException()
         {
             var pact = new ProviderServicePactFile
             {
@@ -176,119 +217,14 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
                     }
                 }
             };
-            var mockProviderServiceResponseComparer = Substitute.For<IProviderServiceResponseComparer>();
-            var fakeHttpClient = new FakeHttpClient();
-            var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
-            var mockProviderServiceResponseMapper = Substitute.For<IProviderServiceResponseMapper>();
 
-            var providerServiceValidator = new ProviderServiceValidator(
-                mockProviderServiceResponseComparer,
-                fakeHttpClient,
-                mockHttpRequestMessageMapper,
-                mockProviderServiceResponseMapper,
-                new Reporter(new NoOpReportOutputter()));
+            var validator = GetSubject();
 
-            providerServiceValidator.Validate(pact, null);
-
-            mockHttpRequestMessageMapper.Received(1).Convert(Arg.Any<ProviderServiceRequest>());
-        }
-
-        [Fact]
-        public void Validate_WithInteractionsInPactFile_CallsConvertOnTheProviderServiceResponseMapper()
-        {
-            var pact = new ProviderServicePactFile
-            {
-                Consumer = new Party { Name = "My client" },
-                Provider = new Party { Name = "My Provider" },
-                Interactions = new List<ProviderServiceInteraction>
-                {
-                    new ProviderServiceInteraction
-                    {
-                        Description = "My interaction"
-                    }
-                }
-            };
-            var mockProviderServiceResponseComparer = Substitute.For<IProviderServiceResponseComparer>();
-            var fakeHttpClient = new FakeHttpClient();
-            var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
-            var mockProviderServiceResponseMapper = Substitute.For<IProviderServiceResponseMapper>();
-
-            var providerServiceValidator = new ProviderServiceValidator(
-                mockProviderServiceResponseComparer,
-                fakeHttpClient,
-                mockHttpRequestMessageMapper,
-                mockProviderServiceResponseMapper,
-                new Reporter(new NoOpReportOutputter()));
-
-            providerServiceValidator.Validate(pact, null);
-
-            mockProviderServiceResponseMapper.Received(1).Convert(Arg.Any<HttpResponseMessage>());
-        }
-
-        [Fact]
-        public void Validate_WithInteractionsInPactFile_CallsValidateOnTheProviderServiceResponseValidator()
-        {
-            var pact = new ProviderServicePactFile
-            {
-                Consumer = new Party { Name = "My client" },
-                Provider = new Party { Name = "My Provider" },
-                Interactions = new List<ProviderServiceInteraction>
-                {
-                    new ProviderServiceInteraction
-                    {
-                        Description = "My interaction"
-                    }
-                }
-            };
-            var mockProviderServiceResponseComparer = Substitute.For<IProviderServiceResponseComparer>();
-            var fakeHttpClient = new FakeHttpClient();
-            var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
-            var mockProviderServiceResponseMapper = Substitute.For<IProviderServiceResponseMapper>();
-
-            var providerServiceValidator = new ProviderServiceValidator(
-                mockProviderServiceResponseComparer,
-                fakeHttpClient,
-                mockHttpRequestMessageMapper,
-                mockProviderServiceResponseMapper,
-                new Reporter(new NoOpReportOutputter()));
-
-            providerServiceValidator.Validate(pact, null);
-
-            mockProviderServiceResponseComparer.Received(1).Compare(Arg.Any<ProviderServiceResponse>(), Arg.Any<ProviderServiceResponse>());
-        }
-
-        [Fact]
-        public void Validate_WhenProviderServiceResponseValidatorThrowsPactFailureExceptio_ThrowsPactFailureException()
-        {
-            var pact = new ProviderServicePactFile
-            {
-                Consumer = new Party { Name = "My client" },
-                Provider = new Party { Name = "My Provider" },
-                Interactions = new List<ProviderServiceInteraction>
-                {
-                    new ProviderServiceInteraction
-                    {
-                        Description = "My interaction"
-                    }
-                }
-            };
-            var mockProviderServiceResponseComparer = Substitute.For<IProviderServiceResponseComparer>();
-            var fakeHttpClient = new FakeHttpClient();
-            var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
-            var mockProviderServiceResponseMapper = Substitute.For<IProviderServiceResponseMapper>();
-
-            mockProviderServiceResponseComparer
+            _mockResponseComparer
                 .When(x => x.Compare(Arg.Any<ProviderServiceResponse>(), Arg.Any<ProviderServiceResponse>()))
                 .Do(x => { throw new PactFailureException("Expected response cannot be null"); });
 
-            var providerServiceValidator = new ProviderServiceValidator(
-                mockProviderServiceResponseComparer,
-                fakeHttpClient,
-                mockHttpRequestMessageMapper,
-                mockProviderServiceResponseMapper,
-                new Reporter(new NoOpReportOutputter()));
-
-            Assert.Throws<PactFailureException>(() => providerServiceValidator.Validate(pact, null));
+            Assert.Throws<PactFailureException>(() => validator.Validate(pact, null));
         }
 
         [Fact]
@@ -303,19 +239,9 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
             };
             var providerStates = new ProviderStates(setUp: () => { actionInkoved = true; }, tearDown: null);
 
-            var mockProviderServiceResponseComparer = Substitute.For<IProviderServiceResponseComparer>();
-            var fakeHttpClient = new FakeHttpClient();
-            var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
-            var mockProviderServiceResponseMapper = Substitute.For<IProviderServiceResponseMapper>();
+            var validator = GetSubject();
 
-            var providerServiceValidator = new ProviderServiceValidator(
-                mockProviderServiceResponseComparer,
-                fakeHttpClient,
-                mockHttpRequestMessageMapper,
-                mockProviderServiceResponseMapper,
-                new Reporter(new NoOpReportOutputter()));
-
-            providerServiceValidator.Validate(pact, providerStates);
+            validator.Validate(pact, providerStates);
 
             Assert.False(actionInkoved, "Provider states pact setUp action is not invoked");
         }
@@ -338,19 +264,9 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
             };
             var providerStates = new ProviderStates(setUp: () => { actionInkoved = true; }, tearDown: null);
 
-            var mockProviderServiceResponseComparer = Substitute.For<IProviderServiceResponseComparer>();
-            var fakeHttpClient = new FakeHttpClient();
-            var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
-            var mockProviderServiceResponseMapper = Substitute.For<IProviderServiceResponseMapper>();
+            var validator = GetSubject();
 
-            var providerServiceValidator = new ProviderServiceValidator(
-                mockProviderServiceResponseComparer,
-                fakeHttpClient,
-                mockHttpRequestMessageMapper,
-                mockProviderServiceResponseMapper,
-                new Reporter(new NoOpReportOutputter()));
-
-            providerServiceValidator.Validate(pact, providerStates);
+            validator.Validate(pact, providerStates);
 
             Assert.True(actionInkoved, "Provider states pact setUp action is invoked");
         }
@@ -373,19 +289,9 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
             };
             var providerStates = new ProviderStates(setUp: null, tearDown: () => { actionInkoved = true; });
 
-            var mockProviderServiceResponseComparer = Substitute.For<IProviderServiceResponseComparer>();
-            var fakeHttpClient = new FakeHttpClient();
-            var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
-            var mockProviderServiceResponseMapper = Substitute.For<IProviderServiceResponseMapper>();
+            var validator = GetSubject();
 
-            var providerServiceValidator = new ProviderServiceValidator(
-                mockProviderServiceResponseComparer,
-                fakeHttpClient,
-                mockHttpRequestMessageMapper,
-                mockProviderServiceResponseMapper,
-                new Reporter(new NoOpReportOutputter()));
-
-            providerServiceValidator.Validate(pact, providerStates);
+            validator.Validate(pact, providerStates);
 
             Assert.True(actionInkoved, "Provider states pact tearDown action is invoked");
         }
@@ -408,23 +314,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
             };
             var providerStates = new ProviderStates(setUp: null, tearDown: () => { actionInkoved = true; });
 
-            var mockProviderServiceResponseComparer = Substitute.For<IProviderServiceResponseComparer>();
-            var fakeHttpClient = new FakeHttpClient();
-            var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
-            var mockProviderServiceResponseMapper = Substitute.For<IProviderServiceResponseMapper>();
+            var validator = GetSubject();
 
-            mockProviderServiceResponseComparer
+            _mockResponseComparer
                 .When(x => x.Compare(Arg.Any<ProviderServiceResponse>(), Arg.Any<ProviderServiceResponse>()))
                 .Do(x => { throw new PactFailureException("Expected response cannot be null"); });
 
-            var providerServiceValidator = new ProviderServiceValidator(
-                mockProviderServiceResponseComparer,
-                fakeHttpClient,
-                mockHttpRequestMessageMapper,
-                mockProviderServiceResponseMapper,
-                new Reporter(new NoOpReportOutputter()));
-
-            Assert.Throws<PactFailureException>(() => providerServiceValidator.Validate(pact, providerStates));
+            Assert.Throws<PactFailureException>(() => validator.Validate(pact, providerStates));
 
             Assert.True(actionInkoved, "Provider states pact tearDown action is invoked");
         }
@@ -449,19 +345,9 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
             var providerStates = new ProviderStates();
             providerStates.Add(new ProviderState("My Provider State", setUp: () => { actionInkoved = true; }, tearDown: null));
 
-            var mockProviderServiceResponseComparer = Substitute.For<IProviderServiceResponseComparer>();
-            var fakeHttpClient = new FakeHttpClient();
-            var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
-            var mockProviderServiceResponseMapper = Substitute.For<IProviderServiceResponseMapper>();
+            var validator = GetSubject();
 
-            var providerServiceValidator = new ProviderServiceValidator(
-                mockProviderServiceResponseComparer,
-                fakeHttpClient,
-                mockHttpRequestMessageMapper,
-                mockProviderServiceResponseMapper,
-                new Reporter(new NoOpReportOutputter()));
-
-            providerServiceValidator.Validate(pact, providerStates);
+            validator.Validate(pact, providerStates);
 
             Assert.True(actionInkoved, "Provider state setUp action is invoked");
         }
@@ -486,19 +372,9 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
             var providerStates = new ProviderStates();
             providerStates.Add(new ProviderState("My Provider State", setUp: null, tearDown: () => { actionInkoved = true; }));
 
-            var mockProviderServiceResponseComparer = Substitute.For<IProviderServiceResponseComparer>();
-            var fakeHttpClient = new FakeHttpClient();
-            var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
-            var mockProviderServiceResponseMapper = Substitute.For<IProviderServiceResponseMapper>();
+            var validator = GetSubject();
 
-            var providerServiceValidator = new ProviderServiceValidator(
-                mockProviderServiceResponseComparer,
-                fakeHttpClient,
-                mockHttpRequestMessageMapper,
-                mockProviderServiceResponseMapper,
-                new Reporter(new NoOpReportOutputter()));
-
-            providerServiceValidator.Validate(pact, providerStates);
+            validator.Validate(pact, providerStates);
 
             Assert.True(actionInkoved, "Provider state tearDown action is invoked");
         }
@@ -523,23 +399,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
             var providerStates = new ProviderStates();
             providerStates.Add(new ProviderState("My Provider State", setUp: null, tearDown: () => { actionInkoved = true; }));
 
-            var mockProviderServiceResponseComparer = Substitute.For<IProviderServiceResponseComparer>();
-            var fakeHttpClient = new FakeHttpClient();
-            var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
-            var mockProviderServiceResponseMapper = Substitute.For<IProviderServiceResponseMapper>();
+            var validator = GetSubject();
 
-            mockProviderServiceResponseComparer
+            _mockResponseComparer
                 .When(x => x.Compare(Arg.Any<ProviderServiceResponse>(), Arg.Any<ProviderServiceResponse>()))
                 .Do(x => { throw new PactFailureException("Expected response cannot be null"); });
 
-            var providerServiceValidator = new ProviderServiceValidator(
-                mockProviderServiceResponseComparer,
-                fakeHttpClient,
-                mockHttpRequestMessageMapper,
-                mockProviderServiceResponseMapper,
-                new Reporter(new NoOpReportOutputter()));
-
-            Assert.Throws<PactFailureException>(() => providerServiceValidator.Validate(pact, providerStates));
+            Assert.Throws<PactFailureException>(() => validator.Validate(pact, providerStates));
 
             Assert.True(actionInkoved, "Provider state tearDown action is invoked");
         }
@@ -562,19 +428,9 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
             };
             var providerStates = new ProviderStates();
 
-            var mockProviderServiceResponseComparer = Substitute.For<IProviderServiceResponseComparer>();
-            var fakeHttpClient = new FakeHttpClient();
-            var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
-            var mockProviderServiceResponseMapper = Substitute.For<IProviderServiceResponseMapper>();
+            var validator = GetSubject();
 
-            var providerServiceValidator = new ProviderServiceValidator(
-                mockProviderServiceResponseComparer,
-                fakeHttpClient,
-                mockHttpRequestMessageMapper,
-                mockProviderServiceResponseMapper,
-                new Reporter(new NoOpReportOutputter()));
-
-            Assert.Throws<InvalidOperationException>(() => providerServiceValidator.Validate(pact, providerStates));
+            Assert.Throws<InvalidOperationException>(() => validator.Validate(pact, providerStates));
         }
 
         [Fact]
@@ -594,23 +450,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
                 }
             };
 
-            var mockProviderServiceResponseComparer = Substitute.For<IProviderServiceResponseComparer>();
-            var fakeHttpClient = new FakeHttpClient();
-            var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
-            var mockProviderServiceResponseMapper = Substitute.For<IProviderServiceResponseMapper>();
+            var validator = GetSubject();
 
-            var providerServiceValidator = new ProviderServiceValidator(
-                mockProviderServiceResponseComparer,
-                fakeHttpClient,
-                mockHttpRequestMessageMapper,
-                mockProviderServiceResponseMapper,
-                new Reporter(new NoOpReportOutputter()));
-
-            Assert.Throws<InvalidOperationException>(() => providerServiceValidator.Validate(pact, null));
+            Assert.Throws<InvalidOperationException>(() => validator.Validate(pact, null));
         }
 
         [Fact]
-        public void Validate_WhenInteractionDefinesAProviderStateAndProviderStateIsNoFound_ThrowsInvalidOperationException()
+        public void Validate_WhenInteractionDefinesAProviderStateAndProviderStateIsNotFound_ThrowsInvalidOperationException()
         {
             var pact = new ProviderServicePactFile
             {
@@ -629,19 +475,9 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
             var providerStates = new ProviderStates();
             providerStates.Add(new ProviderState("Some other provider state"));
 
-            var mockProviderServiceResponseComparer = Substitute.For<IProviderServiceResponseComparer>();
-            var fakeHttpClient = new FakeHttpClient();
-            var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
-            var mockProviderServiceResponseMapper = Substitute.For<IProviderServiceResponseMapper>();
+            var validator = GetSubject();
 
-            var providerServiceValidator = new ProviderServiceValidator(
-                mockProviderServiceResponseComparer,
-                fakeHttpClient,
-                mockHttpRequestMessageMapper,
-                mockProviderServiceResponseMapper,
-                new Reporter(new NoOpReportOutputter()));
-
-            Assert.Throws<InvalidOperationException>(() => providerServiceValidator.Validate(pact, providerStates));
+            Assert.Throws<InvalidOperationException>(() => validator.Validate(pact, providerStates));
         }
 
         [Fact]
@@ -663,19 +499,9 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
             var providerStates = new ProviderStates();
             providerStates.Add(new ProviderState("My Provider State"));
 
-            var mockProviderServiceResponseComparer = Substitute.For<IProviderServiceResponseComparer>();
-            var fakeHttpClient = new FakeHttpClient();
-            var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
-            var mockProviderServiceResponseMapper = Substitute.For<IProviderServiceResponseMapper>();
+            var validator = GetSubject();
 
-            var providerServiceValidator = new ProviderServiceValidator(
-                mockProviderServiceResponseComparer,
-                fakeHttpClient,
-                mockHttpRequestMessageMapper,
-                mockProviderServiceResponseMapper,
-                new Reporter(new NoOpReportOutputter()));
-
-            providerServiceValidator.Validate(pact, providerStates);
+            validator.Validate(pact, providerStates);
         }
 
         [Fact]
@@ -710,19 +536,9 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
             providerStates.Add(new ProviderState(providerState1, setUp: () => actionInvocationLog.Add(providerState1 + setUpSuffix), tearDown: () => actionInvocationLog.Add(providerState1 + tearDownSuffix)));
             providerStates.Add(new ProviderState(providerState2, setUp: () => actionInvocationLog.Add(providerState2 + setUpSuffix), tearDown: () => actionInvocationLog.Add(providerState2 + tearDownSuffix)));
 
-            var mockProviderServiceResponseComparer = Substitute.For<IProviderServiceResponseComparer>();
-            var fakeHttpClient = new FakeHttpClient();
-            var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
-            var mockProviderServiceResponseMapper = Substitute.For<IProviderServiceResponseMapper>();
+            var validator = GetSubject();
 
-            var providerServiceValidator = new ProviderServiceValidator(
-                mockProviderServiceResponseComparer,
-                fakeHttpClient,
-                mockHttpRequestMessageMapper,
-                mockProviderServiceResponseMapper,
-                new Reporter(new NoOpReportOutputter()));
-
-            providerServiceValidator.Validate(pact, providerStates);
+            validator.Validate(pact, providerStates);
 
             Assert.Equal(4, actionInvocationLog.Count());
             Assert.Equal(providerState1 + setUpSuffix, actionInvocationLog.First());
@@ -747,25 +563,14 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
                 }
             };
 
-            var mockProviderServiceResponseComparer = Substitute.For<IProviderServiceResponseComparer>();
-            var fakeHttpClient = new FakeHttpClient();
-            var mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
-            var mockProviderServiceResponseMapper = Substitute.For<IProviderServiceResponseMapper>();
-            var mockReporter = Substitute.For<IReporter>();
+            var validator = GetSubject();
 
-            mockReporter
+            _mockReporter
                 .When(x => x.ThrowIfAnyErrors())
                 .Do(info => { throw new PactFailureException("Compare failed"); });
 
-            var providerServiceValidator = new ProviderServiceValidator(
-                mockProviderServiceResponseComparer,
-                fakeHttpClient,
-                mockHttpRequestMessageMapper,
-                mockProviderServiceResponseMapper,
-                mockReporter);
-
-            Assert.Throws<PactFailureException>(() => providerServiceValidator.Validate(pact, null));
-            mockReporter.Received(1).ThrowIfAnyErrors();
+            Assert.Throws<PactFailureException>(() => validator.Validate(pact, null));
+            _mockReporter.Received(1).ThrowIfAnyErrors();
         }
     }
 }
