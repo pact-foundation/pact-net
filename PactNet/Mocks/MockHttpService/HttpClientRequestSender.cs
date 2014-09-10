@@ -41,7 +41,7 @@ namespace PactNet.Mocks.MockHttpService
 
             if (httpRequest != null)
             {
-                if (httpResponse.Content != null)
+                if (httpRequest.Content != null)
                 {
                     httpRequest.Content.Dispose();
                 }

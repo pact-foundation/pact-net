@@ -220,7 +220,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         }
 
         [Fact]
-        public void Convert_WithContentLengthHeader_ContentLengthHeaderIsNotAdded()
+        public void Convert_WithContentLengthHeader_ContentLengthHeaderIsNotAddedToHttpRequestMessage()
         {
             var request = new ProviderServiceRequest
             {
@@ -228,8 +228,9 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 Path = "/events",
                 Headers = new Dictionary<string, string>
                 {
-                    { "Content-Length", "100" }
-                }
+                    { "Content-Length", "12" }
+                },
+                Body = "Some content"
             };
 
             var mapper = GetSubject();
@@ -239,6 +240,92 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             var result = mapper.Convert(request);
 
             Assert.Equal(0, result.Headers.Count());
+        }
+
+        [Fact]
+        public void Convert_WithContentLengthHeader_ContentLengthHeaderIsAddedToHttpRequestMessageContentHeaders()
+        {
+            var request = new ProviderServiceRequest
+            {
+                Method = HttpVerb.Post,
+                Path = "/events",
+                Headers = new Dictionary<string, string>
+                {
+                    { "Content-Length", "12" }
+                },
+                Body = "Some content"
+            };
+            var httpBodyContent = new HttpBodyContent(request.Body, "text/plain", Encoding.UTF8);
+            var stringContent = new StringContent(request.Body, Encoding.UTF8, "text/plain");
+
+            var mapper = GetSubject();
+
+            _mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
+            _mockHttpBodyContentMapper.Convert(Arg.Any<string>(), Arg.Any<IDictionary<string, string>>()).Returns(httpBodyContent);
+            _mockHttpContentMapper.Convert(httpBodyContent).Returns(stringContent);
+
+            var result = mapper.Convert(request);
+
+            Assert.Equal(request.Headers.Last().Key, result.Content.Headers.Last().Key);
+            Assert.Equal(request.Headers.Last().Value, result.Content.Headers.Last().Value.First());
+        }
+
+        [Fact]
+        public void Convert_WithContentTypeSpecifiedAndAlsoBeingSetByStringContent_ContentTypeHeaderIsNotReAddedToHttpRequestMessageContentHeaders()
+        {
+            var request = new ProviderServiceRequest
+            {
+                Method = HttpVerb.Post,
+                Path = "/events",
+                Headers = new Dictionary<string, string>
+                {
+                    { "Content-Type", "text/plain" }
+                },
+                Body = "Some content"
+            };
+            var httpBodyContent = new HttpBodyContent(request.Body, "text/plain", Encoding.UTF8);
+            var stringContent = new StringContent(request.Body, Encoding.UTF8, "text/plain");
+
+            var mapper = GetSubject();
+
+            _mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
+            _mockHttpBodyContentMapper.Convert(Arg.Any<string>(), Arg.Any<IDictionary<string, string>>()).Returns(httpBodyContent);
+            _mockHttpContentMapper.Convert(httpBodyContent).Returns(stringContent);
+
+            var result = mapper.Convert(request);
+
+            Assert.Equal(1, result.Content.Headers.Count());
+            Assert.Equal(request.Headers.First().Key, result.Content.Headers.First().Key);
+            Assert.Equal("text/plain; charset=utf-8", result.Content.Headers.First().Value.First());
+        }
+
+        [Fact]
+        public void Convert_WithContentTypeSpecifiedButNotBeingSetByByteArrayContent_ContentTypeHeaderIsNotReAddedToHttpRequestMessageContentHeaders()
+        {
+            var request = new ProviderServiceRequest
+            {
+                Method = HttpVerb.Post,
+                Path = "/events",
+                Headers = new Dictionary<string, string>
+                {
+                    { "Content-Type", "application/octet-stream" }
+                },
+                Body = Encoding.UTF8.GetBytes("Some content")
+            };
+            var httpBodyContent = new HttpBodyContent(request.Body, "text/plain", Encoding.UTF8);
+            var byteArrayContent = new ByteArrayContent(request.Body as byte[]);
+
+            var mapper = GetSubject();
+
+            _mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
+            _mockHttpBodyContentMapper.Convert(Arg.Any<object>(), Arg.Any<IDictionary<string, string>>()).Returns(httpBodyContent);
+            _mockHttpContentMapper.Convert(httpBodyContent).Returns(byteArrayContent);
+
+            var result = mapper.Convert(request);
+
+            Assert.Equal(1, result.Content.Headers.Count());
+            Assert.Equal(request.Headers.First().Key, result.Content.Headers.First().Key);
+            Assert.Equal("application/octet-stream", result.Content.Headers.First().Value.First());
         }
 
         [Fact]
@@ -279,7 +366,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 {
                     { "Content-Type", contentTypeString + "; charset=" + encodingString },
                     { "X-Custom", "My Custom header" },
-                    { "Content-Length", "10000" }, //This header is removed and replace with the correct value of 29
+                    { "Content-Length", "1000" }
                 },
                 Body = new
                 {
@@ -314,7 +401,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
             //Content-Length header
             Assert.Equal(request.Headers.Last().Key, contentLengthHeader.Key);
-            Assert.Equal("29", contentLengthHeader.Value.First());
+            Assert.Equal(request.Headers.Last().Value, contentLengthHeader.Value.First());
         }
     }
 }
