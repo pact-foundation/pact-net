@@ -9,5 +9,24 @@
     <projectUrl>https://github.com/SEEK-Jobs/pact-net</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A .NET version of Pact, which enables consumer driven contract testing.</description>
+    <dependencies>
+      <group targetFramework="net45">
+        <dependency id="Nancy.Hosting.Self" version="0.23.1" />
+        <dependency id="Newtonsoft.Json" version="6.0.3" />
+        <dependency id="System.IO.Abstractions" version="1.4.0.86" />
+      </group>
+      <group targetFramework="net40">
+        <dependency id="Nancy.Hosting.Self" version="0.23.1" />
+        <dependency id="Newtonsoft.Json" version="6.0.3" />
+        <dependency id="System.IO.Abstractions" version="1.4.0.86" />
+        <dependency id="Microsoft.Net.Http" version="2.2.28" />
+      </group>
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Net.Http" targetFramework="net45" />
+    </frameworkAssemblies>
   </metadata>
+  <files>
+    <file src="bin\Release\PactNet.dll" target="lib\net40" />
+  </files>
 </package>
