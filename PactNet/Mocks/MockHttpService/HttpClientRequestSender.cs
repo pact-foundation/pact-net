@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
@@ -39,27 +40,18 @@ namespace PactNet.Mocks.MockHttpService
             var httpResponse = _httpClient.SendAsync(httpRequest, CancellationToken.None).Result;
             var response = _providerServiceResponseMapper.Convert(httpResponse);
 
-            if (httpRequest != null)
-            {
-                if (httpRequest.Content != null)
-                {
-                    httpRequest.Content.Dispose();
-                }
-
-                httpRequest.Dispose();
-            }
-
-            if (httpResponse != null)
-            {
-                if (httpResponse.Content != null)
-                {
-                    httpResponse.Content.Dispose();
-                }
-
-                httpResponse.Dispose();
-            }
+            Dispose(httpRequest);
+            Dispose(httpResponse);
 
             return response;
+        }
+
+        private void Dispose<T>(T disposable) where T : class, IDisposable
+        {
+            if (disposable != null)
+            {
+                disposable.Dispose();
+            }
         }
     }
 }
