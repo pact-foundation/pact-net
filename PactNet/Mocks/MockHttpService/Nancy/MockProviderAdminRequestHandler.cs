@@ -111,7 +111,6 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         private void SetContent(string content, Stream stream)
         {
             var contentBytes = Encoding.UTF8.GetBytes(content);
-            stream.Position = 0;
             stream.Write(contentBytes, 0, contentBytes.Length);
             stream.Flush();
         }
