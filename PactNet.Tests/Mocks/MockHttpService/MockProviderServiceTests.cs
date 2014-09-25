@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -352,6 +353,44 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             Assert.Equal(1, actualIneractions.Count());
             Assert.Equal(expectedInteractions.First(), actualIneractions.First());
+        }
+
+        [Fact]
+        public void WillRespondWith_WhenAddingADuplicateInteractionThatDoesNotMatchExactlyAfterClearingInteractions_ThrowsInvalidOperationException()
+        {
+            var providerState = "My provider state";
+            var description = "My description";
+            var request = new ProviderServiceRequest
+            {
+                Path = "/tester",
+                Method = HttpVerb.Get
+            };
+            var response = new ProviderServiceResponse
+            {
+                Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
+                Status = 200
+            };
+            var response2 = new ProviderServiceResponse
+            {
+                Status = 200,
+                Headers = new Dictionary<string, string> { { "Content-Type", "Application/Json" } }
+            };
+            var mockService = GetSubject();
+
+            mockService
+                .Given(providerState)
+                .UponReceiving(description)
+                .With(request)
+                .WillRespondWith(response);
+
+            mockService.ClearInteractions();
+
+            Assert.Throws<InvalidOperationException>(() => 
+                mockService
+                    .Given(providerState)
+                    .UponReceiving(description)
+                    .With(request)
+                    .WillRespondWith(response2));
         }
 
         [Fact]
