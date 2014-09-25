@@ -30,7 +30,7 @@ namespace PactNet.Mocks.MockHttpService
         public ProviderServiceResponse Send(ProviderServiceRequest request)
         {
             //Added because of this http://stackoverflow.com/questions/23438416/why-is-httpclient-baseaddress-not-working
-            if (_httpClient.BaseAddress.OriginalString.EndsWith("/"))
+            if (_httpClient.BaseAddress != null && _httpClient.BaseAddress.OriginalString.EndsWith("/"))
             {
                 request.Path = request.Path.TrimStart('/');
             }

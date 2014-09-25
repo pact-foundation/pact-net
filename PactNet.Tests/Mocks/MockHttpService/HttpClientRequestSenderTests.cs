@@ -101,5 +101,22 @@ namespace PactNet.Tests.Mocks.MockHttpService
             _mockHttpRequestMessageMapper.Received(1).Convert(Arg.Is<ProviderServiceRequest>(x => x.Path == path));
             Assert.Equal(path, request.Path);
         }
+
+        [Fact]
+        public void Send_WhenBaseAddressIsNull_ThePathIsNotAltered()
+        {
+            const string path = "/testing/hi";
+            var request = new ProviderServiceRequest
+            {
+                Path = path
+            };
+
+            var requestSender = GetSubject(new FakeHttpClient(baseAddress: null));
+
+            requestSender.Send(request);
+
+            _mockHttpRequestMessageMapper.Received(1).Convert(Arg.Is<ProviderServiceRequest>(x => x.Path == path));
+            Assert.Equal(path, request.Path);
+        }
     }
 }

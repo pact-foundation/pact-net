@@ -18,7 +18,11 @@ namespace PactNet.Tests.Fakes
         {
             Response = response ?? new HttpResponseMessage(HttpStatusCode.OK);
             _requestsRecieved = new List<HttpRequestMessage>();
-            BaseAddress = new Uri(baseAddress);
+
+            if (baseAddress != null)
+            {
+                BaseAddress = new Uri(baseAddress);
+            }
         }
 
         public override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
