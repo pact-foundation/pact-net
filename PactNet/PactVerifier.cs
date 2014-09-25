@@ -89,20 +89,20 @@ namespace PactNet
             return this;
         }
 
-        public IPactVerifier ServiceProvider(string providerName, Func<ProviderServiceRequest, ProviderServiceResponse> httpRequestSenderFunc)
+        public IPactVerifier ServiceProvider(string providerName, Func<ProviderServiceRequest, ProviderServiceResponse> httpRequestSender)
         {
             if (String.IsNullOrEmpty(providerName))
             {
                 throw new ArgumentException("Please supply a non null or empty providerName");
             }
 
-            if (httpRequestSenderFunc == null)
+            if (httpRequestSender == null)
             {
                 throw new ArgumentException("Please supply a non null httpRequestSenderFunc");
             }
 
             ProviderName = providerName;
-            _httpRequestSender = new CustomRequestSender(httpRequestSenderFunc);
+            _httpRequestSender = new CustomRequestSender(httpRequestSender);
 
             return this;
         }

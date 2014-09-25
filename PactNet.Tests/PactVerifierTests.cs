@@ -181,7 +181,7 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void ServiceProvider_WhenCalledWithCustomFunc_CustomRequestSenderIsPassedIntoProviderServiceValidatorFactoryWhenVerifyIsCalled()
+        public void ServiceProvider_WhenCalledWithCustomRequestSender_CustomRequestSenderIsPassedIntoProviderServiceValidatorFactoryWhenVerifyIsCalled()
         {
             var pactVerifier = GetSubject();
 
