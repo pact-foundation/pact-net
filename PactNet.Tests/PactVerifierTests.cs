@@ -8,6 +8,7 @@ using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Validators;
 using PactNet.Models;
+using PactNet.Tests.Mocks.MockHttpService;
 using Xunit;
 
 namespace PactNet.Tests
@@ -30,7 +31,7 @@ namespace PactNet.Tests
                 _providerServiceValidatorFactoryCallInfo = new Tuple<bool, IHttpRequestSender>(true, httpRequestSender);
                 
                 return _mockProviderServiceValidator;
-            });
+            }, new HttpClient(new MockHttpMessageHandler()));
         }
 
         [Fact]
@@ -174,6 +175,23 @@ namespace PactNet.Tests
             pactVerifier
                 .HonoursPactWith("My client")
                 .PactUri("../../../Consumer.Tests/pacts/my_client-event_api.json")
+                .Verify();
+
+            Assert.True(_providerServiceValidatorFactoryCallInfo.Item1, "_providerServiceValidatorFactory was called");
+            Assert.IsType(typeof(HttpClientRequestSender), _providerServiceValidatorFactoryCallInfo.Item2); //was called with type
+        }
+
+        [Fact]
+        public void ServiceProvider_WhenCalledWithHttpClient_HttpClientRequestSenderWithMockHandlerIsPassedIntoProviderServiceValidatorFactoryWhenVerifyIsCalled()
+        {
+            var httpClient = new HttpClient(new MockHttpMessageHandler());
+            var pactVerifier = GetSubject();
+
+            pactVerifier.ServiceProvider("Event API", httpClient);
+
+            pactVerifier
+                .HonoursPactWith("consumer")
+                .PactUri("http://yourpactserver.com/getlatestpactfile")
                 .Verify();
 
             Assert.True(_providerServiceValidatorFactoryCallInfo.Item1, "_providerServiceValidatorFactory was called");

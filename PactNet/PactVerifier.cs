@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
@@ -21,17 +23,20 @@ namespace PactNet
         public string ProviderName { get; private set; }
         public ProviderStates ProviderStates { get; private set; }
         public string PactFileUri { get; private set; }
+        private HttpClient PactBrokerClient { get; set; }
 
         internal PactVerifier(IFileSystem fileSystem,
-            Func<IHttpRequestSender, IProviderServiceValidator> providerServiceValidatorFactory)
+            Func<IHttpRequestSender, IProviderServiceValidator> providerServiceValidatorFactory, HttpClient pactBrokerClient)
         {
             _fileSystem = fileSystem;
             _providerServiceValidatorFactory = providerServiceValidatorFactory;
+            PactBrokerClient = pactBrokerClient;
         }
 
         public PactVerifier() : this(
             new FileSystem(),
-            httpRequestSender => new ProviderServiceValidator(httpRequestSender, new Reporter()))
+            httpRequestSender => new ProviderServiceValidator(httpRequestSender, new Reporter()),
+            new HttpClient())
         {
         }
 
@@ -151,10 +156,30 @@ namespace PactNet
             ProviderServicePactFile pactFile;
             try
             {
-                var pactFileJson = _fileSystem.File.ReadAllText(PactFileUri);
+                var isWebUri = Uri.IsWellFormedUriString(PactFileUri, UriKind.Absolute);
+                var pactFileJson = string.Empty;
+                if (!isWebUri)
+                {
+                    pactFileJson = _fileSystem.File.ReadAllText(PactFileUri);
+                }
+                else
+                {
+                    // Make Web request to get the file
+                    PactBrokerClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    var response = PactBrokerClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, PactFileUri)).Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        pactFileJson = response.Content.ReadAsStringAsync().Result;
+                    }
+                }
+
                 pactFile = JsonConvert.DeserializeObject<ProviderServicePactFile>(pactFileJson);
             }
             catch (System.IO.IOException)
+            {
+                throw new InvalidOperationException(String.Format("Json Pact file could not be retrieved using uri \'{0}\'.", PactFileUri));
+            }
+            catch (WebException)
             {
                 throw new InvalidOperationException(String.Format("Json Pact file could not be retrieved using uri \'{0}\'.", PactFileUri));
             }
