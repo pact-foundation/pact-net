@@ -12,6 +12,27 @@ using PactNet.Reporters;
 
 namespace PactNet
 {
+    public interface IPactFileContentService
+    {
+        string GetPactFile();
+    }
+
+    public class FileSystemThingo : IPactFileContentService
+    {
+        public string GetPactFile()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class WebThingo : IPactFileContentService
+    {
+        public string GetPactFile()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class PactVerifier : IPactVerifier, IProviderStates
     {
         private readonly IFileSystem _fileSystem;

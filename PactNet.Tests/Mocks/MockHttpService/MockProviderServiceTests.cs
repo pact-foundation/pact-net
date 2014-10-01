@@ -14,13 +14,13 @@ namespace PactNet.Tests.Mocks.MockHttpService
     public class MockProviderServiceTests
     {
         private IHttpHost _mockHttpHost;
-        private FakeHttpClient _fakeHttpClient;
+        private FakeHttpMessageHandler _fakeHttpMessageHandler;
         private int _mockHttpHostFactoryCallCount;
 
         private IMockProviderService GetSubject(int port = 1234, bool enableSsl = false)
         {
             _mockHttpHost = Substitute.For<IHttpHost>();
-            _fakeHttpClient = new FakeHttpClient();
+            _fakeHttpMessageHandler = new FakeHttpMessageHandler();
             _mockHttpHostFactoryCallCount = 0;
 
             return new MockProviderService(
@@ -31,7 +31,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 },
                 port,
                 enableSsl,
-                baseUri => _fakeHttpClient);
+                baseUri => new HttpClient(_fakeHttpMessageHandler) { BaseAddress = new Uri(baseUri) });
         }
 
         [Fact]
@@ -418,7 +418,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             {
             }
 
-            Assert.Equal(0, _fakeHttpClient.RequestsRecieved.Count());
+            Assert.Equal(0, _fakeHttpMessageHandler.RequestsRecieved.Count());
         }
 
         [Fact]
@@ -430,9 +430,9 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.VerifyInteractions();
 
-            Assert.Equal(1, _fakeHttpClient.RequestsRecieved.Count());
-            Assert.Equal(HttpMethod.Get, _fakeHttpClient.RequestsRecieved.First().Method);
-            Assert.Equal("/interactions/verification", _fakeHttpClient.RequestsRecieved.First().RequestUri.ToString());
+            Assert.Equal(1, _fakeHttpMessageHandler.RequestsRecieved.Count());
+            Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsRecieved.First().Method);
+            Assert.Equal("http://localhost:1234/interactions/verification", _fakeHttpMessageHandler.RequestsRecieved.First().RequestUri.ToString());
         }
 
         [Fact]
@@ -440,7 +440,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             var mockService = GetSubject();
 
-            _fakeHttpClient.Response = new HttpResponseMessage(HttpStatusCode.Forbidden);
+            _fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.Forbidden);
 
             mockService.Start();
 
@@ -470,7 +470,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.ClearInteractions();
 
-            Assert.Equal(0, _fakeHttpClient.RequestsRecieved.Count());
+            Assert.Equal(0, _fakeHttpMessageHandler.RequestsRecieved.Count());
         }
 
         [Fact]
@@ -482,9 +482,9 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.ClearInteractions();
 
-            Assert.Equal(1, _fakeHttpClient.RequestsRecieved.Count());
-            Assert.Equal(HttpMethod.Delete, _fakeHttpClient.RequestsRecieved.First().Method);
-            Assert.Equal("/interactions", _fakeHttpClient.RequestsRecieved.First().RequestUri.ToString());
+            Assert.Equal(1, _fakeHttpMessageHandler.RequestsRecieved.Count());
+            Assert.Equal(HttpMethod.Delete, _fakeHttpMessageHandler.RequestsRecieved.First().Method);
+            Assert.Equal("http://localhost:1234/interactions", _fakeHttpMessageHandler.RequestsRecieved.First().RequestUri.ToString());
         }
 
         [Fact]
@@ -492,7 +492,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             var mockService = GetSubject();
 
-            _fakeHttpClient.Response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
+            _fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
 
             mockService.Start();
 

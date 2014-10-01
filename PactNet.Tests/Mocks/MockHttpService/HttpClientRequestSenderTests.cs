@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using NSubstitute;
@@ -12,18 +13,24 @@ namespace PactNet.Tests.Mocks.MockHttpService
 {
     public class HttpClientRequestSenderTests
     {
-        private FakeHttpClient _fakeHttpClient;
+        private FakeHttpMessageHandler _fakeHttpMessageHandler;
         private IHttpRequestMessageMapper _mockHttpRequestMessageMapper;
         private IProviderServiceResponseMapper _mockProviderServiceResponseMapper;
 
-        private IHttpRequestSender GetSubject(FakeHttpClient fakeHttpClient = null)
+        private IHttpRequestSender GetSubject(string baseAddress = "http://localhost")
         {
-            _fakeHttpClient = fakeHttpClient ?? new FakeHttpClient();
+            _fakeHttpMessageHandler = new FakeHttpMessageHandler();
             _mockHttpRequestMessageMapper = Substitute.For<IHttpRequestMessageMapper>();
             _mockProviderServiceResponseMapper = Substitute.For<IProviderServiceResponseMapper>();
 
+            var httpClient = new HttpClient(_fakeHttpMessageHandler);
+            if (baseAddress != null)
+            {
+                httpClient.BaseAddress = new Uri(baseAddress);
+            }
+
             return new HttpClientRequestSender(
-                _fakeHttpClient,
+                httpClient,
                 _mockHttpRequestMessageMapper,
                 _mockProviderServiceResponseMapper);
         }
@@ -33,6 +40,8 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             var request = new ProviderServiceRequest();
             var requestSender = GetSubject();
+
+            _mockHttpRequestMessageMapper.Convert(Arg.Any<ProviderServiceRequest>()).Returns(new HttpRequestMessage());
 
             requestSender.Send(request);
 
@@ -51,15 +60,17 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             requestSender.Send(request);
 
-            Assert.Equal(1, _fakeHttpClient.RequestsRecieved.Count());
-            Assert.Equal(convertedRequest, _fakeHttpClient.RequestsRecieved.First());
+            Assert.Equal(1, _fakeHttpMessageHandler.RequestsRecieved.Count());
+            Assert.Equal(convertedRequest, _fakeHttpMessageHandler.RequestsRecieved.First());
         }
 
         [Fact]
         public void Send_WhenCalled_CallsConvertOnProviderServiceResponseMapper()
         {
             var response = new HttpResponseMessage(HttpStatusCode.OK);
-            var requestSender = GetSubject(new FakeHttpClient(response));
+            var requestSender = GetSubject();
+
+            _fakeHttpMessageHandler.Response = response;
 
             _mockHttpRequestMessageMapper.Convert(Arg.Any<ProviderServiceRequest>())
                 .Returns(new HttpRequestMessage());
@@ -77,7 +88,9 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 Path = "/testing/hi"
             };
 
-            var requestSender = GetSubject(new FakeHttpClient(baseAddress: "http://localhost/api/v2/"));
+            var requestSender = GetSubject("http://localhost/api/v2/");
+
+            _mockHttpRequestMessageMapper.Convert(Arg.Any<ProviderServiceRequest>()).Returns(new HttpRequestMessage());
 
             requestSender.Send(request);
 
@@ -94,7 +107,9 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 Path = path
             };
 
-            var requestSender = GetSubject(new FakeHttpClient(baseAddress: "http://my-hostname:1234"));
+            var requestSender = GetSubject("http://my-hostname:1234");
+
+            _mockHttpRequestMessageMapper.Convert(Arg.Any<ProviderServiceRequest>()).Returns(new HttpRequestMessage());
 
             requestSender.Send(request);
 
@@ -111,7 +126,9 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 Path = path
             };
 
-            var requestSender = GetSubject(new FakeHttpClient(baseAddress: null));
+            var requestSender = GetSubject(null);
+
+            _mockHttpRequestMessageMapper.Convert(Arg.Any<ProviderServiceRequest>()).Returns(new HttpRequestMessage(HttpMethod.Get, "http://tester/"));
 
             requestSender.Send(request);
 

@@ -2,13 +2,15 @@
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Text;
 using NSubstitute;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Validators;
 using PactNet.Models;
-using PactNet.Tests.Mocks.MockHttpService;
+using PactNet.Tests.Fakes;
 using Xunit;
 
 namespace PactNet.Tests
@@ -19,19 +21,21 @@ namespace PactNet.Tests
 
         private IFileSystem _mockFileSystem;
         private IProviderServiceValidator _mockProviderServiceValidator;
+        private FakeHttpMessageHandler _fakeHttpMessageHandler;
 
         public IPactVerifier GetSubject()
         {
             _providerServiceValidatorFactoryCallInfo = null;
             _mockFileSystem = Substitute.For<IFileSystem>();
             _mockProviderServiceValidator = Substitute.For<IProviderServiceValidator>();
+            _fakeHttpMessageHandler = new FakeHttpMessageHandler();
 
             return new PactVerifier(_mockFileSystem, httpRequestSender =>
             {
                 _providerServiceValidatorFactoryCallInfo = new Tuple<bool, IHttpRequestSender>(true, httpRequestSender);
                 
                 return _mockProviderServiceValidator;
-            }, new HttpClient(new MockHttpMessageHandler()));
+            }, new HttpClient(_fakeHttpMessageHandler));
         }
 
         [Fact]
@@ -182,23 +186,6 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void ServiceProvider_WhenCalledWithHttpClient_HttpClientRequestSenderWithMockHandlerIsPassedIntoProviderServiceValidatorFactoryWhenVerifyIsCalled()
-        {
-            var httpClient = new HttpClient(new MockHttpMessageHandler());
-            var pactVerifier = GetSubject();
-
-            pactVerifier.ServiceProvider("Event API", httpClient);
-
-            pactVerifier
-                .HonoursPactWith("consumer")
-                .PactUri("http://yourpactserver.com/getlatestpactfile")
-                .Verify();
-
-            Assert.True(_providerServiceValidatorFactoryCallInfo.Item1, "_providerServiceValidatorFactory was called");
-            Assert.IsType(typeof(HttpClientRequestSender), _providerServiceValidatorFactoryCallInfo.Item2); //was called with type
-        }
-
-        [Fact]
         public void ServiceProvider_WhenCalledWithCustomRequestSender_CustomRequestSenderIsPassedIntoProviderServiceValidatorFactoryWhenVerifyIsCalled()
         {
             var pactVerifier = GetSubject();
@@ -295,6 +282,80 @@ namespace PactNet.Tests
             pactVerifier.ServiceProvider("Event API", new HttpClient());
 
             Assert.Throws<InvalidOperationException>(() => pactVerifier.Verify());
+        }
+
+        [Fact]
+        public void Verify_WithFileSystemPactFileUri_CallsFileReadAllText()
+        {
+            var serviceProvider = "Event API";
+            var serviceConsumer = "My client";
+            var pactUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
+            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description\", \"provider_state\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
+
+            var pactVerifier = GetSubject();
+
+            _mockFileSystem.File.ReadAllText(pactUri).Returns(pactFileJson);
+
+            pactVerifier
+                .ServiceProvider(serviceProvider, new HttpClient())
+                .HonoursPactWith(serviceConsumer)
+                .PactUri(pactUri);
+
+            pactVerifier.Verify();
+
+            _mockFileSystem.File.Received(1).ReadAllText(pactUri);
+        }
+
+        [Fact]
+        public void Verify_WithHttpPactFileUri_CallsHttpClientWithJsonGetRequest()
+        {
+            var serviceProvider = "Event API";
+            var serviceConsumer = "My client";
+            var pactUri = "http://yourpactserver.com/getlatestpactfile";
+            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description\", \"provider_state\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
+
+            var pactVerifier = GetSubject();
+
+            _fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(pactFileJson, Encoding.UTF8, "application/json")
+            };
+
+            pactVerifier
+                .ServiceProvider(serviceProvider, new HttpClient())
+                .HonoursPactWith(serviceConsumer)
+                .PactUri(pactUri);
+
+            pactVerifier.Verify();
+
+            Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsRecieved.Single().Method);
+            Assert.Equal("application/json", _fakeHttpMessageHandler.RequestsRecieved.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
+        }
+
+        [Fact]
+        public void Verify_WithHttpsPactFileUri_CallsHttpClientWithJsonGetRequest()
+        {
+            var serviceProvider = "Event API";
+            var serviceConsumer = "My client";
+            var pactUri = "https://yourpactserver.com/getlatestpactfile";
+            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description\", \"provider_state\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
+
+            var pactVerifier = GetSubject();
+
+            _fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(pactFileJson, Encoding.UTF8, "application/json")
+            };
+
+            pactVerifier
+                .ServiceProvider(serviceProvider, new HttpClient())
+                .HonoursPactWith(serviceConsumer)
+                .PactUri(pactUri);
+
+            pactVerifier.Verify();
+
+            Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsRecieved.Single().Method);
+            Assert.Equal("application/json", _fakeHttpMessageHandler.RequestsRecieved.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
         }
 
         [Fact]
