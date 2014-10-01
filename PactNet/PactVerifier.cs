@@ -1,10 +1,9 @@
 ﻿using System;
 using System.IO.Abstractions;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using Newtonsoft.Json;
+using PactNet.Extensions;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Validators;
@@ -17,20 +16,21 @@ namespace PactNet
     {
         private readonly IFileSystem _fileSystem;
         private readonly Func<IHttpRequestSender, IProviderServiceValidator> _providerServiceValidatorFactory;
+        private readonly HttpClient _httpClient;
         private IHttpRequestSender _httpRequestSender;
 
         public string ConsumerName { get; private set; }
         public string ProviderName { get; private set; }
         public ProviderStates ProviderStates { get; private set; }
         public string PactFileUri { get; private set; }
-        private HttpClient PactBrokerClient { get; set; }
 
         internal PactVerifier(IFileSystem fileSystem,
-            Func<IHttpRequestSender, IProviderServiceValidator> providerServiceValidatorFactory, HttpClient pactBrokerClient)
+            Func<IHttpRequestSender, IProviderServiceValidator> providerServiceValidatorFactory, 
+            HttpClient httpClient)
         {
             _fileSystem = fileSystem;
             _providerServiceValidatorFactory = providerServiceValidatorFactory;
-            PactBrokerClient = pactBrokerClient;
+            _httpClient = httpClient;
         }
 
         public PactVerifier() : this(
@@ -141,6 +141,12 @@ namespace PactNet
             return this;
         }
 
+        private bool IsWebUri(string uri)
+        {
+            return uri.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase) ||
+                   uri.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase);
+        }
+
         public void Verify(string providerDescription = null, string providerState = null)
         {
             if (_httpRequestSender == null)
@@ -156,30 +162,32 @@ namespace PactNet
             ProviderServicePactFile pactFile;
             try
             {
-                var isWebUri = Uri.IsWellFormedUriString(PactFileUri, UriKind.Absolute);
-                var pactFileJson = string.Empty;
-                if (!isWebUri)
+                var pactFileJson = String.Empty;
+
+                if (IsWebUri(PactFileUri))
                 {
-                    pactFileJson = _fileSystem.File.ReadAllText(PactFileUri);
-                }
-                else
-                {
-                    // Make Web request to get the file
-                    PactBrokerClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    var response = PactBrokerClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, PactFileUri)).Result;
-                    if (response.IsSuccessStatusCode)
+                    var request = new HttpRequestMessage(HttpMethod.Get, PactFileUri);
+                    request.Headers.Add("Accept", "application/json");
+
+                    var response = _httpClient.SendAsync(request).Result;
+                    if (response.IsSuccessStatusCode) //TODO: Deal with this scenario
                     {
                         pactFileJson = response.Content.ReadAsStringAsync().Result;
                     }
+
+                    request.SafeDispose();
+                    response.SafeDispose();
+                }
+                else //Assume it's a file uri, and we will just throw if it does not exist
+                {
+                    pactFileJson = _fileSystem.File.ReadAllText(PactFileUri);
                 }
 
                 pactFile = JsonConvert.DeserializeObject<ProviderServicePactFile>(pactFileJson);
             }
-            catch (System.IO.IOException)
-            {
-                throw new InvalidOperationException(String.Format("Json Pact file could not be retrieved using uri \'{0}\'.", PactFileUri));
-            }
-            catch (WebException)
+            //IOException
+            //WebException
+            catch (Exception) //TODO: should we do this?
             {
                 throw new InvalidOperationException(String.Format("Json Pact file could not be retrieved using uri \'{0}\'.", PactFileUri));
             }

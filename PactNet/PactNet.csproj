@@ -83,6 +83,7 @@
     <Compile Include="Comparers\IComparer.cs" />
     <Compile Include="Configuration\Json\Converters\LowercaseStringEnumConverter.cs" />
     <Compile Include="Configuration\Json\JsonConfig.cs" />
+    <Compile Include="Extensions\DisposableExtensions.cs" />
     <Compile Include="Mocks\MockHttpService\CustomRequestSender.cs" />
     <Compile Include="Mocks\MockHttpService\IHttpRequestSender.cs" />
     <Compile Include="Mocks\MockHttpService\HttpClientRequestSender.cs" />
