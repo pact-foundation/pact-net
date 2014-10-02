@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Nancy;
@@ -36,9 +37,34 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                 return tcs.Task;
             }
 
-            var response = IsAdminRequest(context.Request) ?
-                                    _adminRequestHandler.Handle(context) :
-                                    _requestHandler.Handle(context);
+            Response response;
+
+            try
+            {
+                response = IsAdminRequest(context.Request) ?
+                    _adminRequestHandler.Handle(context) :
+                    _requestHandler.Handle(context);
+            }
+            catch (Exception ex)
+            {
+                var exceptionMessage = ex.Message
+                    .Replace("\r", " ")
+                    .Replace("\n", "")
+                    .Replace("\t", " ")
+                    .Replace(@"\", "");
+
+                response = new Response
+                {
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    ReasonPhrase = exceptionMessage,
+                    Contents = s =>
+                    {
+                        var bytes = Encoding.UTF8.GetBytes(exceptionMessage);
+                        s.Write(bytes, 0, bytes.Length);
+                        s.Flush();
+                    }
+                };
+            }
 
             context.Response = response;
             tcs.SetResult(context.Response);
@@ -46,7 +72,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             return tcs.Task;
         }
 
-        private bool IsAdminRequest(Request request)
+        private static bool IsAdminRequest(Request request)
         {
             return request.Headers != null &&
                    request.Headers.Any(x => x.Key == Constants.AdministrativeRequestHeaderKey);

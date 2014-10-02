@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO.Abstractions;
-using Newtonsoft.Json;
-using PactNet.Configuration.Json;
+using System.Net.Http;
 using PactNet.Mocks.MockHttpService;
-using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
 
 namespace PactNet
@@ -13,36 +9,16 @@ namespace PactNet
     {
         public string ConsumerName { get; private set; }
         public string ProviderName { get; private set; }
-        private readonly IFileSystem _fileSystem;
         private readonly Func<int, bool, IMockProviderService> _mockProviderServiceFactory;
         private IMockProviderService _mockProviderService;
-        private const string PactFileDirectory = "../../pacts/";
 
-        private string PactFileName
-        {
-            get { return String.Format("{0}-{1}.json", ConsumerName, ProviderName).Replace(' ', '_').ToLower(); }
-        }
-
-        public string PactFileUri
-        {
-            get
-            {
-                return _fileSystem.Path.Combine(PactFileDirectory, PactFileName);
-            }
-        }
-
-        internal PactBuilder(
-            Func<int, bool, IMockProviderService> mockProviderServiceFactory, 
-            IFileSystem fileSystem)
+        internal PactBuilder(Func<int, bool, IMockProviderService> mockProviderServiceFactory)
         {
             _mockProviderServiceFactory = mockProviderServiceFactory;
-            _fileSystem = fileSystem;
         }
 
         public PactBuilder()
-            : this(
-                (port, enableSsl) => new MockProviderService(port, enableSsl),
-                new FileSystem())
+            : this((port, enableSsl) => new MockProviderService(port, enableSsl))
         {
         }
 
@@ -86,12 +62,13 @@ namespace PactNet
 
         public void Build()
         {
-            PersistPactFile();
-
-            if (_mockProviderService != null)
+            if (_mockProviderService == null)
             {
-                _mockProviderService.Stop();
+                throw new InvalidOperationException("The Pact file could not be saved because the mock provider service is not initialised. Please initialise by calling the MockService() method.");
             }
+
+            PersistPactFile();
+            _mockProviderService.Stop();
         }
 
         private void PersistPactFile()
@@ -106,32 +83,13 @@ namespace PactNet
                 throw new InvalidOperationException("ProviderName has not been set, please supply a provider name using the HasPactWith method.");
             }
 
-            var pactFile = new ProviderServicePactFile
+            var pactDetails = new PactDetails
             {
                 Provider = new Party { Name = ProviderName },
                 Consumer = new Party { Name = ConsumerName }
             };
 
-            if (_mockProviderService != null)
-            {
-                var interactions = _mockProviderService.Interactions;
-                if (interactions != null)
-                {
-                    pactFile.Interactions = interactions as IEnumerable<ProviderServiceInteraction>;
-                }
-            }
-
-            var pactFileJson = JsonConvert.SerializeObject(pactFile, JsonConfig.PactFileSerializerSettings);
-
-            try
-            {
-                _fileSystem.File.WriteAllText(PactFileUri, pactFileJson);
-            }
-            catch (System.IO.DirectoryNotFoundException)
-            {
-                _fileSystem.Directory.CreateDirectory(PactFileDirectory);
-                _fileSystem.File.WriteAllText(PactFileUri, pactFileJson);
-            }
+            _mockProviderService.SendAdminHttpRequest(HttpMethod.Post, Constants.PactPath, pactDetails);
         }
     }
 }

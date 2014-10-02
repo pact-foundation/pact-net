@@ -6,7 +6,7 @@ namespace PactNet.Tests.Models
     public class InteractionTests
     {
         [Fact]
-        public void ToString_WhenCalled_ReturnsJsonRepresentation()
+        public void AsJsonString_WhenCalled_ReturnsJsonRepresentation()
         {
             const string expectedInteractionJson = "{\"description\":\"My description\",\"provider_state\":\"My provider state\"}";
 
@@ -16,7 +16,7 @@ namespace PactNet.Tests.Models
                 ProviderState = "My provider state"
             };
 
-            var actualInteractionJson = interaction.ToString();
+            var actualInteractionJson = interaction.AsJsonString();
 
             Assert.Equal(expectedInteractionJson, actualInteractionJson);
         }

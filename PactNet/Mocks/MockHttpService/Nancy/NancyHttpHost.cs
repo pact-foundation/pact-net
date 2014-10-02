@@ -7,21 +7,17 @@ namespace PactNet.Mocks.MockHttpService.Nancy
     public class NancyHttpHost : IHttpHost
     {
         private readonly Uri _baseUri;
-        private readonly IMockContextService _mockContextService;
         private NancyHost _host;
 
-        public NancyHttpHost(
-            Uri baseUri, 
-            IMockContextService mockContextService)
+        public NancyHttpHost(Uri baseUri)
         {
             _baseUri = baseUri;
-            _mockContextService = mockContextService;
         }
 
         public void Start()
         {
             Stop();
-            _host = new NancyHost(new MockProviderNancyBootstrapper(_mockContextService), NancyConfig.HostConfiguration, _baseUri);
+            _host = new NancyHost(new MockProviderNancyBootstrapper(), NancyConfig.HostConfiguration, _baseUri);
             _host.Start();
         }
 

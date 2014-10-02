@@ -8,16 +8,52 @@ using Xunit;
 
 namespace PactNet.Tests.IntegrationTests
 {
-    public class PactBuilderFailureIntegrationTests : IUseFixture<IntegrationTestsMyApiPact>
+    public class PactBuilderFailureIntegrationTests : IUseFixture<FailureIntegrationTestsMyApiPact>
     {
         private IMockProviderService _mockProviderService;
         private string _mockProviderServiceBaseUri;
 
-        public void SetFixture(IntegrationTestsMyApiPact data)
+        public void SetFixture(FailureIntegrationTestsMyApiPact data)
         {
             _mockProviderService = data.MockProviderService;
             _mockProviderServiceBaseUri = data.MockProviderServiceBaseUri;
             _mockProviderService.ClearInteractions();
+        }
+
+        [Fact]
+        public void WhenRegisteringTheSameInteractionTwiceInATest_ThenPactFailureExceptionIsThrown()
+        {
+            var description = "A POST request to create a new thing";
+            var request = new ProviderServiceRequest
+            {
+                Method = HttpVerb.Post,
+                Path = "/things",
+                Headers = new Dictionary<string, string>
+                {
+                    { "Content-Type", "application/json; charset=utf-8" }
+                },
+                Body = new
+                {
+                    thingId = 1234,
+                    type = "Awesome"
+                }
+            };
+
+            var response = new ProviderServiceResponse
+            {
+                Status = 201
+            };
+
+            _mockProviderService
+                .UponReceiving(description)
+                .With(request)
+                .WillRespondWith(response);
+
+            _mockProviderService
+                .UponReceiving(description)
+                .With(request);
+                
+            Assert.Throws<PactFailureException>(() => _mockProviderService.WillRespondWith(response));
         }
 
         [Fact]

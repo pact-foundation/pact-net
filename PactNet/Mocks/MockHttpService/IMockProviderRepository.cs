@@ -5,8 +5,14 @@ namespace PactNet.Mocks.MockHttpService
 {
     public interface IMockProviderRepository
     {
-        IEnumerable<HandledRequest> HandledRequests { get; }
+        ICollection<ProviderServiceInteraction> TestScopedInteractions { get; }
+        ICollection<ProviderServiceInteraction> Interactions { get; }
+        ICollection<HandledRequest> HandledRequests { get; }
+
+        void AddInteraction(ProviderServiceInteraction interaction);
         void AddHandledRequest(HandledRequest handledRequest);
+        ProviderServiceInteraction GetMatchingTestScopedInteraction(HttpVerb method, string path);
         void ClearHandledRequests();
+        void ClearTestScopedInteractions();
     }
 }

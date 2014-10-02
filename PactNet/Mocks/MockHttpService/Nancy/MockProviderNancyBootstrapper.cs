@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO.Abstractions;
 using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Diagnostics;
@@ -11,13 +12,6 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 {
     public class MockProviderNancyBootstrapper : DefaultNancyBootstrapper
     {
-        private readonly IMockContextService _mockContextService;
-
-        public MockProviderNancyBootstrapper(IMockContextService mockContextService)
-        {
-            _mockContextService = mockContextService;
-        }
-
         protected override IEnumerable<ModuleRegistration> Modules
         {
             get { return new List<ModuleRegistration>(); }
@@ -29,7 +23,6 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             {
                 return NancyInternalConfiguration.WithOverrides(c =>
                 {
-                    c.ContextFactory = typeof (PactAwareContextFactory);
                     c.RequestDispatcher = typeof(MockProviderNancyRequestDispatcher);
                 });
             }
@@ -51,11 +44,11 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             container.Register<IProviderServiceRequestMapper, ProviderServiceRequestMapper>().AsMultiInstance();
             container.Register<IProviderServiceRequestComparer, ProviderServiceRequestComparer>().AsMultiInstance();
             container.Register<INancyResponseMapper, NancyResponseMapper>().AsMultiInstance();
-            container.Register(typeof(IMockContextService), _mockContextService);
             container.Register<IMockProviderRequestHandler, MockProviderRequestHandler>().AsMultiInstance();
             container.Register<IMockProviderAdminRequestHandler, MockProviderAdminRequestHandler>().AsMultiInstance();
             container.Register<IMockProviderRepository, MockProviderRepository>().AsSingleton();
             container.Register<IReporter, Reporter>().AsSingleton();
+            container.Register<IFileSystem, FileSystem>().AsMultiInstance();
         }
     }
 }

@@ -84,8 +84,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Fakes\FakeHttpMessageHandler.cs" />
+    <Compile Include="IntegrationTests\FailureIntegrationTestsMyApiPact.cs" />
     <Compile Include="IntegrationTests\IntegrationTestsMyApiPact.cs" />
     <Compile Include="IntegrationTests\PactBuilderFailureIntegrationTests.cs" />
+    <Compile Include="IntegrationTests\PactBuilderIntegrationTests.cs" />
     <Compile Include="IntegrationTests\Specification\MockHttpServiceSpecificationTests.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -114,14 +116,12 @@
     <Compile Include="Mocks\MockHttpService\Models\ProviderServiceInteractionTests.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\MockProviderAdminRequestHandlerTests.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\MockProviderRequestHandlerTests.cs" />
-    <Compile Include="Mocks\MockHttpService\MockContextServiceTests.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\MockProviderNancyRequestDispatcherTests.cs" />
     <Compile Include="Mocks\MockHttpService\MockProviderServiceTests.cs" />
     <Compile Include="Mocks\MockHttpService\Models\ProviderServiceRequestTests.cs" />
     <Compile Include="Mocks\MockHttpService\Models\HttpBodyContentTests.cs" />
-    <Compile Include="Mocks\MockHttpService\Nancy\NancyContextExtensionsTests.cs" />
-    <Compile Include="Mocks\MockHttpService\Nancy\PactAwareContextFactoryTests.cs" />
     <Compile Include="Models\InteractionTests.cs" />
+    <Compile Include="Models\PactDetailsTests.cs" />
     <Compile Include="Models\PactFileTests.cs" />
     <Compile Include="Models\ProviderStatesTests.cs" />
     <Compile Include="Models\ProviderStateTests.cs" />

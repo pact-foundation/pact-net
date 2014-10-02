@@ -43,7 +43,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
                 ProviderState = "My provider state",
             };
 
-            var actualInteractionJson = interaction.ToString();
+            var actualInteractionJson = interaction.AsJsonString();
 
             Assert.Equal(expectedInteractionJson, actualInteractionJson);
         }

@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using NSubstitute;
+using Newtonsoft.Json;
+using PactNet.Configuration.Json;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Tests.Fakes;
@@ -24,7 +25,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             _mockHttpHostFactoryCallCount = 0;
 
             return new MockProviderService(
-                (baseUri, mockContextService) =>
+                baseUri =>
                 {
                     _mockHttpHostFactoryCallCount++;
                     return _mockHttpHost;
@@ -65,6 +66,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             const string providerState = "My provider state";
             var mockService = GetSubject();
+            mockService.Start();
 
             mockService
                 .Given(providerState)
@@ -72,7 +74,8 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 .With(new ProviderServiceRequest())
                 .WillRespondWith(new ProviderServiceResponse());
 
-            var interaction = mockService.Interactions.First() as ProviderServiceInteraction;
+            var interaction = Deserialise<ProviderServiceInteraction>(_fakeHttpMessageHandler.RequestContentRecieved.Single());
+
             Assert.Equal(providerState, interaction.ProviderState);
         }
 
@@ -97,12 +100,14 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             const string description = "My description";
             var mockService = GetSubject();
+            mockService.Start();
 
             mockService.UponReceiving(description)
                 .With(new ProviderServiceRequest())
                 .WillRespondWith(new ProviderServiceResponse());
 
-            var interaction = mockService.Interactions.First() as ProviderServiceInteraction;
+            var interaction = Deserialise<ProviderServiceInteraction>(_fakeHttpMessageHandler.RequestContentRecieved.Single());
+            
             Assert.Equal(description, interaction.Description);
         }
 
@@ -125,15 +130,35 @@ namespace PactNet.Tests.Mocks.MockHttpService
         [Fact]
         public void With_WithRequest_SetsRequest()
         {
-            var request = new ProviderServiceRequest();
+            var description = "My description";
+            var request = new ProviderServiceRequest
+            {
+                Method = HttpVerb.Head,
+                Path = "/tester/testing/1"
+            };
+            var response = new ProviderServiceResponse
+            {
+                Status = (int)HttpStatusCode.ProxyAuthenticationRequired
+            };
+
+            var expectedInteraction = new ProviderServiceInteraction
+            {
+                Description = description,
+                Request = request,
+                Response = response
+            };
+            var expectedInteractionJson = expectedInteraction.AsJsonString();
+
             var mockService = GetSubject();
+            mockService.Start();
 
-            mockService.UponReceiving("My description")
+            mockService.UponReceiving(description)
                 .With(request)
-                .WillRespondWith(new ProviderServiceResponse());
+                .WillRespondWith(response);
 
-            var interaction = mockService.Interactions.First() as ProviderServiceInteraction;
-            Assert.Equal(request, interaction.Request);
+            var actualInteractionJson = _fakeHttpMessageHandler.RequestContentRecieved.Single();
+            
+            Assert.Equal(expectedInteractionJson, actualInteractionJson);
         }
 
         [Fact]
@@ -142,60 +167,6 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var mockService = GetSubject();
 
             Assert.Throws<ArgumentException>(() => mockService.With(null));
-        }
-
-        [Fact]
-        public void Interactions_WithNoInteractions_ReturnsEmpty()
-        {
-            var mockService = GetSubject();
-
-            Assert.Empty(mockService.Interactions);
-        }
-
-        [Fact]
-        public void Interactions_WithTwoInteractions_ReturnsInteractions()
-        {
-            var mockService = GetSubject();
-
-            mockService
-                .UponReceiving("My description")
-                .With(new ProviderServiceRequest())
-                .WillRespondWith(new ProviderServiceResponse());
-
-            mockService
-                .UponReceiving("My next description")
-                .With(new ProviderServiceRequest())
-                .WillRespondWith(new ProviderServiceResponse());
-
-            Assert.Equal(2, mockService.Interactions.Count());
-        }
-
-        [Fact]
-        public void WillRespondWith_WithResponse_SetsInteractionResponse()
-        {
-            var response = new ProviderServiceResponse();
-            var mockService = GetSubject();
-
-            mockService.UponReceiving("My description")
-                .With(new ProviderServiceRequest())
-                .WillRespondWith(response);
-
-            var interaction = mockService.Interactions.First() as ProviderServiceInteraction;
-            Assert.Equal(response, interaction.Response);
-        }
-
-        [Fact]
-        public void WillRespondWith_WithResponse_SetsTestScopedInteractionResponse()
-        {
-            var response = new ProviderServiceResponse();
-            var mockService = GetSubject();
-
-            mockService.UponReceiving("My description")
-                .With(new ProviderServiceRequest())
-                .WillRespondWith(response);
-
-            var interaction = ((MockProviderService)mockService).Interactions.First() as ProviderServiceInteraction;
-            Assert.Equal(response, interaction.Response);
         }
 
         [Fact]
@@ -229,153 +200,52 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void WillRespondWith_WithValidInteraction_InteractionIsAdded()
+        public void WillRespondWith_WhenHostIsNull_ThrowsInvalidOperationException()
         {
             var providerState = "My provider state";
             var description = "My description";
             var request = new ProviderServiceRequest();
             var response = new ProviderServiceResponse();
+
             var mockService = GetSubject();
-
-            mockService
-                .Given(providerState)
-                .UponReceiving(description)
-                .With(request)
-                .WillRespondWith(response);
-
-            var interaction = mockService.Interactions.First() as ProviderServiceInteraction;
-
-            Assert.Equal(1, mockService.Interactions.Count());
-            Assert.Equal(providerState, interaction.ProviderState);
-            Assert.Equal(description, interaction.Description);
-            Assert.Equal(request, interaction.Request);
-            Assert.Equal(response, interaction.Response);
-        }
-
-        [Fact]
-        public void WillRespondWith_WhenExistingInteractionExistAndWeHaveAnotherValidInteraction_InteractionIsAdded()
-        {
-            var providerState = "My provider state";
-            var description = "My description";
-            var request = new ProviderServiceRequest();
-            var response = new ProviderServiceResponse();
-            var mockService = GetSubject();
-
-            mockService
-                .UponReceiving("My previous description")
-                .With(new ProviderServiceRequest())
-                .WillRespondWith(new ProviderServiceResponse());
-
-            mockService
-                .Given(providerState)
-                .UponReceiving(description)
-                .With(request)
-                .WillRespondWith(response);
-
-            var interaction = mockService.Interactions.Last() as ProviderServiceInteraction;
-
-            Assert.Equal(2, mockService.Interactions.Count());
-            Assert.Equal(providerState, interaction.ProviderState);
-            Assert.Equal(description, interaction.Description);
-            Assert.Equal(request, interaction.Request);
-            Assert.Equal(response, interaction.Response);
-        }
-
-        [Fact]
-        public void WillRespondWith_WhenADuplicateInteractionIsAdded_ThrowsInvalidOperationException()
-        {
-            var providerState = "My provider state";
-            var description = "My description";
-            var request = new ProviderServiceRequest();
-            var response = new ProviderServiceResponse();
-            var mockService = GetSubject();
-
-            mockService
-                .Given(providerState)
-                .UponReceiving(description)
-                .With(request)
-                .WillRespondWith(response);
 
             mockService
                 .Given(providerState)
                 .UponReceiving(description)
                 .With(request);
 
-            Assert.Throws<InvalidOperationException>(() => mockService.WillRespondWith(response));
-        }
-
-        [Fact]
-        public void WillRespondWith_WhenADuplicateInteractionIsAddedWithNoProviderState_ThrowsInvalidOperationException()
-        {
-            var description = "My description";
-            var request = new ProviderServiceRequest();
-            var response = new ProviderServiceResponse();
-            var mockService = GetSubject();
-
-            mockService
-                .UponReceiving(description)
-                .With(request)
-                .WillRespondWith(response);
-
-            mockService
-                .UponReceiving(description)
-                .With(request);
+            mockService.Stop();
 
             Assert.Throws<InvalidOperationException>(() => mockService.WillRespondWith(response));
+            Assert.Equal(0, _fakeHttpMessageHandler.RequestsRecieved.Count());
         }
 
         [Fact]
-        public void WillRespondWith_WhenAddingADuplicateInteractionAfterClearingInteractions_TheDuplicateInteractionIsNotAdded()
-        {
-            var providerState = "My provider state";
-            var description = "My description";
-            var request = new ProviderServiceRequest();
-            var response = new ProviderServiceResponse();
-            var mockService = GetSubject();
-
-            mockService
-                .Given(providerState)
-                .UponReceiving(description)
-                .With(request)
-                .WillRespondWith(response);
-
-            var expectedInteractions = mockService.Interactions;
-
-            mockService.ClearInteractions();
-
-            mockService
-                .Given(providerState)
-                .UponReceiving(description)
-                .With(request)
-                .WillRespondWith(response);
-
-            var actualIneractions = mockService.Interactions;
-
-            Assert.Equal(1, actualIneractions.Count());
-            Assert.Equal(expectedInteractions.First(), actualIneractions.First());
-        }
-
-        [Fact]
-        public void WillRespondWith_WhenAddingADuplicateInteractionThatDoesNotMatchExactlyAfterClearingInteractions_ThrowsInvalidOperationException()
+        public void WillRespondWith_WithValidInteraction_PerformsAdminInteractionsPostRequestWithInteraction()
         {
             var providerState = "My provider state";
             var description = "My description";
             var request = new ProviderServiceRequest
             {
-                Path = "/tester",
-                Method = HttpVerb.Get
+                Method = HttpVerb.Head,
+                Path = "/tester/testing/1"
             };
             var response = new ProviderServiceResponse
             {
-                Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
-                Status = 200
+                Status = (int)HttpStatusCode.ProxyAuthenticationRequired
             };
-            var response2 = new ProviderServiceResponse
+
+            var expectedInteraction = new ProviderServiceInteraction
             {
-                Status = 200,
-                Headers = new Dictionary<string, string> { { "Content-Type", "Application/Json" } }
+                ProviderState = providerState,
+                Description = description,
+                Request = request,
+                Response = response
             };
+            var expectedInteractionJson = expectedInteraction.AsJsonString();
+
             var mockService = GetSubject();
+            mockService.Start();
 
             mockService
                 .Given(providerState)
@@ -383,14 +253,36 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 .With(request)
                 .WillRespondWith(response);
 
-            mockService.ClearInteractions();
+            var actualRequest = _fakeHttpMessageHandler.RequestsRecieved.Single();
+            var actualInteractionJson = _fakeHttpMessageHandler.RequestContentRecieved.Single();
 
-            Assert.Throws<InvalidOperationException>(() => 
-                mockService
-                    .Given(providerState)
-                    .UponReceiving(description)
-                    .With(request)
-                    .WillRespondWith(response2));
+            Assert.Equal(HttpMethod.Post, actualRequest.Method);
+            Assert.Equal("http://localhost:1234/interactions", actualRequest.RequestUri.OriginalString);
+            Assert.True(actualRequest.Headers.Contains(Constants.AdministrativeRequestHeaderKey));
+
+            Assert.Equal(expectedInteractionJson, actualInteractionJson);
+        }
+
+        [Fact]
+        public void WillRespondWith_WhenResponseFromHostIsNotOk_ThrowsPactFailureException()
+        {
+            var providerState = "My provider state";
+            var description = "My description";
+            var request = new ProviderServiceRequest();
+            var response = new ProviderServiceResponse();
+
+            var mockService = GetSubject();
+
+            _fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
+
+            mockService
+                .Given(providerState)
+                .UponReceiving(description)
+                .With(request);
+
+            mockService.Start();
+
+            Assert.Throws<PactFailureException>(() => mockService.WillRespondWith(response));
         }
 
         [Fact]
@@ -401,23 +293,6 @@ namespace PactNet.Tests.Mocks.MockHttpService
             mockService.Stop();
 
             Assert.Throws<InvalidOperationException>(() => mockService.VerifyInteractions());
-        }
-
-        [Fact]
-        public void VerifyInteractions_WhenHostIsNull_DoesNotPerformAdminInteractionsVerificationGetRequest()
-        {
-            var mockService = GetSubject();
-
-            mockService.Stop();
-
-            try
-            {
-                mockService.VerifyInteractions();
-            }
-            catch (Exception)
-            {
-            }
-
             Assert.Equal(0, _fakeHttpMessageHandler.RequestsRecieved.Count());
         }
 
@@ -448,24 +323,9 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void ClearInteractions_WhenCalled_SetsTestScopedInteractionsEmpty()
-        {
-            var mockService = GetSubject();
-
-            mockService.UponReceiving("My description")
-                .With(new ProviderServiceRequest())
-                .WillRespondWith(new ProviderServiceResponse());
-
-            mockService.ClearInteractions();
-
-            Assert.Empty(((MockProviderService)mockService).TestScopedInteractions);
-        }
-
-        [Fact]
         public void ClearInteractions_WhenHostIsNull_DoesNotPerformAdminInteractionsDeleteRequest()
         {
             var mockService = GetSubject();
-
             mockService.Stop();
 
             mockService.ClearInteractions();
@@ -497,21 +357,6 @@ namespace PactNet.Tests.Mocks.MockHttpService
             mockService.Start();
 
             Assert.Throws<PactFailureException>(() => mockService.ClearInteractions());
-        }
-
-        [Fact]
-        public void Stop_WhenCalled_InteractionsIsEmpty()
-        {
-            var mockService = GetSubject();
-
-            mockService
-                .UponReceiving("My interaction")
-                .With(new ProviderServiceRequest())
-                .WillRespondWith(new ProviderServiceResponse());
-
-            mockService.Stop();
-
-            Assert.Empty(mockService.Interactions);
         }
 
         [Fact]
@@ -572,6 +417,11 @@ namespace PactNet.Tests.Mocks.MockHttpService
             mockService.Start();
 
             _mockHttpHost.Received(1).Start();
+        }
+
+        private T Deserialise<T>(string json)
+        {
+            return JsonConvert.DeserializeObject<T>(json, JsonConfig.ApiSerializerSettings);
         }
     }
 }

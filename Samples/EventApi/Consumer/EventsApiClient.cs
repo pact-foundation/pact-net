@@ -169,7 +169,6 @@ namespace Consumer
             {
                 throw new InvalidOperationException(reasonPhrase);
             }
-            
         }
 
         private HttpClient HttpClient()

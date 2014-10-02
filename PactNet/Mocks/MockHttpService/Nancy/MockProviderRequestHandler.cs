@@ -1,5 +1,4 @@
-﻿using System;
-using Nancy;
+﻿using Nancy;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 
@@ -23,37 +22,14 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
         public Response Handle(NancyContext context)
         {
-            try
-            {
-                var response = HandlePactRequest(context);
-
-                return response;
-            }
-            catch (Exception ex)
-            {
-                var exceptionMessage = ex.Message
-                    .Replace("\r", " ")
-                    .Replace("\n", "")
-                    .Replace("\t", " ")
-                    .Replace(@"\", "");
-
-                var errorResponse = new ProviderServiceResponse
-                {
-                    Status = 500,
-                    Body = exceptionMessage
-                };
-                var response = _responseMapper.Convert(errorResponse);
-                response.ReasonPhrase = exceptionMessage;
-
-                return response;
-            }
+            return HandlePactRequest(context);
         }
 
         private Response HandlePactRequest(NancyContext context)
         {
             var actualRequest = _requestMapper.Convert(context.Request);
 
-            var matchingInteraction = context.GetMatchingMockInteraction(actualRequest.Method, actualRequest.Path);
+            var matchingInteraction = _mockProviderRepository.GetMatchingTestScopedInteraction(actualRequest.Method, actualRequest.Path);
 
             _mockProviderRepository.AddHandledRequest(new HandledRequest(actualRequest, matchingInteraction));
 

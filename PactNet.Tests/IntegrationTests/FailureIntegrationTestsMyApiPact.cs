@@ -3,7 +3,7 @@ using PactNet.Mocks.MockHttpService;
 
 namespace PactNet.Tests.IntegrationTests
 {
-    public class IntegrationTestsMyApiPact : IDisposable
+    public class FailureIntegrationTestsMyApiPact : IDisposable
     {
         public IPactBuilder PactBuilder { get; private set; }
         public IMockProviderService MockProviderService { get; private set; }
@@ -11,10 +11,10 @@ namespace PactNet.Tests.IntegrationTests
         public int MockServerPort { get { return 4321; } }
         public string MockProviderServiceBaseUri { get { return String.Format("http://localhost:{0}", MockServerPort); } }
 
-        public IntegrationTestsMyApiPact()
+        public FailureIntegrationTestsMyApiPact()
         {
             PactBuilder = new PactBuilder((port, enableSsl) => new MockProviderService(port, enableSsl))
-                .ServiceConsumer("IntegrationTests")
+                .ServiceConsumer("FailureIntegrationTests")
                 .HasPactWith("MyApi");
 
             MockProviderService = PactBuilder.MockService(MockServerPort);
