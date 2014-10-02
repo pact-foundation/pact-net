@@ -359,7 +359,7 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void Verify_WhenFileDoesNotExistOnFileSystem_ThrowsInvalidOperationException()
+        public void Verify_WithFileUriAndWhenFileDoesNotExistOnFileSystem_ThrowsInvalidOperationException()
         {
             var serviceProvider = "Event API";
             var serviceConsumer = "My client";
@@ -377,6 +377,27 @@ namespace PactNet.Tests
             Assert.Throws<InvalidOperationException>(() => pactVerifier.Verify());
 
             _mockFileSystem.File.Received(1).ReadAllText(pactUri);
+        }
+
+        [Fact]
+        public void Verify_WithHttpUriAndNonSuccessfulStatusCodeIsReturned_ThrowsInvalidOperationException()
+        {
+            var serviceProvider = "Event API";
+            var serviceConsumer = "My client";
+            var pactUri = "http://yourpactserver.com/getlatestpactfile";
+
+            var pactVerifier = GetSubject();
+
+            _fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
+
+            pactVerifier
+                .ServiceProvider(serviceProvider, new HttpClient())
+                .HonoursPactWith(serviceConsumer)
+                .PactUri(pactUri);
+
+            Assert.Throws<InvalidOperationException>(() => pactVerifier.Verify());
+
+            Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsRecieved.Single().Method);
         }
 
         [Fact]

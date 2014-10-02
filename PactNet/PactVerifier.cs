@@ -3,7 +3,6 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Net.Http;
 using Newtonsoft.Json;
-using PactNet.Extensions;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Validators;
@@ -12,27 +11,6 @@ using PactNet.Reporters;
 
 namespace PactNet
 {
-    public interface IPactFileContentService
-    {
-        string GetPactFile();
-    }
-
-    public class FileSystemThingo : IPactFileContentService
-    {
-        public string GetPactFile()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class WebThingo : IPactFileContentService
-    {
-        public string GetPactFile()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
     public class PactVerifier : IPactVerifier, IProviderStates
     {
         private readonly IFileSystem _fileSystem;
@@ -162,12 +140,6 @@ namespace PactNet
             return this;
         }
 
-        private bool IsWebUri(string uri)
-        {
-            return uri.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase) ||
-                   uri.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase);
-        }
-
         public void Verify(string providerDescription = null, string providerState = null)
         {
             if (_httpRequestSender == null)
@@ -183,7 +155,7 @@ namespace PactNet
             ProviderServicePactFile pactFile;
             try
             {
-                var pactFileJson = String.Empty;
+                string pactFileJson;
 
                 if (IsWebUri(PactFileUri))
                 {
@@ -191,13 +163,17 @@ namespace PactNet
                     request.Headers.Add("Accept", "application/json");
 
                     var response = _httpClient.SendAsync(request).Result;
-                    if (response.IsSuccessStatusCode) //TODO: Deal with this scenario
+
+                    try
                     {
+                        response.EnsureSuccessStatusCode();
                         pactFileJson = response.Content.ReadAsStringAsync().Result;
                     }
-
-                    request.SafeDispose();
-                    response.SafeDispose();
+                    finally
+                    {
+                        Dipose(request);
+                        Dipose(response);
+                    }
                 }
                 else //Assume it's a file uri, and we will just throw if it does not exist
                 {
@@ -206,11 +182,9 @@ namespace PactNet
 
                 pactFile = JsonConvert.DeserializeObject<ProviderServicePactFile>(pactFileJson);
             }
-            //IOException
-            //WebException
-            catch (Exception) //TODO: should we do this?
+            catch (Exception ex)
             {
-                throw new InvalidOperationException(String.Format("Json Pact file could not be retrieved using uri \'{0}\'.", PactFileUri));
+                throw new InvalidOperationException(String.Format("Json Pact file could not be retrieved using uri \'{0}\'.", PactFileUri), ex);
             }
 
             //Filter interactions
@@ -225,6 +199,20 @@ namespace PactNet
             }
 
             _providerServiceValidatorFactory(_httpRequestSender).Validate(pactFile, ProviderStates);
+        }
+
+        private static bool IsWebUri(string uri)
+        {
+            return uri.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase) ||
+                   uri.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        private static void Dipose(IDisposable disposable)
+        {
+            if (disposable != null)
+            {
+                disposable.Dispose();
+            }
         }
     }
 }
