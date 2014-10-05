@@ -134,7 +134,6 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
         private Response HandlePostPactRequest(NancyContext context)
         {
-            //TODO: Have a way to inject a NoOp pact file writer
             //TODO: Path is not going to be correct when running standalone mode
             //TODO: Check to make sure we handle the new ProviderState serialisation name
 

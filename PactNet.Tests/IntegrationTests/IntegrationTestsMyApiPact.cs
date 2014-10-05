@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Net.Http;
 using PactNet.Mocks.MockHttpService;
+using PactNet.Mocks.MockHttpService.Nancy;
 
 namespace PactNet.Tests.IntegrationTests
 {
@@ -13,7 +15,11 @@ namespace PactNet.Tests.IntegrationTests
 
         public IntegrationTestsMyApiPact()
         {
-            PactBuilder = new PactBuilder((port, enableSsl) => new MockProviderService(port, enableSsl))
+            PactBuilder = new PactBuilder((port, enableSsl) =>
+                    new MockProviderService(
+                        baseUri => new NancyHttpHost(baseUri, new IntegrationTestingMockProviderNancyBootstrapper()),
+                        port, enableSsl,
+                        baseUri => new HttpClient { BaseAddress = new Uri(baseUri) }))
                 .ServiceConsumer("IntegrationTests")
                 .HasPactWith("MyApi");
 

@@ -85,6 +85,7 @@
   <ItemGroup>
     <Compile Include="Fakes\FakeHttpMessageHandler.cs" />
     <Compile Include="IntegrationTests\FailureIntegrationTestsMyApiPact.cs" />
+    <Compile Include="IntegrationTests\IntegrationTestingMockProviderNancyBootstrapper.cs" />
     <Compile Include="IntegrationTests\IntegrationTestsMyApiPact.cs" />
     <Compile Include="IntegrationTests\PactBuilderFailureIntegrationTests.cs" />
     <Compile Include="IntegrationTests\PactBuilderIntegrationTests.cs" />
