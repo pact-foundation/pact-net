@@ -17,8 +17,8 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             _bootstrapper = bootstrapper;
         }
 
-        public NancyHttpHost(Uri baseUri)
-            : this(baseUri, new MockProviderNancyBootstrapper())
+        public NancyHttpHost(Uri baseUri, string pactFileDirectory)
+            : this(baseUri, new MockProviderNancyBootstrapper(pactFileDirectory))
         {
             _baseUri = baseUri;
         }

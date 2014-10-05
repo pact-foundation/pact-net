@@ -20,17 +20,20 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         private readonly IProviderServiceRequestComparer _requestComparer;
         private readonly IReporter _reporter;
         private readonly IFileSystem _fileSystem;
+        private readonly string _pactFileDirectory;
 
         public MockProviderAdminRequestHandler(
             IMockProviderRepository mockProviderRepository,
             IReporter reporter,
             IProviderServiceRequestComparer requestComparer,
-            IFileSystem fileSystem)
+            IFileSystem fileSystem,
+            PactFileInfo pactFileInfo)
         {
             _mockProviderRepository = mockProviderRepository;
             _reporter = reporter;
             _requestComparer = requestComparer;
             _fileSystem = fileSystem;
+            _pactFileDirectory = pactFileInfo.Directory ?? Constants.DefaultPactFileDirectory;
         }
 
         public Response Handle(NancyContext context)
@@ -134,11 +137,9 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
         private Response HandlePostPactRequest(NancyContext context)
         {
-            //TODO: Path is not going to be correct when running standalone mode
-
             var pactDetailsJson = ReadContent(context.Request.Body);
             var pactDetails = JsonConvert.DeserializeObject<PactDetails>(pactDetailsJson);
-            var pactFilePath = Path.Combine(Constants.PactFileDirectory, pactDetails.GeneratePactFileName());
+            var pactFilePath = Path.Combine(_pactFileDirectory, pactDetails.GeneratePactFileName());
 
             var pactFile = new ProviderServicePactFile
             {
@@ -155,7 +156,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             }
             catch (DirectoryNotFoundException)
             {
-                _fileSystem.Directory.CreateDirectory(Constants.PactFileDirectory);
+                _fileSystem.Directory.CreateDirectory(_pactFileDirectory);
                 _fileSystem.File.WriteAllText(pactFilePath, pactFileJson);
             }
 

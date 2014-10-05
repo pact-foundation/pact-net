@@ -132,6 +132,7 @@
     <Compile Include="Mocks\MockHttpService\Mappers\ProviderServiceResponseMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Models\HandledRequest.cs" />
     <Compile Include="Mocks\MockHttpService\MockProviderRepository.cs" />
+    <Compile Include="Models\PactFileInfo.cs" />
     <Compile Include="Mocks\MockHttpService\Validators\IProviderServiceValidator.cs" />
     <Compile Include="Mocks\MockHttpService\Validators\ProviderServiceValidator.cs" />
     <Compile Include="Models\PactDetails.cs" />

@@ -6,6 +6,6 @@
         public const string InteractionsPath = "/interactions";
         public const string InteractionsVerificationPath = "/interactions/verification";
         public const string PactPath = "/pact";
-        public const string PactFileDirectory = "../../pacts/";
+        public const string DefaultPactFileDirectory = "../../pacts/";
     }
 }

@@ -34,9 +34,9 @@ namespace PactNet.Mocks.MockHttpService
             _httpClient = httpClientFactory(BaseUri);
         }
 
-        public MockProviderService(int port, bool enableSsl)
+        public MockProviderService(int port, bool enableSsl, string pactFileDirectory = null)
             : this(
-            baseUri => new NancyHttpHost(baseUri), 
+            baseUri => new NancyHttpHost(baseUri, pactFileDirectory), 
             port,
             enableSsl,
             baseUri => new HttpClient { BaseAddress = new Uri(baseUri) })

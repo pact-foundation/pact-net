@@ -36,7 +36,8 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
                 _mockProviderRepository,
                 _mockReporter,
                 _mockRequestComparer,
-                _mockFileSystem);
+                _mockFileSystem,
+                new PactFileInfo(null));
         }
 
         [Fact]
@@ -503,7 +504,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             handler.Handle(context);
 
-            _mockFileSystem.File.Received(1).WriteAllText(Path.Combine(Constants.PactFileDirectory, pactDetails.GeneratePactFileName()), pactFileJson);
+            _mockFileSystem.File.Received(1).WriteAllText(Path.Combine(Constants.DefaultPactFileDirectory, pactDetails.GeneratePactFileName()), pactFileJson);
         }
 
         [Fact]
@@ -556,7 +557,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             handler.Handle(context);
 
-            _mockFileSystem.File.Received(1).WriteAllText(Path.Combine(Constants.PactFileDirectory, pactDetails.GeneratePactFileName()), pactFileJson);
+            _mockFileSystem.File.Received(1).WriteAllText(Path.Combine(Constants.DefaultPactFileDirectory, pactDetails.GeneratePactFileName()), pactFileJson);
         }
 
         [Fact]
@@ -702,7 +703,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
                 Request = new Request("POST", new Url("http://localhost/pact"), requestStream)
             };
 
-            var filePath = Path.Combine(Constants.PactFileDirectory, pactDetails.GeneratePactFileName());
+            var filePath = Path.Combine(Constants.DefaultPactFileDirectory, pactDetails.GeneratePactFileName());
 
             var handler = GetSubject();
 
