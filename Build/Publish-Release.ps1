@@ -4,7 +4,9 @@
 	[string]
 	$ReleaseVersionNumber,
 
-	[switch]$Push
+	[switch]$Push,
+	
+	[string]$ApiKey
 )
 
 $PSScriptFilePath = (Get-Item $MyInvocation.MyCommand.Path).FullName
@@ -24,6 +26,11 @@ if (-not $?)
 # Upload the NuGet package
 if ($Push)
 {
+	if($ApiKey)
+	{
+		& $NuGetExe setApiKey $ApiKey
+	}
+
 	$NuPkgPath = Join-Path -Path $BuildRoot -ChildPath "PactNet.$ReleaseVersionNumber.nupkg"
 	& $NuGetExe push $NuPkgPath
 	if (-not $?)
