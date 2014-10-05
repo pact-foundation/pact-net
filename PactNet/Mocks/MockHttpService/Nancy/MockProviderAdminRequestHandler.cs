@@ -135,7 +135,6 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         private Response HandlePostPactRequest(NancyContext context)
         {
             //TODO: Path is not going to be correct when running standalone mode
-            //TODO: Check to make sure we handle the new ProviderState serialisation name
 
             var pactDetailsJson = ReadContent(context.Request.Body);
             var pactDetails = JsonConvert.DeserializeObject<PactDetails>(pactDetailsJson);
