@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
@@ -66,7 +67,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         {
             _mockProviderRepository.ClearHandledRequests();
             _mockProviderRepository.ClearTestScopedInteractions();
-            return GenerateResponse(HttpStatusCode.OK, "Successfully deleted interactions.");
+            return GenerateResponse(HttpStatusCode.OK, "Deleted interactions");
         }
 
         private Response HandlePostInteractionsRequest(NancyContext context)
@@ -76,8 +77,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
             _mockProviderRepository.AddInteraction(interaction);
 
-            //TODO: Should we return the interaction as the response? Check Pact ruby responses
-            return GenerateResponse(HttpStatusCode.OK, "Successfully registered interaction.");
+            return GenerateResponse(HttpStatusCode.OK, "Added interaction");
         }
 
         private Response HandleGetInteractionsVerificationRequest()
@@ -129,7 +129,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                 return GenerateResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
 
-            return GenerateResponse(HttpStatusCode.OK, "Successfully verified mock provider interactions.");
+            return GenerateResponse(HttpStatusCode.OK, "Interactions matched");
         }
 
         private Response HandlePostPactRequest(NancyContext context)
@@ -159,14 +159,15 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                 _fileSystem.File.WriteAllText(pactFilePath, pactFileJson);
             }
 
-            return GenerateResponse(HttpStatusCode.OK, pactFileJson);
+            return GenerateResponse(HttpStatusCode.OK, pactFileJson, "application/json");
         }
 
-        private Response GenerateResponse(HttpStatusCode statusCode, string message)
+        private Response GenerateResponse(HttpStatusCode statusCode, string message, string contentType = "text/plain")
         {
             return new Response
             {
                 StatusCode = statusCode,
+                Headers = new Dictionary<string, string> { { "Content-Type", contentType } },
                 Contents = s => SetContent(message, s)
             };
         }

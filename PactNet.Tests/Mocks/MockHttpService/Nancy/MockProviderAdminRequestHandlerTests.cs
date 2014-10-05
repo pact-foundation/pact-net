@@ -560,6 +560,105 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         }
 
         [Fact]
+        public void Handle_WithAPostRequestToPactAndInteractionsHaveBeenRegistered_ReturnsOkResponse()
+        {
+            var pactDetails = new PactDetails
+            {
+                Consumer = new Party { Name = "Consumer" },
+                Provider = new Party { Name = "Provider" }
+            };
+
+            var interactions = new List<ProviderServiceInteraction>
+            {
+                new ProviderServiceInteraction
+                {
+                    Description = "My description",
+                    Request = new ProviderServiceRequest
+                    {
+                        Method = HttpVerb.Get,
+                        Path = "/test"
+                    },
+                    Response = new ProviderServiceResponse
+                    {
+                        Status = (int)HttpStatusCode.NoContent
+                    }
+                }
+            };
+
+            var pactDetailsJson = JsonConvert.SerializeObject(pactDetails, JsonConfig.ApiSerializerSettings);
+
+            var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(pactDetailsJson));
+
+            var requestStream = new RequestStream(jsonStream, jsonStream.Length, true);
+            var context = new NancyContext
+            {
+                Request = new Request("POST", new Url("http://localhost/pact"), requestStream)
+            };
+
+            var handler = GetSubject();
+
+            _mockProviderRepository.Interactions.Returns(interactions);
+
+            var response = handler.Handle(context);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public void Handle_WithAPostRequestToPactAndInteractionsHaveBeenRegistered_ReturnsResponseWithPactFileJson()
+        {
+            var pactDetails = new PactDetails
+            {
+                Consumer = new Party { Name = "Consumer" },
+                Provider = new Party { Name = "Provider" }
+            };
+
+            var interactions = new List<ProviderServiceInteraction>
+            {
+                new ProviderServiceInteraction
+                {
+                    Description = "My description",
+                    Request = new ProviderServiceRequest
+                    {
+                        Method = HttpVerb.Get,
+                        Path = "/test"
+                    },
+                    Response = new ProviderServiceResponse
+                    {
+                        Status = (int)HttpStatusCode.NoContent
+                    }
+                }
+            };
+
+            var pactFile = new ProviderServicePactFile
+            {
+                Provider = pactDetails.Provider,
+                Consumer = pactDetails.Consumer,
+                Interactions = interactions
+            };
+
+            var pactFileJson = JsonConvert.SerializeObject(pactFile, JsonConfig.PactFileSerializerSettings);
+            var pactDetailsJson = JsonConvert.SerializeObject(pactDetails, JsonConfig.ApiSerializerSettings);
+
+            var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(pactDetailsJson));
+
+            var requestStream = new RequestStream(jsonStream, jsonStream.Length, true);
+            var context = new NancyContext
+            {
+                Request = new Request("POST", new Url("http://localhost/pact"), requestStream)
+            };
+
+            var handler = GetSubject();
+
+            _mockProviderRepository.Interactions.Returns(interactions);
+
+            var response = handler.Handle(context);
+
+            Assert.Equal("application/json", response.Headers["Content-Type"]);
+            Assert.Equal(pactFileJson, ReadResponseContent(response.Contents));
+        }
+
+        [Fact]
         public void Handle_WithAPostRequestToPactAndDirectoryDoesNotExist_DirectoryIsCreatedAndNewPactFileIsSavedWithInteractions()
         {
             var pactDetails = new PactDetails
