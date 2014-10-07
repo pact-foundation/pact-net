@@ -28,5 +28,6 @@
   </metadata>
   <files>
     <file src="bin\Release\PactNet.dll" target="lib\net40" />
+    <file src="readme.txt" target="" />
   </files>
 </package>
