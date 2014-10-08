@@ -3,7 +3,7 @@ Thumbs.db
 #Ignore files build by Visual Studio
 *.obj
 *.exe
-!Build/.nuget/Nuget.exe
+!.nuget/Nuget.exe
 *.pdb
 *.user
 *.aps
@@ -41,3 +41,6 @@ _TeamCity*/
 Build/PactNet*.nupkg
 *.ncrunchproject
 *.ncrunchsolution
+/packages/*
+!packages/repositories.config
+/Build/coverage
