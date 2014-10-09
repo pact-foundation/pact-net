@@ -10,6 +10,8 @@ install:
 deploy:
   - provider: NuGet
     skip_symbols: false
+    api_key:
+      secure: <encrypted key here>
     on:
       branch: master
       appveyor_repo_tag: true
