@@ -1,0 +1,29 @@
+version: 0.0.1.{build}
+
+branches:
+  only:
+    - master
+
+install:
+  - git submodule update --init --recursive
+
+deploy:
+  - provider: NuGet
+    skip_symbols: false
+    on:
+      branch: master
+      appveyor_repo_tag: true
+
+artifacts:
+  - path: '**\PactNet*.nupkg'
+
+configuration: Release
+
+build:
+  project: PactNet.sln
+  verbosity: normal
+  on:
+    branch: master
+
+after_build:
+  - nuget pack PactNet\PactNet.nuspec -version %APPVEYOR_BUILD_VERSION%-beta
