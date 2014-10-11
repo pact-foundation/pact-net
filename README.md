@@ -20,7 +20,7 @@ Please feel free to contribute, we do accept pull requests.
 
 ## Usage
 Below are some samples of usage.  
-We have also written some `//NOTE:` comments inline in the code to help explain what certains calls do.
+We have also written some `//NOTE:` comments inline in the code to help explain what certain calls do.
 
 ### Installing
 
