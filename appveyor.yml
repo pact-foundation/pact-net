@@ -1,4 +1,4 @@
-version: 0.1.4-beta.{build}
+version: "$(appveyor_repo_branch).{build}"
 
 branches:
   only:
