@@ -1,5 +1,4 @@
-package_version: 0.1.4-beta
-version: {package_version}.{build}
+version: 0.1.4-beta.{build}
 
 branches:
   only:
@@ -11,10 +10,10 @@ install:
 assembly_info:
   patch: true
   file: AssemblyInfo.*
-  assembly_version: "{package_version}.{build}"
-  assembly_file_version: "{package_version}.{build}"
+  assembly_version: "0.1.4.{build}"
+  assembly_file_version: "0.1.4.{build}"
   assembly_informational_version: "{version}"
-  
+
 deploy:
   - provider: NuGet
     skip_symbols: true
@@ -26,6 +25,7 @@ deploy:
 
 artifacts:
   - path: '**\Build\PactNet*.nupkg'
+  - path: '**\Build\coverage\*'
 
 configuration: Release
 
@@ -39,4 +39,5 @@ before_build:
   - nuget restore
 
 after_build:
-  - ps: .\Build\Publish-Release.ps1 -ReleaseVersionNumber {package_version}
+  - ps: .\Build\Publish-Release.ps1 -ReleaseVersionNumber 0.1.4-beta
+  - ps: .\Build\Tests-Coverage.ps1 -GenerateSummaryReport

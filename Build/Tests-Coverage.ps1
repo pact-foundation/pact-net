@@ -1,4 +1,5 @@
 param (
+	[switch]$GenerateSummaryReport
 )
 
 $PSScriptFilePath = (Get-Item $MyInvocation.MyCommand.Path).FullName
@@ -25,6 +26,13 @@ New-Item -ItemType directory -Path "$BuildRoot\coverage" -ErrorAction:ignore
     '-filter:+[PactNet]* -[*Tests]*' `
     '-output:.\coverage\results.xml'
     
-& $ReportGenExe '-reports:.\coverage\results.xml' "-targetdir:$BuildRoot\coverage"
+if($GenerateSummaryReport)
+{
+	& $ReportGenExe '-reports:.\coverage\results.xml' '-reporttypes:HtmlSummary' "-targetdir:$BuildRoot\coverage"
+}
+else
+{
+	& $ReportGenExe '-reports:.\coverage\results.xml' "-targetdir:$BuildRoot\coverage"
+}
 
 cd $SolutionRoot
