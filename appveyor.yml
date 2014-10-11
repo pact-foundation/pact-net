@@ -33,9 +33,9 @@ build:
   verbosity: normal
   on:
     branch: master
-	
+
 before_build:
   - nuget restore
-  
+
 after_build:
   - .\Build\Publish-Release.ps1 -ReleaseVersionNumber 0.1.4-beta
