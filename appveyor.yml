@@ -6,12 +6,13 @@ branches:
 
 install:
   - git submodule update --init --recursive
+  - ps: .\Build\Setup-Build-Environment.ps1
 
 assembly_info:
   patch: true
   file: AssemblyInfo.*
-  assembly_version: "0.1.4.{build}"
-  assembly_file_version: "0.1.4.{build}"
+  assembly_version: "$(pactnet_assembly_version).{build}"
+  assembly_file_version: "$(pactnet_assembly_version).{build}"
   assembly_informational_version: "{version}"
 
 deploy:
@@ -38,8 +39,8 @@ build:
 before_build:
   - nuget restore
 
-before_deploy:
-  - ps: .\Build\Publish-Release.ps1 -ReleaseVersionNumber 0.1.4-beta
+after_build:
+  - ps: .\Build\Publish-Release.ps1 -ReleaseVersionNumber "$(pactnet_version)"
 
 after_test:
   - ps: .\Build\Tests-Coverage.ps1 -GenerateSummaryReport
