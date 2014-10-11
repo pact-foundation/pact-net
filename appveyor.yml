@@ -24,7 +24,7 @@ deploy:
       appveyor_repo_tag: true
 
 artifacts:
-  - path: '**\PactNet*.nupkg'
+  - path: '**\Build\PactNet*.nupkg'
 
 configuration: Release
 
@@ -38,4 +38,4 @@ before_build:
   - nuget restore
 
 after_build:
-  - .\Build\Publish-Release.ps1 -ReleaseVersionNumber 0.1.4-beta
+  - ps: .\Build\Publish-Release.ps1 -ReleaseVersionNumber 0.1.4-beta
