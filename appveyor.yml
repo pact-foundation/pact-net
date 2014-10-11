@@ -40,7 +40,7 @@ before_build:
   - nuget restore
 
 after_build:
-  - ps: .\Build\Publish-Release.ps1 -ReleaseVersionNumber "$(pactnet_version)"
+  - ps: .\Build\Publish-Release.ps1 -ReleaseVersionNumber "$env:PACTNET_VERSION"
 
 after_test:
   - ps: .\Build\Tests-Coverage.ps1 -GenerateSummaryReport
