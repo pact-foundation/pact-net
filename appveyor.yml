@@ -1,4 +1,4 @@
-version: 0.0.1.{build}
+version: 0.1.4-beta.{build}
 
 branches:
   only:
@@ -7,11 +7,18 @@ branches:
 install:
   - git submodule update --init --recursive
 
+assembly_info:
+  patch: true
+  file: AssemblyInfo.*
+  assembly_version: "0.1.4.{build}"
+  assembly_file_version: "0.1.4.{build}"
+  assembly_informational_version: "{version}"
+  
 deploy:
   - provider: NuGet
-    skip_symbols: false
+    skip_symbols: true
     api_key:
-      secure: <encrypted key here>
+      secure: Vlw7m7mXEZ9XqlZBsQ4fzqDKjO8yTdtXhO9c04RnrD4zwhf6dx+lxBmC9TJ7EF6G
     on:
       branch: master
       appveyor_repo_tag: true
@@ -28,4 +35,4 @@ build:
     branch: master
 
 after_build:
-  - nuget pack PactNet\PactNet.nuspec -version %APPVEYOR_BUILD_VERSION%-beta
+  - .\Build\Publish-Release.ps1 -ReleaseVersionNumber 0.1.4-beta
