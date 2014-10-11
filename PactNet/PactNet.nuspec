@@ -28,5 +28,9 @@
   </metadata>
   <files>
     <file src="bin\Release\PactNet.dll" target="lib\net40" />
+    <file src="bin\Release\PactNet.pdb" target="lib\net40" />
+    <file src="bin\Release\PactNet.dll.config" target="lib\net40" />
+    <file src="bin\Release\PactNet.xml" target="lib\net40" />
+    <file src="readme.txt" target="" />
   </files>
 </package>
