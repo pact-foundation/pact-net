@@ -9,7 +9,9 @@ $AssemblyVersion = $Version -replace "[^0-9,.]", ''
 
 $env:PACTNET_ASSEMBLY_VERSION = "$AssemblyVersion"
 
-if($env:APPVEYOR_REPO_TAG)
+Write-Host "From Tag: $env:APPVEYOR_REPO_TAG"
+
+if($env:APPVEYOR_REPO_TAG -eq 'True')
 {
 	$env:PACTNET_VERSION = "$Version"
 }
