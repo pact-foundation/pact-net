@@ -27,4 +27,4 @@ New-Item -ItemType directory -Path "$BuildRoot\coverage" -ErrorAction:ignore
     
 & $ReportGenExe '-reports:.\coverage\results.xml' "-targetdir:$BuildRoot\coverage"
 
-
+cd $SolutionRoot
