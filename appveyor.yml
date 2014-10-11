@@ -1,4 +1,4 @@
-version: "$(appveyor_repo_branch).{build}"
+version: "{build}"
 
 branches:
   only:
@@ -13,7 +13,7 @@ assembly_info:
   file: AssemblyInfo.*
   assembly_version: "$(pactnet_assembly_version).{build}"
   assembly_file_version: "$(pactnet_assembly_version).{build}"
-  assembly_informational_version: "{version}"
+  assembly_informational_version: "$(pactnet_version)"
 
 deploy:
   - provider: NuGet
