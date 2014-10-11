@@ -38,6 +38,8 @@ build:
 before_build:
   - nuget restore
 
-after_build:
+before_deploy:
   - ps: .\Build\Publish-Release.ps1 -ReleaseVersionNumber 0.1.4-beta
+
+after_test:
   - ps: .\Build\Tests-Coverage.ps1 -GenerateSummaryReport
