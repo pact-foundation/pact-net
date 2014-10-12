@@ -11,7 +11,7 @@ namespace PactNet.Models
         {
             Metadata = new
             {
-                pactSpecificationVersion = "1.0.0"
+                pactSpecificationVersion = "1.1.0"
             };
         }
     }

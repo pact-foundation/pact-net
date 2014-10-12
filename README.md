@@ -7,7 +7,7 @@ PactNet primarily provides a fluent .NET DSL for describing HTTP requests that w
 In documenting the consumer interactions, we can replay them on the provider and ensure the provider responds as expected. This basically gives us complete test symmetry and removes the basic need for integrated tests.  
 PactNet also has the ability to support other mock providers should we see fit.
 
-PactNet is aiming to be Pact Specification Version 1 compliant (Version 2 is a WIP).  
+PactNet is aiming to be Pact Specification Version 1.1 compliant (Version 2 is a WIP).  
 
 From the [Pact Specification repo] (https://github.com/bethesque/pact_specification)
 
@@ -15,7 +15,6 @@ From the [Pact Specification repo] (https://github.com/bethesque/pact_specificat
 
 Read more about Pact and the problems it solves at https://github.com/realestate-com-au/pact
 
-Please also note that this project is still a work in progress, so there will likely be bugs and items that have not yet been implemented.  
 Please feel free to contribute, we do accept pull requests.
 
 ## Usage

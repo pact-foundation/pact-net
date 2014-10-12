@@ -32,9 +32,9 @@ namespace PactNet.Reporters
         public void ReportError(string errorMessage = null, object expected = null, object actual = null)
         {
             string errorMsg;
-            if (expected != null && actual != null)
+            if (expected != null || actual != null)
             {
-                errorMsg = String.Format("{0} Expected: {1}, Actual: {2}", errorMessage, expected, actual);
+                errorMsg = String.Format("{0} Expected: {1}, Actual: {2}", errorMessage, expected ?? "null", actual ?? "null");
             }
             else
             {

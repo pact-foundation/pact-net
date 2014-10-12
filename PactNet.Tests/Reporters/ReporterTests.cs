@@ -38,11 +38,22 @@ namespace PactNet.Tests.Reporters
 
             reporter.ReportError();
 
-            mockOutputter.Received(1).WriteError(Arg.Any<string>(), Arg.Any<object[]>());
+            mockOutputter.Received(1).WriteError(Arg.Any<string>(), Arg.Is<object[]>(x => x.Single() == null));
         }
 
         [Fact]
-        public void ReportError_WithOnlyErrorMessageParameters_ErrorIsAdded()
+        public void ReportError_WithSomeParameters_CallsWriteErrorOnOutputter()
+        {
+            var mockOutputter = Substitute.For<IReportOutputter>();
+            var reporter = new Reporter(mockOutputter);
+
+            reporter.ReportError(expected: "tester");
+
+            mockOutputter.Received(1).WriteError(Arg.Any<string>(), Arg.Is<object[]>(x => (string) x.Single() == " Expected: tester, Actual: null"));
+        }
+
+        [Fact]
+        public void ReportError_WithOnlyErrorMessageParameter_ErrorIsAdded()
         {
             var errorMessage = "My error message about something that went wrong";
             var mockOutputter = Substitute.For<IReportOutputter>();

@@ -10,7 +10,7 @@ namespace PactNet.Tests.Models
         {
             var pactFile = new PactFile();
 
-            Assert.Equal("1.0.0", pactFile.Metadata.pactSpecificationVersion);
+            Assert.Equal("1.1.0", pactFile.Metadata.pactSpecificationVersion);
         }
     }
 }

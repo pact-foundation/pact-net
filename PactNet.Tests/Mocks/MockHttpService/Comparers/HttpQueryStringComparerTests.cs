@@ -26,6 +26,28 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         }
 
         [Fact]
+        public void Compare_WithNullExpectedQueryAndNonNullActualQuery_ReportErrorIsCalledOnTheReporter()
+        {
+            const string actualQuery = "test=1234";
+            var comparer = GetSubject();
+
+            comparer.Compare(null, actualQuery);
+
+            _mockReporter.Received(1).ReportError(null, null, actualQuery);
+        }
+
+        [Fact]
+        public void Compare_WithNonNullExpectedQueryAndNullActualQuery_ReportErrorIsCalledOnTheReporter()
+        {
+            const string expectedQuery = "test=1234";
+            var comparer = GetSubject();
+
+            comparer.Compare(expectedQuery, null);
+
+            _mockReporter.Received(1).ReportError(null, expectedQuery, null);
+        }
+
+        [Fact]
         public void Compare_WithNonEncodedQueryThatMatch_ReportErrorIsNotCalledOnTheReporter()
         {
             const string expected = "test=1234&hello=test";
