@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
+using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Nancy;
 
@@ -14,7 +15,8 @@ namespace PactNet.Mocks.MockHttpService
     {
         private readonly Func<Uri, IHttpHost> _hostFactory;
         private IHttpHost _host;
-        private readonly HttpClient _httpClient; 
+        private readonly HttpClient _httpClient;
+        private readonly IHttpMethodMapper _httpMethodMapper;
 
         private string _providerState;
         private string _description;
@@ -27,11 +29,13 @@ namespace PactNet.Mocks.MockHttpService
             Func<Uri, IHttpHost> hostFactory,
             int port,
             bool enableSsl,
-            Func<string, HttpClient> httpClientFactory)
+            Func<string, HttpClient> httpClientFactory,
+            IHttpMethodMapper httpMethodMapper)
         {
             _hostFactory = hostFactory;
             BaseUri = String.Format("{0}://localhost:{1}", enableSsl ? "https" : "http", port);
             _httpClient = httpClientFactory(BaseUri);
+            _httpMethodMapper = httpMethodMapper;
         }
 
         public MockProviderService(int port, bool enableSsl, string pactFileDirectory = null)
@@ -39,7 +43,8 @@ namespace PactNet.Mocks.MockHttpService
             baseUri => new NancyHttpHost(baseUri, pactFileDirectory), 
             port,
             enableSsl,
-            baseUri => new HttpClient { BaseAddress = new Uri(baseUri) })
+            baseUri => new HttpClient { BaseAddress = new Uri(baseUri) },
+            new HttpMethodMapper())
         {
         }
 
@@ -93,7 +98,7 @@ namespace PactNet.Mocks.MockHttpService
 
         public void VerifyInteractions()
         {
-            SendAdminHttpRequest(HttpMethod.Get, Constants.InteractionsVerificationPath);
+            SendAdminHttpRequest(HttpVerb.Get, Constants.InteractionsVerificationPath);
         }
 
         private void RegisterInteraction()
@@ -121,7 +126,7 @@ namespace PactNet.Mocks.MockHttpService
                 Response = _response
             };
 
-            SendAdminHttpRequest(HttpMethod.Post, Constants.InteractionsPath, interaction);
+            SendAdminHttpRequest(HttpVerb.Post, Constants.InteractionsPath, interaction);
 
             ClearTrasientState();
         }
@@ -143,11 +148,11 @@ namespace PactNet.Mocks.MockHttpService
         {
             if (_host != null)
             {
-                SendAdminHttpRequest(HttpMethod.Delete, Constants.InteractionsPath);
+                SendAdminHttpRequest(HttpVerb.Delete, Constants.InteractionsPath);
             }
         }
 
-        public void SendAdminHttpRequest<T>(HttpMethod method, string path, T requestContent) where T : class
+        public void SendAdminHttpRequest<T>(HttpVerb method, string path, T requestContent) where T : class
         {
             if (_host == null)
             {
@@ -156,7 +161,7 @@ namespace PactNet.Mocks.MockHttpService
 
             var responseContent = String.Empty;
 
-            var request = new HttpRequestMessage(method, path);
+            var request = new HttpRequestMessage(_httpMethodMapper.Convert(method), path);
             request.Headers.Add(Constants.AdministrativeRequestHeaderKey, "true");
 
             if (requestContent != null)
@@ -182,7 +187,7 @@ namespace PactNet.Mocks.MockHttpService
             }
         }
 
-        private void SendAdminHttpRequest(HttpMethod method, string path)
+        private void SendAdminHttpRequest(HttpVerb method, string path)
         {
             SendAdminHttpRequest<object>(method, path, null);
         }

@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Net.Http;
 using PactNet.Mocks.MockHttpService;
+using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
 
 namespace PactNet
@@ -89,7 +89,7 @@ namespace PactNet
                 Consumer = new Party { Name = ConsumerName }
             };
 
-            _mockProviderService.SendAdminHttpRequest(HttpMethod.Post, Constants.PactPath, pactDetails);
+            _mockProviderService.SendAdminHttpRequest(HttpVerb.Post, Constants.PactPath, pactDetails);
         }
     }
 }

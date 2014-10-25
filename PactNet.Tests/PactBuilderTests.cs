@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Net.Http;
 using NSubstitute;
 using PactNet.Mocks.MockHttpService;
+using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
 using Xunit;
 
@@ -191,7 +191,7 @@ namespace PactNet.Tests
 
             pactBuilder.Build();
 
-            mockProviderService.Received(1).SendAdminHttpRequest(HttpMethod.Post, Constants.PactPath, Arg.Is<PactDetails>(x => x.Consumer.Name == consumerName && x.Provider.Name == providerName));
+            mockProviderService.Received(1).SendAdminHttpRequest(HttpVerb.Post, Constants.PactPath, Arg.Is<PactDetails>(x => x.Consumer.Name == consumerName && x.Provider.Name == providerName));
         }
 
         [Fact]
