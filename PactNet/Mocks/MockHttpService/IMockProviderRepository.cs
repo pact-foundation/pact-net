@@ -11,7 +11,7 @@ namespace PactNet.Mocks.MockHttpService
 
         void AddInteraction(ProviderServiceInteraction interaction);
         void AddHandledRequest(HandledRequest handledRequest);
-        ProviderServiceInteraction GetMatchingTestScopedInteraction(HttpVerb method, string path);
+        ProviderServiceInteraction GetMatchingTestScopedInteraction(HttpVerb method, string pathWithQuery);
         void ClearHandledRequests();
         void ClearTestScopedInteractions();
     }

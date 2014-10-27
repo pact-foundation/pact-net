@@ -29,7 +29,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         {
             var actualRequest = _requestMapper.Convert(context.Request);
 
-            var matchingInteraction = _mockProviderRepository.GetMatchingTestScopedInteraction(actualRequest.Method, actualRequest.Path);
+            var matchingInteraction = _mockProviderRepository.GetMatchingTestScopedInteraction(actualRequest.Method, actualRequest.PathWithQuery());
 
             _mockProviderRepository.AddHandledRequest(new HandledRequest(actualRequest, matchingInteraction));
 
