@@ -7,7 +7,6 @@ using System.Text;
 using Nancy;
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
-using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
 using PactNet.Reporters;
@@ -17,7 +16,6 @@ namespace PactNet.Mocks.MockHttpService.Nancy
     public class MockProviderAdminRequestHandler : IMockProviderAdminRequestHandler
     {
         private readonly IMockProviderRepository _mockProviderRepository;
-        private readonly IProviderServiceRequestComparer _requestComparer;
         private readonly IReporter _reporter;
         private readonly IFileSystem _fileSystem;
         private readonly string _pactFileDirectory;
@@ -25,13 +23,11 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         public MockProviderAdminRequestHandler(
             IMockProviderRepository mockProviderRepository,
             IReporter reporter,
-            IProviderServiceRequestComparer requestComparer,
             IFileSystem fileSystem,
             PactFileInfo pactFileInfo)
         {
             _mockProviderRepository = mockProviderRepository;
             _reporter = reporter;
-            _requestComparer = requestComparer;
             _fileSystem = fileSystem;
             _pactFileDirectory = pactFileInfo.Directory ?? Constants.DefaultPactFileDirectory;
         }
@@ -109,16 +105,6 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                 if (_mockProviderRepository.HandledRequests != null && _mockProviderRepository.HandledRequests.Any())
                 {
                     _reporter.ReportError("No mock interactions were registered, however the mock provider service was called.");
-                }
-            }
-
-            //Check all handled requests actually match the registered interaction
-            if (_mockProviderRepository.HandledRequests != null &&
-                _mockProviderRepository.HandledRequests.Any())
-            {
-                foreach (var handledRequest in _mockProviderRepository.HandledRequests)
-                {
-                    _requestComparer.Compare(handledRequest.MatchedInteraction.Request, handledRequest.ActualRequest);
                 }
             }
 

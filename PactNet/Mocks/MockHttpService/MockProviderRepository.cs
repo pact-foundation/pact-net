@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Nancy;
+using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Reporters;
 
 namespace PactNet.Mocks.MockHttpService
 {
     public class MockProviderRepository : IMockProviderRepository
     {
+        private readonly IReporter _reporter;
+        private readonly IProviderServiceRequestComparer _requestComparer;
+
         private readonly List<ProviderServiceInteraction> _testScopedInteractions = new List<ProviderServiceInteraction>();
         public ICollection<ProviderServiceInteraction> TestScopedInteractions { get { return _testScopedInteractions; } }
 
@@ -15,6 +21,12 @@ namespace PactNet.Mocks.MockHttpService
 
         private readonly List<HandledRequest> _handledRequests = new List<HandledRequest>();
         public ICollection<HandledRequest> HandledRequests { get { return _handledRequests; } }
+
+        public MockProviderRepository(IReporter reporter, IProviderServiceRequestComparer requestComparer)
+        {
+            _reporter = reporter;
+            _requestComparer = requestComparer;
+        }
 
         public void AddInteraction(ProviderServiceInteraction interaction)
         {
@@ -62,10 +74,24 @@ namespace PactNet.Mocks.MockHttpService
                 throw new PactFailureException("No mock interactions have been registered");
             }
 
-            var matchingInteractions = TestScopedInteractions.Where(x =>
-                x.Request != null &&
-                x.Request.Method == request.Method &&
-                x.Request.Path == request.Path).ToList();
+            var matchingInteractions = new List<ProviderServiceInteraction>();
+
+            foreach (var testScopedInteraction in TestScopedInteractions)
+            {
+                _requestComparer.Compare(testScopedInteraction.Request, request);
+
+                try
+                {
+                    _reporter.ThrowIfAnyErrors();
+                }
+                catch (Exception)
+                {
+                    _reporter.ClearErrors();
+                    continue;
+                }
+
+                matchingInteractions.Add(testScopedInteraction);
+            }
 
             if (matchingInteractions == null || !matchingInteractions.Any())
             {

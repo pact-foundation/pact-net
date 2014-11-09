@@ -22,20 +22,17 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
     {
         private IMockProviderRepository _mockProviderRepository;
         private IReporter _mockReporter;
-        private IProviderServiceRequestComparer _mockRequestComparer;
         private IFileSystem _mockFileSystem;
 
         private IMockProviderAdminRequestHandler GetSubject()
         {
             _mockProviderRepository = Substitute.For<IMockProviderRepository>();
             _mockReporter = Substitute.For<IReporter>();
-            _mockRequestComparer = Substitute.For<IProviderServiceRequestComparer>();
             _mockFileSystem = Substitute.For<IFileSystem>();
 
             return new MockProviderAdminRequestHandler(
                 _mockProviderRepository,
                 _mockReporter,
-                _mockRequestComparer,
                 _mockFileSystem,
                 new PactFileInfo(null));
         }

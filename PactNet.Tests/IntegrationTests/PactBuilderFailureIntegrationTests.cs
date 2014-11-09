@@ -108,14 +108,14 @@ namespace PactNet.Tests.IntegrationTests
 
             if (response1.StatusCode != HttpStatusCode.OK || response2.StatusCode != HttpStatusCode.OK)
             {
-                throw new Exception("Wrong status code was returned");
+                throw new Exception(String.Format("Wrong status code '{0} and {1}' was returned", response1.StatusCode, response2.StatusCode));
             }
 
             Assert.Throws<PactFailureException>(() => _mockProviderService.VerifyInteractions());
         }
 
         [Fact]
-        public void WhenRegisteringAnInteractionWhereTheRequestDoesNotExactlyMatchTheActualRequest_ThenPactFailureExceptionIsThrown()
+        public void WhenRegisteringAnInteractionWhereTheRequestDoesNotExactlyMatchTheActualRequest_ThenStatusCodeReturnedIs500AndPactFailureExceptionIsThrown()
         {
             _mockProviderService
                 .UponReceiving("A GET request to retrieve things by type")
@@ -137,11 +137,12 @@ namespace PactNet.Tests.IntegrationTests
             var httpClient = new HttpClient { BaseAddress = new Uri(_mockProviderServiceBaseUri) };
 
             var request = new HttpRequestMessage(HttpMethod.Get, "/things?type=awesome");
+
             var response = httpClient.SendAsync(request).Result;
 
-            if (response.StatusCode != HttpStatusCode.OK || response.StatusCode != HttpStatusCode.OK)
+            if (response.StatusCode != HttpStatusCode.InternalServerError)
             {
-                throw new Exception("Wrong status code was returned");
+                throw new Exception(String.Format("Wrong status code '{0}' was returned", response.StatusCode));
             }
 
             Assert.Throws<PactFailureException>(() => _mockProviderService.VerifyInteractions());
