@@ -108,9 +108,15 @@ namespace PactNet.Tests.Mocks.MockHttpService
         [Fact]
         public void GetMatchingTestScopedInteraction_WhenNoTestScopedInteractionsHaveBeenRegistered_ThrowsPactFailureException()
         {
+            var expectedRequest = new ProviderServiceRequest
+            {
+                Method = HttpVerb.Get,
+                Path = "/"
+            };
+
             var repo = GetSubject();
 
-            Assert.Throws<PactFailureException>(() => repo.GetMatchingTestScopedInteraction(HttpVerb.Get, "/"));
+            Assert.Throws<PactFailureException>(() => repo.GetMatchingTestScopedInteraction(expectedRequest));
         }
 
         [Fact]
@@ -130,11 +136,17 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 }
             };
 
+            var nonMatchingRequest = new ProviderServiceRequest
+            {
+                Method = HttpVerb.Get,
+                Path = "/tester"
+            };
+
             var repo = GetSubject();
 
             repo.AddInteraction(interaction);
 
-            Assert.Throws<PactFailureException>(() => repo.GetMatchingTestScopedInteraction(HttpVerb.Get, "/tester"));
+            Assert.Throws<PactFailureException>(() => repo.GetMatchingTestScopedInteraction(nonMatchingRequest));
         }
 
         [Fact]
@@ -173,7 +185,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             repo.AddInteraction(interaction1);
             repo.AddInteraction(interaction2);
 
-            Assert.Throws<PactFailureException>(() => repo.GetMatchingTestScopedInteraction(HttpVerb.Head, "/tester"));
+            Assert.Throws<PactFailureException>(() => repo.GetMatchingTestScopedInteraction(interaction1.Request));
         }
 
         [Fact]
@@ -197,7 +209,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             repo.AddInteraction(expectedInteraction);
 
-            var interaction = repo.GetMatchingTestScopedInteraction(HttpVerb.Head, "/tester");
+            var interaction = repo.GetMatchingTestScopedInteraction(expectedInteraction.Request);
 
             Assert.Equal(expectedInteraction, interaction);
         }

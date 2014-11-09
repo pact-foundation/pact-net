@@ -42,7 +42,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             var interaction = new ProviderServiceInteraction { Request = expectedRequest, Response = expectedResponse };
 
-            _mockProviderRepository.GetMatchingTestScopedInteraction(HttpVerb.Get, "/")
+            _mockProviderRepository.GetMatchingTestScopedInteraction(expectedRequest)
                 .Returns(interaction);
 
             handler.Handle(nancyContext);
@@ -75,7 +75,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             var interaction = new ProviderServiceInteraction { Request = expectedRequest, Response = expectedResponse };
 
-            _mockProviderRepository.GetMatchingTestScopedInteraction(HttpVerb.Get, "/")
+            _mockProviderRepository.GetMatchingTestScopedInteraction(Arg.Any<ProviderServiceRequest>())
                 .Returns(interaction);
 
             _mockRequestMapper.Convert(nancyContext.Request).Returns(actualRequest);
@@ -105,7 +105,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             var interaction = new ProviderServiceInteraction { Request = expectedRequest, Response = expectedResponse };
 
-            _mockProviderRepository.GetMatchingTestScopedInteraction(HttpVerb.Get, "/")
+            _mockProviderRepository.GetMatchingTestScopedInteraction(expectedRequest)
                 .Returns(interaction);
 
             handler.Handle(nancyContext);
@@ -138,7 +138,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             var interaction = new ProviderServiceInteraction { Request = expectedRequest, Response = expectedResponse };
 
-            _mockProviderRepository.GetMatchingTestScopedInteraction(HttpVerb.Get, "/Test")
+            _mockProviderRepository.GetMatchingTestScopedInteraction(Arg.Any<ProviderServiceRequest>())
                 .Returns(interaction);
 
             _mockRequestMapper.Convert(nancyContext.Request).Returns(actualRequest);
@@ -179,7 +179,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         public void Handle_WhenGetMatchingMockInteractionThrows_PactFailureExceptionIsThrown()
         {
             const string exceptionMessage = "No matching mock interaction has been registered for the current request";
-            var request = new ProviderServiceRequest
+            var expectedRequest = new ProviderServiceRequest
             {
                 Method = HttpVerb.Get,
                 Path = "/Test"
@@ -193,7 +193,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             _mockRequestMapper
                 .Convert(nancyContext.Request)
-                .Returns(request);
+                .Returns(expectedRequest);
 
             _mockResponseMapper.Convert(Arg.Any<ProviderServiceResponse>())
                 .Returns(new Response
@@ -202,7 +202,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
                 });
 
             _mockProviderRepository
-                .When(x => x.GetMatchingTestScopedInteraction(HttpVerb.Get, "/Test"))
+                .When(x => x.GetMatchingTestScopedInteraction(expectedRequest))
                 .Do(x => { throw new PactFailureException(exceptionMessage); });
 
             Assert.Throws<PactFailureException>(() => handler.Handle(nancyContext));
