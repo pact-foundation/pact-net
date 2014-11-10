@@ -97,7 +97,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         public void AddHandledRequest_WithHandledRequest_AddsHandledRequest()
         {
             var handledRequest = new HandledRequest(new ProviderServiceRequest(), new ProviderServiceInteraction());
-                                     
+
             var repo = GetSubject();
 
             repo.AddHandledRequest(handledRequest);
@@ -126,7 +126,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 },
                 Response = new ProviderServiceResponse
                 {
-                    Status = (int) HttpStatusCode.NoContent
+                    Status = (int)HttpStatusCode.NoContent
                 }
             };
 
@@ -198,6 +198,34 @@ namespace PactNet.Tests.Mocks.MockHttpService
             repo.AddInteraction(expectedInteraction);
 
             var interaction = repo.GetMatchingTestScopedInteraction(HttpVerb.Head, "/tester");
+
+            Assert.Equal(expectedInteraction, interaction);
+        }
+
+        [Fact]
+        public void GetMatchingTestScopedInteraction_WithOneMatchingTestScopedInteraction_WithQueryString()
+        {
+            var expectedInteraction = new ProviderServiceInteraction
+            {
+                Description = "My description",
+                Request = new ProviderServiceRequest
+                {
+                    Method = HttpVerb.Get,
+                    Path = "/tester",
+                    Query = "params=test"
+
+                },
+                Response = new ProviderServiceResponse
+                {
+                    Status = (int)HttpStatusCode.NoContent
+                }
+            };
+
+            var repo = GetSubject();
+
+            repo.AddInteraction(expectedInteraction);
+
+            var interaction = repo.GetMatchingTestScopedInteraction(HttpVerb.Get, "/tester?params=test");
 
             Assert.Equal(expectedInteraction, interaction);
         }

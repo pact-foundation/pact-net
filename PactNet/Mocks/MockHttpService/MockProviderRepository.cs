@@ -55,7 +55,7 @@ namespace PactNet.Mocks.MockHttpService
             _handledRequests.Add(handledRequest);
         }
 
-        public ProviderServiceInteraction GetMatchingTestScopedInteraction(HttpVerb method, string path)
+        public ProviderServiceInteraction GetMatchingTestScopedInteraction(HttpVerb method, string pathWithQuery)
         {
             if (TestScopedInteractions == null || !TestScopedInteractions.Any())
             {
@@ -65,7 +65,7 @@ namespace PactNet.Mocks.MockHttpService
             var matchingInteractions = TestScopedInteractions.Where(x =>
                 x.Request != null &&
                 x.Request.Method == method &&
-                x.Request.Path == path).ToList();
+                x.Request.PathWithQuery() == pathWithQuery).ToList();
 
             if (matchingInteractions == null || !matchingInteractions.Any())
             {
