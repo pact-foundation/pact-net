@@ -33,8 +33,6 @@ configuration: Release
 build:
   project: PactNet.sln
   verbosity: normal
-  on:
-    branch: master
 
 before_build:
   - nuget restore
