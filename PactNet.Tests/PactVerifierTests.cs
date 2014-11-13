@@ -186,6 +186,22 @@ namespace PactNet.Tests
         }
 
         [Fact]
+        public void ServiceProvider_WhenCalledWithNullProviderNameAndCustomRequestSender_ThrowsArgumentException()
+        {
+            var pactVerifier = GetSubject();
+
+            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider(null, request => new ProviderServiceResponse()));
+        }
+
+        [Fact]
+        public void ServiceProvider_WhenCalledWithNullRequestSender_ThrowsArgumentException()
+        {
+            var pactVerifier = GetSubject();
+
+            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider("Event API", (Func<ProviderServiceRequest, ProviderServiceResponse>) null));
+        }
+
+        [Fact]
         public void ServiceProvider_WhenCalledWithCustomRequestSender_CustomRequestSenderIsPassedIntoProviderServiceValidatorFactoryWhenVerifyIsCalled()
         {
             var pactVerifier = GetSubject();

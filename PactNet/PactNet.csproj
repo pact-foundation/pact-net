@@ -167,7 +167,6 @@
     <Compile Include="Reporters\ConsoleReportOutputter.cs" />
     <Compile Include="Reporters\IReporter.cs" />
     <Compile Include="Reporters\IReportOutputter.cs" />
-    <Compile Include="Reporters\NoOpReportOutputter.cs" />
     <Compile Include="Reporters\Reporter.cs" />
     <Compile Include="Validators\IPactValidator.cs" />
   </ItemGroup>
