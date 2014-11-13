@@ -17,7 +17,6 @@ deploy:
     api_key:
       secure: Vlw7m7mXEZ9XqlZBsQ4fzqDKjO8yTdtXhO9c04RnrD4zwhf6dx+lxBmC9TJ7EF6G
     on:
-      branch: master
       appveyor_repo_tag: true
 
 artifacts:
