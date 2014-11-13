@@ -1,9 +1,5 @@
 version: "#{build}"
 
-branches:
-  only:
-    - master
-
 install:
   - git submodule update --init --recursive
   - ps: .\Build\Setup-Build-Environment.ps1
