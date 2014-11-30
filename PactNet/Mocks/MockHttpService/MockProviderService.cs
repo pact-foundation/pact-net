@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -79,6 +80,11 @@ namespace PactNet.Mocks.MockHttpService
                 throw new ArgumentException("Please supply a non null request");
             }
 
+            if (!IsContentTypeSpecifiedForBody(request))
+            {
+                throw new ArgumentException("Please supply a Content-Type request header");
+            }
+
             _request = request;
             
             return this;
@@ -91,6 +97,11 @@ namespace PactNet.Mocks.MockHttpService
                 throw new ArgumentException("Please supply a non null response");
             }
 
+            if (!IsContentTypeSpecifiedForBody(response))
+            {
+                throw new ArgumentException("Please supply a Content-Type response header");
+            }
+
             _response = response;
 
             RegisterInteraction();
@@ -99,36 +110,6 @@ namespace PactNet.Mocks.MockHttpService
         public void VerifyInteractions()
         {
             SendAdminHttpRequest(HttpVerb.Get, Constants.InteractionsVerificationPath);
-        }
-
-        private void RegisterInteraction()
-        {
-            if (String.IsNullOrEmpty(_description))
-            {
-                throw new InvalidOperationException("description has not been set, please supply using the UponReceiving method.");
-            }
-
-            if (_request == null)
-            {
-                throw new InvalidOperationException("request has not been set, please supply using the With method.");
-            }
-
-            if (_response == null)
-            {
-                throw new InvalidOperationException("response has not been set, please supply using the WillRespondWith method.");
-            }
-
-            var interaction = new ProviderServiceInteraction
-            {
-                ProviderState = _providerState,
-                Description = _description,
-                Request = _request,
-                Response = _response
-            };
-
-            SendAdminHttpRequest(HttpVerb.Post, Constants.InteractionsPath, interaction);
-
-            ClearTrasientState();
         }
 
         public void Start()
@@ -187,6 +168,36 @@ namespace PactNet.Mocks.MockHttpService
             }
         }
 
+        private void RegisterInteraction()
+        {
+            if (String.IsNullOrEmpty(_description))
+            {
+                throw new InvalidOperationException("description has not been set, please supply using the UponReceiving method.");
+            }
+
+            if (_request == null)
+            {
+                throw new InvalidOperationException("request has not been set, please supply using the With method.");
+            }
+
+            if (_response == null)
+            {
+                throw new InvalidOperationException("response has not been set, please supply using the WillRespondWith method.");
+            }
+
+            var interaction = new ProviderServiceInteraction
+            {
+                ProviderState = _providerState,
+                Description = _description,
+                Request = _request,
+                Response = _response
+            };
+
+            SendAdminHttpRequest(HttpVerb.Post, Constants.InteractionsPath, interaction);
+
+            ClearTrasientState();
+        }
+
         private void SendAdminHttpRequest(HttpVerb method, string path)
         {
             SendAdminHttpRequest<object>(method, path, null);
@@ -213,6 +224,23 @@ namespace PactNet.Mocks.MockHttpService
             _response = null;
             _providerState = null;
             _description = null;
+        }
+
+        private bool IsContentTypeSpecifiedForBody(IHttpMessage message)
+        {
+            //No content-type required if there is no body
+            if (message.Body == null)
+            {
+                return true;
+            }
+
+            IDictionary<string, string> headers = null;
+            if (message.Headers != null)
+            {
+                headers = new Dictionary<string, string>(message.Headers, StringComparer.InvariantCultureIgnoreCase);
+            }
+
+            return headers != null && headers.ContainsKey("Content-Type");
         }
 
         private void Dispose(IDisposable disposable)

@@ -7,17 +7,6 @@
   },
   "interactions": [
     {
-      "description": "A GET request to check the api status",
-      "request": {
-        "method": "get",
-        "path": "/stats/status"
-      },
-      "response": {
-        "status": 200,
-        "body": "alive"
-      }
-    },
-    {
       "description": "A POST request to create a new event",
       "request": {
         "method": "post",
@@ -33,6 +22,45 @@
       },
       "response": {
         "status": 201
+      }
+    },
+    {
+      "description": "A GET request to check the api status",
+      "request": {
+        "method": "get",
+        "path": "/stats/status",
+        "headers": {
+          "Accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": {
+          "alive": true
+        }
+      }
+    },
+    {
+      "description": "A GET request to retrieve event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
+      "provider_state": "There is an event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
+      "request": {
+        "method": "get",
+        "path": "/events/83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
+        "headers": {
+          "Accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": {
+          "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9"
+        }
       }
     },
     {
@@ -90,26 +118,6 @@
             "eventType": "DetailsView"
           }
         ]
-      }
-    },
-    {
-      "description": "A GET request to retrieve event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
-      "provider_state": "There is an event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
-      "request": {
-        "method": "get",
-        "path": "/events/83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
-        "headers": {
-          "Accept": "application/json"
-        }
-      },
-      "response": {
-        "status": 200,
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": {
-          "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9"
-        }
       }
     }
   ],

@@ -172,6 +172,28 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
+        public void With_WithRequestThatContainsABodyAndNoContentType_ThrowsArgumentException()
+        {
+            var description = "My description";
+            var request = new ProviderServiceRequest
+            {
+                Method = HttpVerb.Head,
+                Path = "/tester/testing/1",
+                Body = new
+                {
+                    tester = 1
+                }
+            };
+
+            var mockService = GetSubject();
+            mockService.Start();
+
+            mockService.UponReceiving(description);
+
+            Assert.Throws<ArgumentException>(() => mockService.With(request));
+        }
+
+        [Fact]
         public void WillRespondWith_WithNullResponse_ThrowsArgumentException()
         {
             var mockService = GetSubject();
@@ -199,6 +221,31 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 .UponReceiving("My description");
 
             Assert.Throws<InvalidOperationException>(() => mockService.WillRespondWith(new ProviderServiceResponse()));
+        }
+
+        [Fact]
+        public void WillRespondWith_WithResponseThatContainsABodyAndNoContentType_ThrowsArgumentException()
+        {
+            var providerState = "My provider state";
+            var description = "My description";
+            var request = new ProviderServiceRequest();
+            var response = new ProviderServiceResponse
+            {
+                Status = (int)HttpStatusCode.OK,
+                Body = new
+                {
+                    tester = 1
+                }
+            };
+
+            var mockService = GetSubject();
+
+            mockService
+                .Given(providerState)
+                .UponReceiving(description)
+                .With(request);
+
+            Assert.Throws<ArgumentException>(() => mockService.WillRespondWith(response));
         }
 
         [Fact]

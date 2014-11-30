@@ -122,12 +122,17 @@ namespace Consumer.Tests
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
+                    Headers = new Dictionary<string, string> { { "Accept", "application/json" } },
                     Path = "/stats/status"
                 })
                 .WillRespondWith(new ProviderServiceResponse
                 {
                     Status = 200,
-                    Body = "alive"
+                    Headers = new Dictionary<string, string> { { "Content-Type", "application/json; charset=utf-8" } },
+                    Body = new
+                    {
+                        alive = true
+                    }
                 });
 
             var consumer = new EventsApiClient(_mockProviderServiceBaseUri);

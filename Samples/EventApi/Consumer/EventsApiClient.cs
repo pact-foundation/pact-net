@@ -29,15 +29,18 @@ namespace Consumer
             using (var client = HttpClient())
             {
                 var request = new HttpRequestMessage(HttpMethod.Get, "/stats/status");
+                request.Headers.Add("Accept", "application/json");
+
                 var response = client.SendAsync(request);
 
                 var result = response.Result;
                 var content = result.Content.ReadAsStringAsync().Result;
                 var status = result.StatusCode;
 
-                if (status == HttpStatusCode.OK && content.Equals("alive"))
+                if (status == HttpStatusCode.OK)
                 {
-                    return true;
+                    var responseContent = JsonConvert.DeserializeObject<dynamic>(content, _jsonSettings);
+                    return responseContent.alive;
                 }
 
                 request.Dispose();

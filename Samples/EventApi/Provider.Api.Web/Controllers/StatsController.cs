@@ -5,9 +5,9 @@ namespace Provider.Api.Web.Controllers
     public class StatsController : ApiController
     {
         [Route("stats/status")]
-        public string GetAlive()
+        public dynamic GetAlive()
         {
-            return "alive";
+            return new { alive = true };
         }
     }
 }
