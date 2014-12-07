@@ -74,7 +74,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 .Given(providerState)
                 .UponReceiving("My description")
                 .With(new ProviderServiceRequest())
-                .WillRespondWith(new ProviderServiceResponse());
+                .WillRespondWith(new ProviderServiceResponse { Status = (int)HttpStatusCode.OK });
 
             var interaction = Deserialise<ProviderServiceInteraction>(_fakeHttpMessageHandler.RequestContentRecieved.Single());
 
@@ -106,7 +106,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.UponReceiving(description)
                 .With(new ProviderServiceRequest())
-                .WillRespondWith(new ProviderServiceResponse());
+                .WillRespondWith(new ProviderServiceResponse { Status = (int)HttpStatusCode.OK });
 
             var interaction = Deserialise<ProviderServiceInteraction>(_fakeHttpMessageHandler.RequestContentRecieved.Single());
             
@@ -209,7 +209,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             mockService
                 .With(new ProviderServiceRequest());
 
-            Assert.Throws<InvalidOperationException>(() => mockService.WillRespondWith(new ProviderServiceResponse()));
+            Assert.Throws<InvalidOperationException>(() => mockService.WillRespondWith(new ProviderServiceResponse { Status = (int)HttpStatusCode.OK }));
         }
 
         [Fact]
@@ -220,7 +220,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             mockService
                 .UponReceiving("My description");
 
-            Assert.Throws<InvalidOperationException>(() => mockService.WillRespondWith(new ProviderServiceResponse()));
+            Assert.Throws<InvalidOperationException>(() => mockService.WillRespondWith(new ProviderServiceResponse { Status = (int)HttpStatusCode.OK }));
         }
 
         [Fact]
@@ -249,12 +249,30 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void WillRespondWith_WhenHostIsNull_ThrowsInvalidOperationException()
+        public void WillRespondWith_WithResponseThatDoesNotHaveAResponseStatusSet_ThrowsArgumentException()
         {
             var providerState = "My provider state";
             var description = "My description";
             var request = new ProviderServiceRequest();
             var response = new ProviderServiceResponse();
+
+            var mockService = GetSubject();
+
+            mockService
+                .Given(providerState)
+                .UponReceiving(description)
+                .With(request);
+
+            Assert.Throws<ArgumentException>(() => mockService.WillRespondWith(response));
+        }
+
+        [Fact]
+        public void WillRespondWith_WhenHostIsNull_ThrowsInvalidOperationException()
+        {
+            var providerState = "My provider state";
+            var description = "My description";
+            var request = new ProviderServiceRequest();
+            var response = new ProviderServiceResponse { Status = (int)HttpStatusCode.OK };
 
             var mockService = GetSubject();
 
@@ -318,7 +336,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var providerState = "My provider state";
             var description = "My description";
             var request = new ProviderServiceRequest();
-            var response = new ProviderServiceResponse();
+            var response = new ProviderServiceResponse { Status = (int)HttpStatusCode.OK };
 
             var mockService = GetSubject();
 

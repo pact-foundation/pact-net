@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Nancy;
 using PactNet.Mocks.MockHttpService.Models;
 

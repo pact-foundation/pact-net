@@ -97,6 +97,11 @@ namespace PactNet.Mocks.MockHttpService
                 throw new ArgumentException("Please supply a non null response");
             }
 
+            if (response.Status <= 0)
+            {
+                throw new ArgumentException("Please supply a response Status");
+            }
+
             if (!IsContentTypeSpecifiedForBody(response))
             {
                 throw new ArgumentException("Please supply a Content-Type response header");
