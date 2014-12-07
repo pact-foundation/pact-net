@@ -82,5 +82,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
             Assert.Equal("PATCH", httpMethod.ToString());
         }
+
+        [Fact]
+        public void Convert_WithNotSetHttpVerb_ThrowsArgumentException()
+        {
+            var mapper = GetSubject();
+
+            Assert.Throws<ArgumentException>(() => mapper.Convert(HttpVerb.NotSet));
+        }
     }
 }

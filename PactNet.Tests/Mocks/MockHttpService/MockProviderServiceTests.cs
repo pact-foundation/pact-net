@@ -73,7 +73,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             mockService
                 .Given(providerState)
                 .UponReceiving("My description")
-                .With(new ProviderServiceRequest())
+                .With(new ProviderServiceRequest { Method = HttpVerb.Get })
                 .WillRespondWith(new ProviderServiceResponse { Status = (int)HttpStatusCode.OK });
 
             var interaction = Deserialise<ProviderServiceInteraction>(_fakeHttpMessageHandler.RequestContentRecieved.Single());
@@ -105,7 +105,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             mockService.Start();
 
             mockService.UponReceiving(description)
-                .With(new ProviderServiceRequest())
+                .With(new ProviderServiceRequest { Method = HttpVerb.Get })
                 .WillRespondWith(new ProviderServiceResponse { Status = (int)HttpStatusCode.OK });
 
             var interaction = Deserialise<ProviderServiceInteraction>(_fakeHttpMessageHandler.RequestContentRecieved.Single());
@@ -172,6 +172,23 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
+        public void With_WithRequestThatDoesNotHaveARequestMethod_ThrowsArgumentException()
+        {
+            var description = "My description";
+            var request = new ProviderServiceRequest
+            {
+                Path = "/tester/testing/1"
+            };
+
+            var mockService = GetSubject();
+            mockService.Start();
+
+            mockService.UponReceiving(description);
+
+            Assert.Throws<ArgumentException>(() => mockService.With(request));
+        }
+
+        [Fact]
         public void With_WithRequestThatContainsABodyAndNoContentType_ThrowsArgumentException()
         {
             var description = "My description";
@@ -207,7 +224,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var mockService = GetSubject();
 
             mockService
-                .With(new ProviderServiceRequest());
+                .With(new ProviderServiceRequest { Method = HttpVerb.Get });
 
             Assert.Throws<InvalidOperationException>(() => mockService.WillRespondWith(new ProviderServiceResponse { Status = (int)HttpStatusCode.OK }));
         }
@@ -228,7 +245,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             var providerState = "My provider state";
             var description = "My description";
-            var request = new ProviderServiceRequest();
+            var request = new ProviderServiceRequest { Method = HttpVerb.Get };
             var response = new ProviderServiceResponse
             {
                 Status = (int)HttpStatusCode.OK,
@@ -253,7 +270,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             var providerState = "My provider state";
             var description = "My description";
-            var request = new ProviderServiceRequest();
+            var request = new ProviderServiceRequest { Method = HttpVerb.Get };
             var response = new ProviderServiceResponse();
 
             var mockService = GetSubject();
@@ -271,7 +288,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             var providerState = "My provider state";
             var description = "My description";
-            var request = new ProviderServiceRequest();
+            var request = new ProviderServiceRequest { Method = HttpVerb.Get };
             var response = new ProviderServiceResponse { Status = (int)HttpStatusCode.OK };
 
             var mockService = GetSubject();
@@ -335,7 +352,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             var providerState = "My provider state";
             var description = "My description";
-            var request = new ProviderServiceRequest();
+            var request = new ProviderServiceRequest { Method = HttpVerb.Get };
             var response = new ProviderServiceResponse { Status = (int)HttpStatusCode.OK };
 
             var mockService = GetSubject();

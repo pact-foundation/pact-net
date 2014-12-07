@@ -80,6 +80,11 @@ namespace PactNet.Mocks.MockHttpService
                 throw new ArgumentException("Please supply a non null request");
             }
 
+            if (request.Method == HttpVerb.NotSet)
+            {
+                throw new ArgumentException("Please supply a request Method");
+            }
+
             if (!IsContentTypeSpecifiedForBody(request))
             {
                 throw new ArgumentException("Please supply a Content-Type request header");

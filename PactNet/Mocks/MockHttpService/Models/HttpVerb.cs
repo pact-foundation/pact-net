@@ -2,6 +2,7 @@
 {
     public enum HttpVerb
     {
+        NotSet = 0,
         Get,
         Post,
         Put,
