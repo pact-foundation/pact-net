@@ -21,3 +21,9 @@ else
 
 $env:PACTNET_VERSION = $PactNetVersion
 $env:PACTNET_ASSEMBLY_VERSION = $PactNetAssemblyVersion
+
+Write-Host "env:PACTNET_VERSION = $PactNetVersion"
+Write-Host "env:PACTNET_ASSEMBLY_VERSION = $PactNetAssemblyVersion"
+
+Write-Host "### Printing local environment variables ###"
+Write-Host (Get-ChildItem Env: | Format-List | Out-String)
