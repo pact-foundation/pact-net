@@ -468,7 +468,7 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void Verify_WithProviderDescription_CallsProviderServiceValidatorWith2FilteredInteractions()
+        public void Verify_WithDescription_CallsProviderServiceValidatorWith2FilteredInteractions()
         {
             var description = "My Description";
             var pactUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
@@ -487,7 +487,7 @@ namespace PactNet.Tests
                 .HonoursPactWith("My client")
                 .PactUri(pactUri);
 
-            pactVerifier.Verify(providerDescription: description);
+            pactVerifier.Verify(description: description);
 
             _mockProviderServiceValidator.Received(1).Validate(
                 Arg.Is<ProviderServicePactFile>(x => x.Interactions.Count() == 2 && x.Interactions.All(i => i.Description.Equals(description))),
@@ -542,7 +542,7 @@ namespace PactNet.Tests
                 .HonoursPactWith("My client")
                 .PactUri(pactUri);
 
-            pactVerifier.Verify(providerDescription: description, providerState: providerState);
+            pactVerifier.Verify(description: description, providerState: providerState);
 
             _mockProviderServiceValidator.Received(1).Validate(
                 Arg.Is<ProviderServicePactFile>(x => x.Interactions.Count() == 1 && x.Interactions.All(i => i.ProviderState.Equals(providerState) && i.Description.Equals(description))), 

@@ -140,7 +140,7 @@ namespace PactNet
             return this;
         }
 
-        public void Verify(string providerDescription = null, string providerState = null)
+        public void Verify(string description = null, string providerState = null)
         {
             if (_httpRequestSender == null)
             {
@@ -188,9 +188,9 @@ namespace PactNet
             }
 
             //Filter interactions
-            if (providerDescription != null)
+            if (description != null)
             {
-                pactFile.Interactions = pactFile.Interactions.Where(x => x.Description.Equals(providerDescription));
+                pactFile.Interactions = pactFile.Interactions.Where(x => x.Description.Equals(description));
             }
 
             if (providerState != null)
