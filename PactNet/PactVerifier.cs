@@ -171,8 +171,8 @@ namespace PactNet
                     }
                     finally
                     {
-                        Dipose(request);
-                        Dipose(response);
+                        Dispose(request);
+                        Dispose(response);
                     }
                 }
                 else //Assume it's a file uri, and we will just throw if it does not exist
@@ -207,7 +207,7 @@ namespace PactNet
                    uri.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase);
         }
 
-        private static void Dipose(IDisposable disposable)
+        private static void Dispose(IDisposable disposable)
         {
             if (disposable != null)
             {

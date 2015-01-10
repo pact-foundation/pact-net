@@ -40,13 +40,13 @@ namespace PactNet.Mocks.MockHttpService
             var httpResponse = _httpClient.SendAsync(httpRequest, CancellationToken.None).Result;
             var response = _providerServiceResponseMapper.Convert(httpResponse);
 
-            Dipose(httpRequest);
-            Dipose(httpResponse);
+            Dispose(httpRequest);
+            Dispose(httpResponse);
 
             return response;
         }
 
-        private static void Dipose(IDisposable disposable)
+        private static void Dispose(IDisposable disposable)
         {
             if (disposable != null)
             {
