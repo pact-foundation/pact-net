@@ -2,8 +2,8 @@
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PactNet.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
-using PactNet.Reporters;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
@@ -11,34 +11,36 @@ namespace PactNet.Mocks.MockHttpService.Comparers
     {
         private readonly IHttpHeaderComparer _httpHeaderComparer;
         private readonly IHttpBodyComparer _httpBodyComparer;
-        private readonly IReporter _reporter;
 
         private const string MessagePrefix = "\t- Returns a response which";
 
-        public ProviderServiceResponseComparer(IReporter reporter)
+        public ProviderServiceResponseComparer()
         {
-            _reporter = reporter;
-            _httpHeaderComparer = new HttpHeaderComparer(MessagePrefix, _reporter);
-            _httpBodyComparer = new HttpBodyComparer(MessagePrefix, _reporter); //TODO: MessagePrefix isn't real nice
+            _httpHeaderComparer = new HttpHeaderComparer(MessagePrefix);
+            _httpBodyComparer = new HttpBodyComparer(MessagePrefix); //TODO: MessagePrefix isn't real nice
         }
 
-        public void Compare(ProviderServiceResponse expected, ProviderServiceResponse actual)
+        public ComparisonResult Compare(ProviderServiceResponse expected, ProviderServiceResponse actual)
         {
+            var result = new ComparisonResult();
+
             if (expected == null)
             {
-                _reporter.ReportError("Expected response cannot be null");
-                return;
+                result.AddError("Expected response cannot be null");
+                return result;
             }
 
-            _reporter.ReportInfo(String.Format("{0} has status code of {1}", MessagePrefix, expected.Status));
+            //TODO: Create a comparer for status code
+            result.AddInfo(String.Format("{0} has status code of {1}", MessagePrefix, expected.Status));
             if (!expected.Status.Equals(actual.Status))
             {
-                _reporter.ReportError(expected: expected.Status, actual: actual.Status);
+                result.AddError(expected: expected.Status, actual: actual.Status);
             }
 
             if (expected.Headers != null && expected.Headers.Any())
             {
-                _httpHeaderComparer.Compare(expected.Headers, actual.Headers);
+                var headerResult = _httpHeaderComparer.Compare(expected.Headers, actual.Headers);
+                result.AddComparisonResult(headerResult);
             }
 
             if (expected.Body != null)
@@ -48,8 +50,11 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                 var actualResponseBody = JsonConvert.DeserializeObject<JToken>(actualResponseBodyJson);
                 var expectedResponseBody = JsonConvert.DeserializeObject<JToken>(expectedResponseBodyJson);
 
-                _httpBodyComparer.Validate(expectedResponseBody, actualResponseBody);
+                var bodyResult = _httpBodyComparer.Compare(expectedResponseBody, actualResponseBody);
+                result.AddComparisonResult(bodyResult);
             }
+
+            return result;
         }
     }
 }

@@ -1,34 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using PactNet.Reporters;
+using PactNet.Comparers;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
     public class HttpHeaderComparer : IHttpHeaderComparer
     {
         private readonly string _messagePrefix;
-        private readonly IReporter _reporter;
 
-        public HttpHeaderComparer(string messagePrefix, IReporter reporter)
+        public HttpHeaderComparer(string messagePrefix)
         {
             _messagePrefix = messagePrefix;
-            _reporter = reporter;
         }
 
-        public void Compare(IDictionary<string, string> expected, IDictionary<string, string> actual)
+        public ComparisonResult Compare(IDictionary<string, string> expected, IDictionary<string, string> actual)
         {
+            var result = new ComparisonResult();
+
             if (actual == null)
             {
-                _reporter.ReportError("Headers are null");
-                return;
+                result.AddError("Headers are null");
+                return result;
             }
 
             actual = MakeDictionaryCaseInsensitive(actual);
 
             foreach (var header in expected)
             {
-                _reporter.ReportInfo(String.Format("{0} includes header {1} with value {2}", _messagePrefix, header.Key, header.Value));
+                result.AddInfo(String.Format("{0} includes header {1} with value {2}", _messagePrefix, header.Key, header.Value));
 
                 string actualValue;
 
@@ -41,8 +41,8 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                     {
                         if (!header.Value.Equals(actualValue))
                         {
-                            _reporter.ReportError(expected: expectedValue, actual: actualValue);
-                            return;
+                            result.AddError(expected: expectedValue, actual: actualValue);
+                            return result;
                         }
                     }
                     else
@@ -53,18 +53,20 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
                         if (!expectedValueSplitJoined.Equals(actualValueSplitJoined))
                         {
-                            _reporter.ReportError(expected: expectedValue, actual: actualValue);
-                            return;
+                            result.AddError(expected: expectedValue, actual: actualValue);
+                            return result;
                         }
                     }
                     
                 }
                 else
                 {
-                    _reporter.ReportError("Header does not exist");
-                    return;
+                    result.AddError("Header does not exist");
+                    return result;
                 }
             }
+
+            return result;
         }
 
         private IDictionary<string, string> MakeDictionaryCaseInsensitive(IDictionary<string, string> from)

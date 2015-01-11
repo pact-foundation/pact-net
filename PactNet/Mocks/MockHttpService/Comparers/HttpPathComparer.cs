@@ -1,33 +1,35 @@
 using System;
-using PactNet.Reporters;
+using PactNet.Comparers;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
     public class HttpPathComparer : IHttpPathComparer
     {
         private readonly string _messagePrefix;
-        private readonly IReporter _reporter;
 
-        public HttpPathComparer(string messagePrefix, IReporter reporter)
+        public HttpPathComparer(string messagePrefix)
         {
             _messagePrefix = messagePrefix;
-            _reporter = reporter;
         }
 
-        public void Compare(string expected, string actual)
+        public ComparisonResult Compare(string expected, string actual)
         {
+            var result = new ComparisonResult();
+
             if (expected == null)
             {
-                return;
+                return result;
             }
 
-            _reporter.ReportInfo(String.Format("{0} has path set to {1}", _messagePrefix, expected));
+            result.AddInfo(String.Format("{0} has path set to {1}", _messagePrefix, expected));
 
             if (!expected.Equals(actual))
             {
-                _reporter.ReportError(expected: expected, actual: actual);
-                return;
+                result.AddError(expected: expected, actual: actual);
+                return result;
             }
+
+            return result;
         }
     }
 }

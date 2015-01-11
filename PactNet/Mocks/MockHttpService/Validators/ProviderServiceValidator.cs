@@ -26,7 +26,7 @@ namespace PactNet.Mocks.MockHttpService.Validators
         public ProviderServiceValidator(
             IHttpRequestSender httpRequestSender, 
             IReporter reporter) : this(
-            new ProviderServiceResponseComparer(reporter),
+            new ProviderServiceResponseComparer(),
             httpRequestSender,
             reporter)
         {
@@ -87,7 +87,7 @@ namespace PactNet.Mocks.MockHttpService.Validators
                         }
                         finally
                         {
-                            InvokeInteractionIfApplicable(providerStateItem);
+                            InvokeInteractionTearDownIfApplicable(providerStateItem);
                         }
                         
                         interationNumber++;
@@ -107,7 +107,8 @@ namespace PactNet.Mocks.MockHttpService.Validators
             var expectedResponse = interaction.Response;
             var actualResponse = _httpRequestSender.Send(interaction.Request);
 
-            _providerServiceResponseComparer.Compare(expectedResponse, actualResponse);
+            var responseComparisonResult = _providerServiceResponseComparer.Compare(expectedResponse, actualResponse);
+            _reporter.ReportComparisonResult(responseComparisonResult);
         }
 
         private void InvokePactSetUpIfApplicable(ProviderStates providerStates)
@@ -134,7 +135,7 @@ namespace PactNet.Mocks.MockHttpService.Validators
             }
         }
 
-        private void InvokeInteractionIfApplicable(ProviderState providerState)
+        private void InvokeInteractionTearDownIfApplicable(ProviderState providerState)
         {
             if (providerState != null && providerState.TearDown != null)
             {

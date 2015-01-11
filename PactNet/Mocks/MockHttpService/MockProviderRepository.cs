@@ -77,7 +77,8 @@ namespace PactNet.Mocks.MockHttpService
 
             foreach (var testScopedInteraction in TestScopedInteractions)
             {
-                _requestComparer.Compare(testScopedInteraction.Request, request);
+                var requestComparisonResult = _requestComparer.Compare(testScopedInteraction.Request, request);
+                _reporter.ReportComparisonResult(requestComparisonResult);
 
                 try
                 {

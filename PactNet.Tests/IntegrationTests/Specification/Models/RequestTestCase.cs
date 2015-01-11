@@ -1,14 +1,13 @@
-﻿using NSubstitute;
+﻿using System.Linq;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
-using PactNet.Reporters;
+using Xunit;
 
 namespace PactNet.Tests.IntegrationTests.Specification.Models
 {
     public class RequestTestCase : IVerifiable
     {
         private readonly IProviderServiceRequestComparer _requestComparer;
-        private readonly IReporter _reporter;
 
         public bool Match { get; set; }
         public string Comment { get; set; }
@@ -17,21 +16,24 @@ namespace PactNet.Tests.IntegrationTests.Specification.Models
 
         public RequestTestCase()
         {
-            _reporter = Substitute.For<IReporter>();
-            _requestComparer = new ProviderServiceRequestComparer(_reporter);
+            _requestComparer = new ProviderServiceRequestComparer();
         }
 
         public void Verify()
         {
-            _requestComparer.Compare(Expected, Actual);
+            var result = _requestComparer.Compare(Expected, Actual);
 
             if (Match)
             {
-                _reporter.DidNotReceive().ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
+                Assert.Empty(result.Errors);
+                foreach (var childResult in result.ComparisonResults)
+                {
+                    Assert.Empty(childResult.Errors);
+                }
             }
             else
             {
-                _reporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
+                Assert.Equal(1, result.Errors.Count() + result.ComparisonResults.Sum(childResult => childResult.Errors.Count()));
             }
         }
     }

@@ -2,6 +2,6 @@
 {
     public interface IComparer<in T>
     {
-        void Compare(T expected, T actual);
+        ComparisonResult Compare(T expected, T actual);
     }
 }

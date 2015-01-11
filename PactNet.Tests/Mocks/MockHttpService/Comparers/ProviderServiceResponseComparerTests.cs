@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NSubstitute;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
@@ -10,16 +11,16 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 {
     public class ProviderServiceResponseComparerTests
     {
-        private IReporter _mockReporter;
+        //private IReporter _mockReporter;
 
         private IProviderServiceResponseComparer GetSubject()
         {
-            _mockReporter = Substitute.For<IReporter>();
-            return new ProviderServiceResponseComparer(_mockReporter);
+            //_mockReporter = Substitute.For<IReporter>();
+            return new ProviderServiceResponseComparer();
         }
 
         [Fact]
-        public void Compare_WithMatchingStatusCodes_NoExceptionsAreThrown()
+        public void Compare_WithMatchingStatusCodes_NoErrorsAreAddedToTheComparisonResult()
         {
             var expected = new ProviderServiceResponse
             {
@@ -33,11 +34,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            comparer.Compare(expected, actual);
+            var result = comparer.Compare(expected, actual);
+
+            Assert.Empty(result.Errors);
         }
 
         [Fact]
-        public void Compare_WithNonMatchingStatusCodes_ReportErrorIsCalled()
+        public void Compare_WithNonMatchingStatusCodes_OneErrorIsAddedToTheComparisonResult()
         {
             var expected = new ProviderServiceResponse
             {
@@ -51,12 +54,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            comparer.Compare(expected, actual);
-            _mockReporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
+            var result = comparer.Compare(expected, actual);
+
+            Assert.Equal(1, result.Errors.Count());
         }
 
         [Fact]
-        public void Compare_WithMatchingHeaders_NoExceptionsAreThrown()
+        public void Compare_WithMatchingHeaders_NoErrorsAreAddedToTheComparisonResult()
         {
             var expected = new ProviderServiceResponse
             {
@@ -78,11 +82,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            comparer.Compare(expected, actual);
+            var result = comparer.Compare(expected, actual);
+
+            Assert.Empty(result.Errors);
         }
 
         [Fact]
-        public void Compare_WithMatchingHeadersButWithDifferentCasingOnName_NoExceptionsAreThrown()
+        public void Compare_WithMatchingHeadersButWithDifferentCasingOnName_NoErrorsAreAddedToTheComparisonResult()
         {
             var expected = new ProviderServiceResponse
             {
@@ -104,11 +110,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            comparer.Compare(expected, actual);
+            var result = comparer.Compare(expected, actual);
+
+            Assert.Empty(result.Errors);
         }
 
         [Fact]
-        public void Compare_WithMatchingHeadersButWithDifferentCasingOnValue_ReportErrorIsCalled()
+        public void Compare_WithMatchingHeadersButWithDifferentCasingOnValue_OneErrorIsAddedToTheComparisonResult()
         {
             var expected = new ProviderServiceResponse
             {
@@ -130,12 +138,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            comparer.Compare(expected, actual);
-            _mockReporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
+            var result = comparer.Compare(expected, actual);
+
+            Assert.Equal(1, result.ComparisonResults.Last().Errors.Count());
         }
 
         [Fact]
-        public void Compare_WithMatchingHeadersButResponseHasAdditionalHeaders_NoExceptionsAreThrown()
+        public void Compare_WithMatchingHeadersButResponseHasAdditionalHeaders_NoErrorsAreAddedToTheComparisonResult()
         {
             var expected = new ProviderServiceResponse
             {
@@ -159,11 +168,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            comparer.Compare(expected, actual);
+            var result = comparer.Compare(expected, actual);
+
+            Assert.Empty(result.Errors);
         }
 
         [Fact]
-        public void Compare_WithNonMatchingHeadersValues_ReportErrorIsCalled()
+        public void Compare_WithNonMatchingHeadersValues_OneErrorIsAddedToTheComparisonResult()
         {
             var expected = new ProviderServiceResponse
             {
@@ -185,12 +196,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            comparer.Compare(expected, actual);
-            _mockReporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
+            var result = comparer.Compare(expected, actual);
+
+            Assert.Equal(1, result.ComparisonResults.Last().Errors.Count());
         }
 
         [Fact]
-        public void Compare_WithNonMatchingHeaderNames_ReportErrorIsCalled()
+        public void Compare_WithNonMatchingHeaderNames_OneErrorIsAddedToTheComparisonResult()
         {
             var expected = new ProviderServiceResponse
             {
@@ -212,12 +224,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            comparer.Compare(expected, actual);
-            _mockReporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
+            var result = comparer.Compare(expected, actual);
+
+            Assert.Equal(1, result.ComparisonResults.Last().Errors.Count());
         }
 
         [Fact]
-        public void Compare_WithResponseThatHasNoHeaders_ReportErrorIsCalled()
+        public void Compare_WithResponseThatHasNoHeaders_OneErrorIsAddedToTheComparisonResult()
         {
             var expected = new ProviderServiceResponse
             {
@@ -235,12 +248,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            comparer.Compare(expected, actual);
-            _mockReporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
+            var result = comparer.Compare(expected, actual);
+
+            Assert.Equal(1, result.ComparisonResults.Last().Errors.Count());
         }
 
         [Fact]
-        public void Compare_WithMatchingObjectBody_NoExceptionsAreThrown()
+        public void Compare_WithMatchingObjectBody_NoErrorsAreAddedToTheComparisonResult()
         {
             var expected = new ProviderServiceResponse
             {
@@ -266,11 +280,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            comparer.Compare(expected, actual);
+            var result = comparer.Compare(expected, actual);
+
+            Assert.Empty(result.Errors);
         }
 
         [Fact]
-        public void Compare_WithMatchingObjectBodyOutOfOrder_NoExceptionsAreThrown()
+        public void Compare_WithMatchingObjectBodyOutOfOrder_NoErrorsAreAddedToTheComparisonResult()
         {
             var expected = new ProviderServiceResponse
             {
@@ -296,11 +312,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            comparer.Compare(expected, actual);
+            var result = comparer.Compare(expected, actual);
+
+            Assert.Empty(result.Errors);
         }
 
         [Fact]
-        public void Compare_WithMatchingObjectBodyButResponseHasAdditionalProperties_NoExceptionsAreThrown()
+        public void Compare_WithMatchingObjectBodyButResponseHasAdditionalProperties_NoErrorsAreAddedToTheComparisonResult()
         {
             var expected = new ProviderServiceResponse
             {
@@ -327,11 +345,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            comparer.Compare(expected, actual);
+            var result = comparer.Compare(expected, actual);
+
+            Assert.Empty(result.Errors);
         }
 
         [Fact]
-        public void Compare_WithNonMatchingObject_ReportErrorIsCalled()
+        public void Compare_WithNonMatchingObject_OneErrorIsAddedToTheComparisonResult()
         {
             var expected = new ProviderServiceResponse
             {
@@ -358,12 +378,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            comparer.Compare(expected, actual);
-            _mockReporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
+            var result = comparer.Compare(expected, actual);
+
+            Assert.Equal(1, result.ComparisonResults.Last().Errors.Count());
         }
 
         [Fact]
-        public void Compare_WithMatchingObjectAndANonMatchingValue_ReportErrorIsCalled()
+        public void Compare_WithMatchingObjectAndANonMatchingValue_OneErrorIsAddedToTheComparisonResult()
         {
             var expected = new ProviderServiceResponse
             {
@@ -389,12 +410,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            comparer.Compare(expected, actual);
-            _mockReporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
+            var result = comparer.Compare(expected, actual);
+
+            Assert.Equal(1, result.ComparisonResults.Last().Errors.Count());
         }
 
         [Fact]
-        public void Compare_WithMatchingObjectHoweverPropertyNameCasingIsDifferent_ReportErrorIsCalled()
+        public void Compare_WithMatchingObjectHoweverPropertyNameCasingIsDifferent_OneErrorIsAddedToTheComparisonResult()
         {
             var expected = new ProviderServiceResponse
             {
@@ -420,12 +442,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            comparer.Compare(expected, actual);
-            _mockReporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
+            var result = comparer.Compare(expected, actual);
+
+            Assert.Equal(1, result.ComparisonResults.Last().Errors.Count());
         }
 
         [Fact]
-        public void Compare_WithNullBodyInResponse_ReportErrorIsCalled()
+        public void Compare_WithNullBodyInResponse_OneErrorIsAddedToTheComparisonResult()
         {
             var expected = new ProviderServiceResponse
             {
@@ -445,12 +468,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            comparer.Compare(expected, actual);
-            _mockReporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
+            var result = comparer.Compare(expected, actual);
+
+            Assert.Equal(1, result.ComparisonResults.Last().Errors.Count());
         }
 
         [Fact]
-        public void Compare_WithMatchingCollection_NoExceptionsAreThrown()
+        public void Compare_WithMatchingCollection_NoErrorsAreAddedToTheComparisonResult()
         {
             var expected = new ProviderServiceResponse
             {
@@ -482,11 +506,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            comparer.Compare(expected, actual);
+            var result = comparer.Compare(expected, actual);
+
+            Assert.Empty(result.Errors);
         }
 
         [Fact]
-        public void Compare_WithNonMatchingCollection_ReportErrorIsCalled()
+        public void Compare_WithNonMatchingCollection_OneErrorIsAddedToTheComparisonResult()
         {
             var expected = new ProviderServiceResponse
             {
@@ -518,8 +544,9 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var comparer = GetSubject();
 
-            comparer.Compare(expected, actual);
-            _mockReporter.Received(1).ReportError(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<object>());
+            var result = comparer.Compare(expected, actual);
+
+            Assert.Equal(1, result.ComparisonResults.Last().Errors.Count());
         }
     }
 }
