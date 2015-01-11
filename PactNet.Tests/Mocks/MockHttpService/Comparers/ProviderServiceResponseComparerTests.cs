@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NSubstitute;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
-using PactNet.Reporters;
 using Xunit;
 
 namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 {
+    //TODO: Split these up into separate tests for each of the individual counterpart
     public class ProviderServiceResponseComparerTests
     {
-        //private IReporter _mockReporter;
-
         private IProviderServiceResponseComparer GetSubject()
         {
-            //_mockReporter = Substitute.For<IReporter>();
             return new ProviderServiceResponseComparer();
         }
 
@@ -37,6 +33,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var result = comparer.Compare(expected, actual);
 
             Assert.Empty(result.Errors);
+            Assert.Empty(result.ComparisonResults.Last().Errors);
         }
 
         [Fact]
@@ -56,7 +53,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.Equal(1, result.Errors.Count());
+            Assert.Equal(1, result.ComparisonResults.First().Errors.Count());
         }
 
         [Fact]
@@ -85,6 +82,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var result = comparer.Compare(expected, actual);
 
             Assert.Empty(result.Errors);
+            Assert.Empty(result.ComparisonResults.Last().Errors);
         }
 
         [Fact]
@@ -113,6 +111,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var result = comparer.Compare(expected, actual);
 
             Assert.Empty(result.Errors);
+            Assert.Empty(result.ComparisonResults.Last().Errors);
         }
 
         [Fact]
@@ -171,6 +170,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var result = comparer.Compare(expected, actual);
 
             Assert.Empty(result.Errors);
+            Assert.Empty(result.ComparisonResults.Last().Errors);
         }
 
         [Fact]
@@ -283,6 +283,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var result = comparer.Compare(expected, actual);
 
             Assert.Empty(result.Errors);
+            Assert.Empty(result.ComparisonResults.Last().Errors);
         }
 
         [Fact]
@@ -315,6 +316,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var result = comparer.Compare(expected, actual);
 
             Assert.Empty(result.Errors);
+            Assert.Empty(result.ComparisonResults.Last().Errors);
         }
 
         [Fact]
@@ -348,6 +350,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var result = comparer.Compare(expected, actual);
 
             Assert.Empty(result.Errors);
+            Assert.Empty(result.ComparisonResults.Last().Errors);
         }
 
         [Fact]
@@ -509,6 +512,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var result = comparer.Compare(expected, actual);
 
             Assert.Empty(result.Errors);
+            Assert.Empty(result.ComparisonResults.Last().Errors);
         }
 
         [Fact]

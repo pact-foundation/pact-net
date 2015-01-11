@@ -9,6 +9,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 {
     public class ProviderServiceResponseComparer : IProviderServiceResponseComparer
     {
+        private readonly IHttpStatusCodeComparer _httpStatusCodeComparer;
         private readonly IHttpHeaderComparer _httpHeaderComparer;
         private readonly IHttpBodyComparer _httpBodyComparer;
 
@@ -16,6 +17,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
         public ProviderServiceResponseComparer()
         {
+            _httpStatusCodeComparer = new HttpStatusCodeComparer();
             _httpHeaderComparer = new HttpHeaderComparer(MessagePrefix);
             _httpBodyComparer = new HttpBodyComparer(MessagePrefix); //TODO: MessagePrefix isn't real nice
         }
@@ -30,12 +32,10 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                 return result;
             }
 
-            //TODO: Create a comparer for status code
             result.AddInfo(String.Format("{0} has status code of {1}", MessagePrefix, expected.Status));
-            if (!expected.Status.Equals(actual.Status))
-            {
-                result.AddError(expected: expected.Status, actual: actual.Status);
-            }
+
+            var statusResult = _httpStatusCodeComparer.Compare(expected.Status, actual.Status);
+            result.AddComparisonResult(statusResult);
 
             if (expected.Headers != null && expected.Headers.Any())
             {
