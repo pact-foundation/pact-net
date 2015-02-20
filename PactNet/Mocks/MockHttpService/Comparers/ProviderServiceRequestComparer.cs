@@ -44,12 +44,6 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
             if (expected.Headers != null && expected.Headers.Any())
             {
-                //TODO:Check if we can move this into the comparer
-                if (actual.Headers == null)
-                {
-                    result.AddError("Headers are null");
-                }
-
                 var headerResult = _httpHeaderComparer.Compare(expected.Headers, actual.Headers);
                 result.AddComparisonResult(headerResult);
             }
