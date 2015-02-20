@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using PactNet.Comparers;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
@@ -25,15 +26,11 @@ namespace PactNet.Tests.IntegrationTests.Specification.Models
 
             if (Match)
             {
-                Assert.Empty(result.Errors);
-                foreach (var childResult in result.ComparisonResults)
-                {
-                    Assert.Empty(childResult.Errors);
-                }
+                Assert.False(result.HasErrors, "There should not be any errors");
             }
             else
             {
-                Assert.Equal(1, result.Errors.Count() + result.ComparisonResults.Sum(childResult => childResult.Errors.Count()));
+                Assert.Equal(1, result.Results.Count(x => x.OutputType == OutputType.Error));
             }
         }
     }

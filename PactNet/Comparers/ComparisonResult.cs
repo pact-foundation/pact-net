@@ -1,32 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PactNet.Comparers
 {
     public class ComparisonResult
     {
-        private readonly IList<string> _errors = new List<string>();
-        public IEnumerable<string> Errors
+        private readonly IList<ReportedResult> _results = new List<ReportedResult>();
+        public IEnumerable<ReportedResult> Results
         {
-            get { return _errors; }
+            get { return _results; }
         }
 
-        private readonly IList<Tuple<string, OutputType>> _outputItems = new List<Tuple<string, OutputType>>();
-        public IEnumerable<Tuple<string, OutputType>> OutputItems
+        public bool HasErrors 
         {
-            get { return _outputItems; }
-        }
-
-        //TODO: Only one depth is supported, so come up with a better way of doing this
-        private readonly IList<ComparisonResult> _comparisonResults = new List<ComparisonResult>();
-        public IEnumerable<ComparisonResult> ComparisonResults
-        {
-            get { return _comparisonResults; }
+            get { return Results.Any(x => x.OutputType == OutputType.Error); }
         }
 
         public void AddInfo(string infoMessage)
         {
-            _outputItems.Add(new Tuple<string, OutputType>(infoMessage, OutputType.Info));
+            _results.Add(new ReportedResult(OutputType.Info, infoMessage));
         }
 
         public void AddError(string errorMessage = null, object expected = null, object actual = null)
@@ -41,8 +34,7 @@ namespace PactNet.Comparers
                 errorMsg = errorMessage;
             }
 
-            _outputItems.Add(new Tuple<string, OutputType>(errorMsg, OutputType.Error));
-            _errors.Add(errorMsg);
+            _results.Add(new ReportedResult(OutputType.Error, errorMsg));
         }
 
         public void AddComparisonResult(ComparisonResult comparisonResult)
@@ -52,7 +44,10 @@ namespace PactNet.Comparers
                 return;
             }
 
-            _comparisonResults.Add(comparisonResult);
+            foreach (var result in comparisonResult.Results)
+            {
+                _results.Add(result);
+            }
         }
     }
 }

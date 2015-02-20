@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using PactNet.Comparers;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
@@ -32,8 +33,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.Empty(result.Errors);
-            Assert.Empty(result.ComparisonResults.Last().Errors);
+            Assert.False(result.HasErrors, "There should not be any errors");
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.Equal(1, result.ComparisonResults.First().Errors.Count());
+            Assert.Equal(1, result.Results.Count(x => x.OutputType == OutputType.Error));
         }
 
         [Fact]
@@ -81,8 +81,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.Empty(result.Errors);
-            Assert.Empty(result.ComparisonResults.Last().Errors);
+            Assert.False(result.HasErrors, "There should not be any errors");
         }
 
         [Fact]
@@ -110,8 +109,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.Empty(result.Errors);
-            Assert.Empty(result.ComparisonResults.Last().Errors);
+            Assert.False(result.HasErrors, "There should not be any errors");
         }
 
         [Fact]
@@ -139,7 +137,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.Equal(1, result.ComparisonResults.Last().Errors.Count());
+            Assert.Equal(1, result.Results.Count(x => x.OutputType == OutputType.Error));
         }
 
         [Fact]
@@ -169,8 +167,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.Empty(result.Errors);
-            Assert.Empty(result.ComparisonResults.Last().Errors);
+            Assert.False(result.HasErrors, "There should not be any errors");
         }
 
         [Fact]
@@ -198,7 +195,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.Equal(1, result.ComparisonResults.Last().Errors.Count());
+            Assert.Equal(1, result.Results.Count(x => x.OutputType == OutputType.Error));
         }
 
         [Fact]
@@ -226,7 +223,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.Equal(1, result.ComparisonResults.Last().Errors.Count());
+            Assert.Equal(1, result.Results.Count(x => x.OutputType == OutputType.Error));
         }
 
         [Fact]
@@ -250,7 +247,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.Equal(1, result.ComparisonResults.Last().Errors.Count());
+            Assert.Equal(1, result.Results.Count(x => x.OutputType == OutputType.Error));
         }
 
         [Fact]
@@ -282,8 +279,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.Empty(result.Errors);
-            Assert.Empty(result.ComparisonResults.Last().Errors);
+            Assert.False(result.HasErrors, "There should not be any errors");
         }
 
         [Fact]
@@ -315,8 +311,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.Empty(result.Errors);
-            Assert.Empty(result.ComparisonResults.Last().Errors);
+            Assert.False(result.HasErrors, "There should not be any errors");
         }
 
         [Fact]
@@ -349,8 +344,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.Empty(result.Errors);
-            Assert.Empty(result.ComparisonResults.Last().Errors);
+            Assert.False(result.HasErrors, "There should not be any errors");
         }
 
         [Fact]
@@ -383,7 +377,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.Equal(1, result.ComparisonResults.Last().Errors.Count());
+            Assert.Equal(1, result.Results.Count(x => x.OutputType == OutputType.Error));
         }
 
         [Fact]
@@ -415,7 +409,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.Equal(1, result.ComparisonResults.Last().Errors.Count());
+            Assert.Equal(1, result.Results.Count(x => x.OutputType == OutputType.Error));
         }
 
         [Fact]
@@ -447,7 +441,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.Equal(1, result.ComparisonResults.Last().Errors.Count());
+            Assert.Equal(1, result.Results.Count(x => x.OutputType == OutputType.Error));
         }
 
         [Fact]
@@ -473,7 +467,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.Equal(1, result.ComparisonResults.Last().Errors.Count());
+            Assert.Equal(1, result.Results.Count(x => x.OutputType == OutputType.Error));
         }
 
         [Fact]
@@ -511,8 +505,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.Empty(result.Errors);
-            Assert.Empty(result.ComparisonResults.Last().Errors);
+            Assert.False(result.HasErrors, "There should not be any errors");
         }
 
         [Fact]
@@ -550,7 +543,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.Equal(1, result.ComparisonResults.Last().Errors.Count());
+            Assert.Equal(1, result.Results.Count(x => x.OutputType == OutputType.Error));
         }
     }
 }

@@ -25,7 +25,6 @@ namespace PactNet.Reporters
         {
         }
 
-        //TODO: Currently only works for one level deep (this stuff needs refactoring)
         public void ReportComparisonResult(ComparisonResult comparisonResult)
         {
             if (comparisonResult == null)
@@ -33,33 +32,24 @@ namespace PactNet.Reporters
                 return;
             }
 
-            Out(comparisonResult.OutputItems);
-            foreach (var error in comparisonResult.Errors)
+            Out(comparisonResult.Results);
+            foreach (var error in comparisonResult.Results.Where(x => x.OutputType == OutputType.Error))
             {
-                _errors.Add(error);
-            }
-
-            foreach (var result in comparisonResult.ComparisonResults)
-            {
-                Out(result.OutputItems);
-                foreach (var error in result.Errors)
-                {
-                    _errors.Add(error);
-                }
+                _errors.Add(error.Message);
             }
         }
 
-        private void Out(IEnumerable<Tuple<string, OutputType>> outputItems)
+        private void Out(IEnumerable<ReportedResult> results)
         {
-            foreach (var output in outputItems)
+            foreach (var result in results)
             {
-                switch (output.Item2)
+                switch (result.OutputType)
                 {
                     case OutputType.Error:
-                        _outputter.WriteError("[Failure] {0}", output.Item1);
+                        _outputter.WriteError("[Failure] {0}", result.Message);
                         break;
                     case OutputType.Info:
-                        _outputter.WriteInfo(output.Item1);
+                        _outputter.WriteInfo(result.Message);
                         break;
                 }
             }
