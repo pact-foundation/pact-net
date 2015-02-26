@@ -23,8 +23,8 @@ namespace Consumer.Tests
         public void GetAllEvents_WhenCalled_ReturnsAllEvents()
         {
             //Arrange
-            _mockProviderService.Given("There are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
-                .UponReceiving("A GET request to retrieve all events")
+            _mockProviderService.Given("there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
+                .UponReceiving("a request to retrieve all events")
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
@@ -85,7 +85,7 @@ namespace Consumer.Tests
             var dateTime = new DateTime(2011, 07, 01, 01, 41, 03);
             DateTimeFactory.Now = () => dateTime;
 
-            _mockProviderService.UponReceiving("A POST request to create a new event")
+            _mockProviderService.UponReceiving("a request to create a new event")
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Post,
@@ -118,7 +118,7 @@ namespace Consumer.Tests
         public void IsAlive_WhenApiIsAlive_ReturnsTrue()
         {
             //Arrange
-            _mockProviderService.UponReceiving("A GET request to check the api status")
+            _mockProviderService.UponReceiving("a request to check the api status")
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
@@ -151,8 +151,8 @@ namespace Consumer.Tests
         {
             //Arrange
             var eventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9");
-            _mockProviderService.Given(String.Format("There is an event with id '{0}'", eventId))
-                .UponReceiving(String.Format("A GET request to retrieve event with id '{0}'", eventId))
+            _mockProviderService.Given(String.Format("there is an event with id '{0}'", eventId))
+                .UponReceiving(String.Format("a request to retrieve event with id '{0}'", eventId))
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
@@ -191,8 +191,8 @@ namespace Consumer.Tests
         {
             //Arrange
             const string eventType = "DetailsView";
-            _mockProviderService.Given(String.Format("There is one event with type '{0}'", eventType))
-                .UponReceiving(String.Format("A GET request to retrieve events with type '{0}'", eventType))
+            _mockProviderService.Given(String.Format("there is one event with type '{0}'", eventType))
+                .UponReceiving(String.Format("a request to retrieve events with type '{0}'", eventType))
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,

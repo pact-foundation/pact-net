@@ -7,6 +7,32 @@ using PactNet.Reporters;
 
 namespace PactNet.Mocks.MockHttpService.Validators
 {
+    internal class Indent
+    {
+        public int CurrentDepth { get; private set; }
+        private const string DefaultIndent = "  ";
+        private string _currentIndentDepth = "";
+
+        public Indent(int depth = 1)
+        {
+            for (var i = 0; i < depth; i ++)
+            {
+                Increment();
+            }
+        }
+
+        public void Increment()
+        {
+            _currentIndentDepth = _currentIndentDepth + DefaultIndent;
+            CurrentDepth++;
+        }
+
+        public override string ToString()
+        {
+            return _currentIndentDepth;
+        }
+    }
+
     internal class ProviderServiceValidator : IProviderServiceValidator
     {
         private readonly IProviderServiceResponseComparer _providerServiceResponseComparer;
@@ -53,11 +79,14 @@ namespace PactNet.Mocks.MockHttpService.Validators
             {
                 InvokePactSetUpIfApplicable(providerStates);
 
-                var interationNumber = 1;
+                _reporter.ReportInfo(String.Format("Verifying a Pact between {0} and {1}.", pactFile.Consumer.Name, pactFile.Provider.Name));
+
                 try //TODO: Clean this up once the validators/comparers no longer throw
                 {
                     foreach (var interaction in pactFile.Interactions)
                     {
+                        var indent = new Indent();
+
                         ProviderState providerStateItem = null;
 
                         if (interaction.ProviderState != null)
@@ -79,8 +108,23 @@ namespace PactNet.Mocks.MockHttpService.Validators
 
                         InvokeInteractionSetUpIfApplicable(providerStateItem);
 
-                        _reporter.ReportInfo(String.Format("{0}) Verifying a Pact between {1} and {2} - {3}.", interationNumber, pactFile.Consumer.Name, pactFile.Provider.Name, interaction.Description));
+                        if (!String.IsNullOrEmpty(interaction.ProviderState))
+                        {
+                            _reporter.ReportInfo(String.Format("{0}Given {1}", indent, interaction.ProviderState));
+                            indent.Increment();
+                        }
 
+                        _reporter.ReportInfo(String.Format("{0}{1}", indent, interaction.Description));
+                        indent.Increment();
+
+                        if (interaction.Request != null)
+                        {
+                            _reporter.ReportInfo(String.Format("{0}with {1} {2}", indent, interaction.Request.Method.ToString().ToUpper(), interaction.Request.Path));
+                            indent.Increment();
+                        }
+
+                        _reporter.ReportInfo(String.Format("{0}returns a response which", indent));
+                        
                         try
                         {
                             ValidateInteraction(interaction);
@@ -89,8 +133,6 @@ namespace PactNet.Mocks.MockHttpService.Validators
                         {
                             InvokeInteractionTearDownIfApplicable(providerStateItem);
                         }
-                        
-                        interationNumber++;
                     }
 
                     _reporter.ThrowIfAnyErrors();

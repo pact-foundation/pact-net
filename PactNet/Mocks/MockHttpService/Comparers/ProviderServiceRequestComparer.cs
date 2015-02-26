@@ -19,8 +19,8 @@ namespace PactNet.Mocks.MockHttpService.Comparers
             _httpMethodComparer = new HttpMethodComparer(MessagePrefix);
             _httpPathComparer = new HttpPathComparer(MessagePrefix);
             _httpQueryStringComparer = new HttpQueryStringComparer(MessagePrefix);
-            _httpHeaderComparer = new HttpHeaderComparer(MessagePrefix);
-            _httpBodyComparer = new HttpBodyComparer(MessagePrefix);
+            _httpHeaderComparer = new HttpHeaderComparer();
+            _httpBodyComparer = new HttpBodyComparer();
         }
 
         public ComparisonResult Compare(ProviderServiceRequest expected, ProviderServiceRequest actual)

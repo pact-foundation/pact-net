@@ -1,23 +1,21 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PactNet.Comparers;
+using PactNet.Mocks.MockHttpService.Validators;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
     public class HttpBodyComparer : IHttpBodyComparer
     {
-        private readonly string _messagePrefix;
-
-        public HttpBodyComparer(string messagePrefix)
-        {
-            _messagePrefix = messagePrefix;
-        }
-
         //TODO: Remove boolean and add "matching" functionality
         public ComparisonResult Compare(dynamic expected, dynamic actual, bool useStrict = false)
         {
             var result = new ComparisonResult();
+
+            var indent = new Indent(5);
+            result.AddInfo(String.Format("{0}has a matching body", indent));
 
             if (expected == null)
             {

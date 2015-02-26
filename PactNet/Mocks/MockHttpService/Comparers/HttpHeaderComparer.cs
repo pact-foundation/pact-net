@@ -2,18 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using PactNet.Comparers;
+using PactNet.Mocks.MockHttpService.Validators;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
     public class HttpHeaderComparer : IHttpHeaderComparer
     {
-        private readonly string _messagePrefix;
-
-        public HttpHeaderComparer(string messagePrefix)
-        {
-            _messagePrefix = messagePrefix;
-        }
-
         public ComparisonResult Compare(IDictionary<string, string> expected, IDictionary<string, string> actual)
         {
             var result = new ComparisonResult();
@@ -26,9 +20,14 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
             actual = MakeDictionaryCaseInsensitive(actual);
 
+            var indent = new Indent(5);
+
+            result.AddInfo(String.Format("{0}includes headers", indent));
+            indent.Increment();
+
             foreach (var header in expected)
             {
-                result.AddInfo(String.Format("{0} includes header {1} with value {2}", _messagePrefix, header.Key, header.Value));
+                result.AddInfo(String.Format("{0}\"{1}\" with value {2}", indent, header.Key, header.Value));
 
                 string actualValue;
 

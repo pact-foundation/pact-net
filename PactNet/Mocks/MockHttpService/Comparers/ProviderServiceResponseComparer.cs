@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PactNet.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Mocks.MockHttpService.Validators;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
@@ -13,13 +14,11 @@ namespace PactNet.Mocks.MockHttpService.Comparers
         private readonly IHttpHeaderComparer _httpHeaderComparer;
         private readonly IHttpBodyComparer _httpBodyComparer;
 
-        private const string MessagePrefix = "\t- Returns a response which";
-
         public ProviderServiceResponseComparer()
         {
             _httpStatusCodeComparer = new HttpStatusCodeComparer();
-            _httpHeaderComparer = new HttpHeaderComparer(MessagePrefix);
-            _httpBodyComparer = new HttpBodyComparer(MessagePrefix); //TODO: MessagePrefix isn't real nice
+            _httpHeaderComparer = new HttpHeaderComparer();
+            _httpBodyComparer = new HttpBodyComparer();
         }
 
         public ComparisonResult Compare(ProviderServiceResponse expected, ProviderServiceResponse actual)
@@ -31,8 +30,6 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                 result.AddError("Expected response cannot be null");
                 return result;
             }
-
-            result.AddInfo(String.Format("{0} has status code of {1}", MessagePrefix, expected.Status));
 
             var statusResult = _httpStatusCodeComparer.Compare(expected.Status, actual.Status);
             result.AddComparisonResult(statusResult);
