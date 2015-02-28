@@ -27,17 +27,17 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
             if (expected == null)
             {
-                result.AddError("Expected response cannot be null");
+                result.RecordFailure("Expected response cannot be null");
                 return result;
             }
 
             var statusResult = _httpStatusCodeComparer.Compare(expected.Status, actual.Status);
-            result.AddComparisonResult(statusResult);
+            result.AddChildResult(statusResult);
 
             if (expected.Headers != null && expected.Headers.Any())
             {
                 var headerResult = _httpHeaderComparer.Compare(expected.Headers, actual.Headers);
-                result.AddComparisonResult(headerResult);
+                result.AddChildResult(headerResult);
             }
 
             if (expected.Body != null)
@@ -48,7 +48,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                 var expectedResponseBody = JsonConvert.DeserializeObject<JToken>(expectedResponseBodyJson);
 
                 var bodyResult = _httpBodyComparer.Compare(expectedResponseBody, actualResponseBody);
-                result.AddComparisonResult(bodyResult);
+                result.AddChildResult(bodyResult);
             }
 
             return result;

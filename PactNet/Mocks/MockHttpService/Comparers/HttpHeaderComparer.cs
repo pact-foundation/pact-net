@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using PactNet.Comparers;
-using PactNet.Mocks.MockHttpService.Validators;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
@@ -10,24 +9,19 @@ namespace PactNet.Mocks.MockHttpService.Comparers
     {
         public ComparisonResult Compare(IDictionary<string, string> expected, IDictionary<string, string> actual)
         {
-            var result = new ComparisonResult();
+            var result = new ComparisonResult("includes headers");
 
             if (actual == null)
             {
-                result.AddError("Headers are null");
+                result.RecordFailure("Actual Headers are null");
                 return result;
             }
 
             actual = MakeDictionaryCaseInsensitive(actual);
 
-            var indent = new Indent(5);
-
-            result.AddInfo(String.Format("{0}includes headers", indent));
-            indent.Increment();
-
             foreach (var header in expected)
             {
-                result.AddInfo(String.Format("{0}\"{1}\" with value {2}", indent, header.Key, header.Value));
+                var headerResult = new ComparisonResult("'{0}' with value {1}", header.Key, header.Value);
 
                 string actualValue;
 
@@ -40,8 +34,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                     {
                         if (!header.Value.Equals(actualValue))
                         {
-                            result.AddError(expected: expectedValue, actual: actualValue);
-                            return result;
+                            headerResult.RecordFailure(expected: expectedValue, actual: actualValue);
                         }
                     }
                     else
@@ -52,17 +45,16 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
                         if (!expectedValueSplitJoined.Equals(actualValueSplitJoined))
                         {
-                            result.AddError(expected: expectedValue, actual: actualValue);
-                            return result;
+                            headerResult.RecordFailure(expected: expectedValue, actual: actualValue);
                         }
                     }
-                    
                 }
                 else
                 {
-                    result.AddError("Header does not exist");
-                    return result;
+                    headerResult.RecordFailure(String.Format("Header with key '{0}', does not exist in actual", header.Key));
                 }
+
+                result.AddChildResult(headerResult);
             }
 
             return result;

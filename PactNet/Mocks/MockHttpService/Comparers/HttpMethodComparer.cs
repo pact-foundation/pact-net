@@ -15,12 +15,11 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
         public ComparisonResult Compare(HttpVerb expected, HttpVerb actual)
         {
-            var result = new ComparisonResult();
+            var result = new ComparisonResult(String.Format("{0} has method set to {1}", _messagePrefix, expected));
 
-            result.AddInfo(String.Format("{0} has method set to {1}", _messagePrefix, expected));
             if (!expected.Equals(actual))
             {
-                result.AddError(expected: expected, actual: actual);
+                result.RecordFailure(expected: expected, actual: actual);
                 return result;
             }
 

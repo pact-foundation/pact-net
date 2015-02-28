@@ -88,8 +88,7 @@
   <ItemGroup>
     <Compile Include="Comparers\ComparisonResult.cs" />
     <Compile Include="Comparers\IComparer.cs" />
-    <Compile Include="Comparers\OutputType.cs" />
-    <Compile Include="Comparers\ReportedResult.cs" />
+    <Compile Include="Comparers\ComparisonFailure.cs" />
     <Compile Include="Configuration\Json\Converters\LowercaseStringEnumConverter.cs" />
     <Compile Include="Configuration\Json\JsonConfig.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\HttpStatusCodeComparer.cs" />

@@ -1,6 +1,4 @@
-﻿using System;
-using PactNet.Comparers;
-using PactNet.Mocks.MockHttpService.Validators;
+﻿using PactNet.Comparers;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
@@ -8,15 +6,10 @@ namespace PactNet.Mocks.MockHttpService.Comparers
     {
         public ComparisonResult Compare(int expected, int actual)
         {
-            var result = new ComparisonResult();
-
-            var indent = new Indent(5);
-
-            result.AddInfo(String.Format("{0}has status code {1}", indent, expected));
-
+            var result = new ComparisonResult("has status code {0}", expected);
             if (!expected.Equals(actual))
             {
-                result.AddError(expected: expected, actual: actual);
+                result.RecordFailure(expected: expected, actual: actual);
             }
 
             return result;

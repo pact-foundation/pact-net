@@ -38,7 +38,7 @@ namespace PactNet.Tests.Reporters
 
             reporter.ReportError();
 
-            mockOutputter.Received(1).WriteError(Arg.Any<string>(), Arg.Is<object[]>(x => x.Single() == null));
+            mockOutputter.Received(1).WriteError(Arg.Is<string>(x => x == "[Failure] "), 0);
         }
 
         [Fact]
@@ -49,7 +49,7 @@ namespace PactNet.Tests.Reporters
 
             reporter.ReportError(expected: "tester");
 
-            mockOutputter.Received(1).WriteError(Arg.Any<string>(), Arg.Is<object[]>(x => (string) x.Single() == " Expected: tester, Actual: null"));
+            mockOutputter.Received(1).WriteError(Arg.Is<string>(x => x == "[Failure]  Expected: tester, Actual: null"), 0);
         }
 
         [Fact]
@@ -84,7 +84,7 @@ namespace PactNet.Tests.Reporters
 
             reporter.ReportError("message", new { test = "" }, new { test = "tester" });
 
-            mockOutputter.Received(1).WriteError(Arg.Any<string>(), Arg.Any<object[]>());
+            mockOutputter.Received(1).WriteError(Arg.Any<string>());
         }
 
         [Fact]

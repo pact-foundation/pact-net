@@ -4,25 +4,55 @@ using System.Linq;
 
 namespace PactNet.Comparers
 {
+    //TODO: Can we make this internal?
     public class ComparisonResult
     {
-        private readonly IList<ReportedResult> _results = new List<ReportedResult>();
-        public IEnumerable<ReportedResult> Results
+        public string ComparisonDescription { get; private set; }
+
+        private readonly IList<ComparisonFailure> _failures = new List<ComparisonFailure>();
+        public IEnumerable<ComparisonFailure> Failures
         {
-            get { return _results; }
+            get
+            {
+                var failuresDeep = new List<ComparisonFailure>();
+                GetChildComparisonResultFailures(this, failuresDeep);
+                return failuresDeep;
+            }
         }
 
-        public bool HasErrors 
+        private readonly IList<ComparisonResult> _childResults = new List<ComparisonResult>();
+        public IEnumerable<ComparisonResult> ChildResults
         {
-            get { return Results.Any(x => x.OutputType == OutputType.Error); }
+            get { return _childResults; }
         }
 
-        public void AddInfo(string infoMessage)
+        public bool HasFailures
         {
-            _results.Add(new ReportedResult(OutputType.Info, infoMessage));
+            get
+            {
+                return Failures.Any();
+            }
         }
 
-        public void AddError(string errorMessage = null, object expected = null, object actual = null)
+        public bool HasShallowFailure
+        {
+            get
+            {
+                return _failures.Any();
+            }
+        }
+
+        public ComparisonResult(string message = null)
+        {
+            ComparisonDescription = message;
+        }
+
+        public ComparisonResult(string messageFormat, params object[] args)
+        {
+            ComparisonDescription = String.Format(messageFormat, args);
+        }
+
+        public void RecordFailure(string errorMessage = null, object expected = null, object actual = null)
         {
             string errorMsg;
             if (expected != null || actual != null)
@@ -34,19 +64,25 @@ namespace PactNet.Comparers
                 errorMsg = errorMessage;
             }
 
-            _results.Add(new ReportedResult(OutputType.Error, errorMsg));
+            _failures.Add(new ComparisonFailure(errorMsg));
         }
 
-        public void AddComparisonResult(ComparisonResult comparisonResult)
+        public void AddChildResult(ComparisonResult comparisonResult)
         {
             if (comparisonResult == null)
             {
                 return;
             }
 
-            foreach (var result in comparisonResult.Results)
+            _childResults.Add(comparisonResult);
+        }
+
+        private static void GetChildComparisonResultFailures(ComparisonResult comparisonResult, List<ComparisonFailure> fails)
+        {
+            fails.AddRange(comparisonResult._failures);
+            foreach (var childComparisonResult in comparisonResult.ChildResults)
             {
-                _results.Add(result);
+                GetChildComparisonResultFailures(childComparisonResult, fails);
             }
         }
     }

@@ -29,29 +29,29 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
             if (expected == null)
             {
-                result.AddError("Expected request cannot be null");
+                result.RecordFailure("Expected request cannot be null");
                 return result;
             }
 
             var methodResult = _httpMethodComparer.Compare(expected.Method, actual.Method);
-            result.AddComparisonResult(methodResult);
+            result.AddChildResult(methodResult);
 
             var pathResult = _httpPathComparer.Compare(expected.Path, actual.Path);
-            result.AddComparisonResult(pathResult);
+            result.AddChildResult(pathResult);
 
             var queryResult = _httpQueryStringComparer.Compare(expected.Query, actual.Query);
-            result.AddComparisonResult(queryResult);
+            result.AddChildResult(queryResult);
 
             if (expected.Headers != null && expected.Headers.Any())
             {
                 var headerResult = _httpHeaderComparer.Compare(expected.Headers, actual.Headers);
-                result.AddComparisonResult(headerResult);
+                result.AddChildResult(headerResult);
             }
 
             if (expected.Body != null)
             {
                 var bodyResult = _httpBodyComparer.Compare(expected.Body, actual.Body, true);
-                result.AddComparisonResult(bodyResult);
+                result.AddChildResult(bodyResult);
             }
 
             return result;

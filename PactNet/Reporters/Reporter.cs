@@ -5,9 +5,38 @@ using PactNet.Comparers;
 
 namespace PactNet.Reporters
 {
+    internal class Indent
+    {
+        public int CurrentDepth { get; private set; }
+        private const string DefaultIndent = "  ";
+        private string _currentIndentDepth = "";
+
+        public Indent(int depth = 1)
+        {
+            for (var i = 0; i < depth; i++)
+            {
+                Increment();
+            }
+        }
+
+        public void Increment()
+        {
+            _currentIndentDepth = _currentIndentDepth + DefaultIndent;
+            CurrentDepth++;
+        }
+
+        public override string ToString()
+        {
+            return _currentIndentDepth;
+        }
+    }
+
     public class Reporter : IReporter
     {
         private readonly IReportOutputter _outputter;
+        private int _currentTabDepth;
+        private int _failureInfoCount;
+        private int _failureCount;
 
         private readonly IList<string> _errors = new List<string>();
         public IEnumerable<string> Errors
@@ -25,6 +54,7 @@ namespace PactNet.Reporters
         {
         }
 
+        //TODO: REMOVE THIS
         public void ReportComparisonResult(ComparisonResult comparisonResult)
         {
             if (comparisonResult == null)
@@ -32,32 +62,73 @@ namespace PactNet.Reporters
                 return;
             }
 
-            Out(comparisonResult.Results);
-            foreach (var error in comparisonResult.Results.Where(x => x.OutputType == OutputType.Error))
-            {
-                _errors.Add(error.Message);
-            }
+            WriteSummary(comparisonResult);
+            WriteFailureReasons(comparisonResult);
         }
 
-        private void Out(IEnumerable<ReportedResult> results)
+        public void GenerateSummary(ComparisonResult comparisonResult)
         {
-            foreach (var result in results)
+            WriteSummary(comparisonResult);
+        }
+
+        public void ReportFailureReasons(ComparisonResult comparisonResult)
+        {
+            WriteFailureReasons(comparisonResult);
+        }
+
+        private void WriteSummary(ComparisonResult comparisonResult, int tabDepth = 1)
+        {
+            if (comparisonResult == null)
             {
-                switch (result.OutputType)
+                return;
+            }
+
+            if (!String.IsNullOrEmpty(comparisonResult.ComparisonDescription))
+            {
+                if (comparisonResult.HasFailures)
                 {
-                    case OutputType.Error:
-                        _outputter.WriteError("[Failure] {0}", result.Message);
-                        break;
-                    case OutputType.Info:
-                        _outputter.WriteInfo(result.Message);
-                        break;
+                    _outputter.WriteError(comparisonResult.ComparisonDescription +
+                        (comparisonResult.HasShallowFailure ? String.Format(" (FAILED - {0})", ++_failureInfoCount) : ""),
+                        _currentTabDepth + tabDepth);
+                }
+                else
+                {
+                    _outputter.WriteSuccess(comparisonResult.ComparisonDescription,
+                        _currentTabDepth + tabDepth);
                 }
             }
+
+            foreach (var childComparisonResult in comparisonResult.ChildResults)
+            {
+                WriteSummary(childComparisonResult, tabDepth + 1);
+            }
         }
 
-        public void ReportInfo(string infoMessage)
+        private void WriteFailureReasons(ComparisonResult comparisonResult)
         {
-            _outputter.WriteInfo(infoMessage);
+            if (comparisonResult == null)
+            {
+                return;
+            }
+
+            var failures = comparisonResult.Failures.ToList();
+            if (!failures.Any())
+            {
+                return;
+            }
+
+            _outputter.WriteInfo(Environment.NewLine + "Failures:");
+            foreach (var failure in failures)
+            {
+                _outputter.WriteError(String.Format("{0}) {1}", ++_failureCount, failure.Message));
+                _errors.Add(failure.Message); //TODO: Fix this up, dont do it
+            }
+        }
+
+        public void ReportInfo(string infoMessage, int depth = 0)
+        {
+            _currentTabDepth = depth;
+            _outputter.WriteInfo(infoMessage, _currentTabDepth);
         }
 
         public void ReportError(string errorMessage = null, object expected = null, object actual = null)
@@ -72,7 +143,7 @@ namespace PactNet.Reporters
                 errorMsg = errorMessage;
             }
 
-            _outputter.WriteError("[Failure] {0}", errorMsg);
+            _outputter.WriteError(String.Format("[Failure] {0}", errorMsg));
             _errors.Add(errorMsg);
         }
 
@@ -88,6 +159,8 @@ namespace PactNet.Reporters
         public void ClearErrors()
         {
             _errors.Clear();
+            _failureCount = 0;
+            _failureInfoCount = 0;
         }
     }
 }

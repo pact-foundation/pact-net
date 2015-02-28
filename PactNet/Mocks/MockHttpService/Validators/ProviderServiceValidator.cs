@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using PactNet.Comparers;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
@@ -7,32 +9,6 @@ using PactNet.Reporters;
 
 namespace PactNet.Mocks.MockHttpService.Validators
 {
-    internal class Indent
-    {
-        public int CurrentDepth { get; private set; }
-        private const string DefaultIndent = "  ";
-        private string _currentIndentDepth = "";
-
-        public Indent(int depth = 1)
-        {
-            for (var i = 0; i < depth; i ++)
-            {
-                Increment();
-            }
-        }
-
-        public void Increment()
-        {
-            _currentIndentDepth = _currentIndentDepth + DefaultIndent;
-            CurrentDepth++;
-        }
-
-        public override string ToString()
-        {
-            return _currentIndentDepth;
-        }
-    }
-
     internal class ProviderServiceValidator : IProviderServiceValidator
     {
         private readonly IProviderServiceResponseComparer _providerServiceResponseComparer;
@@ -79,13 +55,15 @@ namespace PactNet.Mocks.MockHttpService.Validators
             {
                 InvokePactSetUpIfApplicable(providerStates);
 
-                _reporter.ReportInfo(String.Format("Verifying a Pact between {0} and {1}.", pactFile.Consumer.Name, pactFile.Provider.Name));
+                _reporter.ReportInfo(String.Format("Verifying a Pact between {0} and {1}", pactFile.Consumer.Name, pactFile.Provider.Name));
 
                 try //TODO: Clean this up once the validators/comparers no longer throw
                 {
+                    var comparisonResult = new ComparisonResult();
+
                     foreach (var interaction in pactFile.Interactions)
                     {
-                        var indent = new Indent();
+                        var depth = 1;
 
                         ProviderState providerStateItem = null;
 
@@ -110,24 +88,26 @@ namespace PactNet.Mocks.MockHttpService.Validators
 
                         if (!String.IsNullOrEmpty(interaction.ProviderState))
                         {
-                            _reporter.ReportInfo(String.Format("{0}Given {1}", indent, interaction.ProviderState));
-                            indent.Increment();
+                            _reporter.ReportInfo(String.Format("Given {0}", interaction.ProviderState), depth);
+                            depth++;
                         }
 
-                        _reporter.ReportInfo(String.Format("{0}{1}", indent, interaction.Description));
-                        indent.Increment();
+                        _reporter.ReportInfo(String.Format("{0}", interaction.Description), depth);
+                        depth++;
 
                         if (interaction.Request != null)
                         {
-                            _reporter.ReportInfo(String.Format("{0}with {1} {2}", indent, interaction.Request.Method.ToString().ToUpper(), interaction.Request.Path));
-                            indent.Increment();
+                            _reporter.ReportInfo(String.Format("with {0} {1}", interaction.Request.Method.ToString().ToUpper(), interaction.Request.Path), depth + 1);
+                            depth++;
                         }
 
-                        _reporter.ReportInfo(String.Format("{0}returns a response which", indent));
+                        _reporter.ReportInfo("returns a response which", depth);
                         
                         try
                         {
-                            ValidateInteraction(interaction);
+                            var interactionComparisonResult = ValidateInteraction(interaction);
+                            comparisonResult.AddChildResult(interactionComparisonResult);
+                            _reporter.GenerateSummary(interactionComparisonResult);
                         }
                         finally
                         {
@@ -135,7 +115,8 @@ namespace PactNet.Mocks.MockHttpService.Validators
                         }
                     }
 
-                    _reporter.ThrowIfAnyErrors();
+                    _reporter.ReportFailureReasons(comparisonResult);
+                    _reporter.ThrowIfAnyErrors(); //TODO: Should the reporter do this?
                 }
                 finally 
                 {
@@ -144,13 +125,12 @@ namespace PactNet.Mocks.MockHttpService.Validators
             }
         }
 
-        private void ValidateInteraction(ProviderServiceInteraction interaction)
+        private ComparisonResult ValidateInteraction(ProviderServiceInteraction interaction)
         {
             var expectedResponse = interaction.Response;
             var actualResponse = _httpRequestSender.Send(interaction.Request);
 
-            var responseComparisonResult = _providerServiceResponseComparer.Compare(expectedResponse, actualResponse);
-            _reporter.ReportComparisonResult(responseComparisonResult);
+            return _providerServiceResponseComparer.Compare(expectedResponse, actualResponse);
         }
 
         private void InvokePactSetUpIfApplicable(ProviderStates providerStates)

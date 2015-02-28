@@ -19,7 +19,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(null, "");
 
-            Assert.False(result.HasErrors, "There should not be any errors");
+            Assert.False(result.HasFailures, "There should not be any errors");
         }
 
         [Fact]
@@ -30,7 +30,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(null, actualQuery);
 
-            Assert.Equal(1, result.Results.Count(x => x.OutputType == OutputType.Error));
+            Assert.Equal(1, result.Failures.Count());
         }
 
         [Fact]
@@ -41,7 +41,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expectedQuery, null);
 
-            Assert.Equal(1, result.Results.Count(x => x.OutputType == OutputType.Error));
+            Assert.Equal(1, result.Failures.Count());
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.False(result.HasErrors, "There should not be any errors");
+            Assert.False(result.HasFailures, "There should not be any errors");
         }
 
         [Fact]
@@ -65,7 +65,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.Equal(1, result.Results.Count(x => x.OutputType == OutputType.Error));
+            Assert.Equal(1, result.Failures.Count());
         }
 
         [Fact]
@@ -77,7 +77,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.False(result.HasErrors, "There should not be any errors");
+            Assert.False(result.HasFailures, "There should not be any errors");
         }
 
         [Fact]
@@ -89,7 +89,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.Equal(1, result.Results.Count(x => x.OutputType == OutputType.Error));
+            Assert.Equal(1, result.Failures.Count());
         }
 
     }
