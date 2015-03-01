@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using PactNet.Comparers;
 using PactNet.Mocks.MockHttpService.Comparers;
@@ -59,11 +58,11 @@ namespace PactNet.Mocks.MockHttpService.Validators
 
                 try //TODO: Clean this up once the validators/comparers no longer throw
                 {
-                    var comparisonResult = new ComparisonResult();
+                    var comparisonResult = new ComparisonResult("Stuff");
 
                     foreach (var interaction in pactFile.Interactions)
                     {
-                        var depth = 1;
+                        var depth = 0;
 
                         ProviderState providerStateItem = null;
 
@@ -88,20 +87,15 @@ namespace PactNet.Mocks.MockHttpService.Validators
 
                         if (!String.IsNullOrEmpty(interaction.ProviderState))
                         {
-                            _reporter.ReportInfo(String.Format("Given {0}", interaction.ProviderState), depth);
-                            depth++;
+                            _reporter.ReportInfo(String.Format("Given {0}", interaction.ProviderState), ++depth);
                         }
 
-                        _reporter.ReportInfo(String.Format("{0}", interaction.Description), depth);
-                        depth++;
+                        _reporter.ReportInfo(String.Format("{0}", interaction.Description), ++depth);
 
                         if (interaction.Request != null)
                         {
-                            _reporter.ReportInfo(String.Format("with {0} {1}", interaction.Request.Method.ToString().ToUpper(), interaction.Request.Path), depth + 1);
-                            depth++;
+                            _reporter.ReportInfo(String.Format("with {0} {1}", interaction.Request.Method.ToString().ToUpper(), interaction.Request.Path), ++depth);
                         }
-
-                        _reporter.ReportInfo("returns a response which", depth);
                         
                         try
                         {

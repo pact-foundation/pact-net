@@ -19,7 +19,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
             if (!expected.Equals(actual))
             {
-                result.RecordFailure(expected: expected, actual: actual);
+                result.RecordFailure(expected, actual);
                 return result;
             }
 

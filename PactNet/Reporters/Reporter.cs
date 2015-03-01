@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using PactNet.Comparers;
 
 namespace PactNet.Reporters
@@ -83,19 +84,32 @@ namespace PactNet.Reporters
                 return;
             }
 
-            if (!String.IsNullOrEmpty(comparisonResult.ComparisonDescription))
+            if (comparisonResult.HasFailures)
             {
-                if (comparisonResult.HasFailures)
+                var failureBuilder = new StringBuilder();
+                var shallowFailureCount = comparisonResult.ShallowFailureCount;
+
+                if (shallowFailureCount > 0)
                 {
-                    _outputter.WriteError(comparisonResult.ComparisonDescription +
-                        (comparisonResult.HasShallowFailure ? String.Format(" (FAILED - {0})", ++_failureInfoCount) : ""),
-                        _currentTabDepth + tabDepth);
+                    failureBuilder.Append(" (FAILED - ");
+                    for (var i = 0; i < shallowFailureCount; i++)
+                    {
+                        failureBuilder.Append(++_failureInfoCount + "");
+                        if (i < shallowFailureCount - 1)
+                        {
+                            failureBuilder.Append(", ");
+                        }
+                    }
+                    failureBuilder.Append(")");
                 }
-                else
-                {
-                    _outputter.WriteSuccess(comparisonResult.ComparisonDescription,
-                        _currentTabDepth + tabDepth);
-                }
+
+                _outputter.WriteError(comparisonResult.Message + failureBuilder,
+                    _currentTabDepth + tabDepth);
+            }
+            else
+            {
+                _outputter.WriteSuccess(comparisonResult.Message,
+                    _currentTabDepth + tabDepth);
             }
 
             foreach (var childComparisonResult in comparisonResult.ChildResults)
@@ -120,8 +134,8 @@ namespace PactNet.Reporters
             _outputter.WriteInfo(Environment.NewLine + "Failures:");
             foreach (var failure in failures)
             {
-                _outputter.WriteError(String.Format("{0}) {1}", ++_failureCount, failure.Message));
-                _errors.Add(failure.Message); //TODO: Fix this up, dont do it
+                _outputter.WriteError(String.Format("{0}{1}) {2}", Environment.NewLine, ++_failureCount, failure.Result));
+                _errors.Add(failure.Result); //TODO: Fix this up, dont do it
             }
         }
 
@@ -152,7 +166,7 @@ namespace PactNet.Reporters
             if (_errors.Any())
             {
                 //TODO: Take a look at BDDfy and see what they do with regards to showing errors etc
-                throw new PactFailureException(String.Join(", ", _errors));
+                throw new PactFailureException("See output for failure details.");
             }
         }
 

@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PactNet.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
-using PactNet.Mocks.MockHttpService.Validators;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
@@ -23,7 +22,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
         public ComparisonResult Compare(ProviderServiceResponse expected, ProviderServiceResponse actual)
         {
-            var result = new ComparisonResult();
+            var result = new ComparisonResult("returns a response which");
 
             if (expected == null)
             {

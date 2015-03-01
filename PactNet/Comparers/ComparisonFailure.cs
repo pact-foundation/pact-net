@@ -1,12 +1,19 @@
-﻿namespace PactNet.Comparers
+﻿using System;
+
+namespace PactNet.Comparers
 {
     public class ComparisonFailure
     {
-        public string Message { get; private set; }
+        public string Result { get; private set; }
 
-        public ComparisonFailure(string message)
+        public ComparisonFailure(string result)
         {
-            Message = message;
+            Result = result;
+        }
+
+        public ComparisonFailure(object expected, object actual)
+        {
+            Result = String.Format("Expected: {0}, Actual: {1}", expected ?? "null", actual ?? "null");
         }
     }
 }

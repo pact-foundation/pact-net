@@ -7,7 +7,7 @@ namespace PactNet.Comparers
     //TODO: Can we make this internal?
     public class ComparisonResult
     {
-        public string ComparisonDescription { get; private set; }
+        public string Message { get; private set; }
 
         private readonly IList<ComparisonFailure> _failures = new List<ComparisonFailure>();
         public IEnumerable<ComparisonFailure> Failures
@@ -20,12 +20,6 @@ namespace PactNet.Comparers
             }
         }
 
-        private readonly IList<ComparisonResult> _childResults = new List<ComparisonResult>();
-        public IEnumerable<ComparisonResult> ChildResults
-        {
-            get { return _childResults; }
-        }
-
         public bool HasFailures
         {
             get
@@ -34,37 +28,38 @@ namespace PactNet.Comparers
             }
         }
 
-        public bool HasShallowFailure
+        public int ShallowFailureCount
         {
             get
             {
-                return _failures.Any();
+                return _failures.Count();
             }
+        }
+
+        private readonly IList<ComparisonResult> _childResults = new List<ComparisonResult>();
+        public IEnumerable<ComparisonResult> ChildResults
+        {
+            get { return _childResults; }
         }
 
         public ComparisonResult(string message = null)
         {
-            ComparisonDescription = message;
+            Message = message;
         }
 
         public ComparisonResult(string messageFormat, params object[] args)
         {
-            ComparisonDescription = String.Format(messageFormat, args);
+            Message = String.Format(messageFormat, args);
         }
 
-        public void RecordFailure(string errorMessage = null, object expected = null, object actual = null)
+        public void RecordFailure(string errorMessage)
         {
-            string errorMsg;
-            if (expected != null || actual != null)
-            {
-                errorMsg = String.Format("{0} Expected: {1}, Actual: {2}", errorMessage, expected ?? "null", actual ?? "null");
-            }
-            else
-            {
-                errorMsg = errorMessage;
-            }
+            _failures.Add(new ComparisonFailure(errorMessage));
+        }
 
-            _failures.Add(new ComparisonFailure(errorMsg));
+        public void RecordFailure(object expected, object actual)
+        {
+            _failures.Add(new ComparisonFailure(expected, actual));
         }
 
         public void AddChildResult(ComparisonResult comparisonResult)

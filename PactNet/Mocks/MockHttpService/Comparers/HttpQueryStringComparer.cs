@@ -25,16 +25,10 @@ namespace PactNet.Mocks.MockHttpService.Comparers
             var normalisedExpectedQuery = NormaliseUrlEncodingAndTrimTrailingAmpersand(expected);
             var normalisedActualQuery = NormaliseUrlEncodingAndTrimTrailingAmpersand(actual);
             var result = new ComparisonResult("{0} has query set to {1}", _messagePrefix, normalisedExpectedQuery ?? "null");
-            
-            if (expected == null)
-            {
-                result.RecordFailure(actual: actual);
-                return result;
-            }
 
-            if (actual == null)
+            if (expected == null || actual == null)
             {
-                result.RecordFailure(expected: expected);
+                result.RecordFailure(expected, actual);
                 return result;
             }
 
@@ -43,7 +37,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
             if (expectedQueryItems.Count != actualQueryItems.Count)
             {
-                result.RecordFailure(expected: normalisedExpectedQuery, actual: normalisedActualQuery);
+                result.RecordFailure(normalisedExpectedQuery, normalisedActualQuery);
                 return result;
             }
 
@@ -51,7 +45,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
             {
                 if (!actualQueryItems.AllKeys.Contains(expectedKey))
                 {
-                    result.RecordFailure(expected: normalisedExpectedQuery, actual: normalisedActualQuery);
+                    result.RecordFailure(normalisedExpectedQuery, normalisedActualQuery);
                     return result;
                 }
 
@@ -60,7 +54,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
                 if (expectedValue != actualValue)
                 {
-                    result.RecordFailure(expected: normalisedExpectedQuery, actual: normalisedActualQuery);
+                    result.RecordFailure(normalisedExpectedQuery, normalisedActualQuery);
                     return result;
                 }
             }

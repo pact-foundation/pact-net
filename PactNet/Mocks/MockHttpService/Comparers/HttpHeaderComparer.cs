@@ -34,7 +34,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                     {
                         if (!header.Value.Equals(actualValue))
                         {
-                            headerResult.RecordFailure(expected: expectedValue, actual: actualValue);
+                            headerResult.RecordFailure(expectedValue, actualValue);
                         }
                     }
                     else
@@ -45,7 +45,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
                         if (!expectedValueSplitJoined.Equals(actualValueSplitJoined))
                         {
-                            headerResult.RecordFailure(expected: expectedValue, actual: actualValue);
+                            headerResult.RecordFailure(expectedValue, actualValue);
                         }
                     }
                 }
