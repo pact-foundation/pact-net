@@ -6,32 +6,6 @@ using PactNet.Comparers;
 
 namespace PactNet.Reporters
 {
-    internal class Indent
-    {
-        public int CurrentDepth { get; private set; }
-        private const string DefaultIndent = "  ";
-        private string _currentIndentDepth = "";
-
-        public Indent(int depth = 1)
-        {
-            for (var i = 0; i < depth; i++)
-            {
-                Increment();
-            }
-        }
-
-        public void Increment()
-        {
-            _currentIndentDepth = _currentIndentDepth + DefaultIndent;
-            CurrentDepth++;
-        }
-
-        public override string ToString()
-        {
-            return _currentIndentDepth;
-        }
-    }
-
     public class Reporter : IReporter
     {
         private readonly IReportOutputter _outputter;
@@ -55,19 +29,7 @@ namespace PactNet.Reporters
         {
         }
 
-        //TODO: REMOVE THIS
-        public void ReportComparisonResult(ComparisonResult comparisonResult)
-        {
-            if (comparisonResult == null)
-            {
-                return;
-            }
-
-            WriteSummary(comparisonResult);
-            WriteFailureReasons(comparisonResult);
-        }
-
-        public void GenerateSummary(ComparisonResult comparisonResult)
+        public void ReportSummary(ComparisonResult comparisonResult)
         {
             WriteSummary(comparisonResult);
         }
@@ -77,7 +39,7 @@ namespace PactNet.Reporters
             WriteFailureReasons(comparisonResult);
         }
 
-        private void WriteSummary(ComparisonResult comparisonResult, int tabDepth = 1)
+        private void WriteSummary(ComparisonResult comparisonResult, int tabDepth = 0)
         {
             if (comparisonResult == null)
             {
@@ -139,9 +101,8 @@ namespace PactNet.Reporters
             }
         }
 
-        public void ReportInfo(string infoMessage, int depth = 0)
+        public void ReportInfo(string infoMessage)
         {
-            _currentTabDepth = depth;
             _outputter.WriteInfo(infoMessage, _currentTabDepth);
         }
 
@@ -157,7 +118,7 @@ namespace PactNet.Reporters
                 errorMsg = errorMessage;
             }
 
-            _outputter.WriteError(String.Format("[Failure] {0}", errorMsg));
+            _outputter.WriteError(String.Format("[Failure] {0}", errorMsg), _currentTabDepth);
             _errors.Add(errorMsg);
         }
 
@@ -175,6 +136,16 @@ namespace PactNet.Reporters
             _errors.Clear();
             _failureCount = 0;
             _failureInfoCount = 0;
+        }
+
+        public void Indent()
+        {
+            _currentTabDepth++;
+        }
+
+        public void ResetIndentation()
+        {
+            _currentTabDepth = 0;
         }
     }
 }

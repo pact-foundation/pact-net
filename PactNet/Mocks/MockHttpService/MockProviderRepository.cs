@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using PactNet.Comparers;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Reporters;
@@ -75,23 +76,22 @@ namespace PactNet.Mocks.MockHttpService
 
             var matchingInteractions = new List<ProviderServiceInteraction>();
 
+            var comparisonResult = new ComparisonResult();
+
             foreach (var testScopedInteraction in TestScopedInteractions)
             {
                 var requestComparisonResult = _requestComparer.Compare(testScopedInteraction.Request, request);
-                _reporter.ReportComparisonResult(requestComparisonResult);
+                comparisonResult.AddChildResult(requestComparisonResult);
+                _reporter.ReportSummary(requestComparisonResult);
 
-                try
+                if (!requestComparisonResult.HasFailures)
                 {
-                    _reporter.ThrowIfAnyErrors();
+                    matchingInteractions.Add(testScopedInteraction);
                 }
-                catch (Exception)
-                {
-                    _reporter.ClearErrors();
-                    continue;
-                }
-
-                matchingInteractions.Add(testScopedInteraction);
             }
+
+            _reporter.ReportFailureReasons(comparisonResult);
+            _reporter.ClearErrors();
 
             if (matchingInteractions == null || !matchingInteractions.Any())
             {

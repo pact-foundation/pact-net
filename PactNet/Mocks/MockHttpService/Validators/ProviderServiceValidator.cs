@@ -58,11 +58,11 @@ namespace PactNet.Mocks.MockHttpService.Validators
 
                 try //TODO: Clean this up once the validators/comparers no longer throw
                 {
-                    var comparisonResult = new ComparisonResult("Stuff");
+                    var comparisonResult = new ComparisonResult();
 
                     foreach (var interaction in pactFile.Interactions)
                     {
-                        var depth = 0;
+                        _reporter.ResetIndentation();
 
                         ProviderState providerStateItem = null;
 
@@ -87,21 +87,25 @@ namespace PactNet.Mocks.MockHttpService.Validators
 
                         if (!String.IsNullOrEmpty(interaction.ProviderState))
                         {
-                            _reporter.ReportInfo(String.Format("Given {0}", interaction.ProviderState), ++depth);
+                            _reporter.Indent();
+                            _reporter.ReportInfo(String.Format("Given {0}", interaction.ProviderState));
                         }
 
-                        _reporter.ReportInfo(String.Format("{0}", interaction.Description), ++depth);
-
+                        _reporter.Indent();
+                        _reporter.ReportInfo(String.Format("{0}", interaction.Description));
+                        
                         if (interaction.Request != null)
                         {
-                            _reporter.ReportInfo(String.Format("with {0} {1}", interaction.Request.Method.ToString().ToUpper(), interaction.Request.Path), ++depth);
+                            _reporter.Indent();
+                            _reporter.ReportInfo(String.Format("with {0} {1}", interaction.Request.Method.ToString().ToUpper(), interaction.Request.Path));
                         }
                         
                         try
                         {
                             var interactionComparisonResult = ValidateInteraction(interaction);
                             comparisonResult.AddChildResult(interactionComparisonResult);
-                            _reporter.GenerateSummary(interactionComparisonResult);
+                            _reporter.Indent();
+                            _reporter.ReportSummary(interactionComparisonResult);
                         }
                         finally
                         {
@@ -109,6 +113,7 @@ namespace PactNet.Mocks.MockHttpService.Validators
                         }
                     }
 
+                    _reporter.ResetIndentation();
                     _reporter.ReportFailureReasons(comparisonResult);
                     _reporter.ThrowIfAnyErrors(); //TODO: Should the reporter do this?
                 }

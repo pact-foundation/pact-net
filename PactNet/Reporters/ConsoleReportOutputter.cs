@@ -1,44 +1,47 @@
 ﻿using System;
+using System.Text;
 
 namespace PactNet.Reporters
 {
     public class ConsoleReportOutputter : IReportOutputter
     {
-        private Indent SetupCorrectIndentation(int tabDepth)
-        {
-            var indent = new Indent(0);
-            for (var i = 0; i < tabDepth; i++)
-            {
-                indent.Increment();
-            }
-            return indent;
-        }
+        private const string AnIndent = "  ";
 
-        public void WriteInfo(string infoMessage, int tabDepth)
+        public void WriteInfo(string infoMessage, int tabDepth = 0)
         {
-            var indent = SetupCorrectIndentation(tabDepth);
+            var indentation = GetIndentation(tabDepth);
 
             Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine(indent + infoMessage);
+            Console.WriteLine(indentation + infoMessage);
             Console.ResetColor();
         }
 
-        public void WriteError(string errorMessage, int tabDepth)
+        public void WriteError(string errorMessage, int tabDepth = 0)
         {
-            var indent = SetupCorrectIndentation(tabDepth);
+            var indentation = GetIndentation(tabDepth);
 
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(indent + errorMessage);
+            Console.WriteLine(indentation + errorMessage);
             Console.ResetColor();
         }
 
         public void WriteSuccess(string successMessage, int tabDepth = 0)
         {
-            var indent = SetupCorrectIndentation(tabDepth);
+            var indentation = GetIndentation(tabDepth);
 
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(indent + successMessage);
+            Console.WriteLine(indentation + successMessage);
             Console.ResetColor();
+        }
+
+        private static string GetIndentation(int tabDepth)
+        {
+            var builder = new StringBuilder();
+            for (var i = 0; i < tabDepth; i++)
+            {
+                builder.Append(AnIndent);
+            }
+            return builder.ToString();
         }
     }
 }

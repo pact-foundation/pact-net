@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using PactNet.Comparers;
 using PactNet.Mocks.MockHttpService.Comparers;
 using Xunit;
 
@@ -9,7 +8,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
     {
         private HttpQueryStringComparer GetSubject()
         {
-            return new HttpQueryStringComparer("query");
+            return new HttpQueryStringComparer();
         }
 
         [Fact]

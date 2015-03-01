@@ -8,23 +8,16 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 {
     public class HttpQueryStringComparer : IHttpQueryStringComparer
     {
-        private readonly string _messagePrefix;
-
-        public HttpQueryStringComparer(string messagePrefix)
-        {
-            _messagePrefix = messagePrefix;
-        }
-
         public ComparisonResult Compare(string expected, string actual)
         {
             if (String.IsNullOrEmpty(expected) && String.IsNullOrEmpty(actual))
             {
-                return new ComparisonResult();
+                return new ComparisonResult("has no query strings");
             }
 
             var normalisedExpectedQuery = NormaliseUrlEncodingAndTrimTrailingAmpersand(expected);
             var normalisedActualQuery = NormaliseUrlEncodingAndTrimTrailingAmpersand(actual);
-            var result = new ComparisonResult("{0} has query set to {1}", _messagePrefix, normalisedExpectedQuery ?? "null");
+            var result = new ComparisonResult("has query {0}", normalisedExpectedQuery ?? "null");
 
             if (expected == null || actual == null)
             {
