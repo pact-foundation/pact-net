@@ -247,9 +247,9 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
         }
 
         [Fact]
-        public void Validate_ProviderStatesSetUpDefined_SetUpActionIsInvoked()
+        public void Validate_ProviderStatesSetUpDefined_SetUpActionIsInvokedForEachInteraction()
         {
-            var actionInkoved = false;
+            var actionInvocationCount = 0;
             var pact = new ProviderServicePactFile
             {
                 Consumer = new Party { Name = "My client" },
@@ -259,22 +259,26 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
                     new ProviderServiceInteraction
                     {
                         Description = "My interaction"
+                    },
+                    new ProviderServiceInteraction
+                    {
+                        Description = "My interaction 2"
                     }
                 }
             };
-            var providerStates = new ProviderStates(setUp: () => { actionInkoved = true; }, tearDown: null);
+            var providerStates = new ProviderStates(setUp: () => { actionInvocationCount++; }, tearDown: null);
 
             var validator = GetSubject();
 
             validator.Validate(pact, providerStates);
 
-            Assert.True(actionInkoved, "Provider states pact setUp action is invoked");
+            Assert.Equal(pact.Interactions.Count(), actionInvocationCount);
         }
 
         [Fact]
-        public void Validate_ProviderStatesTearDownDefined_TearDownActionIsInvoked()
+        public void Validate_ProviderStatesTearDownDefined_TearDownActionIsInvokedForEachInteraction()
         {
-            var actionInkoved = false;
+            var actionInvocationCount = 0;
             var pact = new ProviderServicePactFile
             {
                 Consumer = new Party { Name = "My client" },
@@ -284,16 +288,20 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
                     new ProviderServiceInteraction
                     {
                         Description = "My interaction"
+                    },
+                    new ProviderServiceInteraction
+                    {
+                        Description = "My interaction 2"
                     }
                 }
             };
-            var providerStates = new ProviderStates(setUp: null, tearDown: () => { actionInkoved = true; });
+            var providerStates = new ProviderStates(setUp: null, tearDown: () => { actionInvocationCount++; });
 
             var validator = GetSubject();
 
             validator.Validate(pact, providerStates);
 
-            Assert.True(actionInkoved, "Provider states pact tearDown action is invoked");
+            Assert.Equal(pact.Interactions.Count(), actionInvocationCount);
         }
 
         [Fact]

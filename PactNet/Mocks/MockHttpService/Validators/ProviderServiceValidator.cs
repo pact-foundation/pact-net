@@ -51,54 +51,48 @@ namespace PactNet.Mocks.MockHttpService.Validators
 
             if (pactFile.Interactions != null && pactFile.Interactions.Any())
             {
-                InvokePactSetUpIfApplicable(providerStates);
-
                 var interationNumber = 1;
-                try //TODO: Clean this up once the validators/comparers no longer throw
+                foreach (var interaction in pactFile.Interactions)
                 {
-                    foreach (var interaction in pactFile.Interactions)
+                    InvokePactSetUpIfApplicable(providerStates);
+
+                    ProviderState providerStateItem = null;
+
+                    if (interaction.ProviderState != null)
                     {
-                        ProviderState providerStateItem = null;
-
-                        if (interaction.ProviderState != null)
-                        {
-                            try
-                            {
-                                providerStateItem = providerStates.Find(interaction.ProviderState);
-                            }
-                            catch (Exception)
-                            {
-                                providerStateItem = null;
-                            }
-
-                            if (providerStateItem == null)
-                            {
-                                throw new InvalidOperationException(String.Format("providerState '{0}' was defined by a consumer, however could not be found. Please supply this provider state.", interaction.ProviderState));
-                            }
-                        }
-
-                        InvokeInteractionSetUpIfApplicable(providerStateItem);
-
-                        _reporter.ReportInfo(String.Format("{0}) Verifying a Pact between {1} and {2} - {3}.", interationNumber, pactFile.Consumer.Name, pactFile.Provider.Name, interaction.Description));
-
                         try
                         {
-                            ValidateInteraction(interaction);
+                            providerStateItem = providerStates.Find(interaction.ProviderState);
                         }
-                        finally
+                        catch (Exception)
                         {
-                            InvokeInteractionTearDownIfApplicable(providerStateItem);
+                            providerStateItem = null;
                         }
-                        
-                        interationNumber++;
+
+                        if (providerStateItem == null)
+                        {
+                            throw new InvalidOperationException(String.Format("providerState '{0}' was defined by a consumer, however could not be found. Please supply this provider state.", interaction.ProviderState));
+                        }
                     }
 
-                    _reporter.ThrowIfAnyErrors();
+                    InvokeProviderStateSetUpIfApplicable(providerStateItem);
+
+                    _reporter.ReportInfo(String.Format("{0}) Verifying a Pact between {1} and {2} - {3}.", interationNumber, pactFile.Consumer.Name, pactFile.Provider.Name, interaction.Description));
+
+                    try
+                    {
+                        ValidateInteraction(interaction);
+                    }
+                    finally
+                    {
+                        InvokeProviderStateTearDownIfApplicable(providerStateItem);
+                        InvokeTearDownIfApplicable(providerStates);
+                    }
+                        
+                    interationNumber++;
                 }
-                finally 
-                {
-                    InvokeTearDownIfApplicable(providerStates);
-                }
+
+                _reporter.ThrowIfAnyErrors();
             }
         }
 
@@ -127,7 +121,7 @@ namespace PactNet.Mocks.MockHttpService.Validators
             }
         }
 
-        private void InvokeInteractionSetUpIfApplicable(ProviderState providerState)
+        private void InvokeProviderStateSetUpIfApplicable(ProviderState providerState)
         {
             if (providerState != null && providerState.SetUp != null)
             {
@@ -135,7 +129,7 @@ namespace PactNet.Mocks.MockHttpService.Validators
             }
         }
 
-        private void InvokeInteractionTearDownIfApplicable(ProviderState providerState)
+        private void InvokeProviderStateTearDownIfApplicable(ProviderState providerState)
         {
             if (providerState != null && providerState.TearDown != null)
             {
