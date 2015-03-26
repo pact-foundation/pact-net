@@ -97,7 +97,6 @@
     <Compile Include="Mocks\MockHttpService\IHttpRequestSender.cs" />
     <Compile Include="Mocks\MockHttpService\HttpClientRequestSender.cs" />
     <Compile Include="IPactBuilder.cs" />
-    <Compile Include="IProviderStates.cs" />
     <Compile Include="Mappers\IMapper.cs" />
     <Compile Include="Mocks\IMockProvider.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\HttpMethodComparer.cs" />

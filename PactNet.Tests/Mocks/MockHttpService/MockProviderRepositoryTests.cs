@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using NSubstitute;
+using PactNet.Comparers;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
@@ -201,7 +202,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void GetMatchingTestScopedInteraction_WithOneMatchingTestScopedInteraction_ThrowsPactFailureException()
+        public void GetMatchingTestScopedInteraction_WithOneMatchingTestScopedInteraction_DoesNotThrowAPactFailureException()
         {
             var expectedInteraction = new ProviderServiceInteraction
             {
@@ -218,6 +219,10 @@ namespace PactNet.Tests.Mocks.MockHttpService
             };
 
             var repo = GetSubject();
+
+            _mockComparer
+                .Compare(expectedInteraction.Request, expectedInteraction.Request)
+                .Returns(new ComparisonResult());
 
             repo.AddInteraction(expectedInteraction);
 

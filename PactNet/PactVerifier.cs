@@ -11,7 +11,7 @@ using PactNet.Reporters;
 
 namespace PactNet
 {
-    public class PactVerifier : IPactVerifier, IProviderStates
+    public class PactVerifier : IPactVerifier
     {
         private readonly IFileSystem _fileSystem;
         private readonly Func<IHttpRequestSender, IProviderServiceValidator> _providerServiceValidatorFactory;
@@ -32,32 +32,36 @@ namespace PactNet
             _httpClient = httpClient;
         }
 
-        public PactVerifier() : this(
+        /// <summary>
+        /// Define any set up and tear down state that is required when running the interaction verify.
+        /// We strongly recommend that any set up state is cleared using the tear down. This includes any state and IoC container overrides you may be doing.
+        /// </summary>
+        /// <param name="consumerName">The name of the consumer being verified.</param>
+        /// <param name="setUp">A set up action that will be run before each interaction verify. If no action is required please use an empty lambda () => {}.</param>
+        /// <param name="tearDown">A tear down action that will be run after each interaction verify. If no action is required please use an empty lambda () => {}.</param>
+        public PactVerifier(string consumerName, Action setUp, Action tearDown) : this(
             new FileSystem(),
             httpRequestSender => new ProviderServiceValidator(httpRequestSender, new Reporter()),
             new HttpClient())
         {
+            SetConsumer(consumerName, setUp, tearDown);
         }
 
-        public IProviderStates ProviderStatesFor(string consumerName, Action setUp = null, Action tearDown = null)
+        [Obsolete("Please supply this information in the constructor. Will be removed in the next major version.")]
+        public IPactVerifier ProviderStatesFor(string consumerName, Action setUp = null, Action tearDown = null)
         {
-            if (String.IsNullOrEmpty(consumerName))
-            {
-                throw new ArgumentException("Please supply a non null or empty consumerName");
-            }
-
-            if (!String.IsNullOrEmpty(ConsumerName) && !ConsumerName.Equals(consumerName))
-            {
-                throw new ArgumentException("Please supply the same consumerName that was defined when calling the HonoursPactWith method");
-            }
-
-            ConsumerName = consumerName;
-            ProviderStates = new ProviderStates(setUp, tearDown);
-
+            SetConsumer(consumerName, setUp, tearDown);
             return this;
         }
 
-        public IProviderStates ProviderState(string providerState, Action setUp = null, Action tearDown = null)
+        /// <summary>
+        /// Define a set up and/or tear down action for a specific state specified by the consumer.
+        /// This is where you should set up test data, so that you can fulfil the contract outlined by a consumer.
+        /// </summary>
+        /// <param name="providerState">The name of the provider state as defined by the consumer interaction, which lives in the Pact file.</param>
+        /// <param name="setUp">A set up action that will be run before the interaction verify, if the provider has specified it in the interaction. If no action is required please use an empty lambda () => {}.</param>
+        /// <param name="tearDown">A tear down action that will be run after the interaction verify, if the provider has specified it in the interaction. If no action is required please use an empty lambda () => {}.</param>
+        public IPactVerifier ProviderState(string providerState, Action setUp = null, Action tearDown = null)
         {
             if (ProviderStates == null)
             {
@@ -213,6 +217,27 @@ namespace PactNet
             {
                 disposable.Dispose();
             }
+        }
+
+        private void SetConsumer(string consumerName, Action setUp, Action tearDown)
+        {
+            if (!String.IsNullOrEmpty(ConsumerName) && ProviderStates != null)
+            {
+                throw new ArgumentException("The consumer details and have already supplied in the constructor. Please remove usages of ProviderStatesFor as it has been deprecated.");
+            }
+
+            if (String.IsNullOrEmpty(consumerName))
+            {
+                throw new ArgumentException("Please supply a non null or empty consumerName");
+            }
+
+            if (!String.IsNullOrEmpty(ConsumerName) && !ConsumerName.Equals(consumerName))
+            {
+                throw new ArgumentException("Please supply the same consumerName that was defined when calling the HonoursPactWith method");
+            }
+
+            ConsumerName = consumerName;
+            ProviderStates = new ProviderStates(setUp, tearDown);
         }
     }
 }

@@ -199,10 +199,9 @@ public class SomethingApiTests
 	public void EnsureSomethingApiHonoursPactWithConsumer()
 	{
 		//Arrange
-		var pactVerifier = new PactVerifier();
+		IPactVerifier pactVerifier = new PactVerifier("Consumer", () => {}, () => {}); //NOTE: You can supply setUp and tearDown, which will run before starting and after completing each individual verification.
 		
 		pactVerifier
-			.ProviderStatesFor("Consumer") //NOTE: You can supply setUp and tearDown, which will run before starting and after completing the verifications.
 			.ProviderState("There is a something with id 'tester'",
 				setUp: AddTesterIfItDoesntExist); //NOTE: We also have tearDown
 
@@ -235,10 +234,9 @@ public class SomethingApiTests
 	public void EnsureSomethingApiHonoursPactWithConsumer()
 	{
 		//Arrange
-		var pactVerifier = new PactVerifier();
+		IPactVerifier pactVerifier = new PactVerifier("Consumer", () => {}, () => {}); //NOTE: You can supply setUp and tearDown, which will run before starting and after completing each individual verification.
 		
 		pactVerifier
-			.ProviderStatesFor("Consumer") //NOTE: You can supply setUp and tearDown, which will run before starting and after completing the verifications.
 			.ProviderState("There is a something with id 'tester'",
 				setUp: AddTesterIfItDoesntExist); //NOTE: We also have tearDown
 

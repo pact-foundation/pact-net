@@ -84,7 +84,7 @@ namespace PactNet.Mocks.MockHttpService
                 comparisonResult.AddChildResult(requestComparisonResult);
                 _reporter.ReportSummary(requestComparisonResult);
 
-                if (!requestComparisonResult.HasFailures)
+                if (requestComparisonResult != null && !requestComparisonResult.HasFailures)
                 {
                     matchingInteractions.Add(testScopedInteraction);
                 }
