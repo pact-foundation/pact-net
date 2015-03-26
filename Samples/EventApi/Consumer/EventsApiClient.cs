@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -33,22 +34,93 @@ namespace Consumer
 
                 var response = client.SendAsync(request);
 
-                var result = response.Result;
-                var content = result.Content.ReadAsStringAsync().Result;
-                var status = result.StatusCode;
-
-                if (status == HttpStatusCode.OK)
+                try
                 {
-                    var responseContent = JsonConvert.DeserializeObject<dynamic>(content, _jsonSettings);
-                    return responseContent.alive;
-                }
+                    var result = response.Result;
+                    var content = result.Content.ReadAsStringAsync().Result;
+                    var status = result.StatusCode;
 
-                request.Dispose();
-                response.Dispose();
-                result.Dispose();
+                
+                    if (status == HttpStatusCode.OK)
+                    {
+                        var responseContent = JsonConvert.DeserializeObject<dynamic>(content, _jsonSettings);
+                        return responseContent.alive;
+                    }
+                }
+                finally
+                {
+                    request.Dispose();
+                    response.Dispose();
+                }
             }
 
             return false;
+        }
+
+        public DateTime UpSince()
+        {
+            using (var client = HttpClient())
+            {
+                var statusRequest = new HttpRequestMessage(HttpMethod.Get, "/stats/status");
+                statusRequest.Headers.Add("Accept", "application/json");
+
+                var statusResponse = client.SendAsync(statusRequest);
+
+                try
+                {
+                    var statusResult = statusResponse.Result;
+                    var statusResponseContent = statusResult.Content.ReadAsStringAsync().Result;
+                    var statusStatusCode = statusResult.StatusCode;
+
+                    var statusResponseBody = new StatusResponseBody();
+
+                    if (statusStatusCode == HttpStatusCode.OK)
+                    {
+                        statusResponseBody = JsonConvert.DeserializeObject<StatusResponseBody>(statusResponseContent, _jsonSettings);
+                    }
+
+                    if (statusResponseBody.Alive)
+                    {
+                        //Get the uptime
+                        var uptimeLink = statusResponseBody.Links.Single(x => x.Key.Equals("uptime")).Value.Href;
+
+                        if (!String.IsNullOrEmpty(uptimeLink))
+                        {
+                            var uptimeRequest = new HttpRequestMessage(HttpMethod.Get, uptimeLink);
+                            uptimeRequest.Headers.Add("Accept", "application/json");
+
+                            var uptimeResponse = client.SendAsync(uptimeRequest);
+
+                            try
+                            {
+                                var uptimeResult = uptimeResponse.Result;
+                                var uptimeResponseContent = uptimeResult.Content.ReadAsStringAsync().Result;
+                                var uptimeStatusCode = uptimeResult.StatusCode;
+
+                                var uptimeResponseBody = new UptimeResponseBody();
+
+                                if (uptimeStatusCode == HttpStatusCode.OK)
+                                {
+                                    uptimeResponseBody = JsonConvert.DeserializeObject<UptimeResponseBody>(uptimeResponseContent, _jsonSettings);
+                                    return uptimeResponseBody.UpSince;
+                                }
+                            }
+                            finally
+                            {
+                                uptimeRequest.Dispose();
+                                uptimeResponse.Dispose();
+                            }
+                        }
+                    }
+                }
+                finally
+                {
+                    statusRequest.Dispose();
+                    statusResponse.Dispose();
+                }
+            }
+
+            throw new InvalidOperationException("The API is currently down");
         }
 
         public IEnumerable<Event> GetAllEvents()

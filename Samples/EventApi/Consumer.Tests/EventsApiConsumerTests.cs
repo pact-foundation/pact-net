@@ -131,7 +131,14 @@ namespace Consumer.Tests
                     Headers = new Dictionary<string, string> { { "Content-Type", "application/json; charset=utf-8" } },
                     Body = new
                     {
-                        alive = true
+                        alive = true,
+                        _links = new
+                        {
+                            uptime = new
+                            {
+                                href = "/stats/uptime"
+                            }
+                        }
                     }
                 });
 
@@ -142,6 +149,65 @@ namespace Consumer.Tests
 
             //Assert
             Assert.Equal(true, result);
+
+            _mockProviderService.VerifyInteractions();
+        }
+
+        [Fact]
+        public void UpSince_WhenApiIsAliveAndWeRetrieveUptime_ReturnsUpSinceDate()
+        {
+            //Arrange
+            var upSinceDate = new DateTime(2014, 6, 27, 23, 51, 12, DateTimeKind.Utc);
+
+            _mockProviderService.UponReceiving("a request to check the api status")
+                .With(new ProviderServiceRequest
+                {
+                    Method = HttpVerb.Get,
+                    Headers = new Dictionary<string, string> { { "Accept", "application/json" } },
+                    Path = "/stats/status"
+                })
+                .WillRespondWith(new ProviderServiceResponse
+                {
+                    Status = 200,
+                    Headers = new Dictionary<string, string> { { "Content-Type", "application/json; charset=utf-8" } },
+                    Body = new
+                    {
+                        alive = true,
+                        _links = new
+                        {
+                            uptime = new
+                            {
+                                href = "/stats/uptime"
+                            }
+                        }
+                    }
+                });
+
+            _mockProviderService
+                .UponReceiving("a request to check the api uptime")
+                .With(new ProviderServiceRequest
+                {
+                    Method = HttpVerb.Get,
+                    Headers = new Dictionary<string, string> { { "Accept", "application/json" } },
+                    Path = "/stats/uptime"
+                })
+                .WillRespondWith(new ProviderServiceResponse
+                {
+                    Status = 200,
+                    Headers = new Dictionary<string, string> { { "Content-Type", "application/json; charset=utf-8" } },
+                    Body = new
+                    {
+                        upSince = upSinceDate
+                    }
+                });
+
+            var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
+
+            //Act
+            var result = consumer.UpSince();
+
+            //Assert
+            Assert.Equal(upSinceDate.ToString("O"), result.ToString("O"));
 
             _mockProviderService.VerifyInteractions();
         }

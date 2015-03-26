@@ -106,6 +106,7 @@
   <ItemGroup>
     <Compile Include="Controllers\EventsController.cs" />
     <Compile Include="Models\Event.cs" />
+    <Compile Include="Models\HypermediaLink.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Controllers\StatsController.cs" />

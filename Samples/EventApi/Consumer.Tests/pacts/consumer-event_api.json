@@ -7,29 +7,6 @@
   },
   "interactions": [
     {
-      "description": "a request to retrieve events with type 'DetailsView'",
-      "provider_state": "there is one event with type 'DetailsView'",
-      "request": {
-        "method": "get",
-        "path": "/events",
-        "query": "type=DetailsView",
-        "headers": {
-          "Accept": "application/json"
-        }
-      },
-      "response": {
-        "status": 200,
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": [
-          {
-            "eventType": "DetailsView"
-          }
-        ]
-      }
-    },
-    {
       "description": "a request to check the api status",
       "request": {
         "method": "get",
@@ -44,27 +21,12 @@
           "Content-Type": "application/json; charset=utf-8"
         },
         "body": {
-          "alive": true
-        }
-      }
-    },
-    {
-      "description": "a request to retrieve event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
-      "provider_state": "there is an event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
-      "request": {
-        "method": "get",
-        "path": "/events/83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
-        "headers": {
-          "Accept": "application/json"
-        }
-      },
-      "response": {
-        "status": 200,
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": {
-          "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9"
+          "alive": true,
+          "_links": {
+            "uptime": {
+              "href": "/stats/uptime"
+            }
+          }
         }
       }
     },
@@ -100,6 +62,68 @@
             "eventType": "SearchView"
           }
         ]
+      }
+    },
+    {
+      "description": "a request to retrieve events with type 'DetailsView'",
+      "provider_state": "there is one event with type 'DetailsView'",
+      "request": {
+        "method": "get",
+        "path": "/events",
+        "query": "type=DetailsView",
+        "headers": {
+          "Accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": [
+          {
+            "eventType": "DetailsView"
+          }
+        ]
+      }
+    },
+    {
+      "description": "a request to check the api uptime",
+      "request": {
+        "method": "get",
+        "path": "/stats/uptime",
+        "headers": {
+          "Accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": {
+          "upSince": "2014-06-27T23:51:12Z"
+        }
+      }
+    },
+    {
+      "description": "a request to retrieve event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
+      "provider_state": "there is an event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
+      "request": {
+        "method": "get",
+        "path": "/events/83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
+        "headers": {
+          "Accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": {
+          "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9"
+        }
       }
     },
     {
