@@ -92,11 +92,15 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
                     if (interactionUsages == null || !interactionUsages.Any())
                     {
-                        _reporter.ReportError(String.Format("Registered mock interaction with description '{0}' and provider state '{1}', was not used by the test.", registeredInteraction.Description, registeredInteraction.ProviderState));
+                        _reporter.ReportError(String.Format("The interaction with description '{0}' and provider state '{1}', was not used by the test. Missing request {2} {3}.", 
+                            registeredInteraction.Description, 
+                            registeredInteraction.ProviderState,
+                            registeredInteraction.Request != null ? registeredInteraction.Request.Method.ToString().ToUpperInvariant() : "No Method", 
+                            registeredInteraction.Request != null ? registeredInteraction.Request.Path : "No Path"));
                     }
                     else if (interactionUsages.Count() > 1)
                     {
-                        _reporter.ReportError(String.Format("Registered mock interaction with description '{0}' and provider state '{1}', was used {2} time/s by the test.", registeredInteraction.Description, registeredInteraction.ProviderState, interactionUsages.Count()));
+                        _reporter.ReportError(String.Format("The interaction with description '{0}' and provider state '{1}', was used {2} time/s by the test.", registeredInteraction.Description, registeredInteraction.ProviderState, interactionUsages.Count()));
                     }
                 }
             }
@@ -104,7 +108,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             {
                 if (_mockProviderRepository.HandledRequests != null && _mockProviderRepository.HandledRequests.Any())
                 {
-                    _reporter.ReportError("No mock interactions were registered, however the mock provider service was called.");
+                    _reporter.ReportError("No interactions were registered, however the mock provider service was called.");
                 }
             }
 

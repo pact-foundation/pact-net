@@ -207,7 +207,7 @@ namespace Consumer.Tests
             var result = consumer.UpSince();
 
             //Assert
-            Assert.Equal(upSinceDate.ToString("O"), result.ToString("O"));
+            Assert.Equal(upSinceDate.ToString("O"), result.Value.ToString("O"));
 
             _mockProviderService.VerifyInteractions();
         }

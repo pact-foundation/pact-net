@@ -51,7 +51,7 @@ namespace PactNet.Mocks.MockHttpService
             else if (duplicateInteractions.Any(di => di.AsJsonString() != interaction.AsJsonString()))
             {
                 //If the interaction description and provider state match, however anything else in the interaction is different, throw
-                throw new InvalidOperationException(String.Format("An interaction registered by another test already exists with the description '{0}' and provider state '{1}', however the interaction does not match perfectly. Please supply a different description or provider state. Alternatively align this interaction to match the duplicate exactly.", interaction.Description, interaction.ProviderState));
+                throw new InvalidOperationException(String.Format("An interaction registered by another test already exists with the description '{0}' and provider state '{1}', however the interaction does not match exactly. Please supply a different description or provider state. Alternatively align this interaction to match the duplicate exactly.", interaction.Description, interaction.ProviderState));
             }
 
             _testScopedInteractions.Add(interaction);
@@ -71,36 +71,28 @@ namespace PactNet.Mocks.MockHttpService
         {
             if (TestScopedInteractions == null || !TestScopedInteractions.Any())
             {
-                throw new PactFailureException("No mock interactions have been registered");
+                throw new PactFailureException(String.Format("No interaction found for {0} {1}.", request.Method.ToString().ToUpperInvariant(), request.Path));
             }
 
             var matchingInteractions = new List<ProviderServiceInteraction>();
 
-            var comparisonResult = new ComparisonResult();
-
             foreach (var testScopedInteraction in TestScopedInteractions)
             {
                 var requestComparisonResult = _requestComparer.Compare(testScopedInteraction.Request, request);
-                comparisonResult.AddChildResult(requestComparisonResult);
-                _reporter.ReportSummary(requestComparisonResult);
-
                 if (requestComparisonResult != null && !requestComparisonResult.HasFailures)
                 {
                     matchingInteractions.Add(testScopedInteraction);
                 }
             }
 
-            _reporter.ReportFailureReasons(comparisonResult);
-            _reporter.ClearErrors();
-
             if (matchingInteractions == null || !matchingInteractions.Any())
             {
-                throw new PactFailureException("No matching mock interaction has been registered for the current request");
+                throw new PactFailureException(String.Format("No interaction found for {0} {1}.", request.Method.ToString().ToUpperInvariant(), request.Path));
             }
 
             if (matchingInteractions.Count() > 1)
             {
-                throw new PactFailureException("More than one matching mock interaction has been registered for the current request");
+                throw new PactFailureException(String.Format("More than one interaction found for {0} {1}.", request.Method.ToString().ToUpperInvariant(), request.Path));
             }
 
             return matchingInteractions.Single();

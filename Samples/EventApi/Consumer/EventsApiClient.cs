@@ -10,13 +10,13 @@ using Newtonsoft.Json.Serialization;
 
 namespace Consumer
 {
-    public class EventsApiClient
+    public class EventsApiClient : IDisposable
     {
-        public string BaseUri { get; set; }
+        private readonly HttpClient _httpClient;
 
         public EventsApiClient(string baseUri = null)
         {
-            BaseUri = baseUri ?? "http://my.api/v2/capture";
+            _httpClient = new HttpClient { BaseAddress = new Uri(baseUri ?? "http://my.api/v2/capture") };
         }
 
         private readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
@@ -27,228 +27,218 @@ namespace Consumer
 
         public bool IsAlive()
         {
-            using (var client = HttpClient())
+            var request = new HttpRequestMessage(HttpMethod.Get, "/stats/status");
+            request.Headers.Add("Accept", "application/json");
+
+            var response = _httpClient.SendAsync(request);
+
+            try
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, "/stats/status");
-                request.Headers.Add("Accept", "application/json");
-
-                var response = client.SendAsync(request);
-
-                try
+                var result = response.Result;
+                if (result.StatusCode == HttpStatusCode.OK)
                 {
-                    var result = response.Result;
-                    var content = result.Content.ReadAsStringAsync().Result;
-                    var status = result.StatusCode;
+                    var responseContent = JsonConvert.DeserializeObject<dynamic>(result.Content.ReadAsStringAsync().Result, _jsonSettings);
+                    return responseContent.alive;
+                }
 
-                
-                    if (status == HttpStatusCode.OK)
-                    {
-                        var responseContent = JsonConvert.DeserializeObject<dynamic>(content, _jsonSettings);
-                        return responseContent.alive;
-                    }
-                }
-                finally
-                {
-                    request.Dispose();
-                    response.Dispose();
-                }
+                RaiseResponseError(request, result);
+            }
+            finally
+            {
+                Dispose(request, response);
             }
 
             return false;
         }
 
-        public DateTime UpSince()
+        public DateTime? UpSince()
         {
-            using (var client = HttpClient())
+            var statusRequest = new HttpRequestMessage(HttpMethod.Get, "/stats/status");
+            statusRequest.Headers.Add("Accept", "application/json");
+
+            var statusResponse = _httpClient.SendAsync(statusRequest);
+
+            try
             {
-                var statusRequest = new HttpRequestMessage(HttpMethod.Get, "/stats/status");
-                statusRequest.Headers.Add("Accept", "application/json");
+                var statusResult = statusResponse.Result;
+                var statusResponseBody = new StatusResponseBody();
 
-                var statusResponse = client.SendAsync(statusRequest);
-
-                try
+                if (statusResult.StatusCode == HttpStatusCode.OK)
                 {
-                    var statusResult = statusResponse.Result;
-                    var statusResponseContent = statusResult.Content.ReadAsStringAsync().Result;
-                    var statusStatusCode = statusResult.StatusCode;
+                    statusResponseBody = JsonConvert.DeserializeObject<StatusResponseBody>(statusResult.Content.ReadAsStringAsync().Result, _jsonSettings);
+                }
+                else
+                {
+                    RaiseResponseError(statusRequest, statusResult);
+                }
 
-                    var statusResponseBody = new StatusResponseBody();
+                if (statusResponseBody.Alive)
+                {
+                    var uptimeLink = statusResponseBody.Links.Single(x => x.Key.Equals("uptime")).Value.Href;
 
-                    if (statusStatusCode == HttpStatusCode.OK)
+                    if (!String.IsNullOrEmpty(uptimeLink))
                     {
-                        statusResponseBody = JsonConvert.DeserializeObject<StatusResponseBody>(statusResponseContent, _jsonSettings);
-                    }
+                        var uptimeRequest = new HttpRequestMessage(HttpMethod.Get, uptimeLink);
+                        uptimeRequest.Headers.Add("Accept", "application/json");
 
-                    if (statusResponseBody.Alive)
-                    {
-                        //Get the uptime
-                        var uptimeLink = statusResponseBody.Links.Single(x => x.Key.Equals("uptime")).Value.Href;
-
-                        if (!String.IsNullOrEmpty(uptimeLink))
+                        var uptimeResponse = _httpClient.SendAsync(uptimeRequest);
+                        try
                         {
-                            var uptimeRequest = new HttpRequestMessage(HttpMethod.Get, uptimeLink);
-                            uptimeRequest.Headers.Add("Accept", "application/json");
-
-                            var uptimeResponse = client.SendAsync(uptimeRequest);
-
-                            try
+                            var uptimeResult = uptimeResponse.Result;
+                            if (uptimeResult.StatusCode == HttpStatusCode.OK)
                             {
-                                var uptimeResult = uptimeResponse.Result;
-                                var uptimeResponseContent = uptimeResult.Content.ReadAsStringAsync().Result;
-                                var uptimeStatusCode = uptimeResult.StatusCode;
-
-                                var uptimeResponseBody = new UptimeResponseBody();
-
-                                if (uptimeStatusCode == HttpStatusCode.OK)
-                                {
-                                    uptimeResponseBody = JsonConvert.DeserializeObject<UptimeResponseBody>(uptimeResponseContent, _jsonSettings);
-                                    return uptimeResponseBody.UpSince;
-                                }
+                                var uptimeResponseBody = JsonConvert.DeserializeObject<UptimeResponseBody>(uptimeResult.Content.ReadAsStringAsync().Result, _jsonSettings);
+                                return uptimeResponseBody.UpSince;
                             }
-                            finally
-                            {
-                                uptimeRequest.Dispose();
-                                uptimeResponse.Dispose();
-                            }
+
+                            RaiseResponseError(uptimeRequest, uptimeResult);
+                        }
+                        finally
+                        {
+                            Dispose(uptimeRequest, uptimeResponse);
                         }
                     }
                 }
-                finally
-                {
-                    statusRequest.Dispose();
-                    statusResponse.Dispose();
-                }
+            }
+            finally
+            {
+                Dispose(statusRequest, statusResponse);
             }
 
-            throw new InvalidOperationException("The API is currently down");
+            return null;
         }
 
         public IEnumerable<Event> GetAllEvents()
         {
-            string reasonPhrase;
-            using (var client = HttpClient())
+            var request = new HttpRequestMessage(HttpMethod.Get, "/events");
+            request.Headers.Add("Accept", "application/json");
+
+            var response = _httpClient.SendAsync(request);
+
+            try
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, "/events");
-                request.Headers.Add("Accept", "application/json");
-
-                var response = client.SendAsync(request);
                 var result = response.Result;
-                var content = result.Content.ReadAsStringAsync().Result;
-                var status = result.StatusCode;
-
-                reasonPhrase = result.ReasonPhrase;
-
-                if (status == HttpStatusCode.OK)
+                if (result.StatusCode == HttpStatusCode.OK)
                 {
+                    var content = result.Content.ReadAsStringAsync().Result;
                     return !String.IsNullOrEmpty(content)
-                               ? JsonConvert.DeserializeObject<IEnumerable<Event>>(content, _jsonSettings)
-                               : new List<Event>();
+                                ? JsonConvert.DeserializeObject<IEnumerable<Event>>(content, _jsonSettings)
+                                : new List<Event>();
                 }
 
-                request.Dispose();
-                response.Dispose();
-                result.Dispose();
+                RaiseResponseError(request, result);
+            }
+            finally
+            {
+                Dispose(request, response);
             }
 
-            throw new InvalidOperationException(reasonPhrase);
+            return null;
         }
 
         public Event GetEventById(Guid id)
         {
-            string reasonPhrase;
-            using (var client = HttpClient())
+            var request = new HttpRequestMessage(HttpMethod.Get, String.Format("/events/{0}", id));
+            request.Headers.Add("Accept", "application/json");
+
+            var response = _httpClient.SendAsync(request);
+
+            try
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, String.Format("/events/{0}", id));
-                request.Headers.Add("Accept", "application/json");
-
-                var response = client.SendAsync(request);
                 var result = response.Result;
-                var content = result.Content.ReadAsStringAsync().Result;
-                var status = result.StatusCode;
-
-                reasonPhrase = result.ReasonPhrase;
-
-                if (status == HttpStatusCode.OK)
+                if (result.StatusCode == HttpStatusCode.OK)
                 {
-                    return JsonConvert.DeserializeObject<Event>(content, _jsonSettings);
+                    return JsonConvert.DeserializeObject<Event>(result.Content.ReadAsStringAsync().Result, _jsonSettings);
                 }
 
-                request.Dispose();
-                response.Dispose();
-                result.Dispose();
+                RaiseResponseError(request, result);
+            }
+            finally
+            {
+                Dispose(request, response);
             }
 
-            throw new InvalidOperationException(reasonPhrase);
+            return null;
         }
 
         public IEnumerable<Event> GetEventsByType(string eventType)
         {
-            string reasonPhrase;
-            using (var client = HttpClient())
+            var request = new HttpRequestMessage(HttpMethod.Get, String.Format("/events?type={0}", eventType));
+            request.Headers.Add("Accept", "application/json");
+
+            var response = _httpClient.SendAsync(request);
+
+            try
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, String.Format("/events?type={0}", eventType));
-                request.Headers.Add("Accept", "application/json");
-
-                var response = client.SendAsync(request);
                 var result = response.Result;
-                var content = result.Content.ReadAsStringAsync().Result;
-                var status = result.StatusCode;
-
-                reasonPhrase = result.ReasonPhrase;
-
-                if (status == HttpStatusCode.OK)
+                if (result.StatusCode == HttpStatusCode.OK)
                 {
-                    return JsonConvert.DeserializeObject<IEnumerable<Event>>(content, _jsonSettings);
+                    return JsonConvert.DeserializeObject<IEnumerable<Event>>(result.Content.ReadAsStringAsync().Result, _jsonSettings);
                 }
 
-                request.Dispose();
-                response.Dispose();
-                result.Dispose();
+                RaiseResponseError(request, result);
+            }
+            finally
+            {
+                Dispose(request, response);
             }
 
-            throw new InvalidOperationException(reasonPhrase);
+            return null;
         }
 
         public void CreateEvent(Guid eventId, string eventType = "DetailsView")
         {
-            HttpStatusCode statusCode;
-            string reasonPhrase;
-
-            using (var client = HttpClient())
+            var @event = new
             {
-                var @event = new
-                {
-                    EventId = eventId,
-                    Timestamp = DateTimeFactory.Now().ToString("O"),
-                    EventType = eventType
-                };
+                EventId = eventId,
+                Timestamp = DateTimeFactory.Now().ToString("O"),
+                EventType = eventType
+            };
 
-                var eventJson = JsonConvert.SerializeObject(@event, _jsonSettings);
+            var eventJson = JsonConvert.SerializeObject(@event, _jsonSettings);
+            var requestContent = new StringContent(eventJson, Encoding.UTF8, "application/json");
+            var request = new HttpRequestMessage(HttpMethod.Post, "/events") { Content = requestContent };
 
-                var requestContent = new StringContent(eventJson, Encoding.UTF8, "application/json");
+            var response = _httpClient.SendAsync(request);
 
-                var request = new HttpRequestMessage(HttpMethod.Post, "/events");
-                request.Content = requestContent;
-
-                var response = client.SendAsync(request);
+            try
+            {
                 var result = response.Result;
-                statusCode = result.StatusCode;
-                reasonPhrase = result.ReasonPhrase;
+                var statusCode = result.StatusCode;
+                if (statusCode == HttpStatusCode.Created)
+                {
+                    return;
+                }
 
-                request.Dispose();
-                response.Dispose();
-                result.Dispose();
+                RaiseResponseError(request, result);
             }
-
-            if (statusCode != HttpStatusCode.Created)
+            finally
             {
-                throw new InvalidOperationException(reasonPhrase);
+                Dispose(request, response);
             }
         }
 
-        private HttpClient HttpClient()
+        private static void RaiseResponseError(HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)
         {
-            return new HttpClient { BaseAddress = new Uri(BaseUri) };
-        } 
+            throw new HttpRequestException(
+                String.Format("The Events API request for {0} {1} failed. Response Status: {2}, Response Body: {3}",
+                failedRequest.Method.ToString().ToUpperInvariant(),
+                failedRequest.RequestUri,
+                (int)failedResponse.StatusCode, 
+                failedResponse.Content.ReadAsStringAsync().Result));
+        }
+
+        public void Dispose()
+        {
+            Dispose(_httpClient);
+        }
+
+        public void Dispose(params IDisposable[] disposables)
+        {
+            foreach (var disposable in disposables.Where(d => d != null))
+            {
+                disposable.Dispose();
+            }
+        }
     }
 }
