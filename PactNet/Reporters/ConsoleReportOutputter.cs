@@ -3,7 +3,7 @@ using System.Text;
 
 namespace PactNet.Reporters
 {
-    public class ConsoleReportOutputter : IReportOutputter
+    internal class ConsoleReportOutputter : IReportOutputter
     {
         private const string AnIndent = "  ";
 

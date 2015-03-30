@@ -2,7 +2,7 @@
 
 namespace PactNet.Mocks.MockHttpService.Configuration
 {
-    public class NancyConfig
+    internal class NancyConfig
     {
         private static HostConfiguration _hostConfiguration;
         public static HostConfiguration HostConfiguration
