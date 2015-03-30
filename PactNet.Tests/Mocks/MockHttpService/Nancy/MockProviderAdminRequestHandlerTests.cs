@@ -386,8 +386,8 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         {
             var pactDetails = new PactDetails
             {
-                Consumer = new Party { Name = "Consumer" },
-                Provider = new Party { Name = "Provider" }
+                Consumer = new Pacticipant { Name = "Consumer" },
+                Provider = new Pacticipant { Name = "Provider" }
             };
 
             var pactFile = new ProviderServicePactFile
@@ -420,8 +420,8 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         {
             var pactDetails = new PactDetails
             {
-                Consumer = new Party { Name = "Consumer" },
-                Provider = new Party { Name = "Provider" }
+                Consumer = new Pacticipant { Name = "Consumer" },
+                Provider = new Pacticipant { Name = "Provider" }
             };
 
             var interactions = new List<ProviderServiceInteraction>
@@ -473,8 +473,8 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         {
             var pactDetails = new PactDetails
             {
-                Consumer = new Party { Name = "Consumer" },
-                Provider = new Party { Name = "Provider" }
+                Consumer = new Pacticipant { Name = "Consumer" },
+                Provider = new Pacticipant { Name = "Provider" }
             };
 
             var interactions = new List<ProviderServiceInteraction>
@@ -518,8 +518,8 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         {
             var pactDetails = new PactDetails
             {
-                Consumer = new Party { Name = "Consumer" },
-                Provider = new Party { Name = "Provider" }
+                Consumer = new Pacticipant { Name = "Consumer" },
+                Provider = new Pacticipant { Name = "Provider" }
             };
 
             var interactions = new List<ProviderServiceInteraction>
@@ -572,8 +572,8 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         {
             var pactDetails = new PactDetails
             {
-                Consumer = new Party { Name = "Consumer" },
-                Provider = new Party { Name = "Provider" }
+                Consumer = new Pacticipant { Name = "Consumer" },
+                Provider = new Pacticipant { Name = "Provider" }
             };
 
             var interactions = new List<ProviderServiceInteraction>

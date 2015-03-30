@@ -6,10 +6,10 @@ namespace PactNet.Models
     internal class PactDetails
     {
         [JsonProperty(Order = -3, PropertyName = "provider")]
-        public Party Provider { get; set; }
+        public Pacticipant Provider { get; set; }
 
         [JsonProperty(Order = -2, PropertyName = "consumer")]
-        public Party Consumer { get; set; }
+        public Pacticipant Consumer { get; set; }
 
         public string GeneratePactFileName()
         {

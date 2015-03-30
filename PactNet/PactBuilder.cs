@@ -85,8 +85,8 @@ namespace PactNet
 
             var pactDetails = new PactDetails
             {
-                Provider = new Party { Name = ProviderName },
-                Consumer = new Party { Name = ConsumerName }
+                Provider = new Pacticipant { Name = ProviderName },
+                Consumer = new Pacticipant { Name = ConsumerName }
             };
 
             _mockProviderService.SendAdminHttpRequest(HttpVerb.Post, Constants.PactPath, pactDetails);

@@ -154,7 +154,7 @@
     <Compile Include="PactFailureException.cs" />
     <Compile Include="Mocks\MockHttpService\Models\ProviderServicePactFile.cs" />
     <Compile Include="Models\Interaction.cs" />
-    <Compile Include="Models\Party.cs" />
+    <Compile Include="Models\Pacticipant.cs" />
     <Compile Include="PactBuilder.cs" />
     <Compile Include="Mocks\MockHttpService\Models\ProviderServiceRequest.cs" />
     <Compile Include="Mocks\MockHttpService\Models\ProviderServiceResponse.cs" />

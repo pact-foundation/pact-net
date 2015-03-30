@@ -10,8 +10,8 @@ namespace PactNet.Tests.Models
         {
             var details = new PactDetails
             {
-                Consumer = new Party { Name = "My Consumer" },
-                Provider = new Party { Name = "My Provider" }
+                Consumer = new Pacticipant { Name = "My Consumer" },
+                Provider = new Pacticipant { Name = "My Provider" }
             };
 
             var fileName = details.GeneratePactFileName();
@@ -24,8 +24,8 @@ namespace PactNet.Tests.Models
         {
             var details = new PactDetails
             {
-                Consumer = new Party(),
-                Provider = new Party()
+                Consumer = new Pacticipant(),
+                Provider = new Pacticipant()
             };
 
             var fileName = details.GeneratePactFileName();
