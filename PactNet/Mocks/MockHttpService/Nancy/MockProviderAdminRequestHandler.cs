@@ -6,28 +6,25 @@ using System.Linq;
 using System.Text;
 using Nancy;
 using Newtonsoft.Json;
+using PactNet.Comparers;
 using PactNet.Configuration.Json;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
-using PactNet.Reporters;
 
 namespace PactNet.Mocks.MockHttpService.Nancy
 {
     internal class MockProviderAdminRequestHandler : IMockProviderAdminRequestHandler
     {
         private readonly IMockProviderRepository _mockProviderRepository;
-        private readonly IReporter _reporter;
         private readonly IFileSystem _fileSystem;
         private readonly string _pactFileDirectory;
 
         public MockProviderAdminRequestHandler(
             IMockProviderRepository mockProviderRepository,
-            IReporter reporter,
             IFileSystem fileSystem,
             PactFileInfo pactFileInfo)
         {
             _mockProviderRepository = mockProviderRepository;
-            _reporter = reporter;
             _fileSystem = fileSystem;
             _pactFileDirectory = pactFileInfo.Directory ?? Constants.DefaultPactFileDirectory;
         }
@@ -84,15 +81,17 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             //Check all registered interactions have been used once and only once
             var registeredInteractions = _mockProviderRepository.TestScopedInteractions;
 
+            var comparisonResult = new ComparisonResult();
+
             if (registeredInteractions.Any())
             {
                 foreach (var registeredInteraction in registeredInteractions)
                 {
-                    var interactionUsages = _mockProviderRepository.HandledRequests.Where(x => x.MatchedInteraction == registeredInteraction).ToList();
+                    var interactionUsages = _mockProviderRepository.HandledRequests.Where(x => x.MatchedInteraction != null && x.MatchedInteraction == registeredInteraction).ToList();
 
                     if (interactionUsages == null || !interactionUsages.Any())
                     {
-                        _reporter.ReportError(String.Format("The interaction with description '{0}' and provider state '{1}', was not used by the test. Missing request {2} {3}.", 
+                        comparisonResult.RecordFailure(String.Format("The interaction with description '{0}' and provider state '{1}', was not used by the test. Missing request {2} {3}.", 
                             registeredInteraction.Description, 
                             registeredInteraction.ProviderState,
                             registeredInteraction.Request != null ? registeredInteraction.Request.Method.ToString().ToUpperInvariant() : "No Method", 
@@ -100,7 +99,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                     }
                     else if (interactionUsages.Count() > 1)
                     {
-                        _reporter.ReportError(String.Format("The interaction with description '{0}' and provider state '{1}', was used {2} time/s by the test.", registeredInteraction.Description, registeredInteraction.ProviderState, interactionUsages.Count()));
+                        comparisonResult.RecordFailure(String.Format("The interaction with description '{0}' and provider state '{1}', was used {2} time/s by the test.", registeredInteraction.Description, registeredInteraction.ProviderState, interactionUsages.Count()));
                     }
                 }
             }
@@ -108,21 +107,17 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             {
                 if (_mockProviderRepository.HandledRequests != null && _mockProviderRepository.HandledRequests.Any())
                 {
-                    _reporter.ReportError("No interactions were registered, however the mock provider service was called.");
+                    comparisonResult.RecordFailure("No interactions were registered, however the mock provider service was called.");
                 }
             }
 
-            try
+            if (!comparisonResult.HasFailures)
             {
-                _reporter.ThrowIfAnyErrors();
+                return GenerateResponse(HttpStatusCode.OK, "Interactions matched");
             }
-            catch (Exception ex)
-            {
-                _reporter.ClearErrors();
-                return GenerateResponse(HttpStatusCode.InternalServerError, ex.Message);
-            }
-
-            return GenerateResponse(HttpStatusCode.OK, "Interactions matched");
+            
+            var failure = comparisonResult.Failures.First();
+            return GenerateResponse(HttpStatusCode.InternalServerError, failure.Result);
         }
 
         private Response HandlePostPactRequest(NancyContext context)

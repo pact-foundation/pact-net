@@ -2,7 +2,7 @@
 
 namespace PactNet.Comparers
 {
-    public class ComparisonFailure
+    internal class ComparisonFailure
     {
         public string Result { get; private set; }
 

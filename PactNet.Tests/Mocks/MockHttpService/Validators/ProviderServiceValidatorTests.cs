@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NSubstitute;
+using PactNet.Comparers;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
@@ -556,7 +557,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
         }
 
         [Fact]
-        public void Validate_WhenReporterHasErrors_ThrowsPactFailureException()
+        public void Validate_WhenAFailureOccurs_ThrowsPactFailureException()
         {
             var pact = new ProviderServicePactFile
             {
@@ -571,14 +572,16 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
                 }
             };
 
+            var comparisonResult = new ComparisonResult();
+            comparisonResult.RecordFailure("It failed");
+
             var validator = GetSubject();
 
-            _mockReporter
-                .When(x => x.ThrowIfAnyErrors())
-                .Do(info => { throw new PactFailureException("Compare failed"); });
+            _mockResponseComparer
+                .Compare(Arg.Any<ProviderServiceResponse>(), Arg.Any<ProviderServiceResponse>())
+                .Returns(comparisonResult);
 
             Assert.Throws<PactFailureException>(() => validator.Validate(pact, null));
-            _mockReporter.Received(1).ThrowIfAnyErrors();
         }
     }
 }

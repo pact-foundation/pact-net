@@ -6,22 +6,19 @@ using PactNet.Comparers;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
-using PactNet.Reporters;
 using Xunit;
 
 namespace PactNet.Tests.Mocks.MockHttpService
 {
     public class MockProviderRepositoryTests
     {
-        private IReporter _mockReporter;
         private IProviderServiceRequestComparer _mockComparer;
 
         private IMockProviderRepository GetSubject()
         {
-            _mockReporter = Substitute.For<IReporter>();
             _mockComparer = Substitute.For<IProviderServiceRequestComparer>();
 
-            return new MockProviderRepository(_mockReporter, _mockComparer);
+            return new MockProviderRepository(_mockComparer);
         }
 
         [Fact]
@@ -153,9 +150,6 @@ namespace PactNet.Tests.Mocks.MockHttpService
             };
 
             var repo = GetSubject();
-
-            _mockReporter.When(x => x.ThrowIfAnyErrors())
-                .Do(x => { throw new PactFailureException("[Failure] Expected: Head, Actual: Get"); });
 
             repo.AddInteraction(interaction);
 

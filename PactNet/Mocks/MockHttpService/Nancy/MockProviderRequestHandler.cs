@@ -1,4 +1,5 @@
-﻿using Nancy;
+﻿using System;
+using Nancy;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 
@@ -29,10 +30,19 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         {
             var actualRequest = _requestMapper.Convert(context.Request);
 
-            var matchingInteraction = _mockProviderRepository.GetMatchingTestScopedInteraction(actualRequest);
-
-            _mockProviderRepository.AddHandledRequest(new HandledRequest(actualRequest, matchingInteraction));
-
+            ProviderServiceInteraction matchingInteraction;
+            
+            try
+            {
+                matchingInteraction = _mockProviderRepository.GetMatchingTestScopedInteraction(actualRequest);
+                _mockProviderRepository.AddHandledRequest(new HandledRequest(actualRequest, matchingInteraction));
+            }
+            catch (Exception)
+            {
+                _mockProviderRepository.AddHandledRequest(new HandledRequest(actualRequest, null));
+                throw;
+            }
+            
             return _responseMapper.Convert(matchingInteraction.Response);
         }
     }

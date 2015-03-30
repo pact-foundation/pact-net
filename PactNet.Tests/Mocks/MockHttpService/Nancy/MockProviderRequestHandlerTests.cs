@@ -1,4 +1,5 @@
-﻿using Nancy;
+﻿using System;
+using Nancy;
 using NSubstitute;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Mappers;
@@ -173,6 +174,47 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
                 });
 
             Assert.Throws<PactFailureException>(() => handler.Handle(nancyContext));
+        }
+
+        [Fact]
+        public void Handle_WhenGetMatchingMockInteractionThrows_RequestIsMarkedAsHandled()
+        {
+            const string exceptionMessage = "No matching mock interaction has been registered for the current request";
+            var expectedRequest = new ProviderServiceRequest
+            {
+                Method = HttpVerb.Get,
+                Path = "/Test"
+            };
+            var nancyContext = new NancyContext
+            {
+                Request = new Request("GET", "/Test", "HTTP")
+            };
+
+            var handler = GetSubject();
+
+            _mockRequestMapper
+                .Convert(nancyContext.Request)
+                .Returns(expectedRequest);
+
+            _mockResponseMapper.Convert(Arg.Any<ProviderServiceResponse>())
+                .Returns(new Response
+                {
+                    StatusCode = HttpStatusCode.InternalServerError
+                });
+
+            _mockProviderRepository
+                .When(x => x.GetMatchingTestScopedInteraction(expectedRequest))
+                .Do(x => { throw new PactFailureException(exceptionMessage); });
+
+            try
+            {
+                handler.Handle(nancyContext);
+            }
+            catch (Exception)
+            {
+            }
+
+            _mockProviderRepository.Received(1).AddHandledRequest(Arg.Is<HandledRequest>(x => x.ActualRequest == expectedRequest && x.MatchedInteraction == null));
         }
 
         [Fact]

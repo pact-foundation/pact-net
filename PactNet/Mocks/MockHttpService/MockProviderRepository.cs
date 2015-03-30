@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
-using PactNet.Reporters;
 
 namespace PactNet.Mocks.MockHttpService
 {
     internal class MockProviderRepository : IMockProviderRepository
     {
-        private readonly IReporter _reporter;
         private readonly IProviderServiceRequestComparer _requestComparer;
 
         private readonly List<ProviderServiceInteraction> _testScopedInteractions = new List<ProviderServiceInteraction>();
@@ -21,9 +19,8 @@ namespace PactNet.Mocks.MockHttpService
         private readonly List<HandledRequest> _handledRequests = new List<HandledRequest>();
         public ICollection<HandledRequest> HandledRequests { get { return _handledRequests; } }
 
-        public MockProviderRepository(IReporter reporter, IProviderServiceRequestComparer requestComparer)
+        public MockProviderRepository(IProviderServiceRequestComparer requestComparer)
         {
-            _reporter = reporter;
             _requestComparer = requestComparer;
         }
 
