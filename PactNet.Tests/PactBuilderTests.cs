@@ -9,7 +9,7 @@ namespace PactNet.Tests
 {
     public class PactBuilderTests
     {
-        public IPactBuilder GetSubject()
+        private IPactBuilder GetSubject()
         {
             return new PactBuilder();
         }

@@ -1,6 +1,6 @@
 ﻿namespace PactNet.Mocks.MockHttpService
 {
-    public interface IHttpHost
+    internal interface IHttpHost
     {
         void Start();
         void Stop();

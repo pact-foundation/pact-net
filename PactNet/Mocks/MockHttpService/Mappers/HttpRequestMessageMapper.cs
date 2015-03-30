@@ -6,7 +6,7 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
-    public class HttpRequestMessageMapper : IHttpRequestMessageMapper
+    internal class HttpRequestMessageMapper : IHttpRequestMessageMapper
     {
         private readonly IHttpMethodMapper _httpMethodMapper;
         private readonly IHttpContentMapper _httpContentMapper;

@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using PactNet.Comparers;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Reporters;
 
 namespace PactNet.Mocks.MockHttpService
 {
-    public class MockProviderRepository : IMockProviderRepository
+    internal class MockProviderRepository : IMockProviderRepository
     {
         private readonly IReporter _reporter;
         private readonly IProviderServiceRequestComparer _requestComparer;

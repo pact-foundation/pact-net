@@ -3,7 +3,7 @@ using PactNet.Mappers;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
-    public interface IEncodingMapper : IMapper<string, Encoding>
+    internal interface IEncodingMapper : IMapper<string, Encoding>
     {
     }
 }

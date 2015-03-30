@@ -7,7 +7,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 {
     public class EncodingMapperTests
     {
-        public EncodingMapper GetSubject()
+        private EncodingMapper GetSubject()
         {
             return new EncodingMapper();
         }

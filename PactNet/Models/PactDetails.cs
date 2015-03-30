@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace PactNet.Models
 {
-    public class PactDetails
+    internal class PactDetails
     {
         [JsonProperty(Order = -3, PropertyName = "provider")]
         public Party Provider { get; set; }

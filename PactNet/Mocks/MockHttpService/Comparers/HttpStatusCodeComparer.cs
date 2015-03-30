@@ -2,7 +2,7 @@
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
-    public class HttpStatusCodeComparer : IHttpStatusCodeComparer
+    internal class HttpStatusCodeComparer : IHttpStatusCodeComparer
     {
         public ComparisonResult Compare(int expected, int actual)
         {

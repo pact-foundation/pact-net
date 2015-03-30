@@ -4,7 +4,7 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Nancy
 {
-    public class MockProviderRequestHandler : IMockProviderRequestHandler
+    internal class MockProviderRequestHandler : IMockProviderRequestHandler
     {
         private readonly INancyResponseMapper _responseMapper;
         private readonly IProviderServiceRequestMapper _requestMapper;

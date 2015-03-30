@@ -4,7 +4,7 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
-    public class ProviderServiceRequestComparer : IProviderServiceRequestComparer
+    internal class ProviderServiceRequestComparer : IProviderServiceRequestComparer
     {
         private readonly IHttpMethodComparer _httpMethodComparer;
         private readonly IHttpPathComparer _httpPathComparer;

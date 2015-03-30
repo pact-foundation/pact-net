@@ -8,7 +8,7 @@ using Nancy.Routing;
 
 namespace PactNet.Mocks.MockHttpService.Nancy
 {
-    public class MockProviderNancyRequestDispatcher : IRequestDispatcher
+    internal class MockProviderNancyRequestDispatcher : IRequestDispatcher
     {
         private readonly IMockProviderRequestHandler _requestHandler;
         private readonly IMockProviderAdminRequestHandler _adminRequestHandler;

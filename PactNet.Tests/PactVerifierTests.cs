@@ -23,7 +23,7 @@ namespace PactNet.Tests
         private IProviderServiceValidator _mockProviderServiceValidator;
         private FakeHttpMessageHandler _fakeHttpMessageHandler;
 
-        public IPactVerifier GetSubject()
+        private IPactVerifier GetSubject()
         {
             _providerServiceValidatorFactoryCallInfo = null;
             _mockFileSystem = Substitute.For<IFileSystem>();

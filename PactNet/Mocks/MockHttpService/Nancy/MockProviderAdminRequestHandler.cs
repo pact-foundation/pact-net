@@ -13,7 +13,7 @@ using PactNet.Reporters;
 
 namespace PactNet.Mocks.MockHttpService.Nancy
 {
-    public class MockProviderAdminRequestHandler : IMockProviderAdminRequestHandler
+    internal class MockProviderAdminRequestHandler : IMockProviderAdminRequestHandler
     {
         private readonly IMockProviderRepository _mockProviderRepository;
         private readonly IReporter _reporter;

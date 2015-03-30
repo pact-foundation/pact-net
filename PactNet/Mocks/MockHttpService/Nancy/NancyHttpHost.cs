@@ -5,7 +5,7 @@ using PactNet.Mocks.MockHttpService.Configuration;
 
 namespace PactNet.Mocks.MockHttpService.Nancy
 {
-    public class NancyHttpHost : IHttpHost
+    internal class NancyHttpHost : IHttpHost
     {
         private readonly Uri _baseUri;
         private readonly INancyBootstrapper _bootstrapper;

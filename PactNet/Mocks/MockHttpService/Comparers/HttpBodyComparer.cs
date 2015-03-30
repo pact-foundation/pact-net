@@ -5,7 +5,7 @@ using PactNet.Comparers;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
-    public class HttpBodyComparer : IHttpBodyComparer
+    internal class HttpBodyComparer : IHttpBodyComparer
     {
         //TODO: Remove boolean and add "matching" functionality
         public ComparisonResult Compare(dynamic expected, dynamic actual, bool useStrict = false)

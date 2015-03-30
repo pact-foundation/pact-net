@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
-    public class EncodingMapper : IEncodingMapper
+    internal class EncodingMapper : IEncodingMapper
     {
         private readonly static Dictionary<string, Encoding> Map = new Dictionary<string, Encoding>
         {

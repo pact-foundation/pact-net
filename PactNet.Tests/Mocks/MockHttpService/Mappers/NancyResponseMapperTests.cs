@@ -11,7 +11,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 {
     public class NancyResponseMapperTests
     {
-        public INancyResponseMapper GetSubject()
+        private INancyResponseMapper GetSubject()
         {
             return new NancyResponseMapper();
         }

@@ -2,7 +2,7 @@
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
-    public interface IHttpBodyComparer
+    internal interface IHttpBodyComparer
     {
         ComparisonResult Compare(dynamic expected, dynamic actual, bool useStrict = false);
     }

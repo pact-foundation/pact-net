@@ -5,7 +5,7 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
-    public class HttpMethodMapper : IHttpMethodMapper
+    internal class HttpMethodMapper : IHttpMethodMapper
     {
         private static readonly IDictionary<HttpVerb, HttpMethod> Map = new Dictionary<HttpVerb, HttpMethod>
         {

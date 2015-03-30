@@ -3,7 +3,7 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService
 {
-    public interface IMockProviderRepository
+    internal interface IMockProviderRepository
     {
         ICollection<ProviderServiceInteraction> TestScopedInteractions { get; }
         ICollection<ProviderServiceInteraction> Interactions { get; }

@@ -11,7 +11,7 @@ using PactNet.Reporters;
 
 namespace PactNet.Mocks.MockHttpService.Nancy
 {
-    public class MockProviderNancyBootstrapper : DefaultNancyBootstrapper
+    internal class MockProviderNancyBootstrapper : DefaultNancyBootstrapper
     {
         private readonly string _pactFileDirectory;
 

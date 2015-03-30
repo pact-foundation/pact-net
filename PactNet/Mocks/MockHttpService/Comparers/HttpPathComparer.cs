@@ -2,7 +2,7 @@ using PactNet.Comparers;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
-    public class HttpPathComparer : IHttpPathComparer
+    internal class HttpPathComparer : IHttpPathComparer
     {
         public ComparisonResult Compare(string expected, string actual)
         {

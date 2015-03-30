@@ -2,7 +2,7 @@
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
-    public interface IHttpPathComparer : IComparer<string>
+    internal interface IHttpPathComparer : IComparer<string>
     {
     }
 }

@@ -16,7 +16,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         IHttpContentMapper _mockHttpContentMapper;
         IHttpBodyContentMapper _mockHttpBodyContentMapper;
 
-        public IHttpRequestMessageMapper GetSubject()
+        private IHttpRequestMessageMapper GetSubject()
         {
             _mockHttpMethodMapper = Substitute.For<IHttpMethodMapper>();
             _mockHttpContentMapper = Substitute.For<IHttpContentMapper>();

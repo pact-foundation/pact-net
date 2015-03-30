@@ -5,7 +5,7 @@ using PactNet.Comparers;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
-    public class HttpHeaderComparer : IHttpHeaderComparer
+    internal class HttpHeaderComparer : IHttpHeaderComparer
     {
         public ComparisonResult Compare(IDictionary<string, string> expected, IDictionary<string, string> actual)
         {

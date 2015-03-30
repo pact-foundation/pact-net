@@ -3,7 +3,7 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
-    public class HttpMethodComparer : IHttpMethodComparer
+    internal class HttpMethodComparer : IHttpMethodComparer
     {
         public ComparisonResult Compare(HttpVerb expected, HttpVerb actual)
         {

@@ -4,13 +4,13 @@ using PactNet.Mocks.MockHttpService.Nancy;
 
 namespace PactNet.Tests.IntegrationTests
 {
-    public class IntegrationTestingMockProviderNancyBootstrapper : MockProviderNancyBootstrapper
+    internal class IntegrationTestingMockProviderNancyBootstrapper : MockProviderNancyBootstrapper
     {
         public IntegrationTestingMockProviderNancyBootstrapper()
             : base(null)
         {
-            
         }
+
         protected override void ApplicationStartup(Nancy.TinyIoc.TinyIoCContainer container, Nancy.Bootstrapper.IPipelines pipelines)
         {
             base.ApplicationStartup(container, pipelines);

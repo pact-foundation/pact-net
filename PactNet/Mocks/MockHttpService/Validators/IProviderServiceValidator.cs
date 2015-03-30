@@ -3,7 +3,7 @@ using PactNet.Validators;
 
 namespace PactNet.Mocks.MockHttpService.Validators
 {
-    public interface IProviderServiceValidator : IPactValidator<ProviderServicePactFile>
+    internal interface IProviderServiceValidator : IPactValidator<ProviderServicePactFile>
     {
     }
 }

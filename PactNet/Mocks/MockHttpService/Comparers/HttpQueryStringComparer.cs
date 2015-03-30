@@ -6,7 +6,7 @@ using PactNet.Comparers;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
-    public class HttpQueryStringComparer : IHttpQueryStringComparer
+    internal class HttpQueryStringComparer : IHttpQueryStringComparer
     {
         public ComparisonResult Compare(string expected, string actual)
         {

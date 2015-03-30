@@ -4,7 +4,7 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
-    public interface INancyResponseMapper : IMapper<ProviderServiceResponse, Response>
+    internal interface INancyResponseMapper : IMapper<ProviderServiceResponse, Response>
     {
     }
 }

@@ -6,7 +6,7 @@ using PactNet.Comparers;
 
 namespace PactNet.Reporters
 {
-    public class Reporter : IReporter
+    internal class Reporter : IReporter
     {
         private readonly IReportOutputter _outputter;
         private int _currentTabDepth;

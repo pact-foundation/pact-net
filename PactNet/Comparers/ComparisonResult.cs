@@ -4,8 +4,7 @@ using System.Linq;
 
 namespace PactNet.Comparers
 {
-    //TODO: Can we make this internal?
-    public class ComparisonResult
+    internal class ComparisonResult
     {
         public string Message { get; private set; }
 

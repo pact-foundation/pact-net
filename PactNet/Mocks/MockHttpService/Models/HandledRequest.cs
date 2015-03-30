@@ -1,6 +1,6 @@
 ﻿namespace PactNet.Mocks.MockHttpService.Models
 {
-    public class HandledRequest
+    internal class HandledRequest
     {
         public ProviderServiceRequest ActualRequest { get; private set; }
         public ProviderServiceInteraction MatchedInteraction { get; private set; }

@@ -7,7 +7,7 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
-    public class ProviderServiceResponseComparer : IProviderServiceResponseComparer
+    internal class ProviderServiceResponseComparer : IProviderServiceResponseComparer
     {
         private readonly IHttpStatusCodeComparer _httpStatusCodeComparer;
         private readonly IHttpHeaderComparer _httpHeaderComparer;

@@ -8,7 +8,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 {
     public class HttpMethodMapperTests
     {
-        public IHttpMethodMapper GetSubject()
+        private IHttpMethodMapper GetSubject()
         {
             return new HttpMethodMapper();
         }
