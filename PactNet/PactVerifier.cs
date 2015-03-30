@@ -23,10 +23,15 @@ namespace PactNet
         public ProviderStates ProviderStates { get; private set; }
         public string PactFileUri { get; private set; }
 
-        internal PactVerifier(IFileSystem fileSystem,
+        internal PactVerifier(
+            string consumerName, 
+            Action setUp, 
+            Action tearDown,
+            IFileSystem fileSystem,
             Func<IHttpRequestSender, IProviderServiceValidator> providerServiceValidatorFactory, 
             HttpClient httpClient)
         {
+            SetConsumer(consumerName, setUp, tearDown);
             _fileSystem = fileSystem;
             _providerServiceValidatorFactory = providerServiceValidatorFactory;
             _httpClient = httpClient;
@@ -40,11 +45,13 @@ namespace PactNet
         /// <param name="setUp">A set up action that will be run before each interaction verify. If no action is required please use an empty lambda () => {}.</param>
         /// <param name="tearDown">A tear down action that will be run after each interaction verify. If no action is required please use an empty lambda () => {}.</param>
         public PactVerifier(string consumerName, Action setUp, Action tearDown) : this(
+            consumerName, 
+            setUp, 
+            tearDown,
             new FileSystem(),
             httpRequestSender => new ProviderServiceValidator(httpRequestSender, new Reporter()),
             new HttpClient())
         {
-            SetConsumer(consumerName, setUp, tearDown);
         }
 
         [Obsolete("Please supply this information in the constructor. Will be removed in the next major version.")]
@@ -63,11 +70,6 @@ namespace PactNet
         /// <param name="tearDown">A tear down action that will be run after the interaction verify, if the provider has specified it in the interaction. If no action is required please use an empty lambda () => {}.</param>
         public IPactVerifier ProviderState(string providerState, Action setUp = null, Action tearDown = null)
         {
-            if (ProviderStates == null)
-            {
-                throw new InvalidOperationException("Please intitialise the provider states by first calling the ProviderStatesFor method");
-            }
-
             if (String.IsNullOrEmpty(providerState))
             {
                 throw new ArgumentException("Please supply a non null or empty providerState");
@@ -124,7 +126,7 @@ namespace PactNet
 
             if (!String.IsNullOrEmpty(ConsumerName) && !ConsumerName.Equals(consumerName))
             {
-                throw new ArgumentException("Please supply the same consumerName that was defined when calling the ProviderStatesFor method");
+                throw new ArgumentException("Please supply the same consumerName that was defined when creating a PactVerifier object");
             }
 
             ConsumerName = consumerName;
@@ -223,7 +225,7 @@ namespace PactNet
         {
             if (!String.IsNullOrEmpty(ConsumerName) && ProviderStates != null)
             {
-                throw new ArgumentException("The consumer details and have already supplied in the constructor. Please remove usages of ProviderStatesFor as it has been deprecated.");
+                throw new ArgumentException("The consumer details have already supplied in the constructor. Please remove usages of ProviderStatesFor as it has been deprecated.");
             }
 
             if (String.IsNullOrEmpty(consumerName))
