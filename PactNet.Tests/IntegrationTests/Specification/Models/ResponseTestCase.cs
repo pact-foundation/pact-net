@@ -26,7 +26,7 @@ namespace PactNet.Tests.IntegrationTests.Specification.Models
 
             if (Match)
             {
-                Assert.False(result.HasFailures, "There should not be any errors");
+                Assert.False(result.HasFailure, "There should not be any errors");
             }
             else
             {

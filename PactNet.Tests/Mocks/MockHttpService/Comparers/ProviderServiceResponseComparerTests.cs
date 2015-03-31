@@ -32,7 +32,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.False(result.HasFailures, "There should not be any errors");
+            Assert.False(result.HasFailure, "There should not be any errors");
         }
 
         [Fact]
@@ -80,7 +80,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.False(result.HasFailures, "There should not be any errors");
+            Assert.False(result.HasFailure, "There should not be any errors");
         }
 
         [Fact]
@@ -108,7 +108,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.False(result.HasFailures, "There should not be any errors");
+            Assert.False(result.HasFailure, "There should not be any errors");
         }
 
         [Fact]
@@ -166,7 +166,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.False(result.HasFailures, "There should not be any errors");
+            Assert.False(result.HasFailure, "There should not be any errors");
         }
 
         [Fact]
@@ -278,7 +278,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.False(result.HasFailures, "There should not be any errors");
+            Assert.False(result.HasFailure, "There should not be any errors");
         }
 
         [Fact]
@@ -310,7 +310,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.False(result.HasFailures, "There should not be any errors");
+            Assert.False(result.HasFailure, "There should not be any errors");
         }
 
         [Fact]
@@ -343,7 +343,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.False(result.HasFailures, "There should not be any errors");
+            Assert.False(result.HasFailure, "There should not be any errors");
         }
 
         [Fact]
@@ -504,7 +504,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             var result = comparer.Compare(expected, actual);
 
-            Assert.False(result.HasFailures, "There should not be any errors");
+            Assert.False(result.HasFailure, "There should not be any errors");
         }
 
         [Fact]

@@ -39,7 +39,7 @@ namespace PactNet.Reporters
                 return;
             }
 
-            if (comparisonResult.HasFailures)
+            if (comparisonResult.HasFailure)
             {
                 var failureBuilder = new StringBuilder();
                 var shallowFailureCount = comparisonResult.ShallowFailureCount;

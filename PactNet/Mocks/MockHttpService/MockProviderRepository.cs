@@ -75,7 +75,7 @@ namespace PactNet.Mocks.MockHttpService
             foreach (var testScopedInteraction in TestScopedInteractions)
             {
                 var requestComparisonResult = _requestComparer.Compare(testScopedInteraction.Request, request);
-                if (requestComparisonResult != null && !requestComparisonResult.HasFailures)
+                if (requestComparisonResult != null && !requestComparisonResult.HasFailure)
                 {
                     matchingInteractions.Add(testScopedInteraction);
                 }

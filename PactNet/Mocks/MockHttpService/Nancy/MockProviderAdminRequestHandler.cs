@@ -111,7 +111,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                 }
             }
 
-            if (!comparisonResult.HasFailures)
+            if (!comparisonResult.HasFailure)
             {
                 return GenerateResponse(HttpStatusCode.OK, "Interactions matched");
             }

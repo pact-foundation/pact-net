@@ -115,7 +115,7 @@ namespace PactNet.Mocks.MockHttpService.Validators
                 _reporter.ResetIndentation();
                 _reporter.ReportFailureReasons(comparisonResult);
 
-                if (comparisonResult.HasFailures)
+                if (comparisonResult.HasFailure)
                 {
                     throw new PactFailureException("See output for failure details.");
                 }
