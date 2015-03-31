@@ -22,6 +22,11 @@ namespace PactNet.Reporters
         {
         }
 
+        public void ReportInfo(string infoMessage)
+        {
+            _outputter.WriteInfo(infoMessage, _currentTabDepth);
+        }
+
         public void ReportSummary(ComparisonResult comparisonResult)
         {
             WriteSummary(comparisonResult);
@@ -30,6 +35,16 @@ namespace PactNet.Reporters
         public void ReportFailureReasons(ComparisonResult comparisonResult)
         {
             WriteFailureReasons(comparisonResult);
+        }
+
+        public void Indent()
+        {
+            _currentTabDepth++;
+        }
+
+        public void ResetIndentation()
+        {
+            _currentTabDepth = 0;
         }
 
         private void WriteSummary(ComparisonResult comparisonResult, int tabDepth = 0)
@@ -80,32 +95,16 @@ namespace PactNet.Reporters
                 return;
             }
 
-            var failures = comparisonResult.Failures.ToList();
-            if (!failures.Any())
+            if (!comparisonResult.HasFailure)
             {
                 return;
             }
 
             _outputter.WriteInfo(Environment.NewLine + "Failures:");
-            foreach (var failure in failures)
+            foreach (var failure in comparisonResult.Failures)
             {
                 _outputter.WriteError(String.Format("{0}{1}) {2}", Environment.NewLine, ++_failureCount, failure.Result));
             }
-        }
-
-        public void ReportInfo(string infoMessage)
-        {
-            _outputter.WriteInfo(infoMessage, _currentTabDepth);
-        }
-
-        public void Indent()
-        {
-            _currentTabDepth++;
-        }
-
-        public void ResetIndentation()
-        {
-            _currentTabDepth = 0;
         }
     }
 }

@@ -11,7 +11,7 @@ namespace PactNet.Reporters
         {
             var indentation = GetIndentation(tabDepth);
 
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.Black;
             Console.WriteLine(indentation + infoMessage);
             Console.ResetColor();
         }
