@@ -1,6 +1,6 @@
 ﻿namespace PactNet.Reporters
 {
-    public interface IReportOutputter
+    internal interface IReportOutputter
     {
         void WriteInfo(string infoMessage, int tabDepth = 0);
         void WriteError(string errorMessage, int tabDepth = 0);
