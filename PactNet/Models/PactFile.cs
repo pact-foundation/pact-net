@@ -2,7 +2,7 @@
 
 namespace PactNet.Models
 {
-    internal class PactFile : PactDetails
+    public class PactFile : PactDetails
     {
         [JsonProperty(PropertyName = "metadata")]
         public dynamic Metadata { get; private set; }

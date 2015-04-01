@@ -2,7 +2,7 @@
 
 namespace PactNet.Configuration.Json.Converters
 {
-    internal class LowercaseStringEnumConverter : StringEnumConverter
+    public class LowercaseStringEnumConverter : StringEnumConverter
     {
         public LowercaseStringEnumConverter()
         {

@@ -3,7 +3,7 @@ using PactNet.Models;
 
 namespace PactNet.Mocks.MockHttpService.Models
 {
-    internal class ProviderServiceInteraction : Interaction
+    public class ProviderServiceInteraction : Interaction
     {
         [JsonProperty(PropertyName = "request")]
         public ProviderServiceRequest Request { get; set; }

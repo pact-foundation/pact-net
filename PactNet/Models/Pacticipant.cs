@@ -2,7 +2,7 @@
 
 namespace PactNet.Models
 {
-    internal class Pacticipant
+    public class Pacticipant
     {
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }

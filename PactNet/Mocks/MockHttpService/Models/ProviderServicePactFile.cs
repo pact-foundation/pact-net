@@ -4,7 +4,7 @@ using PactNet.Models;
 
 namespace PactNet.Mocks.MockHttpService.Models
 {
-    internal class ProviderServicePactFile : PactFile
+    public class ProviderServicePactFile : PactFile
     {
         [JsonProperty(PropertyName = "interactions")]
         public IEnumerable<ProviderServiceInteraction> Interactions { get; set; }
