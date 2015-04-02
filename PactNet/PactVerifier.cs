@@ -24,17 +24,17 @@ namespace PactNet
         public string PactFileUri { get; private set; }
 
         internal PactVerifier(
-            string consumerName, 
             Action setUp, 
             Action tearDown,
             IFileSystem fileSystem,
             Func<IHttpRequestSender, IProviderServiceValidator> providerServiceValidatorFactory, 
             HttpClient httpClient)
         {
-            SetConsumer(consumerName, setUp, tearDown);
             _fileSystem = fileSystem;
             _providerServiceValidatorFactory = providerServiceValidatorFactory;
             _httpClient = httpClient;
+
+            ProviderStates = new ProviderStates(setUp, tearDown);
         }
 
         /// <summary>
@@ -44,8 +44,7 @@ namespace PactNet
         /// <param name="consumerName">The name of the consumer being verified.</param>
         /// <param name="setUp">A set up action that will be run before each interaction verify. If no action is required please use an empty lambda () => {}.</param>
         /// <param name="tearDown">A tear down action that will be run after each interaction verify. If no action is required please use an empty lambda () => {}.</param>
-        public PactVerifier(string consumerName, Action setUp, Action tearDown) : this(
-            consumerName, 
+        public PactVerifier(Action setUp, Action tearDown) : this(
             setUp, 
             tearDown,
             new FileSystem(),
@@ -57,7 +56,8 @@ namespace PactNet
         [Obsolete("Please supply this information in the constructor. Will be removed in the next major version.")]
         public IPactVerifier ProviderStatesFor(string consumerName, Action setUp = null, Action tearDown = null)
         {
-            SetConsumer(consumerName, setUp, tearDown);
+            ProviderStates = new ProviderStates(setUp, tearDown);
+
             return this;
         }
 
@@ -122,11 +122,6 @@ namespace PactNet
             if (String.IsNullOrEmpty(consumerName))
             {
                 throw new ArgumentException("Please supply a non null or empty consumerName");
-            }
-
-            if (!String.IsNullOrEmpty(ConsumerName) && !ConsumerName.Equals(consumerName))
-            {
-                throw new ArgumentException("Please supply the same consumerName that was defined when creating a PactVerifier object");
             }
 
             ConsumerName = consumerName;
@@ -219,27 +214,6 @@ namespace PactNet
             {
                 disposable.Dispose();
             }
-        }
-
-        private void SetConsumer(string consumerName, Action setUp, Action tearDown)
-        {
-            if (!String.IsNullOrEmpty(ConsumerName) && ProviderStates != null)
-            {
-                throw new ArgumentException("The consumer details have already supplied in the constructor. Please remove usages of ProviderStatesFor as it has been deprecated.");
-            }
-
-            if (String.IsNullOrEmpty(consumerName))
-            {
-                throw new ArgumentException("Please supply a non null or empty consumerName");
-            }
-
-            if (!String.IsNullOrEmpty(ConsumerName) && !ConsumerName.Equals(consumerName))
-            {
-                throw new ArgumentException("Please supply the same consumerName that was defined when calling the HonoursPactWith method");
-            }
-
-            ConsumerName = consumerName;
-            ProviderStates = new ProviderStates(setUp, tearDown);
         }
     }
 }

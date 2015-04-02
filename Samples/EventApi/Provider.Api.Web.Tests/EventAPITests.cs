@@ -13,7 +13,7 @@ namespace Provider.Api.Web.Tests
         public void EnsureEventApiHonoursPactWithConsumer()
         {
             //Arrange
-            IPactVerifier pactVerifier = new PactVerifier("Consumer", () => {}, () => {});
+            IPactVerifier pactVerifier = new PactVerifier(() => {}, () => {});
 
             pactVerifier
                 .ProviderState(
