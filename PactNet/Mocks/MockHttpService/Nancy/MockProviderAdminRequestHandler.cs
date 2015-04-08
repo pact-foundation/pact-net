@@ -18,15 +18,18 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         private readonly IMockProviderRepository _mockProviderRepository;
         private readonly IFileSystem _fileSystem;
         private readonly string _pactFileDirectory;
+        private readonly ILogger _logger;
 
         public MockProviderAdminRequestHandler(
             IMockProviderRepository mockProviderRepository,
             IFileSystem fileSystem,
-            PactFileInfo pactFileInfo)
+            PactFileInfo pactFileInfo,
+            ILogger logger)
         {
             _mockProviderRepository = mockProviderRepository;
             _fileSystem = fileSystem;
             _pactFileDirectory = pactFileInfo.Directory ?? Constants.DefaultPactFileDirectory;
+            _logger = logger;
         }
 
         public Response Handle(NancyContext context)
@@ -63,6 +66,9 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         {
             _mockProviderRepository.ClearHandledRequests();
             _mockProviderRepository.ClearTestScopedInteractions();
+
+            _logger.Log("Cleared interactions");
+            
             return GenerateResponse(HttpStatusCode.OK, "Deleted interactions");
         }
 
@@ -70,14 +76,25 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         {
             var interactionJson = ReadContent(context.Request.Body);
             var interaction = JsonConvert.DeserializeObject<ProviderServiceInteraction>(interactionJson);
-
             _mockProviderRepository.AddInteraction(interaction);
+
+            _logger.Log(String.Format("Registered expected interaction {0} {1}", interaction.Request.Method.ToString().ToUpperInvariant(), interaction.Request.Path));
+            _logger.Log(JsonConvert.SerializeObject(interaction, Formatting.Indented), LogType.Debug);
 
             return GenerateResponse(HttpStatusCode.OK, "Added interaction");
         }
 
         private Response HandleGetInteractionsVerificationRequest()
         {
+            //TODO: add logs for this! Trello has the example
+            //Verifying - actual interactions do not match expected interactions for example "ZooApp::AnimalServiceClient.find_alligator_by_name when an alligator by the given name does not exist returns nil". 
+//Missing requests:
+//	GET /alligators/turds
+
+//Unexpected requests:
+//	GET /alligators/tester
+
+
             //Check all registered interactions have been used once and only once
             var registeredInteractions = _mockProviderRepository.TestScopedInteractions;
 
@@ -91,15 +108,24 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
                     if (interactionUsages == null || !interactionUsages.Any())
                     {
+                        var missingRequestMethod = registeredInteraction.Request != null ? registeredInteraction.Request.Method.ToString().ToUpperInvariant() : "No Method";
+                        var missingRequestPath = registeredInteraction.Request != null ? registeredInteraction.Request.Path : "No Path";
+
                         comparisonResult.RecordFailure(String.Format("The interaction with description '{0}' and provider state '{1}', was not used by the test. Missing request {2} {3}.", 
                             registeredInteraction.Description, 
                             registeredInteraction.ProviderState,
-                            registeredInteraction.Request != null ? registeredInteraction.Request.Method.ToString().ToUpperInvariant() : "No Method", 
-                            registeredInteraction.Request != null ? registeredInteraction.Request.Path : "No Path"));
+                            missingRequestMethod, 
+                            missingRequestPath));
+
+                        _logger.Log("Verifying - actual interactions do not match expected interactions", LogType.Warn);
+                        _logger.Log(String.Format("Missing request: {0} {1}", missingRequestMethod, missingRequestPath), LogType.Warn); //TODO: Make a collection and write at bottom
                     }
                     else if (interactionUsages.Count() > 1)
                     {
                         comparisonResult.RecordFailure(String.Format("The interaction with description '{0}' and provider state '{1}', was used {2} time/s by the test.", registeredInteraction.Description, registeredInteraction.ProviderState, interactionUsages.Count()));
+
+                        _logger.Log("Verifying - actual interactions do not match expected interactions", LogType.Warn);
+                        //TODO: More info here
                     }
                 }
             }
@@ -108,11 +134,33 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                 if (_mockProviderRepository.HandledRequests != null && _mockProviderRepository.HandledRequests.Any())
                 {
                     comparisonResult.RecordFailure("No interactions were registered, however the mock provider service was called.");
+
+                    _logger.Log("Verifying - actual interactions do not match expected interactions", LogType.Warn);
+                    //TODO: More info here
                 }
             }
 
+            //TODO: Test this functionality
+            if (_mockProviderRepository.HandledRequests != null && _mockProviderRepository.HandledRequests.Any(x => x.MatchedInteraction == null))
+            {
+                foreach (var handledRequest in _mockProviderRepository.HandledRequests.Where(x => x.MatchedInteraction == null))
+                {
+                    var unexpectedRequestMethod = handledRequest.ActualRequest != null ? handledRequest.ActualRequest.Method.ToString().ToUpperInvariant() : "No Method";
+                    var unexpectedRequestPath = handledRequest.ActualRequest != null ? handledRequest.ActualRequest.Path : "No Path";
+
+                    comparisonResult.RecordFailure(String.Format("An unexpected request {0} {1} was seen by the mock provider service.",
+                            unexpectedRequestMethod,
+                            unexpectedRequestPath));
+
+                    _logger.Log("Verifying - actual interactions do not match expected interactions", LogType.Warn); //TODO: Should only print this once for a failure
+                    _logger.Log(String.Format("Unexpected request: {0} {1}", unexpectedRequestMethod, unexpectedRequestPath), LogType.Warn); //TODO: Make a collection and write at bottom
+                }
+            }
+            
             if (!comparisonResult.HasFailure)
             {
+                _logger.Log("Verifying - interactions matched");
+
                 return GenerateResponse(HttpStatusCode.OK, "Interactions matched");
             }
             

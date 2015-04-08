@@ -20,16 +20,19 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
     {
         private IMockProviderRepository _mockProviderRepository;
         private IFileSystem _mockFileSystem;
+        private ILogger _mockLogger;
 
         private IMockProviderAdminRequestHandler GetSubject()
         {
             _mockProviderRepository = Substitute.For<IMockProviderRepository>();
             _mockFileSystem = Substitute.For<IFileSystem>();
+            _mockLogger = Substitute.For<ILogger>();
 
             return new MockProviderAdminRequestHandler(
                 _mockProviderRepository,
                 _mockFileSystem,
-                new PactFileInfo(null));
+                new PactFileInfo(null),
+                _mockLogger);
         }
 
         [Fact]

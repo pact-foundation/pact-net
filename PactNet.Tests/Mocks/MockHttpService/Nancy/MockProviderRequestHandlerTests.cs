@@ -14,14 +14,16 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         private IProviderServiceRequestMapper _mockRequestMapper;
         private INancyResponseMapper _mockResponseMapper;
         private IMockProviderRepository _mockProviderRepository;
+        private ILogger _mockLogger;
 
         private IMockProviderRequestHandler GetSubject()
         {
             _mockRequestMapper = Substitute.For<IProviderServiceRequestMapper>();
             _mockResponseMapper = Substitute.For<INancyResponseMapper>();
             _mockProviderRepository = Substitute.For<IMockProviderRepository>();
+            _mockLogger = Substitute.For<ILogger>();
 
-            return new MockProviderRequestHandler(_mockRequestMapper, _mockResponseMapper, _mockProviderRepository);
+            return new MockProviderRequestHandler(_mockRequestMapper, _mockResponseMapper, _mockProviderRepository, _mockLogger);
         }
 
         [Fact]
