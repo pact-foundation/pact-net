@@ -130,18 +130,8 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                     }
                 }
             }
-            else
-            {
-                if (_mockProviderRepository.HandledRequests != null && _mockProviderRepository.HandledRequests.Any())
-                {
-                    comparisonResult.RecordFailure("No interactions were registered, however the mock provider service was called.");
 
-                    _log.Warn("Verifying - actual interactions do not match expected interactions");
-                    //TODO: More info here
-                }
-            }
-
-            //TODO: Test this functionality
+            //Have we seen any request that has not be registered in the test?
             if (_mockProviderRepository.HandledRequests != null && _mockProviderRepository.HandledRequests.Any(x => x.MatchedInteraction == null))
             {
                 foreach (var handledRequest in _mockProviderRepository.HandledRequests.Where(x => x.MatchedInteraction == null))
@@ -157,7 +147,17 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                     _log.WarnFormat("Unexpected request: {0} {1}", unexpectedRequestMethod, unexpectedRequestPath); //TODO: Make a collection and write at bottom
                 }
             }
-            
+
+            if (!registeredInteractions.Any() && 
+                _mockProviderRepository.HandledRequests != null && 
+                _mockProviderRepository.HandledRequests.Any())
+            {
+                comparisonResult.RecordFailure("No interactions were registered, however the mock provider service was called.");
+
+                _log.Warn("Verifying - actual interactions do not match expected interactions");
+                //TODO: More info here
+            }
+
             if (!comparisonResult.HasFailure)
             {
                 _log.Info("Verifying - interactions matched");

@@ -366,6 +366,42 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         }
 
         [Fact]
+        public void Handle_WithAGetRequestToInteractionsVerificationAndAnInteractionWasSentButNotRegisteredByTheTest_ReturnsFailureResponseContent()
+        {
+            const string failure = "An unexpected request POST /tester was seen by the mock provider service.";
+            var context = new NancyContext
+            {
+                Request = new Request("GET", "/interactions/verification", "http")
+            };
+
+            var handler = GetSubject();
+
+            var handledRequest = new ProviderServiceRequest();
+            var handledInteraction = new ProviderServiceInteraction { Request = handledRequest };
+
+            var unExpectedRequest = new ProviderServiceRequest { Method = HttpVerb.Post, Path = "/tester" };
+
+            _mockProviderRepository.TestScopedInteractions
+                .Returns(new List<ProviderServiceInteraction>
+                {
+                    handledInteraction
+                });
+
+            _mockProviderRepository.HandledRequests
+                .Returns(new List<HandledRequest>
+                {
+                    new HandledRequest(handledRequest, handledInteraction),
+                    new HandledRequest(unExpectedRequest, null)
+                });
+
+            var response = handler.Handle(context);
+
+            var content = ReadResponseContent(response);
+
+            Assert.Equal(failure, content);
+        }
+
+        [Fact]
         public void Handle_WithAGetRequestToInteractionsVerificationAndAFailureOcurrs_ReturnsFailureResponseContent()
         {
             const string failure = "The interaction with description '' and provider state '', was not used by the test. Missing request No Method No Path.";
