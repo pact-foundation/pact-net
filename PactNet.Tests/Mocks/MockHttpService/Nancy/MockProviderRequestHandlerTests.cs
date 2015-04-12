@@ -1,6 +1,7 @@
 ﻿using System;
 using Nancy;
 using NSubstitute;
+using PactNet.Logging;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
@@ -14,16 +15,16 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         private IProviderServiceRequestMapper _mockRequestMapper;
         private INancyResponseMapper _mockResponseMapper;
         private IMockProviderRepository _mockProviderRepository;
-        private ILogger _mockLogger;
+        private ILog _mockLog;
 
         private IMockProviderRequestHandler GetSubject()
         {
             _mockRequestMapper = Substitute.For<IProviderServiceRequestMapper>();
             _mockResponseMapper = Substitute.For<INancyResponseMapper>();
             _mockProviderRepository = Substitute.For<IMockProviderRepository>();
-            _mockLogger = Substitute.For<ILogger>();
+            _mockLog = Substitute.For<ILog>();
 
-            return new MockProviderRequestHandler(_mockRequestMapper, _mockResponseMapper, _mockProviderRepository, _mockLogger);
+            return new MockProviderRequestHandler(_mockRequestMapper, _mockResponseMapper, _mockProviderRepository, _mockLog);
         }
 
         [Fact]

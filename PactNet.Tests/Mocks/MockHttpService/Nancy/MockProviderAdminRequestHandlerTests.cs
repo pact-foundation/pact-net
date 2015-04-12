@@ -8,6 +8,7 @@ using Nancy;
 using Nancy.IO;
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
+using PactNet.Logging;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Nancy;
@@ -20,19 +21,19 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
     {
         private IMockProviderRepository _mockProviderRepository;
         private IFileSystem _mockFileSystem;
-        private ILogger _mockLogger;
+        private ILog _mockLog;
 
         private IMockProviderAdminRequestHandler GetSubject()
         {
             _mockProviderRepository = Substitute.For<IMockProviderRepository>();
             _mockFileSystem = Substitute.For<IFileSystem>();
-            _mockLogger = Substitute.For<ILogger>();
+            _mockLog = Substitute.For<ILog>();
 
             return new MockProviderAdminRequestHandler(
                 _mockProviderRepository,
                 _mockFileSystem,
                 new PactFileInfo(null),
-                _mockLogger);
+                _mockLog);
         }
 
         [Fact]

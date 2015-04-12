@@ -1,6 +1,7 @@
 ﻿using System;
 using Nancy.Bootstrapper;
 using Nancy.Hosting.Self;
+using PactNet.Logging;
 using PactNet.Mocks.MockHttpService.Configuration;
 
 namespace PactNet.Mocks.MockHttpService.Nancy
@@ -9,14 +10,14 @@ namespace PactNet.Mocks.MockHttpService.Nancy
     {
         private readonly Uri _baseUri;
         private readonly INancyBootstrapper _bootstrapper;
-        private readonly ILogger _logger;
+        private readonly ILog _log;
         private NancyHost _host;
 
         internal NancyHttpHost(Uri baseUri, INancyBootstrapper bootstrapper)
         {
             _baseUri = baseUri;
             _bootstrapper = bootstrapper;
-            _logger = new Logger();
+            _log = LogProvider.GetLogger(typeof(NancyHttpHost));
         }
 
         public NancyHttpHost(Uri baseUri, string pactFileDirectory)
@@ -30,7 +31,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             Stop();
             _host = new NancyHost(_bootstrapper, NancyConfig.HostConfiguration, _baseUri);
             _host.Start();
-            _logger.Log("Started " + _baseUri.OriginalString);
+            _log.InfoFormat("Started {0}", _baseUri.OriginalString);
         }
 
         public void Stop()
@@ -40,7 +41,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                 _host.Stop();
                 _host.Dispose();
                 _host = null;
-                _logger.Log("Stopped " + _baseUri.OriginalString);
+                _log.InfoFormat("Stopped {0}", _baseUri.OriginalString);
             }
         }
     }

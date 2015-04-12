@@ -44,3 +44,4 @@ Build/PactNet*.nupkg
 /packages/*
 !packages/repositories.config
 /Build/coverage
+[Ll]ogs

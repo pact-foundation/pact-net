@@ -8,6 +8,7 @@ using Nancy;
 using Newtonsoft.Json;
 using PactNet.Comparers;
 using PactNet.Configuration.Json;
+using PactNet.Logging;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
 
@@ -18,18 +19,18 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         private readonly IMockProviderRepository _mockProviderRepository;
         private readonly IFileSystem _fileSystem;
         private readonly string _pactFileDirectory;
-        private readonly ILogger _logger;
+        private readonly ILog _log;
 
         public MockProviderAdminRequestHandler(
             IMockProviderRepository mockProviderRepository,
             IFileSystem fileSystem,
             PactFileInfo pactFileInfo,
-            ILogger logger)
+            ILog log)
         {
             _mockProviderRepository = mockProviderRepository;
             _fileSystem = fileSystem;
             _pactFileDirectory = pactFileInfo.Directory ?? Constants.DefaultPactFileDirectory;
-            _logger = logger;
+            _log = log;
         }
 
         public Response Handle(NancyContext context)
@@ -67,7 +68,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             _mockProviderRepository.ClearHandledRequests();
             _mockProviderRepository.ClearTestScopedInteractions();
 
-            _logger.Log("Cleared interactions");
+            _log.Info("Cleared interactions");
             
             return GenerateResponse(HttpStatusCode.OK, "Deleted interactions");
         }
@@ -78,8 +79,8 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             var interaction = JsonConvert.DeserializeObject<ProviderServiceInteraction>(interactionJson);
             _mockProviderRepository.AddInteraction(interaction);
 
-            _logger.Log(String.Format("Registered expected interaction {0} {1}", interaction.Request.Method.ToString().ToUpperInvariant(), interaction.Request.Path));
-            _logger.Log(JsonConvert.SerializeObject(interaction, Formatting.Indented), LogType.Debug);
+            _log.InfoFormat("Registered expected interaction {0} {1}", interaction.Request.Method.ToString().ToUpperInvariant(), interaction.Request.Path);
+            _log.Debug(JsonConvert.SerializeObject(interaction, Formatting.Indented));
 
             return GenerateResponse(HttpStatusCode.OK, "Added interaction");
         }
@@ -117,14 +118,14 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                             missingRequestMethod, 
                             missingRequestPath));
 
-                        _logger.Log("Verifying - actual interactions do not match expected interactions", LogType.Warn);
-                        _logger.Log(String.Format("Missing request: {0} {1}", missingRequestMethod, missingRequestPath), LogType.Warn); //TODO: Make a collection and write at bottom
+                        _log.Warn("Verifying - actual interactions do not match expected interactions");
+                        _log.WarnFormat("Missing request: {0} {1}", missingRequestMethod, missingRequestPath); //TODO: Make a collection and write at bottom
                     }
                     else if (interactionUsages.Count() > 1)
                     {
                         comparisonResult.RecordFailure(String.Format("The interaction with description '{0}' and provider state '{1}', was used {2} time/s by the test.", registeredInteraction.Description, registeredInteraction.ProviderState, interactionUsages.Count()));
 
-                        _logger.Log("Verifying - actual interactions do not match expected interactions", LogType.Warn);
+                        _log.Warn("Verifying - actual interactions do not match expected interactions");
                         //TODO: More info here
                     }
                 }
@@ -135,7 +136,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                 {
                     comparisonResult.RecordFailure("No interactions were registered, however the mock provider service was called.");
 
-                    _logger.Log("Verifying - actual interactions do not match expected interactions", LogType.Warn);
+                    _log.Warn("Verifying - actual interactions do not match expected interactions");
                     //TODO: More info here
                 }
             }
@@ -152,14 +153,14 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                             unexpectedRequestMethod,
                             unexpectedRequestPath));
 
-                    _logger.Log("Verifying - actual interactions do not match expected interactions", LogType.Warn); //TODO: Should only print this once for a failure
-                    _logger.Log(String.Format("Unexpected request: {0} {1}", unexpectedRequestMethod, unexpectedRequestPath), LogType.Warn); //TODO: Make a collection and write at bottom
+                    _log.Warn("Verifying - actual interactions do not match expected interactions"); //TODO: Should only print this once for a failure
+                    _log.WarnFormat("Unexpected request: {0} {1}", unexpectedRequestMethod, unexpectedRequestPath); //TODO: Make a collection and write at bottom
                 }
             }
             
             if (!comparisonResult.HasFailure)
             {
-                _logger.Log("Verifying - interactions matched");
+                _log.Info("Verifying - interactions matched");
 
                 return GenerateResponse(HttpStatusCode.OK, "Interactions matched");
             }

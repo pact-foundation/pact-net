@@ -1,51 +1,29 @@
 ﻿using System;
 using Nancy;
 using Newtonsoft.Json;
+using PactNet.Logging;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Nancy
 {
-    public enum LogType
-    {
-        Debug,
-        Info,
-        Error,
-        Warn
-    }
-
-    public interface ILogger
-    {
-        void Log(string message, LogType type = LogType.Info);
-    }
-
-    public class Logger : ILogger
-    {
-        //need to write to /log/
-
-        public void Log(string message, LogType type = LogType.Info)
-        {
-            
-        }
-    }
-
     internal class MockProviderRequestHandler : IMockProviderRequestHandler
     {
         private readonly INancyResponseMapper _responseMapper;
         private readonly IProviderServiceRequestMapper _requestMapper;
         private readonly IMockProviderRepository _mockProviderRepository;
-        private readonly ILogger _logger;
+        private readonly ILog _log;
 
         public MockProviderRequestHandler(
             IProviderServiceRequestMapper requestMapper,
             INancyResponseMapper responseMapper,
             IMockProviderRepository mockProviderRepository,
-            ILogger logger)
+            ILog log)
         {
             _requestMapper = requestMapper;
             _responseMapper = responseMapper;
             _mockProviderRepository = mockProviderRepository;
-            _logger = logger;
+            _log = log;
         }
 
         public Response Handle(NancyContext context)
@@ -59,8 +37,8 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             var actualRequestMethod = actualRequest.Method.ToString().ToUpperInvariant();
             var actualRequestPath = actualRequest.Path;
 
-            _logger.Log(String.Format("Received request {0} {1}", actualRequestMethod, actualRequestPath));
-            _logger.Log(JsonConvert.SerializeObject(actualRequest, Formatting.Indented), LogType.Debug);
+            _log.InfoFormat("Received request {0} {1}", actualRequestMethod, actualRequestPath);
+            _log.Debug(JsonConvert.SerializeObject(actualRequest, Formatting.Indented));
 
             ProviderServiceInteraction matchingInteraction;
             
@@ -69,12 +47,12 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                 matchingInteraction = _mockProviderRepository.GetMatchingTestScopedInteraction(actualRequest);
                 _mockProviderRepository.AddHandledRequest(new HandledRequest(actualRequest, matchingInteraction));
 
-                _logger.Log(String.Format("Found matching response for {0} {1}", actualRequestMethod, actualRequestPath));
-                _logger.Log(JsonConvert.SerializeObject(matchingInteraction.Response, Formatting.Indented), LogType.Debug);
+                _log.InfoFormat("Found matching response for {0} {1}", actualRequestMethod, actualRequestPath);
+                _log.Debug(JsonConvert.SerializeObject(matchingInteraction.Response, Formatting.Indented));
             }
             catch (Exception)
             {
-                _logger.Log(String.Format("No matching interaction found for {0} {1}", actualRequestMethod, actualRequestPath), LogType.Error);
+                _log.InfoFormat("No matching interaction found for {0} {1}", actualRequestMethod, actualRequestPath);
                 _mockProviderRepository.AddHandledRequest(new HandledRequest(actualRequest, null));
                 throw;
             }

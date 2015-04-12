@@ -2,6 +2,7 @@
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
+using Serilog;
 
 namespace PactNet
 {
@@ -15,6 +16,10 @@ namespace PactNet
         internal PactBuilder(Func<int, bool, IMockProviderService> mockProviderServiceFactory)
         {
             _mockProviderServiceFactory = mockProviderServiceFactory;
+
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.RollingFile(@"..\..\logs\log.txt")
+                .CreateLogger();
         }
 
         public PactBuilder()
