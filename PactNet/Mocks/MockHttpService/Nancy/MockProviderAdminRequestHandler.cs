@@ -87,20 +87,19 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
         private Response HandleGetInteractionsVerificationRequest()
         {
+            var missingRequests = new List<string>();
+            var unexpectedRequests = new List<string>();
+
+
             //TODO: add logs for this! Trello has the example
-            //Verifying - actual interactions do not match expected interactions for example "ZooApp::AnimalServiceClient.find_alligator_by_name when an alligator by the given name does not exist returns nil". 
-//Missing requests:
-//	GET /alligators/turds
+            //TODO: add the test name, so that we know what test
 
-//Unexpected requests:
-//	GET /alligators/tester
-
-
-            //Check all registered interactions have been used once and only once
+            
             var registeredInteractions = _mockProviderRepository.TestScopedInteractions;
 
             var comparisonResult = new ComparisonResult();
 
+            //Check all registered interactions have been used once and only once
             if (registeredInteractions.Any())
             {
                 foreach (var registeredInteraction in registeredInteractions)
@@ -118,20 +117,18 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                             missingRequestMethod, 
                             missingRequestPath));
 
-                        _log.Warn("Verifying - actual interactions do not match expected interactions");
-                        _log.WarnFormat("Missing request: {0} {1}", missingRequestMethod, missingRequestPath); //TODO: Make a collection and write at bottom
+                        missingRequests.Add(String.Format("{0} {1}", missingRequestMethod, missingRequestPath));
                     }
                     else if (interactionUsages.Count() > 1)
                     {
                         comparisonResult.RecordFailure(String.Format("The interaction with description '{0}' and provider state '{1}', was used {2} time/s by the test.", registeredInteraction.Description, registeredInteraction.ProviderState, interactionUsages.Count()));
 
-                        _log.Warn("Verifying - actual interactions do not match expected interactions");
-                        //TODO: More info here
+                        //TODO: Log info required here
                     }
                 }
             }
 
-            //Have we seen any request that has not be registered in the test?
+            //Have we seen any request that has not be registered by the test?
             if (_mockProviderRepository.HandledRequests != null && _mockProviderRepository.HandledRequests.Any(x => x.MatchedInteraction == null))
             {
                 foreach (var handledRequest in _mockProviderRepository.HandledRequests.Where(x => x.MatchedInteraction == null))
@@ -140,22 +137,21 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                     var unexpectedRequestPath = handledRequest.ActualRequest != null ? handledRequest.ActualRequest.Path : "No Path";
 
                     comparisonResult.RecordFailure(String.Format("An unexpected request {0} {1} was seen by the mock provider service.",
-                            unexpectedRequestMethod,
-                            unexpectedRequestPath));
+                        unexpectedRequestMethod,
+                        unexpectedRequestPath));
 
-                    _log.Warn("Verifying - actual interactions do not match expected interactions"); //TODO: Should only print this once for a failure
-                    _log.WarnFormat("Unexpected request: {0} {1}", unexpectedRequestMethod, unexpectedRequestPath); //TODO: Make a collection and write at bottom
+                    unexpectedRequests.Add(String.Format("{0} {1}", unexpectedRequestMethod, unexpectedRequestPath));
                 }
             }
 
+            //Have we seen any requests when no interactions were registered by the test?
             if (!registeredInteractions.Any() && 
                 _mockProviderRepository.HandledRequests != null && 
                 _mockProviderRepository.HandledRequests.Any())
             {
                 comparisonResult.RecordFailure("No interactions were registered, however the mock provider service was called.");
 
-                _log.Warn("Verifying - actual interactions do not match expected interactions");
-                //TODO: More info here
+                //TODO: Log info required here
             }
 
             if (!comparisonResult.HasFailure)
@@ -164,6 +160,26 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
                 return GenerateResponse(HttpStatusCode.OK, "Interactions matched");
             }
+
+            //TODO: Add see log file for details
+
+            _log.Warn("Verifying - actual interactions do not match expected interactions");
+
+            //TODO: Use the comparison result instead
+            if (missingRequests.Any())
+            {
+                _log.Error("Missing requests: " + String.Join(",", missingRequests));
+            }
+
+            if (unexpectedRequests.Any())
+            {
+                _log.Error("Unexpected requests: " + String.Join(",", unexpectedRequests));
+            }
+
+            /*foreach (var failureResult in comparisonResult.Failures)
+            {
+                
+            }*/
             
             var failure = comparisonResult.Failures.First();
             return GenerateResponse(HttpStatusCode.InternalServerError, failure.Result);
