@@ -51,14 +51,19 @@ namespace PactNet.Comparers
             Message = String.Format(messageFormat, args);
         }
 
+        public void RecordFailure(ComparisonFailure comparisonFailure)
+        {
+            _failures.Add(comparisonFailure);
+        }
+
         public void RecordFailure(string errorMessage)
         {
-            _failures.Add(new ComparisonFailure(errorMessage));
+            _failures.Add(new ErrorMessageComparisonFailure(errorMessage));
         }
 
         public void RecordFailure(object expected, object actual)
         {
-            _failures.Add(new ComparisonFailure(expected, actual));
+            _failures.Add(new DiffComparisonFailure(expected, actual));
         }
 
         public void AddChildResult(ComparisonResult comparisonResult)

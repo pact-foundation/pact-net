@@ -87,14 +87,9 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
         private Response HandleGetInteractionsVerificationRequest()
         {
-            var missingRequests = new List<string>();
-            var unexpectedRequests = new List<string>();
-
-
             //TODO: add logs for this! Trello has the example
             //TODO: add the test name, so that we know what test
 
-            
             var registeredInteractions = _mockProviderRepository.TestScopedInteractions;
 
             var comparisonResult = new ComparisonResult();
@@ -108,22 +103,12 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
                     if (interactionUsages == null || !interactionUsages.Any())
                     {
-                        var missingRequestMethod = registeredInteraction.Request != null ? registeredInteraction.Request.Method.ToString().ToUpperInvariant() : "No Method";
-                        var missingRequestPath = registeredInteraction.Request != null ? registeredInteraction.Request.Path : "No Path";
-
-                        comparisonResult.RecordFailure(String.Format("The interaction with description '{0}' and provider state '{1}', was not used by the test. Missing request {2} {3}.", 
-                            registeredInteraction.Description, 
-                            registeredInteraction.ProviderState,
-                            missingRequestMethod, 
-                            missingRequestPath));
-
-                        missingRequests.Add(String.Format("{0} {1}", missingRequestMethod, missingRequestPath));
+                        comparisonResult.RecordFailure(
+                            new MissingInteractionComparisonFailure(registeredInteraction));
                     }
                     else if (interactionUsages.Count() > 1)
                     {
                         comparisonResult.RecordFailure(String.Format("The interaction with description '{0}' and provider state '{1}', was used {2} time/s by the test.", registeredInteraction.Description, registeredInteraction.ProviderState, interactionUsages.Count()));
-
-                        //TODO: Log info required here
                     }
                 }
             }
@@ -133,14 +118,8 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             {
                 foreach (var handledRequest in _mockProviderRepository.HandledRequests.Where(x => x.MatchedInteraction == null))
                 {
-                    var unexpectedRequestMethod = handledRequest.ActualRequest != null ? handledRequest.ActualRequest.Method.ToString().ToUpperInvariant() : "No Method";
-                    var unexpectedRequestPath = handledRequest.ActualRequest != null ? handledRequest.ActualRequest.Path : "No Path";
-
-                    comparisonResult.RecordFailure(String.Format("An unexpected request {0} {1} was seen by the mock provider service.",
-                        unexpectedRequestMethod,
-                        unexpectedRequestPath));
-
-                    unexpectedRequests.Add(String.Format("{0} {1}", unexpectedRequestMethod, unexpectedRequestPath));
+                    comparisonResult.RecordFailure(
+                        new UnexpectedRequestComparisonFailure(handledRequest.ActualRequest));
                 }
             }
 
@@ -150,8 +129,6 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                 _mockProviderRepository.HandledRequests.Any())
             {
                 comparisonResult.RecordFailure("No interactions were registered, however the mock provider service was called.");
-
-                //TODO: Log info required here
             }
 
             if (!comparisonResult.HasFailure)
@@ -165,22 +142,29 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
             _log.Warn("Verifying - actual interactions do not match expected interactions");
 
-            //TODO: Use the comparison result instead
-            if (missingRequests.Any())
+            if (comparisonResult.Failures.Any(x => x is MissingInteractionComparisonFailure))
             {
-                _log.Error("Missing requests: " + String.Join(",", missingRequests));
+                _log.Error("Missing requests: " + String.Join(",", 
+                    comparisonResult.Failures
+                        .Where(x => x is MissingInteractionComparisonFailure)
+                        .Cast<MissingInteractionComparisonFailure>()
+                        .Select(x => x.RequestDescription)));
             }
 
-            if (unexpectedRequests.Any())
+            if (comparisonResult.Failures.Any(x => x is UnexpectedRequestComparisonFailure))
             {
-                _log.Error("Unexpected requests: " + String.Join(",", unexpectedRequests));
+                _log.Error("Unexpected requests: " + String.Join(",", 
+                    comparisonResult.Failures
+                        .Where(x => x is UnexpectedRequestComparisonFailure)
+                        .Cast<UnexpectedRequestComparisonFailure>()
+                        .Select(x => x.RequestDescription)));
             }
 
-            /*foreach (var failureResult in comparisonResult.Failures)
+            foreach (var failureResult in comparisonResult.Failures.Where(failureResult => !(failureResult is MissingInteractionComparisonFailure) && !(failureResult is UnexpectedRequestComparisonFailure)))
             {
-                
-            }*/
-            
+                _log.Error(failureResult.Result);
+            }
+
             var failure = comparisonResult.Failures.First();
             return GenerateResponse(HttpStatusCode.InternalServerError, failure.Result);
         }

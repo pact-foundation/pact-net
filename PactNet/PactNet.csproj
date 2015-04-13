@@ -94,8 +94,12 @@
   <ItemGroup>
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
     <Compile Include="Comparers\ComparisonResult.cs" />
+    <Compile Include="Comparers\DiffComparisonFailure.cs" />
+    <Compile Include="Comparers\ErrorMessageComparisonFailure.cs" />
     <Compile Include="Comparers\IComparer.cs" />
     <Compile Include="Comparers\ComparisonFailure.cs" />
+    <Compile Include="Comparers\MissingInteractionComparisonFailure.cs" />
+    <Compile Include="Comparers\UnexpectedRequestComparisonFailure.cs" />
     <Compile Include="Configuration\Json\Converters\LowercaseStringEnumConverter.cs" />
     <Compile Include="Configuration\Json\JsonConfig.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\HttpStatusCodeComparer.cs" />
