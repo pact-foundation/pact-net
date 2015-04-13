@@ -2,7 +2,7 @@
 
 namespace PactNet
 {
-    internal class PactFailureException : Exception
+    public class PactFailureException : Exception
     {
         public PactFailureException(string message)
             : base(message)
