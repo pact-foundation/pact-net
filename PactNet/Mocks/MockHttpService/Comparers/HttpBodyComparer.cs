@@ -19,7 +19,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
             if (expected != null && actual == null)
             {
-                result.RecordFailure("Actual Body is null");
+                result.RecordFailure(new ErrorMessageComparisonFailure("Actual Body is null"));
                 return result;
             }
 
@@ -33,7 +33,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
             {
                 if (!JToken.DeepEquals(expectedToken, actualToken))
                 {
-                    result.RecordFailure(expectedToken, actualToken);
+                    result.RecordFailure(new DiffComparisonFailure(expectedToken, actualToken));
                 }
                 return result;
             }
@@ -51,7 +51,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                     {
                         if (httpBody1.Count() != httpBody2.Count())
                         {
-                            result.RecordFailure(httpBody1.Root, httpBody2.Root);
+                            result.RecordFailure(new DiffComparisonFailure(httpBody1.Root, httpBody2.Root));
                             return false;
                         }
 
@@ -84,7 +84,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                             }
                             else
                             {
-                                result.RecordFailure(httpBody1.Root, httpBody2.Root);
+                                result.RecordFailure(new DiffComparisonFailure(httpBody1.Root, httpBody2.Root));
                                 return false;
                             }
                         }
@@ -106,7 +106,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                         }
                         else
                         {
-                            result.RecordFailure(httpBody1.Root, httpBody2.Root);
+                            result.RecordFailure(new DiffComparisonFailure(httpBody1.Root, httpBody2.Root));
                             return false;
                         }
                         break;
@@ -116,7 +116,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                     {
                         if (!httpBody1.Equals(httpBody2))
                         {
-                            result.RecordFailure(httpBody1.Root, httpBody2.Root);
+                            result.RecordFailure(new DiffComparisonFailure(httpBody1.Root, httpBody2.Root));
                             return false;
                         }
                         break;
@@ -125,7 +125,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                     {
                         if (!JToken.DeepEquals(httpBody1, httpBody2))
                         {
-                            result.RecordFailure(httpBody1.Root, httpBody2.Root);
+                            result.RecordFailure(new DiffComparisonFailure(httpBody1.Root, httpBody2.Root));
                             return false;
                         }
                         break;

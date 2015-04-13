@@ -573,7 +573,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
             };
 
             var comparisonResult = new ComparisonResult();
-            comparisonResult.RecordFailure("It failed");
+            comparisonResult.RecordFailure(new ErrorMessageComparisonFailure("It failed"));
 
             var validator = GetSubject();
 

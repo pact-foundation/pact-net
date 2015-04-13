@@ -56,16 +56,6 @@ namespace PactNet.Comparers
             _failures.Add(comparisonFailure);
         }
 
-        public void RecordFailure(string errorMessage)
-        {
-            _failures.Add(new ErrorMessageComparisonFailure(errorMessage));
-        }
-
-        public void RecordFailure(object expected, object actual)
-        {
-            _failures.Add(new DiffComparisonFailure(expected, actual));
-        }
-
         public void AddChildResult(ComparisonResult comparisonResult)
         {
             if (comparisonResult == null)

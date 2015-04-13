@@ -19,15 +19,15 @@ namespace PactNet.Tests.Comparers
             var failure3 = "Failure 3";
 
             var nestedChildResult2 = new ComparisonResult();
-            nestedChildResult2.RecordFailure(failure3);
+            nestedChildResult2.RecordFailure(new ErrorMessageComparisonFailure(failure3));
 
             var nestedChildResult = new ComparisonResult();
-            nestedChildResult.RecordFailure(failure2);
+            nestedChildResult.RecordFailure(new ErrorMessageComparisonFailure(failure2));
             nestedChildResult.AddChildResult(nestedChildResult2);
 
             var comparisonResult = GetSubject();
 
-            comparisonResult.RecordFailure(failure1);
+            comparisonResult.RecordFailure(new ErrorMessageComparisonFailure(failure1));
             comparisonResult.AddChildResult(nestedChildResult);
 
             var failures = comparisonResult.Failures;
@@ -42,7 +42,7 @@ namespace PactNet.Tests.Comparers
         public void HasFailure_WithOnlyNestedChildResultsWithFailures_ReturnsTrue()
         {
             var nestedChildResult = new ComparisonResult();
-            nestedChildResult.RecordFailure("failure 1");
+            nestedChildResult.RecordFailure(new ErrorMessageComparisonFailure("failure 1"));
 
             var comparisonResult = GetSubject();
 
@@ -57,7 +57,7 @@ namespace PactNet.Tests.Comparers
         public void ShallowFailureCount_WithOnlyNestedChildResultsWithFailures_ReturnsZero()
         {
             var nestedChildResult = new ComparisonResult();
-            nestedChildResult.RecordFailure("failure 1");
+            nestedChildResult.RecordFailure(new ErrorMessageComparisonFailure("failure 1"));
 
             var comparisonResult = GetSubject();
 
@@ -73,7 +73,7 @@ namespace PactNet.Tests.Comparers
         {
             var comparisonResult = GetSubject();
 
-            comparisonResult.RecordFailure("failure 1");
+            comparisonResult.RecordFailure(new ErrorMessageComparisonFailure("failure 1"));
 
             var shallowFailureCount = comparisonResult.ShallowFailureCount;
 

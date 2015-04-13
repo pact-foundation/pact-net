@@ -21,7 +21,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
             if (expected == null || actual == null)
             {
-                result.RecordFailure(expected, actual);
+                result.RecordFailure(new DiffComparisonFailure(expected, actual));
                 return result;
             }
 
@@ -30,7 +30,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
             if (expectedQueryItems.Count != actualQueryItems.Count)
             {
-                result.RecordFailure(normalisedExpectedQuery, normalisedActualQuery);
+                result.RecordFailure(new DiffComparisonFailure(normalisedExpectedQuery, normalisedActualQuery));
                 return result;
             }
 
@@ -38,7 +38,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
             {
                 if (!actualQueryItems.AllKeys.Contains(expectedKey))
                 {
-                    result.RecordFailure(normalisedExpectedQuery, normalisedActualQuery);
+                    result.RecordFailure(new DiffComparisonFailure(normalisedExpectedQuery, normalisedActualQuery));
                     return result;
                 }
 
@@ -47,7 +47,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
                 if (expectedValue != actualValue)
                 {
-                    result.RecordFailure(normalisedExpectedQuery, normalisedActualQuery);
+                    result.RecordFailure(new DiffComparisonFailure(normalisedExpectedQuery, normalisedActualQuery));
                     return result;
                 }
             }

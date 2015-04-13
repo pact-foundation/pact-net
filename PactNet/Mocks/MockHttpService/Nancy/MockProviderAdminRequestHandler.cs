@@ -108,7 +108,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                     }
                     else if (interactionUsages.Count() > 1)
                     {
-                        comparisonResult.RecordFailure(String.Format("The interaction with description '{0}' and provider state '{1}', was used {2} time/s by the test.", registeredInteraction.Description, registeredInteraction.ProviderState, interactionUsages.Count()));
+                        comparisonResult.RecordFailure(new ErrorMessageComparisonFailure(String.Format("The interaction with description '{0}' and provider state '{1}', was used {2} time/s by the test.", registeredInteraction.Description, registeredInteraction.ProviderState, interactionUsages.Count())));
                     }
                 }
             }
@@ -128,7 +128,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                 _mockProviderRepository.HandledRequests != null && 
                 _mockProviderRepository.HandledRequests.Any())
             {
-                comparisonResult.RecordFailure("No interactions were registered, however the mock provider service was called.");
+                comparisonResult.RecordFailure(new ErrorMessageComparisonFailure("No interactions were registered, however the mock provider service was called."));
             }
 
             if (!comparisonResult.HasFailure)

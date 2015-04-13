@@ -13,7 +13,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
             if (actual == null)
             {
-                result.RecordFailure("Actual Headers are null");
+                result.RecordFailure(new ErrorMessageComparisonFailure("Actual Headers are null"));
                 return result;
             }
 
@@ -34,7 +34,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                     {
                         if (!header.Value.Equals(actualValue))
                         {
-                            headerResult.RecordFailure(expectedValue, actualValue);
+                            headerResult.RecordFailure(new DiffComparisonFailure(expectedValue, actualValue));
                         }
                     }
                     else
@@ -45,13 +45,13 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
                         if (!expectedValueSplitJoined.Equals(actualValueSplitJoined))
                         {
-                            headerResult.RecordFailure(expectedValue, actualValue);
+                            headerResult.RecordFailure(new DiffComparisonFailure(expectedValue, actualValue));
                         }
                     }
                 }
                 else
                 {
-                    headerResult.RecordFailure(String.Format("Header with key '{0}', does not exist in actual", header.Key));
+                    headerResult.RecordFailure(new ErrorMessageComparisonFailure(String.Format("Header with key '{0}', does not exist in actual", header.Key)));
                 }
 
                 result.AddChildResult(headerResult);

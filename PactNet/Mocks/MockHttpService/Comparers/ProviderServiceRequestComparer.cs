@@ -27,7 +27,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
             if (expected == null)
             {
-                result.RecordFailure("Expected request cannot be null");
+                result.RecordFailure(new ErrorMessageComparisonFailure("Expected request cannot be null"));
                 return result;
             }
 

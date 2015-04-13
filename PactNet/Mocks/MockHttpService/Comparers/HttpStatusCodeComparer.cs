@@ -9,7 +9,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
             var result = new ComparisonResult("has status code {0}", expected);
             if (!expected.Equals(actual))
             {
-                result.RecordFailure(expected, actual);
+                result.RecordFailure(new DiffComparisonFailure(expected, actual));
             }
 
             return result;

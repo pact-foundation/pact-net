@@ -39,7 +39,7 @@ namespace PactNet.Tests.Reporters
             var reporter = GetSubject();
 
             var comparisonResult = new ComparisonResult(comparisonMessage);
-            comparisonResult.RecordFailure("It failed");
+            comparisonResult.RecordFailure(new ErrorMessageComparisonFailure("It failed"));
 
             reporter.ReportSummary(comparisonResult);
 
@@ -56,8 +56,8 @@ namespace PactNet.Tests.Reporters
             var reporter = GetSubject();
 
             var comparisonResult = new ComparisonResult(comparisonMessage);
-            comparisonResult.RecordFailure("Failure 1");
-            comparisonResult.RecordFailure("Failure 2");
+            comparisonResult.RecordFailure(new ErrorMessageComparisonFailure("Failure 1"));
+            comparisonResult.RecordFailure(new ErrorMessageComparisonFailure("Failure 2"));
 
             reporter.ReportSummary(comparisonResult);
 
@@ -87,10 +87,10 @@ namespace PactNet.Tests.Reporters
             var reporter = GetSubject();
 
             var comparisonResult2 = new ComparisonResult(comparisonMessage2);
-            comparisonResult2.RecordFailure("Failure 2");
+            comparisonResult2.RecordFailure(new ErrorMessageComparisonFailure("Failure 2"));
 
             var comparisonResult = new ComparisonResult(comparisonMessage1);
-            comparisonResult.RecordFailure("Failure 1");
+            comparisonResult.RecordFailure(new ErrorMessageComparisonFailure("Failure 1"));
 
             comparisonResult.AddChildResult(comparisonResult2);
 
@@ -111,8 +111,8 @@ namespace PactNet.Tests.Reporters
             var reporter = GetSubject();
 
             var comparisonResult = new ComparisonResult(comparisonMessage);
-            comparisonResult.RecordFailure(comparisonFailureMessage1);
-            comparisonResult.RecordFailure(comparisonFailureMessage2);
+            comparisonResult.RecordFailure(new ErrorMessageComparisonFailure(comparisonFailureMessage1));
+            comparisonResult.RecordFailure(new ErrorMessageComparisonFailure(comparisonFailureMessage2));
 
             reporter.ReportFailureReasons(comparisonResult);
 
