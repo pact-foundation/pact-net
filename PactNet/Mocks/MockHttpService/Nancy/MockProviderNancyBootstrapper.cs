@@ -10,7 +10,7 @@ using PactNet.Models;
 
 namespace PactNet.Mocks.MockHttpService.Nancy
 {
-    internal class MockProviderNancyBootstrapper : DefaultNancyBootstrapper
+    public class MockProviderNancyBootstrapper : DefaultNancyBootstrapper
     {
         private readonly string _pactFileDirectory;
 
