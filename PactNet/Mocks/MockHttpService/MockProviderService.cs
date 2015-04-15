@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
+using PactNet.Logging;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Nancy;
@@ -39,9 +40,9 @@ namespace PactNet.Mocks.MockHttpService
             _httpMethodMapper = httpMethodMapper;
         }
 
-        public MockProviderService(int port, bool enableSsl, string pactFileDirectory = null)
+        public MockProviderService(int port, bool enableSsl, string providerName, string pactFileDirectory = null)
             : this(
-            baseUri => new NancyHttpHost(baseUri, pactFileDirectory), 
+            baseUri => new NancyHttpHost(baseUri, pactFileDirectory, providerName), 
             port,
             enableSsl,
             baseUri => new HttpClient { BaseAddress = new Uri(baseUri) },

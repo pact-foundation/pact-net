@@ -470,6 +470,9 @@ namespace PactNet.Logging
             }
         }
 
+        //Pact Custom addition
+        public static string LogFilePath { get; set; }
+
         /// <summary>
         /// Gets a logger for the specified type.
         /// </summary>

@@ -52,7 +52,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             }
             catch (Exception)
             {
-                _log.InfoFormat("No matching interaction found for {0} {1}", actualRequestMethod, actualRequestPath);
+                _log.WarnFormat("No matching interaction found for {0} {1}", actualRequestMethod, actualRequestPath);
                 _mockProviderRepository.AddHandledRequest(new HandledRequest(actualRequest, null));
                 throw;
             }

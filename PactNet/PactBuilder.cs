@@ -2,7 +2,6 @@
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
-using Serilog;
 
 namespace PactNet
 {
@@ -10,20 +9,16 @@ namespace PactNet
     {
         public string ConsumerName { get; private set; }
         public string ProviderName { get; private set; }
-        private readonly Func<int, bool, IMockProviderService> _mockProviderServiceFactory;
+        private readonly Func<int, bool, string, IMockProviderService> _mockProviderServiceFactory;
         private IMockProviderService _mockProviderService;
 
-        internal PactBuilder(Func<int, bool, IMockProviderService> mockProviderServiceFactory)
+        internal PactBuilder(Func<int, bool, string, IMockProviderService> mockProviderServiceFactory)
         {
             _mockProviderServiceFactory = mockProviderServiceFactory;
-
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.RollingFile(@"..\..\logs\log.txt")
-                .CreateLogger();
         }
 
         public PactBuilder()
-            : this((port, enableSsl) => new MockProviderService(port, enableSsl))
+            : this((port, enableSsl, providerName) => new MockProviderService(port, enableSsl, providerName))
         {
         }
 
@@ -58,7 +53,7 @@ namespace PactNet
                 _mockProviderService.Stop();
             }
 
-            _mockProviderService = _mockProviderServiceFactory(port, enableSsl);
+            _mockProviderService = _mockProviderServiceFactory(port, enableSsl, ProviderName);
 
             _mockProviderService.Start();
 

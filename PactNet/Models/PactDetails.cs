@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using PactNet.Extensions;
 
 namespace PactNet.Models
 {
@@ -16,7 +17,7 @@ namespace PactNet.Models
             return String.Format("{0}-{1}.json", 
                 Consumer != null ? Consumer.Name : String.Empty,
                 Provider != null ? Provider.Name : String.Empty)
-                .Replace(' ', '_').ToLower();
+                .ToLowerSnakeCase();
         }
     }
 }
