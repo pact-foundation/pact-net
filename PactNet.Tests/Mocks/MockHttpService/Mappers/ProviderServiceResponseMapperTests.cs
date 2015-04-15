@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -56,7 +57,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         [Fact]
         public void Convert_WithResponseContentHeaders_CorrectlyMapsHeaders()
         {
-            var stringContent = new StringContent("", Encoding.UTF8, "text/plain");
+            var stringContent = new StringContent(String.Empty, Encoding.UTF8, "text/plain");
 
             var message = new HttpResponseMessage
             {
@@ -65,7 +66,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             };
 
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
-            mockHttpBodyContentMapper.Convert(Arg.Any<string>(), Arg.Any<IDictionary<string, string>>()).Returns(new HttpBodyContent("", "text/plain", Encoding.UTF8));
+            mockHttpBodyContentMapper.Convert(Arg.Any<string>(), Arg.Any<IDictionary<string, string>>()).Returns(new HttpBodyContent(String.Empty, "text/plain", Encoding.UTF8));
             
             IProviderServiceResponseMapper mapper = new ProviderServiceResponseMapper(mockHttpBodyContentMapper);
 
@@ -77,7 +78,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         [Fact]
         public void Convert_WithResponseAndResponseContentHeaders_CorrectlyMapsHeaders()
         {
-            var stringContent = new StringContent("", Encoding.UTF8, "text/plain");
+            var stringContent = new StringContent(String.Empty, Encoding.UTF8, "text/plain");
             const string headerValue = "Customer Header Value";
 
             var message = new HttpResponseMessage
@@ -89,7 +90,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
 
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
-            mockHttpBodyContentMapper.Convert(Arg.Any<string>(), Arg.Any<IDictionary<string, string>>()).Returns(new HttpBodyContent("", "text/plain", Encoding.UTF8));
+            mockHttpBodyContentMapper.Convert(Arg.Any<string>(), Arg.Any<IDictionary<string, string>>()).Returns(new HttpBodyContent(String.Empty, "text/plain", Encoding.UTF8));
 
             IProviderServiceResponseMapper mapper = new ProviderServiceResponseMapper(mockHttpBodyContentMapper);
 

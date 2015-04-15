@@ -21,7 +21,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         {
             var logFileNameFormat = String.Format("{0}_mock_service-{{Date}}.log", providerName.ToLowerSnakeCase());
             var logFilePathFormat = Path.Combine(Constants.DefaultLogFileDirectory, logFileNameFormat);
-            LogProvider.LogFilePath = Path.Combine(Constants.DefaultLogFileDirectory.Replace(@"..\", ""), logFileNameFormat.Replace("{Date}", DateTime.Now.ToString("yyyyMMdd", CultureInfo.InvariantCulture)));
+            LogProvider.LogFilePath = Path.Combine(Constants.DefaultLogFileDirectory.Replace(@"..\", String.Empty), logFileNameFormat.Replace("{Date}", DateTime.Now.ToString("yyyyMMdd", CultureInfo.InvariantCulture)));
 
             Log.Logger = new LoggerConfiguration()
                 .WriteTo

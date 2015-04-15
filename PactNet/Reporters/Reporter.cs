@@ -64,7 +64,7 @@ namespace PactNet.Reporters
                     failureBuilder.Append(" (FAILED - ");
                     for (var i = 0; i < shallowFailureCount; i++)
                     {
-                        failureBuilder.Append(++_failureInfoCount + "");
+                        failureBuilder.Append(++_failureInfoCount);
                         if (i < shallowFailureCount - 1)
                         {
                             failureBuilder.Append(", ");

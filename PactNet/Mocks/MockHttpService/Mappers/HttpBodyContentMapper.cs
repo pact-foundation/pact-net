@@ -60,7 +60,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
                         var encodingString = contentTypeHeaderSplit.FirstOrDefault(x => x.Contains("charset="));
                         if (!String.IsNullOrEmpty(encodingString))
                         {
-                            encodingString = encodingString.Trim().Replace("charset=", "").ToLower();
+                            encodingString = encodingString.Trim().Replace("charset=", String.Empty).ToLower();
                             encoding = _encodingMapper.Convert(encodingString);
                         }
                         break;

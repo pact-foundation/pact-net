@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using PactNet.Mocks.MockHttpService.Comparers;
 using Xunit;
 
@@ -16,7 +17,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         {
             var comparer = GetSubject();
 
-            var result = comparer.Compare(null, "");
+            var result = comparer.Compare(null, String.Empty);
 
             Assert.False(result.HasFailure, "There should not be any errors");
         }
