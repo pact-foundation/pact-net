@@ -1,4 +1,4 @@
-version: "#{build}"
+version: "{build}"
 
 install:
   - git submodule update --init --recursive
