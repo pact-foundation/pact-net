@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
-using PactNet.Logging;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Nancy;
@@ -144,7 +144,7 @@ namespace PactNet.Mocks.MockHttpService
             }
         }
 
-        public void SendAdminHttpRequest<T>(HttpVerb method, string path, T requestContent) where T : class
+        public void SendAdminHttpRequest<T>(HttpVerb method, string path, T requestContent, IDictionary<string, string> headers = null) where T : class
         {
             if (_host == null)
             {
@@ -155,6 +155,14 @@ namespace PactNet.Mocks.MockHttpService
 
             var request = new HttpRequestMessage(_httpMethodMapper.Convert(method), path);
             request.Headers.Add(Constants.AdministrativeRequestHeaderKey, "true");
+
+            if (headers != null)
+            {
+                foreach (var header in headers)
+                {
+                    request.Headers.Add(header.Key, header.Value);
+                }
+            }
 
             if (requestContent != null)
             {
@@ -204,9 +212,39 @@ namespace PactNet.Mocks.MockHttpService
                 Response = _response
             };
 
-            SendAdminHttpRequest(HttpVerb.Post, Constants.InteractionsPath, interaction);
+            var testContext = DiscoverTestContext();
+
+            SendAdminHttpRequest(HttpVerb.Post, Constants.InteractionsPath, interaction, new Dictionary<string, string> { { Constants.AdministrativeRequestTestContextHeaderKey, testContext } });
 
             ClearTrasientState();
+        }
+
+        private string DiscoverTestContext()
+        {
+            var stack = new StackTrace(true);
+            var frames = stack.GetFrames() ?? new StackFrame[0];
+
+            var relevantFrames = new List<string>();
+
+            foreach (var stackFrame in frames)
+            {
+                var type = stackFrame.GetMethod().ReflectedType;
+
+                if (type == null || type.Assembly.GetName().Name.StartsWith("PactNet", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    continue;
+                }
+
+                //Don't care about any mscorlib frames down
+                if (type.Assembly.GetName().Name.Equals("mscorlib", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    break;
+                }
+
+                relevantFrames.Add(String.Format("{0}.{1}", type.Name, stackFrame.GetMethod().Name));
+            }
+
+            return String.Join(" ", relevantFrames);
         }
 
         private void SendAdminHttpRequest(HttpVerb method, string path)

@@ -20,6 +20,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         private readonly IFileSystem _fileSystem;
         private readonly string _pactFileDirectory;
         private readonly ILog _log;
+        private string _testContext;
 
         public MockProviderAdminRequestHandler(
             IMockProviderRepository mockProviderRepository,
@@ -35,6 +36,15 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
         public Response Handle(NancyContext context)
         {
+            //First admin request that sends in test context will log it.
+            if (_testContext == null &&
+                context.Request.Headers != null &&
+                context.Request.Headers.Any(x => x.Key == Constants.AdministrativeRequestTestContextHeaderKey))
+            {
+                _testContext = context.Request.Headers.Single(x => x.Key == Constants.AdministrativeRequestTestContextHeaderKey).Value.Single();
+                _log.InfoFormat("Test context {0}", _testContext);
+            }
+
             if (context.Request.Method.Equals("DELETE", StringComparison.InvariantCultureIgnoreCase) &&
                 context.Request.Path == Constants.InteractionsPath)
             {
@@ -67,6 +77,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         {
             _mockProviderRepository.ClearHandledRequests();
             _mockProviderRepository.ClearTestScopedInteractions();
+            _testContext = null;
 
             _log.Info("Cleared interactions");
             
@@ -137,8 +148,6 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
                 return GenerateResponse(HttpStatusCode.OK, "Interactions matched");
             }
-
-            //TODO: Add see log file for details
 
             _log.Warn("Verifying - actual interactions do not match expected interactions");
 
