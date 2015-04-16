@@ -88,6 +88,11 @@ namespace PactNet
                 throw new ArgumentException("Please supply a non null or empty providerName");
             }
 
+            if (!String.IsNullOrEmpty(ProviderName))
+            {
+                throw new ArgumentException("ProviderName has already been supplied, please instantiate a new PactVerifier if you want to perform verification for a different provider");
+            }
+
             if (httpClient == null)
             {
                 throw new ArgumentException("Please supply a non null httpClient");
@@ -106,6 +111,11 @@ namespace PactNet
                 throw new ArgumentException("Please supply a non null or empty providerName");
             }
 
+            if (!String.IsNullOrEmpty(ProviderName))
+            {
+                throw new ArgumentException("ProviderName has already been supplied, please instantiate a new PactVerifier if you want to perform verification for a different provider");
+            }
+
             if (httpRequestSender == null)
             {
                 throw new ArgumentException("Please supply a non null httpRequestSenderFunc");
@@ -122,6 +132,11 @@ namespace PactNet
             if (String.IsNullOrEmpty(consumerName))
             {
                 throw new ArgumentException("Please supply a non null or empty consumerName");
+            }
+
+            if (!String.IsNullOrEmpty(ConsumerName))
+            {
+                throw new ArgumentException("ConsumerName has already been supplied, please instantiate a new PactVerifier if you want to perform verification for a different consumer");
             }
 
             ConsumerName = consumerName;

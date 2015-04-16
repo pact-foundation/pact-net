@@ -93,6 +93,28 @@ namespace PactNet.Tests
         }
 
         [Fact]
+        public void ServiceProvider_WhenCalledWithAnAlreadySetProviderName_ThrowsArgumentException()
+        {
+            const string providerName = "My API";
+            var pactVerifier = GetSubject();
+
+            pactVerifier.ServiceProvider(providerName, new HttpClient());
+
+            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider(providerName, new HttpClient()));
+        }
+
+        [Fact]
+        public void ServiceProviderOverload_WhenCalledWithAnAlreadySetProviderName_ThrowsArgumentException()
+        {
+            const string providerName = "My API";
+            var pactVerifier = GetSubject();
+
+            pactVerifier.ServiceProvider(providerName, request => null);
+
+            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider(providerName, request => null));
+        }
+
+        [Fact]
         public void ServiceProvider_WhenCalledWithNullHttpClient_ThrowsArgumentException()
         {
             var pactVerifier = GetSubject();
@@ -174,6 +196,17 @@ namespace PactNet.Tests
             var pactVerifier = GetSubject();
 
             Assert.Throws<ArgumentException>(() => pactVerifier.HonoursPactWith(String.Empty));
+        }
+
+        [Fact]
+        public void HonoursPactWith_WhenCalledWithAnAlreadySetConsumerName_ThrowsArgumentException()
+        {
+            const string consumerName = "My Consumer";
+            var pactVerifier = GetSubject();
+
+            pactVerifier.HonoursPactWith(consumerName);
+
+            Assert.Throws<ArgumentException>(() => pactVerifier.HonoursPactWith(consumerName));
         }
 
         [Fact]
