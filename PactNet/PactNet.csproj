@@ -52,12 +52,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Serilog">
-      <HintPath>..\packages\Serilog.1.5.1\lib\net40\Serilog.dll</HintPath>
-    </Reference>
-    <Reference Include="Serilog.FullNetFx">
-      <HintPath>..\packages\Serilog.1.5.1\lib\net40\Serilog.FullNetFx.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
@@ -92,7 +86,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\Logging\ILocalLogMessageHandler.cs" />
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
+    <Compile Include="Infrastructure\Logging\LocalLogger.cs" />
+    <Compile Include="Infrastructure\Logging\LocalLogMessage.cs" />
+    <Compile Include="Infrastructure\Logging\LocalLogProvider.cs" />
+    <Compile Include="Infrastructure\Logging\LocalLogNewRollingFileMessageHandler.cs" />
     <Compile Include="Comparers\ComparisonResult.cs" />
     <Compile Include="Comparers\DiffComparisonFailure.cs" />
     <Compile Include="Comparers\ErrorMessageComparisonFailure.cs" />

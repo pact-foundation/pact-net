@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Globalization;
+using System.Collections.Generic;
 using System.IO;
 using Nancy.Bootstrapper;
 using Nancy.Hosting.Self;
 using PactNet.Extensions;
+using PactNet.Infrastructure.Logging;
 using PactNet.Logging;
 using PactNet.Mocks.MockHttpService.Configuration;
-using Serilog;
 
 namespace PactNet.Mocks.MockHttpService.Nancy
 {
@@ -19,14 +19,12 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
         internal NancyHttpHost(Uri baseUri, string providerName, INancyBootstrapper bootstrapper)
         {
-            var logFileNameFormat = String.Format("{0}_mock_service-{{Date}}.log", providerName.ToLowerSnakeCase());
-            var logFilePathFormat = Path.Combine(Constants.DefaultLogFileDirectory, logFileNameFormat);
-            LogProvider.LogFilePath = Path.Combine(Constants.DefaultLogFileDirectory.Replace(@"..\", String.Empty), logFileNameFormat.Replace("{Date}", DateTime.Now.ToString("yyyyMMdd", CultureInfo.InvariantCulture)));
-
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo
-                .RollingFile(logFilePathFormat)
-                .CreateLogger();
+            var logFileName = String.Format("{0}_mock_service.log", providerName.ToLowerSnakeCase());
+            LogProvider.LogFilePath = Path.Combine(Constants.DefaultLogFileDirectory.Replace(@"..\", String.Empty), logFileName);
+            var logFilePath = Path.Combine(Constants.DefaultLogFileDirectory, logFileName);
+            
+            var logProvider = new LocalLogProvider(new List<ILocalLogMessageHandler> { new LocalLogNewRollingFileMessageHandler(logFilePath) });
+            LogProvider.SetCurrentLogProvider(logProvider);
 
             _baseUri = baseUri;
             _bootstrapper = bootstrapper;
