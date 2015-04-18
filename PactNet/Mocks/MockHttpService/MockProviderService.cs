@@ -212,14 +212,14 @@ namespace PactNet.Mocks.MockHttpService
                 Response = _response
             };
 
-            var testContext = DiscoverTestContext();
+            var testContext = BuildTestContext();
 
             SendAdminHttpRequest(HttpVerb.Post, Constants.InteractionsPath, interaction, new Dictionary<string, string> { { Constants.AdministrativeRequestTestContextHeaderKey, testContext } });
 
             ClearTrasientState();
         }
 
-        private static string DiscoverTestContext()
+        private static string BuildTestContext()
         {
             var stack = new StackTrace(true);
             var stackFrames = stack.GetFrames() ?? new StackFrame[0];

@@ -348,6 +348,35 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
+        public void WillRespondWith_WithValidInteraction_PerformsAdminInteractionsPostRequestWithTestContext()
+        {
+            var providerState = "My provider state";
+            var description = "My description";
+            var request = new ProviderServiceRequest
+            {
+                Method = HttpVerb.Head,
+                Path = "/tester/testing/1"
+            };
+            var response = new ProviderServiceResponse
+            {
+                Status = (int)HttpStatusCode.ProxyAuthenticationRequired
+            };
+
+            var mockService = GetSubject();
+            mockService.Start();
+
+            mockService
+                .Given(providerState)
+                .UponReceiving(description)
+                .With(request)
+                .WillRespondWith(response);
+
+            var actualRequest = _fakeHttpMessageHandler.RequestsRecieved.Single();
+
+            Assert.Equal("MockProviderServiceTests.WillRespondWith_WithValidInteraction_PerformsAdminInteractionsPostRequestWithTestContext", actualRequest.Headers.Single(x => x.Key == Constants.AdministrativeRequestTestContextHeaderKey).Value.Single());
+        }
+
+        [Fact]
         public void WillRespondWith_WhenResponseFromHostIsNotOk_ThrowsPactFailureException()
         {
             var providerState = "My provider state";
