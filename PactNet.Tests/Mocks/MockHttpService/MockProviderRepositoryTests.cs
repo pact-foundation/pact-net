@@ -67,7 +67,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var repo = GetSubject();
 
             repo.AddInteraction(interaction1);
-            repo.ClearTestScopedInteractions();
+            repo.ClearTestScopedState();
 
             repo.AddInteraction(interaction2);
 
@@ -84,7 +84,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var repo = GetSubject();
 
             repo.AddInteraction(interaction1);
-            repo.ClearTestScopedInteractions();
+            repo.ClearTestScopedState();
 
             Assert.Throws<InvalidOperationException>(() => repo.AddInteraction(interaction2));
 
@@ -226,17 +226,17 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void ClearHandledRequests_WithNoHandledRequest_HandledRequestIsEmpty()
+        public void ClearTestScopedState_WithNoHandledRequest_HandledRequestIsEmpty()
         {
             var repo = GetSubject();
 
-            repo.ClearHandledRequests();
+            repo.ClearTestScopedState();
 
             Assert.Empty(repo.HandledRequests);
         }
 
         [Fact]
-        public void ClearHandledRequests_WithHandledRequests_HandledRequestIsEmpty()
+        public void ClearTestScopedState_WithHandledRequests_HandledRequestIsEmpty()
         {
             var handledRequest1 = new HandledRequest(new ProviderServiceRequest(), new ProviderServiceInteraction());
             var handledRequest2 = new HandledRequest(new ProviderServiceRequest(), new ProviderServiceInteraction());
@@ -246,23 +246,23 @@ namespace PactNet.Tests.Mocks.MockHttpService
             repo.AddHandledRequest(handledRequest1);
             repo.AddHandledRequest(handledRequest2);
 
-            repo.ClearHandledRequests();
+            repo.ClearTestScopedState();
 
             Assert.Empty(repo.HandledRequests);
         }
 
         [Fact]
-        public void ClearTestScopedInteractions_WithNoTestScopedInteractions_TestScopedInteractionsRequestIsEmpty()
+        public void ClearTestScopedState_WithNoTestScopedInteractions_TestScopedInteractionsRequestIsEmpty()
         {
             var repo = GetSubject();
 
-            repo.ClearTestScopedInteractions();
+            repo.ClearTestScopedState();
 
             Assert.Empty(repo.TestScopedInteractions);
         }
 
         [Fact]
-        public void ClearTestScopedInteractions_WithTestScopedInteractions_TestScopedInteractionsRequestIsEmpty()
+        public void ClearTestScopedState_WithTestScopedInteractions_TestScopedInteractionsRequestIsEmpty()
         {
             var interaction1 = new ProviderServiceInteraction { Description = "My description 1" };
             var interaction2 = new ProviderServiceInteraction { Description = "My description 2" };
@@ -272,9 +272,21 @@ namespace PactNet.Tests.Mocks.MockHttpService
             repo.AddInteraction(interaction1);
             repo.AddInteraction(interaction2);
 
-            repo.ClearTestScopedInteractions();
+            repo.ClearTestScopedState();
 
             Assert.Empty(repo.TestScopedInteractions);
+        }
+
+        [Fact]
+        public void ClearTestScopedState_WithTestContextSet_TestContextIsNull()
+        {
+            var repo = GetSubject();
+
+            repo.TestContext = "Blah blah";
+
+            repo.ClearTestScopedState();
+
+            Assert.Null(repo.TestContext);
         }
     }
 }

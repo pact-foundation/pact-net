@@ -10,6 +10,8 @@ namespace PactNet.Mocks.MockHttpService
     {
         private readonly IProviderServiceRequestComparer _requestComparer;
 
+        public string TestContext { get; set; }
+
         private readonly List<ProviderServiceInteraction> _testScopedInteractions = new List<ProviderServiceInteraction>();
         public ICollection<ProviderServiceInteraction> TestScopedInteractions { get { return _testScopedInteractions; } }
 
@@ -94,14 +96,11 @@ namespace PactNet.Mocks.MockHttpService
             return matchingInteractions.Single();
         }
 
-        public void ClearHandledRequests()
+        public void ClearTestScopedState()
         {
             _handledRequests.Clear();
-        }
-
-        public void ClearTestScopedInteractions()
-        {
             _testScopedInteractions.Clear();
+            TestContext = null;
         }
     }
 }

@@ -219,14 +219,14 @@ namespace PactNet.Mocks.MockHttpService
             ClearTrasientState();
         }
 
-        private string DiscoverTestContext()
+        private static string DiscoverTestContext()
         {
             var stack = new StackTrace(true);
-            var frames = stack.GetFrames() ?? new StackFrame[0];
+            var stackFrames = stack.GetFrames() ?? new StackFrame[0];
 
-            var relevantFrames = new List<string>();
+            var relevantStackFrameSummaries = new List<string>();
 
-            foreach (var stackFrame in frames)
+            foreach (var stackFrame in stackFrames)
             {
                 var type = stackFrame.GetMethod().ReflectedType;
 
@@ -243,10 +243,10 @@ namespace PactNet.Mocks.MockHttpService
                     break;
                 }
 
-                relevantFrames.Add(String.Format("{0}.{1}", type.Name, stackFrame.GetMethod().Name));
+                relevantStackFrameSummaries.Add(String.Format("{0}.{1}", type.Name, stackFrame.GetMethod().Name));
             }
 
-            return String.Join(" ", relevantFrames);
+            return String.Join(" ", relevantStackFrameSummaries);
         }
 
         private void SendAdminHttpRequest(HttpVerb method, string path)

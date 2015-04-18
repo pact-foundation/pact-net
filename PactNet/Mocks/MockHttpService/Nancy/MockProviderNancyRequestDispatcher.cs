@@ -48,10 +48,10 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             catch (Exception ex)
             {
                 var exceptionMessage = ex.Message
-                    .Replace("\r", " ")
-                    .Replace("\n", String.Empty)
-                    .Replace("\t", " ")
-                    .Replace(@"\", String.Empty);
+                    .Replace(@"\", "\\")
+                    .Replace("\r", "\\r")
+                    .Replace("\n", "\\n")
+                    .Replace("\t", "\\t");
 
                 response = new Response
                 {

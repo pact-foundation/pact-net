@@ -20,7 +20,6 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         private readonly IFileSystem _fileSystem;
         private readonly string _pactFileDirectory;
         private readonly ILog _log;
-        private string _testContext;
 
         public MockProviderAdminRequestHandler(
             IMockProviderRepository mockProviderRepository,
@@ -36,13 +35,13 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
         public Response Handle(NancyContext context)
         {
-            //First admin request that sends in test context will log it.
-            if (_testContext == null &&
+            //The first admin request with test context, we should log the context
+            if (String.IsNullOrEmpty(_mockProviderRepository.TestContext) &&
                 context.Request.Headers != null &&
                 context.Request.Headers.Any(x => x.Key == Constants.AdministrativeRequestTestContextHeaderKey))
             {
-                _testContext = context.Request.Headers.Single(x => x.Key == Constants.AdministrativeRequestTestContextHeaderKey).Value.Single();
-                _log.InfoFormat("Test context {0}", _testContext);
+                _mockProviderRepository.TestContext = context.Request.Headers.Single(x => x.Key == Constants.AdministrativeRequestTestContextHeaderKey).Value.Single();
+                _log.InfoFormat("Test context {0}", _mockProviderRepository.TestContext);
             }
 
             if (context.Request.Method.Equals("DELETE", StringComparison.InvariantCultureIgnoreCase) &&
@@ -75,9 +74,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
         private Response HandleDeleteInteractionsRequest()
         {
-            _mockProviderRepository.ClearHandledRequests();
-            _mockProviderRepository.ClearTestScopedInteractions();
-            _testContext = null;
+            _mockProviderRepository.ClearTestScopedState();
 
             _log.Info("Cleared interactions");
             
@@ -91,7 +88,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             _mockProviderRepository.AddInteraction(interaction);
 
             _log.InfoFormat("Registered expected interaction {0} {1}", interaction.Request.Method.ToString().ToUpperInvariant(), interaction.Request.Path);
-            _log.Debug(JsonConvert.SerializeObject(interaction, Formatting.Indented));
+            _log.Debug(JsonConvert.SerializeObject(interaction, JsonConfig.PactFileSerializerSettings));
 
             return GenerateResponse(HttpStatusCode.OK, "Added interaction");
         }

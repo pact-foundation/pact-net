@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using NSubstitute;
 using Nancy;
 using Nancy.Routing;
+using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Nancy;
 using Xunit;
 
@@ -38,6 +40,32 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             requestDispatcher.Dispatch(nancyContext, CancellationToken.None);
 
             _mockRequestHandler.Received(1).Handle(nancyContext);
+        }
+
+        [Fact]
+        public void Dispatch_WithNancyContextThatContainsAdminHeader_CallsAdminRequestHandlerWithContext()
+        {
+            var headers = new Dictionary<string, IEnumerable<string>>
+            {
+                { Constants.AdministrativeRequestHeaderKey, new List<string> { "true" } }
+            };
+
+            var nancyContext = new NancyContext
+            {
+                Request = new Request("GET", new Url
+                {
+                    Path = "/Test",
+                    Scheme = "HTTP"
+                }, null, headers)
+            };
+
+            var requestDispatcher = GetSubject();
+
+            _mockAdminRequestHandler.Handle(nancyContext).Returns(new Response());
+
+            requestDispatcher.Dispatch(nancyContext, CancellationToken.None);
+
+            _mockAdminRequestHandler.Received(1).Handle(nancyContext);
         }
 
         [Fact]
@@ -166,7 +194,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         public void Dispatch_WhenRequestHandlerThrowsWithMessageThatContainsSlashes_ResponseContentAndReasonPhrasesIsReturnedWithoutSlashes()
         {
             var exception = new InvalidOperationException("Something\r\n \t \\ failed");
-            const string expectedMessage = "Something     failed";  
+            const string expectedMessage = @"Something\r\n \t \ failed";  
             var nancyContext = new NancyContext
             {
                 Request = new Request("GET", "/Test", "HTTP")

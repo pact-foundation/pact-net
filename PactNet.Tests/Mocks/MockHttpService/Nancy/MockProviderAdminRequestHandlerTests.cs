@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
@@ -29,11 +30,91 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             _mockFileSystem = Substitute.For<IFileSystem>();
             _mockLog = Substitute.For<ILog>();
 
+            _mockLog.Log(Arg.Any<LogLevel>(), Arg.Any<Func<string>>(), Arg.Any<Exception>(), Arg.Any<object[]>())
+                .Returns(true);
+
             return new MockProviderAdminRequestHandler(
                 _mockProviderRepository,
                 _mockFileSystem,
                 new PactFileInfo(null),
                 _mockLog);
+        }
+
+        [Fact]
+        public void Handle_WithTheTestContextHeaderAttached_LogsTheTestContext()
+        {
+            const string testContext = "EventsApiConsumerTests.GetAllEvents_WhenCalled_ReturnsAllEvents";
+            var headers = new Dictionary<string, IEnumerable<string>>
+            {
+                { Constants.AdministrativeRequestTestContextHeaderKey, new List<string> { testContext } }
+            };
+
+            var context = new NancyContext
+            {
+                Request = new Request("DELETE", new Url
+                  {
+                    Path = "/interactions",
+                    Scheme = "http"
+                  }, null,  headers)
+            };
+
+            var handler = GetSubject();
+
+            handler.Handle(context);
+
+            _mockLog.Received(1).Log(LogLevel.Info, Arg.Any<Func<string>>(), null, Arg.Is<object[]>(x => x.Single() == testContext));
+        }
+
+        [Fact]
+        public void Handle_WithTheTestContextHeaderAttached_SetsTestContextOnTheRepository()
+        {
+            const string testContext = "EventsApiConsumerTests.GetAllEvents_WhenCalled_ReturnsAllEvents";
+            var headers = new Dictionary<string, IEnumerable<string>>
+            {
+                { Constants.AdministrativeRequestTestContextHeaderKey, new List<string> { testContext } }
+            };
+
+            var context = new NancyContext
+            {
+                Request = new Request("DELETE", new Url
+                {
+                    Path = "/interactions",
+                    Scheme = "http"
+                }, null, headers)
+            };
+
+            var handler = GetSubject();
+
+            handler.Handle(context);
+
+            _mockProviderRepository.Received(1).TestContext = testContext;
+        }
+
+        [Fact]
+        public void Handle_WhenTestContextIsSetOnTheRepository_DoesNotLogTheTextContext()
+        {
+            const string testContext = "EventsApiConsumerTests.GetAllEvents_WhenCalled_ReturnsAllEvents";
+            var headers = new Dictionary<string, IEnumerable<string>>
+            {
+                { Constants.AdministrativeRequestTestContextHeaderKey, new List<string> { testContext } }
+            };
+
+            var context = new NancyContext
+            {
+                Request = new Request("DELETE", new Url
+                {
+                    Path = "/interactions",
+                    Scheme = "http"
+                }, null, headers)
+            };
+
+            var handler = GetSubject();
+
+            _mockProviderRepository.TestContext.Returns(testContext);
+
+            handler.Handle(context);
+
+            _mockLog.Received(0).Log(LogLevel.Info, Arg.Any<Func<string>>(), null, Arg.Is<object[]>(x => x.Single() == testContext));
         }
 
         [Fact]
@@ -48,7 +129,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             handler.Handle(context);
 
-            _mockProviderRepository.Received(1).ClearHandledRequests();
+            _mockProviderRepository.Received(1).ClearTestScopedState();
         }
 
         [Fact]
@@ -63,7 +144,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             handler.Handle(context);
 
-            _mockProviderRepository.Received(1).ClearTestScopedInteractions();
+            _mockProviderRepository.Received(1).ClearTestScopedState();
         }
 
         [Fact]

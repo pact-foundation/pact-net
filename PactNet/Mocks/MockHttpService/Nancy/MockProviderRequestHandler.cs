@@ -1,6 +1,7 @@
 ﻿using System;
 using Nancy;
 using Newtonsoft.Json;
+using PactNet.Configuration.Json;
 using PactNet.Logging;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
@@ -38,7 +39,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             var actualRequestPath = actualRequest.Path;
 
             _log.InfoFormat("Received request {0} {1}", actualRequestMethod, actualRequestPath);
-            _log.Debug(JsonConvert.SerializeObject(actualRequest, Formatting.Indented));
+            _log.Debug(JsonConvert.SerializeObject(actualRequest, JsonConfig.PactFileSerializerSettings));
 
             ProviderServiceInteraction matchingInteraction;
             
@@ -48,7 +49,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                 _mockProviderRepository.AddHandledRequest(new HandledRequest(actualRequest, matchingInteraction));
 
                 _log.InfoFormat("Found matching response for {0} {1}", actualRequestMethod, actualRequestPath);
-                _log.Debug(JsonConvert.SerializeObject(matchingInteraction.Response, Formatting.Indented));
+                _log.Debug(JsonConvert.SerializeObject(matchingInteraction.Response, JsonConfig.PactFileSerializerSettings));
             }
             catch (Exception)
             {
