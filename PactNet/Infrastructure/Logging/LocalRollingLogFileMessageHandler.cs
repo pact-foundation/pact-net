@@ -5,15 +5,14 @@ using System.Text;
 
 namespace PactNet.Infrastructure.Logging
 {
-    internal class LocalLogNewRollingFileMessageHandler : ILocalLogMessageHandler
+    internal class LocalRollingLogFileMessageHandler : ILocalLogMessageHandler
     {
         private static readonly object Sync = new object();
         private readonly StreamWriter _writer;
 
-        public LocalLogNewRollingFileMessageHandler(string filePath)
+        public LocalRollingLogFileMessageHandler(string filePath)
         {
             TryCreateDirectory(filePath);
-            TryDeleteFile(filePath);
             var file = File.Open(filePath, FileMode.Append, FileAccess.Write, FileShare.Read);
             _writer = new StreamWriter(file, Encoding.UTF8);
         }
@@ -47,7 +46,10 @@ namespace PactNet.Infrastructure.Logging
 
         public void Dispose()
         {
-            _writer.Dispose();
+            if (_writer != null)
+            {
+                _writer.Dispose();
+            }
         }
 
         private static void TryCreateDirectory(string filePath)
@@ -63,21 +65,6 @@ namespace PactNet.Infrastructure.Logging
             catch (Exception ex)
             {
                 throw new Exception("Could not create log directory.", ex);
-            }
-        }
-
-        private static void TryDeleteFile(string filePath)
-        {
-            try
-            {
-                if (File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Could not delete log file.", ex);
             }
         }
     }

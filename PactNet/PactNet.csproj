@@ -91,7 +91,7 @@
     <Compile Include="Infrastructure\Logging\LocalLogger.cs" />
     <Compile Include="Infrastructure\Logging\LocalLogMessage.cs" />
     <Compile Include="Infrastructure\Logging\LocalLogProvider.cs" />
-    <Compile Include="Infrastructure\Logging\LocalLogNewRollingFileMessageHandler.cs" />
+    <Compile Include="Infrastructure\Logging\LocalRollingLogFileMessageHandler.cs" />
     <Compile Include="Comparers\ComparisonResult.cs" />
     <Compile Include="Comparers\DiffComparisonFailure.cs" />
     <Compile Include="Comparers\ErrorMessageComparisonFailure.cs" />

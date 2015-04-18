@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using PactNet.Logging;
 using PactNet.Logging.LogProviders;
 
 namespace PactNet.Infrastructure.Logging
 {
-    internal class LocalLogProvider : LogProviderBase, IDisposable
+    internal class LocalLogProvider : LogProviderBase
     {
         private readonly LocalLogger _logger;
 
@@ -19,7 +18,7 @@ namespace PactNet.Infrastructure.Logging
             return _logger.Log;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             if (_logger != null)
             {

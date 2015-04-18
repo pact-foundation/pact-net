@@ -23,7 +23,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             LogProvider.LogFilePath = Path.Combine(Constants.DefaultLogFileDirectory.Replace(@"..\", String.Empty), logFileName);
             var logFilePath = Path.Combine(Constants.DefaultLogFileDirectory, logFileName);
             
-            var logProvider = new LocalLogProvider(new List<ILocalLogMessageHandler> { new LocalLogNewRollingFileMessageHandler(logFilePath) });
+            var logProvider = new LocalLogProvider(new List<ILocalLogMessageHandler> { new LocalRollingLogFileMessageHandler(logFilePath) });
             LogProvider.SetCurrentLogProvider(logProvider);
 
             _baseUri = baseUri;
@@ -53,6 +53,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                 _host.Dispose();
                 _host = null;
                 _log.InfoFormat("Stopped {0}", _baseUri.OriginalString);
+                LogProvider.CurrentLogProvider.Dispose();
             }
         }
     }

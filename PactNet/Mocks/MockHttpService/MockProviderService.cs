@@ -230,7 +230,9 @@ namespace PactNet.Mocks.MockHttpService
             {
                 var type = stackFrame.GetMethod().ReflectedType;
 
-                if (type == null || type.Assembly.GetName().Name.StartsWith("PactNet", StringComparison.CurrentCultureIgnoreCase))
+                if (type == null || 
+                    (type.Assembly.GetName().Name.StartsWith("PactNet", StringComparison.CurrentCultureIgnoreCase) &&
+                    !type.Assembly.GetName().Name.Equals("PactNet.Tests", StringComparison.CurrentCultureIgnoreCase)))
                 {
                     continue;
                 }

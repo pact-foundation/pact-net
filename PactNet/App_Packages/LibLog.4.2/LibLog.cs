@@ -377,7 +377,7 @@ namespace PactNet.Logging
 #else
     public
 #endif
-    interface ILogProvider
+    interface ILogProvider : IDisposable
     {
         /// <summary>
         /// Gets the specified named logger.
@@ -762,6 +762,10 @@ namespace PactNet.Logging.LogProviders
         protected virtual OpenMdc GetOpenMdcMethod()
         {
             return (_, __) => NoopDisposableInstance;
+        }
+
+        public virtual void Dispose()
+        {
         }
     }
 
