@@ -95,9 +95,6 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
         private Response HandleGetInteractionsVerificationRequest()
         {
-            //TODO: add logs for this! Trello has the example
-            //TODO: add the test name, so that we know what test
-
             var registeredInteractions = _mockProviderRepository.TestScopedInteractions;
 
             var comparisonResult = new ComparisonResult();

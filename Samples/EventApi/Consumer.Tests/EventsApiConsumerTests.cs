@@ -106,27 +106,6 @@ namespace Consumer.Tests
                     Status = 201
                 });
 
-            _mockProviderService.UponReceiving("a request to create a new event 2")
-                .With(new ProviderServiceRequest
-                {
-                    Method = HttpVerb.Post,
-                    Path = "/events2",
-                    Headers = new Dictionary<string, string>
-                    {
-                        { "Content-Type", "application/json; charset=utf-8" }
-                    },
-                    Body = new
-                    {
-                        eventId,
-                        timestamp = dateTime.ToString("O"),
-                        eventType = "DetailsView"
-                    }
-                })
-                .WillRespondWith(new ProviderServiceResponse
-                {
-                    Status = 201
-                });
-
             var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
 
             //Act / Assert

@@ -24,6 +24,9 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             _mockProviderRepository = Substitute.For<IMockProviderRepository>();
             _mockLog = Substitute.For<ILog>();
 
+            _mockLog.Log(Arg.Any<LogLevel>(), Arg.Any<Func<string>>(), Arg.Any<Exception>(), Arg.Any<object[]>())
+                .Returns(true);
+
             return new MockProviderRequestHandler(_mockRequestMapper, _mockResponseMapper, _mockProviderRepository, _mockLog);
         }
 
@@ -180,7 +183,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         }
 
         [Fact]
-        public void Handle_WhenGetMatchingMockInteractionThrows_RequestIsMarkedAsHandled()
+        public void Handle_WhenNoMatchingInteractionsAreFound_RequestIsMarkedAsHandled()
         {
             const string exceptionMessage = "No matching mock interaction has been registered for the current request";
             var expectedRequest = new ProviderServiceRequest
@@ -221,7 +224,48 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         }
 
         [Fact]
-        public void Handle_WhenGetMatchingMockInteractionThrows_PactFailureExceptionIsThrown()
+        public void Handle_WhenNoMatchingInteractionsAreFound_ErrorIsLogged()
+        {
+            const string exceptionMessage = "No matching mock interaction has been registered for the current request";
+            var expectedRequest = new ProviderServiceRequest
+            {
+                Method = HttpVerb.Get,
+                Path = "/Test"
+            };
+            var nancyContext = new NancyContext
+            {
+                Request = new Request("GET", "/Test", "HTTP")
+            };
+
+            var handler = GetSubject();
+
+            _mockRequestMapper
+                .Convert(nancyContext.Request)
+                .Returns(expectedRequest);
+
+            _mockResponseMapper.Convert(Arg.Any<ProviderServiceResponse>())
+                .Returns(new Response
+                {
+                    StatusCode = HttpStatusCode.InternalServerError
+                });
+
+            _mockProviderRepository
+                .When(x => x.GetMatchingTestScopedInteraction(expectedRequest))
+                .Do(x => { throw new PactFailureException(exceptionMessage); });
+
+            try
+            {
+                handler.Handle(nancyContext);
+            }
+            catch (Exception)
+            {
+            }
+
+            _mockLog.Received().Log(LogLevel.Error, Arg.Any<Func<string>>(), null, Arg.Any<object[]>());
+        }
+
+        [Fact]
+        public void Handle_WhenNoMatchingInteractionsAreFound_PactFailureExceptionIsThrown()
         {
             const string exceptionMessage = "No matching mock interaction has been registered for the current request";
             var expectedRequest = new ProviderServiceRequest
