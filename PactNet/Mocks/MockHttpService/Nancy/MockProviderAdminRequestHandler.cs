@@ -146,7 +146,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                 return GenerateResponse(HttpStatusCode.OK, "Interactions matched");
             }
 
-            _log.Warn("Verifying - actual interactions do not match expected interactions");
+            _log.Error("Verifying - actual interactions do not match expected interactions");
 
             if (comparisonResult.Failures.Any(x => x is MissingInteractionComparisonFailure))
             {

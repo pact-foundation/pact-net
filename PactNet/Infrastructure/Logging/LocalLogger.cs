@@ -24,6 +24,11 @@ namespace PactNet.Infrastructure.Logging
                 return true;
             }
 
+            if (_logHandlers == null)
+            {
+                return true;
+            }
+
             foreach (var handler in _logHandlers)
             {
                 handler.Handle(new LocalLogMessage(logLevel, messageFunc, exception, formatParameters));
@@ -34,6 +39,11 @@ namespace PactNet.Infrastructure.Logging
 
         public void Dispose()
         {
+            if (_logHandlers == null)
+            {
+                return;
+            }
+
             foreach (var handler in _logHandlers.Where(handler => handler != null))
             {
                 handler.Dispose();

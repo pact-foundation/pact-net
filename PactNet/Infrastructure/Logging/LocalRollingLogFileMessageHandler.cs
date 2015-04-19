@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
 
@@ -10,11 +11,16 @@ namespace PactNet.Infrastructure.Logging
         private static readonly object Sync = new object();
         private readonly StreamWriter _writer;
 
-        public LocalRollingLogFileMessageHandler(string filePath)
+        internal LocalRollingLogFileMessageHandler(IFileSystem fileSystem, string filePath)
         {
             TryCreateDirectory(filePath);
-            var file = File.Open(filePath, FileMode.Append, FileAccess.Write, FileShare.Read);
+            var file = fileSystem.File.Open(filePath, FileMode.Append, FileAccess.Write, FileShare.Read);
             _writer = new StreamWriter(file, Encoding.UTF8);
+        }
+
+        internal LocalRollingLogFileMessageHandler(string filePath)
+            : this(new FileSystem(), filePath)
+        {
         }
 
         public void Handle(LocalLogMessage logMessage)
