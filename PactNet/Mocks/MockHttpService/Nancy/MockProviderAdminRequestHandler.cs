@@ -147,7 +147,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
             if (comparisonResult.Failures.Any(x => x is MissingInteractionComparisonFailure))
             {
-                _log.Error("Missing requests: " + String.Join(",", 
+                _log.Error("Missing requests: " + String.Join(", ", 
                     comparisonResult.Failures
                         .Where(x => x is MissingInteractionComparisonFailure)
                         .Cast<MissingInteractionComparisonFailure>()
@@ -156,7 +156,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
             if (comparisonResult.Failures.Any(x => x is UnexpectedRequestComparisonFailure))
             {
-                _log.Error("Unexpected requests: " + String.Join(",", 
+                _log.Error("Unexpected requests: " + String.Join(", ", 
                     comparisonResult.Failures
                         .Where(x => x is UnexpectedRequestComparisonFailure)
                         .Cast<UnexpectedRequestComparisonFailure>()
