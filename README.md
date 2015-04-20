@@ -23,7 +23,7 @@ We have also written some `//NOTE:` comments inline in the code to help explain 
 
 ### Installing
 
-Via Nuget with [Install-Package PactNet -Pre](http://www.nuget.org/packages/PactNet)
+Via Nuget with [Install-Package PactNet](http://www.nuget.org/packages/PactNet)
 
 ### Service Consumer
 
