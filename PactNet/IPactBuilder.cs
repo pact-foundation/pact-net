@@ -1,4 +1,5 @@
-﻿using PactNet.Mocks.MockHttpService;
+﻿using Newtonsoft.Json;
+using PactNet.Mocks.MockHttpService;
 
 namespace PactNet
 {
@@ -6,7 +7,7 @@ namespace PactNet
     {
         IPactBuilder ServiceConsumer(string consumerName);
         IPactBuilder HasPactWith(string providerName);
-        IMockProviderService MockService(int port, bool enableSsl = false);
+        IMockProviderService MockService(int port, bool enableSsl = false, JsonSerializerSettings jsonSerializerSettings = null);
         void Build();
     }
 }

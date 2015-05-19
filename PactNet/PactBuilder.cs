@@ -1,4 +1,6 @@
 ﻿using System;
+using Newtonsoft.Json;
+using PactNet.Configuration.Json;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
@@ -46,11 +48,16 @@ namespace PactNet
             return this;
         }
 
-        public IMockProviderService MockService(int port, bool enableSsl = false)
+        public IMockProviderService MockService(int port, bool enableSsl = false, JsonSerializerSettings jsonSerializerSettings = null)
         {
             if (_mockProviderService != null)
             {
                 _mockProviderService.Stop();
+            }
+
+            if (jsonSerializerSettings != null)
+            {
+                JsonConfig.ApiSerializerSettings = jsonSerializerSettings;
             }
 
             _mockProviderService = _mockProviderServiceFactory(port, enableSsl, ProviderName);

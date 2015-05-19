@@ -1,5 +1,7 @@
 ﻿using System;
+using Newtonsoft.Json;
 using NSubstitute;
+using PactNet.Configuration.Json;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
@@ -144,6 +146,19 @@ namespace PactNet.Tests
             pactBuilder.MockService(1234, true);
 
             Assert.True(calledWithSslEnabled);
+        }
+
+        [Fact]
+        public void MockService_WhenCalledWithJsonSerializerSettings_SetsTheGlobalApiSerializerSettings()
+        {
+            var serializerSettings = new JsonSerializerSettings();
+            var mockMockProviderService = Substitute.For<IMockProviderService>();
+
+            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl, providerName) => mockMockProviderService);
+
+            pactBuilder.MockService(1234, jsonSerializerSettings: serializerSettings);
+
+            Assert.Equal(serializerSettings, JsonConfig.ApiSerializerSettings);
         }
 
         [Fact]

@@ -2,10 +2,10 @@
 
 namespace PactNet.Configuration.Json
 {
-    public static class JsonConfig
+    internal static class JsonConfig
     {
         private static JsonSerializerSettings _serializerSettings;
-        public static JsonSerializerSettings PactFileSerializerSettings 
+        internal static JsonSerializerSettings PactFileSerializerSettings 
         {
             get
             {
@@ -19,7 +19,7 @@ namespace PactNet.Configuration.Json
         }
 
         private static JsonSerializerSettings _apiRequestSerializerSettings;
-        public static JsonSerializerSettings ApiSerializerSettings
+        internal static JsonSerializerSettings ApiSerializerSettings
         {
             get
             {
@@ -30,6 +30,7 @@ namespace PactNet.Configuration.Json
                 };
                 return _apiRequestSerializerSettings;
             }
+            set { _apiRequestSerializerSettings = value; }
         }
     }
 }
