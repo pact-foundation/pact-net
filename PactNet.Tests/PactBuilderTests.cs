@@ -156,9 +156,21 @@ namespace PactNet.Tests
 
             IPactBuilder pactBuilder = new PactBuilder((port, enableSsl, providerName) => mockMockProviderService);
 
-            pactBuilder.MockService(1234, jsonSerializerSettings: serializerSettings);
+            pactBuilder.MockService(1234, serializerSettings);
 
             Assert.Equal(serializerSettings, JsonConfig.ApiSerializerSettings);
+        }
+
+        [Fact]
+        public void MockService_WhenCalledWithNoJsonSerializerSettings_DoesNotSetTheGlobalApiSerializerSettingsToNull()
+        {
+            var mockMockProviderService = Substitute.For<IMockProviderService>();
+
+            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl, providerName) => mockMockProviderService);
+
+            pactBuilder.MockService(1234);
+
+            Assert.NotNull(JsonConfig.ApiSerializerSettings);
         }
 
         [Fact]
