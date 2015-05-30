@@ -515,6 +515,33 @@ namespace PactNet.Tests
         }
 
         [Fact]
+        public void Verify_WithDescriptionThatYieldsNoInteractions_ThrowsArgumentException()
+        {
+            var description = "Description that does not match an interaction";
+            var pactUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
+            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description\", \"provider_state\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
+            var httpClient = new HttpClient();
+
+            var pactVerifier = GetSubject();
+
+            _mockFileSystem.File.ReadAllText(pactUri).Returns(pactFileJson);
+
+            pactVerifier
+                .ProviderState("My Provider State")
+                .ProviderState("My Provider State 2");
+
+            pactVerifier.ServiceProvider("Event API", httpClient)
+                .HonoursPactWith("My client")
+                .PactUri(pactUri);
+
+            Assert.Throws<ArgumentException>(() => pactVerifier.Verify(description: description));
+
+            _mockProviderServiceValidator.DidNotReceive().Validate(
+                Arg.Any<ProviderServicePactFile>(),
+                Arg.Any<ProviderStates>());
+        }
+
+        [Fact]
         public void Verify_WithProviderStateSet_CallsProviderServiceValidatorWithProviderState()
         {
             var httpClient = new HttpClient();

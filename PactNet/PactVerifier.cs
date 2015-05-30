@@ -214,6 +214,12 @@ namespace PactNet
                 pactFile.Interactions = pactFile.Interactions.Where(x => x.ProviderState.Equals(providerState));
             }
 
+            if ((description != null || providerState != null) &&
+                (pactFile.Interactions == null || !pactFile.Interactions.Any()))
+            {
+                throw new ArgumentException("The specified description and/or providerState filter yielded no interactions.");
+            }
+
             _providerServiceValidatorFactory(_httpRequestSender).Validate(pactFile, ProviderStates);
         }
 
