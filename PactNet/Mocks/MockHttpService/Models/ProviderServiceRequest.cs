@@ -8,7 +8,7 @@ namespace PactNet.Mocks.MockHttpService.Models
     public class ProviderServiceRequest : IHttpMessage
     {
         [JsonProperty(PropertyName = "method")]
-        [JsonConverter(typeof(LowercaseStringEnumConverter))]
+        [JsonConverter(typeof(CamelCaseStringEnumConverter))]
         public HttpVerb Method { get; set; }
 
         [JsonProperty(PropertyName = "path")]
@@ -18,6 +18,7 @@ namespace PactNet.Mocks.MockHttpService.Models
         public string Query { get; set; }
 
         [JsonProperty(PropertyName = "headers")]
+        [JsonConverter(typeof(PreserveCasingDictionaryConverter))]
         public IDictionary<string, string> Headers { get; set; }
 
         [JsonProperty(PropertyName = "body")]

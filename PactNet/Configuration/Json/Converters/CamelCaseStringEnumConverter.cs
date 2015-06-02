@@ -2,9 +2,9 @@
 
 namespace PactNet.Configuration.Json.Converters
 {
-    public class LowercaseStringEnumConverter : StringEnumConverter
+    public class CamelCaseStringEnumConverter : StringEnumConverter
     {
-        public LowercaseStringEnumConverter()
+        public CamelCaseStringEnumConverter()
         {
             CamelCaseText = true;
         }
