@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Globalization;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace PactNet.Configuration.Json.Converters
@@ -15,15 +14,14 @@ namespace PactNet.Configuration.Json.Converters
             }
             else
             {
-                var dictionary = (IDictionary) value;
+                var dictionary = (IDictionary<string, string>) value;
 
                 writer.WriteStartObject();
 
-                foreach (DictionaryEntry entry in dictionary)
+                foreach (var item in dictionary)
                 {
-                    var key = Convert.ToString(entry.Key, CultureInfo.InvariantCulture);
-                    writer.WritePropertyName(key);
-                    serializer.Serialize(writer, entry.Value);
+                    writer.WritePropertyName(item.Key);
+                    serializer.Serialize(writer, item.Value);
                 }
 
                 writer.WriteEndObject();
@@ -42,7 +40,7 @@ namespace PactNet.Configuration.Json.Converters
 
         public override bool CanConvert(Type objectType)
         {
-            return typeof(IDictionary).IsAssignableFrom(objectType);
+            return typeof(IDictionary<string, string>).IsAssignableFrom(objectType);
         }
     }
 }
