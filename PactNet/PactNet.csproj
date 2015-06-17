@@ -102,6 +102,7 @@
     <Compile Include="Comparers\MissingInteractionComparisonFailure.cs" />
     <Compile Include="Comparers\UnexpectedRequestComparisonFailure.cs" />
     <Compile Include="Configuration\Json\JsonConfig.cs" />
+    <Compile Include="Matchers\DefineMatcher.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\HttpStatusCodeComparer.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\IHttpStatusCodeComparer.cs" />
     <Compile Include="Mocks\MockHttpService\CustomRequestSender.cs" />
