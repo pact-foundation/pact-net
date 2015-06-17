@@ -41,12 +41,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
             if (expected.Body != null)
             {
-                string expectedResponseBodyJson = JsonConvert.SerializeObject(expected.Body);
-                string actualResponseBodyJson = JsonConvert.SerializeObject(actual.Body);
-                var actualResponseBody = JsonConvert.DeserializeObject<JToken>(actualResponseBodyJson);
-                var expectedResponseBody = JsonConvert.DeserializeObject<JToken>(expectedResponseBodyJson);
-
-                var bodyResult = _httpBodyComparer.Compare(expectedResponseBody, actualResponseBody);
+                var bodyResult = _httpBodyComparer.Compare(expected.Body, actual.Body);
                 result.AddChildResult(bodyResult);
             }
 
