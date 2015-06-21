@@ -7,7 +7,6 @@ using Xunit;
 
 namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 {
-    //TODO: Split these up into separate tests for each of the individual counterpart
     public class ProviderServiceResponseComparerTests
     {
         private IProviderServiceResponseComparer GetSubject()

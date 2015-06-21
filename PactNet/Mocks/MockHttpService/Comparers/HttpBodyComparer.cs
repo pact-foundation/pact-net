@@ -30,10 +30,12 @@ namespace PactNet.Mocks.MockHttpService.Comparers
             {
                 var matchResult = rule.Match(expectedToken, actualToken);
 
+                //TODO: Maybe we should call this a list of differences
                 var comparisonFailures = new List<ComparisonFailure>();
 
-                foreach (var failedCheck in matchResult.PerformedChecks.Where(x => x is FailedMatchCheck).Cast<FailedMatchCheck>())
+                foreach (var failedCheck in matchResult.MatcherChecks.Where(x => x is FailedMatcherCheck).Cast<FailedMatcherCheck>())
                 {
+                    //TODO: We should be able to generate a better output, as we know exactly the path that failed
                     var comparisonFailure = new DiffComparisonFailure(expectedToken, actualToken);
                     if (comparisonFailures.All(x => x.Result != comparisonFailure.Result))
                     {

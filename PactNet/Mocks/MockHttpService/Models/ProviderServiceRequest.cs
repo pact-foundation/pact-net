@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using PactNet.Configuration.Json.Converters;
 using PactNet.Matchers;
+using PactNet.Mocks.MockHttpService.Matchers;
 
 namespace PactNet.Mocks.MockHttpService.Models
 {
@@ -26,7 +27,7 @@ namespace PactNet.Mocks.MockHttpService.Models
 
         [JsonIgnore]
         [JsonProperty(PropertyName = "matchingRules")]
-        public IEnumerable<IMatcher> MatchingRules { get; protected set; }
+        internal IEnumerable<IMatcher> MatchingRules { get; private set; }
 
         [JsonProperty(PropertyName = "body")]
         public dynamic Body
@@ -44,7 +45,7 @@ namespace PactNet.Mocks.MockHttpService.Models
 
             //Populate matching rules collection
             var matchingRules = new List<IMatcher>();
-            matchingRules.Add(new DefaultRequestBodyMatcher());
+            matchingRules.Add(new DefaultHttpBodyMatcher(false));
 
 
             //If no matching rules can be found, we can then add the default one or apply a default one all the time.
