@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
+using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 using PactNet.Configuration.Json.Converters;
 using PactNet.Matchers;
 using PactNet.Mocks.MockHttpService.Matchers;
+using PactNet.Mocks.MockHttpService.Matchers.Regex;
+using PactNet.Mocks.MockHttpService.Matchers.Type;
 
 namespace PactNet.Mocks.MockHttpService.Models
 {
@@ -27,7 +33,7 @@ namespace PactNet.Mocks.MockHttpService.Models
 
         [JsonIgnore]
         [JsonProperty(PropertyName = "matchingRules")]
-        internal IEnumerable<IMatcher> MatchingRules { get; private set; }
+        internal IDictionary<string, IMatcher> MatchingRules { get; private set; }
 
         [JsonProperty(PropertyName = "body")]
         public dynamic Body
@@ -41,21 +47,54 @@ namespace PactNet.Mocks.MockHttpService.Models
 
         private dynamic ParseBodyMatchingRules(dynamic body)
         {
-            //Find matching rules
+            MatchingRules = new Dictionary<string, IMatcher>
+            {
+                 { DefaultHttpBodyMatcher.Path, new DefaultHttpBodyMatcher(false) }
+            };
 
-            //Populate matching rules collection
-            var matchingRules = new List<IMatcher>();
-            matchingRules.Add(new DefaultHttpBodyMatcher(false));
+            var bodyToken = JToken.FromObject(body);
 
+            if (bodyToken is JValue)
+            {
+                return body;
+            }
 
-            //If no matching rules can be found, we can then add the default one or apply a default one all the time.
-            //Something like the law of specicifity on the path?
-            MatchingRules = matchingRules;
+            var matcherTypes = ((JToken)bodyToken).SelectTokens("$..*.$pactMatcherType").ToList();
 
+            if (!matcherTypes.Any())
+            {
+                return body;
+            }
 
-            //Return the example value with rules stripped
+            var matchersToRemove = new Stack<dynamic>();
 
-            return body;
+            var matcherFactory = new Dictionary<string, Func<JContainer, IMatcher>>()
+            {
+                { RegexMatchDefinition.Name, props => new RegexMatcher(props["regex"].Value<string>()) },
+                { TypeMatchDefinition.Name, props => new TypeMatcher() }
+            };
+
+            foreach (var matcherType in matcherTypes.Where(x => x is JValue).Cast<JValue>())
+            {
+                var matcherDefinition = matcherType.Parent.Parent;
+                var example = matcherDefinition["example"].Value<dynamic>();
+
+                matchersToRemove.Push(new { Path = matcherDefinition.Path, Example = example });
+                MatchingRules.Add(matcherDefinition.Path, matcherFactory[matcherDefinition["$pactMatcherType"].Value<string>()](matcherDefinition));
+            }
+
+            foreach (var item in matchersToRemove)
+            {
+                bodyToken.SelectToken(item.Path).Replace(item.Example);
+            }
+
+            //http://blog.petegoo.com/2009/10/26/using-json-net-to-eval-json-into-a-dynamic-variable-in/
+            //http://www.tomdupont.net/2014/02/deserialize-to-expandoobject-with.html
+            //http://gotoanswer.com/?q=Deserialize+json+object+into+dynamic+object+using+Json.net
+
+            return bodyToken is JArray
+                ? JsonConvert.DeserializeObject<IEnumerable<ExpandoObject>>(bodyToken.ToString(), new ExpandoObjectConverter())
+                : JsonConvert.DeserializeObject<ExpandoObject>(bodyToken.ToString(), new ExpandoObjectConverter());
         }
 
         public string PathWithQuery()

@@ -6,6 +6,6 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 {
     internal interface IHttpBodyComparer
     {
-        ComparisonResult Compare(dynamic expected, dynamic actual, IEnumerable<IMatcher> matchingRules);
+        ComparisonResult Compare(dynamic expected, dynamic actual, IDictionary<string, IMatcher> matchingRules);
     }
 }

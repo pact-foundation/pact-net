@@ -7,7 +7,12 @@ namespace PactNet.Mocks.MockHttpService.Matchers
 {
     internal class DefaultHttpBodyMatcher : IMatcher
     {
-        public string MatchPath { get { return "$..*"; } }
+        public const string Path = "$..*";
+
+        public string Type
+        {
+            get { return "default"; }
+        }
 
         public bool AllowExtraKeys { get; private set; }
 
@@ -16,25 +21,18 @@ namespace PactNet.Mocks.MockHttpService.Matchers
             AllowExtraKeys = allowExtraKeysInObjects;
         }
 
-        public MatcherResult Match(JToken expected, JToken actual)
+        public MatcherResult Match(string path, JToken expected, JToken actual)
         {
-            var checks = new List<MatcherCheck>();
-
             if (expected is JValue)
             {
-                if (actual != null && expected.Equals(actual))
-                {
-                    checks.Add(new SuccessfulMatcherCheck(MatchPath));
-                }
-                else
-                {
-                    checks.Add(new FailedMatcherCheck(MatchPath, MatcherCheckFailureType.ValueDoesNotMatch));
-                }
-
-                return new MatcherResult { MatcherChecks = checks };
+                return actual != null && expected.Equals(actual) ?
+                    new MatcherResult(new SuccessfulMatcherCheck(path)) :
+                    new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotMatch));
             }
 
-            var expectedTokens = expected.SelectTokens(MatchPath);
+            var checks = new List<MatcherCheck>();
+
+            var expectedTokens = expected.SelectTokens(path);
 
             foreach (var expectedToken in expectedTokens)
             {
@@ -70,7 +68,7 @@ namespace PactNet.Mocks.MockHttpService.Matchers
                 }
             }
 
-            return new MatcherResult { MatcherChecks = checks };
+            return new MatcherResult(checks);
         }
     }
 }

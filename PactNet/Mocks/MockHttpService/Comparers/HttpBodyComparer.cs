@@ -8,7 +8,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 {
     internal class HttpBodyComparer : IHttpBodyComparer
     {
-        public ComparisonResult Compare(dynamic expected, dynamic actual, IEnumerable<IMatcher> matchingRules)
+        public ComparisonResult Compare(dynamic expected, dynamic actual, IDictionary<string, IMatcher> matchingRules)
         {
             var result = new ComparisonResult("has a matching body");
 
@@ -28,7 +28,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
             foreach (var rule in matchingRules)
             {
-                MatcherResult matchResult = rule.Match(expectedToken, actualToken);
+                MatcherResult matchResult = rule.Value.Match(rule.Key, expectedToken, actualToken);
 
                 //TODO: Maybe we should call this a list of differences
                 var comparisonFailures = new List<ComparisonFailure>();

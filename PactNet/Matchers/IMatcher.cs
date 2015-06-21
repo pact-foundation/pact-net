@@ -1,10 +1,13 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace PactNet.Matchers
 {
     internal interface IMatcher
     {
-        string MatchPath { get; }
-        MatcherResult Match(JToken expected, JToken actual);
+        [JsonProperty("match")]
+        string Type { get; }
+
+        MatcherResult Match(string path, JToken expected, JToken actual);
     }
 }
