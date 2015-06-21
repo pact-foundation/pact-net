@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PactNet.Comparers;
@@ -19,17 +18,24 @@ namespace PactNet.Matchers
             protected set { _path = value.StartsWith(PathPrefix) ? value : PathPrefix + value; }
         }
 
-        public bool Failed { get; protected set; }
         public string Message { get; protected set; }
+    }
+
+    public enum FailureType
+    {
+        AdditionalItemInArray,
+        AdditionalPropertyInObject,
+        ValueDoesNotMatch
     }
 
     public class FailedMatchCheck : MatchCheck
     {
-        public FailedMatchCheck(string path, string message)
+        public FailureType FailureType { get; set; }
+
+        public FailedMatchCheck(string path, FailureType failureType)
         {
             Path = path;
-            Failed = true;
-            Message = message;
+            FailureType = failureType;
         }
     }
 
@@ -38,7 +44,6 @@ namespace PactNet.Matchers
         public SuccessfulMatchCheck(string path)
         {
             Path = path;
-            Failed = false;
         }
     }
 
@@ -50,7 +55,7 @@ namespace PactNet.Matchers
     public interface IMatcher
     {
         string MatchPath { get; }
-        MatchResult Match(dynamic expected, dynamic actual);
+        MatchResult Match(JToken expected, JToken actual);
     }
 
     //TODO: Maybe allowExtraKeys could remove the need for two seperate default body matchers? https://github.com/bethesque/pact-specification/blob/version-2/example.json
@@ -59,21 +64,51 @@ namespace PactNet.Matchers
     {
         public string MatchPath { get { return "$..*"; } }
 
-        public MatchResult Match(dynamic expected, dynamic actual)
+        public MatchResult Match(JToken expected, JToken actual)
         {
+            //TODO: Maybe this should become a list of differences
             var checks = new List<MatchCheck>();
 
-            //TODO: Maybe look at changing these to JToken.FromObject(...)
-            string expectedJson = JsonConvert.SerializeObject(expected);
-            string actualJson = JsonConvert.SerializeObject(actual);
-            var expectedToken = JsonConvert.DeserializeObject<JToken>(expectedJson);
-            var actualToken = JsonConvert.DeserializeObject<JToken>(actualJson);
+            var actualTokens = actual.SelectTokens(MatchPath);
 
-            //TODO: This will need to become a full object graph walk / strict compare
-            if (!JToken.DeepEquals(expectedToken, actualToken))
+            foreach (var actualToken in actualTokens)
             {
-                checks.Add(new FailedMatchCheck(MatchPath, new DiffComparisonFailure(expectedToken, actualToken).Result));
+                if (actualToken is JArray || actualToken is JObject)
+                {
+                    var expectedToken = expected.SelectToken(actualToken.Path);
+
+                    if (expectedToken != null && actualToken.Count().Equals(expectedToken.Count()))
+                    {
+                        checks.Add(new SuccessfulMatchCheck(actualToken.Path));
+                    }
+                    else
+                    {
+                        var failureType = actualToken is JArray ? FailureType.AdditionalItemInArray : FailureType.AdditionalPropertyInObject;
+                        checks.Add(new FailedMatchCheck(actualToken.Path, failureType));
+                    }
+                }
+                else if (actualToken is JValue)
+                {
+                    var expectedToken = expected.SelectToken(actualToken.Path);
+
+                    if (expectedToken != null && actualToken.Equals(expectedToken))
+                    {
+                        checks.Add(new SuccessfulMatchCheck(actualToken.Path));
+                    }
+                    else
+                    {
+                        /*var expectedParent = expectedJson.SelectToken(actualToken.Parent.Path);
+                        var actualParent = actualToken.Parent;*/
+
+                        //Say what kind of failure instead of the saying generating the failure
+
+                        checks.Add(new FailedMatchCheck(actualToken.Path, FailureType.ValueDoesNotMatch));
+
+                        //checks.Add(new FailedMatchCheck(actualToken.Path, new DiffComparisonFailure(expectedParent, actualParent).Result));
+                    }
+                }
             }
+
             return new MatchResult { PerformedChecks = checks };
         }
     }
@@ -82,17 +117,11 @@ namespace PactNet.Matchers
     {
         public string MatchPath { get { return "$..*"; } }
 
-        public MatchResult Match(dynamic expected, dynamic actual)
+        public MatchResult Match(JToken expected, JToken actual)
         {
             var checks = new List<MatchCheck>();
 
-            //TODO: Maybe look at changing these to JToken.FromObject(...)
-            string expectedJson = JsonConvert.SerializeObject(expected);
-            string actualJson = JsonConvert.SerializeObject(actual);
-            var expectedToken = JsonConvert.DeserializeObject<JToken>(expectedJson);
-            var actualToken = JsonConvert.DeserializeObject<JToken>(actualJson);
-
-            AssertPropertyValuesMatch(expectedToken, actualToken, checks);
+            AssertPropertyValuesMatch(expected, actual, checks);
 
             return new MatchResult { PerformedChecks = checks };
         }
@@ -105,7 +134,7 @@ namespace PactNet.Matchers
                     {
                         if (httpBody1.Count() != httpBody2.Count())
                         {
-                            checks.Add(new FailedMatchCheck(httpBody1.Path, new DiffComparisonFailure(httpBody1.Root, httpBody2.Root).Result));
+                            checks.Add(new FailedMatchCheck(httpBody1.Path, FailureType.ValueDoesNotMatch));
                             return false;
                         }
 
@@ -138,7 +167,7 @@ namespace PactNet.Matchers
                             }
                             else
                             {
-                                checks.Add(new FailedMatchCheck(httpBody1.Path, new DiffComparisonFailure(httpBody1.Root, httpBody2.Root).Result));
+                                checks.Add(new FailedMatchCheck(httpBody1.Path, FailureType.ValueDoesNotMatch));
                                 return false;
                             }
                         }
@@ -160,7 +189,7 @@ namespace PactNet.Matchers
                         }
                         else
                         {
-                            checks.Add(new FailedMatchCheck(httpBody1.Path, new DiffComparisonFailure(httpBody1.Root, httpBody2.Root).Result));
+                            checks.Add(new FailedMatchCheck(httpBody1.Path, FailureType.ValueDoesNotMatch));
                             return false;
                         }
                         break;
@@ -170,7 +199,7 @@ namespace PactNet.Matchers
                     {
                         if (!httpBody1.Equals(httpBody2))
                         {
-                            checks.Add(new FailedMatchCheck(httpBody1.Path, new DiffComparisonFailure(httpBody1.Root, httpBody2.Root).Result));
+                            checks.Add(new FailedMatchCheck(httpBody1.Path, FailureType.ValueDoesNotMatch));
                             return false;
                         }
                         break;
@@ -179,7 +208,7 @@ namespace PactNet.Matchers
                     {
                         if (!JToken.DeepEquals(httpBody1, httpBody2))
                         {
-                            checks.Add(new FailedMatchCheck(httpBody1.Path, new DiffComparisonFailure(httpBody1.Root, httpBody2.Root).Result));
+                            checks.Add(new FailedMatchCheck(httpBody1.Path, FailureType.ValueDoesNotMatch));
                             return false;
                         }
                         break;
@@ -200,7 +229,7 @@ namespace PactNet.Matchers
             RegEx = regex;
         }
 
-        public MatchResult Match(dynamic expected, dynamic actual)
+        public MatchResult Match(JToken expected, JToken actual)
         {
             //var act = actual as JValue;
             //return act != null && Regex.IsMatch(act.Value.ToString(), RegEx);

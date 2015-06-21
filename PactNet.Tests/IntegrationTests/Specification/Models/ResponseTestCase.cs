@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using PactNet.Comparers;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
