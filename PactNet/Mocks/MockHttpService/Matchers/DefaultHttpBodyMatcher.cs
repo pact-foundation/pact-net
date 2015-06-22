@@ -20,6 +20,20 @@ namespace PactNet.Mocks.MockHttpService.Matchers
         {
             var checks = new List<MatcherCheck>();
 
+            if (expected is JValue)
+            {
+                if (actual != null && expected.Equals(actual))
+                {
+                    checks.Add(new SuccessfulMatcherCheck(MatchPath));
+                }
+                else
+                {
+                    checks.Add(new FailedMatcherCheck(MatchPath, MatcherCheckFailureType.ValueDoesNotMatch));
+                }
+
+                return new MatcherResult { MatcherChecks = checks };
+            }
+
             var expectedTokens = expected.SelectTokens(MatchPath);
 
             foreach (var expectedToken in expectedTokens)

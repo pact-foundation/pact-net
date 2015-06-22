@@ -23,12 +23,12 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                 return result;
             }
 
-            JToken expectedToken = JToken.FromObject(expected);
-            JToken actualToken = JToken.FromObject(actual);
+            var expectedToken = JToken.FromObject(expected);
+            var actualToken = JToken.FromObject(actual);
 
             foreach (var rule in matchingRules)
             {
-                var matchResult = rule.Match(expectedToken, actualToken);
+                MatcherResult matchResult = rule.Match(expectedToken, actualToken);
 
                 //TODO: Maybe we should call this a list of differences
                 var comparisonFailures = new List<ComparisonFailure>();
