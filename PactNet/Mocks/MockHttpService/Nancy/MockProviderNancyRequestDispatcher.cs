@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Nancy;
 using Nancy.Routing;
+using Newtonsoft.Json;
 
 namespace PactNet.Mocks.MockHttpService.Nancy
 {
@@ -47,11 +48,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             }
             catch (Exception ex)
             {
-                var exceptionMessage = ex.Message
-                    .Replace(@"\", "\\")
-                    .Replace("\r", "\\r")
-                    .Replace("\n", "\\n")
-                    .Replace("\t", "\\t");
+                var exceptionMessage = JsonConvert.ToString(ex.Message).Trim('"');
 
                 response = new Response
                 {

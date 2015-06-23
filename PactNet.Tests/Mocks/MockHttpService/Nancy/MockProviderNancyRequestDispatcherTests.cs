@@ -194,7 +194,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         public void Dispatch_WhenRequestHandlerThrowsWithMessageThatContainsSlashes_ResponseContentAndReasonPhrasesIsReturnedWithoutSlashes()
         {
             var exception = new InvalidOperationException("Something\r\n \t \\ failed");
-            const string expectedMessage = @"Something\r\n \t \ failed";  
+            const string expectedMessage = @"Something\r\n \t \\ failed";
             var nancyContext = new NancyContext
             {
                 Request = new Request("GET", "/Test", "HTTP")
