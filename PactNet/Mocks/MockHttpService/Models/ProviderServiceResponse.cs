@@ -19,7 +19,7 @@ namespace PactNet.Mocks.MockHttpService.Models
 
         [JsonIgnore]
         [JsonProperty(PropertyName = "matchingRules")]
-        internal IEnumerable<IMatcher> MatchingRules { get; private set; }
+        internal IDictionary<string, IMatcher> MatchingRules { get; private set; }
 
         [JsonProperty(PropertyName = "body")]
         public dynamic Body
@@ -33,20 +33,10 @@ namespace PactNet.Mocks.MockHttpService.Models
 
         private dynamic ParseBodyMatchingRules(dynamic body)
         {
-            //Find matching rules
-                //Recurse through object graph
-                //Need to generate the current path
-
-            //Populate matching rules collection
-            var matchingRules = new List<IMatcher>();
-            matchingRules.Add(new DefaultHttpBodyMatcher(true));
-
-            //If no matching rules can be found, we can then add the default one or apply a default one all the time.
-            //Something like the law of specicifity on the path?
-            MatchingRules = matchingRules;
-
-
-            //Return the example value with rules stripped
+            MatchingRules = new Dictionary<string, IMatcher>
+            {
+                { DefaultHttpBodyMatcher.Path, new DefaultHttpBodyMatcher(true) }
+            };
 
             return body;
         }

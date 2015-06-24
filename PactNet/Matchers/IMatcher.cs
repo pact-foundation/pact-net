@@ -4,7 +4,6 @@ namespace PactNet.Matchers
 {
     internal interface IMatcher
     {
-        string MatchPath { get; }
-        MatcherResult Match(JToken expected, JToken actual);
+        MatcherResult Match(string path, JToken expected, JToken actual);
     }
 }
