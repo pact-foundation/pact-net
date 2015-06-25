@@ -50,10 +50,19 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             if (_host != null)
             {
                 _host.Stop();
-                _host.Dispose();
+                Dispose(_host);
                 _host = null;
                 _log.InfoFormat("Stopped {0}", _baseUri.OriginalString);
-                LogProvider.CurrentLogProvider.Dispose();
+
+                Dispose(LogProvider.CurrentLogProvider);
+            }
+        }
+
+        private void Dispose(IDisposable disposable)
+        {
+            if (disposable != null)
+            {
+                disposable.Dispose();
             }
         }
     }

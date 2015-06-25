@@ -54,7 +54,14 @@ namespace PactNet.Infrastructure.Logging
         {
             if (_writer != null)
             {
-                _writer.Dispose();
+                try
+                {
+                    _writer.Dispose();
+                }
+                catch (ObjectDisposedException)
+                {
+                    //Swallow this as something else has already disposed the file
+                }
             }
         }
 
