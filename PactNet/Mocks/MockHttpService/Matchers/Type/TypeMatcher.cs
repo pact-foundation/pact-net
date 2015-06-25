@@ -1,6 +1,5 @@
 using Newtonsoft.Json.Linq;
 using PactNet.Matchers;
-using PactNet.Mocks.MockHttpService.Matchers.Regex;
 
 namespace PactNet.Mocks.MockHttpService.Matchers.Type
 {
@@ -8,7 +7,7 @@ namespace PactNet.Mocks.MockHttpService.Matchers.Type
     {
         public string Type
         {
-            get { return RegexMatchDefinition.Name; }
+            get { return TypeMatchDefinition.Name; }
         }
 
         public MatcherResult Match(string path, JToken expected, JToken actual)
