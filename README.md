@@ -241,7 +241,7 @@ public class SomethingApiTests
 	public void EnsureSomethingApiHonoursPactWithConsumer()
 	{
 		//Arrange
-		IPactVerifier pactVerifier = new PactVerifier(() => {}, () => {}); //NOTE: You can supply setUp and tearDown, which will run before starting and after completing each individual verification.
+		IPactVerifier pactVerifier = new PactVerifier(() => {}, () => {}); //NOTE: The supplied setUp and tearDown actions will run before starting and after completing each individual verification.
 		
 		pactVerifier
 			.ProviderState("There is a something with id 'tester'",
