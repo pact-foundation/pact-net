@@ -7,17 +7,16 @@ using Nancy.TinyIoc;
 using PactNet.Logging;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Mappers;
-using PactNet.Models;
 
 namespace PactNet.Mocks.MockHttpService.Nancy
 {
     public class MockProviderNancyBootstrapper : DefaultNancyBootstrapper
     {
-        private readonly string _pactFileDirectory;
+        private readonly PactConfig _config;
 
-        public MockProviderNancyBootstrapper(string pactFileDirectory)
+        public MockProviderNancyBootstrapper(PactConfig config)
         {
-            _pactFileDirectory = pactFileDirectory;
+            _config = config;
         }
 
         protected override IEnumerable<ModuleRegistration> Modules
@@ -49,7 +48,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
         private void RegisterDependenciesWithNancyContainer(TinyIoCContainer container)
         {
-            container.Register(typeof(PactFileInfo), (c, o) => new PactFileInfo(_pactFileDirectory));
+            container.Register(typeof(PactConfig), (c, o) => _config);
             container.Register<IProviderServiceRequestMapper, ProviderServiceRequestMapper>().AsMultiInstance();
             container.Register<IProviderServiceRequestComparer, ProviderServiceRequestComparer>().AsMultiInstance();
             container.Register<INancyResponseMapper, NancyResponseMapper>().AsMultiInstance();

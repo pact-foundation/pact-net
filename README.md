@@ -87,15 +87,19 @@ public class ConsumerMyApiPact : IDisposable
 
 	public ConsumerMyApiPact()
 	{
-		PactBuilder = new PactBuilder()
+		PactBuilder = new PactBuilder(); //Uses default directories. PactDir: ..\..\pacts and LogDir: ..\..\logs
+		//or
+		PactBuilder = new PactBuilder(new PactConfig { PactDir = @"..\pacts", LogDir = @"c:\temp\logs" }); //Configures the PactDir and/or LogDir.
+	
+		PactBuilder
 			.ServiceConsumer("Consumer")
 			.HasPactWith("Something API");
 
 		MockProviderService = PactBuilder.MockService(MockServerPort); //Configure the http mock server
 		//or
-		//MockProviderService = PactBuilder.MockService(MockServerPort, true); //By passing true as the second param, you can enabled SSL. This will however require a valid SSL certificate installed and bound with netsh (netsh http add sslcert ipport=0.0.0.0:port certhash=thumbprint appid={app-guid}) on the machine running the test. See https://groups.google.com/forum/#!topic/nancy-web-framework/t75dKyfgzpg
+		MockProviderService = PactBuilder.MockService(MockServerPort, true); //By passing true as the second param, you can enabled SSL. This will however require a valid SSL certificate installed and bound with netsh (netsh http add sslcert ipport=0.0.0.0:port certhash=thumbprint appid={app-guid}) on the machine running the test. See https://groups.google.com/forum/#!topic/nancy-web-framework/t75dKyfgzpg
 		//or
-		//MockProviderService = PactBuilder.MockService(MockServerPort, new JsonSerializerSettings()); //You can also change the default Json serialization settings using this overload
+		MockProviderService = PactBuilder.MockService(MockServerPort, new JsonSerializerSettings()); //You can also change the default Json serialization settings using this overload
 	}
 
 	public void Dispose()

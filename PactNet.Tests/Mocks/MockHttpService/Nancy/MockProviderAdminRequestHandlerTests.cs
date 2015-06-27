@@ -23,8 +23,8 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         private IMockProviderRepository _mockProviderRepository;
         private IFileSystem _mockFileSystem;
         private ILog _mockLog;
-
-        private IMockProviderAdminRequestHandler GetSubject()
+        
+        private IMockProviderAdminRequestHandler GetSubject(PactConfig pactConfig = null)
         {
             _mockProviderRepository = Substitute.For<IMockProviderRepository>();
             _mockFileSystem = Substitute.For<IFileSystem>();
@@ -36,7 +36,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             return new MockProviderAdminRequestHandler(
                 _mockProviderRepository,
                 _mockFileSystem,
-                new PactFileInfo(null),
+                pactConfig ?? new PactConfig(),
                 _mockLog);
         }
 
@@ -615,7 +615,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             handler.Handle(context);
 
-            _mockFileSystem.File.Received(1).WriteAllText(Path.Combine(Constants.DefaultPactFileDirectory, pactDetails.GeneratePactFileName()), pactFileJson);
+            _mockFileSystem.File.Received(1).WriteAllText(Path.Combine(Constants.DefaultPactDir, pactDetails.GeneratePactFileName()), pactFileJson);
         }
 
         [Fact]
@@ -668,7 +668,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             handler.Handle(context);
 
-            _mockFileSystem.File.Received(1).WriteAllText(Path.Combine(Constants.DefaultPactFileDirectory, pactDetails.GeneratePactFileName()), pactFileJson);
+            _mockFileSystem.File.Received(1).WriteAllText(Path.Combine(Constants.DefaultPactDir, pactDetails.GeneratePactFileName()), pactFileJson);
         }
 
         [Fact]
@@ -771,6 +771,62 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         }
 
         [Fact]
+        public void Handle_WithAPostRequestToPactAndPactDirIsDifferentFromDefault_NewPactFileIsSavedWithInteractionsInTheSpecifiedPath()
+        {
+            var pactDetails = new PactDetails
+            {
+                Consumer = new Pacticipant { Name = "Consumer" },
+                Provider = new Pacticipant { Name = "Provider" }
+            };
+
+            var interactions = new List<ProviderServiceInteraction>
+            {
+                new ProviderServiceInteraction
+                {
+                    Description = "My description",
+                    Request = new ProviderServiceRequest
+                    {
+                        Method = HttpVerb.Get,
+                        Path = "/test"
+                    },
+                    Response = new ProviderServiceResponse
+                    {
+                        Status = (int)HttpStatusCode.NoContent
+                    }
+                }
+            };
+
+            var pactFile = new ProviderServicePactFile
+            {
+                Provider = pactDetails.Provider,
+                Consumer = pactDetails.Consumer,
+                Interactions = interactions
+            };
+
+            var config = new PactConfig { PactDir = @"C:\temp" };
+            var filePath = Path.Combine(config.PactDir, pactDetails.GeneratePactFileName());
+
+            var pactFileJson = JsonConvert.SerializeObject(pactFile, JsonConfig.PactFileSerializerSettings);
+            var pactDetailsJson = JsonConvert.SerializeObject(pactDetails, JsonConfig.ApiSerializerSettings);
+
+            var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(pactDetailsJson));
+
+            var requestStream = new RequestStream(jsonStream, jsonStream.Length, true);
+            var context = new NancyContext
+            {
+                Request = new Request("POST", new Url("http://localhost/pact"), requestStream)
+            };
+
+            var handler = GetSubject(config);
+
+            _mockProviderRepository.Interactions.Returns(interactions);
+
+            var response = handler.Handle(context);
+
+            _mockFileSystem.File.Received(1).WriteAllText(filePath, pactFileJson);
+        }
+
+        [Fact]
         public void Handle_WithAPostRequestToPactAndDirectoryDoesNotExist_DirectoryIsCreatedAndNewPactFileIsSavedWithInteractions()
         {
             var pactDetails = new PactDetails
@@ -814,7 +870,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
                 Request = new Request("POST", new Url("http://localhost/pact"), requestStream)
             };
 
-            var filePath = Path.Combine(Constants.DefaultPactFileDirectory, pactDetails.GeneratePactFileName());
+            var filePath = Path.Combine(Constants.DefaultPactDir, pactDetails.GeneratePactFileName());
 
             var handler = GetSubject();
 

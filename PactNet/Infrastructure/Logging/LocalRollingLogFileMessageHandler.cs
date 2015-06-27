@@ -11,15 +11,15 @@ namespace PactNet.Infrastructure.Logging
         private static readonly object Sync = new object();
         private readonly StreamWriter _writer;
 
-        internal LocalRollingLogFileMessageHandler(IFileSystem fileSystem, string filePath)
+        internal LocalRollingLogFileMessageHandler(IFileSystem fileSystem, string logFilePath)
         {
-            TryCreateDirectory(filePath);
-            var file = fileSystem.File.Open(filePath, FileMode.Append, FileAccess.Write, FileShare.Read);
+            TryCreateDirectory(logFilePath);
+            var file = fileSystem.File.Open(logFilePath, FileMode.Append, FileAccess.Write, FileShare.Read);
             _writer = new StreamWriter(file, Encoding.UTF8);
         }
 
-        internal LocalRollingLogFileMessageHandler(string filePath)
-            : this(new FileSystem(), filePath)
+        internal LocalRollingLogFileMessageHandler(string logFilePath)
+            : this(new FileSystem(), logFilePath)
         {
         }
 

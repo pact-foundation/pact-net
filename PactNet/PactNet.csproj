@@ -161,11 +161,11 @@
     <Compile Include="Mocks\MockHttpService\Models\HandledRequest.cs" />
     <Compile Include="Mocks\MockHttpService\MockProviderRepository.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Models\PactFileInfo.cs" />
     <Compile Include="Mocks\MockHttpService\Validators\IProviderServiceValidator.cs" />
     <Compile Include="Mocks\MockHttpService\Validators\ProviderServiceValidator.cs" />
     <Compile Include="Models\PactDetails.cs" />
     <Compile Include="Models\PactFile.cs" />
+    <Compile Include="PactConfig.cs" />
     <Compile Include="PactVerifier.cs" />
     <Compile Include="Mocks\MockHttpService\Models\ProviderServiceInteraction.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\IProviderServiceResponseComparer.cs" />

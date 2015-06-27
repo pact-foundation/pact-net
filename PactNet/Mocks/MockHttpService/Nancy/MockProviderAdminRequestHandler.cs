@@ -18,18 +18,18 @@ namespace PactNet.Mocks.MockHttpService.Nancy
     {
         private readonly IMockProviderRepository _mockProviderRepository;
         private readonly IFileSystem _fileSystem;
-        private readonly string _pactFileDirectory;
+        private readonly PactConfig _pactConfig;
         private readonly ILog _log;
 
         public MockProviderAdminRequestHandler(
             IMockProviderRepository mockProviderRepository,
             IFileSystem fileSystem,
-            PactFileInfo pactFileInfo,
+            PactConfig pactConfig,
             ILog log)
         {
             _mockProviderRepository = mockProviderRepository;
             _fileSystem = fileSystem;
-            _pactFileDirectory = pactFileInfo.Directory ?? Constants.DefaultPactFileDirectory;
+            _pactConfig = pactConfig;
             _log = log;
         }
 
@@ -176,7 +176,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         {
             var pactDetailsJson = ReadContent(context.Request.Body);
             var pactDetails = JsonConvert.DeserializeObject<PactDetails>(pactDetailsJson);
-            var pactFilePath = Path.Combine(_pactFileDirectory, pactDetails.GeneratePactFileName());
+            var pactFilePath = Path.Combine(_pactConfig.PactDir, pactDetails.GeneratePactFileName());
 
             var pactFile = new ProviderServicePactFile
             {
@@ -193,7 +193,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             }
             catch (DirectoryNotFoundException)
             {
-                _fileSystem.Directory.CreateDirectory(_pactFileDirectory);
+                _fileSystem.Directory.CreateDirectory(_pactConfig.PactDir);
                 _fileSystem.File.WriteAllText(pactFilePath, pactFileJson);
             }
 
