@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Nancy;
 using Nancy.Routing;
 using Newtonsoft.Json;
+using PactNet.Logging;
 
 namespace PactNet.Mocks.MockHttpService.Nancy
 {
@@ -13,13 +14,16 @@ namespace PactNet.Mocks.MockHttpService.Nancy
     {
         private readonly IMockProviderRequestHandler _requestHandler;
         private readonly IMockProviderAdminRequestHandler _adminRequestHandler;
+        private readonly ILog _log;
 
         public MockProviderNancyRequestDispatcher(
             IMockProviderRequestHandler requestHandler,
-            IMockProviderAdminRequestHandler adminRequestHandler)
+            IMockProviderAdminRequestHandler adminRequestHandler,
+            ILog log)
         {
             _requestHandler = requestHandler;
             _adminRequestHandler = adminRequestHandler;
+            _log = log;
         }
 
         public Task<Response> Dispatch(NancyContext context, CancellationToken cancellationToken)
@@ -48,6 +52,11 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             }
             catch (Exception ex)
             {
+                if (ex.GetType() != typeof(PactFailureException))
+                {
+                    _log.ErrorException("Failed to handle the request", ex);
+                }
+
                 var exceptionMessage = JsonConvert.ToString(ex.Message).Trim('"');
 
                 response = new Response

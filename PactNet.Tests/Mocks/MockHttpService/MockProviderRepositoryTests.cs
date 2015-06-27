@@ -43,7 +43,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void AddInteraction_WhenAddingADuplicateTestScopedInteraction_ThrowsInvalidOperationException()
+        public void AddInteraction_WhenAddingADuplicateTestScopedInteraction_ThrowsPactFailureException()
         {
             var interaction1 = new ProviderServiceInteraction { Description = "My description 1" };
             var interaction2 = new ProviderServiceInteraction { Description = "My description 1" };
@@ -52,7 +52,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             repo.AddInteraction(interaction1);
 
-            Assert.Throws<InvalidOperationException>(() => repo.AddInteraction(interaction2));
+            Assert.Throws<PactFailureException>(() => repo.AddInteraction(interaction2));
 
             Assert.Equal(interaction1, repo.Interactions.Single());
             Assert.Equal(interaction1, repo.TestScopedInteractions.Single());
@@ -76,7 +76,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void AddInteraction_WhenAddingAnInteractionThatHasBeenAddedInAPreviousTestHoweverTheDataIsDifferent_ThrowsInvalidOperationException()
+        public void AddInteraction_WhenAddingAnInteractionThatHasBeenAddedInAPreviousTestHoweverTheDataIsDifferent_ThrowsPactFailureException()
         {
             var interaction1 = new ProviderServiceInteraction { Description = "My description 1", Request = new ProviderServiceRequest { Method = HttpVerb.Get } };
             var interaction2 = new ProviderServiceInteraction { Description = "My description 1", Request = new ProviderServiceRequest { Method = HttpVerb.Delete } };
@@ -86,7 +86,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             repo.AddInteraction(interaction1);
             repo.ClearTestScopedState();
 
-            Assert.Throws<InvalidOperationException>(() => repo.AddInteraction(interaction2));
+            Assert.Throws<PactFailureException>(() => repo.AddInteraction(interaction2));
 
             Assert.Equal(interaction1, repo.Interactions.Single());
             Assert.Empty(repo.TestScopedInteractions);

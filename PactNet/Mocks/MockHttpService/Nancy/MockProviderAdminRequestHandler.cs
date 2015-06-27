@@ -108,8 +108,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
                     if (interactionUsages == null || !interactionUsages.Any())
                     {
-                        comparisonResult.RecordFailure(
-                            new MissingInteractionComparisonFailure(registeredInteraction));
+                        comparisonResult.RecordFailure(new MissingInteractionComparisonFailure(registeredInteraction));
                     }
                     else if (interactionUsages.Count() > 1)
                     {
@@ -123,8 +122,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             {
                 foreach (var handledRequest in _mockProviderRepository.HandledRequests.Where(x => x.MatchedInteraction == null))
                 {
-                    comparisonResult.RecordFailure(
-                        new UnexpectedRequestComparisonFailure(handledRequest.ActualRequest));
+                    comparisonResult.RecordFailure(new UnexpectedRequestComparisonFailure(handledRequest.ActualRequest));
                 }
             }
 
