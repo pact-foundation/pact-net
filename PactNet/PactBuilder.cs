@@ -20,7 +20,12 @@ namespace PactNet
         }
 
         public PactBuilder()
-            : this((port, enableSsl, providerName) => new MockProviderService(port, enableSsl, providerName))
+            : this(new PactConfig())
+        {
+        }
+
+        public PactBuilder(PactConfig config)
+            : this((port, enableSsl, providerName) => new MockProviderService(port, enableSsl, providerName, config))
         {
         }
 

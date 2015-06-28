@@ -6,8 +6,8 @@ namespace PactNet.Tests.IntegrationTests
 {
     internal class IntegrationTestingMockProviderNancyBootstrapper : MockProviderNancyBootstrapper
     {
-        public IntegrationTestingMockProviderNancyBootstrapper()
-            : base(null)
+        public IntegrationTestingMockProviderNancyBootstrapper(PactConfig config)
+            : base(config)
         {
         }
 

@@ -6,9 +6,6 @@ namespace PactNet
 {
     public interface IPactVerifier
     {
-        [Obsolete("Please supply this information in the constructor. Will be removed in the next major version.")]
-        IPactVerifier ProviderStatesFor(string consumerName, Action setUp = null, Action tearDown = null);
-
         /// <summary>
         /// Define a set up and/or tear down action for a specific state specified by the consumer.
         /// This is where you should set up test data, so that you can fulfil the contract outlined by a consumer.

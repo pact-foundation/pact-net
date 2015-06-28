@@ -130,6 +130,7 @@
     <Compile Include="Models\PactFileTests.cs" />
     <Compile Include="Models\ProviderStatesTests.cs" />
     <Compile Include="Models\ProviderStateTests.cs" />
+    <Compile Include="PactConfigTests.cs" />
     <Compile Include="PactBuilderTests.cs" />
     <Compile Include="ProviderServicePactFileTests.cs" />
     <Compile Include="PactVerifierTests.cs" />

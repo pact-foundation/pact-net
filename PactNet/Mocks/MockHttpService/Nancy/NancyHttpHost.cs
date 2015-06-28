@@ -17,11 +17,11 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         private readonly ILog _log;
         private NancyHost _host;
 
-        internal NancyHttpHost(Uri baseUri, string providerName, INancyBootstrapper bootstrapper)
+        internal NancyHttpHost(Uri baseUri, string providerName, INancyBootstrapper bootstrapper, string logDir)
         {
             var logFileName = String.Format("{0}_mock_service.log", providerName.ToLowerSnakeCase());
-            LogProvider.LogFilePath = Path.Combine(Constants.DefaultLogFileDirectory.Replace(@"..\", String.Empty), logFileName);
-            var logFilePath = Path.Combine(Constants.DefaultLogFileDirectory, logFileName);
+            var logFilePath = Path.Combine(logDir, logFileName);
+            LogProvider.LogFilePath = Path.GetFullPath(logFilePath);
             
             var logProvider = new LocalLogProvider(new List<ILocalLogMessageHandler> { new LocalRollingLogFileMessageHandler(logFilePath) });
             LogProvider.SetCurrentLogProvider(logProvider);
@@ -31,8 +31,8 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             _log = LogProvider.GetLogger(typeof(NancyHttpHost));
         }
 
-        internal NancyHttpHost(Uri baseUri, string pactFileDirectory, string providerName)
-            : this(baseUri, providerName, new MockProviderNancyBootstrapper(pactFileDirectory))
+        internal NancyHttpHost(Uri baseUri, string providerName, PactConfig config)
+            : this(baseUri, providerName, new MockProviderNancyBootstrapper(config), config.LogDir)
         {
             _baseUri = baseUri;
         }

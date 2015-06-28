@@ -176,7 +176,7 @@ namespace PactNet.Tests
         [Fact]
         public void Build_WhenCalledBeforeTheMockProviderServiceIsInitialised_ThrowsInvalidOperationException()
         {
-            IPactBuilder pactBuilder = new PactBuilder(null);
+            IPactBuilder pactBuilder = new PactBuilder(mockProviderServiceFactory: null);
 
             Assert.Throws<InvalidOperationException>(() => pactBuilder.Build());
         }

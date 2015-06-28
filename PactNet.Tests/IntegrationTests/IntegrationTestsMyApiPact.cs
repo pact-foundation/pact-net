@@ -16,9 +16,11 @@ namespace PactNet.Tests.IntegrationTests
 
         public IntegrationTestsMyApiPact()
         {
+            var pactConfig = new PactConfig();
+
             PactBuilder = new PactBuilder((port, enableSsl, providerName) =>
                     new MockProviderService(
-                        baseUri => new NancyHttpHost(baseUri, providerName, new IntegrationTestingMockProviderNancyBootstrapper()),
+                        baseUri => new NancyHttpHost(baseUri, providerName, new IntegrationTestingMockProviderNancyBootstrapper(pactConfig), pactConfig.LogDir),
                         port, enableSsl,
                         baseUri => new HttpClient { BaseAddress = new Uri(baseUri) },
                         new HttpMethodMapper()))
