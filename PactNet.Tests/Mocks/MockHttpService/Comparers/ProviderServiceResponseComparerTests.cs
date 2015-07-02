@@ -544,6 +544,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
 
             Assert.Equal(1, result.Failures.Count());
         }
+
         [Fact]
         public void Compare_WithMatchingTypeMatchers_NoErrorsAreAddedToTheComparisonResult()
         {
