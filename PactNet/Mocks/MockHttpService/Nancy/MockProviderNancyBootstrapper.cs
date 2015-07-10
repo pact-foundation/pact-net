@@ -56,7 +56,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             container.Register<IMockProviderAdminRequestHandler, MockProviderAdminRequestHandler>().AsMultiInstance();
             container.Register<IMockProviderRepository, MockProviderRepository>().AsSingleton();
             container.Register<IFileSystem, FileSystem>().AsMultiInstance();
-            container.Register(typeof(ILog), (c, o) => LogProvider.GetLogger(typeof(MockProviderNancyRequestDispatcher)));
+            container.Register(typeof(ILog), (c, o) => LogProvider.GetLogger(_config.LoggerName));
         }
     }
 }

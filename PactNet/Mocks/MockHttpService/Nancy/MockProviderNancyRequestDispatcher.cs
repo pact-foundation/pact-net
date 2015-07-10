@@ -15,15 +15,18 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         private readonly IMockProviderRequestHandler _requestHandler;
         private readonly IMockProviderAdminRequestHandler _adminRequestHandler;
         private readonly ILog _log;
+        private readonly PactConfig _pactConfig;
 
         public MockProviderNancyRequestDispatcher(
             IMockProviderRequestHandler requestHandler,
             IMockProviderAdminRequestHandler adminRequestHandler,
-            ILog log)
+            ILog log,
+            PactConfig pactConfig)
         {
             _requestHandler = requestHandler;
             _adminRequestHandler = adminRequestHandler;
             _log = log;
+            _pactConfig = pactConfig;
         }
 
         public Task<Response> Dispatch(NancyContext context, CancellationToken cancellationToken)
@@ -57,7 +60,9 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                     _log.ErrorException("Failed to handle the request", ex);
                 }
 
-                var exceptionMessage = JsonConvert.ToString(ex.Message).Trim('"');
+                var exceptionMessage = String.Format("{0} See {1} for details.", 
+                    JsonConvert.ToString(ex.Message).Trim('"'), 
+                    !String.IsNullOrEmpty(_pactConfig.LoggerName) ? LogProvider.CurrentLogProvider.ResolveLogPath(_pactConfig.LoggerName) : "logs");
 
                 response = new Response
                 {

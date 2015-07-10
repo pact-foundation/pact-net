@@ -36,6 +36,8 @@
 // Define LIBLOG_PROVIDERS_ONLY if your library provides its own logging API and you just want to use the
 // LibLog providers internally to provide built in support for popular logging frameworks.
 
+using PactNet.Infrastructure.Logging;
+
 #pragma warning disable 1591
 
 // If you copied this file manually, you need to change all "YourRootNameSpace" so not to clash with other libraries
@@ -377,8 +379,13 @@ namespace PactNet.Logging
 #else
     public
 #endif
-    interface ILogProvider : IDisposable
+    interface ILogProvider
     {
+        //NOTE: PactNet Custom Additions
+        string AddLogger(string logDir, string loggerNameSeed, string logFileNameTemplate = "{0}.log");
+        void RemoveLogger(string loggerName);
+        string ResolveLogPath(string loggerName);
+
         /// <summary>
         /// Gets the specified named logger.
         /// </summary>
@@ -400,6 +407,8 @@ namespace PactNet.Logging
         /// <param name="value">A value.</param>
         /// <returns>A disposable that when disposed removes the map from the context.</returns>
         IDisposable OpenMappedContext(string key, string value);
+
+        
     }
 
     /// <summary>
@@ -423,11 +432,11 @@ namespace PactNet.Logging
         private static dynamic _currentLogProvider;
         private static Action<ILogProvider> _onCurrentLogProviderSet;
 
-        //Pact Custom addition
-        public static string LogFilePath { get; set; }
-
         static LogProvider()
         {
+            //NOTE: PactNet Custom Addition
+            SetCurrentLogProvider(new LocalLogProvider());
+
             IsDisabled = false;
         }
 
@@ -435,7 +444,8 @@ namespace PactNet.Logging
         /// Sets the current log provider.
         /// </summary>
         /// <param name="logProvider">The log provider.</param>
-        public static void SetCurrentLogProvider(ILogProvider logProvider)
+        //NOTE: PactNet Custom Addition (public -> internal)
+        internal static void SetCurrentLogProvider(ILogProvider logProvider)
         {
             _currentLogProvider = logProvider;
 
@@ -742,6 +752,11 @@ namespace PactNet.Logging.LogProviders
                = new Lazy<OpenMdc>(GetOpenMdcMethod);
         }
 
+        //NOTE: PactNet Custom Additions
+        public abstract string AddLogger(string logDir, string loggerNameSeed, string logFileNameTemplate = "{0}.log");
+        public abstract void RemoveLogger(string loggerName);
+        public abstract string ResolveLogPath(string loggerName);
+
         public abstract Logger GetLogger(string name);
 
         public IDisposable OpenNestedContext(string message)
@@ -762,10 +777,6 @@ namespace PactNet.Logging.LogProviders
         protected virtual OpenMdc GetOpenMdcMethod()
         {
             return (_, __) => NoopDisposableInstance;
-        }
-
-        public virtual void Dispose()
-        {
         }
     }
 

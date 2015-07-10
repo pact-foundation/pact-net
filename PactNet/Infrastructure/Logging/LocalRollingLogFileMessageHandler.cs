@@ -8,11 +8,14 @@ namespace PactNet.Infrastructure.Logging
 {
     internal class LocalRollingLogFileMessageHandler : ILocalLogMessageHandler
     {
-        private static readonly object Sync = new object();
+        public string LogPath { get; set; }
+
+        private readonly object _sync = new object();
         private readonly StreamWriter _writer;
 
         internal LocalRollingLogFileMessageHandler(IFileSystem fileSystem, string logFilePath)
         {
+            LogPath = logFilePath;
             TryCreateDirectory(logFilePath);
             var file = fileSystem.File.Open(logFilePath, FileMode.Append, FileAccess.Write, FileShare.Read);
             _writer = new StreamWriter(file, Encoding.UTF8);
@@ -43,7 +46,7 @@ namespace PactNet.Infrastructure.Logging
                 message = messageFormat;
             }
             
-            lock (Sync)
+            lock (_sync)
             {
                 _writer.WriteLine("{0} [{1}] {2}", logMessage.DateTimeFormatted, logMessage.Level, message);
                 _writer.Flush();
@@ -54,14 +57,7 @@ namespace PactNet.Infrastructure.Logging
         {
             if (_writer != null)
             {
-                try
-                {
-                    _writer.Dispose();
-                }
-                catch (ObjectDisposedException)
-                {
-                    //Swallow this as something else has already disposed the file
-                }
+                _writer.Dispose();
             }
         }
 

@@ -1,3 +1,4 @@
+using System;
 using PactNet.Mocks.MockHttpService;
 
 namespace PactNet
@@ -6,6 +7,8 @@ namespace PactNet
     {
         public string PactDir { get; set; }
         public string LogDir { get; set; }
+
+        internal string LoggerName;
 
         public PactConfig()
         {

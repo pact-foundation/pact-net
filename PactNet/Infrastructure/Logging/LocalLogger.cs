@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using PactNet.Logging;
 
@@ -7,11 +6,13 @@ namespace PactNet.Infrastructure.Logging
 {
     internal class LocalLogger : IDisposable
     {
-        private readonly IEnumerable<ILocalLogMessageHandler> _logHandlers;
+        internal string LogPath { get { return _logHandler.LogPath; } }
 
-        public LocalLogger(IEnumerable<ILocalLogMessageHandler> logHandlers)
+        private readonly ILocalLogMessageHandler _logHandler;
+
+        public LocalLogger(string logFilePath)
         {
-            _logHandlers = logHandlers;
+            _logHandler = new LocalRollingLogFileMessageHandler(logFilePath);
         }
 
         public bool Log(LogLevel logLevel, Func<string> messageFunc, Exception exception, params object[] formatParameters)
@@ -24,29 +25,16 @@ namespace PactNet.Infrastructure.Logging
                 return true;
             }
 
-            if (_logHandlers == null)
-            {
-                return true;
-            }
-
-            foreach (var handler in _logHandlers)
-            {
-                handler.Handle(new LocalLogMessage(logLevel, messageFunc, exception, formatParameters));
-            }
+             _logHandler.Handle(new LocalLogMessage(logLevel, messageFunc, exception, formatParameters));
 
             return true;
         }
 
         public void Dispose()
         {
-            if (_logHandlers == null)
+            if (_logHandler != null)
             {
-                return;
-            }
-
-            foreach (var handler in _logHandlers.Where(handler => handler != null))
-            {
-                handler.Dispose();
+                _logHandler.Dispose();
             }
         }
     }
