@@ -30,12 +30,12 @@ namespace PactNet.Tests
             _mockProviderServiceValidator = Substitute.For<IProviderServiceValidator>();
             _fakeHttpMessageHandler = new FakeHttpMessageHandler();
 
-            return new PactVerifier(() => {}, () => {}, _mockFileSystem, httpRequestSender =>
+            return new PactVerifier(() => {}, () => {}, _mockFileSystem, (httpRequestSender, reporter, config) =>
             {
                 _providerServiceValidatorFactoryCallInfo = new Tuple<bool, IHttpRequestSender>(true, httpRequestSender);
                 
                 return _mockProviderServiceValidator;
-            }, new HttpClient(_fakeHttpMessageHandler));
+            }, new HttpClient(_fakeHttpMessageHandler), null);
         }
 
         [Fact]

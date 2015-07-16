@@ -1,15 +1,13 @@
 namespace PactNet
 {
-    public class PactConfig
+    public class PactVerifierConfig
     {
-        public string PactDir { get; set; }
         public string LogDir { get; set; }
 
         internal string LoggerName;
 
-        public PactConfig()
+        public PactVerifierConfig()
         {
-            PactDir = Constants.DefaultPactDir;
             LogDir = Constants.DefaultLogDir;
         }
     }

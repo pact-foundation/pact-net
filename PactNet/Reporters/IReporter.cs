@@ -10,5 +10,7 @@ namespace PactNet.Reporters
 
         void Indent();
         void ResetIndentation();
+
+        void Flush();
     }
 }

@@ -1,8 +1,5 @@
-﻿using System;
-using Microsoft.Owin.Testing;
+﻿using Microsoft.Owin.Testing;
 using PactNet;
-using PactNet.Models;
-using Provider.Api.Web.Controllers;
 using Xunit;
 
 namespace Provider.Api.Web.Tests

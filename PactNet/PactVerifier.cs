@@ -3,6 +3,8 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Net.Http;
 using Newtonsoft.Json;
+using PactNet.Extensions;
+using PactNet.Logging;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Validators;
@@ -14,8 +16,10 @@ namespace PactNet
     public class PactVerifier : IPactVerifier
     {
         private readonly IFileSystem _fileSystem;
-        private readonly Func<IHttpRequestSender, IProviderServiceValidator> _providerServiceValidatorFactory;
+        private readonly Func<IHttpRequestSender, IReporter, PactVerifierConfig, IProviderServiceValidator> _providerServiceValidatorFactory;
         private readonly HttpClient _httpClient;
+        private readonly PactVerifierConfig _config;
+
         private IHttpRequestSender _httpRequestSender;
 
         public string ConsumerName { get; private set; }
@@ -27,12 +31,14 @@ namespace PactNet
             Action setUp, 
             Action tearDown,
             IFileSystem fileSystem,
-            Func<IHttpRequestSender, IProviderServiceValidator> providerServiceValidatorFactory, 
-            HttpClient httpClient)
+            Func<IHttpRequestSender, IReporter, PactVerifierConfig, IProviderServiceValidator> providerServiceValidatorFactory, 
+            HttpClient httpClient,
+            PactVerifierConfig config)
         {
             _fileSystem = fileSystem;
             _providerServiceValidatorFactory = providerServiceValidatorFactory;
             _httpClient = httpClient;
+            _config = config ?? new PactVerifierConfig();
 
             ProviderStates = new ProviderStates(setUp, tearDown);
         }
@@ -41,15 +47,17 @@ namespace PactNet
         /// Define any set up and tear down state that is required when running the interaction verify.
         /// We strongly recommend that any set up state is cleared using the tear down. This includes any state and IoC container overrides you may be doing.
         /// </summary>
-        /// <param name="consumerName">The name of the consumer being verified.</param>
         /// <param name="setUp">A set up action that will be run before each interaction verify. If no action is required please use an empty lambda () => {}.</param>
         /// <param name="tearDown">A tear down action that will be run after each interaction verify. If no action is required please use an empty lambda () => {}.</param>
-        public PactVerifier(Action setUp, Action tearDown) : this(
+        /// <param name="config"></param>
+        public PactVerifier(Action setUp, Action tearDown, PactVerifierConfig config = null)
+            : this(
             setUp, 
             tearDown,
             new FileSystem(),
-            httpRequestSender => new ProviderServiceValidator(httpRequestSender, new Reporter()),
-            new HttpClient())
+            (httpRequestSender, reporter, verifierConfig) => new ProviderServiceValidator(httpRequestSender, reporter, verifierConfig),
+            new HttpClient(),
+            config)
         {
         }
 
@@ -212,7 +220,17 @@ namespace PactNet
                 throw new ArgumentException("The specified description and/or providerState filter yielded no interactions.");
             }
 
-            _providerServiceValidatorFactory(_httpRequestSender).Validate(pactFile, ProviderStates);
+            var loggerName = LogProvider.CurrentLogProvider.AddLogger(_config.LogDir, ProviderName.ToLowerSnakeCase(), "{0}_verifier.log");
+            _config.LoggerName = loggerName;
+
+            try
+            {
+                _providerServiceValidatorFactory(_httpRequestSender, new Reporter(_config), _config).Validate(pactFile, ProviderStates);
+            }
+            finally
+            {
+                LogProvider.CurrentLogProvider.RemoveLogger(_config.LoggerName);
+            }
         }
 
         private static bool IsWebUri(string uri)

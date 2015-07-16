@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using PactNet.Comparers;
@@ -7,29 +8,36 @@ namespace PactNet.Reporters
 {
     internal class Reporter : IReporter
     {
-        private readonly IReportOutputter _outputter;
+        private readonly IEnumerable<Action<string>> _outputters;
+
         private int _currentTabDepth;
         private int _failureInfoCount;
         private int _failureCount;
 
-        public Reporter(IReportOutputter outputter)
+        private readonly IList<string> _reportLines = new List<string>();
+
+        internal Reporter(IEnumerable<Action<string>> outputters)
         {
-            _outputter = outputter;
+            _outputters = outputters;
         }
 
-        public Reporter() : this(
-            new ConsoleReportOutputter())
+        public Reporter(PactVerifierConfig config)
+            : this(new List<Action<string>>
+            {
+                Console.WriteLine, 
+                new FileReportOutputter(config.LoggerName).Write
+            })
         {
         }
 
         public void ReportInfo(string infoMessage)
         {
-            _outputter.WriteInfo(infoMessage, _currentTabDepth);
+            AddReportLine(infoMessage, _currentTabDepth);
         }
 
         public void ReportSummary(ComparisonResult comparisonResult)
         {
-            WriteSummary(comparisonResult);
+            AddSummary(comparisonResult);
         }
 
         public void ReportFailureReasons(ComparisonResult comparisonResult)
@@ -47,7 +55,20 @@ namespace PactNet.Reporters
             _currentTabDepth = 0;
         }
 
-        private void WriteSummary(ComparisonResult comparisonResult, int tabDepth = 0)
+        public void Flush()
+        {
+            if (!_reportLines.Any())
+            {
+                return;
+            }
+
+            foreach (var outputter in _outputters)
+            {
+                outputter(String.Join(Environment.NewLine, _reportLines));
+            }
+        }
+
+        private void AddSummary(ComparisonResult comparisonResult, int tabDepth = 0)
         {
             if (comparisonResult == null)
             {
@@ -73,18 +94,16 @@ namespace PactNet.Reporters
                     failureBuilder.Append(")");
                 }
 
-                _outputter.WriteError(comparisonResult.Message + failureBuilder,
-                    _currentTabDepth + tabDepth);
+                AddReportLine(comparisonResult.Message + failureBuilder, _currentTabDepth + tabDepth);
             }
             else
             {
-                _outputter.WriteSuccess(comparisonResult.Message,
-                    _currentTabDepth + tabDepth);
+                AddReportLine(comparisonResult.Message, _currentTabDepth + tabDepth);
             }
 
             foreach (var childComparisonResult in comparisonResult.ChildResults)
             {
-                WriteSummary(childComparisonResult, tabDepth + 1);
+                AddSummary(childComparisonResult, tabDepth + 1);
             }
         }
 
@@ -100,11 +119,20 @@ namespace PactNet.Reporters
                 return;
             }
 
-            _outputter.WriteInfo(Environment.NewLine + "Failures:");
+            AddReportLine(String.Empty, 0);
+            AddReportLine("Failures:", 0);
+
             foreach (var failure in comparisonResult.Failures)
             {
-                _outputter.WriteError(String.Format("{0}{1}) {2}", Environment.NewLine, ++_failureCount, failure.Result));
+                AddReportLine(String.Empty, 0);
+                AddReportLine(String.Format("{0}) {1}", ++_failureCount, failure.Result), 0);
             }
+        }
+
+        private void AddReportLine(string message, int tabDepth)
+        {
+            var indentation = new String(' ', tabDepth*2); //Each tab we want to be 2 space chars
+            _reportLines.Add(indentation + message);
         }
     }
 }
