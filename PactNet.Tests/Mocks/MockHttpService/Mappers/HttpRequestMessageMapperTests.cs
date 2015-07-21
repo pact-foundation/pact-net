@@ -69,7 +69,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             var mapper = GetSubject();
 
             _mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
-            _mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(new HttpBodyContent(String.Empty, null, null));
+            _mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: null, encoding: null));
 
             var result = mapper.Convert(request);
 
@@ -91,7 +91,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = new {}
             };
-            var httpBodyContent = new HttpBodyContent(String.Empty, contentTypeString, null);
+            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: contentTypeString, encoding: null);
 
             var mapper = GetSubject();
 
@@ -118,7 +118,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = new { }
             };
-            var httpBodyContent = new HttpBodyContent(String.Empty, contentTypeString, null);
+            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: contentTypeString, encoding: null);
 
             var mapper = GetSubject();
 
@@ -147,7 +147,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = new { }
             };
-            var httpBodyContent = new HttpBodyContent(String.Empty, contentTypeString, encoding);
+            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: contentTypeString, encoding: encoding);
 
             var mapper = GetSubject();
 
@@ -177,7 +177,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = new { }
             };
-            var httpBodyContent = new HttpBodyContent(String.Empty, contentTypeString, encoding);
+            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: contentTypeString, encoding: encoding);
 
             var mapper = GetSubject();
 
@@ -206,7 +206,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = new { }
             };
-            var httpBodyContent = new HttpBodyContent(String.Empty, contentTypeString, null);
+            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: contentTypeString, encoding: null);
 
             var mapper = GetSubject();
 
@@ -255,7 +255,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = "Some content"
             };
-            var httpBodyContent = new HttpBodyContent(request.Body, "text/plain", Encoding.UTF8);
+            var httpBodyContent = new HttpBodyContent(body: request.Body, contentType: "text/plain", encoding: Encoding.UTF8);
             var stringContent = new StringContent(request.Body, Encoding.UTF8, "text/plain");
 
             var mapper = GetSubject();
@@ -283,7 +283,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = "Some content"
             };
-            var httpBodyContent = new HttpBodyContent(request.Body, "text/plain", Encoding.UTF8);
+            var httpBodyContent = new HttpBodyContent(body: request.Body, contentType: "text/plain", encoding: Encoding.UTF8);
             var stringContent = new StringContent(request.Body, Encoding.UTF8, "text/plain");
 
             var mapper = GetSubject();
@@ -312,13 +312,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = Encoding.UTF8.GetBytes("Some content")
             };
-            var httpBodyContent = new HttpBodyContent(request.Body, "text/plain", Encoding.UTF8);
+            var httpBodyContent = new HttpBodyContent(body: request.Body, contentType: "text/plain", encoding: Encoding.UTF8);
             var byteArrayContent = new ByteArrayContent(request.Body as byte[]);
 
             var mapper = GetSubject();
 
             _mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
-            _mockHttpBodyContentMapper.Convert(Arg.Any<object>(), Arg.Any<IDictionary<string, string>>()).Returns(httpBodyContent);
+            _mockHttpBodyContentMapper.Convert(body: Arg.Any<byte[]>(), headers: Arg.Any<IDictionary<string, string>>()).Returns(httpBodyContent);
             _mockHttpContentMapper.Convert(httpBodyContent).Returns(byteArrayContent);
 
             var result = mapper.Convert(request);
@@ -374,7 +374,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                     Testing = 1
                 }
             };
-            var httpBodyContent = new HttpBodyContent(bodyJson, contentTypeString, encoding);
+            var httpBodyContent = new HttpBodyContent(body: bodyJson, contentType: contentTypeString, encoding: encoding);
 
             var mapper = GetSubject();
 

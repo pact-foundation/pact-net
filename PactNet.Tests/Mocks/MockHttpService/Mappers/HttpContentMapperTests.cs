@@ -26,7 +26,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         [Fact]
         public void Convert_WithEmptyContent_ReturnsNull()
         {
-            var httpBodyContent = new HttpBodyContent(String.Empty, "text/plain", Encoding.UTF8);
+            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: "text/plain", encoding: Encoding.UTF8);
             var mapper = GetSubject();
 
             var result = mapper.Convert(httpBodyContent);

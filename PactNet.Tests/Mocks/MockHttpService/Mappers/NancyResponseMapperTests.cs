@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using NSubstitute;
 using Nancy;
 using PactNet.Mocks.MockHttpService.Mappers;
@@ -100,7 +101,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = "This is a plain body"
             };
-            var httpBodyContent = new HttpBodyContent(response.Body, contentTypeString, null);
+            var httpBodyContent = new HttpBodyContent(body: response.Body, contentType: contentTypeString, encoding: null);
 
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
 
@@ -144,7 +145,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 }
             };
             var jsonBody = "{\"Test\":\"tester\",\"Test2\":1}";
-            var httpBodyContent = new HttpBodyContent(jsonBody, contentTypeString, null);
+            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(jsonBody), contentType: contentTypeString, encoding: null);
 
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
 

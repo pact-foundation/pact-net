@@ -17,7 +17,14 @@ namespace PactNet.Mocks.MockHttpService.Models
         {
             get
             {
-                return Content == null ? null : Encoding.GetBytes(Content);
+                if (Content == null)
+                {
+                    return null;
+                }
+
+                return IsBinaryContentType() ? 
+                    Convert.FromBase64String(Content) : 
+                    Encoding.GetBytes(Content);
             }
         }
 
@@ -50,11 +57,33 @@ namespace PactNet.Mocks.MockHttpService.Models
             _contentType = contentType;
             _encoding = encoding;
 
-            Body = body;
-            Content = ConvertBodyToContent(body);
+            if (IsJsonContentType())
+            {
+                string c = JsonConvert.SerializeObject(body, JsonConfig.ApiSerializerSettings);
+                Content = c;
+                Body = body;
+            }
+            else if (IsBinaryContentType())
+            {
+                if (body is byte[])
+                {
+                    Content = Convert.ToBase64String(body);
+                    Body = body;
+                }
+                else //It's a string coming from json serialised content
+                {
+                    Content = Encoding.GetString(Convert.FromBase64String(body));
+                    Body = body;
+                }
+            }
+            else
+            {
+                Content = body.ToString();
+                Body = body;
+            }
         }
 
-        public HttpBodyContent(string content, string contentType, Encoding encoding)
+        public HttpBodyContent(byte[] content, string contentType, Encoding encoding)
         {
             if (content == null)
             {
@@ -64,38 +93,23 @@ namespace PactNet.Mocks.MockHttpService.Models
             _contentType = contentType;
             _encoding = encoding;
 
-            Content = content;
-            Body = ConvertContentToBody(content);
-        }
-
-        private string ConvertBodyToContent(dynamic body)
-        {
             if (IsJsonContentType())
             {
-                return JsonConvert.SerializeObject(body, JsonConfig.ApiSerializerSettings);
+                var jsonContent = Encoding.GetString(content);
+                Content = jsonContent;
+                Body = JsonConvert.DeserializeObject<dynamic>(jsonContent);
             }
-
-            if (IsBinaryContentType())
+            else if (IsBinaryContentType())
             {
-                return Encoding.GetString(body);
+                Content = Encoding.GetString(content);
+                Body = Convert.ToBase64String(content);
             }
-
-            return body.ToString();
-        }
-
-        private dynamic ConvertContentToBody(string content)
-        {
-            if (IsJsonContentType())
+            else
             {
-                return JsonConvert.DeserializeObject<dynamic>(content);
+                var stringContent = Encoding.GetString(content);
+                Content = stringContent;
+                Body = stringContent;
             }
-
-            if (IsBinaryContentType())
-            {
-                return Encoding.GetBytes(content);
-            }
-                
-            return content;
         }
 
         private bool IsJsonContentType()
