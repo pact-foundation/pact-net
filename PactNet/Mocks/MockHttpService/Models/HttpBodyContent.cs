@@ -9,6 +9,7 @@ namespace PactNet.Mocks.MockHttpService.Models
     {
         private const string DefaultContentType = "text/plain";
         private readonly Encoding _defaultEncoding = Encoding.UTF8;
+        private readonly bool _contentIsBase64Encoded = false;
 
         public dynamic Body { get; private set; }
         public string Content { get; private set; }
@@ -22,7 +23,7 @@ namespace PactNet.Mocks.MockHttpService.Models
                     return null;
                 }
 
-                return IsBinaryContentType() ? 
+                return _contentIsBase64Encoded ? 
                     Convert.FromBase64String(Content) : 
                     Encoding.GetBytes(Content);
             }
@@ -69,6 +70,7 @@ namespace PactNet.Mocks.MockHttpService.Models
                 {
                     Content = Convert.ToBase64String(body);
                     Body = body;
+                    _contentIsBase64Encoded = true;
                 }
                 else //It's a string coming from json serialised content
                 {
