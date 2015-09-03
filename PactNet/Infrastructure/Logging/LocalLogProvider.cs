@@ -31,7 +31,8 @@ namespace PactNet.Infrastructure.Logging
         {
             lock (_sync)
             {
-                if (_loggers.ContainsKey(name))
+                if (!String.IsNullOrEmpty(name) &&
+                    _loggers.ContainsKey(name))
                 {
                     return _loggers[name].Log;
                 }
