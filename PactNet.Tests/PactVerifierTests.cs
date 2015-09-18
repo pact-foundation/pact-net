@@ -12,6 +12,7 @@ using PactNet.Mocks.MockHttpService.Validators;
 using PactNet.Models;
 using PactNet.Tests.Fakes;
 using Xunit;
+using Xunit.Sdk;
 
 namespace PactNet.Tests
 {
@@ -314,12 +315,66 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void Verify_WithHttpsPactFileUri_CallsHttpClientWithJsonGetRequest()
+        public void Verify_WithHttpsPactFileUri_AndBasicAuthUriOptions_CallsHttpClientWithJsonGetRequest()
         {
             var serviceProvider = "Event API";
             var serviceConsumer = "My client";
             var pactUri = "https://yourpactserver.com/getlatestpactfile";
             var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description\", \"provider_state\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
+            var basicAuthUserName = "someuser";
+            var basicAuthPassword = "somepassword";
+            var expectedAuthHeader = Convert.ToBase64String(
+                                        Encoding.UTF8.GetBytes(
+                                            String.Format("{0}:{1}", basicAuthUserName, basicAuthPassword)));
+
+            var pactVerifier = GetSubject();
+
+            _fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(pactFileJson, Encoding.UTF8, "application/json")
+            };
+
+            pactVerifier
+                .ServiceProvider(serviceProvider, new HttpClient())
+                .HonoursPactWith(serviceConsumer)
+                .PactUri(pactUri, new PactUriOptions(basicAuthUserName, basicAuthPassword));
+
+            pactVerifier.Verify();
+            Assert.Equal(_fakeHttpMessageHandler.RequestsRecieved.Single().Headers.Authorization.Parameter,
+                expectedAuthHeader);
+            Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsRecieved.Single().Method);
+            Assert.Equal("application/json", _fakeHttpMessageHandler.RequestsRecieved.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
+        }
+
+        [Fact]
+        public void PactUri_WithBasicAuthUriOptions_InvalidPassword_ThrowsApplicationException()
+        {
+            var serviceProvider = "Event API";
+            var serviceConsumer = "My client";
+            var pactUri = "https://yourpactserver.com/getlatestpactfile";
+            var basicAuthUserName = "someuser";
+            var basicAuthPassword = "";
+
+            var pactVerifier = GetSubject();
+
+            Assert.Throws<ApplicationException>(() => pactVerifier
+                .ServiceProvider(serviceProvider, new HttpClient())
+                .HonoursPactWith(serviceConsumer)
+                .PactUri(pactUri, new PactUriOptions(basicAuthUserName, basicAuthPassword)));
+        }
+
+        [Fact]
+        public void Verify_WithHttpsPactFileUri_AndBasicAuthUriOptions_InUrl_CallsHttpClientWithJsonGetRequest()
+        {
+            var serviceProvider = "Event API";
+            var serviceConsumer = "My client";
+            var pactUri = "https://someuser:somepassword@yourpactserver.com/getlatestpactfile";
+            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description\", \"provider_state\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
+            var basicAuthUserName = "someuser";
+            var basicAuthPassword = "somepassword";
+            var expectedAuthHeader = Convert.ToBase64String(
+                                        Encoding.UTF8.GetBytes(
+                                            String.Format("{0}:{1}", basicAuthUserName, basicAuthPassword)));
 
             var pactVerifier = GetSubject();
 
@@ -334,9 +389,33 @@ namespace PactNet.Tests
                 .PactUri(pactUri);
 
             pactVerifier.Verify();
-
+            Assert.Equal(_fakeHttpMessageHandler.RequestsRecieved.Single().Headers.Authorization.Parameter,
+                expectedAuthHeader);
             Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsRecieved.Single().Method);
             Assert.Equal("application/json", _fakeHttpMessageHandler.RequestsRecieved.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
+        }
+
+        [Fact]
+        public void Verify_WithHttpsPactFileUri_AndBasicAuthUriOptions_InUrl_InvalidUserInfo_ThrowsException()
+        {
+            var serviceProvider = "Event API";
+            var serviceConsumer = "My client";
+            var pactUri = "https://someuser@yourpactserver.com/getlatestpactfile";
+            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description\", \"provider_state\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
+            
+            var pactVerifier = GetSubject();
+
+            _fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(pactFileJson, Encoding.UTF8, "application/json")
+            };
+
+            pactVerifier
+                .ServiceProvider(serviceProvider, new HttpClient())
+                .HonoursPactWith(serviceConsumer)
+                .PactUri(pactUri);
+
+            Assert.Throws<InvalidOperationException>(() => pactVerifier.Verify());
         }
 
         [Fact]
