@@ -1,22 +1,48 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace PactNet
 {
     public class PactUriOptions
     {
-        public PactUriOptions(string basicAuthUserName, string basicAuthPassword)
-        {
-            if (String.IsNullOrEmpty(basicAuthUserName) || String.IsNullOrEmpty(basicAuthPassword))
-                throw new ApplicationException("Invalid username or password");
+        private const string AuthScheme = "Basic";
+        private readonly string _username;
+        private readonly string _password;
 
-            this.BasicAuthUserName = basicAuthUserName;
-            this.BasicAuthPassword = basicAuthPassword;
+        internal string AuthorizationScheme
+        {
+            get { return AuthScheme; }
         }
 
-        public string BasicAuthUserName { get; private set; }
-        public string BasicAuthPassword { get; private set; }
+        internal string AuthorizationValue
+        {
+            get
+            {
+                return Convert.ToBase64String(
+                    Encoding.UTF8.GetBytes(
+                    String.Format("{0}:{1}", _username, _password)));
+            }
+        }
+
+        public PactUriOptions(string username, string password)
+        {
+            if (String.IsNullOrEmpty(username))
+            {
+                throw new ArgumentException("username is null or empty.");
+            }
+
+            if (username.Contains(":"))
+            {
+                throw new ArgumentException("username contains a ':' character, which is not allowed.");
+            }
+
+            if (String.IsNullOrEmpty(password))
+            {
+                throw new ArgumentException("password is null or empty.");
+            }
+
+            _username = username;
+            _password = password;
+        }
     }
 }

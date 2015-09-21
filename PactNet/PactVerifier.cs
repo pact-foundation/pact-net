@@ -181,37 +181,13 @@ namespace PactNet
                 if (IsWebUri(PactFileUri))
                 {
                     var request = new HttpRequestMessage(HttpMethod.Get, PactFileUri);
-
-                    if (PactUriOptions != null)
-                    {
-                        if (String.IsNullOrEmpty(PactUriOptions.BasicAuthUserName) ||
-                            String.IsNullOrEmpty(PactUriOptions.BasicAuthPassword))
-                        {
-                            throw new ApplicationException("Invalid basic-auth username or password");
-                        }
-                    }
-                    else
-                    {
-                        var uriObj = new Uri(PactFileUri);
-                        if (!String.IsNullOrEmpty(uriObj.UserInfo))
-                        {
-                            if(!uriObj.UserInfo.Contains(":"))
-                                throw new ApplicationException("Invalid basic-auth username or password in the url");
-                            
-                            PactUriOptions = new PactUriOptions(uriObj.UserInfo.Split(':')[0], uriObj.UserInfo.Split(':')[1]);
-                        }
-                    }
-
-                    if (PactUriOptions != null)
-                        request.Headers.Add("Authorization", "Basic " +
-                                                             Convert.ToBase64String(
-                                                                 Encoding.UTF8.GetBytes(
-                                                                     String.Format("{0}:{1}",
-                                                                         PactUriOptions.BasicAuthUserName,
-                                                                         PactUriOptions.BasicAuthPassword))));
-
-
                     request.Headers.Add("Accept", "application/json");
+
+                    if (PactUriOptions != null)
+                    {
+                        request.Headers.Add("Authorization", String.Format("{0} {1}", PactUriOptions.AuthorizationScheme, PactUriOptions.AuthorizationValue));
+                    }
+
                     var response = _httpClient.SendAsync(request).Result;
 
                     try
@@ -234,8 +210,7 @@ namespace PactNet
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException(
-                    String.Format("Json Pact file could not be retrieved using uri \'{0}\'.", PactFileUri), ex);
+                throw new InvalidOperationException(String.Format("Json Pact file could not be retrieved using uri \'{0}\'.", PactFileUri), ex);
             }
 
             //Filter interactions
@@ -252,12 +227,10 @@ namespace PactNet
             if ((description != null || providerState != null) &&
                 (pactFile.Interactions == null || !pactFile.Interactions.Any()))
             {
-                throw new ArgumentException(
-                    "The specified description and/or providerState filter yielded no interactions.");
+                throw new ArgumentException("The specified description and/or providerState filter yielded no interactions.");
             }
 
-            var loggerName = LogProvider.CurrentLogProvider.AddLogger(_config.LogDir, ProviderName.ToLowerSnakeCase(),
-                "{0}_verifier.log");
+            var loggerName = LogProvider.CurrentLogProvider.AddLogger(_config.LogDir, ProviderName.ToLowerSnakeCase(), "{0}_verifier.log");
             _config.LoggerName = loggerName;
 
             try
