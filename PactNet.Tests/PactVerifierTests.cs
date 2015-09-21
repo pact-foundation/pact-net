@@ -12,6 +12,7 @@ using PactNet.Mocks.MockHttpService.Validators;
 using PactNet.Models;
 using PactNet.Tests.Fakes;
 using Xunit;
+using Xunit.Sdk;
 
 namespace PactNet.Tests
 {
@@ -337,6 +338,35 @@ namespace PactNet.Tests
 
             Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsRecieved.Single().Method);
             Assert.Equal("application/json", _fakeHttpMessageHandler.RequestsRecieved.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
+        }
+
+        [Fact]
+        public void Verify_WithHttpsPactFileUriAndBasicAuthUriOptions_CallsHttpClientWithJsonGetRequestAndBasicAuthorizationHeader()
+        {
+            var serviceProvider = "Event API";
+            var serviceConsumer = "My client";
+            var pactUri = "https://yourpactserver.com/getlatestpactfile";
+            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description\", \"provider_state\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
+            var options = new PactUriOptions("someuser", "somepassword");
+
+            var pactVerifier = GetSubject();
+
+            _fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(pactFileJson, Encoding.UTF8, "application/json")
+            };
+
+            pactVerifier
+                .ServiceProvider(serviceProvider, new HttpClient())
+                .HonoursPactWith(serviceConsumer)
+                .PactUri(pactUri, options);
+
+            pactVerifier.Verify();
+
+            Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsRecieved.Single().Method);
+            Assert.Equal("application/json", _fakeHttpMessageHandler.RequestsRecieved.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
+            Assert.Equal(_fakeHttpMessageHandler.RequestsRecieved.Single().Headers.Authorization.Scheme, options.AuthorizationScheme);
+            Assert.Equal(_fakeHttpMessageHandler.RequestsRecieved.Single().Headers.Authorization.Parameter, options.AuthorizationValue);
         }
 
         [Fact]

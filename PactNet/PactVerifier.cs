@@ -10,6 +10,7 @@ using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Validators;
 using PactNet.Models;
 using PactNet.Reporters;
+using System.Text;
 
 namespace PactNet
 {
@@ -26,6 +27,7 @@ namespace PactNet
         public string ProviderName { get; private set; }
         public ProviderStates ProviderStates { get; private set; }
         public string PactFileUri { get; private set; }
+        public PactUriOptions PactUriOptions { get; private set; }
 
         internal PactVerifier(
             Action setUp, 
@@ -144,7 +146,7 @@ namespace PactNet
             return this;
         }
 
-        public IPactVerifier PactUri(string uri)
+        public IPactVerifier PactUri(string uri, PactUriOptions options = null)
         {
             if (String.IsNullOrEmpty(uri))
             {
@@ -152,6 +154,7 @@ namespace PactNet
             }
 
             PactFileUri = uri;
+            PactUriOptions = options;
 
             return this;
         }
@@ -160,12 +163,14 @@ namespace PactNet
         {
             if (_httpRequestSender == null)
             {
-                throw new InvalidOperationException("httpRequestSender has not been set, please supply a httpClient or httpRequestSenderFunc using the ServiceProvider method.");
+                throw new InvalidOperationException(
+                    "httpRequestSender has not been set, please supply a httpClient or httpRequestSenderFunc using the ServiceProvider method.");
             }
 
             if (String.IsNullOrEmpty(PactFileUri))
             {
-                throw new InvalidOperationException("PactFileUri has not been set, please supply a uri using the PactUri method.");
+                throw new InvalidOperationException(
+                    "PactFileUri has not been set, please supply a uri using the PactUri method.");
             }
 
             ProviderServicePactFile pactFile;
@@ -177,6 +182,11 @@ namespace PactNet
                 {
                     var request = new HttpRequestMessage(HttpMethod.Get, PactFileUri);
                     request.Headers.Add("Accept", "application/json");
+
+                    if (PactUriOptions != null)
+                    {
+                        request.Headers.Add("Authorization", String.Format("{0} {1}", PactUriOptions.AuthorizationScheme, PactUriOptions.AuthorizationValue));
+                    }
 
                     var response = _httpClient.SendAsync(request).Result;
 
@@ -225,7 +235,8 @@ namespace PactNet
 
             try
             {
-                _providerServiceValidatorFactory(_httpRequestSender, new Reporter(_config), _config).Validate(pactFile, ProviderStates);
+                _providerServiceValidatorFactory(_httpRequestSender, new Reporter(_config), _config)
+                    .Validate(pactFile, ProviderStates);
             }
             finally
             {
