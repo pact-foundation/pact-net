@@ -269,7 +269,8 @@ namespace Consumer.Tests
                     Headers = new Dictionary<string, string>
                     {
                         { "Accept", "application/json" }
-                    }
+                    },
+                    Body = null
                 })
                 .WillRespondWith(new ProviderServiceResponse
                 {
@@ -280,10 +281,10 @@ namespace Consumer.Tests
                     },
                     Body = new []
                     {
-                         new
-                         {
-                             eventType = eventType
-                         }
+                        new
+                        {
+                            eventType = eventType
+                        }
                     }
                 });
 

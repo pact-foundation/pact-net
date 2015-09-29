@@ -9,6 +9,7 @@ namespace PactNet.Mocks.MockHttpService.Models
 {
     public class ProviderServiceRequest : IHttpMessage
     {
+        private bool _bodyWasSet;
         private dynamic _body;
 
         [JsonProperty(PropertyName = "method")]
@@ -29,14 +30,21 @@ namespace PactNet.Mocks.MockHttpService.Models
         [JsonProperty(PropertyName = "matchingRules")]
         internal IDictionary<string, IMatcher> MatchingRules { get; private set; }
 
-        [JsonProperty(PropertyName = "body")]
+        [JsonProperty(PropertyName = "body", NullValueHandling = NullValueHandling.Include)]
         public dynamic Body
         {
             get { return _body; }
             set
             {
+                _bodyWasSet = true;
                 _body = ParseBodyMatchingRules(value);
             }
+        }
+
+        // A not so well known feature in JSON.Net to do conditional serialization at runtime
+        public bool ShouldSerializeBody()
+        {
+            return _bodyWasSet;
         }
 
         private dynamic ParseBodyMatchingRules(dynamic body)
