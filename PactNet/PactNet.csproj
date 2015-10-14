@@ -49,8 +49,12 @@
       <HintPath>..\packages\Nancy.Hosting.Self.0.23.1\lib\net40\Nancy.Hosting.Self.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json.Schema, Version=1.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.Schema.1.0.11\lib\net40\Newtonsoft.Json.Schema.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -102,6 +106,8 @@
     <Compile Include="Comparers\MissingInteractionComparisonFailure.cs" />
     <Compile Include="Comparers\UnexpectedRequestComparisonFailure.cs" />
     <Compile Include="Configuration\Json\JsonConfig.cs" />
+    <Compile Include="Schemas\Interfaces\IPactSchemaValidator.cs" />
+    <Compile Include="Schemas\Interfaces\IPactSchemaVerifier.cs" />
     <Compile Include="Mocks\MockHttpService\Matchers\DefaultHttpBodyMatcher.cs" />
     <Compile Include="Matchers\FailedMatcherCheck.cs" />
     <Compile Include="Matchers\MatcherCheckFailureType.cs" />
@@ -127,6 +133,8 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Mocks\MockHttpService\IHttpHost.cs" />
     <Compile Include="Mocks\MockHttpService\Models\IHttpMessage.cs" />
+    <Compile Include="Schemas\Models\ProviderDataSchema.cs" />
+    <Compile Include="Schemas\Models\ProviderSchemaPactFile.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\NancyHttpHost.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\IMockProviderAdminRequestHandler.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\IMockProviderNancyRequestHandler.cs" />
@@ -161,8 +169,11 @@
     <Compile Include="Mocks\MockHttpService\Models\HandledRequest.cs" />
     <Compile Include="Mocks\MockHttpService\MockProviderRepository.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Schemas\Interfaces\IProviderDataSchemaValidator.cs" />
     <Compile Include="Mocks\MockHttpService\Validators\IProviderServiceValidator.cs" />
+    <Compile Include="Schemas\Validators\ProviderDataSchemaValidator.cs" />
     <Compile Include="Mocks\MockHttpService\Validators\ProviderServiceValidator.cs" />
+    <Compile Include="Schemas\Verifiers\PactSchemaVerifier.cs" />
     <Compile Include="Models\PactDetails.cs" />
     <Compile Include="Models\PactFile.cs" />
     <Compile Include="PactConfig.cs" />
@@ -195,6 +206,7 @@
     <Compile Include="Validators\IPactValidator.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="PactNet.nuspec" />
   </ItemGroup>

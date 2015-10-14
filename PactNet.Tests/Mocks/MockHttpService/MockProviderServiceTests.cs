@@ -132,11 +132,19 @@ namespace PactNet.Tests.Mocks.MockHttpService
         [Fact]
         public void With_WithRequest_SetsRequest()
         {
+            var serialiserSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Include,
+                StringEscapeHandling = StringEscapeHandling.Default
+            };
+
             var description = "My description";
             var request = new ProviderServiceRequest
             {
                 Method = HttpVerb.Head,
-                Path = "/tester/testing/1"
+                Path = "/tester/testing/1",
+                Query = null,
+                Headers = null
             };
             var response = new ProviderServiceResponse
             {
@@ -149,7 +157,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 Request = request,
                 Response = response
             };
-            var expectedInteractionJson = expectedInteraction.AsJsonString();
+            var expectedInteractionJson = JsonConvert.SerializeObject(expectedInteraction, serialiserSettings);
 
             var mockService = GetSubject();
             mockService.Start();
@@ -307,6 +315,12 @@ namespace PactNet.Tests.Mocks.MockHttpService
         [Fact]
         public void WillRespondWith_WithValidInteraction_PerformsAdminInteractionsPostRequestWithInteraction()
         {
+            var serialiserSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Include,
+                StringEscapeHandling = StringEscapeHandling.Default
+            };
+
             var providerState = "My provider state";
             var description = "My description";
             var request = new ProviderServiceRequest
@@ -326,7 +340,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 Request = request,
                 Response = response
             };
-            var expectedInteractionJson = expectedInteraction.AsJsonString();
+            var expectedInteractionJson = JsonConvert.SerializeObject(expectedInteraction, serialiserSettings);
 
             var mockService = GetSubject();
             mockService.Start();
@@ -339,7 +353,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             var actualRequest = _fakeHttpMessageHandler.RequestsRecieved.Single();
             var actualInteractionJson = _fakeHttpMessageHandler.RequestContentRecieved.Single();
-
+            
             Assert.Equal(HttpMethod.Post, actualRequest.Method);
             Assert.Equal("http://localhost:1234/interactions", actualRequest.RequestUri.OriginalString);
             Assert.True(actualRequest.Headers.Contains(Constants.AdministrativeRequestHeaderKey));
@@ -528,7 +542,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var mockService = GetSubject();
 
             mockService.Start();
-
+            
             _mockHttpHost.Received(1).Start();
         }
 
