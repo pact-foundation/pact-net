@@ -7,27 +7,17 @@
   },
   "interactions": [
     {
-      "description": "a request to check the api status",
+      "description": "a request to get a new blob by id",
       "request": {
         "method": "get",
-        "path": "/stats/status",
-        "headers": {
-          "Accept": "application/json"
-        }
+        "path": "/blobs/38c3976b-5ae8-4f2f-a8ec-46f6aee826e2"
       },
       "response": {
-        "status": 200,
+        "status": 201,
         "headers": {
-          "Content-Type": "application/json; charset=utf-8"
+          "Content-Type": "text/plain"
         },
-        "body": {
-          "alive": true,
-          "_links": {
-            "uptime": {
-              "href": "/stats/uptime"
-            }
-          }
-        }
+        "body": "This is a test"
       }
     },
     {
@@ -49,17 +39,41 @@
       }
     },
     {
-      "description": "a request to get a new blob by id",
+      "description": "a request to retrieve events with type 'DetailsView'",
+      "provider_state": "there is one event with type 'DetailsView'",
       "request": {
         "method": "get",
-        "path": "/blobs/38c3976b-5ae8-4f2f-a8ec-46f6aee826e2"
+        "path": "/events",
+        "query": "type=DetailsView",
+        "headers": {
+          "Accept": "application/json"
+        },
+        "body": null
       },
       "response": {
-        "status": 201,
+        "status": 200,
         "headers": {
-          "Content-Type": "text/plain"
+          "Content-Type": "application/json; charset=utf-8"
         },
-        "body": "This is a test"
+        "body": [
+          {
+            "eventType": "DetailsView"
+          }
+        ]
+      }
+    },
+    {
+      "description": "a request to create a new blob",
+      "request": {
+        "method": "post",
+        "path": "/blobs/38c3976b-5ae8-4f2f-a8ec-46f6aee826e2",
+        "headers": {
+          "Content-Type": "application/octet-stream"
+        },
+        "body": "VGhpcyBpcyBhIHRlc3Q="
+      },
+      "response": {
+        "status": 201
       }
     },
     {
@@ -97,27 +111,27 @@
       }
     },
     {
-      "description": "a request to retrieve events with type 'DetailsView'",
-      "provider_state": "there is one event with type 'DetailsView'",
+      "description": "a request to check the api status",
       "request": {
         "method": "get",
-        "path": "/events",
-        "query": "type=DetailsView",
+        "path": "/stats/status",
         "headers": {
           "Accept": "application/json"
-        },
-        "body": null
+        }
       },
       "response": {
         "status": 200,
         "headers": {
           "Content-Type": "application/json; charset=utf-8"
         },
-        "body": [
-          {
-            "eventType": "DetailsView"
+        "body": {
+          "alive": true,
+          "_links": {
+            "uptime": {
+              "href": "/stats/uptime"
+            }
           }
-        ]
+        }
       }
     },
     {
@@ -157,20 +171,6 @@
         "body": {
           "upSince": "2014-06-27T23:51:12Z"
         }
-      }
-    },
-    {
-      "description": "a request to create a new blob",
-      "request": {
-        "method": "post",
-        "path": "/blobs/38c3976b-5ae8-4f2f-a8ec-46f6aee826e2",
-        "headers": {
-          "Content-Type": "application/octet-stream"
-        },
-        "body": "VGhpcyBpcyBhIHRlc3Q="
-      },
-      "response": {
-        "status": 201
       }
     }
   ],

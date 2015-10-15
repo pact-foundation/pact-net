@@ -134,7 +134,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             var serialiserSettings = new JsonSerializerSettings
             {
-                NullValueHandling = NullValueHandling.Include,
+                NullValueHandling = NullValueHandling.Ignore,
                 StringEscapeHandling = StringEscapeHandling.Default
             };
 
@@ -317,7 +317,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             var serialiserSettings = new JsonSerializerSettings
             {
-                NullValueHandling = NullValueHandling.Include,
+                NullValueHandling = NullValueHandling.Ignore,
                 StringEscapeHandling = StringEscapeHandling.Default
             };
 
