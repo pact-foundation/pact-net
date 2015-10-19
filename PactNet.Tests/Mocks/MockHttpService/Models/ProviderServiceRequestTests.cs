@@ -64,6 +64,8 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
             var request = new ProviderServiceRequest
             {
                 Method = HttpVerb.Get,
+                Path = null,
+                Query = null,
                 Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
                 Body = new
                 {
@@ -72,7 +74,10 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
                 }
             };
 
-            var requestJson = JsonConvert.SerializeObject(request, JsonConfig.ApiSerializerSettings);
+            var serialiserSettings = new JsonSerializerSettings();
+            serialiserSettings.NullValueHandling = NullValueHandling.Ignore;
+
+            var requestJson = JsonConvert.SerializeObject(request, serialiserSettings);
             var expectedJson = "{\"method\":\"get\",\"headers\":{\"Content-Type\":\"application/json\"},\"body\":{\"Test1\":\"hi\",\"test2\":2}}";
             Assert.Equal(expectedJson, requestJson);
         }
@@ -82,10 +87,16 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
         {
             var request = new ProviderServiceRequest
             {
-                Method = HttpVerb.Get
+                Method = HttpVerb.Get,
+                Path = null,
+                Query = null,
+                Headers = null
             };
 
-            var requestJson = JsonConvert.SerializeObject(request, JsonConfig.ApiSerializerSettings);
+            var serialiserSettings = new JsonSerializerSettings();
+            serialiserSettings.NullValueHandling = NullValueHandling.Ignore;
+
+            var requestJson = JsonConvert.SerializeObject(request, serialiserSettings);
             var expectedJson = "{\"method\":\"get\"}";
             Assert.Equal(expectedJson, requestJson);
         }

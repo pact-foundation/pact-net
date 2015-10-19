@@ -33,10 +33,14 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
         {
             var response = new ProviderServiceResponse
             {
-                Status = 500
+                Status = 500,
+                Headers = null
             };
 
-            var responseJson = JsonConvert.SerializeObject(response, JsonConfig.ApiSerializerSettings);
+            var serialiserSettings = new JsonSerializerSettings();
+            serialiserSettings.NullValueHandling = NullValueHandling.Ignore;
+
+            var responseJson = JsonConvert.SerializeObject(response, serialiserSettings);
             var expectedJson = "{\"status\":500}";
             Assert.Equal(expectedJson, responseJson);
         }

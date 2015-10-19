@@ -10,7 +10,6 @@ using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Validators;
 using PactNet.Models;
 using PactNet.Reporters;
-using System.Text;
 
 namespace PactNet
 {
@@ -224,8 +223,7 @@ namespace PactNet
                 pactFile.Interactions = pactFile.Interactions.Where(x => x.ProviderState.Equals(providerState));
             }
 
-            if ((description != null || providerState != null) &&
-                (pactFile.Interactions == null || !pactFile.Interactions.Any()))
+            if ((description != null || providerState != null) && (pactFile.Interactions == null || !pactFile.Interactions.Any()))
             {
                 throw new ArgumentException("The specified description and/or providerState filter yielded no interactions.");
             }
@@ -235,8 +233,7 @@ namespace PactNet
 
             try
             {
-                _providerServiceValidatorFactory(_httpRequestSender, new Reporter(_config), _config)
-                    .Validate(pactFile, ProviderStates);
+                _providerServiceValidatorFactory(_httpRequestSender, new Reporter(_config), _config).Validate(pactFile, ProviderStates);
             }
             finally
             {

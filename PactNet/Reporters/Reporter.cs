@@ -21,8 +21,7 @@ namespace PactNet.Reporters
             _outputters = outputters;
         }
 
-        public Reporter(PactVerifierConfig config)
-            : this(new List<Action<string>>
+        public Reporter(PactVerifierConfig config) : this(new List<Action<string>>
             {
                 Console.WriteLine, 
                 new FileReportOutputter(config.LoggerName).Write

@@ -12,7 +12,6 @@ using PactNet.Mocks.MockHttpService.Validators;
 using PactNet.Models;
 using PactNet.Tests.Fakes;
 using Xunit;
-using Xunit.Sdk;
 
 namespace PactNet.Tests
 {
@@ -31,14 +30,14 @@ namespace PactNet.Tests
             _mockProviderServiceValidator = Substitute.For<IProviderServiceValidator>();
             _fakeHttpMessageHandler = new FakeHttpMessageHandler();
 
-            return new PactVerifier(() => {}, () => {}, _mockFileSystem, (httpRequestSender, reporter, config) =>
-            {
-                _providerServiceValidatorFactoryCallInfo = new Tuple<bool, IHttpRequestSender>(true, httpRequestSender);
-                
-                return _mockProviderServiceValidator;
-            }, new HttpClient(_fakeHttpMessageHandler), null);
-        }
+            return new PactVerifier(() => { }, () => { }, _mockFileSystem, (httpRequestSender, reporter, config) =>
+              {
+                  _providerServiceValidatorFactoryCallInfo = new Tuple<bool, IHttpRequestSender>(true, httpRequestSender);
 
+                  return _mockProviderServiceValidator;
+              }, new HttpClient(_fakeHttpMessageHandler), null);
+        }
+        
         [Fact]
         public void ProviderState_WhenCalledWithSetUpAndTearDown_SetsProviderStateWithSetUpAndTearDownActions()
         {
@@ -48,8 +47,7 @@ namespace PactNet.Tests
 
             var pactVerifier = (PactVerifier)GetSubject();
 
-            pactVerifier
-                .ProviderState(providerState, providerStateSetUpAction, providerStateTearDownAction);
+            pactVerifier.ProviderState(providerState, providerStateSetUpAction, providerStateTearDownAction);
 
             var providerStateItem = pactVerifier.ProviderStates.Find(providerState);
 
@@ -62,9 +60,7 @@ namespace PactNet.Tests
         {
             var pactVerifier = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => 
-                pactVerifier
-                .ProviderState(null));
+            Assert.Throws<ArgumentException>(() => pactVerifier.ProviderState(null));
         }
 
         [Fact]
@@ -164,7 +160,7 @@ namespace PactNet.Tests
         {
             var pactVerifier = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider("Event API", (Func<ProviderServiceRequest, ProviderServiceResponse>) null));
+            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider("Event API", (Func<ProviderServiceRequest, ProviderServiceResponse>)null));
         }
 
         [Fact]
@@ -512,7 +508,7 @@ namespace PactNet.Tests
             pactVerifier.Verify(providerState: providerState);
 
             _mockProviderServiceValidator.Received(1).Validate(
-                Arg.Is<ProviderServicePactFile>(x => x.Interactions.Count() == 2 && x.Interactions.All(i => i.ProviderState.Equals(providerState))), 
+                Arg.Is<ProviderServicePactFile>(x => x.Interactions.Count() == 2 && x.Interactions.All(i => i.ProviderState.Equals(providerState))),
                 Arg.Any<ProviderStates>());
         }
 
@@ -540,7 +536,7 @@ namespace PactNet.Tests
             pactVerifier.Verify(description: description, providerState: providerState);
 
             _mockProviderServiceValidator.Received(1).Validate(
-                Arg.Is<ProviderServicePactFile>(x => x.Interactions.Count() == 1 && x.Interactions.All(i => i.ProviderState.Equals(providerState) && i.Description.Equals(description))), 
+                Arg.Is<ProviderServicePactFile>(x => x.Interactions.Count() == 1 && x.Interactions.All(i => i.ProviderState.Equals(providerState) && i.Description.Equals(description))),
                 Arg.Any<ProviderStates>());
         }
 
