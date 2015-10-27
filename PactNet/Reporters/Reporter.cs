@@ -26,7 +26,7 @@ namespace PactNet.Reporters
             {
                 Console.WriteLine, 
                 new FileReportOutputter(config.LoggerName).Write
-            })
+            }.Concat(config.Reporters).ToList())
         {
         }
 

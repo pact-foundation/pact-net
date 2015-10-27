@@ -1,4 +1,6 @@
-﻿using Microsoft.Owin.Testing;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Owin.Testing;
 using PactNet;
 using Xunit;
 
@@ -9,8 +11,16 @@ namespace Provider.Api.Web.Tests
         [Fact]
         public void EnsureEventApiHonoursPactWithConsumer()
         {
+            string output = string.Empty;
+
             //Arrange
-            IPactVerifier pactVerifier = new PactVerifier(() => {}, () => {});
+            IPactVerifier pactVerifier = new PactVerifier(() => {}, () => {}, new PactVerifierConfig
+            {
+                Reporters = new List<Action<string>>
+                {
+                    x => output += x
+                }
+            });
 
             pactVerifier
                 .ProviderState(
@@ -30,6 +40,9 @@ namespace Provider.Api.Web.Tests
                    .PactUri("../../../Consumer.Tests/pacts/consumer-event_api.json")
                    .Verify();
             }
+
+            // Verify that verifaction log is also sent to additional reporters defined in the config
+            Assert.Contains("Verifying a Pact between Consumer and Event API", output);
         }
 
         private void EnsureOneDetailsViewEventExists()
