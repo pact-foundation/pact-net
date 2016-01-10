@@ -9,6 +9,7 @@ namespace PactNet.Infrastructure.Logging
     internal class LocalLogProvider : LogProviderBase
     {
         private readonly object _sync = new object();
+        private int _addLoggerRetryCount;
 
         private readonly IDictionary<string, LocalLogger> _loggers = new Dictionary<string, LocalLogger>();
 
@@ -21,7 +22,20 @@ namespace PactNet.Infrastructure.Logging
 
             lock (_sync)
             {
-                _loggers.Add(loggerName, new LocalLogger(Path.GetFullPath(logFilePath)));
+                try
+                {
+                    _loggers.Add(loggerName, new LocalLogger(Path.GetFullPath(logFilePath)));
+                }
+                catch (IOException)
+                {
+                    if (_addLoggerRetryCount > 2)
+                    {
+                        throw;
+                    }
+
+                    _addLoggerRetryCount++;
+                    return AddLogger(logDir, loggerNameSeed + "_" + Guid.NewGuid().ToString("N"), logFileNameTemplate);
+                }
             }
 
             return loggerName;
