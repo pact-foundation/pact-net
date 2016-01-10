@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using NSubstitute;
 using PactNet.Comparers;
 using PactNet.Reporters;
+using PactNet.Reporters.Outputters;
 using Xunit;
 
 namespace PactNet.Tests.Reporters
 {
     public class ReporterTests
     {
-        private Action<string> _reportOutputter;
+        private IReportOutputter _reportOutputter;
 
         private IReporter GetSubject()
         {
-            _reportOutputter = Substitute.For<Action<string>>();
+            _reportOutputter = Substitute.For<IReportOutputter>();
 
-            return new Reporter(new List<Action<string>> { _reportOutputter });
+            return new Reporter(new List<IReportOutputter> { _reportOutputter });
         }
 
         [Fact]
@@ -28,7 +29,7 @@ namespace PactNet.Tests.Reporters
             
             reporter.Flush();
 
-            _reportOutputter.Received(1)(message);
+            _reportOutputter.Received(1).Write(message);
         }
 
         [Fact]
@@ -46,7 +47,7 @@ namespace PactNet.Tests.Reporters
             reporter.ReportSummary(comparisonResult);
             reporter.Flush();
 
-            _reportOutputter.Received(1)(expectedMessage);
+            _reportOutputter.Received(1).Write(expectedMessage);
         }
         
         [Fact]
@@ -65,7 +66,7 @@ namespace PactNet.Tests.Reporters
             reporter.ReportSummary(comparisonResult);
             reporter.Flush();
 
-            _reportOutputter.Received(1)(expectedMessage);
+            _reportOutputter.Received(1).Write(expectedMessage);
         }
 
         [Fact]
@@ -80,7 +81,7 @@ namespace PactNet.Tests.Reporters
             reporter.ReportSummary(comparisonResult);
             reporter.Flush();
 
-            _reportOutputter.Received(1)(comparisonMessage);
+            _reportOutputter.Received(1).Write(comparisonMessage);
         }
 
         [Fact]
@@ -102,7 +103,7 @@ namespace PactNet.Tests.Reporters
             reporter.ReportSummary(comparisonResult);
             reporter.Flush();
 
-            _reportOutputter.Received(1)(Arg.Is<string>(x => x.Contains(comparisonMessage1 + " (FAILED - 1)") && x.Contains(comparisonMessage2 + " (FAILED - 2)")));
+            _reportOutputter.Received(1).Write(Arg.Is<string>(x => x.Contains(comparisonMessage1 + " (FAILED - 1)") && x.Contains(comparisonMessage2 + " (FAILED - 2)")));
         }
 
         [Fact]
@@ -122,7 +123,7 @@ namespace PactNet.Tests.Reporters
             reporter.ReportFailureReasons(comparisonResult);
             reporter.Flush();
 
-            _reportOutputter.Received(1)(Arg.Is<string>(x => x.Contains("1) " + comparisonFailureMessage1) && x.Contains("2) " + comparisonFailureMessage2)));
+            _reportOutputter.Received(1).Write(Arg.Is<string>(x => x.Contains("1) " + comparisonFailureMessage1) && x.Contains("2) " + comparisonFailureMessage2)));
         }
 
         [Fact]
@@ -137,7 +138,7 @@ namespace PactNet.Tests.Reporters
             reporter.ReportFailureReasons(comparisonResult);
             reporter.Flush();
 
-            _reportOutputter.DidNotReceive()(Arg.Any<string>());
+            _reportOutputter.DidNotReceive().Write(Arg.Any<string>());
         }
     }
 }

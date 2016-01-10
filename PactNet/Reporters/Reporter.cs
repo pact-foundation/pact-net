@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using PactNet.Comparers;
+using PactNet.Reporters.Outputters;
 
 namespace PactNet.Reporters
 {
     internal class Reporter : IReporter
     {
-        private readonly IEnumerable<Action<string>> _outputters;
+        private readonly IEnumerable<IReportOutputter> _outputters;
 
         private int _currentTabDepth;
         private int _failureInfoCount;
@@ -16,17 +17,13 @@ namespace PactNet.Reporters
 
         private readonly IList<string> _reportLines = new List<string>();
 
-        internal Reporter(IEnumerable<Action<string>> outputters)
+        internal Reporter(IEnumerable<IReportOutputter> outputters)
         {
             _outputters = outputters;
         }
 
         public Reporter(PactVerifierConfig config)
-            : this(new List<Action<string>>
-            {
-                Console.WriteLine, 
-                new FileReportOutputter(config.LoggerName).Write
-            })
+            : this(config.ReportOutputters)
         {
         }
 
@@ -57,14 +54,14 @@ namespace PactNet.Reporters
 
         public void Flush()
         {
-            if (!_reportLines.Any())
+            if (!_reportLines.Any() || _outputters == null)
             {
                 return;
             }
 
             foreach (var outputter in _outputters)
             {
-                outputter(String.Join(Environment.NewLine, _reportLines));
+                outputter.Write(String.Join(Environment.NewLine, _reportLines));
             }
         }
 
