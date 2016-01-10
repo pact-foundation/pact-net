@@ -1,19 +1,20 @@
-﻿using PactNet.Logging;
+﻿using System;
+using PactNet.Logging;
 
 namespace PactNet.Reporters
 {
-    internal class FileReportOutputter
+    internal class FileReportOutputter : IReportOutputter
     {
-        private readonly ILog _log;
+        private readonly Func<ILog> _logFactory;
 
-        public FileReportOutputter(string loggerName)
+        public FileReportOutputter(Func<string> loggerNameGenerator)
         {
-            _log = LogProvider.GetLogger(loggerName);
+            _logFactory = () => LogProvider.GetLogger(loggerNameGenerator());
         }
 
-        public void Write(string message)
+        public void Write(string report)
         {
-            _log.Debug(message);
+            _logFactory().Debug(report);
         }
     }
 }

@@ -189,8 +189,10 @@
     <Compile Include="Mocks\MockHttpService\Comparers\ProviderServiceRequestComparer.cs" />
     <Compile Include="Models\ProviderState.cs" />
     <Compile Include="Models\ProviderStates.cs" />
+    <Compile Include="Reporters\ConsoleReportOutputter.cs" />
     <Compile Include="Reporters\FileReportOutputter.cs" />
     <Compile Include="Reporters\IReporter.cs" />
+    <Compile Include="Reporters\IReportOutputter.cs" />
     <Compile Include="Reporters\Reporter.cs" />
     <Compile Include="Validators\IPactValidator.cs" />
   </ItemGroup>
