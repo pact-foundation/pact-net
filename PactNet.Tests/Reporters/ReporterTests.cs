@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using NSubstitute;
 using PactNet.Comparers;
 using PactNet.Reporters;
+using PactNet.Reporters.Outputters;
 using Xunit;
 
 namespace PactNet.Tests.Reporters

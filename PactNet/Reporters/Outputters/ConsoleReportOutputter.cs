@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PactNet.Reporters
+namespace PactNet.Reporters.Outputters
 {
     internal class ConsoleReportOutputter : IReportOutputter
     {

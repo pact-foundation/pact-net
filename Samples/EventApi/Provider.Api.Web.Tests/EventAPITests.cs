@@ -1,6 +1,6 @@
 ﻿using Microsoft.Owin.Testing;
 using PactNet;
-using PactNet.Reporters;
+using PactNet.Reporters.Outputters;
 using Xunit;
 
 namespace Provider.Api.Web.Tests

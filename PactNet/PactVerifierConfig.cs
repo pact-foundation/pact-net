@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using PactNet.Reporters;
+using PactNet.Reporters.Outputters;
 
 namespace PactNet
 {

@@ -1,4 +1,4 @@
-﻿namespace PactNet.Reporters
+﻿namespace PactNet.Reporters.Outputters
 {
     public interface IReportOutputter
     {

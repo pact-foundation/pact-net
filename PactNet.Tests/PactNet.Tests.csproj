@@ -137,6 +137,7 @@
     <Compile Include="PactUriOptionsTests.cs" />
     <Compile Include="ProviderServicePactFileTests.cs" />
     <Compile Include="PactVerifierTests.cs" />
+    <Compile Include="Reporters\Outputters\FileReportOutputterTests.cs" />
     <Compile Include="Reporters\ReporterTests.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\ProviderServiceResponseComparerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
