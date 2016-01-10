@@ -5,16 +5,6 @@ using Xunit;
 
 namespace Provider.Api.Web.Tests
 {
-    public class CustomOutputter : IReportOutputter
-    {
-        public string Output { get; set; }
-
-        public void Write(string report)
-        {
-            Output += report;
-        }
-    }
-
     public class EventApiTests
     {
         [Fact]
@@ -62,6 +52,16 @@ namespace Provider.Api.Web.Tests
         private void InsertEventIntoDatabase()
         {
             //Logic to do database inserts for event with id 83F9262F-28F1-4703-AB1A-8CFD9E8249C9
+        }
+
+        private class CustomOutputter : IReportOutputter
+        {
+            public string Output { get; private set; }
+
+            public void Write(string report)
+            {
+                Output += report;
+            }
         }
     }
 }
