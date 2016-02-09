@@ -53,6 +53,11 @@ namespace PactNet.Mocks.MockHttpService.Models
                 { DefaultHttpBodyMatcher.Path, new DefaultHttpBodyMatcher(true) }
             };
 
+            if (body == null)
+            {
+                return null;
+            }
+
             var bodyToken = JToken.FromObject(body);
 
             if (bodyToken is JValue)
