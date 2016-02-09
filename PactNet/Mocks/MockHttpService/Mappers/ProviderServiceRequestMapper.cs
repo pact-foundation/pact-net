@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Nancy;
 using PactNet.Mocks.MockHttpService.Models;
 
@@ -50,8 +49,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
 
             if (from.Body != null && from.Body.Length > 0)
             {
-                var content = ConvertStreamToString(from.Body);
-                var httpBodyContent = _httpBodyContentMapper.Convert(content, to.Headers);
+                var httpBodyContent = _httpBodyContentMapper.Convert(content: ConvertStreamToBytes(from.Body), headers: to.Headers);
 
                 to.Body = httpBodyContent.Body;
             }
@@ -59,12 +57,12 @@ namespace PactNet.Mocks.MockHttpService.Mappers
             return to;
         }
 
-        private string ConvertStreamToString(Stream stream)
+        private static byte[] ConvertStreamToBytes(Stream content)
         {
-            using (var reader = new StreamReader(stream, Encoding.UTF8))
+            using (var memoryStream = new MemoryStream())
             {
-                var body = reader.ReadToEnd();
-                return body;
+                content.CopyTo(memoryStream);
+                return memoryStream.ToArray();
             }
         }
     }

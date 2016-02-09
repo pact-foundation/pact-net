@@ -37,10 +37,10 @@ namespace PactNet.Mocks.MockHttpService.Mappers
 
             if(from.Content != null)
             {
-                var responseContent = from.Content.ReadAsStringAsync().Result;
+                var responseContent = from.Content.ReadAsByteArrayAsync().Result;
                 if (responseContent != null)
                 {
-                    var httpBodyContent = _httpBodyContentMapper.Convert(responseContent, to.Headers);
+                    var httpBodyContent = _httpBodyContentMapper.Convert(content: responseContent, headers: to.Headers);
 
                     to.Body = httpBodyContent.Body;
                 }

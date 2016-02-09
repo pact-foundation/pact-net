@@ -167,7 +167,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             }
 
             var failure = comparisonResult.Failures.First();
-            return GenerateResponse(HttpStatusCode.InternalServerError, failure.Result);
+            throw new PactFailureException(failure.Result);
         }
 
         private Response HandlePostPactRequest(NancyContext context)

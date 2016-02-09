@@ -41,6 +41,12 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                 var bodyResult = _httpBodyComparer.Compare(expected.Body, actual.Body, expected.MatchingRules);
                 result.AddChildResult(bodyResult);
             }
+            else if (expected.Body == null && 
+                expected.ShouldSerializeBody() && //Body was explicitly set
+                actual.Body != null)
+            {
+                result.RecordFailure(new ErrorMessageComparisonFailure("Expected response body was explicitly set to null however the actual response body was not null"));
+            }
 
             return result;
         }

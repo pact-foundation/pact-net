@@ -25,7 +25,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
             _mockHttpRequestSender = Substitute.For<IHttpRequestSender>();
             _mockReporter = Substitute.For<IReporter>();
 
-            return new ProviderServiceValidator(_mockResponseComparer, _mockHttpRequestSender, _mockReporter);
+            return new ProviderServiceValidator(_mockResponseComparer, _mockHttpRequestSender, _mockReporter, new PactVerifierConfig());
         }
 
         [Fact]

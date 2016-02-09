@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -66,7 +67,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             };
 
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
-            mockHttpBodyContentMapper.Convert(Arg.Any<string>(), Arg.Any<IDictionary<string, string>>()).Returns(new HttpBodyContent(String.Empty, "text/plain", Encoding.UTF8));
+            mockHttpBodyContentMapper.Convert(Arg.Any<byte[]>(), Arg.Any<IDictionary<string, string>>()).Returns(new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: "text/plain", encoding: Encoding.UTF8));
             
             IProviderServiceResponseMapper mapper = new ProviderServiceResponseMapper(mockHttpBodyContentMapper);
 
@@ -90,7 +91,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
 
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
-            mockHttpBodyContentMapper.Convert(Arg.Any<string>(), Arg.Any<IDictionary<string, string>>()).Returns(new HttpBodyContent(String.Empty, "text/plain", Encoding.UTF8));
+            mockHttpBodyContentMapper.Convert(Arg.Any<byte[]>(), Arg.Any<IDictionary<string, string>>()).Returns(new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: "text/plain", encoding: Encoding.UTF8));
 
             IProviderServiceResponseMapper mapper = new ProviderServiceResponseMapper(mockHttpBodyContentMapper);
 
@@ -114,14 +115,14 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             };
 
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
-            mockHttpBodyContentMapper.Convert(Arg.Any<string>(), Arg.Any<IDictionary<string, string>>()).Returns(new HttpBodyContent(content, "text/plain", Encoding.UTF8));
+            mockHttpBodyContentMapper.Convert(Arg.Any<byte[]>(), Arg.Any<IDictionary<string, string>>()).Returns(new HttpBodyContent(content: Encoding.UTF8.GetBytes(content), contentType: "text/plain", encoding: Encoding.UTF8));
 
             IProviderServiceResponseMapper mapper = new ProviderServiceResponseMapper(mockHttpBodyContentMapper);
 
             var result = mapper.Convert(message);
 
             Assert.Equal(content, result.Body);
-            mockHttpBodyContentMapper.Received(1).Convert(content, Arg.Any<Dictionary<string, string>>());
+            mockHttpBodyContentMapper.Received(1).Convert(Arg.Is<byte[]>(x => CompareBytes(Encoding.UTF8.GetBytes(content), x)), Arg.Any<Dictionary<string, string>>());
         }
 
         [Fact]
@@ -143,7 +144,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             };
 
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
-            mockHttpBodyContentMapper.Convert(Arg.Any<string>(), Arg.Any<IDictionary<string, string>>()).Returns(new HttpBodyContent(content, "application/json", Encoding.UTF8));
+            mockHttpBodyContentMapper.Convert(Arg.Any<byte[]>(), Arg.Any<IDictionary<string, string>>()).Returns(new HttpBodyContent(content: Encoding.UTF8.GetBytes(content), contentType: "application/json", encoding: Encoding.UTF8));
 
             IProviderServiceResponseMapper mapper = new ProviderServiceResponseMapper(mockHttpBodyContentMapper);
 
@@ -151,7 +152,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
             Assert.Equal(body.Test, (string)result.Body.Test);
             Assert.Equal(body.test2, (int)result.Body.test2);
-            mockHttpBodyContentMapper.Received(1).Convert(content, Arg.Any<Dictionary<string, string>>());
+            mockHttpBodyContentMapper.Received(1).Convert(Arg.Is<byte[]>(x => CompareBytes(Encoding.UTF8.GetBytes(content), x)), Arg.Any<Dictionary<string, string>>());
+        }
+
+        private static bool CompareBytes(byte[] expected, byte[] actual)
+        {
+            return expected.SequenceEqual(actual);
         }
     }
 }

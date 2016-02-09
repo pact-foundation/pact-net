@@ -104,6 +104,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\BlobsController.cs" />
     <Compile Include="Controllers\EventsController.cs" />
     <Compile Include="Models\Event.cs" />
     <Compile Include="Models\HypermediaLink.cs" />

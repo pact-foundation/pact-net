@@ -1,8 +1,6 @@
-﻿using System;
-using Microsoft.Owin.Testing;
+﻿using Microsoft.Owin.Testing;
 using PactNet;
-using PactNet.Models;
-using Provider.Api.Web.Controllers;
+using PactNet.Reporters.Outputters;
 using Xunit;
 
 namespace Provider.Api.Web.Tests
@@ -13,7 +11,10 @@ namespace Provider.Api.Web.Tests
         public void EnsureEventApiHonoursPactWithConsumer()
         {
             //Arrange
-            IPactVerifier pactVerifier = new PactVerifier(() => {}, () => {});
+            var outputter = new CustomOutputter();
+            var config = new PactVerifierConfig();
+            config.ReportOutputters.Add(outputter);
+            IPactVerifier pactVerifier = new PactVerifier(() => {}, () => {}, config);
 
             pactVerifier
                 .ProviderState(
@@ -33,6 +34,9 @@ namespace Provider.Api.Web.Tests
                    .PactUri("../../../Consumer.Tests/pacts/consumer-event_api.json")
                    .Verify();
             }
+
+            // Verify that verifaction log is also sent to additional reporters defined in the config
+            Assert.Contains("Verifying a Pact between Consumer and Event API", outputter.Output);
         }
 
         private void EnsureOneDetailsViewEventExists()
@@ -48,6 +52,16 @@ namespace Provider.Api.Web.Tests
         private void InsertEventIntoDatabase()
         {
             //Logic to do database inserts for event with id 83F9262F-28F1-4703-AB1A-8CFD9E8249C9
+        }
+
+        private class CustomOutputter : IReportOutputter
+        {
+            public string Output { get; private set; }
+
+            public void Write(string report)
+            {
+                Output += report;
+            }
         }
     }
 }

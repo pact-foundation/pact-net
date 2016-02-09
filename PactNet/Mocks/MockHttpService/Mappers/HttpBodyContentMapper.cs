@@ -28,10 +28,10 @@ namespace PactNet.Mocks.MockHttpService.Mappers
 
             var contentInfo = ParseContentHeaders(headers);
 
-            return new HttpBodyContent(body, contentInfo.Item1, contentInfo.Item2);
+            return new HttpBodyContent(body: body, contentType: contentInfo.Item1, encoding: contentInfo.Item2);
         }
 
-        public HttpBodyContent Convert(string content, IDictionary<string, string> headers)
+        public HttpBodyContent Convert(byte[] content, IDictionary<string, string> headers)
         {
             if (content == null)
             {
@@ -40,7 +40,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
 
             var contentInfo = ParseContentHeaders(headers);
 
-            return new HttpBodyContent(content, contentInfo.Item1, contentInfo.Item2);
+            return new HttpBodyContent(content: content, contentType: contentInfo.Item1, encoding: contentInfo.Item2);
         }
 
         private Tuple<string, Encoding> ParseContentHeaders(IDictionary<string, string> headers)

@@ -1,36 +1,39 @@
 ﻿using System;
+using System.Collections.Generic;
 using NSubstitute;
 using PactNet.Comparers;
 using PactNet.Reporters;
+using PactNet.Reporters.Outputters;
 using Xunit;
 
 namespace PactNet.Tests.Reporters
 {
     public class ReporterTests
     {
-        private IReportOutputter _mockOutputter;
+        private IReportOutputter _reportOutputter;
 
         private IReporter GetSubject()
         {
-            _mockOutputter = Substitute.For<IReportOutputter>();
+            _reportOutputter = Substitute.For<IReportOutputter>();
 
-            return new Reporter(_mockOutputter);
+            return new Reporter(new List<IReportOutputter> { _reportOutputter });
         }
 
         [Fact]
-        public void ReportInfo_WhenCalled_CallsWriteInfoOnOutputterWithMessage()
+        public void Flush_WithReportedInfo_CallsOutputterWithEmptyString()
         {
             const string message = "Hello!";
 
             var reporter = GetSubject();
-
             reporter.ReportInfo(message);
+            
+            reporter.Flush();
 
-            _mockOutputter.Received(1).WriteInfo(message);
+            _reportOutputter.Received(1).Write(message);
         }
 
         [Fact]
-        public void ReportSummary_WithFailuresOnComparisonResult_CallsWriteErrorOnOutputterWithMessage()
+        public void Flush_WithAReportedSummaryThatContainsFailuresOnTheComparisonResult_CallsOutputterWithMessage()
         {
             const string comparisonMessage = "The thing I am testing";
 
@@ -40,14 +43,15 @@ namespace PactNet.Tests.Reporters
 
             var comparisonResult = new ComparisonResult(comparisonMessage);
             comparisonResult.RecordFailure(new ErrorMessageComparisonFailure("It failed"));
-
+            
             reporter.ReportSummary(comparisonResult);
+            reporter.Flush();
 
-            _mockOutputter.Received(1).WriteError(expectedMessage, Arg.Any<int>());
+            _reportOutputter.Received(1).Write(expectedMessage);
         }
-
+        
         [Fact]
-        public void ReportSummary_WithMultipleFailuresOnComparisonResult_CallsWriteErrorOnOutputterWithMessage()
+        public void Flush_WithAReportedSummaryThatContainsMultipleFailuresOnTheComparisonResult_CallsOutputterWithMessage()
         {
             const string comparisonMessage = "The thing I am testing";
 
@@ -60,12 +64,13 @@ namespace PactNet.Tests.Reporters
             comparisonResult.RecordFailure(new ErrorMessageComparisonFailure("Failure 2"));
 
             reporter.ReportSummary(comparisonResult);
+            reporter.Flush();
 
-            _mockOutputter.Received(1).WriteError(expectedMessage, Arg.Any<int>());
+            _reportOutputter.Received(1).Write(expectedMessage);
         }
 
         [Fact]
-        public void ReportSummary_WithNoFailuresOnComparisonResult_CallsWriteSuccessOnOutputterWithMessage()
+        public void Flush_WithWithAReportedSummaryThatContainsNoFailuresOnTheComparisonResult_CallsOutputterWithMessage()
         {
             const string comparisonMessage = "The thing I am testing";
 
@@ -74,12 +79,13 @@ namespace PactNet.Tests.Reporters
             var comparisonResult = new ComparisonResult(comparisonMessage);
 
             reporter.ReportSummary(comparisonResult);
+            reporter.Flush();
 
-            _mockOutputter.Received(1).WriteSuccess(comparisonMessage, Arg.Any<int>());
+            _reportOutputter.Received(1).Write(comparisonMessage);
         }
 
         [Fact]
-        public void ReportSummary_WithChildResultMultipleFailuresOnComparisonResult_CallsWriteErrorOnOutputterWithMessage()
+        public void Flush_WithAReportedSummaryThatContainsAChildResultWithMultipleFailuresOnTheComparisonResult_CallsOutputterWithMessage()
         {
             const string comparisonMessage1 = "The thing I am testing";
             const string comparisonMessage2 = "The thing I am testing 2";
@@ -95,13 +101,13 @@ namespace PactNet.Tests.Reporters
             comparisonResult.AddChildResult(comparisonResult2);
 
             reporter.ReportSummary(comparisonResult);
+            reporter.Flush();
 
-            _mockOutputter.Received(1).WriteError(comparisonMessage1 + " (FAILED - 1)", Arg.Any<int>());
-            _mockOutputter.Received(1).WriteError(comparisonMessage2 + " (FAILED - 2)", Arg.Any<int>());
+            _reportOutputter.Received(1).Write(Arg.Is<string>(x => x.Contains(comparisonMessage1 + " (FAILED - 1)") && x.Contains(comparisonMessage2 + " (FAILED - 2)")));
         }
 
         [Fact]
-        public void ReportFailureReasons_WithFailuresOnComparisonResult_CallsWriteErrorOnOutputterWithFailures()
+        public void Flush_WithReportedFailureReasonThatContainsFailuresOnTheComparisonResult_CallsOutputterWithMessage()
         {
             const string comparisonMessage = "The thing I am testing";
             const string comparisonFailureMessage1 = "It failed 1";
@@ -115,13 +121,13 @@ namespace PactNet.Tests.Reporters
             comparisonResult.RecordFailure(new ErrorMessageComparisonFailure(comparisonFailureMessage2));
 
             reporter.ReportFailureReasons(comparisonResult);
+            reporter.Flush();
 
-            _mockOutputter.Received(1).WriteError(Environment.NewLine + "1) " + comparisonFailureMessage1, Arg.Any<int>());
-            _mockOutputter.Received(1).WriteError(Environment.NewLine + "2) " + comparisonFailureMessage2, Arg.Any<int>());
+            _reportOutputter.Received(1).Write(Arg.Is<string>(x => x.Contains("1) " + comparisonFailureMessage1) && x.Contains("2) " + comparisonFailureMessage2)));
         }
 
         [Fact]
-        public void ReportFailureReasons_WithNoFailuresOnComparisonResult_DoesNotCallTheOutputter()
+        public void Flush_WithReportedFailureReasonThatContainsNoFailuresOnTheComparisonResult_DoesNotCallTheOutputter()
         {
             const string comparisonMessage = "The thing I am testing";
 
@@ -130,9 +136,9 @@ namespace PactNet.Tests.Reporters
             var comparisonResult = new ComparisonResult(comparisonMessage);
 
             reporter.ReportFailureReasons(comparisonResult);
+            reporter.Flush();
 
-            _mockOutputter.DidNotReceive().WriteInfo(Arg.Any<String>(), Arg.Any<int>());
-            _mockOutputter.DidNotReceive().WriteError(Arg.Any<String>(), Arg.Any<int>());
+            _reportOutputter.DidNotReceive().Write(Arg.Any<string>());
         }
     }
 }

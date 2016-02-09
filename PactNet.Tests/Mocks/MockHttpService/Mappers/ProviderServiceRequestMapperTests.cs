@@ -136,20 +136,21 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         public void Convert_WithPlainTextBody_CallsHttpBodyContentMapperAndCorrectlySetsBody()
         {
             const string content = "Plain text body";
+            var contentByes = Encoding.UTF8.GetBytes(content);
             var request = GetPreCannedRequest(content: content);
             var httpBodyContent = new HttpBodyContent(content, null, null);
 
             var mockHttpVerbMapper = Substitute.For<IHttpVerbMapper>();
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
             mockHttpVerbMapper.Convert("GET").Returns(HttpVerb.Get);
-            mockHttpBodyContentMapper.Convert(content: content, headers: null).Returns(httpBodyContent);
+            mockHttpBodyContentMapper.Convert(content: Arg.Any<byte[]>(), headers: null).Returns(httpBodyContent);
 
             var mapper = new ProviderServiceRequestMapper(mockHttpVerbMapper, mockHttpBodyContentMapper);
 
             var result = mapper.Convert(request);
 
             Assert.Equal(content, result.Body);
-            mockHttpBodyContentMapper.Received(1).Convert(content: content, headers: null);
+            mockHttpBodyContentMapper.Received(1).Convert(content: Arg.Any<byte[]>(), headers: null);
         }
 
         [Fact]
@@ -165,13 +166,14 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 test2 = 1
             };
             const string content = "{\"Test\":\"tester\",\"test2\":1}";
+            var contentBytes = Encoding.UTF8.GetBytes(content);
             var request = GetPreCannedRequest(headers: headers, content: content);
-            var httpBodyContent = new HttpBodyContent(content, "application/json", Encoding.UTF8);
+            var httpBodyContent = new HttpBodyContent(content: contentBytes, contentType: "application/json", encoding: Encoding.UTF8);
 
             var mockHttpVerbMapper = Substitute.For<IHttpVerbMapper>();
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
             mockHttpVerbMapper.Convert("GET").Returns(HttpVerb.Get);
-            mockHttpBodyContentMapper.Convert(content: content, headers: Arg.Any<IDictionary<string, string>>()).Returns(httpBodyContent);
+            mockHttpBodyContentMapper.Convert(content: Arg.Any<byte[]>(), headers: Arg.Any<IDictionary<string, string>>()).Returns(httpBodyContent);
 
             var mapper = new ProviderServiceRequestMapper(mockHttpVerbMapper, mockHttpBodyContentMapper);
 
@@ -179,7 +181,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
             Assert.Equal(body.Test, (string)result.Body.Test);
             Assert.Equal(body.test2, (int)result.Body.test2);
-            mockHttpBodyContentMapper.Received(1).Convert(content: content, headers: Arg.Any<IDictionary<string, string>>());
+            mockHttpBodyContentMapper.Received(1).Convert(content: Arg.Any<byte[]>(), headers: Arg.Any<IDictionary<string, string>>());
         }
 
         private Request GetPreCannedRequest(IDictionary<string, IEnumerable<string>> headers = null, string content = null)

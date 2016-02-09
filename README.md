@@ -218,7 +218,11 @@ public class SomethingApiTests
 			pactVerifier
 				.ServiceProvider("Something API", testServer.HttpClient)
 				.HonoursPactWith("Consumer")
-				.PactUri("../../../Consumer.Tests/pacts/consumer-something_api.json") //NOTE: You can alternatively specify a http or https uri. e.g. http://pact-broker/pacts/provider/Something%20Api/consumer/Consumer/version/latest
+				.PactUri("../../../Consumer.Tests/pacts/consumer-something_api.json")
+				//or
+				.PactUri("http://pact-broker/pacts/provider/Something%20Api/consumer/Consumer/version/latest") //You can specify a http or https uri
+				//or
+				.PactUri("http://pact-broker/pacts/provider/Something%20Api/consumer/Consumer/version/latest", new PactUriOptions("someuser", "somepassword")) //You can also specify http/https basic auth details
 				.Verify(); //NOTE: Optionally you can control what interactions are verified by specifying a providerDescription and/or providerState
 		}
 	}
@@ -253,7 +257,11 @@ public class SomethingApiTests
 			pactVerifier
 				.ServiceProvider("Something API", client) //NOTE: You can also use your own client by using the ServiceProvider method which takes a Func<ProviderServiceRequest, ProviderServiceResponse>. You are then responsible for mapping and performing the actual provider verification HTTP request within that Func.
 				.HonoursPactWith("Consumer")
-				.PactUri("../../../Consumer.Tests/pacts/consumer-something_api.json") //NOTE: You can alternatively specify a http or https uri. e.g. http://pact-broker/pacts/provider/Something%20Api/consumer/Consumer/version/latest
+				.PactUri("../../../Consumer.Tests/pacts/consumer-something_api.json")
+				//or
+				.PactUri("http://pact-broker/pacts/provider/Something%20Api/consumer/Consumer/version/latest") //You can specify a http or https uri
+				//or
+				.PactUri("http://pact-broker/pacts/provider/Something%20Api/consumer/Consumer/version/latest", new PactUriOptions("someuser", "somepassword")) //You can also specify http/https basic auth details
 				.Verify(); //NOTE: Optionally you can control what interactions are verified by specifying a providerDescription and/or providerState
 		}
 	}

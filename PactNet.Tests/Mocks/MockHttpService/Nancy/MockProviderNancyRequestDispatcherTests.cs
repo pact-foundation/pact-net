@@ -25,7 +25,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             _mockAdminRequestHandler = Substitute.For<IMockProviderAdminRequestHandler>();
             _log = Substitute.For<ILog>();
 
-            return new MockProviderNancyRequestDispatcher(_mockRequestHandler, _mockAdminRequestHandler, _log);
+            return new MockProviderNancyRequestDispatcher(_mockRequestHandler, _mockAdminRequestHandler, _log, new PactConfig());
         }
 
         [Fact]
@@ -174,7 +174,8 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         [Fact]
         public void Dispatch_WhenRequestHandlerThrows_InternalServerErrorResponseIsReturned()
         {
-            var exception = new InvalidOperationException("Something failed"); 
+            var exception = new InvalidOperationException("Something failed.");
+            const string expectedMessage = "Something failed. See logs for details.";
             var nancyContext = new NancyContext
             {
                 Request = new Request("GET", "/Test", "HTTP")
@@ -189,15 +190,15 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             var response = requestDispatcher.Dispatch(nancyContext, CancellationToken.None).Result;
 
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-            Assert.Equal(exception.Message, response.ReasonPhrase);
-            Assert.Equal(exception.Message, ReadResponseContent(response));
+            Assert.Equal(expectedMessage, response.ReasonPhrase);
+            Assert.Equal(expectedMessage, ReadResponseContent(response));
         }
 
         [Fact]
         public void Dispatch_WhenRequestHandlerThrowsWithMessageThatContainsSlashes_ResponseContentAndReasonPhrasesIsReturnedWithoutSlashes()
         {
-            var exception = new InvalidOperationException("Something\r\n \t \\ failed");
-            const string expectedMessage = @"Something\r\n \t \\ failed";
+            var exception = new InvalidOperationException("Something\r\n \t \\ failed.");
+            const string expectedMessage = @"Something\r\n \t \\ failed. See logs for details.";
             var nancyContext = new NancyContext
             {
                 Request = new Request("GET", "/Test", "HTTP")
@@ -218,7 +219,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         [Fact]
         public void Dispatch_WhenRequestHandlerThrows_TheExceptionIsLogged()
         {
-            var exception = new InvalidOperationException("Something failed");
+            var exception = new InvalidOperationException("Something failed.");
             var nancyContext = new NancyContext
             {
                 Request = new Request("GET", "/Test", "HTTP")

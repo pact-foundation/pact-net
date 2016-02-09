@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using PactNet.Comparers;
+using PactNet.Logging;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
@@ -13,23 +14,28 @@ namespace PactNet.Mocks.MockHttpService.Validators
         private readonly IProviderServiceResponseComparer _providerServiceResponseComparer;
         private readonly IHttpRequestSender _httpRequestSender;
         private readonly IReporter _reporter;
+        private readonly PactVerifierConfig _config;
 
         internal ProviderServiceValidator(
             IProviderServiceResponseComparer providerServiceResponseComparer,
             IHttpRequestSender httpRequestSender, 
-            IReporter reporter)
+            IReporter reporter,
+            PactVerifierConfig config)
         {
             _providerServiceResponseComparer = providerServiceResponseComparer;
             _httpRequestSender = httpRequestSender;
             _reporter = reporter;
+            _config = config;
         }
 
         public ProviderServiceValidator(
             IHttpRequestSender httpRequestSender, 
-            IReporter reporter) : this(
+            IReporter reporter,
+            PactVerifierConfig config) : this(
             new ProviderServiceResponseComparer(),
             httpRequestSender,
-            reporter)
+            reporter,
+            config)
         {
         }
 
@@ -97,7 +103,7 @@ namespace PactNet.Mocks.MockHttpService.Validators
                         _reporter.Indent();
                         _reporter.ReportInfo(String.Format("with {0} {1}", interaction.Request.Method.ToString().ToUpper(), interaction.Request.Path));
                     }
-                        
+
                     try
                     {
                         var interactionComparisonResult = ValidateInteraction(interaction);
@@ -114,10 +120,12 @@ namespace PactNet.Mocks.MockHttpService.Validators
 
                 _reporter.ResetIndentation();
                 _reporter.ReportFailureReasons(comparisonResult);
+                _reporter.Flush();
 
                 if (comparisonResult.HasFailure)
                 {
-                    throw new PactFailureException("See output for failure details.");
+                    throw new PactFailureException(String.Format("See test output or {0} for failure details.", 
+                        !String.IsNullOrEmpty(_config.LoggerName) ? LogProvider.CurrentLogProvider.ResolveLogPath(_config.LoggerName) : "logs"));
                 }
             }
         }

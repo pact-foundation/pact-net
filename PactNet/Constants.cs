@@ -1,4 +1,4 @@
-﻿namespace PactNet.Mocks.MockHttpService
+﻿namespace PactNet
 {
     internal static class Constants
     {

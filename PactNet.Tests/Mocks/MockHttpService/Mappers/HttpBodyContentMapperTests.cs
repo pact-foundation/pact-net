@@ -104,8 +104,6 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             Assert.Equal(contentTypeString, result.ContentType);
         }
 
-        //
-
         [Fact]
         public void Convert2_WithNullContent_ReturnsNull()
         {
@@ -122,7 +120,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             const string content = "This is my content";
             var mapper = GetSubject();
 
-            var result = mapper.Convert(content: content, headers: null);
+            var result = mapper.Convert(content: Encoding.UTF8.GetBytes(content), headers: null);
 
             Assert.Equal(content, result.Content);
             Assert.Equal(Encoding.UTF8, result.Encoding);
@@ -144,7 +142,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             const string content = "{\"Test\":\"testeR\",\"tesT2\":1}";
             var mapper = GetSubject();
 
-            var result = mapper.Convert(content: content, headers: headers);
+            var result = mapper.Convert(content: Encoding.UTF8.GetBytes(content), headers: headers);
 
             Assert.Equal(body.Test, (string)result.Body.Test);
             Assert.Equal(body.tesT2, (int)result.Body.tesT2);
@@ -168,7 +166,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
             var mapper = new HttpBodyContentMapper(mockEncodingMapper);
 
-            var result = mapper.Convert(content: content, headers: headers);
+            var result = mapper.Convert(content: Encoding.UTF8.GetBytes(content), headers: headers);
 
             Assert.Equal(content, result.Body);
             Assert.Equal(encoding, result.Encoding);
