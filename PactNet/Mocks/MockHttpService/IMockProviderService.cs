@@ -6,6 +6,7 @@ namespace PactNet.Mocks.MockHttpService
     public interface IMockProviderService : IMockProvider<IMockProviderService>
     {
         IMockProviderService With(ProviderServiceRequest request);
+        IMockProviderService WithValueAgnosticBodyComparison();
         void WillRespondWith(ProviderServiceResponse response);
         void Start();
         void Stop();

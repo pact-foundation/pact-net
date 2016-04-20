@@ -24,6 +24,7 @@ namespace PactNet.Mocks.MockHttpService
         private string _description;
         private ProviderServiceRequest _request;
         private ProviderServiceResponse _response;
+        private bool _valueAgnosticValueComparison;
 
         public string BaseUri { get; private set; }
 
@@ -38,11 +39,12 @@ namespace PactNet.Mocks.MockHttpService
             BaseUri = String.Format("{0}://localhost:{1}", enableSsl ? "https" : "http", port);
             _httpClient = httpClientFactory(BaseUri);
             _httpMethodMapper = httpMethodMapper;
+            _valueAgnosticValueComparison = false;
         }
 
         public MockProviderService(int port, bool enableSsl, string providerName, PactConfig config)
             : this(
-            baseUri => new NancyHttpHost(baseUri, providerName, config), 
+            baseUri => new NancyHttpHost(baseUri, providerName, config),
             port,
             enableSsl,
             baseUri => new HttpClient { BaseAddress = new Uri(baseUri) },
@@ -92,7 +94,14 @@ namespace PactNet.Mocks.MockHttpService
             }
 
             _request = request;
-            
+
+            return this;
+        }
+
+        public IMockProviderService WithValueAgnosticBodyComparison()
+        {
+            _valueAgnosticValueComparison = true;
+
             return this;
         }
 
@@ -209,7 +218,8 @@ namespace PactNet.Mocks.MockHttpService
                 ProviderState = _providerState,
                 Description = _description,
                 Request = _request,
-                Response = _response
+                Response = _response,
+                ValueAgnosticBodyComparison = _valueAgnosticValueComparison
             };
 
             var testContext = BuildTestContext();

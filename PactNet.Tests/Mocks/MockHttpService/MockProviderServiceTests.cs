@@ -98,6 +98,43 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
+        public void Given_WithValueAgnosticBodyComparison_SetsValueAgnosticBodyComparison()
+        {
+            string ANY_STRING = "blah";
+            var mockService = GetSubject();
+            mockService.Start();
+
+            mockService
+                .Given(ANY_STRING)
+                .UponReceiving(ANY_STRING)
+                .With(new ProviderServiceRequest { Method = HttpVerb.Get })
+                .WithValueAgnosticBodyComparison()
+                .WillRespondWith(new ProviderServiceResponse { Status = (int)HttpStatusCode.OK });
+
+            var interaction = Deserialise<ProviderServiceInteraction>(_fakeHttpMessageHandler.RequestContentRecieved.Single());
+
+            Assert.Equal(true, interaction.ValueAgnosticBodyComparison);
+        }
+
+        [Fact]
+        public void Given_WithoutValueAgnosticBodyComparison_DefaultsValueAgnosticBodyComparisonToFalse()
+        {
+            string ANY_STRING = "blah";
+            var mockService = GetSubject();
+            mockService.Start();
+
+            mockService
+                .Given(ANY_STRING)
+                .UponReceiving(ANY_STRING)
+                .With(new ProviderServiceRequest { Method = HttpVerb.Get })
+                .WillRespondWith(new ProviderServiceResponse { Status = (int)HttpStatusCode.OK });
+
+            var interaction = Deserialise<ProviderServiceInteraction>(_fakeHttpMessageHandler.RequestContentRecieved.Single());
+
+            Assert.Equal(false, interaction.ValueAgnosticBodyComparison);
+        }
+
+        [Fact]
         public void UponReceiving_WithDescription_SetsDescription()
         {
             const string description = "My description";

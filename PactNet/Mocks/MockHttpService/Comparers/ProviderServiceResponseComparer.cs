@@ -1,6 +1,9 @@
 ﻿using System.Linq;
 using PactNet.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Matchers;
+using System.Collections.Generic;
+using PactNet.Mocks.MockHttpService.Matchers;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
@@ -18,6 +21,11 @@ namespace PactNet.Mocks.MockHttpService.Comparers
         }
 
         public ComparisonResult Compare(ProviderServiceResponse expected, ProviderServiceResponse actual)
+        {
+            return Compare(expected, actual, false);
+        }
+        
+        public ComparisonResult Compare(ProviderServiceResponse expected, ProviderServiceResponse actual, bool valueAgnosticBodyComparison)
         {
             var result = new ComparisonResult("returns a response which");
 
@@ -38,7 +46,12 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
             if (expected.Body != null)
             {
-                var bodyResult = _httpBodyComparer.Compare(expected.Body, actual.Body, expected.MatchingRules);
+                var matchingRules = new Dictionary<string, IMatcher>
+                {
+                    { DefaultHttpBodyMatcher.Path, new DefaultHttpBodyMatcher(valueAgnosticBodyComparison ? (IJValueMatcher) new JValueValueAgnosticMatcher() : new JValueMatcher(), true) }
+                };
+
+                var bodyResult = _httpBodyComparer.Compare(expected.Body, actual.Body, matchingRules);
                 result.AddChildResult(bodyResult);
             }
             else if (expected.Body == null && 

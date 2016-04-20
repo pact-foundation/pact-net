@@ -126,6 +126,9 @@
     <Compile Include="Mocks\MockHttpService\Configuration\NancyConfig.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Mocks\MockHttpService\IHttpHost.cs" />
+    <Compile Include="Mocks\MockHttpService\Matchers\IJValueMatcher.cs" />
+    <Compile Include="Mocks\MockHttpService\Matchers\JValueMatcher.cs" />
+    <Compile Include="Mocks\MockHttpService\Matchers\JValueValueAgnosticMatcher.cs" />
     <Compile Include="Mocks\MockHttpService\Models\IHttpMessage.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\NancyHttpHost.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\IMockProviderAdminRequestHandler.cs" />

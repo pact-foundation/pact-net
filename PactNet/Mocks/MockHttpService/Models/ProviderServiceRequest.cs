@@ -51,7 +51,7 @@ namespace PactNet.Mocks.MockHttpService.Models
         {
             MatchingRules = new Dictionary<string, IMatcher>
             {
-                { DefaultHttpBodyMatcher.Path, new DefaultHttpBodyMatcher(false) }
+                { DefaultHttpBodyMatcher.Path, new DefaultHttpBodyMatcher(new JValueMatcher(), false) }
             };
 
             return body;

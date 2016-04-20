@@ -135,7 +135,7 @@ namespace PactNet.Mocks.MockHttpService.Validators
             var expectedResponse = interaction.Response;
             var actualResponse = _httpRequestSender.Send(interaction.Request);
 
-            return _providerServiceResponseComparer.Compare(expectedResponse, actualResponse);
+            return _providerServiceResponseComparer.Compare(expectedResponse, actualResponse, interaction.ValueAgnosticBodyComparison);
         }
 
         private void InvokePactSetUpIfApplicable(ProviderStates providerStates)

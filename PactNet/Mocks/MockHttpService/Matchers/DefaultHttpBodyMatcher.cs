@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using PactNet.Matchers;
+using System.Diagnostics.Contracts;
 
 namespace PactNet.Mocks.MockHttpService.Matchers
 {
@@ -10,9 +11,13 @@ namespace PactNet.Mocks.MockHttpService.Matchers
         public const string Path = "$..*";
 
         public bool AllowExtraKeys { get; private set; }
+        public IJValueMatcher JValueMatcher { get; }
 
-        public DefaultHttpBodyMatcher(bool allowExtraKeysInObjects)
+        public DefaultHttpBodyMatcher(IJValueMatcher jValueMatcher, bool allowExtraKeysInObjects)
         {
+            Contract.Requires(jValueMatcher != null);
+
+            JValueMatcher = jValueMatcher;
             AllowExtraKeys = allowExtraKeysInObjects;
         }
 
@@ -20,7 +25,7 @@ namespace PactNet.Mocks.MockHttpService.Matchers
         {
             if (expected is JValue)
             {
-                return actual != null && expected.Equals(actual) ?
+                return JValueMatcher.Match((JValue) expected, actual) ? 
                     new MatcherResult(new SuccessfulMatcherCheck(path)) :
                     new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotMatch));
             }
@@ -52,7 +57,7 @@ namespace PactNet.Mocks.MockHttpService.Matchers
                 {
                     var actualToken = actual.SelectToken(expectedToken.Path);
 
-                    if (actualToken != null && expectedToken.Equals(actualToken))
+                    if (JValueMatcher.Match((JValue) expectedToken, actualToken))
                     {
                         checks.Add(new SuccessfulMatcherCheck(expectedToken.Path));
                     }

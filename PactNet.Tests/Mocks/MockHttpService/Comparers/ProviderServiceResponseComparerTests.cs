@@ -379,6 +379,39 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         }
 
         [Fact]
+        public void Compare_ValueAgnostic_WithNonMatchingObject_OneErrorIsAddedToTheComparisonResult()
+        {
+            var expected = new ProviderServiceResponse
+            {
+                Status = 201,
+                Body = new
+                {
+                    myString = "Tester",
+                    myInt = 1,
+                    myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C"),
+                    myDouble = 2.0
+                }
+            };
+
+            var actual = new ProviderServiceResponse
+            {
+                Status = 201,
+                Body = new
+                {
+                    myString = "Tester",
+                    MyInt = 1,
+                    MyGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")
+                }
+            };
+
+            var comparer = GetSubject();
+
+            var result = comparer.Compare(expected, actual);
+
+            Assert.Equal(1, result.Failures.Count());
+        }
+
+        [Fact]
         public void Compare_WithMatchingObjectAndANonMatchingValue_OneErrorIsAddedToTheComparisonResult()
         {
             var expected = new ProviderServiceResponse
@@ -411,7 +444,71 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         }
 
         [Fact]
+        public void Compare_ValueAgnostic_WithMatchingObjectAndANonMatchingValue_NoErrorsAreAddedToTheComparisonResult()
+        {
+            var expected = new ProviderServiceResponse
+            {
+                Status = 201,
+                Body = new
+                {
+                    myString = "Tester",
+                    myInt = 1,
+                    myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")
+                }
+            };
+
+            var actual = new ProviderServiceResponse
+            {
+                Status = 201,
+                Body = new
+                {
+                    myString = "Tester2",
+                    myInt = 1,
+                    myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")
+                }
+            };
+
+            var comparer = GetSubject();
+
+            var result = comparer.Compare(expected, actual, true);
+
+            Assert.Equal(0, result.Failures.Count());
+        }
+
+        [Fact]
         public void Compare_WithMatchingObjectHoweverPropertyNameCasingIsDifferent_OneErrorIsAddedToTheComparisonResult()
+        {
+            var expected = new ProviderServiceResponse
+            {
+                Status = 201,
+                Body = new
+                {
+                    MyString = "Tester",
+                    MyInt = 1,
+                    MyGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")
+                }
+            };
+
+            var actual = new ProviderServiceResponse
+            {
+                Status = 201,
+                Body = new
+                {
+                    myString = "Tester",
+                    myInt = 1,
+                    myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")
+                }
+            };
+
+            var comparer = GetSubject();
+
+            var result = comparer.Compare(expected, actual);
+
+            Assert.Equal(1, result.Failures.Count());
+        }
+
+        [Fact]
+        public void Compare_ValueAgnostic_WithMatchingObjectHoweverPropertyNameCasingIsDifferent_OneErrorIsAddedToTheComparisonResult()
         {
             var expected = new ProviderServiceResponse
             {
@@ -542,6 +639,44 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var result = comparer.Compare(expected, actual);
 
             Assert.Equal(1, result.Failures.Count());
+        }
+
+        [Fact]
+        public void Compare_VAlueAgnostic_WithNonMatchingCollection_NoErrorsAreAddedToTheComparisonResult()
+        {
+            var expected = new ProviderServiceResponse
+            {
+                Status = 201,
+                Body = new List<dynamic>
+                {
+                    new
+                    {
+                        myString = "Tester",
+                        myInt = 1,
+                        myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")
+                    }
+                }
+            };
+
+            var actual = new ProviderServiceResponse
+            {
+                Status = 201,
+                Body = new List<dynamic>
+                {
+                    new
+                    {
+                        myString = "Tester2",
+                        myInt = 1,
+                        myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")
+                    }
+                }
+            };
+
+            var comparer = GetSubject();
+
+            var result = comparer.Compare(expected, actual, true);
+
+            Assert.Equal(0, result.Failures.Count());
         }
     }
 }
