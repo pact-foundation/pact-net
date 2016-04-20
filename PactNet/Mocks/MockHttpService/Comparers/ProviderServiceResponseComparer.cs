@@ -51,7 +51,6 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                     { DefaultHttpBodyMatcher.Path, new DefaultHttpBodyMatcher(valueAgnosticBodyComparison ? (IJValueMatcher) new JValueValueAgnosticMatcher() : new JValueMatcher(), true) }
                 };
 
-                //var bodyResult = _httpBodyComparer.Compare(expected.Body, actual.Body, expected.MatchingRules);
                 var bodyResult = _httpBodyComparer.Compare(expected.Body, actual.Body, matchingRules);
                 result.AddChildResult(bodyResult);
             }

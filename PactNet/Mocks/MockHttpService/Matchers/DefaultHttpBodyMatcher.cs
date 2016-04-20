@@ -25,7 +25,7 @@ namespace PactNet.Mocks.MockHttpService.Matchers
         {
             if (expected is JValue)
             {
-                return JValueMatcher.Match((JValue) expected, actual) ? //  actual != null && expected.Equals(actual) ?
+                return JValueMatcher.Match((JValue) expected, actual) ? 
                     new MatcherResult(new SuccessfulMatcherCheck(path)) :
                     new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotMatch));
             }
@@ -57,7 +57,7 @@ namespace PactNet.Mocks.MockHttpService.Matchers
                 {
                     var actualToken = actual.SelectToken(expectedToken.Path);
 
-                    if (JValueMatcher.Match((JValue) expectedToken, actualToken)) //(actualToken != null && expectedToken.Equals(actualToken))
+                    if (JValueMatcher.Match((JValue) expectedToken, actualToken))
                     {
                         checks.Add(new SuccessfulMatcherCheck(expectedToken.Path));
                     }
