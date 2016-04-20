@@ -5,6 +5,11 @@ namespace PactNet.Models
 {
     public class Interaction
     {
+        public Interaction()
+        {
+            ValueAgnosticBodyComparison = false;
+        }
+
         private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
         {
             NullValueHandling = NullValueHandling.Ignore,
@@ -21,6 +26,9 @@ namespace PactNet.Models
         //public string provider_state { set { ProviderState = value; } } //Uncomment when provider_state becomes providerState
         [Obsolete("For forwards compatibility.")]
         public string providerState { set { ProviderState = value; } } //Remove when provider_state becomes providerState 
+
+        [JsonProperty(PropertyName = "valueAgnosticBodyComparison")]
+        public bool ValueAgnosticBodyComparison { get; set; }
 
         public string AsJsonString()
         {
