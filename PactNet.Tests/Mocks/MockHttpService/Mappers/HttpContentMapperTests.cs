@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
@@ -32,6 +34,22 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             var result = mapper.Convert(httpBodyContent);
 
             Assert.Empty(result.ReadAsStringAsync().Result);
+        }
+
+        [Fact]
+        public void Convert_WithContentTypeContainingParameter_ReturnsContentWithContentTypeHeader()
+        {
+            const string contentType = "text/plain";
+            const string content = "test";
+            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(content), contentType: contentType + "; version=1", encoding: Encoding.UTF8);
+            IHttpContentMapper mapper = GetSubject();
+
+            HttpContent result = mapper.Convert(httpBodyContent);
+
+            Assert.Equal(contentType, result.Headers.ContentType.MediaType);
+            Assert.Contains(new NameValueHeaderValue("version", "1"), result.Headers.ContentType.Parameters);
+            Assert.Equal("utf-8", result.Headers.ContentType.CharSet);
+            Assert.Equal(content, result.ReadAsStringAsync().Result);
         }
     }
 }
