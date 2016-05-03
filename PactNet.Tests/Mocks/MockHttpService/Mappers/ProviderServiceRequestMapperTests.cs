@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http.Headers;
 using System.Text;
+using Nancy;
 using Nancy.IO;
 using NSubstitute;
-using Nancy;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
@@ -46,7 +47,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             mockHttpVerbMapper.Received(1).Convert("GET");
         }
 
-        [Fact] 
+        [Fact]
         public void Convert_WithPath_CorrectlySetsPath()
         {
             const string path = "/events";
@@ -136,9 +137,8 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         public void Convert_WithPlainTextBody_CallsHttpBodyContentMapperAndCorrectlySetsBody()
         {
             const string content = "Plain text body";
-            var contentByes = Encoding.UTF8.GetBytes(content);
             var request = GetPreCannedRequest(content: content);
-            var httpBodyContent = new HttpBodyContent(content, null, null);
+            var httpBodyContent = new HttpBodyContent(content, new MediaTypeHeaderValue("text/plain") { CharSet = "utf-8" });
 
             var mockHttpVerbMapper = Substitute.For<IHttpVerbMapper>();
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
@@ -168,7 +168,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             const string content = "{\"Test\":\"tester\",\"test2\":1}";
             var contentBytes = Encoding.UTF8.GetBytes(content);
             var request = GetPreCannedRequest(headers: headers, content: content);
-            var httpBodyContent = new HttpBodyContent(content: contentBytes, contentType: "application/json", encoding: Encoding.UTF8);
+            var httpBodyContent = new HttpBodyContent(content: contentBytes, contentType: new MediaTypeHeaderValue("application/json") { CharSet = "utf-8" });
 
             var mockHttpVerbMapper = Substitute.For<IHttpVerbMapper>();
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();

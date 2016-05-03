@@ -131,7 +131,6 @@
     <Compile Include="Mocks\MockHttpService\Nancy\IMockProviderAdminRequestHandler.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\IMockProviderNancyRequestHandler.cs" />
     <Compile Include="Mocks\MockHttpService\IMockProviderService.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\EncodingMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\HttpVerbMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\IHttpVerbMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\IMockProviderRequestHandler.cs" />
@@ -140,7 +139,6 @@
     <Compile Include="Mocks\MockHttpService\Nancy\MockProviderRequestHandler.cs" />
     <Compile Include="Mocks\MockHttpService\Models\HttpBodyContent.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\HttpBodyContentMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\IEncodingMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\IHttpBodyContentMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\INancyResponseMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\IProviderServiceRequestMapper.cs" />
@@ -197,7 +195,9 @@
     <Compile Include="Validators\IPactValidator.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="PactNet.nuspec" />
   </ItemGroup>
   <ItemGroup />

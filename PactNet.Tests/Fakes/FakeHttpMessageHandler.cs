@@ -8,27 +8,27 @@ namespace PactNet.Tests.Fakes
 {
     public class FakeHttpMessageHandler : DelegatingHandler
     {
-        private readonly IList<HttpRequestMessage> _requestsRecieved;
-        public IEnumerable<HttpRequestMessage> RequestsRecieved { get { return _requestsRecieved; } }
+        private readonly IList<HttpRequestMessage> _requestsReceived;
+        public IEnumerable<HttpRequestMessage> RequestsReceived { get { return _requestsReceived; } }
 
-        private readonly IList<string> _requestContentRecieved;
-        public IEnumerable<string> RequestContentRecieved { get { return _requestContentRecieved; } }
+        private readonly IList<string> _requestContentReceived;
+        public IEnumerable<string> RequestContentReceived { get { return _requestContentReceived; } }
 
         public HttpResponseMessage Response { get; set; }
 
         public FakeHttpMessageHandler(HttpResponseMessage response = null)
         {
             Response = response ?? new HttpResponseMessage(HttpStatusCode.OK);
-            _requestsRecieved = new List<HttpRequestMessage>();
-            _requestContentRecieved = new List<string>();
+            _requestsReceived = new List<HttpRequestMessage>();
+            _requestContentReceived = new List<string>();
         }
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            _requestsRecieved.Add(request);
+            _requestsReceived.Add(request);
             if (request.Content != null)
             {
-                _requestContentRecieved.Add(request.Content.ReadAsStringAsync().Result);
+                _requestContentReceived.Add(request.Content.ReadAsStringAsync().Result);
             }
 
             var tcs = new TaskCompletionSource<HttpResponseMessage>();
@@ -36,7 +36,5 @@ namespace PactNet.Tests.Fakes
 
             return tcs.Task;
         }
-
-
     }
 }

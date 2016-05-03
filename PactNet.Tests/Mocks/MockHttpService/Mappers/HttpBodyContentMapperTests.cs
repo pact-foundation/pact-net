@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Net.Http.Headers;
 using System.Text;
-using NSubstitute;
 using PactNet.Mocks.MockHttpService.Mappers;
 using Xunit;
 
@@ -33,7 +33,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
             Assert.Equal(body, result.Content);
             Assert.Equal(Encoding.UTF8, result.Encoding);
-            Assert.Equal("text/plain", result.ContentType);
+            Assert.Equal("text/plain", result.ContentType.MediaType);
         }
 
         [Fact]
@@ -56,7 +56,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
             Assert.Equal(jsonBody, result.Content);
             Assert.Equal(Encoding.UTF8, result.Encoding);
-            Assert.Equal(contentTypeString, result.ContentType);
+            Assert.Equal(contentTypeString, result.ContentType.MediaType);
         }
 
         [Fact]
@@ -78,30 +78,33 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
             Assert.Equal(jsonBody, result.Content);
             Assert.Equal(Encoding.UTF8, result.Encoding);
-            Assert.Equal("application/json", result.ContentType);
+            Assert.Equal("Application/Json", result.ContentType.MediaType);
         }
 
         [Fact]
-        public void Convert1_WithAsciiHtmlBody_CallsEncodingMapperAndReturnsBodyWithAsciiEncodingAndHtmlContentType()
+        public void Convert1_WithContentTypeParameterAndUsAsciiCharSet_ReturnsJsonBodyWithAsciiEncodingAndContentTypeWithParameters()
         {
-            const string contentTypeString = "text/html";
-            const string body = "<p>This is my content</p>";
-            const string encodingString = "us-ascii";
-            var encoding = Encoding.ASCII;
+            const string contentTypeString = "text/richtext";
+            const string body = "string";
+            const string parameterName = "date-format";
+            const string parameterValue = "json";
+            const string charSet = "IBM285";
+
             var headers = new Dictionary<string, string>
             {
-                { "Content-Type", contentTypeString + "; charset=" + encodingString }
+                { "Content-Type", $"{contentTypeString}; {parameterName}={parameterValue}; charset={charSet}" }
             };
-            var mockEncodingMapper = Substitute.For<IEncodingMapper>();
-            mockEncodingMapper.Convert(encodingString).Returns(encoding);
 
-            var mapper = new HttpBodyContentMapper(mockEncodingMapper);
+            var mapper = GetSubject();
 
             var result = mapper.Convert(body: body, headers: headers);
+            var encoding = Encoding.GetEncoding(charSet);
 
-            Assert.Equal(body, result.Content);
             Assert.Equal(encoding, result.Encoding);
-            Assert.Equal(contentTypeString, result.ContentType);
+            Assert.Equal(body, result.Content);
+            Assert.Equal(contentTypeString, result.ContentType.MediaType);
+            Assert.Equal(charSet, result.ContentType.CharSet);
+            Assert.Contains(new NameValueHeaderValue(parameterName, parameterValue), result.ContentType.Parameters);
         }
 
         [Fact]
@@ -124,7 +127,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
             Assert.Equal(content, result.Content);
             Assert.Equal(Encoding.UTF8, result.Encoding);
-            Assert.Equal("text/plain", result.ContentType);
+            Assert.Equal("text/plain", result.ContentType.MediaType);
         }
 
         [Fact]
@@ -147,31 +150,33 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             Assert.Equal(body.Test, (string)result.Body.Test);
             Assert.Equal(body.tesT2, (int)result.Body.tesT2);
             Assert.Equal(Encoding.UTF8, result.Encoding);
-            Assert.Equal("application/json", result.ContentType);
+            Assert.Equal("Application/Json", result.ContentType.MediaType);
         }
 
         [Fact]
-        public void Convert2_WithAsciiHtmlContent_CallsEncodingMapperAndReturnsBodyWithAsciiEncodingAndHtmlContentType()
+        public void Convert2_WithContentTypeParameterAndUsAsciiCharSet_ReturnsJsonBodyWithAsciiEncodingAndContentTypeWithParameters()
         {
-            const string contentTypeString = "text/html";
-            const string content = "<p>This is my content</p>";
-            const string encodingString = "us-ascii";
-            var encoding = Encoding.ASCII;
+            const string contentTypeString = "text/richtext";
+            const string content = "string";
+            const string parameterName = "date-format";
+            const string parameterValue = "json";
+            const string charSet = "IBM285";
+
             var headers = new Dictionary<string, string>
             {
-                { "Content-Type", contentTypeString + "; charset=" + encodingString }
+                { "Content-Type", $"{contentTypeString}; {parameterName}={parameterValue}; charset={charSet}" }
             };
-            var mockEncodingMapper = Substitute.For<IEncodingMapper>();
-            mockEncodingMapper.Convert(encodingString).Returns(encoding);
 
-            var mapper = new HttpBodyContentMapper(mockEncodingMapper);
+            var mapper = GetSubject();
 
-            var result = mapper.Convert(content: Encoding.UTF8.GetBytes(content), headers: headers);
+            var result = mapper.Convert(body: Encoding.UTF8.GetBytes(content), headers: headers);
+            var encoding = Encoding.GetEncoding(charSet);
 
-            Assert.Equal(content, result.Body);
             Assert.Equal(encoding, result.Encoding);
-            Assert.Equal(contentTypeString, result.ContentType);
+            Assert.Equal(encoding.GetString(Encoding.UTF8.GetBytes(content)), result.Content);
+            Assert.Equal(contentTypeString, result.ContentType.MediaType);
+            Assert.Equal(charSet, result.ContentType.CharSet);
+            Assert.Contains(new NameValueHeaderValue(parameterName, parameterValue), result.ContentType.Parameters);
         }
-
     }
 }
