@@ -60,8 +60,8 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             requestSender.Send(request);
 
-            Assert.Equal(1, _fakeHttpMessageHandler.RequestsRecieved.Count());
-            Assert.Equal(convertedRequest, _fakeHttpMessageHandler.RequestsRecieved.First());
+            Assert.Equal(1, _fakeHttpMessageHandler.RequestsReceived.Count());
+            Assert.Equal(convertedRequest, _fakeHttpMessageHandler.RequestsReceived.First());
         }
 
         [Fact]
