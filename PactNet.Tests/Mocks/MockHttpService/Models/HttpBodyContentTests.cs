@@ -11,13 +11,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
         [Fact]
         public void Ctor1_WithNullBody_ThrowsArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => new HttpBodyContent(body: null, contentType: null));
+            Assert.Throws<ArgumentNullException>(() => new HttpBodyContent(body: null, contentType: new MediaTypeHeaderValue("text/plain")));
         }
 
         [Fact]
         public void Ctor2_WithNullContent_ThrowsArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => new HttpBodyContent(content: null, contentType: null));
+            Assert.Throws<ArgumentNullException>(() => new HttpBodyContent(content: null, contentType: new MediaTypeHeaderValue("text/plain")));
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
         }
 
         [Fact]
-        public void Ctor1_WithContantAndContentType_SetsContentType()
+        public void Ctor1_WithContentAndContentType_SetsContentType()
         {
             const string contentType = "text/html";
             const string parameterName = "date-format";
