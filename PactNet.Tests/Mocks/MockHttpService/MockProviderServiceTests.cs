@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using NSubstitute;
 using Newtonsoft.Json;
+using NSubstitute;
 using PactNet.Configuration.Json;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Mappers;
@@ -44,7 +44,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var expectedBaseUri = String.Format("http://localhost:{0}", port);
             var mockService = GetSubject(port);
 
-            Assert.Equal(expectedBaseUri, ((MockProviderService) mockService).BaseUri);
+            Assert.Equal(expectedBaseUri, ((MockProviderService)mockService).BaseUri);
         }
 
         [Fact]
@@ -76,7 +76,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 .With(new ProviderServiceRequest { Method = HttpVerb.Get })
                 .WillRespondWith(new ProviderServiceResponse { Status = (int)HttpStatusCode.OK });
 
-            var interaction = Deserialise<ProviderServiceInteraction>(_fakeHttpMessageHandler.RequestContentRecieved.Single());
+            var interaction = Deserialise<ProviderServiceInteraction>(_fakeHttpMessageHandler.RequestContentReceived.Single());
 
             Assert.Equal(providerState, interaction.ProviderState);
         }
@@ -108,8 +108,8 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 .With(new ProviderServiceRequest { Method = HttpVerb.Get })
                 .WillRespondWith(new ProviderServiceResponse { Status = (int)HttpStatusCode.OK });
 
-            var interaction = Deserialise<ProviderServiceInteraction>(_fakeHttpMessageHandler.RequestContentRecieved.Single());
-            
+            var interaction = Deserialise<ProviderServiceInteraction>(_fakeHttpMessageHandler.RequestContentReceived.Single());
+
             Assert.Equal(description, interaction.Description);
         }
 
@@ -158,8 +158,8 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 .With(request)
                 .WillRespondWith(response);
 
-            var actualInteractionJson = _fakeHttpMessageHandler.RequestContentRecieved.Single();
-            
+            var actualInteractionJson = _fakeHttpMessageHandler.RequestContentReceived.Single();
+
             Assert.Equal(expectedInteractionJson, actualInteractionJson);
         }
 
@@ -301,7 +301,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             mockService.Stop();
 
             Assert.Throws<InvalidOperationException>(() => mockService.WillRespondWith(response));
-            Assert.Equal(0, _fakeHttpMessageHandler.RequestsRecieved.Count());
+            Assert.Equal(0, _fakeHttpMessageHandler.RequestsReceived.Count());
         }
 
         [Fact]
@@ -337,8 +337,8 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 .With(request)
                 .WillRespondWith(response);
 
-            var actualRequest = _fakeHttpMessageHandler.RequestsRecieved.Single();
-            var actualInteractionJson = _fakeHttpMessageHandler.RequestContentRecieved.Single();
+            var actualRequest = _fakeHttpMessageHandler.RequestsReceived.Single();
+            var actualInteractionJson = _fakeHttpMessageHandler.RequestContentReceived.Single();
 
             Assert.Equal(HttpMethod.Post, actualRequest.Method);
             Assert.Equal("http://localhost:1234/interactions", actualRequest.RequestUri.OriginalString);
@@ -371,7 +371,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 .With(request)
                 .WillRespondWith(response);
 
-            var actualRequest = _fakeHttpMessageHandler.RequestsRecieved.Single();
+            var actualRequest = _fakeHttpMessageHandler.RequestsReceived.Single();
 
             Assert.Equal("MockProviderServiceTests.WillRespondWith_WithValidInteraction_PerformsAdminInteractionsPostRequestWithTestContext", actualRequest.Headers.Single(x => x.Key == Constants.AdministrativeRequestTestContextHeaderKey).Value.Single());
         }
@@ -406,7 +406,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             mockService.Stop();
 
             Assert.Throws<InvalidOperationException>(() => mockService.VerifyInteractions());
-            Assert.Equal(0, _fakeHttpMessageHandler.RequestsRecieved.Count());
+            Assert.Equal(0, _fakeHttpMessageHandler.RequestsReceived.Count());
         }
 
         [Fact]
@@ -418,9 +418,9 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.VerifyInteractions();
 
-            Assert.Equal(1, _fakeHttpMessageHandler.RequestsRecieved.Count());
-            Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsRecieved.First().Method);
-            Assert.Equal("http://localhost:1234/interactions/verification", _fakeHttpMessageHandler.RequestsRecieved.First().RequestUri.ToString());
+            Assert.Equal(1, _fakeHttpMessageHandler.RequestsReceived.Count());
+            Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsReceived.First().Method);
+            Assert.Equal("http://localhost:1234/interactions/verification", _fakeHttpMessageHandler.RequestsReceived.First().RequestUri.ToString());
         }
 
         [Fact]
@@ -443,7 +443,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.ClearInteractions();
 
-            Assert.Equal(0, _fakeHttpMessageHandler.RequestsRecieved.Count());
+            Assert.Equal(0, _fakeHttpMessageHandler.RequestsReceived.Count());
         }
 
         [Fact]
@@ -455,9 +455,9 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.ClearInteractions();
 
-            Assert.Equal(1, _fakeHttpMessageHandler.RequestsRecieved.Count());
-            Assert.Equal(HttpMethod.Delete, _fakeHttpMessageHandler.RequestsRecieved.First().Method);
-            Assert.Equal("http://localhost:1234/interactions", _fakeHttpMessageHandler.RequestsRecieved.First().RequestUri.ToString());
+            Assert.Equal(1, _fakeHttpMessageHandler.RequestsReceived.Count());
+            Assert.Equal(HttpMethod.Delete, _fakeHttpMessageHandler.RequestsReceived.First().Method);
+            Assert.Equal("http://localhost:1234/interactions", _fakeHttpMessageHandler.RequestsReceived.First().RequestUri.ToString());
         }
 
         [Fact]

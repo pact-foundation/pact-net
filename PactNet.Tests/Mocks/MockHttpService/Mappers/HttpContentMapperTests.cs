@@ -28,7 +28,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         [Fact]
         public void Convert_WithEmptyContent_ReturnsNull()
         {
-            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: "text/plain", encoding: Encoding.UTF8);
+            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: new MediaTypeHeaderValue("text/plain") { CharSet = "utf-8" });
             var mapper = GetSubject();
 
             var result = mapper.Convert(httpBodyContent);
@@ -41,13 +41,17 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         {
             const string contentType = "text/plain";
             const string content = "test";
-            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(content), contentType: contentType + "; version=1", encoding: Encoding.UTF8);
+            NameValueHeaderValue versionParameter = new NameValueHeaderValue("version", "1");
+
+            var httpBodyContent = new HttpBodyContent(
+                content: Encoding.UTF8.GetBytes(content),
+                contentType: new MediaTypeHeaderValue(contentType) { CharSet = "utf-8", Parameters = { versionParameter } });
             IHttpContentMapper mapper = GetSubject();
 
             HttpContent result = mapper.Convert(httpBodyContent);
 
             Assert.Equal(contentType, result.Headers.ContentType.MediaType);
-            Assert.Contains(new NameValueHeaderValue("version", "1"), result.Headers.ContentType.Parameters);
+            Assert.Contains(versionParameter, result.Headers.ContentType.Parameters);
             Assert.Equal("utf-8", result.Headers.ContentType.CharSet);
             Assert.Equal(content, result.ReadAsStringAsync().Result);
         }

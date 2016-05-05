@@ -109,7 +109,6 @@
     <Compile Include="Mocks\MockHttpService\Comparers\HttpQueryStringComparerTests.cs" />
     <Compile Include="Mocks\MockHttpService\CustomRequestSenderTests.cs" />
     <Compile Include="Mocks\MockHttpService\HttpClientRequestSenderTests.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\EncodingMapperTests.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\HttpBodyContentMapperTests.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\HttpContentMapperTests.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\HttpMethodMapperTests.cs" />
