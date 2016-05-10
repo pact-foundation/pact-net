@@ -11,13 +11,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
         [Fact]
         public void Ctor1_WithNullBody_ThrowsArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => new HttpBodyContent(body: null, contentType: new MediaTypeHeaderValue("text/plain")));
+            Assert.Throws<ArgumentNullException>(() => new HttpBodyContent(body: null, contentType: new MediaTypeHeaderValue("text/plain") { CharSet = "utf-8" }));
         }
 
         [Fact]
         public void Ctor2_WithNullContent_ThrowsArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => new HttpBodyContent(content: null, contentType: new MediaTypeHeaderValue("text/plain")));
+            Assert.Throws<ArgumentNullException>(() => new HttpBodyContent(content: null, contentType: new MediaTypeHeaderValue("text/plain") { CharSet = "utf-8" }));
         }
 
         [Fact]
