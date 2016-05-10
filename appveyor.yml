@@ -1,7 +1,10 @@
 version: "{build}"
 
+os: Visual Studio 2015
+
 install:
   - git submodule update --init --recursive
+  - set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
   - ps: .\Build\Setup-Build-Environment.ps1
 
 assembly_info:
