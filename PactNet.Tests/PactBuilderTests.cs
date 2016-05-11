@@ -159,6 +159,13 @@ namespace PactNet.Tests
             pactBuilder.MockService(1234, serializerSettings);
 
             Assert.Equal(serializerSettings, JsonConfig.ApiSerializerSettings);
+
+            //Reset the settings
+            JsonConfig.ApiSerializerSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting = Formatting.None
+            };
         }
 
         [Fact]
