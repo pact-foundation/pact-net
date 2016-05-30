@@ -31,6 +31,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                 return NancyInternalConfiguration.WithOverrides(c =>
                 {
                     c.RequestDispatcher = typeof(MockProviderNancyRequestDispatcher);
+                    c.StatusCodeHandlers.Clear();
                 });
             }
         }
