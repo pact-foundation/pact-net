@@ -101,7 +101,7 @@ public class ConsumerMyApiPact : IDisposable
 		//or
 		MockProviderService = PactBuilder.MockService(MockServerPort, new JsonSerializerSettings()); //You can also change the default Json serialization settings using this overload
 		//or
-		MockProviderService = PactBuilder.MockService(MockServerPort, false, new JsonSerializerSettings()); //By passing false as the rewriteLocalhost parameter, the http mock server will only be bound to "localhost", and will not require admin privileges in order to run
+		MockProviderService = PactBuilder.MockService(MockServerPort, new JsonSerializerSettings(), bindOnAllAdapters:true); //By passing true as the bindOnAllAdapters parameter the http mock server will be able to accept external network requests, but will require admin privileges in order to run
 	}
 
 	public void Dispose()

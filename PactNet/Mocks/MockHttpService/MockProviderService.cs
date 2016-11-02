@@ -41,11 +41,11 @@ namespace PactNet.Mocks.MockHttpService
             _httpMethodMapper = httpMethodMapper;
         }
 
-        public MockProviderService(int port, bool enableSsl, bool rewriteLocalhost, string providerName, PactConfig config)
+        public MockProviderService(int port, bool enableSsl, bool bindOnAllAdapters, string providerName, PactConfig config)
             : this(
             baseUri =>
             {
-                NancyConfig.HostConfiguration.RewriteLocalhost = rewriteLocalhost;
+                NancyConfig.HostConfiguration.RewriteLocalhost = bindOnAllAdapters;
                 return new NancyHttpHost(baseUri, providerName, config);
             }, 
             port,
