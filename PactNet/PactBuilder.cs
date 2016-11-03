@@ -53,9 +53,9 @@ namespace PactNet
             return this;
         }
 
-        public IMockProviderService MockService(int port, bool enableSsl = false)
+        public IMockProviderService MockService(int port, bool enableSsl = false, bool bindOnAllAdapters = false)
         {
-            return MockService(port, jsonSerializerSettings: null, enableSsl: enableSsl, bindOnAllAdapters: false);
+            return MockService(port, jsonSerializerSettings: null, enableSsl: enableSsl, bindOnAllAdapters: bindOnAllAdapters);
         }
     
 
