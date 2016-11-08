@@ -11,10 +11,10 @@ namespace PactNet
     {
         public string ConsumerName { get; private set; }
         public string ProviderName { get; private set; }
-        private readonly Func<int, bool, string, IMockProviderService> _mockProviderServiceFactory;
+        private readonly Func<int, bool, string, bool, IMockProviderService> _mockProviderServiceFactory;
         private IMockProviderService _mockProviderService;
 
-        internal PactBuilder(Func<int, bool, string, IMockProviderService> mockProviderServiceFactory)
+        internal PactBuilder(Func<int, bool, string, bool, IMockProviderService> mockProviderServiceFactory)
         {
             _mockProviderServiceFactory = mockProviderServiceFactory;
         }
@@ -25,7 +25,7 @@ namespace PactNet
         }
 
         public PactBuilder(PactConfig config)
-            : this((port, enableSsl, providerName) => new MockProviderService(port, enableSsl, providerName, config))
+            : this((port, enableSsl, providerName, bindOnAllAdapters) => new MockProviderService(port, enableSsl, providerName, config, bindOnAllAdapters))
         {
         }
 
@@ -53,12 +53,13 @@ namespace PactNet
             return this;
         }
 
-        public IMockProviderService MockService(int port, bool enableSsl = false)
+        public IMockProviderService MockService(int port, bool enableSsl = false, bool bindOnAllAdapters = false)
         {
-            return MockService(port, jsonSerializerSettings: null, enableSsl: enableSsl);
+            return MockService(port, jsonSerializerSettings: null, enableSsl: enableSsl, bindOnAllAdapters: bindOnAllAdapters);
         }
+    
 
-        public IMockProviderService MockService(int port, JsonSerializerSettings jsonSerializerSettings, bool enableSsl = false)
+        public IMockProviderService MockService(int port, JsonSerializerSettings jsonSerializerSettings, bool enableSsl = false, bool bindOnAllAdapters = false)
         {
             if (_mockProviderService != null)
             {
@@ -70,7 +71,7 @@ namespace PactNet
                 JsonConfig.ApiSerializerSettings = jsonSerializerSettings;
             }
 
-            _mockProviderService = _mockProviderServiceFactory(port, enableSsl, ProviderName);
+            _mockProviderService = _mockProviderServiceFactory(port, enableSsl, ProviderName, bindOnAllAdapters);
 
             _mockProviderService.Start();
 

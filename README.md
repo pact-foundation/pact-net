@@ -100,6 +100,8 @@ public class ConsumerMyApiPact : IDisposable
 		MockProviderService = PactBuilder.MockService(MockServerPort, true); //By passing true as the second param, you can enabled SSL. This will however require a valid SSL certificate installed and bound with netsh (netsh http add sslcert ipport=0.0.0.0:port certhash=thumbprint appid={app-guid}) on the machine running the test. See https://groups.google.com/forum/#!topic/nancy-web-framework/t75dKyfgzpg
 		//or
 		MockProviderService = PactBuilder.MockService(MockServerPort, new JsonSerializerSettings()); //You can also change the default Json serialization settings using this overload
+		//or
+		MockProviderService = PactBuilder.MockService(MockServerPort, new JsonSerializerSettings(), bindOnAllAdapters:true); //By passing true as the bindOnAllAdapters parameter the http mock server will be able to accept external network requests, but will require admin privileges in order to run
 	}
 
 	public void Dispose()
