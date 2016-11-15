@@ -11,12 +11,12 @@
     <description>A .NET version of Pact, which enables consumer driven contract testing.</description>
     <dependencies>
       <group targetFramework="net45">
-        <dependency id="Nancy.Hosting.Self" version="1.4.3" />
+        <dependency id="Nancy.Hosting.Self" version="1.4.1" />
         <dependency id="Newtonsoft.Json" version="9.0.1" />
         <dependency id="System.IO.Abstractions" version="2.0.0.137" />
       </group>
       <group targetFramework="net40">
-        <dependency id="Nancy.Hosting.Self" version="1.4.3" />
+        <dependency id="Nancy.Hosting.Self" version="1.4.1" />
         <dependency id="Newtonsoft.Json" version="9.0.1" />
         <dependency id="System.IO.Abstractions" version="2.0.0.137" />
         <dependency id="Microsoft.Net.Http" version="2.2.29" />
