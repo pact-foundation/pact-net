@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
+using PactNet.Extensions;
 using PactNet.Matchers;
 
 namespace PactNet.Mocks.MockHttpService.Matchers
@@ -48,18 +50,19 @@ namespace PactNet.Mocks.MockHttpService.Matchers
                         checks.Add(new FailedMatcherCheck(expectedToken.Path, failureType));
                     }
                 }
-                else if (expectedToken is JValue)
-                {
+                else if (expectedToken is JValue) {
                     var actualToken = actual.SelectToken(expectedToken.Path);
 
-                    if (actualToken != null && expectedToken.Equals(actualToken))
-                    {
+                    var func = expectedToken.Value<string>()?.ToFunc();
+
+                    if (func != null && Regex.IsMatch(actualToken.Value<string>(), func.Invoke()))
                         checks.Add(new SuccessfulMatcherCheck(expectedToken.Path));
-                    }
+
+                    else if (expectedToken.Equals(actualToken))
+                        checks.Add(new SuccessfulMatcherCheck(expectedToken.Path));
+
                     else
-                    {
                         checks.Add(new FailedMatcherCheck(expectedToken.Path, MatcherCheckFailureType.ValueDoesNotMatch));
-                    }
                 }
             }
 
