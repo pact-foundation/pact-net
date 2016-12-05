@@ -10,6 +10,7 @@ namespace Provider.Api.Web.Controllers
 {
     public class EventsController : ApiController
     {
+        [Authorize]
         [Route("events")]
         public IEnumerable<Event> Get()
         {
