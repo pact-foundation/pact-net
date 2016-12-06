@@ -33,7 +33,7 @@ namespace Consumer.Tests
                     Path = "/events",
                     Headers = new Dictionary<string, string>
                     {
-                        { "Accept", "application/json" },
+                        { "Accept", "application/json" }
                     }
                 })
                 .WillRespondWith(new ProviderServiceResponse

@@ -32,7 +32,7 @@ namespace Provider.Api.Web.Tests
 
             _server = TestServer.Create(app =>
             {
-                app.Use(typeof(AuthMiddleware), app.CreateDataProtector(typeof(OAuthAuthorizationServerMiddleware).Namespace, "Access_Token", "v1"));
+                app.Use(typeof(AuthorizationTokenReplacementMiddleware), app.CreateDataProtector(typeof(OAuthAuthorizationServerMiddleware).Namespace, "Access_Token", "v1"));
                 var apiStartup = new Startup();
                 apiStartup.Configuration(app);
             });

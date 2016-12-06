@@ -6,12 +6,12 @@ using Microsoft.Owin.Security.DataProtection;
 
 namespace Provider.Api.Web.Tests
 {
-    public class AuthMiddleware
+    public class AuthorizationTokenReplacementMiddleware
     {
         private readonly Func<IDictionary<string, object>, Task> _next;
         private readonly TokenGenerator _tokenGenerator;
 
-        public AuthMiddleware(Func<IDictionary<string, object>, Task> next, IDataProtector dataProtector)
+        public AuthorizationTokenReplacementMiddleware(Func<IDictionary<string, object>, Task> next, IDataProtector dataProtector)
         {
             _next = next;
             _tokenGenerator = new TokenGenerator(dataProtector);
@@ -22,7 +22,7 @@ namespace Provider.Api.Web.Tests
             var headers = environment["owin.RequestHeaders"] as IDictionary<string, string[]>;
 
             Debug.Assert(headers != null, "headers != null");
-            if (headers.ContainsKey("Authorization"))
+            if (headers.ContainsKey("Authorization") && headers["Authorization"][0] == "Bearer SomeValidAuthToken")
             {
                 headers["Authorization"][0] = $"Bearer {_tokenGenerator.Generate()}";
             }
