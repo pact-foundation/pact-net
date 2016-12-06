@@ -39,23 +39,27 @@
       }
     },
     {
-      "description": "a request to retrieve event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
-      "provider_state": "there is an event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
+      "description": "a request to retrieve events with type 'DetailsView'",
+      "provider_state": "there is one event with type 'DetailsView'",
       "request": {
         "method": "get",
-        "path": "/events/83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
+        "path": "/events",
+        "query": "type=DetailsView",
         "headers": {
           "Accept": "application/json"
-        }
+        },
+        "body": null
       },
       "response": {
         "status": 200,
         "headers": {
           "Content-Type": "application/json; charset=utf-8"
         },
-        "body": {
-          "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9"
-        }
+        "body": [
+          {
+            "eventType": "DetailsView"
+          }
+        ]
       }
     },
     {
@@ -83,20 +87,6 @@
       }
     },
     {
-      "description": "a request to create a new blob",
-      "request": {
-        "method": "post",
-        "path": "/blobs/38c3976b-5ae8-4f2f-a8ec-46f6aee826e2",
-        "headers": {
-          "Content-Type": "application/octet-stream"
-        },
-        "body": "VGhpcyBpcyBhIHRlc3Q="
-      },
-      "response": {
-        "status": 201
-      }
-    },
-    {
       "description": "a request to check the api uptime",
       "request": {
         "method": "get",
@@ -116,13 +106,34 @@
       }
     },
     {
-      "description": "a request to retrieve all events",
+      "description": "a request to retrieve all events with no authorization",
       "provider_state": "there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'",
       "request": {
         "method": "get",
         "path": "/events",
         "headers": {
           "Accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 401,
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": {
+          "message": "Authorization has been denied for this request."
+        }
+      }
+    },
+    {
+      "description": "a request to retrieve all events",
+      "provider_state": "there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'",
+      "request": {
+        "method": "get",
+        "path": "/events",
+        "headers": {
+          "Accept": "application/json",
+          "Authorization": "Bearer SomeValidAuthToken"
         }
       },
       "response": {
@@ -150,27 +161,37 @@
       }
     },
     {
-      "description": "a request to retrieve events with type 'DetailsView'",
-      "provider_state": "there is one event with type 'DetailsView'",
+      "description": "a request to create a new blob",
+      "request": {
+        "method": "post",
+        "path": "/blobs/38c3976b-5ae8-4f2f-a8ec-46f6aee826e2",
+        "headers": {
+          "Content-Type": "application/octet-stream"
+        },
+        "body": "VGhpcyBpcyBhIHRlc3Q="
+      },
+      "response": {
+        "status": 201
+      }
+    },
+    {
+      "description": "a request to retrieve event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
+      "provider_state": "there is an event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
       "request": {
         "method": "get",
-        "path": "/events",
-        "query": "type=DetailsView",
+        "path": "/events/83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
         "headers": {
           "Accept": "application/json"
-        },
-        "body": null
+        }
       },
       "response": {
         "status": 200,
         "headers": {
           "Content-Type": "application/json; charset=utf-8"
         },
-        "body": [
-          {
-            "eventType": "DetailsView"
-          }
-        ]
+        "body": {
+          "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9"
+        }
       }
     }
   ],

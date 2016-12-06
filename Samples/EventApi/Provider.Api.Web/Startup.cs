@@ -2,6 +2,7 @@
 using Autofac;
 using Autofac.Integration.WebApi;
 using Microsoft.Owin;
+using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Owin;
@@ -16,6 +17,10 @@ namespace Provider.Api.Web
         public void Configuration(IAppBuilder app)
         {
             var config = new HttpConfiguration();
+
+            // Owin Middleware; we use token middleware for requests that require authorization.
+            var oAuthBearerOptions = new OAuthBearerAuthenticationOptions();
+            app.UseOAuthBearerAuthentication(oAuthBearerOptions);
 
             config.MapHttpAttributeRoutes();
 
