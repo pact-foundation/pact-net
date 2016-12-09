@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using PactNet.Matchers;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
@@ -542,6 +543,103 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var result = comparer.Compare(expected, actual);
 
             Assert.Equal(1, result.Failures.Count());
+        }
+
+        [Fact]
+        public void Compare_WithMatchingTypeMatchers_NoErrorsAreAddedToTheComparisonResult()
+        {
+            var expected = new ProviderServiceResponse
+            {
+                Status = 201,
+                Body = new List<dynamic>
+                {
+                    new 
+                    {
+                        myString = Match.Type("Tester"),
+                        myInt = Match.Type(1),
+                        myGuid = Match.Type(Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")),
+                        myBool = Match.Type(true),
+                        myArray = Match.Type(new List<string>()
+                        {
+                            "First String",
+                            "Second String"
+                        })
+
+                    }
+                }
+            };
+
+            var actual = new ProviderServiceResponse
+            {
+                Status = 201,
+                Body = new List<dynamic>
+                {
+                    new 
+                    {
+                        myString = "Tester2",
+                        myInt = 2,
+                        myGuid = Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C"),
+                        myBool = false,
+                        myArray = new List<int>()
+                        {
+                            1
+                        }
+                    }
+                }
+            };
+
+            var comparer = GetSubject();
+
+            var result = comparer.Compare(expected, actual);
+
+            Assert.False(result.HasFailure, "There should be no failures");
+        }
+
+        [Fact]
+        public void Compare_WithNonMatchingTypeMatchers_FiveErrorsAreAddedToTheComparisonResult()
+        {
+            var expected = new ProviderServiceResponse
+            {
+                Status = 201,
+                Body = new List<dynamic>
+                {
+                    new 
+                    {
+                        myString = Match.Type("Tester"),
+                        myInt = Match.Type(1),
+                        myGuid = Match.Type(Guid.Parse("EEB517E6-AC8B-414A-A0DB-6147EAD9193C")),
+                        myBool = Match.Type(true),
+                        myArray = Match.Type(new List<string>()
+                        {
+                            "First String",
+                            "Second String"
+                        })
+
+                    }
+                }
+            };
+
+            var actual = new ProviderServiceResponse
+            {
+                Status = 201,
+                Body = new List<dynamic>
+                {
+                    new 
+                    {
+                        myString = 5,
+                        myInt = "2",
+                        myGuid = false,
+                        myBool = "true",
+                        myArray = "Array"
+                    }
+                }
+            };
+
+            var comparer = GetSubject();
+
+            var result = comparer.Compare(expected, actual);
+
+            Assert.Equal(5, result.Failures.Count());
         }
     }
 }
