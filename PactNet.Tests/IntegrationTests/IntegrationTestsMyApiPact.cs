@@ -17,11 +17,10 @@ namespace PactNet.Tests.IntegrationTests
         public IntegrationTestsMyApiPact()
         {
             var pactConfig = new PactConfig();
-            pactConfig.LoggerName = "my_api";
 
-            PactBuilder = new PactBuilder((port, enableSsl, providerName) =>
+            PactBuilder = new PactBuilder((port, enableSsl, providerName, bindOnAllAdapters) =>
                     new MockProviderService(
-                        baseUri => new NancyHttpHost(baseUri, pactConfig, new IntegrationTestingMockProviderNancyBootstrapper(pactConfig)),
+                        baseUri => new NancyHttpHost(baseUri, "MyApi", pactConfig, new IntegrationTestingMockProviderNancyBootstrapper(pactConfig)),
                         port, enableSsl,
                         baseUri => new HttpClient { BaseAddress = new Uri(baseUri) },
                         new HttpMethodMapper()))

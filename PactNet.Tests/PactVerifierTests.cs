@@ -310,8 +310,8 @@ namespace PactNet.Tests
 
             pactVerifier.Verify();
 
-            Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsRecieved.Single().Method);
-            Assert.Equal("application/json", _fakeHttpMessageHandler.RequestsRecieved.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
+            Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsReceived.Single().Method);
+            Assert.Equal("application/json", _fakeHttpMessageHandler.RequestsReceived.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
         }
 
         [Fact]
@@ -336,8 +336,8 @@ namespace PactNet.Tests
 
             pactVerifier.Verify();
 
-            Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsRecieved.Single().Method);
-            Assert.Equal("application/json", _fakeHttpMessageHandler.RequestsRecieved.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
+            Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsReceived.Single().Method);
+            Assert.Equal("application/json", _fakeHttpMessageHandler.RequestsReceived.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
         }
 
         [Fact]
@@ -363,10 +363,10 @@ namespace PactNet.Tests
 
             pactVerifier.Verify();
 
-            Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsRecieved.Single().Method);
-            Assert.Equal("application/json", _fakeHttpMessageHandler.RequestsRecieved.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
-            Assert.Equal(_fakeHttpMessageHandler.RequestsRecieved.Single().Headers.Authorization.Scheme, options.AuthorizationScheme);
-            Assert.Equal(_fakeHttpMessageHandler.RequestsRecieved.Single().Headers.Authorization.Parameter, options.AuthorizationValue);
+            Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsReceived.Single().Method);
+            Assert.Equal("application/json", _fakeHttpMessageHandler.RequestsReceived.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
+            Assert.Equal(_fakeHttpMessageHandler.RequestsReceived.Single().Headers.Authorization.Scheme, options.AuthorizationScheme);
+            Assert.Equal(_fakeHttpMessageHandler.RequestsReceived.Single().Headers.Authorization.Parameter, options.AuthorizationValue);
         }
 
         [Fact]
@@ -408,7 +408,7 @@ namespace PactNet.Tests
 
             Assert.Throws<InvalidOperationException>(() => pactVerifier.Verify());
 
-            Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsRecieved.Single().Method);
+            Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsReceived.Single().Method);
         }
 
         [Fact]

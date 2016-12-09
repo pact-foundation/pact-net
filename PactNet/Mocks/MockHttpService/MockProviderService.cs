@@ -40,9 +40,9 @@ namespace PactNet.Mocks.MockHttpService
             _httpMethodMapper = httpMethodMapper;
         }
 
-        public MockProviderService(int port, bool enableSsl, string providerName, PactConfig config)
+        public MockProviderService(int port, bool enableSsl, string providerName, PactConfig config, bool bindOnAllAdapters = false)
             : this(
-            baseUri => new NancyHttpHost(baseUri, providerName, config), 
+            baseUri => new NancyHttpHost(baseUri, providerName, config, bindOnAllAdapters),
             port,
             enableSsl,
             baseUri => new HttpClient { BaseAddress = new Uri(baseUri) },

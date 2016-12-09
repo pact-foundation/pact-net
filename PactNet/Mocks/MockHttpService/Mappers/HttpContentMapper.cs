@@ -12,7 +12,12 @@ namespace PactNet.Mocks.MockHttpService.Mappers
                 return null;
             }
 
-            return new StringContent(from.Content, from.Encoding, from.ContentType);
+            var stringContent = new StringContent(from.Content, from.Encoding);
+
+            stringContent.Headers.ContentType = from.ContentType;
+            stringContent.Headers.ContentType.CharSet = from.Encoding.WebName;
+
+            return stringContent;
         }
     }
 }

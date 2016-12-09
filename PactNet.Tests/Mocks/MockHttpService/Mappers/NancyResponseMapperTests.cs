@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
-using NSubstitute;
 using Nancy;
+using NSubstitute;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
@@ -101,7 +102,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = "This is a plain body"
             };
-            var httpBodyContent = new HttpBodyContent(body: response.Body, contentType: contentTypeString, encoding: null);
+            var httpBodyContent = new HttpBodyContent(body: response.Body, contentType: new MediaTypeHeaderValue(contentTypeString) { CharSet = "utf-8" });
 
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
 
@@ -145,7 +146,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 }
             };
             var jsonBody = "{\"Test\":\"tester\",\"Test2\":1}";
-            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(jsonBody), contentType: contentTypeString, encoding: null);
+            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(jsonBody), contentType: new MediaTypeHeaderValue(contentTypeString) { CharSet = "utf-8" });
 
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
 

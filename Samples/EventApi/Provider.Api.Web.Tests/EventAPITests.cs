@@ -1,12 +1,17 @@
-﻿using Microsoft.Owin.Testing;
+﻿using System;
+using Microsoft.Owin.Security.DataProtection;
+using Microsoft.Owin.Security.OAuth;
+using Microsoft.Owin.Testing;
 using PactNet;
 using PactNet.Reporters.Outputters;
 using Xunit;
 
 namespace Provider.Api.Web.Tests
 {
-    public class EventApiTests
+    public class EventApiTests : IDisposable
     {
+        private TestServer _server;
+        
         [Fact]
         public void EnsureEventApiHonoursPactWithConsumer()
         {
@@ -25,15 +30,19 @@ namespace Provider.Api.Web.Tests
                 .ProviderState("there is one event with type 'DetailsView'",
                     setUp: EnsureOneDetailsViewEventExists);
 
-            //Act / Assert
-            using (var testServer = TestServer.Create<Startup>())
+            _server = TestServer.Create(app =>
             {
-                pactVerifier
-                   .ServiceProvider("Event API", testServer.HttpClient)
+                app.Use(typeof(AuthorizationTokenReplacementMiddleware), app.CreateDataProtector(typeof(OAuthAuthorizationServerMiddleware).Namespace, "Access_Token", "v1"));
+                var apiStartup = new Startup();
+                apiStartup.Configuration(app);
+            });
+
+            //Act / Assert
+            pactVerifier
+                   .ServiceProvider("Event API", _server.HttpClient)
                    .HonoursPactWith("Consumer")
                    .PactUri("../../../Consumer.Tests/pacts/consumer-event_api.json")
                    .Verify();
-            }
 
             // Verify that verifaction log is also sent to additional reporters defined in the config
             Assert.Contains("Verifying a Pact between Consumer and Event API", outputter.Output);
@@ -52,6 +61,15 @@ namespace Provider.Api.Web.Tests
         private void InsertEventIntoDatabase()
         {
             //Logic to do database inserts for event with id 83F9262F-28F1-4703-AB1A-8CFD9E8249C9
+        }
+
+    
+        public virtual void Dispose()
+        {
+            if (_server != null)
+            {
+                _server.Dispose();
+            }
         }
 
         private class CustomOutputter : IReportOutputter

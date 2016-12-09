@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using PactNet.Mocks.MockHttpService.Models;
 
@@ -8,67 +9,34 @@ namespace PactNet.Mocks.MockHttpService.Mappers
 {
     internal class HttpBodyContentMapper : IHttpBodyContentMapper
     {
-        private readonly IEncodingMapper _encodingMapper;
-
-        internal HttpBodyContentMapper(IEncodingMapper encodingMapper)
-        {
-            _encodingMapper = encodingMapper;
-        }
-
-        public HttpBodyContentMapper() : this(new EncodingMapper())
-        {
-        }
-
         public HttpBodyContent Convert(dynamic body, IDictionary<string, string> headers)
         {
-            if (body == null)
-            {
-                return null;
-            }
-
-            var contentInfo = ParseContentHeaders(headers);
-
-            return new HttpBodyContent(body: body, contentType: contentInfo.Item1, encoding: contentInfo.Item2);
+            return body == null
+                ? null
+                : new HttpBodyContent(body, this.ParseContentTypeHeader(headers));
         }
 
         public HttpBodyContent Convert(byte[] content, IDictionary<string, string> headers)
         {
-            if (content == null)
-            {
-                return null;
-            }
-
-            var contentInfo = ParseContentHeaders(headers);
-
-            return new HttpBodyContent(content: content, contentType: contentInfo.Item1, encoding: contentInfo.Item2);
+            return content == null
+                ? null
+                : new HttpBodyContent(content, this.ParseContentTypeHeader(headers));
         }
 
-        private Tuple<string, Encoding> ParseContentHeaders(IDictionary<string, string> headers)
+        private MediaTypeHeaderValue ParseContentTypeHeader(IDictionary<string, string> headers)
         {
-            string contentType = null;
-            Encoding encoding = null;
+            string contentType = headers?
+                .Where(hdr => hdr.Key.Equals("Content-Type", StringComparison.InvariantCultureIgnoreCase))
+                .Select(hdr => hdr.Value)
+                .FirstOrDefault();
 
-            if (headers != null && headers.Any())
-            {
-                foreach (var header in headers)
-                {
-                    if (header.Key.Equals("Content-Type", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        var contentTypeHeaderSplit = header.Value.Split(';');
-                        contentType = contentTypeHeaderSplit.First().Trim().ToLower();
+            MediaTypeHeaderValue contentTypeHeader = (contentType == null)
+                ? new MediaTypeHeaderValue("text/plain")
+                : MediaTypeHeaderValue.Parse(contentType);
 
-                        var encodingString = contentTypeHeaderSplit.FirstOrDefault(x => x.Contains("charset="));
-                        if (!String.IsNullOrEmpty(encodingString))
-                        {
-                            encodingString = encodingString.Trim().Replace("charset=", String.Empty).ToLower();
-                            encoding = _encodingMapper.Convert(encodingString);
-                        }
-                        break;
-                    }
-                }
-            }
+            contentTypeHeader.CharSet = contentTypeHeader.CharSet ?? Encoding.UTF8.WebName;
 
-            return new Tuple<string, Encoding>(contentType, encoding);
+            return contentTypeHeader;
         }
     }
 }

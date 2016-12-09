@@ -26,14 +26,14 @@ namespace PactNet.Mocks.MockHttpService.Mappers
 
             var to = new Response
             {
-                StatusCode = (HttpStatusCode) from.Status,
+                StatusCode = (HttpStatusCode)from.Status,
                 Headers = from.Headers ?? new Dictionary<string, string>()
             };
 
             if (from.Body != null)
             {
                 HttpBodyContent bodyContent = _httpBodyContentMapper.Convert(body: from.Body, headers: from.Headers);
-                to.ContentType = bodyContent.ContentType;
+                to.ContentType = bodyContent.ContentType.MediaType;
                 to.Contents = s =>
                 {
                     byte[] bytes = bodyContent.ContentBytes;

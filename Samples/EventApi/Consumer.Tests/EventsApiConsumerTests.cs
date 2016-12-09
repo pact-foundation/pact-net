@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
@@ -19,6 +19,42 @@ namespace Consumer.Tests
             _mockProviderService = data.MockProviderService;
             _mockProviderServiceBaseUri = data.MockProviderServiceBaseUri;
             _mockProviderService.ClearInteractions();
+        }
+
+        [Fact]
+        public void GetAllEvents_WithNoAuthorizationToken_ShouldFail()
+        {
+            //Arrange
+            _mockProviderService.Given("there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
+                .UponReceiving("a request to retrieve all events with no authorization")
+                .With(new ProviderServiceRequest
+                {
+                    Method = HttpVerb.Get,
+                    Path = "/events",
+                    Headers = new Dictionary<string, string>
+                    {
+                        { "Accept", "application/json" }
+                    }
+                })
+                .WillRespondWith(new ProviderServiceResponse
+                {
+                    Status = 401,
+                    Headers = new Dictionary<string, string>
+                    {
+                        { "Content-Type", "application/json; charset=utf-8" }
+                    },
+                    Body = new 
+                    {
+                        message = "Authorization has been denied for this request."
+                    }
+                });
+
+            var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
+
+            //Act //Assert
+            Assert.Throws<HttpRequestException>(() => consumer.GetAllEvents());
+            
+            _mockProviderService.VerifyInteractions();
         }
 
         [Fact]
@@ -57,6 +93,8 @@ namespace Consumer.Tests
                       };
 
             //Arrange
+            var testAuthToken = "SomeValidAuthToken";
+
             _mockProviderService.Given("there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
                 .UponReceiving("a request to retrieve all events")
                 .With(new ProviderServiceRequest
@@ -65,12 +103,13 @@ namespace Consumer.Tests
                     Path = "/events",
                     Headers = new Dictionary<string, string>
                     {
-                        { "Accept", "application/json" }
+                        { "Accept", "application/json" },
+                        { "Authorization", $"Bearer {testAuthToken}" }
                     }
                 })
                 .WillRespondWith(res);
 
-            var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
+            var consumer = new EventsApiClient(_mockProviderServiceBaseUri, testAuthToken);
 
             //Act
             var events = consumer.GetAllEvents();

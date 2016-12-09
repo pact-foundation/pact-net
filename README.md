@@ -99,7 +99,9 @@ public class ConsumerMyApiPact : IDisposable
 		//or
 		MockProviderService = PactBuilder.MockService(MockServerPort, true); //By passing true as the second param, you can enabled SSL. This will however require a valid SSL certificate installed and bound with netsh (netsh http add sslcert ipport=0.0.0.0:port certhash=thumbprint appid={app-guid}) on the machine running the test. See https://groups.google.com/forum/#!topic/nancy-web-framework/t75dKyfgzpg
 		//or
-		MockProviderService = PactBuilder.MockService(MockServerPort, new JsonSerializerSettings()); //You can also change the default Json serialization settings using this overload
+		MockProviderService = PactBuilder.MockService(MockServerPort, bindOnAllAdapters: true); //By passing true as the bindOnAllAdapters parameter the http mock server will be able to accept external network requests, but will require admin privileges in order to run
+		//or
+		MockProviderService = PactBuilder.MockService(MockServerPort, new JsonSerializerSettings()); //You can also change the default Json serialization settings using this overload		
 	}
 
 	public void Dispose()
@@ -279,3 +281,10 @@ Everything should be green
 Again, please note: we advise using a TDD approach when using this library, however we will leave it up to you.
 
 For further examples please refer to the [Samples](https://github.com/SEEK-Jobs/pact-net/tree/master/Samples) in the solution.
+
+#### Related Tools
+
+You might also find the following tool and library helpful:
+
+* [Pact based service simulator](https://github.com/SEEK-Jobs/SEEK.Automation.Phantom): leverage pacts to isolate your services
+* [Pact based stubbing library](https://github.com/SEEK-Jobs/seek.automation.stub): leverage pacts during automation to stub dependencies 
