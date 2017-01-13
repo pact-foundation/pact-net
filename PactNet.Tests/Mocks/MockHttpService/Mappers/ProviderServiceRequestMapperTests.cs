@@ -188,7 +188,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         {
             RequestStream requestStream = null;
 
-            if (!String.IsNullOrEmpty(content))
+            if (!string.IsNullOrEmpty(content))
             {
                 var contentBytes = Encoding.UTF8.GetBytes(content);
                 var stream = new MemoryStream(contentBytes);

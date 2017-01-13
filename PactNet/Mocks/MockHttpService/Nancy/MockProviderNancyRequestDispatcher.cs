@@ -60,9 +60,8 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                     _log.ErrorException("Failed to handle the request", ex);
                 }
 
-                var exceptionMessage = String.Format("{0} See {1} for details.", 
-                    JsonConvert.ToString(ex.Message).Trim('"'), 
-                    !String.IsNullOrEmpty(_pactConfig.LoggerName) ? LogProvider.CurrentLogProvider.ResolveLogPath(_pactConfig.LoggerName) : "logs");
+                var exceptionMessage =
+                    $"{JsonConvert.ToString(ex.Message).Trim('"')} See {(!string.IsNullOrEmpty(_pactConfig.LoggerName) ? LogProvider.CurrentLogProvider.ResolveLogPath(_pactConfig.LoggerName) : "logs")} for details.";
 
                 response = new Response
                 {

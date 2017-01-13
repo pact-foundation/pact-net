@@ -17,7 +17,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
         {
             var comparer = GetSubject();
 
-            var result = comparer.Compare(null, String.Empty);
+            var result = comparer.Compare(null, string.Empty);
 
             Assert.False(result.HasFailure, "There should not be any errors");
         }

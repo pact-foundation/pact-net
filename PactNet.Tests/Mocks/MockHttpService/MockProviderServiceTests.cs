@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using NSubstitute;
 using PactNet.Configuration.Json;
@@ -41,7 +42,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         public void Ctor_WhenCalledWithPort_SetsBaseUri()
         {
             const int port = 999;
-            var expectedBaseUri = String.Format("http://localhost:{0}", port);
+            var expectedBaseUri = $"http://localhost:{port}";
             var mockService = GetSubject(port);
 
             Assert.Equal(expectedBaseUri, ((MockProviderService)mockService).BaseUri);
@@ -94,7 +95,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             var mockService = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => mockService.Given(String.Empty));
+            Assert.Throws<ArgumentException>(() => mockService.Given(string.Empty));
         }
 
         [Fact]
@@ -126,7 +127,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             var mockService = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => mockService.UponReceiving(String.Empty));
+            Assert.Throws<ArgumentException>(() => mockService.UponReceiving(string.Empty));
         }
 
         [Fact]
@@ -211,37 +212,37 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void WillRespondWith_WithNullResponse_ThrowsArgumentException()
+        public async Task WillRespondWith_WithNullResponse_ThrowsArgumentException()
         {
             var mockService = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => mockService.WillRespondWith(null));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await mockService.WillRespondWith(null));
         }
 
         [Fact]
-        public void WillRespondWith_WithNullDescription_ThrowsInvalidOperationException()
+        public async Task WillRespondWith_WithNullDescription_ThrowsInvalidOperationException()
         {
             var mockService = GetSubject();
 
             mockService
                 .With(new ProviderServiceRequest { Method = HttpVerb.Get });
 
-            Assert.Throws<InvalidOperationException>(() => mockService.WillRespondWith(new ProviderServiceResponse { Status = (int)HttpStatusCode.OK }));
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await mockService.WillRespondWith(new ProviderServiceResponse { Status = (int)HttpStatusCode.OK }));
         }
 
         [Fact]
-        public void WillRespondWith_WithNullRequest_ThrowsInvalidOperationException()
+        public async Task WillRespondWith_WithNullRequest_ThrowsInvalidOperationException()
         {
             var mockService = GetSubject();
 
             mockService
                 .UponReceiving("My description");
 
-            Assert.Throws<InvalidOperationException>(() => mockService.WillRespondWith(new ProviderServiceResponse { Status = (int)HttpStatusCode.OK }));
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await mockService.WillRespondWith(new ProviderServiceResponse { Status = (int)HttpStatusCode.OK }));
         }
 
         [Fact]
-        public void WillRespondWith_WithResponseThatContainsABodyAndNoContentType_ThrowsArgumentException()
+        public async Task WillRespondWith_WithResponseThatContainsABodyAndNoContentType_ThrowsArgumentException()
         {
             var providerState = "My provider state";
             var description = "My description";
@@ -262,11 +263,11 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 .UponReceiving(description)
                 .With(request);
 
-            Assert.Throws<ArgumentException>(() => mockService.WillRespondWith(response));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await mockService.WillRespondWith(response));
         }
 
         [Fact]
-        public void WillRespondWith_WithResponseThatDoesNotHaveAResponseStatusSet_ThrowsArgumentException()
+        public async Task WillRespondWith_WithResponseThatDoesNotHaveAResponseStatusSet_ThrowsArgumentException()
         {
             var providerState = "My provider state";
             var description = "My description";
@@ -280,11 +281,11 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 .UponReceiving(description)
                 .With(request);
 
-            Assert.Throws<ArgumentException>(() => mockService.WillRespondWith(response));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await mockService.WillRespondWith(response));
         }
 
         [Fact]
-        public void WillRespondWith_WhenHostIsNull_ThrowsInvalidOperationException()
+        public async Task WillRespondWith_WhenHostIsNull_ThrowsInvalidOperationException()
         {
             var providerState = "My provider state";
             var description = "My description";
@@ -300,7 +301,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.Stop();
 
-            Assert.Throws<InvalidOperationException>(() => mockService.WillRespondWith(response));
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await mockService.WillRespondWith(response));
             Assert.Equal(0, _fakeHttpMessageHandler.RequestsReceived.Count());
         }
 
@@ -377,7 +378,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void WillRespondWith_WhenResponseFromHostIsNotOk_ThrowsPactFailureException()
+        public async Task WillRespondWith_WhenResponseFromHostIsNotOk_ThrowsPactFailureException()
         {
             var providerState = "My provider state";
             var description = "My description";
@@ -395,7 +396,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.Start();
 
-            Assert.Throws<PactFailureException>(() => mockService.WillRespondWith(response));
+            await Assert.ThrowsAsync<PactFailureException>(async () => await mockService.WillRespondWith(response));
         }
 
         [Fact]

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using PactNet.Comparers;
 using PactNet.Logging;
 using PactNet.Mocks.MockHttpService.Comparers;
@@ -18,7 +19,7 @@ namespace PactNet.Mocks.MockHttpService.Validators
 
         internal ProviderServiceValidator(
             IProviderServiceResponseComparer providerServiceResponseComparer,
-            IHttpRequestSender httpRequestSender, 
+            IHttpRequestSender httpRequestSender,
             IReporter reporter,
             PactVerifierConfig config)
         {
@@ -29,7 +30,7 @@ namespace PactNet.Mocks.MockHttpService.Validators
         }
 
         public ProviderServiceValidator(
-            IHttpRequestSender httpRequestSender, 
+            IHttpRequestSender httpRequestSender,
             IReporter reporter,
             PactVerifierConfig config) : this(
             new ProviderServiceResponseComparer(),
@@ -39,33 +40,33 @@ namespace PactNet.Mocks.MockHttpService.Validators
         {
         }
 
-        public void Validate(ProviderServicePactFile pactFile, ProviderStates providerStates)
+        public async Task Validate(ProviderServicePactFile pactFile, ProviderStates providerStates)
         {
             if (pactFile == null)
             {
                 throw new ArgumentException("Please supply a non null pactFile");
             }
 
-            if (pactFile.Consumer == null || String.IsNullOrEmpty(pactFile.Consumer.Name))
+            if (string.IsNullOrEmpty(pactFile.Consumer?.Name))
             {
                 throw new ArgumentException("Please supply a non null or empty Consumer name in the pactFile");
             }
 
-            if (pactFile.Provider == null || String.IsNullOrEmpty(pactFile.Provider.Name))
+            if (string.IsNullOrEmpty(pactFile.Provider?.Name))
             {
                 throw new ArgumentException("Please supply a non null or empty Provider name in the pactFile");
             }
 
             if (pactFile.Interactions != null && pactFile.Interactions.Any())
             {
-                _reporter.ReportInfo(String.Format("Verifying a Pact between {0} and {1}", pactFile.Consumer.Name, pactFile.Provider.Name));
+                _reporter.ReportInfo($"Verifying a Pact between {pactFile.Consumer.Name} and {pactFile.Provider.Name}");
 
                 var comparisonResult = new ComparisonResult();
 
                 foreach (var interaction in pactFile.Interactions)
                 {
-					InvokePactSetUpIfApplicable(providerStates);
-					
+                    InvokePactSetUpIfApplicable(providerStates);
+
                     _reporter.ResetIndentation();
 
                     ProviderState providerStateItem = null;
@@ -83,30 +84,32 @@ namespace PactNet.Mocks.MockHttpService.Validators
 
                         if (providerStateItem == null)
                         {
-                            throw new InvalidOperationException(String.Format("providerState '{0}' was defined by a consumer, however could not be found. Please supply this provider state.", interaction.ProviderState));
+                            throw new InvalidOperationException(
+                                $"providerState '{interaction.ProviderState}' was defined by a consumer, however could not be found. Please supply this provider state.");
                         }
                     }
 
                     InvokeProviderStateSetUpIfApplicable(providerStateItem);
 
-                    if (!String.IsNullOrEmpty(interaction.ProviderState))
+                    if (!string.IsNullOrEmpty(interaction.ProviderState))
                     {
                         _reporter.Indent();
-                        _reporter.ReportInfo(String.Format("Given {0}", interaction.ProviderState));
+                        _reporter.ReportInfo($"Given {interaction.ProviderState}");
                     }
 
                     _reporter.Indent();
-                    _reporter.ReportInfo(String.Format("{0}", interaction.Description));
-                        
+                    _reporter.ReportInfo($"{interaction.Description}");
+
                     if (interaction.Request != null)
                     {
                         _reporter.Indent();
-                        _reporter.ReportInfo(String.Format("with {0} {1}", interaction.Request.Method.ToString().ToUpper(), interaction.Request.Path));
+                        _reporter.ReportInfo(
+                            $"with {interaction.Request.Method.ToString().ToUpper()} {interaction.Request.Path}");
                     }
 
                     try
                     {
-                        var interactionComparisonResult = ValidateInteraction(interaction);
+                        var interactionComparisonResult = await ValidateInteraction(interaction);
                         comparisonResult.AddChildResult(interactionComparisonResult);
                         _reporter.Indent();
                         _reporter.ReportSummary(interactionComparisonResult);
@@ -114,8 +117,8 @@ namespace PactNet.Mocks.MockHttpService.Validators
                     finally
                     {
                         InvokeProviderStateTearDownIfApplicable(providerStateItem);
-                    	InvokeTearDownIfApplicable(providerStates);                        
-					}
+                        InvokeTearDownIfApplicable(providerStates);
+                    }
                 }
 
                 _reporter.ResetIndentation();
@@ -124,50 +127,38 @@ namespace PactNet.Mocks.MockHttpService.Validators
 
                 if (comparisonResult.HasFailure)
                 {
-                    throw new PactFailureException(String.Format("See test output or {0} for failure details.", 
-                        !String.IsNullOrEmpty(_config.LoggerName) ? LogProvider.CurrentLogProvider.ResolveLogPath(_config.LoggerName) : "logs"));
+                    throw new PactFailureException(
+                        $"See test output or {(!string.IsNullOrEmpty(_config.LoggerName) ? LogProvider.CurrentLogProvider.ResolveLogPath(_config.LoggerName) : "logs")} for failure details.");
                 }
             }
         }
 
-        private ComparisonResult ValidateInteraction(ProviderServiceInteraction interaction)
+        private async Task<ComparisonResult> ValidateInteraction(ProviderServiceInteraction interaction)
         {
             var expectedResponse = interaction.Response;
-            var actualResponse = _httpRequestSender.Send(interaction.Request);
+            var actualResponse = await _httpRequestSender.Send(interaction.Request);
 
             return _providerServiceResponseComparer.Compare(expectedResponse, actualResponse);
         }
 
         private void InvokePactSetUpIfApplicable(ProviderStates providerStates)
         {
-            if (providerStates != null && providerStates.SetUp != null)
-            {
-                providerStates.SetUp();
-            }
+            providerStates?.SetUp?.Invoke();
         }
 
         private void InvokeTearDownIfApplicable(ProviderStates providerStates)
         {
-            if (providerStates != null && providerStates.TearDown != null)
-            {
-                providerStates.TearDown();
-            }
+            providerStates?.TearDown?.Invoke();
         }
 
         private void InvokeProviderStateSetUpIfApplicable(ProviderState providerState)
         {
-            if (providerState != null && providerState.SetUp != null)
-            {
-                providerState.SetUp();
-            }
+            providerState?.SetUp?.Invoke();
         }
 
         private void InvokeProviderStateTearDownIfApplicable(ProviderState providerState)
         {
-            if (providerState != null && providerState.TearDown != null)
-            {
-                providerState.TearDown();
-            }
+            providerState?.TearDown?.Invoke();
         }
     }
 }

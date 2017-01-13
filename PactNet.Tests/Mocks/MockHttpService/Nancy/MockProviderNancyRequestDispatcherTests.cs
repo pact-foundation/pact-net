@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using NSubstitute;
 using Nancy;
 using Nancy.Routing;
@@ -104,7 +105,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         }
 
         [Fact]
-        public void Dispatch_WithNancyContext_ReturnsResponse()
+        public async Task Dispatch_WithNancyContext_ReturnsResponse()
         {
             var nancyContext = new NancyContext
             {
@@ -120,9 +121,9 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             _mockRequestHandler.Handle(nancyContext).Returns(nancyResponse);
 
-            var response = requestDispatcher.Dispatch(nancyContext, CancellationToken.None);
+            var response = await requestDispatcher.Dispatch(nancyContext, CancellationToken.None);
 
-            Assert.Equal(nancyResponse, response.Result);
+            Assert.Equal(nancyResponse, response);
         }
 
         [Fact]
@@ -172,7 +173,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         }
 
         [Fact]
-        public void Dispatch_WhenRequestHandlerThrows_InternalServerErrorResponseIsReturned()
+        public async Task Dispatch_WhenRequestHandlerThrows_InternalServerErrorResponseIsReturned()
         {
             var exception = new InvalidOperationException("Something failed.");
             const string expectedMessage = "Something failed. See logs for details.";
@@ -186,8 +187,8 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             _mockRequestHandler
                 .When(x => x.Handle(Arg.Any<NancyContext>()))
                 .Do(x => { throw exception; });
-            
-            var response = requestDispatcher.Dispatch(nancyContext, CancellationToken.None).Result;
+
+            var response = await requestDispatcher.Dispatch(nancyContext, CancellationToken.None);
 
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
             Assert.Equal(expectedMessage, response.ReasonPhrase);
@@ -195,7 +196,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         }
 
         [Fact]
-        public void Dispatch_WhenRequestHandlerThrowsWithMessageThatContainsSlashes_ResponseContentAndReasonPhrasesIsReturnedWithoutSlashes()
+        public async Task Dispatch_WhenRequestHandlerThrowsWithMessageThatContainsSlashes_ResponseContentAndReasonPhrasesIsReturnedWithoutSlashes()
         {
             var exception = new InvalidOperationException("Something\r\n \t \\ failed.");
             const string expectedMessage = @"Something\r\n \t \\ failed. See logs for details.";
@@ -210,14 +211,14 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
                 .When(x => x.Handle(Arg.Any<NancyContext>()))
                 .Do(x => { throw exception; });
 
-            var response = requestDispatcher.Dispatch(nancyContext, CancellationToken.None).Result;
+            var response = await requestDispatcher.Dispatch(nancyContext, CancellationToken.None);
 
             Assert.Equal(expectedMessage, response.ReasonPhrase);
             Assert.Equal(expectedMessage, ReadResponseContent(response));
         }
 
         [Fact]
-        public void Dispatch_WhenRequestHandlerThrows_TheExceptionIsLogged()
+        public async Task Dispatch_WhenRequestHandlerThrows_TheExceptionIsLogged()
         {
             var exception = new InvalidOperationException("Something failed.");
             var nancyContext = new NancyContext
@@ -231,13 +232,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
                 .When(x => x.Handle(Arg.Any<NancyContext>()))
                 .Do(x => { throw exception; });
 
-            var response = requestDispatcher.Dispatch(nancyContext, CancellationToken.None).Result;
+            var response = await requestDispatcher.Dispatch(nancyContext, CancellationToken.None);
 
             _log.Received(1).ErrorException(Arg.Any<string>(), exception);
         }
 
         [Fact]
-        public void Dispatch_WhenRequestHandlerThrowsAPactFailureException_TheExceptionIsNotLogged()
+        public async Task Dispatch_WhenRequestHandlerThrowsAPactFailureException_TheExceptionIsNotLogged()
         {
             var exception = new PactFailureException("Something failed");
             var nancyContext = new NancyContext
@@ -251,7 +252,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
                 .When(x => x.Handle(Arg.Any<NancyContext>()))
                 .Do(x => { throw exception; });
 
-            var response = requestDispatcher.Dispatch(nancyContext, CancellationToken.None).Result;
+            var response = await requestDispatcher.Dispatch(nancyContext, CancellationToken.None);
 
             _log.DidNotReceive().ErrorException(Arg.Any<string>(), Arg.Any<Exception>());
         }

@@ -61,7 +61,7 @@ namespace PactNet.Reporters
 
             foreach (var outputter in _outputters)
             {
-                outputter.Write(String.Join(Environment.NewLine, _reportLines));
+                outputter.Write(string.Join(Environment.NewLine, _reportLines));
             }
         }
 
@@ -116,19 +116,19 @@ namespace PactNet.Reporters
                 return;
             }
 
-            AddReportLine(String.Empty, 0);
+            AddReportLine(string.Empty, 0);
             AddReportLine("Failures:", 0);
 
             foreach (var failure in comparisonResult.Failures)
             {
-                AddReportLine(String.Empty, 0);
-                AddReportLine(String.Format("{0}) {1}", ++_failureCount, failure.Result), 0);
+                AddReportLine(string.Empty, 0);
+                AddReportLine($"{++_failureCount}) {failure.Result}", 0);
             }
         }
 
         private void AddReportLine(string message, int tabDepth)
         {
-            var indentation = new String(' ', tabDepth*2); //Each tab we want to be 2 space chars
+            var indentation = new string(' ', tabDepth*2); //Each tab we want to be 2 space chars
             _reportLines.Add(indentation + message);
         }
     }

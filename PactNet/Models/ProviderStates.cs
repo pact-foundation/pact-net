@@ -23,7 +23,8 @@ namespace PactNet.Models
 
             if (_providerStates.Any(x => x.ProviderStateDescription == providerState.ProviderStateDescription))
             {
-                throw new ArgumentException(String.Format("providerState '{0}' has already been added", providerState.ProviderStateDescription));
+                throw new ArgumentException(
+                    $"providerState '{providerState.ProviderStateDescription}' has already been added");
             }
 
             _providerStates.Add(providerState);
@@ -36,12 +37,7 @@ namespace PactNet.Models
                 throw new ArgumentNullException("Please supply a non null providerState");
             }
 
-            if (_providerStates != null && _providerStates.Any(x => x.ProviderStateDescription == providerState))
-            {
-                return _providerStates.FirstOrDefault(x => x.ProviderStateDescription == providerState);
-            }
-
-            return null;
+            return _providerStates?.FirstOrDefault(x => x.ProviderStateDescription == providerState);
         }
     }
 }

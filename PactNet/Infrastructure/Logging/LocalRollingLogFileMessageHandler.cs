@@ -30,16 +30,16 @@ namespace PactNet.Infrastructure.Logging
         {
             var messageFormat = logMessage.MessagePredicate != null ?
                 logMessage.MessagePredicate() :
-                String.Empty;
+                string.Empty;
 
             string message;
             if (logMessage.Exception != null)
             {
-                message = String.Format("{0}. Exception: {1} - {2}", messageFormat, logMessage.Exception, logMessage.Exception.StackTrace);
+                message = $"{messageFormat}. Exception: {logMessage.Exception} - {logMessage.Exception.StackTrace}";
             }
             else if (logMessage.FormatParameters != null && logMessage.FormatParameters.Any())
             {
-                message = String.Format(messageFormat, logMessage.FormatParameters);
+                message = string.Format(messageFormat, logMessage.FormatParameters);
             }
             else
             {
@@ -55,10 +55,7 @@ namespace PactNet.Infrastructure.Logging
 
         public void Dispose()
         {
-            if (_writer != null)
-            {
-                _writer.Dispose();
-            }
+            _writer?.Dispose();
         }
 
         private static void TryCreateDirectory(string filePath)

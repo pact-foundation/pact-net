@@ -6,7 +6,7 @@ namespace PactNet.Comparers
     {
         public DiffComparisonFailure(object expected, object actual)
         {
-            Result = String.Format("Expected: {0}, Actual: {1}", expected ?? "null", actual ?? "null");
+            Result = $"Expected: {expected ?? "null"}, Actual: {actual ?? "null"}";
         }
     }
 }

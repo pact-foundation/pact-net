@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Threading.Tasks;
 using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet
@@ -18,6 +19,6 @@ namespace PactNet
         IPactVerifier ServiceProvider(string providerName, Func<ProviderServiceRequest, ProviderServiceResponse> httpRequestSender);
         IPactVerifier HonoursPactWith(string consumerName);
         IPactVerifier PactUri(string uri, PactUriOptions options = null);
-        void Verify(string description = null, string providerState = null);
+        Task Verify(string description = null, string providerState = null);
     }
 }

@@ -6,7 +6,7 @@ namespace PactNet.Infrastructure.Logging
 {
     internal class LocalLogger : IDisposable
     {
-        internal string LogPath { get { return _logHandler.LogPath; } }
+        internal string LogPath => _logHandler.LogPath;
 
         private readonly ILocalLogMessageHandler _logHandler;
 
@@ -32,10 +32,7 @@ namespace PactNet.Infrastructure.Logging
 
         public void Dispose()
         {
-            if (_logHandler != null)
-            {
-                _logHandler.Dispose();
-            }
+            _logHandler?.Dispose();
         }
     }
 }

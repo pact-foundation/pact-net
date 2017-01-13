@@ -38,12 +38,12 @@ namespace PactNet.Mocks.MockHttpService.Mappers
             {
                 Method = httpVerb,
                 Path = from.Path,
-                Query = !String.IsNullOrEmpty(from.Url.Query) ? from.Url.Query.TrimStart('?') : null
+                Query = !string.IsNullOrEmpty(from.Url.Query) ? from.Url.Query.TrimStart('?') : null
             };
 
             if (from.Headers != null && from.Headers.Any())
             {
-                var fromHeaders = from.Headers.ToDictionary(x => x.Key, x => String.Join(", ", x.Value));
+                var fromHeaders = from.Headers.ToDictionary(x => x.Key, x => string.Join(", ", x.Value));
                 to.Headers = fromHeaders;
             }
 

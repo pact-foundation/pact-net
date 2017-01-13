@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
 using PactNet.Mocks.MockHttpService.Mappers;
@@ -35,7 +36,7 @@ namespace PactNet.Mocks.MockHttpService
             IHttpMethodMapper httpMethodMapper)
         {
             _hostFactory = hostFactory;
-            BaseUri = String.Format("{0}://localhost:{1}", enableSsl ? "https" : "http", port);
+            BaseUri = $"{(enableSsl ? "https" : "http")}://localhost:{port}";
             _httpClient = httpClientFactory(BaseUri);
             _httpMethodMapper = httpMethodMapper;
         }
@@ -52,7 +53,7 @@ namespace PactNet.Mocks.MockHttpService
 
         public IMockProviderService Given(string providerState)
         {
-            if (String.IsNullOrEmpty(providerState))
+            if (string.IsNullOrEmpty(providerState))
             {
                 throw new ArgumentException("Please supply a non null or empty providerState");
             }
@@ -64,7 +65,7 @@ namespace PactNet.Mocks.MockHttpService
 
         public IMockProviderService UponReceiving(string description)
         {
-            if (String.IsNullOrEmpty(description))
+            if (string.IsNullOrEmpty(description))
             {
                 throw new ArgumentException("Please supply a non null or empty description");
             }
@@ -92,11 +93,11 @@ namespace PactNet.Mocks.MockHttpService
             }
 
             _request = request;
-            
+
             return this;
         }
 
-        public void WillRespondWith(ProviderServiceResponse response)
+        public async Task WillRespondWith(ProviderServiceResponse response)
         {
             if (response == null)
             {
@@ -115,7 +116,7 @@ namespace PactNet.Mocks.MockHttpService
 
             _response = response;
 
-            RegisterInteraction();
+            await RegisterInteraction();
         }
 
         public void VerifyInteractions()
@@ -144,14 +145,14 @@ namespace PactNet.Mocks.MockHttpService
             }
         }
 
-        public void SendAdminHttpRequest<T>(HttpVerb method, string path, T requestContent, IDictionary<string, string> headers = null) where T : class
+        public async Task SendAdminHttpRequest<T>(HttpVerb method, string path, T requestContent, IDictionary<string, string> headers = null) where T : class
         {
             if (_host == null)
             {
                 throw new InvalidOperationException("Unable to perform operation because the mock provider service is not running.");
             }
 
-            var responseContent = String.Empty;
+            var responseContent = string.Empty;
 
             var request = new HttpRequestMessage(_httpMethodMapper.Convert(method), path);
             request.Headers.Add(Constants.AdministrativeRequestHeaderKey, "true");
@@ -170,12 +171,12 @@ namespace PactNet.Mocks.MockHttpService
                 request.Content = new StringContent(requestContentJson, Encoding.UTF8, "application/json");
             }
 
-            var response = _httpClient.SendAsync(request, CancellationToken.None).Result;
+            var response = await _httpClient.SendAsync(request, CancellationToken.None);
             var responseStatusCode = response.StatusCode;
 
             if (response.Content != null)
             {
-                responseContent = response.Content.ReadAsStringAsync().Result;
+                responseContent = await response.Content.ReadAsStringAsync();
             }
 
             Dispose(request);
@@ -187,9 +188,9 @@ namespace PactNet.Mocks.MockHttpService
             }
         }
 
-        private void RegisterInteraction()
+        private async Task RegisterInteraction()
         {
-            if (String.IsNullOrEmpty(_description))
+            if (string.IsNullOrEmpty(_description))
             {
                 throw new InvalidOperationException("description has not been set, please supply using the UponReceiving method.");
             }
@@ -214,7 +215,7 @@ namespace PactNet.Mocks.MockHttpService
 
             var testContext = BuildTestContext();
 
-            SendAdminHttpRequest(HttpVerb.Post, Constants.InteractionsPath, interaction, new Dictionary<string, string> { { Constants.AdministrativeRequestTestContextHeaderKey, testContext } });
+            await SendAdminHttpRequest(HttpVerb.Post, Constants.InteractionsPath, interaction, new Dictionary<string, string> { { Constants.AdministrativeRequestTestContextHeaderKey, testContext } });
 
             ClearTrasientState();
         }
@@ -230,7 +231,7 @@ namespace PactNet.Mocks.MockHttpService
             {
                 var type = stackFrame.GetMethod().ReflectedType;
 
-                if (type == null || 
+                if (type == null ||
                     (type.Assembly.GetName().Name.StartsWith("PactNet", StringComparison.CurrentCultureIgnoreCase) &&
                     !type.Assembly.GetName().Name.Equals("PactNet.Tests", StringComparison.CurrentCultureIgnoreCase)))
                 {
@@ -243,15 +244,15 @@ namespace PactNet.Mocks.MockHttpService
                     break;
                 }
 
-                relevantStackFrameSummaries.Add(String.Format("{0}.{1}", type.Name, stackFrame.GetMethod().Name));
+                relevantStackFrameSummaries.Add($"{type.Name}.{stackFrame.GetMethod().Name}");
             }
 
-            return String.Join(" ", relevantStackFrameSummaries);
+            return string.Join(" ", relevantStackFrameSummaries);
         }
 
-        private void SendAdminHttpRequest(HttpVerb method, string path)
+        private async void SendAdminHttpRequest(HttpVerb method, string path)
         {
-            SendAdminHttpRequest<object>(method, path, null);
+            await SendAdminHttpRequest<object>(method, path, null);
         }
 
         private void StopRunningHost()

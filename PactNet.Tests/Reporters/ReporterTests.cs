@@ -37,7 +37,7 @@ namespace PactNet.Tests.Reporters
         {
             const string comparisonMessage = "The thing I am testing";
 
-            var expectedMessage = String.Format("{0} (FAILED - 1)", comparisonMessage);
+            var expectedMessage = $"{comparisonMessage} (FAILED - 1)";
 
             var reporter = GetSubject();
 
@@ -55,7 +55,7 @@ namespace PactNet.Tests.Reporters
         {
             const string comparisonMessage = "The thing I am testing";
 
-            var expectedMessage = String.Format("{0} (FAILED - 1, 2)", comparisonMessage);
+            var expectedMessage = $"{comparisonMessage} (FAILED - 1, 2)";
 
             var reporter = GetSubject();
 

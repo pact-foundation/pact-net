@@ -6,7 +6,7 @@ namespace PactNet.Infrastructure.Logging
     internal class LocalLogMessage
     {
         public DateTime DateTime { get; private set; }
-        public String DateTimeFormatted { get { return DateTime.ToString("yyyy-MM-dd HH:mm:ss.fff zzz"); } }
+        public string DateTimeFormatted => DateTime.ToString("yyyy-MM-dd HH:mm:ss.fff zzz");
         public LogLevel Level { get; private set; }
         public Func<string> MessagePredicate { get; private set; }
         public Exception Exception { get; private set; }

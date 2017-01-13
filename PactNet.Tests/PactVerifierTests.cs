@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using NSubstitute;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
@@ -31,10 +32,10 @@ namespace PactNet.Tests
             _mockProviderServiceValidator = Substitute.For<IProviderServiceValidator>();
             _fakeHttpMessageHandler = new FakeHttpMessageHandler();
 
-            return new PactVerifier(() => {}, () => {}, _mockFileSystem, (httpRequestSender, reporter, config) =>
+            return new PactVerifier(() => { }, () => { }, _mockFileSystem, (httpRequestSender, reporter, config) =>
             {
                 _providerServiceValidatorFactoryCallInfo = new Tuple<bool, IHttpRequestSender>(true, httpRequestSender);
-                
+
                 return _mockProviderServiceValidator;
             }, new HttpClient(_fakeHttpMessageHandler), null);
         }
@@ -62,7 +63,7 @@ namespace PactNet.Tests
         {
             var pactVerifier = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => 
+            Assert.Throws<ArgumentException>(() =>
                 pactVerifier
                 .ProviderState(null));
         }
@@ -74,7 +75,7 @@ namespace PactNet.Tests
 
             Assert.Throws<ArgumentException>(() =>
                 pactVerifier
-                .ProviderState(String.Empty));
+                .ProviderState(string.Empty));
         }
 
         [Fact]
@@ -90,7 +91,7 @@ namespace PactNet.Tests
         {
             var pactVerifier = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider(String.Empty, new HttpClient()));
+            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider(string.Empty, new HttpClient()));
         }
 
         [Fact]
@@ -164,7 +165,7 @@ namespace PactNet.Tests
         {
             var pactVerifier = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider("Event API", (Func<ProviderServiceRequest, ProviderServiceResponse>) null));
+            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider("Event API", (Func<ProviderServiceRequest, ProviderServiceResponse>)null));
         }
 
         [Fact]
@@ -196,7 +197,7 @@ namespace PactNet.Tests
         {
             var pactVerifier = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => pactVerifier.HonoursPactWith(String.Empty));
+            Assert.Throws<ArgumentException>(() => pactVerifier.HonoursPactWith(string.Empty));
         }
 
         [Fact]
@@ -234,7 +235,7 @@ namespace PactNet.Tests
         {
             var pactVerifier = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => pactVerifier.PactUri(String.Empty));
+            Assert.Throws<ArgumentException>(() => pactVerifier.PactUri(string.Empty));
         }
 
         [Fact]
@@ -249,21 +250,21 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void Verify_WhenHttpRequestSenderIsNull_ThrowsInvalidOperationException()
+        public async Task Verify_WhenHttpRequestSenderIsNull_ThrowsInvalidOperationException()
         {
             var pactVerifier = GetSubject();
             pactVerifier.PactUri("../../../Consumer.Tests/pacts/my_client-event_api.json");
 
-            Assert.Throws<InvalidOperationException>(() => pactVerifier.Verify());
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await pactVerifier.Verify());
         }
 
         [Fact]
-        public void Verify_WhenPactFileUriIsNull_ThrowsInvalidOperationException()
+        public async Task Verify_WhenPactFileUriIsNull_ThrowsInvalidOperationException()
         {
             var pactVerifier = GetSubject();
             pactVerifier.ServiceProvider("Event API", new HttpClient());
 
-            Assert.Throws<InvalidOperationException>(() => pactVerifier.Verify());
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await pactVerifier.Verify());
         }
 
         [Fact]
@@ -370,7 +371,7 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void Verify_WithFileUriAndWhenFileDoesNotExistOnFileSystem_ThrowsInvalidOperationException()
+        public async Task Verify_WithFileUriAndWhenFileDoesNotExistOnFileSystem_ThrowsInvalidOperationException()
         {
             var serviceProvider = "Event API";
             var serviceConsumer = "My client";
@@ -385,13 +386,13 @@ namespace PactNet.Tests
                 .HonoursPactWith(serviceConsumer)
                 .PactUri(pactUri);
 
-            Assert.Throws<InvalidOperationException>(() => pactVerifier.Verify());
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await pactVerifier.Verify());
 
             _mockFileSystem.File.Received(1).ReadAllText(pactUri);
         }
 
         [Fact]
-        public void Verify_WithHttpUriAndNonSuccessfulStatusCodeIsReturned_ThrowsInvalidOperationException()
+        public async Task Verify_WithHttpUriAndNonSuccessfulStatusCodeIsReturned_ThrowsInvalidOperationException()
         {
             var serviceProvider = "Event API";
             var serviceConsumer = "My client";
@@ -406,13 +407,13 @@ namespace PactNet.Tests
                 .HonoursPactWith(serviceConsumer)
                 .PactUri(pactUri);
 
-            Assert.Throws<InvalidOperationException>(() => pactVerifier.Verify());
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await pactVerifier.Verify());
 
             Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsReceived.Single().Method);
         }
 
         [Fact]
-        public void Verify_WhenPactFileWithNoInteractionsExistOnFileSystem_CallsPactProviderValidator()
+        public async Task Verify_WhenPactFileWithNoInteractionsExistOnFileSystem_CallsPactProviderValidator()
         {
             var serviceProvider = "Event API";
             var serviceConsumer = "My client";
@@ -429,11 +430,11 @@ namespace PactNet.Tests
                 .HonoursPactWith(serviceConsumer)
                 .PactUri(pactUri);
 
-            pactVerifier.Verify();
+            await pactVerifier.Verify();
 
             _mockFileSystem.File.Received(1).ReadAllText(pactUri);
 
-            _mockProviderServiceValidator.Received(1).Validate(Arg.Any<ProviderServicePactFile>(), Arg.Any<ProviderStates>());
+            await _mockProviderServiceValidator.Received(1).Validate(Arg.Any<ProviderServicePactFile>(), Arg.Any<ProviderStates>());
         }
 
         [Fact]
@@ -512,7 +513,7 @@ namespace PactNet.Tests
             pactVerifier.Verify(providerState: providerState);
 
             _mockProviderServiceValidator.Received(1).Validate(
-                Arg.Is<ProviderServicePactFile>(x => x.Interactions.Count() == 2 && x.Interactions.All(i => i.ProviderState.Equals(providerState))), 
+                Arg.Is<ProviderServicePactFile>(x => x.Interactions.Count() == 2 && x.Interactions.All(i => i.ProviderState.Equals(providerState))),
                 Arg.Any<ProviderStates>());
         }
 
@@ -540,12 +541,12 @@ namespace PactNet.Tests
             pactVerifier.Verify(description: description, providerState: providerState);
 
             _mockProviderServiceValidator.Received(1).Validate(
-                Arg.Is<ProviderServicePactFile>(x => x.Interactions.Count() == 1 && x.Interactions.All(i => i.ProviderState.Equals(providerState) && i.Description.Equals(description))), 
+                Arg.Is<ProviderServicePactFile>(x => x.Interactions.Count() == 1 && x.Interactions.All(i => i.ProviderState.Equals(providerState) && i.Description.Equals(description))),
                 Arg.Any<ProviderStates>());
         }
 
         [Fact]
-        public void Verify_WithDescriptionThatYieldsNoInteractions_ThrowsArgumentException()
+        public async Task Verify_WithDescriptionThatYieldsNoInteractions_ThrowsArgumentException()
         {
             var description = "Description that does not match an interaction";
             var pactUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
@@ -564,9 +565,9 @@ namespace PactNet.Tests
                 .HonoursPactWith("My client")
                 .PactUri(pactUri);
 
-            Assert.Throws<ArgumentException>(() => pactVerifier.Verify(description: description));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await pactVerifier.Verify(description: description));
 
-            _mockProviderServiceValidator.DidNotReceive().Validate(
+            await _mockProviderServiceValidator.DidNotReceive().Validate(
                 Arg.Any<ProviderServicePactFile>(),
                 Arg.Any<ProviderStates>());
         }

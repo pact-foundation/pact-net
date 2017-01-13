@@ -8,6 +8,7 @@ using NSubstitute;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
+using System.Threading.Tasks;
 
 namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 {
@@ -70,7 +71,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             var mapper = GetSubject();
 
             _mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
-            _mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: new MediaTypeHeaderValue("text/plain") { CharSet = "utf-8" }));
+            _mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(new HttpBodyContent(content: Encoding.UTF8.GetBytes(string.Empty), contentType: new MediaTypeHeaderValue("text/plain") { CharSet = "utf-8" }));
 
             var result = mapper.Convert(request);
 
@@ -92,7 +93,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = new { }
             };
-            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: new MediaTypeHeaderValue(contentTypeString) { CharSet = "utf-8" });
+            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(string.Empty), contentType: new MediaTypeHeaderValue(contentTypeString) { CharSet = "utf-8" });
 
             var mapper = GetSubject();
 
@@ -119,7 +120,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = new { }
             };
-            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: new MediaTypeHeaderValue(contentTypeString) { CharSet = "utf-8" });
+            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(string.Empty), contentType: new MediaTypeHeaderValue(contentTypeString) { CharSet = "utf-8" });
 
             var mapper = GetSubject();
 
@@ -148,7 +149,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = new { }
             };
-            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: new MediaTypeHeaderValue(contentTypeString) { CharSet = encodingString });
+            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(string.Empty), contentType: new MediaTypeHeaderValue(contentTypeString) { CharSet = encodingString });
 
             var mapper = GetSubject();
 
@@ -178,7 +179,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = new { }
             };
-            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: new MediaTypeHeaderValue(contentTypeString) { CharSet = encodingString });
+            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(string.Empty), contentType: new MediaTypeHeaderValue(contentTypeString) { CharSet = encodingString });
 
             var mapper = GetSubject();
 
@@ -207,7 +208,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = new { }
             };
-            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: new MediaTypeHeaderValue(contentTypeString) { CharSet = "utf-8" });
+            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(string.Empty), contentType: new MediaTypeHeaderValue(contentTypeString) { CharSet = "utf-8" });
 
             var mapper = GetSubject();
 
@@ -352,7 +353,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         }
 
         [Fact]
-        public void Convert_WithTheWorks_CorrectlyMappedHttpRequestMessageIsReturned()
+        public async Task Convert_WithTheWorks_CorrectlyMappedHttpRequestMessageIsReturned()
         {
             const string encodingString = "utf-8";
             const string contentTypeString = "application/json";
@@ -383,7 +384,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             _mockHttpBodyContentMapper.Convert(Arg.Any<object>(), request.Headers).Returns(httpBodyContent);
 
             var result = mapper.Convert(request);
-            var requestContent = result.Content.ReadAsStringAsync().Result;
+            var requestContent = await result.Content.ReadAsStringAsync();
 
             var contentTypeHeader = result.Content.Headers.First(x => x.Key.Equals("Content-Type"));
             var customHeader = result.Headers.First(x => x.Key.Equals("X-Custom"));

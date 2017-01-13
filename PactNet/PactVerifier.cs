@@ -10,7 +10,7 @@ using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Validators;
 using PactNet.Models;
 using PactNet.Reporters;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace PactNet
 {
@@ -30,10 +30,10 @@ namespace PactNet
         public PactUriOptions PactUriOptions { get; private set; }
 
         internal PactVerifier(
-            Action setUp, 
+            Action setUp,
             Action tearDown,
             IFileSystem fileSystem,
-            Func<IHttpRequestSender, IReporter, PactVerifierConfig, IProviderServiceValidator> providerServiceValidatorFactory, 
+            Func<IHttpRequestSender, IReporter, PactVerifierConfig, IProviderServiceValidator> providerServiceValidatorFactory,
             HttpClient httpClient,
             PactVerifierConfig config)
         {
@@ -54,7 +54,7 @@ namespace PactNet
         /// <param name="config"></param>
         public PactVerifier(Action setUp, Action tearDown, PactVerifierConfig config = null)
             : this(
-            setUp, 
+            setUp,
             tearDown,
             new FileSystem(),
             (httpRequestSender, reporter, verifierConfig) => new ProviderServiceValidator(httpRequestSender, reporter, verifierConfig),
@@ -72,7 +72,7 @@ namespace PactNet
         /// <param name="tearDown">A tear down action that will be run after the interaction verify, if the provider has specified it in the interaction. If no action is required please use an empty lambda () => {}.</param>
         public IPactVerifier ProviderState(string providerState, Action setUp = null, Action tearDown = null)
         {
-            if (String.IsNullOrEmpty(providerState))
+            if (string.IsNullOrEmpty(providerState))
             {
                 throw new ArgumentException("Please supply a non null or empty providerState");
             }
@@ -85,12 +85,12 @@ namespace PactNet
 
         public IPactVerifier ServiceProvider(string providerName, HttpClient httpClient)
         {
-            if (String.IsNullOrEmpty(providerName))
+            if (string.IsNullOrEmpty(providerName))
             {
                 throw new ArgumentException("Please supply a non null or empty providerName");
             }
 
-            if (!String.IsNullOrEmpty(ProviderName))
+            if (!string.IsNullOrEmpty(ProviderName))
             {
                 throw new ArgumentException("ProviderName has already been supplied, please instantiate a new PactVerifier if you want to perform verification for a different provider");
             }
@@ -102,18 +102,18 @@ namespace PactNet
 
             ProviderName = providerName;
             _httpRequestSender = new HttpClientRequestSender(httpClient);
-                
+
             return this;
         }
 
         public IPactVerifier ServiceProvider(string providerName, Func<ProviderServiceRequest, ProviderServiceResponse> httpRequestSender)
         {
-            if (String.IsNullOrEmpty(providerName))
+            if (string.IsNullOrEmpty(providerName))
             {
                 throw new ArgumentException("Please supply a non null or empty providerName");
             }
 
-            if (!String.IsNullOrEmpty(ProviderName))
+            if (!string.IsNullOrEmpty(ProviderName))
             {
                 throw new ArgumentException("ProviderName has already been supplied, please instantiate a new PactVerifier if you want to perform verification for a different provider");
             }
@@ -131,12 +131,12 @@ namespace PactNet
 
         public IPactVerifier HonoursPactWith(string consumerName)
         {
-            if (String.IsNullOrEmpty(consumerName))
+            if (string.IsNullOrEmpty(consumerName))
             {
                 throw new ArgumentException("Please supply a non null or empty consumerName");
             }
 
-            if (!String.IsNullOrEmpty(ConsumerName))
+            if (!string.IsNullOrEmpty(ConsumerName))
             {
                 throw new ArgumentException("ConsumerName has already been supplied, please instantiate a new PactVerifier if you want to perform verification for a different consumer");
             }
@@ -148,7 +148,7 @@ namespace PactNet
 
         public IPactVerifier PactUri(string uri, PactUriOptions options = null)
         {
-            if (String.IsNullOrEmpty(uri))
+            if (string.IsNullOrEmpty(uri))
             {
                 throw new ArgumentException("Please supply a non null or empty consumerName");
             }
@@ -159,7 +159,7 @@ namespace PactNet
             return this;
         }
 
-        public void Verify(string description = null, string providerState = null)
+        public async Task Verify(string description = null, string providerState = null)
         {
             if (_httpRequestSender == null)
             {
@@ -167,7 +167,7 @@ namespace PactNet
                     "httpRequestSender has not been set, please supply a httpClient or httpRequestSenderFunc using the ServiceProvider method.");
             }
 
-            if (String.IsNullOrEmpty(PactFileUri))
+            if (string.IsNullOrEmpty(PactFileUri))
             {
                 throw new InvalidOperationException(
                     "PactFileUri has not been set, please supply a uri using the PactUri method.");
@@ -185,15 +185,14 @@ namespace PactNet
 
                     if (PactUriOptions != null)
                     {
-                        request.Headers.Add("Authorization", String.Format("{0} {1}", PactUriOptions.AuthorizationScheme, PactUriOptions.AuthorizationValue));
+                        request.Headers.Add("Authorization", $"{PactUriOptions.AuthorizationScheme} {PactUriOptions.AuthorizationValue}");
                     }
 
-                    var response = _httpClient.SendAsync(request).Result;
-
+                    var response = await _httpClient.SendAsync(request);
                     try
                     {
                         response.EnsureSuccessStatusCode();
-                        pactFileJson = response.Content.ReadAsStringAsync().Result;
+                        pactFileJson = await response.Content.ReadAsStringAsync();
                     }
                     finally
                     {
@@ -210,7 +209,7 @@ namespace PactNet
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException(String.Format("Json Pact file could not be retrieved using uri \'{0}\'.", PactFileUri), ex);
+                throw new InvalidOperationException($"Json Pact file could not be retrieved using uri \'{PactFileUri}\'.", ex);
             }
 
             //Filter interactions
@@ -235,7 +234,7 @@ namespace PactNet
 
             try
             {
-                _providerServiceValidatorFactory(_httpRequestSender, new Reporter(_config), _config)
+                await _providerServiceValidatorFactory(_httpRequestSender, new Reporter(_config), _config)
                     .Validate(pactFile, ProviderStates);
             }
             finally

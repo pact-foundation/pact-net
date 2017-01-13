@@ -37,7 +37,8 @@ namespace PactNet.Mocks.MockHttpService
             if (_testScopedInteractions.Any(x => x.Description == interaction.Description &&
                 x.ProviderState == interaction.ProviderState))
             {
-                throw new PactFailureException(String.Format("An interaction already exists with the description '{0}' and provider state '{1}' in this test. Please supply a different description or provider state.", interaction.Description, interaction.ProviderState));
+                throw new PactFailureException(
+                    $"An interaction already exists with the description '{interaction.Description}' and provider state '{interaction.ProviderState}' in this test. Please supply a different description or provider state.");
             }
 
             //From a Pact specification perspective, I should de-dupe any interactions that have been registered by another test as long as they match exactly!
@@ -49,7 +50,8 @@ namespace PactNet.Mocks.MockHttpService
             else if (duplicateInteractions.Any(di => di.AsJsonString() != interaction.AsJsonString()))
             {
                 //If the interaction description and provider state match, however anything else in the interaction is different, throw
-                throw new PactFailureException(String.Format("An interaction registered by another test already exists with the description '{0}' and provider state '{1}', however the interaction does not match exactly. Please supply a different description or provider state. Alternatively align this interaction to match the duplicate exactly.", interaction.Description, interaction.ProviderState));
+                throw new PactFailureException(
+                    $"An interaction registered by another test already exists with the description '{interaction.Description}' and provider state '{interaction.ProviderState}', however the interaction does not match exactly. Please supply a different description or provider state. Alternatively align this interaction to match the duplicate exactly.");
             }
 
             _testScopedInteractions.Add(interaction);
@@ -69,7 +71,8 @@ namespace PactNet.Mocks.MockHttpService
         {
             if (TestScopedInteractions == null || !TestScopedInteractions.Any())
             {
-                throw new PactFailureException(String.Format("No interaction found for {0} {1}.", request.Method.ToString().ToUpperInvariant(), request.Path));
+                throw new PactFailureException(
+                    $"No interaction found for {request.Method.ToString().ToUpperInvariant()} {request.Path}.");
             }
 
             var matchingInteractions = new List<ProviderServiceInteraction>();
@@ -85,12 +88,14 @@ namespace PactNet.Mocks.MockHttpService
 
             if (matchingInteractions == null || !matchingInteractions.Any())
             {
-                throw new PactFailureException(String.Format("No interaction found for {0} {1}.", request.Method.ToString().ToUpperInvariant(), request.Path));
+                throw new PactFailureException(
+                    $"No interaction found for {request.Method.ToString().ToUpperInvariant()} {request.Path}.");
             }
 
-            if (matchingInteractions.Count() > 1)
+            if (matchingInteractions.Count > 1)
             {
-                throw new PactFailureException(String.Format("More than one interaction found for {0} {1}.", request.Method.ToString().ToUpperInvariant(), request.Path));
+                throw new PactFailureException(
+                    $"More than one interaction found for {request.Method.ToString().ToUpperInvariant()} {request.Path}.");
             }
 
             return matchingInteractions.Single();

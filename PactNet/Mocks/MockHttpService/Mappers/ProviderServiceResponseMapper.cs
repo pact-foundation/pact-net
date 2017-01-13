@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
@@ -19,10 +20,10 @@ namespace PactNet.Mocks.MockHttpService.Mappers
         public ProviderServiceResponseMapper() : this(
             new HttpBodyContentMapper())
         {
-            
+
         }
 
-        public ProviderServiceResponse Convert(HttpResponseMessage from)
+        public async Task<ProviderServiceResponse> Convert(HttpResponseMessage from)
         {
             if (from == null)
             {
@@ -31,13 +32,13 @@ namespace PactNet.Mocks.MockHttpService.Mappers
 
             var to = new ProviderServiceResponse
             {
-                Status = (int) from.StatusCode,
+                Status = (int)from.StatusCode,
                 Headers = ConvertHeaders(from.Headers, from.Content)
             };
 
-            if(from.Content != null)
+            if (from.Content != null)
             {
-                var responseContent = from.Content.ReadAsByteArrayAsync().Result;
+                var responseContent = await from.Content.ReadAsByteArrayAsync();
                 if (responseContent != null)
                 {
                     var httpBodyContent = _httpBodyContentMapper.Convert(content: responseContent, headers: to.Headers);
@@ -63,15 +64,15 @@ namespace PactNet.Mocks.MockHttpService.Mappers
             {
                 foreach (var responseHeader in responseHeaders)
                 {
-                    headers.Add(responseHeader.Key, String.Join(", ", responseHeader.Value.Select(x => x)));
+                    headers.Add(responseHeader.Key, string.Join(", ", responseHeader.Value.Select(x => x)));
                 }
             }
 
-            if (httpContent != null && httpContent.Headers != null && httpContent.Headers.Any())
+            if (httpContent?.Headers != null && httpContent.Headers.Any())
             {
                 foreach (var contentHeader in httpContent.Headers)
                 {
-                    headers.Add(contentHeader.Key, String.Join(", ", contentHeader.Value.Select(x => x)));
+                    headers.Add(contentHeader.Key, string.Join(", ", contentHeader.Value.Select(x => x)));
                 }
             }
 
