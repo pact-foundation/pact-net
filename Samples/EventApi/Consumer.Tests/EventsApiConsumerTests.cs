@@ -3,18 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
 
 namespace Consumer.Tests
 {
-    public class EventsApiConsumerTests : IUseFixture<ConsumerEventApiPact>
+    [Collection("Consumer test collection")]
+    public class EventsApiConsumerTests
     {
         private IMockProviderService _mockProviderService;
         private string _mockProviderServiceBaseUri;
-            
-        public void SetFixture(ConsumerEventApiPact data)
+
+        public EventsApiConsumerTests(ConsumerEventApiPact data)
         {
             _mockProviderService = data.MockProviderService;
             _mockProviderServiceBaseUri = data.MockProviderServiceBaseUri;
@@ -22,10 +24,10 @@ namespace Consumer.Tests
         }
 
         [Fact]
-        public void GetAllEvents_WithNoAuthorizationToken_ShouldFail()
+        public async Task GetAllEvents_WithNoAuthorizationToken_ShouldFail()
         {
             //Arrange
-            _mockProviderService.Given("there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
+            await _mockProviderService.Given("there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
                 .UponReceiving("a request to retrieve all events with no authorization")
                 .With(new ProviderServiceRequest
                 {
@@ -43,7 +45,7 @@ namespace Consumer.Tests
                     {
                         { "Content-Type", "application/json; charset=utf-8" }
                     },
-                    Body = new 
+                    Body = new
                     {
                         message = "Authorization has been denied for this request."
                     }
@@ -52,18 +54,18 @@ namespace Consumer.Tests
             var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
 
             //Act //Assert
-            Assert.Throws<HttpRequestException>(() => consumer.GetAllEvents());
-            
+            await Assert.ThrowsAsync<HttpRequestException>(async () => await consumer.GetAllEvents());
+
             _mockProviderService.VerifyInteractions();
         }
 
         [Fact]
-        public void GetAllEvents_WhenCalled_ReturnsAllEvents()
+        public async Task GetAllEvents_WhenCalled_ReturnsAllEvents()
         {
             //Arrange
             var testAuthToken = "SomeValidAuthToken";
 
-            _mockProviderService.Given("there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
+            await _mockProviderService.Given("there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
                 .UponReceiving("a request to retrieve all events")
                 .With(new ProviderServiceRequest
                 {
@@ -82,9 +84,9 @@ namespace Consumer.Tests
                     {
                         { "Content-Type", "application/json; charset=utf-8" }
                     },
-                    Body = new []
+                    Body = new[]
                     {
-                        new 
+                        new
                         {
                             eventId = Guid.Parse("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5"),
                             timestamp = "2014-06-30T01:37:41.0660548",
@@ -108,7 +110,7 @@ namespace Consumer.Tests
             var consumer = new EventsApiClient(_mockProviderServiceBaseUri, testAuthToken);
 
             //Act
-            var events = consumer.GetAllEvents();
+            var events = await consumer.GetAllEvents();
 
             //Assert
             Assert.NotEmpty(events);
@@ -119,14 +121,14 @@ namespace Consumer.Tests
         }
 
         [Fact]
-        public void CreateEvent_WhenCalledWithEvent_Succeeds()
+        public async Task CreateEvent_WhenCalledWithEvent_Succeeds()
         {
             //Arrange
             var eventId = Guid.Parse("1F587704-2DCC-4313-A233-7B62B4B469DB");
             var dateTime = new DateTime(2011, 07, 01, 01, 41, 03);
             DateTimeFactory.Now = () => dateTime;
 
-            _mockProviderService.UponReceiving("a request to create a new event")
+            await _mockProviderService.UponReceiving("a request to create a new event")
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Post,
@@ -150,16 +152,16 @@ namespace Consumer.Tests
             var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
 
             //Act / Assert
-            consumer.CreateEvent(eventId);
+            await consumer.CreateEvent(eventId);
 
             _mockProviderService.VerifyInteractions();
         }
 
         [Fact]
-        public void IsAlive_WhenApiIsAlive_ReturnsTrue()
+        public async Task IsAlive_WhenApiIsAlive_ReturnsTrue()
         {
             //Arrange
-            _mockProviderService.UponReceiving("a request to check the api status")
+            await _mockProviderService.UponReceiving("a request to check the api status")
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
@@ -186,7 +188,7 @@ namespace Consumer.Tests
             var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
 
             //Act
-            var result = consumer.IsAlive();
+            var result = await consumer.IsAlive();
 
             //Assert
             Assert.Equal(true, result);
@@ -195,12 +197,12 @@ namespace Consumer.Tests
         }
 
         [Fact]
-        public void UpSince_WhenApiIsAliveAndWeRetrieveUptime_ReturnsUpSinceDate()
+        public async Task UpSince_WhenApiIsAliveAndWeRetrieveUptime_ReturnsUpSinceDate()
         {
             //Arrange
             var upSinceDate = new DateTime(2014, 6, 27, 23, 51, 12, DateTimeKind.Utc);
 
-            _mockProviderService.UponReceiving("a request to check the api status")
+            await _mockProviderService.UponReceiving("a request to check the api status")
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
@@ -224,7 +226,7 @@ namespace Consumer.Tests
                     }
                 });
 
-            _mockProviderService
+            await _mockProviderService
                 .UponReceiving("a request to check the api uptime")
                 .With(new ProviderServiceRequest
                 {
@@ -245,7 +247,7 @@ namespace Consumer.Tests
             var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
 
             //Act
-            var result = consumer.UpSince();
+            var result = await consumer.UpSince();
 
             //Assert
             Assert.Equal(upSinceDate.ToString("O"), result.Value.ToString("O"));
@@ -254,12 +256,12 @@ namespace Consumer.Tests
         }
 
         [Fact]
-        public void GetEventById_WhenTheEventExists_ReturnsEvent()
+        public async Task GetEventById_WhenTheEventExists_ReturnsEvent()
         {
             //Arrange
             var eventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9");
-            _mockProviderService.Given(String.Format("there is an event with id '{0}'", eventId))
-                .UponReceiving(String.Format("a request to retrieve event with id '{0}'", eventId))
+            await _mockProviderService.Given($"there is an event with id '{eventId}'")
+                .UponReceiving($"a request to retrieve event with id '{eventId}'")
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
@@ -285,7 +287,7 @@ namespace Consumer.Tests
             var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
 
             //Act
-            var result = consumer.GetEventById(eventId);
+            var result = await consumer.GetEventById(eventId);
 
             //Assert
             Assert.Equal(eventId, result.EventId);
@@ -294,12 +296,12 @@ namespace Consumer.Tests
         }
 
         [Fact]
-        public void GetEventsByType_WhenOneEventWithTheTypeExists_ReturnsEvent()
+        public async Task GetEventsByType_WhenOneEventWithTheTypeExists_ReturnsEvent()
         {
             //Arrange
             const string eventType = "DetailsView";
-            _mockProviderService.Given(String.Format("there is one event with type '{0}'", eventType))
-                .UponReceiving(String.Format("a request to retrieve events with type '{0}'", eventType))
+            await _mockProviderService.Given($"there is one event with type '{eventType}'")
+                .UponReceiving($"a request to retrieve events with type '{eventType}'")
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
@@ -318,7 +320,7 @@ namespace Consumer.Tests
                     {
                         { "Content-Type", "application/json; charset=utf-8" }
                     },
-                    Body = new []
+                    Body = new[]
                     {
                         new
                         {
@@ -330,7 +332,7 @@ namespace Consumer.Tests
             var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
 
             //Act
-            var result = consumer.GetEventsByType(eventType);
+            var result = await consumer.GetEventsByType(eventType);
 
             //Assert
             Assert.Equal(eventType, result.First().EventType);
@@ -339,17 +341,17 @@ namespace Consumer.Tests
         }
 
         [Fact]
-        public void CreateBlob_WhenCalledWithBlob_Succeeds()
+        public async Task CreateBlob_WhenCalledWithBlob_Succeeds()
         {
             //Arrange
             var blobId = Guid.Parse("38C3976B-5AE8-4F2F-A8EC-46F6AEE826E2");
             var bytes = Encoding.UTF8.GetBytes("This is a test");
 
-            _mockProviderService.UponReceiving("a request to create a new blob")
+            await _mockProviderService.UponReceiving("a request to create a new blob")
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Post,
-                    Path = String.Format("/blobs/{0}", blobId),
+                    Path = $"/blobs/{blobId}",
                     Headers = new Dictionary<string, string>
                     {
                         { "Content-Type", "application/octet-stream" }
@@ -364,23 +366,23 @@ namespace Consumer.Tests
             var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
 
             //Act / Assert
-            consumer.CreateBlob(blobId, bytes, "test.txt");
+            await consumer.CreateBlob(blobId, bytes, "test.txt");
 
             _mockProviderService.VerifyInteractions();
         }
 
         [Fact]
-        public void GetBlob_WhenCalledWithId_Succeeds()
+        public async Task GetBlob_WhenCalledWithId_Succeeds()
         {
             //Arrange
             var blobId = Guid.Parse("38C3976B-5AE8-4F2F-A8EC-46F6AEE826E2");
             var bytes = Encoding.UTF8.GetBytes("This is a test");
 
-            _mockProviderService.UponReceiving("a request to get a new blob by id")
+            await _mockProviderService.UponReceiving("a request to get a new blob by id")
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
-                    Path = String.Format("/blobs/{0}", blobId)
+                    Path = $"/blobs/{blobId}"
                 })
                 .WillRespondWith(new ProviderServiceResponse
                 {
@@ -395,7 +397,7 @@ namespace Consumer.Tests
             var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
 
             //Act / Assert
-            var content = consumer.GetBlob(blobId);
+            var content = await consumer.GetBlob(blobId);
 
             Assert.True(bytes.SequenceEqual(content));
 

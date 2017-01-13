@@ -19,27 +19,12 @@ namespace PactNet.Comparers
             }
         }
 
-        public bool HasFailure
-        {
-            get
-            {
-                return Failures.Any();
-            }
-        }
+        public bool HasFailure => Failures.Any();
 
-        public int ShallowFailureCount
-        {
-            get
-            {
-                return _failures.Count();
-            }
-        }
+        public int ShallowFailureCount => _failures.Count;
 
         private readonly IList<ComparisonResult> _childResults = new List<ComparisonResult>();
-        public IEnumerable<ComparisonResult> ChildResults
-        {
-            get { return _childResults; }
-        }
+        public IEnumerable<ComparisonResult> ChildResults => _childResults;
 
         public ComparisonResult(string message = null)
         {
@@ -48,7 +33,7 @@ namespace PactNet.Comparers
 
         public ComparisonResult(string messageFormat, params object[] args)
         {
-            Message = String.Format(messageFormat, args);
+            Message = string.Format(messageFormat, args);
         }
 
         public void RecordFailure(ComparisonFailure comparisonFailure)

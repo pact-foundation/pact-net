@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService
@@ -12,9 +13,9 @@ namespace PactNet.Mocks.MockHttpService
             _httpRequestSenderFunc = httpRequestSenderFunc;
         }
 
-        public ProviderServiceResponse Send(ProviderServiceRequest request)
+        public Task<ProviderServiceResponse> Send(ProviderServiceRequest request)
         {
-            return _httpRequestSenderFunc(request);
+            return Task.FromResult(_httpRequestSenderFunc(request));
         }
     }
 }

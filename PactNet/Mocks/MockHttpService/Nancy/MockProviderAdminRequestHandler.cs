@@ -36,7 +36,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         public Response Handle(NancyContext context)
         {
             //The first admin request with test context, we should log the context
-            if (String.IsNullOrEmpty(_mockProviderRepository.TestContext) &&
+            if (string.IsNullOrEmpty(_mockProviderRepository.TestContext) &&
                 context.Request.Headers != null &&
                 context.Request.Headers.Any(x => x.Key == Constants.AdministrativeRequestTestContextHeaderKey))
             {
@@ -69,7 +69,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             }
 
             return GenerateResponse(HttpStatusCode.NotFound,
-                String.Format("The {0} request for path {1}, does not have a matching mock provider admin action.", context.Request.Method, context.Request.Path));
+                $"The {context.Request.Method} request for path {context.Request.Path}, does not have a matching mock provider admin action.");
         }
 
         private Response HandleDeleteInteractionsRequest()
@@ -112,7 +112,8 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                     }
                     else if (interactionUsages.Count() > 1)
                     {
-                        comparisonResult.RecordFailure(new ErrorMessageComparisonFailure(String.Format("The interaction with description '{0}' and provider state '{1}', was used {2} time/s by the test.", registeredInteraction.Description, registeredInteraction.ProviderState, interactionUsages.Count())));
+                        comparisonResult.RecordFailure(new ErrorMessageComparisonFailure(
+                            $"The interaction with description '{registeredInteraction.Description}' and provider state '{registeredInteraction.ProviderState}', was used {interactionUsages.Count()} time/s by the test."));
                     }
                 }
             }
@@ -145,7 +146,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
             if (comparisonResult.Failures.Any(x => x is MissingInteractionComparisonFailure))
             {
-                _log.Error("Missing requests: " + String.Join(", ", 
+                _log.Error("Missing requests: " + string.Join(", ", 
                     comparisonResult.Failures
                         .Where(x => x is MissingInteractionComparisonFailure)
                         .Cast<MissingInteractionComparisonFailure>()
@@ -154,7 +155,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
             if (comparisonResult.Failures.Any(x => x is UnexpectedRequestComparisonFailure))
             {
-                _log.Error("Unexpected requests: " + String.Join(", ", 
+                _log.Error("Unexpected requests: " + string.Join(", ", 
                     comparisonResult.Failures
                         .Where(x => x is UnexpectedRequestComparisonFailure)
                         .Cast<UnexpectedRequestComparisonFailure>()

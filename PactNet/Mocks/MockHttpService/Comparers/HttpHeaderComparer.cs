@@ -40,8 +40,8 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                     else
                     {
                         var expectedValueSplit = expectedValue.Split(new[] {',', ';'});
-                        var expectedValueSplitJoined = String.Join(",", expectedValueSplit.Select(x => x.Trim()));
-                        var actualValueSplitJoined = String.Join(",", actualValueSplit.Select(x => x.Trim()));
+                        var expectedValueSplitJoined = string.Join(",", expectedValueSplit.Select(x => x.Trim()));
+                        var actualValueSplitJoined = string.Join(",", actualValueSplit.Select(x => x.Trim()));
 
                         if (!expectedValueSplitJoined.Equals(actualValueSplitJoined))
                         {
@@ -51,7 +51,8 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                 }
                 else
                 {
-                    headerResult.RecordFailure(new ErrorMessageComparisonFailure(String.Format("Header with key '{0}', does not exist in actual", header.Key)));
+                    headerResult.RecordFailure(new ErrorMessageComparisonFailure(
+                        $"Header with key '{header.Key}', does not exist in actual"));
                 }
 
                 result.AddChildResult(headerResult);
@@ -60,7 +61,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
             return result;
         }
 
-        private IDictionary<string, string> MakeDictionaryCaseInsensitive(IDictionary<string, string> from)
+        private static IDictionary<string, string> MakeDictionaryCaseInsensitive(IDictionary<string, string> from)
         {
             return new Dictionary<string, string>(from, StringComparer.InvariantCultureIgnoreCase);
         }

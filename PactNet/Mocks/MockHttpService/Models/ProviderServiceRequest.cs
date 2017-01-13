@@ -59,14 +59,14 @@ namespace PactNet.Mocks.MockHttpService.Models
 
         public string PathWithQuery()
         {
-            if (String.IsNullOrEmpty(Path) && !String.IsNullOrEmpty(Query))
+            if (string.IsNullOrEmpty(Path) && !string.IsNullOrEmpty(Query))
             {
                 throw new InvalidOperationException("Query has been supplied, however Path has not. Please specify as Path.");
             }
 
-            return !String.IsNullOrEmpty(Query) ?
-                    String.Format("{0}?{1}", Path, Query) :
-                    Path;
+            return !string.IsNullOrEmpty(Query) ?
+                $"{Path}?{Query}" :
+                Path;
         }
     }
 }

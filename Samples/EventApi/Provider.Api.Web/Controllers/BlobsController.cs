@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace Provider.Api.Web.Controllers
@@ -27,16 +28,16 @@ namespace Provider.Api.Web.Controllers
 
         [HttpPost]
         [Route("blobs/{id}")]
-        public HttpResponseMessage Post(Guid id)
+        public async Task<HttpResponseMessage> Post(Guid id)
         {
-            var bytes = Request.Content.ReadAsByteArrayAsync().Result;
+            var bytes = await Request.Content.ReadAsByteArrayAsync();
             var requestBody = Encoding.UTF8.GetString(bytes);
 
             if (requestBody != Data)
             {
                 return new HttpResponseMessage(HttpStatusCode.BadRequest);
             }
-            
+
             return new HttpResponseMessage(HttpStatusCode.Created);
         }
     }

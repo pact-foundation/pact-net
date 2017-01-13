@@ -220,7 +220,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
         [Fact]
         public void Ctor2_WithEmptyContent_ReturnsEmptyUtf8ByteArray()
         {
-            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: new MediaTypeHeaderValue("text/plain") { CharSet = "utf-8" });
+            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(string.Empty), contentType: new MediaTypeHeaderValue("text/plain") { CharSet = "utf-8" });
 
             Assert.Empty(httpBodyContent.ContentBytes);
         }

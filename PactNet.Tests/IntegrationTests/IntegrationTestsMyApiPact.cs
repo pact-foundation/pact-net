@@ -12,7 +12,7 @@ namespace PactNet.Tests.IntegrationTests
         public IMockProviderService MockProviderService { get; private set; }
 
         public int MockServerPort { get { return 4321; } }
-        public string MockProviderServiceBaseUri { get { return String.Format("http://localhost:{0}", MockServerPort); } }
+        public string MockProviderServiceBaseUri { get { return $"http://localhost:{MockServerPort}"; } }
 
         public IntegrationTestsMyApiPact()
         {

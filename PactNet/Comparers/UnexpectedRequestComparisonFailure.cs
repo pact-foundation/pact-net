@@ -9,13 +9,11 @@ namespace PactNet.Comparers
 
         public UnexpectedRequestComparisonFailure(ProviderServiceRequest request)
         {
-            var requestMethod = request != null ? request.Method.ToString().ToUpperInvariant() : "No Method";
+            var requestMethod = request?.Method.ToString().ToUpperInvariant() ?? "No Method";
             var requestPath = request != null ? request.Path : "No Path";
 
-            RequestDescription = String.Format("{0} {1}", requestMethod, requestPath);
-            Result = String.Format(
-                "An unexpected request {0} was seen by the mock provider service.",
-                RequestDescription);
+            RequestDescription = $"{requestMethod} {requestPath}";
+            Result = $"An unexpected request {RequestDescription} was seen by the mock provider service.";
         }
     }
 }

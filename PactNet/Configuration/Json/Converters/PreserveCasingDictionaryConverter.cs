@@ -33,10 +33,7 @@ namespace PactNet.Configuration.Json.Converters
             throw new InvalidOperationException();
         }
 
-        public override bool CanRead
-        {
-            get { return false; }
-        }
+        public override bool CanRead => false;
 
         public override bool CanConvert(Type objectType)
         {

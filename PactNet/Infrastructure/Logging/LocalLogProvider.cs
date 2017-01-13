@@ -17,7 +17,7 @@ namespace PactNet.Infrastructure.Logging
         {
             var loggerName = GenerateUniqueLoggerName(loggerNameSeed);
 
-            var logFileName = String.Format(logFileNameTemplate, loggerName);
+            var logFileName = string.Format(logFileNameTemplate, loggerName);
             var logFilePath = Path.Combine(logDir, logFileName);
 
             lock (_sync)
@@ -45,7 +45,7 @@ namespace PactNet.Infrastructure.Logging
         {
             lock (_sync)
             {
-                if (!String.IsNullOrEmpty(name) &&
+                if (!string.IsNullOrEmpty(name) &&
                     _loggers.ContainsKey(name))
                 {
                     return _loggers[name].Log;
@@ -74,7 +74,7 @@ namespace PactNet.Infrastructure.Logging
             {
                 while (_loggers.ContainsKey(loggerName))
                 {
-                    loggerName = String.Format("{0}.{1}", nameSeed, ++count);
+                    loggerName = $"{nameSeed}.{++count}";
                 }
             }
 
@@ -91,7 +91,7 @@ namespace PactNet.Infrastructure.Logging
                 }
             }
 
-            return String.Empty;
+            return string.Empty;
         }
     }
 }

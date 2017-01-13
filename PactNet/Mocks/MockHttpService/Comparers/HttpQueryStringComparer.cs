@@ -10,7 +10,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
     {
         public ComparisonResult Compare(string expected, string actual)
         {
-            if (String.IsNullOrEmpty(expected) && String.IsNullOrEmpty(actual))
+            if (string.IsNullOrEmpty(expected) && string.IsNullOrEmpty(actual))
             {
                 return new ComparisonResult("has no query strings");
             }

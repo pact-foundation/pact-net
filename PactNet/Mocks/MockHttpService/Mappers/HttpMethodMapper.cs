@@ -21,7 +21,8 @@ namespace PactNet.Mocks.MockHttpService.Mappers
         {
             if (!Map.ContainsKey(from))
             {
-                throw new ArgumentException(String.Format("Cannot map HttpVerb.{0} to a HttpMethod, no matching item has been registered.", from));
+                throw new ArgumentException(
+                    $"Cannot map HttpVerb.{@from} to a HttpMethod, no matching item has been registered.");
             }
 
             return Map[from];

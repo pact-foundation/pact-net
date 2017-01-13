@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Owin.Security.DataProtection;
 using Microsoft.Owin.Security.OAuth;
 using Microsoft.Owin.Testing;
@@ -11,15 +12,15 @@ namespace Provider.Api.Web.Tests
     public class EventApiTests : IDisposable
     {
         private TestServer _server;
-        
+
         [Fact]
-        public void EnsureEventApiHonoursPactWithConsumer()
+        public async Task EnsureEventApiHonoursPactWithConsumer()
         {
             //Arrange
             var outputter = new CustomOutputter();
             var config = new PactVerifierConfig();
             config.ReportOutputters.Add(outputter);
-            IPactVerifier pactVerifier = new PactVerifier(() => {}, () => {}, config);
+            IPactVerifier pactVerifier = new PactVerifier(() => { }, () => { }, config);
 
             pactVerifier
                 .ProviderState(
@@ -38,7 +39,7 @@ namespace Provider.Api.Web.Tests
             });
 
             //Act / Assert
-            pactVerifier
+            await pactVerifier
                    .ServiceProvider("Event API", _server.HttpClient)
                    .HonoursPactWith("Consumer")
                    .PactUri("../../../Consumer.Tests/pacts/consumer-event_api.json")
@@ -63,7 +64,7 @@ namespace Provider.Api.Web.Tests
             //Logic to do database inserts for event with id 83F9262F-28F1-4703-AB1A-8CFD9E8249C9
         }
 
-    
+
         public virtual void Dispose()
         {
             if (_server != null)

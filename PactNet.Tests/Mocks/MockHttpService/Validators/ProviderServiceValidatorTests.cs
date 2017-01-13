@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using NSubstitute;
 using PactNet.Comparers;
 using PactNet.Mocks.MockHttpService;
@@ -29,15 +30,15 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
         }
 
         [Fact]
-        public void Validate_WithNullPactFile_ThrowsArgumentException()
+        public async Task Validate_WithNullPactFile_ThrowsArgumentException()
         {
             var validator = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => validator.Validate(null, null));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await validator.Validate(null, null));
         }
 
         [Fact]
-        public void Validate_WithNullConsumer_ThrowsArgumentException()
+        public async Task Validate_WithNullConsumer_ThrowsArgumentException()
         {
             var pact = new ProviderServicePactFile
             {
@@ -46,11 +47,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
 
             var validator = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => validator.Validate(pact, null));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await validator.Validate(pact, null));
+
         }
 
         [Fact]
-        public void Validate_WithNullConsumerName_ThrowsArgumentException()
+        public async Task Validate_WithNullConsumerName_ThrowsArgumentException()
         {
             var pact = new ProviderServicePactFile
             {
@@ -60,25 +62,27 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
 
             var validator = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => validator.Validate(pact, null));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await validator.Validate(pact, null));
+
         }
 
         [Fact]
-        public void Validate_WithEmptyConsumerName_ThrowsArgumentException()
+        public async Task Validate_WithEmptyConsumerName_ThrowsArgumentException()
         {
             var pact = new ProviderServicePactFile
             {
-                Consumer = new Pacticipant { Name = String.Empty },
+                Consumer = new Pacticipant { Name = string.Empty },
                 Provider = new Pacticipant { Name = "My Provider" }
             };
 
             var validator = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => validator.Validate(pact, null));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await validator.Validate(pact, null));
+
         }
 
         [Fact]
-        public void Validate_WithNullProvider_ThrowsArgumentException()
+        public async Task Validate_WithNullProvider_ThrowsArgumentException()
         {
             var pact = new ProviderServicePactFile
             {
@@ -87,11 +91,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
 
             var validator = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => validator.Validate(pact, null));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await validator.Validate(pact, null));
+
         }
 
         [Fact]
-        public void Validate_WithNullProviderName_ThrowsArgumentException()
+        public async Task Validate_WithNullProviderName_ThrowsArgumentException()
         {
             var pact = new ProviderServicePactFile
             {
@@ -101,21 +106,22 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
 
             var validator = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => validator.Validate(pact, null));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await validator.Validate(pact, null));
+
         }
 
         [Fact]
-        public void Validate_WithEmptyProviderName_ThrowsArgumentException()
+        public async Task Validate_WithEmptyProviderName_ThrowsArgumentException()
         {
             var pact = new ProviderServicePactFile
             {
                 Consumer = new Pacticipant { Name = "My client" },
-                Provider = new Pacticipant { Name = String.Empty },
+                Provider = new Pacticipant { Name = string.Empty },
             };
 
             var validator = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => validator.Validate(pact, null));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await validator.Validate(pact, null));
         }
 
         [Fact]
@@ -204,7 +210,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
         }
 
         [Fact]
-        public void Validate_WhenProviderServiceResponseComparerThrowsPactFailureException_ThrowsPactFailureException()
+        public async Task Validate_WhenProviderServiceResponseComparerThrowsPactFailureException_ThrowsPactFailureException()
         {
             var pact = new ProviderServicePactFile
             {
@@ -225,7 +231,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
                 .When(x => x.Compare(Arg.Any<ProviderServiceResponse>(), Arg.Any<ProviderServiceResponse>()))
                 .Do(x => { throw new PactFailureException("Expected response cannot be null"); });
 
-            Assert.Throws<PactFailureException>(() => validator.Validate(pact, null));
+            await Assert.ThrowsAsync<PactFailureException>(async () => await validator.Validate(pact, null));
         }
 
         [Fact]
@@ -306,7 +312,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
         }
 
         [Fact]
-        public void Validate_WhenProviderServiceResponseComparerThrowsAndProviderStatesTearDownDefined_TearDownActionIsInvoked()
+        public async Task Validate_WhenProviderServiceResponseComparerThrowsAndProviderStatesTearDownDefined_TearDownActionIsInvoked()
         {
             var actionInkoved = false;
             var pact = new ProviderServicePactFile
@@ -329,7 +335,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
                 .When(x => x.Compare(Arg.Any<ProviderServiceResponse>(), Arg.Any<ProviderServiceResponse>()))
                 .Do(x => { throw new PactFailureException("Expected response cannot be null"); });
 
-            Assert.Throws<PactFailureException>(() => validator.Validate(pact, providerStates));
+            await Assert.ThrowsAsync<PactFailureException>(async () => await validator.Validate(pact, providerStates));
 
             Assert.True(actionInkoved, "Provider states pact tearDown action is invoked");
         }
@@ -389,7 +395,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
         }
 
         [Fact]
-        public void Validate_WhenInteractionDefinesAProviderStateAndProviderStateTearDownDefinedAndProviderServiceResponseComparerThrows_TearDownActionIsInvoked()
+        public async Task Validate_WhenInteractionDefinesAProviderStateAndProviderStateTearDownDefinedAndProviderServiceResponseComparerThrows_TearDownActionIsInvoked()
         {
             var actionInkoved = false;
             var pact = new ProviderServicePactFile
@@ -414,13 +420,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
                 .When(x => x.Compare(Arg.Any<ProviderServiceResponse>(), Arg.Any<ProviderServiceResponse>()))
                 .Do(x => { throw new PactFailureException("Expected response cannot be null"); });
 
-            Assert.Throws<PactFailureException>(() => validator.Validate(pact, providerStates));
+            await Assert.ThrowsAsync<PactFailureException>(async () => await validator.Validate(pact, providerStates));
 
             Assert.True(actionInkoved, "Provider state tearDown action is invoked");
         }
 
         [Fact]
-        public void Validate_WhenInteractionDefinesAProviderStateButNoProviderStateIsSupplied_ThrowsInvalidOperationException()
+        public async Task Validate_WhenInteractionDefinesAProviderStateButNoProviderStateIsSupplied_ThrowsInvalidOperationException()
         {
             var pact = new ProviderServicePactFile
             {
@@ -439,11 +445,11 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
 
             var validator = GetSubject();
 
-            Assert.Throws<InvalidOperationException>(() => validator.Validate(pact, providerStates));
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await validator.Validate(pact, providerStates));
         }
 
         [Fact]
-        public void Validate_WhenInteractionDefinesAProviderStateAndNoProviderStatesAreSupplied_ThrowsInvalidOperationException()
+        public async Task Validate_WhenInteractionDefinesAProviderStateAndNoProviderStatesAreSupplied_ThrowsInvalidOperationException()
         {
             var pact = new ProviderServicePactFile
             {
@@ -461,11 +467,11 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
 
             var validator = GetSubject();
 
-            Assert.Throws<InvalidOperationException>(() => validator.Validate(pact, null));
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await validator.Validate(pact, null));
         }
 
         [Fact]
-        public void Validate_WhenInteractionDefinesAProviderStateAndProviderStateIsNotFound_ThrowsInvalidOperationException()
+        public async Task Validate_WhenInteractionDefinesAProviderStateAndProviderStateIsNotFound_ThrowsInvalidOperationException()
         {
             var pact = new ProviderServicePactFile
             {
@@ -486,7 +492,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
 
             var validator = GetSubject();
 
-            Assert.Throws<InvalidOperationException>(() => validator.Validate(pact, providerStates));
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await validator.Validate(pact, providerStates));
         }
 
         [Fact]
@@ -557,7 +563,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
         }
 
         [Fact]
-        public void Validate_WhenAFailureOccurs_ThrowsPactFailureException()
+        public async Task Validate_WhenAFailureOccurs_ThrowsPactFailureException()
         {
             var pact = new ProviderServicePactFile
             {
@@ -581,7 +587,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Validators
                 .Compare(Arg.Any<ProviderServiceResponse>(), Arg.Any<ProviderServiceResponse>())
                 .Returns(comparisonResult);
 
-            Assert.Throws<PactFailureException>(() => validator.Validate(pact, null));
+            await Assert.ThrowsAsync<PactFailureException>(async () => await validator.Validate(pact, null));
         }
     }
 }

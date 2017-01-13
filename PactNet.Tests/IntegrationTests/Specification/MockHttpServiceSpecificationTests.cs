@@ -52,7 +52,8 @@ namespace PactNet.Tests.IntegrationTests.Specification
 
             if (!Directory.Exists(pathToTestCases))
             {
-                throw new InvalidOperationException(String.Format("Specification tests not found in path '{0}'. Please ensure pact-specification git submodule has been pulled (git submodule update --init).", pathToTestCases));
+                throw new InvalidOperationException(
+                    $"Specification tests not found in path '{pathToTestCases}'. Please ensure pact-specification git submodule has been pulled (git submodule update --init).");
             }
 
             foreach (var testCaseSubDirectory in Directory.EnumerateDirectories(pathToTestCases))
@@ -70,7 +71,7 @@ namespace PactNet.Tests.IntegrationTests.Specification
                     }
                     catch (SubstituteException)
                     {
-                        failedTestCases.Add(String.Format("[Failed] {0}", testCaseFileName));
+                        failedTestCases.Add($"[Failed] {testCaseFileName}");
                     }
                 }
             }

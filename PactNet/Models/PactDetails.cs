@@ -14,10 +14,9 @@ namespace PactNet.Models
 
         public string GeneratePactFileName()
         {
-            return String.Format("{0}-{1}.json", 
-                Consumer != null ? Consumer.Name : String.Empty,
-                Provider != null ? Provider.Name : String.Empty)
-                .ToLowerSnakeCase();
+            return
+                $"{(Consumer != null ? Consumer.Name : string.Empty)}-{(Provider != null ? Provider.Name : string.Empty)}.json"
+                    .ToLowerSnakeCase();
         }
     }
 }

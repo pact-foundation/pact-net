@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
@@ -26,18 +27,18 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         }
 
         [Fact]
-        public void Convert_WithEmptyContent_ReturnsNull()
+        public async Task Convert_WithEmptyContent_ReturnsNull()
         {
-            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: new MediaTypeHeaderValue("text/plain") { CharSet = "utf-8" });
+            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(string.Empty), contentType: new MediaTypeHeaderValue("text/plain") { CharSet = "utf-8" });
             var mapper = GetSubject();
 
             var result = mapper.Convert(httpBodyContent);
 
-            Assert.Empty(result.ReadAsStringAsync().Result);
+            Assert.Empty(await result.ReadAsStringAsync());
         }
 
         [Fact]
-        public void Convert_WithContentTypeContainingParameter_ReturnsContentWithContentTypeHeader()
+        public async Task Convert_WithContentTypeContainingParameter_ReturnsContentWithContentTypeHeader()
         {
             const string contentType = "text/plain";
             const string content = "test";
@@ -53,7 +54,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             Assert.Equal(contentType, result.Headers.ContentType.MediaType);
             Assert.Contains(versionParameter, result.Headers.ContentType.Parameters);
             Assert.Equal("utf-8", result.Headers.ContentType.CharSet);
-            Assert.Equal(content, result.ReadAsStringAsync().Result);
+            Assert.Equal(content, await result.ReadAsStringAsync());
         }
     }
 }
