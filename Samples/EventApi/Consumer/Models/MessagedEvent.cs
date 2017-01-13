@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Producer.Models
+namespace Consumer.Models
 {
-    public class Event
+    public class MessagedEvent
     {
         public Guid EventId { get; set; }
         public DateTime Timestamp { get; set; }

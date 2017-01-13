@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Producer.Models
+namespace Consumer.Models
 {
     public class Location
     {
