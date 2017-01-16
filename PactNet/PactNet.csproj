@@ -106,6 +106,8 @@
     <Compile Include="Configuration\Json\JsonConfig.cs" />
     <Compile Include="Matchers\Match.cs" />
     <Compile Include="Matchers\MatchDefinition.cs" />
+    <Compile Include="Mocks\IMockMessager.cs" />
+    <Compile Include="Mocks\MessagingService\MessagePactBuilder.cs" />
     <Compile Include="Mocks\MockHttpService\Matchers\Regex\RegexMatchDefinition.cs" />
     <Compile Include="Mocks\MockHttpService\Matchers\Type\TypeMatchDefinition.cs" />
     <Compile Include="Mocks\MockHttpService\Matchers\DefaultHttpBodyMatcher.cs" />
@@ -168,8 +170,11 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Mocks\MockHttpService\Validators\IProviderServiceValidator.cs" />
     <Compile Include="Mocks\MockHttpService\Validators\ProviderServiceValidator.cs" />
+    <Compile Include="Models\Messaging\Message.cs" />
+    <Compile Include="Models\Messaging\MetaData.cs" />
     <Compile Include="Models\PactDetails.cs" />
     <Compile Include="Models\PactFile.cs" />
+    <Compile Include="Models\Messaging\PactMessageFile.cs" />
     <Compile Include="PactConfig.cs" />
     <Compile Include="PactUriOptions.cs" />
     <Compile Include="PactVerifier.cs" />

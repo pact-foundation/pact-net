@@ -127,9 +127,11 @@
     <Compile Include="Mocks\MockHttpService\MockProviderServiceTests.cs" />
     <Compile Include="Mocks\MockHttpService\Models\ProviderServiceRequestTests.cs" />
     <Compile Include="Mocks\MockHttpService\Models\HttpBodyContentTests.cs" />
+    <Compile Include="Mocks\MockMessagingService\MessagePactBuilderTests.cs" />
     <Compile Include="Models\InteractionTests.cs" />
     <Compile Include="Models\PactDetailsTests.cs" />
     <Compile Include="Models\PactFileTests.cs" />
+    <Compile Include="Models\PactMessageFileTests.cs" />
     <Compile Include="Models\ProviderStatesTests.cs" />
     <Compile Include="Models\ProviderStateTests.cs" />
     <Compile Include="PactConfigTests.cs" />
