@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace PactNet.Matchers
 {
-    internal class MatcherResult
+    public class MatcherResult
     {
         public IEnumerable<MatcherCheck> MatcherChecks { get; private set; }
 

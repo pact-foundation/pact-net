@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 
 namespace PactNet.Matchers
 {
-    internal interface IMatcher
+    public interface IMatcher
     {
         [JsonProperty("match")]
         string Type { get; }

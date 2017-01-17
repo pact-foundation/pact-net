@@ -2,19 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace PactNet.Mocks.MessagingService.Consumer.Dsl
 {
-    internal class PactDslValue : DslPart<string>
+    public class PactDslValue<T> : DslPart<T> where T : IConvertible
     {
         public PactDslValue()
             :base()
         {
         }
 
-        public PactDslValue(DslPart parent, string rootPath, string rootName)
-            :base(parent, rootPath, rootName)
+        public PactDslValue(DslPart parent, string rootName, T value)
+            :base(parent, rootName)
         {
+            Body = value;
         }
 
     }
