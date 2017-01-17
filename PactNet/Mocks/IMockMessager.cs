@@ -8,11 +8,6 @@ namespace PactNet.Mocks
 {
     public interface IMockMessager<T>
     {
-
-        void GivenConsumer(string consumer);
-
-        void GivenProvider(string provider);
-
         void ExceptsToRecieve(string messageTopic);
 
         void AddMessage(Message<T> message);

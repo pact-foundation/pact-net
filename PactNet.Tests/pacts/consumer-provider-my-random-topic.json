@@ -1,0 +1,1 @@
+{"provider":{"name":"Provider"},"consumer":{"name":"Consumer"},"messages":[{"description":"Published credit data","providerState":"or maybe 'scenario'? not sure about this","contents":{"foo":"bar"},"metaData":{"contentType":"application/json"}}]}

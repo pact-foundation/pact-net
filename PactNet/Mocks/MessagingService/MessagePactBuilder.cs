@@ -5,16 +5,29 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using PactNet.Mocks.MockHttpService;
+using PactNet.Extensions;
+using System.IO;
 
 namespace PactNet.Mocks.MessagingService
 {
-    public class MessagePactBuilder<T> : IMockMessager<T>
+    public class MessagePactBuilder<T> : IMockMessager<T>, IPactBuilder
     {
-        private PactMessageFile<T> pactMessage;
+        private readonly PactMessageFile<T> pactMessage;
+        private string expectedMessageTopic;
+        private readonly PactConfig pactConfig;
 
-        public MessagePactBuilder()
+        public MessagePactBuilder() 
+            : this(new PactConfig())
         {
-            pactMessage = new PactMessageFile<T>();
+           
+        }
+
+        public MessagePactBuilder(PactConfig pactConfig)
+        {
+            this.pactMessage = new PactMessageFile<T>();
+            this.expectedMessageTopic = string.Empty;
+            this.pactConfig = pactConfig;
         }
 
         public void AddMessage(Message<T> message)
@@ -24,7 +37,7 @@ namespace PactNet.Mocks.MessagingService
 
         public void ExceptsToRecieve(string messageTopic)
         {
-            throw new NotImplementedException();
+            expectedMessageTopic = messageTopic;
         }
 
         public Message<T> GetMessage()
@@ -32,19 +45,83 @@ namespace PactNet.Mocks.MessagingService
             return this.pactMessage.GetMessage();
         }
 
-        public void GivenConsumer(string consumer)
-        {
-            pactMessage.Consumer = new Models.Pacticipant() { Name = consumer };
-        }
 
-        public void GivenProvider(string provider)
-        {
-            pactMessage.Provider = new Models.Pacticipant() { Name = provider };
-        }
-
-        public string Build()
+        public string GetPactAsJSON()
         {
             return JsonConvert.SerializeObject(pactMessage);
+        }
+
+        public IPactBuilder ServiceConsumer(string consumerName)
+        {
+            if (String.IsNullOrWhiteSpace(consumerName))
+            {
+                throw new ArgumentException("Please supply a non null or empty consumerName");
+            }
+
+            pactMessage.Consumer = new Models.Pacticipant() { Name = consumerName };
+
+            return this;
+        }
+
+        public IPactBuilder HasPactWith(string providerName)
+        {
+            if (String.IsNullOrWhiteSpace(providerName))
+            {
+                throw new ArgumentException("Please supply a non null or empty providerName");
+            }
+
+            pactMessage.Provider = new Models.Pacticipant() { Name = providerName };
+
+            return this;
+        }
+
+        public IMockProviderService MockService(int port, bool enableSsl = false, bool bindOnAllAdapters = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IMockProviderService MockService(int port, JsonSerializerSettings jsonSerializerSettings, bool enableSsl = false, bool bindOnAllAdapters = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Build()
+        {
+            if (String.IsNullOrWhiteSpace(pactMessage.Consumer.Name))
+            {
+                throw new InvalidOperationException("ConsumerName has not been set, please supply a consumer name using the ServiceConsumer method.");
+            }
+
+            if (String.IsNullOrWhiteSpace(pactMessage.Provider.Name))
+            {
+                throw new InvalidOperationException("ProviderName has not been set, please supply a provider name using the HasPactWith method.");
+            }
+
+
+            PersistPactFileToDisk();
+        }
+
+        private string GeneratePactFileName()
+        {
+            return String.Format("{0}-{1}-{2}.json",
+                pactMessage.Consumer != null ? pactMessage.Consumer.Name.Replace('.', '-') : String.Empty,
+                pactMessage.Provider != null ? pactMessage.Provider.Name.Replace('.', '-') : String.Empty,
+                expectedMessageTopic != null ? expectedMessageTopic.Replace('.', '-') : String.Empty)
+                .ToLowerSnakeCase();
+        }
+
+        private void PersistPactFileToDisk()
+        {
+            string fileName = GeneratePactFileName();
+
+            if(!Directory.Exists(this.pactConfig.PactDir))
+            {
+                Directory.CreateDirectory(this.pactConfig.PactDir);
+            }
+
+            string fullPath = this.pactConfig.PactDir + fileName;
+
+            File.WriteAllText(fullPath, this.GetPactAsJSON());
         }
     }
 }
