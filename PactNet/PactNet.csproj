@@ -107,6 +107,9 @@
     <Compile Include="Matchers\Match.cs" />
     <Compile Include="Matchers\MatchDefinition.cs" />
     <Compile Include="Mocks\IMockMessager.cs" />
+    <Compile Include="Mocks\MessagingService\Consumer\Dsl\PactDslValue.cs" />
+    <Compile Include="Mocks\MessagingService\Consumer\Dsl\DslPart.cs" />
+    <Compile Include="Mocks\MessagingService\Consumer\Dsl\PactDslJsonBody.cs" />
     <Compile Include="Mocks\MessagingService\MessagePactBuilder.cs" />
     <Compile Include="Mocks\MockHttpService\Matchers\Regex\RegexMatchDefinition.cs" />
     <Compile Include="Mocks\MockHttpService\Matchers\Type\TypeMatchDefinition.cs" />
@@ -213,7 +216,9 @@
     </None>
     <None Include="PactNet.nuspec" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Mocks\MessagingService\Provider\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
