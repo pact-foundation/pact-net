@@ -2,12 +2,27 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 using PactNet.Matchers;
 
 namespace PactNet.Mocks.MessagingService.Consumer.Dsl
 {
     public class PactDslJsonBody : DslPart<Dictionary<string, DslPart>>
     {
+        [JsonProperty(propertyName: "matchingRules")]
+        public Dictionary<string, List<IMatcher>> MatchingRules
+        {
+            get
+            {
+                var matchers = new Dictionary<string, List<IMatcher>>();
+                foreach (var parts in this.Body.Values)
+                {
+                    matchers[parts.Path] = parts.Matchers.Values.ToList();
+                }
+
+                return matchers;
+            }
+        }
 
         public PactDslJsonBody()
             :base()

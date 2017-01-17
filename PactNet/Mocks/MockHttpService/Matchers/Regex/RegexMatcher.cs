@@ -4,7 +4,7 @@ using PactNet.Matchers;
 
 namespace PactNet.Mocks.MockHttpService.Matchers.Regex
 {
-    internal class RegexMatcher : IMatcher
+    public class RegexMatcher : IMatcher
     {
         public string Type
         {

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using PactNet.Matchers;
+using PactNet.Mocks.MockHttpService.Matchers.Regex;
+using PactNet.Mocks.MockHttpService.Matchers.Type;
 
 namespace PactNet.Mocks.MessagingService.Consumer.Dsl
 {
@@ -21,6 +23,16 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
         {
             _parent = parent;
             _rootName = rootName;
+
+            _matchers = new Dictionary<string, IMatcher>();
+        }
+
+        protected Dictionary<string, IMatcher> _matchers;
+        
+        public Dictionary<string, IMatcher> Matchers
+        {
+            get { return _matchers; }
+            set { _matchers = value; }
         }
 
         [JsonIgnore]
@@ -37,13 +49,26 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
                 return path;
             }
         }
+
+        protected DslPart MatchType(string type)
+        {
+            _matchers["type"] = new TypeMatcher();
+            return this;
+        }
+
+        protected DslPart MatchRegex(string regex)
+        {
+            _matchers["regex"] = new RegexMatcher(regex);
+            return this;
+        }
+
+        //TODO: add more matchers
     }
 
     public abstract class DslPart<T> : DslPart
     {
         [JsonIgnore]
         public T Body;
-        //protected Dictionary<string, IMatcher> _matchers;
 
         protected DslPart()
         {
@@ -52,9 +77,7 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
         protected DslPart(DslPart parent, string rootName)
             :base(parent, rootName)
         {
-            //_matchers = new Dictionary<string, IMatcher>();
         }
-
 
     }
 }

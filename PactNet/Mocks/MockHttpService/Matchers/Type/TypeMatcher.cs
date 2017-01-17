@@ -3,7 +3,7 @@ using PactNet.Matchers;
 
 namespace PactNet.Mocks.MockHttpService.Matchers.Type
 {
-    internal class TypeMatcher : IMatcher
+    public class TypeMatcher : IMatcher
     {
         public string Type
         {

@@ -1,6 +1,6 @@
 ﻿namespace PactNet.Matchers
 {
-    internal abstract class MatcherCheck
+    public abstract class MatcherCheck
     {
         private const string PathPrefix = "$.";
         private string _path;
