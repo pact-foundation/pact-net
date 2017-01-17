@@ -6,32 +6,47 @@ using PactNet.Matchers;
 
 namespace PactNet.Mocks.MessagingService.Consumer.Dsl
 {
-    internal class PactDslJsonBody : DslPart<Dictionary<string, DslPart>>
+    public class PactDslJsonBody : DslPart<Dictionary<string, DslPart>>
     {
 
         public PactDslJsonBody()
             :base()
         {
-            _body = new Dictionary<string, DslPart>();
+            Body = new Dictionary<string, DslPart>();
         }
 
-        public PactDslJsonBody(DslPart parent, string rootPath, string rootName)
-            :base(parent, rootPath, rootName)
+        public PactDslJsonBody(DslPart parent, string rootName)
+            :base(parent, rootName)
         {
-            _body = new Dictionary<string, DslPart>();
+            Body = new Dictionary<string, DslPart>();
         }
 
-        public DslPart Object(string name)
+        public PactDslJsonBody Object(string name)
         {
-            this._body["name"] = new PactDslJsonBody(this, string.Format("{0}/{1}", _rootPath, name), name);
-            return this._body["name"];
+            Body[name] = new PactDslJsonBody(this, name);
+            return (PactDslJsonBody)Body[name];
         }
 
-        public DslPart StringType(string name, string example)
+        public PactDslJsonBody CloseObject()
         {
-            this._body["name"] = new PactDslValue(this, name, example);
-            return this._body["name"];
+            if (_parent != null)
+                return (PactDslJsonBody)_parent;
+
+            return this;
         }
+
+        public PactDslJsonBody StringValue(string name, string example)
+        {
+            Body[name] = new PactDslValue<string>(this, name, example);
+            return this;
+        }
+
+        public PactDslJsonBody Int32Value(string name, int example)
+        {
+            Body[name] = new PactDslValue<int>(this, name, example);
+            return this;
+        }
+
 
     }
 }

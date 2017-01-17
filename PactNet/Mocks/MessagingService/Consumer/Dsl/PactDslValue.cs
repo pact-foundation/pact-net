@@ -5,16 +5,20 @@ using System.Text;
 
 namespace PactNet.Mocks.MessagingService.Consumer.Dsl
 {
-    internal class PactDslValue : DslPart<string>
+    public class PactDslValue<T> : DslPart<T> where T : IConvertible
     {
         public PactDslValue()
             :base()
         {
         }
 
-        public PactDslValue(DslPart parent, string rootPath, string rootName)
-            :base(parent, rootPath, rootName)
+        public Dictionary<string, T> Value;
+
+        public PactDslValue(DslPart parent, string rootName, T value)
+            :base(parent, rootName)
         {
+            Body = value;
+            this.Value = new Dictionary<string, T> {{rootName,value}};
         }
 
     }
