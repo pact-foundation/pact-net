@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using PactNet.Matchers;
-using PactNet.Mocks.MessagingService.Consumer.Dsl;
+using PactNet.Models.Messaging.Consumer.Dsl;
 
 namespace PactNet.Models.Messaging
 {

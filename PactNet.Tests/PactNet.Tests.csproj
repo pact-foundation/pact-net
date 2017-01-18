@@ -107,7 +107,7 @@
     <Compile Include="IntegrationTests\Specification\Models\ResponseTestCase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mocks\MessagingService\Consumer\Dsl\DslPartTests.cs" />
+    <Compile Include="Models\Consumer\Dsl\DslPartTests.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\HttpQueryStringComparerTests.cs" />
     <Compile Include="Mocks\MockHttpService\CustomRequestSenderTests.cs" />
     <Compile Include="Mocks\MockHttpService\HttpClientRequestSenderTests.cs" />
@@ -160,6 +160,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Mocks\MessagingService\" />
     <Folder Include="Mocks\MockMessagingService\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

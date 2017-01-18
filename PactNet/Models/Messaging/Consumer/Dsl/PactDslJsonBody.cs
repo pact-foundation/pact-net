@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using Newtonsoft.Json;
 using PactNet.Matchers;
 
-namespace PactNet.Mocks.MessagingService.Consumer.Dsl
+namespace PactNet.Models.Messaging.Consumer.Dsl
 {
     public class PactDslJsonBody : DslPart<Dictionary<string, DslPart>>
     {
@@ -69,6 +66,7 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
 
         public override object Value { get { return this.Body; } }
 
+        [JsonIgnore]
         public DslPart Parent
         {
             get { return _parent; }

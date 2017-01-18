@@ -8,7 +8,6 @@ using System.Text;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Extensions;
 using System.IO;
-using PactNet.Mocks.MessagingService.Consumer.Dsl;
 
 namespace PactNet
 {

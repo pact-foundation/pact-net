@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Newtonsoft.Json;
 using PactNet.Matchers;
 
-namespace PactNet.Mocks.MessagingService.Consumer.Dsl
+namespace PactNet.Models.Messaging.Consumer.Dsl
 {
     public class PactDslValue<T> : DslPart<T> where T : IConvertible
     {

@@ -1,5 +1,4 @@
-﻿using PactNet.Mocks.MessagingService;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +6,8 @@ using System.Threading.Tasks;
 using Consumer.Tests.Models;
 using PactNet;
 using Xunit;
-using PactNet.Mocks.MessagingService.Consumer.Dsl;
 using PactNet.Models.Messaging;
+using PactNet.Models.Messaging.Consumer.Dsl;
 
 namespace Consumer.Tests
 {

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using PactNet.Matchers;
 
-namespace PactNet.Mocks.MessagingService.Consumer.Dsl
+namespace PactNet.Models.Messaging.Consumer.Dsl
 {
     public class PactDslJsonArray : DslPart<List<PactDslJsonBody>>
     {

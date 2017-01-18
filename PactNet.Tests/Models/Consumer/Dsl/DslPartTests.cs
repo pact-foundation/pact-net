@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
-using PactNet.Mocks.MessagingService;
-using PactNet.Mocks.MessagingService.Consumer.Dsl;
 using PactNet.Models.Messaging;
+using PactNet.Models.Messaging.Consumer.Dsl;
 using Xunit;
 
 namespace PactNet.Tests.Mocks.MessagingService.Consumer.Dsl

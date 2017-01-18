@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using PactNet.Mocks.MessagingService.Consumer.Dsl;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Models.Messaging;
 using System.Collections;

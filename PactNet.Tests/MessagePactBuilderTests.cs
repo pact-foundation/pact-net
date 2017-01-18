@@ -1,13 +1,12 @@
-﻿using PactNet.Mocks.MessagingService;
-using PactNet.Models.Messaging;
+﻿using PactNet.Models.Messaging;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using PactNet.Mocks.MessagingService.Consumer.Dsl;
 using Xunit;
 using PactNet;
+using PactNet.Models.Messaging.Consumer.Dsl;
 
 namespace PactNet.Tests
 {
