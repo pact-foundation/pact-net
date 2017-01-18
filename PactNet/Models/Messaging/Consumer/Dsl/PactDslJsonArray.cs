@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using PactNet.Matchers;
 
 namespace PactNet.Models.Messaging.Consumer.Dsl
@@ -50,6 +51,7 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
 
                 return null;
             }
+            set { Console.WriteLine(value); }
         }
 
         public override Dictionary<string, object> Content
@@ -65,6 +67,7 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
 
                 return null;
             }
+            set { Console.WriteLine(value); }
         }
 
         public override object Value

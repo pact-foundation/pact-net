@@ -113,6 +113,7 @@
     <Compile Include="Matchers\Type\TypeMatchDefinition.cs" />
     <Compile Include="Matchers\Type\TypeMatcher.cs" />
     <Compile Include="Mocks\IMockMessager.cs" />
+    <Compile Include="Models\Messaging\Consumer\Dsl\DslPartConverter.cs" />
     <Compile Include="Models\Messaging\Consumer\Dsl\PactDslJsonArray.cs" />
     <Compile Include="Models\Messaging\Consumer\Dsl\PactDslValue.cs" />
     <Compile Include="Models\Messaging\Consumer\Dsl\DslPart.cs" />

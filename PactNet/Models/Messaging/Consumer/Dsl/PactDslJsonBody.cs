@@ -20,6 +20,8 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             Body = new Dictionary<string, DslPart>();
         }
 
+
+
         [JsonProperty("matchingRules", NullValueHandling = NullValueHandling.Ignore)]
         public override Dictionary<string, List<IMatcher>> Matchers
         {
@@ -37,9 +39,10 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
 
                 return null;
             }
+            set { Console.WriteLine(value); }
         }
 
-        [JsonProperty("content", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("contents", NullValueHandling = NullValueHandling.Ignore)]
         public override Dictionary<string, object> Content
         {
             get
@@ -60,6 +63,7 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
 
                 return null;
             }
+            set { Console.WriteLine(value); }
         }
 
         public override bool IsPrimitive { get { return false; } }

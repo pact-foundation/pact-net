@@ -21,11 +21,13 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
         public override Dictionary<string, object> Content
         {
             get { return new Dictionary<string, object> {{_rootName, this.Body}}; }
+            set { Console.WriteLine(value); }
         }
 
         public override Dictionary<string, List<IMatcher>> Matchers
         {
             get { return new Dictionary<string, List<IMatcher>> {{this.Path, _matchers.Values.ToList()}}; }
+            set { Console.WriteLine(value);}
         }
 
         public override bool IsPrimitive { get { return true; } }
