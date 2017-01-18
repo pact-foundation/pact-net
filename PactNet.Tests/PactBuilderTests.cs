@@ -233,7 +233,9 @@ namespace PactNet.Tests
         {
             var mockMockProviderService = Substitute.For<IMockProviderService>();
 
-            IPactHttpServiceBuilder pactBuilder = new PactBuilder((port, enableSsl, providerName, bindOnAllAdapters) => mockMockProviderService)
+            IPactHttpServiceBuilder pactBuilder = new PactBuilder((port, enableSsl, providerName, bindOnAllAdapters) => mockMockProviderService);
+
+            pactBuilder
                 .ServiceConsumer("Event Client")
                 .HasPactWith("Event API");
 

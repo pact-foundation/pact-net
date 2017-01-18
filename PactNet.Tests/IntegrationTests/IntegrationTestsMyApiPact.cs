@@ -23,7 +23,9 @@ namespace PactNet.Tests.IntegrationTests
                         baseUri => new NancyHttpHost(baseUri, "MyApi", pactConfig, new IntegrationTestingMockProviderNancyBootstrapper(pactConfig)),
                         port, enableSsl,
                         baseUri => new HttpClient { BaseAddress = new Uri(baseUri) },
-                        new HttpMethodMapper()))
+                        new HttpMethodMapper()));
+
+            PactBuilder
                 .ServiceConsumer("IntegrationTests")
                 .HasPactWith("MyApi");
 

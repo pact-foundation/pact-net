@@ -14,7 +14,8 @@ namespace Consumer.Tests
 
         public ConsumerEventApiPact()
         {
-            PactBuilder = new PactBuilder()
+            PactBuilder = new PactBuilder();
+            PactBuilder
                 .ServiceConsumer("Consumer")
                 .HasPactWith("Event API");
 

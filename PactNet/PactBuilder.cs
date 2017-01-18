@@ -29,7 +29,7 @@ namespace PactNet
         {
         }
 
-        public IPactHttpServiceBuilder ServiceConsumer(string consumerName)
+        public IPactBuilder ServiceConsumer(string consumerName)
         {
             if (String.IsNullOrEmpty(consumerName))
             {
@@ -41,7 +41,7 @@ namespace PactNet
             return this;
         }
 
-        public IPactHttpServiceBuilder HasPactWith(string providerName)
+        public IPactBuilder HasPactWith(string providerName)
         {
             if (String.IsNullOrEmpty(providerName))
             {

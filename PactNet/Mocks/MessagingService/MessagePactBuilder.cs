@@ -51,7 +51,7 @@ namespace PactNet.Mocks.MessagingService
             return JsonConvert.SerializeObject(pactMessage);
         }
 
-        public IPactHttpServiceBuilder ServiceConsumer(string consumerName)
+        public IPactBuilder ServiceConsumer(string consumerName)
         {
             if (String.IsNullOrWhiteSpace(consumerName))
             {
@@ -63,7 +63,7 @@ namespace PactNet.Mocks.MessagingService
             return this;
         }
 
-        public IPactHttpServiceBuilder HasPactWith(string providerName)
+        public IPactBuilder HasPactWith(string providerName)
         {
             if (String.IsNullOrWhiteSpace(providerName))
             {
@@ -73,16 +73,6 @@ namespace PactNet.Mocks.MessagingService
             pactMessage.Provider = new Models.Pacticipant() { Name = providerName };
 
             return this;
-        }
-
-        public IMockProviderService MockService(int port, bool enableSsl = false, bool bindOnAllAdapters = false)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IMockProviderService MockService(int port, JsonSerializerSettings jsonSerializerSettings, bool enableSsl = false, bool bindOnAllAdapters = false)
-        {
-            throw new NotImplementedException();
         }
 
         public void Build()
