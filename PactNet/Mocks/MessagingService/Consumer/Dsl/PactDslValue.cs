@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
+using PactNet.Matchers;
 
 namespace PactNet.Mocks.MessagingService.Consumer.Dsl
 {
@@ -19,5 +20,24 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
             Body = value;
         }
 
+        public override Dictionary<string, object> Content
+        {
+            get { return new Dictionary<string, object> {{_rootName, this.Body}}; }
+        }
+
+        public override Dictionary<string, List<IMatcher>> Matchers
+        {
+            get { return new Dictionary<string, List<IMatcher>> {{this.Path, _matchers.Values.ToList()}}; }
+        }
+
+        public PactDslValue<T> TypeMatcher()
+        {
+            return (PactDslValue<T>) this.MatchType();
+        }
+
+        public PactDslValue<T> StringMatcher(string regex)
+        {
+            return (PactDslValue<T>)this.MatchRegex(regex);
+        }
     }
 }

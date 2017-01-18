@@ -28,14 +28,16 @@ namespace PactNet.Tests.Mocks.MessagingService.Consumer.Dsl
         {
             var dsl = new PactDslJsonBody()
                 .Object("a")
-                .StringValue("a1", "test1")
-                .StringValue("a2", "test2")
-                .Int32Value("a3", 3)
+                .StringType("a1", "test1")
+                .StringType("a2", "test2")
+                .Int32Type("a3", 3)
+                .StringMatcher("a4", "([a-z]).*", "test4")
                     .Object("b")
-                    .StringValue("b1", "test4")
-                        .Object("c")
-                        .Int32Value("c1", 5)
-                        .CloseObject()
+                        .StringType("b1", "test5")
+                            .Object("c")
+                                .Int32Type("c1", 5)
+                                .StringMatcher("c2", "([a-z]).*", "test6")
+                            .CloseObject()
                     .CloseObject()
                 .CloseObject();
 

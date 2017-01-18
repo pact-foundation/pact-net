@@ -9,18 +9,40 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
 {
     public class PactDslJsonBody : DslPart<Dictionary<string, DslPart>>
     {
-        [JsonProperty(propertyName: "matchingRules")]
-        public Dictionary<string, List<IMatcher>> MatchingRules
+        [JsonProperty("matchingRules",  NullValueHandling = NullValueHandling.Ignore)]
+        public override Dictionary<string, List<IMatcher>> Matchers
         {
             get
             {
                 var matchers = new Dictionary<string, List<IMatcher>>();
                 foreach (var parts in this.Body.Values)
                 {
-                    matchers[parts.Path] = parts.Matchers.Values.ToList();
+                    foreach (var match in parts.Matchers)
+                        matchers[match.Key] = match.Value;
                 }
 
-                return matchers;
+                if (matchers.Count > 0)
+                    return matchers;
+
+                return null;
+            }
+        }
+
+        [JsonProperty("content", NullValueHandling = NullValueHandling.Ignore)]
+        public override Dictionary<string, object> Content
+        {
+            get
+            {
+                var content = new Dictionary<string, object>();
+                foreach (var parts in this.Body.Values)
+                {
+                    content[parts.Name] = parts.Content;
+                }
+
+                if (content.Count > 0)
+                    return content;
+
+                return null;
             }
         }
 
@@ -50,18 +72,23 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
             return this;
         }
 
-        public PactDslJsonBody StringValue(string name, string example)
+        public PactDslJsonBody StringType(string name, string example)
         {
-            Body[name] = new PactDslValue<string>(this, name, example);
+            Body[name] = new PactDslValue<string>(this, name, example).TypeMatcher();
             return this;
         }
 
-        public PactDslJsonBody Int32Value(string name, int example)
+        public PactDslJsonBody Int32Type(string name, int example)
         {
-            Body[name] = new PactDslValue<int>(this, name, example);
+            Body[name] = new PactDslValue<int>(this, name, example).TypeMatcher();
             return this;
         }
 
+        public PactDslJsonBody StringMatcher(string name, string regex, string example)
+        {
+            Body[name] = new PactDslValue<string>(this, name, example).StringMatcher(regex);
+            return this;
+        }
 
     }
 }
