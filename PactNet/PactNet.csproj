@@ -107,6 +107,7 @@
     <Compile Include="Matchers\Match.cs" />
     <Compile Include="Matchers\MatchDefinition.cs" />
     <Compile Include="Mocks\IMockMessager.cs" />
+    <Compile Include="Mocks\MessagingService\Consumer\Dsl\PactDslJsonArray.cs" />
     <Compile Include="Mocks\MessagingService\Consumer\Dsl\PactDslValue.cs" />
     <Compile Include="Mocks\MessagingService\Consumer\Dsl\DslPart.cs" />
     <Compile Include="Mocks\MessagingService\Consumer\Dsl\PactDslJsonBody.cs" />

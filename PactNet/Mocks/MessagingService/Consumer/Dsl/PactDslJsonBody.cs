@@ -52,6 +52,8 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
                 {
                     if (parts.IsPrimitive)
                         content[parts.Name] = parts.Value;
+                    else if (parts is PactDslJsonArray)
+                        content[parts.Name] = parts.Value;
                     else
                         content[parts.Name] = parts.Content;
                 }
@@ -67,6 +69,12 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
 
         public override object Value { get { return this.Body; } }
 
+        public DslPart Parent
+        {
+            get { return _parent; }
+            set { _parent = value; }
+        }
+
         public PactDslJsonBody Object(string name)
         {
             Body[name] = new PactDslJsonBody(this, name);
@@ -75,10 +83,16 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
 
         public PactDslJsonBody CloseObject()
         {
-            if (_parent != null)
-                return (PactDslJsonBody)_parent;
+            if (_parent == null)
+                return this;
 
-            return this;
+            return (PactDslJsonBody) _parent;
+        }
+
+        public PactDslJsonArray MinArrayLike(string name, int size)
+        {
+            Body[name] = new PactDslJsonArray(this, name, size);
+            return ((PactDslJsonArray) Body[name]);
         }
 
         public PactDslJsonBody StringType(string name, string example)
@@ -90,6 +104,12 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
         public PactDslJsonBody Int32Type(string name, int example)
         {
             Body[name] = new PactDslValue<int>(this, name, example).TypeMatcher();
+            return this;
+        }
+
+        public PactDslJsonBody DecimalType(string name, int example)
+        {
+            Body[name] = new PactDslValue<decimal>(this, name, example).TypeMatcher();
             return this;
         }
 

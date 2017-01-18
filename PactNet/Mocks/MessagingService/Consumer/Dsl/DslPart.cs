@@ -32,13 +32,16 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
         public string Name { get { return _rootName; } }
 
         [JsonIgnore]
-        public string Path
+        public virtual string Path
         {
             get
             {
                 var path = string.Empty;
                 if (_parent != null)
-                    path = string.Format("{0}.{1}", _parent.Path, _rootName);
+                    if (!string.IsNullOrEmpty(_rootName))
+                        path = string.Format("{0}.{1}", _parent.Path, _rootName);
+                    else
+                        path = _parent.Path;
                 else
                     path = "$.body" + _rootName;
 
