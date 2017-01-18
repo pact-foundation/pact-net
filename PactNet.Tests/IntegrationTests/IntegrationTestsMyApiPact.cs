@@ -8,7 +8,7 @@ namespace PactNet.Tests.IntegrationTests
 {
     public class IntegrationTestsMyApiPact : IDisposable
     {
-        public IPactBuilder PactBuilder { get; private set; }
+        public IPactHttpServiceBuilder PactBuilder { get; private set; }
         public IMockProviderService MockProviderService { get; private set; }
 
         public int MockServerPort { get { return 4321; } }

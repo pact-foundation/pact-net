@@ -6,27 +6,27 @@ using System.Text;
 
 namespace PactNet.Models.Messaging
 {
-    public class PactMessageFile<T> : PactDetails
+    public class PactMessageFile : PactDetails
     {
-        private List<Message<T>> messages;
+        private List<Message> messages;
 
         public PactMessageFile()
         {
-            messages = new List<Message<T>>();
+            messages = new List<Message>();
         }
 
         [JsonProperty(PropertyName = "messages")]
-        public Message<T> [] Messages
+        public Message [] Messages
         {
             get { return messages.ToArray(); } 
         }
 
-        public void AddMessage(Message<T> newMessage)
+        public void AddMessage(Message newMessage)
         {
             messages.Add(newMessage);
         }
 
-        public Message<T> GetMessage()
+        public Message GetMessage()
         {
             var m = messages.FirstOrDefault();
 

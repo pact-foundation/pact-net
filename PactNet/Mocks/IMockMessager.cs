@@ -6,16 +6,16 @@ using System.Text;
 
 namespace PactNet.Mocks
 {
-    public interface IMockMessager<T>
+    public interface IMockMessager
     {
         void ExceptsToRecieve(string messageTopic);
 
-        void AddMessage(Message<T> message);
+        void AddMessage(Message message);
 
         /// <summary>
         /// Gets the first message from queue.
         /// </summary>
         /// <returns></returns>
-        Message<T> GetMessage();
+        Message GetMessage();
     }
 }

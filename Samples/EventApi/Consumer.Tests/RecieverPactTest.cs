@@ -10,7 +10,7 @@ namespace Consumer.Tests
 {
     public class RecieverPactTest
     {
-        MessagePactBuilder<MessagedEvent> pactBuilder = new MessagePactBuilder<MessagedEvent>();
+        MessagePactBuilder pactBuilder = new MessagePactBuilder();
 
 
 

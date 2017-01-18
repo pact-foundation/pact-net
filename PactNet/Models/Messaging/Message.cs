@@ -8,7 +8,7 @@ using PactNet.Mocks.MessagingService.Consumer.Dsl;
 
 namespace PactNet.Models.Messaging
 {
-    public class Message<T>
+    public class Message
     {
         public Message()
         {

@@ -7,7 +7,7 @@ using PactNet.Models;
 
 namespace PactNet
 {
-    public class PactBuilder : IPactBuilder
+    public class PactBuilder : IPactHttpServiceBuilder
     {
         public string ConsumerName { get; private set; }
         public string ProviderName { get; private set; }
@@ -29,7 +29,7 @@ namespace PactNet
         {
         }
 
-        public IPactBuilder ServiceConsumer(string consumerName)
+        public IPactHttpServiceBuilder ServiceConsumer(string consumerName)
         {
             if (String.IsNullOrEmpty(consumerName))
             {
@@ -41,7 +41,7 @@ namespace PactNet
             return this;
         }
 
-        public IPactBuilder HasPactWith(string providerName)
+        public IPactHttpServiceBuilder HasPactWith(string providerName)
         {
             if (String.IsNullOrEmpty(providerName))
             {

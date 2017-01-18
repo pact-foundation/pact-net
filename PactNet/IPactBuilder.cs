@@ -7,8 +7,17 @@ namespace PactNet
     {
         IPactBuilder ServiceConsumer(string consumerName);
         IPactBuilder HasPactWith(string providerName);
+        void Build();
+    }
+
+    public interface IPactHttpServiceBuilder : IPactBuilder
+    {
         IMockProviderService MockService(int port, bool enableSsl = false, bool bindOnAllAdapters = false);
         IMockProviderService MockService(int port, JsonSerializerSettings jsonSerializerSettings, bool enableSsl = false, bool bindOnAllAdapters = false);        
-        void Build();
+    }
+
+    public interface IPactMessagingBuilder : IPactBuilder
+    {
+        
     }
 }

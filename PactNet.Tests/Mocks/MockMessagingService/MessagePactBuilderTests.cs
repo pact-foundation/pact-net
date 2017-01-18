@@ -18,8 +18,8 @@ namespace PactNet.Tests.Mocks.MockMessagingService
             var body = new PactDslJsonBody()
                 .StringType("foo", "bar");
 
-            MessagePactBuilder<string> builder = new MessagePactBuilder<string>();
-            Message<string> m = new Message<string>()
+            MessagePactBuilder builder = new MessagePactBuilder();
+            Message m = new Message()
             {
                 ProviderState = "or maybe 'scenario'? not sure about this",
                 Description = "Published credit data",
@@ -36,8 +36,8 @@ namespace PactNet.Tests.Mocks.MockMessagingService
             var body = new PactDslJsonBody()
                 .StringType("foo", "bar");
 
-            MessagePactBuilder<string> builder = new MessagePactBuilder<string>();
-            Message<string> m = new Message<string>()
+            MessagePactBuilder builder = new MessagePactBuilder();
+            Message m = new Message()
             {
                 ProviderState = "or maybe 'scenario'? not sure about this",
                 Description = "Published credit data",
@@ -60,7 +60,7 @@ namespace PactNet.Tests.Mocks.MockMessagingService
         [Fact]
         public void Returns_Null_When_No_Messages()
         {
-            MessagePactBuilder<string> builder = new MessagePactBuilder<string>();
+            MessagePactBuilder builder = new MessagePactBuilder();
 
             var message = builder.GetMessage();
 
@@ -73,11 +73,11 @@ namespace PactNet.Tests.Mocks.MockMessagingService
             var body = new PactDslJsonBody()
                 .StringType("foo", "bar");
 
-            MessagePactBuilder<string> builder = new MessagePactBuilder<string>();
+            MessagePactBuilder builder = new MessagePactBuilder();
             builder.ServiceConsumer("Consumer");
             builder.HasPactWith("Provider");
 
-            Message<string> m = new Message<string>()
+            Message m = new Message()
             {
                 ProviderState = "or maybe 'scenario'? not sure about this",
                 Description = "Published credit data",
@@ -98,12 +98,12 @@ namespace PactNet.Tests.Mocks.MockMessagingService
             var body = new PactDslJsonBody()
                 .StringType("foo", "bar");
 
-            MessagePactBuilder<string> builder = new MessagePactBuilder<string>();
+            MessagePactBuilder builder = new MessagePactBuilder();
             builder.ServiceConsumer("Consumer");
             builder.HasPactWith("Provider");
             builder.ExceptsToRecieve("my.random.topic");
 
-            Message<string> m = new Message<string>()
+            Message m = new Message()
             {
                 ProviderState = "or maybe 'scenario'? not sure about this",
                 Description = "Published credit data",

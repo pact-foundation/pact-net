@@ -11,9 +11,9 @@ using System.IO;
 
 namespace PactNet.Mocks.MessagingService
 {
-    public class MessagePactBuilder<T> : IMockMessager<T>, IPactBuilder
+    public class MessagePactBuilder : IPactMessagingBuilder
     {
-        private readonly PactMessageFile<T> pactMessage;
+        private readonly PactMessageFile pactMessage;
         private string expectedMessageTopic;
         private readonly PactConfig pactConfig;
 
@@ -25,12 +25,12 @@ namespace PactNet.Mocks.MessagingService
 
         public MessagePactBuilder(PactConfig pactConfig)
         {
-            this.pactMessage = new PactMessageFile<T>();
+            this.pactMessage = new PactMessageFile();
             this.expectedMessageTopic = string.Empty;
             this.pactConfig = pactConfig;
         }
 
-        public void AddMessage(Message<T> message)
+        public void AddMessage(Message message)
         {
             this.pactMessage.AddMessage(message);
         }
@@ -40,7 +40,7 @@ namespace PactNet.Mocks.MessagingService
             expectedMessageTopic = messageTopic;
         }
 
-        public Message<T> GetMessage()
+        public Message GetMessage()
         {
             return this.pactMessage.GetMessage();
         }
@@ -51,7 +51,7 @@ namespace PactNet.Mocks.MessagingService
             return JsonConvert.SerializeObject(pactMessage);
         }
 
-        public IPactBuilder ServiceConsumer(string consumerName)
+        public IPactHttpServiceBuilder ServiceConsumer(string consumerName)
         {
             if (String.IsNullOrWhiteSpace(consumerName))
             {
@@ -63,7 +63,7 @@ namespace PactNet.Mocks.MessagingService
             return this;
         }
 
-        public IPactBuilder HasPactWith(string providerName)
+        public IPactHttpServiceBuilder HasPactWith(string providerName)
         {
             if (String.IsNullOrWhiteSpace(providerName))
             {
