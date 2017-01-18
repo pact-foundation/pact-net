@@ -8,43 +8,26 @@ using System.Text;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Extensions;
 using System.IO;
+using PactNet.Mocks.MessagingService.Consumer.Dsl;
 
-namespace PactNet.Mocks.MessagingService
+namespace PactNet
 {
-    public class MessagePactBuilder : IPactMessagingBuilder
+    public class PactMessageBuilder : IPactMessagingBuilder
     {
         private readonly PactMessageFile pactMessage;
-        private string expectedMessageTopic;
         private readonly PactConfig pactConfig;
 
-        public MessagePactBuilder() 
+        public PactMessageBuilder() 
             : this(new PactConfig())
         {
            
         }
 
-        public MessagePactBuilder(PactConfig pactConfig)
+        public PactMessageBuilder(PactConfig pactConfig)
         {
             this.pactMessage = new PactMessageFile();
-            this.expectedMessageTopic = string.Empty;
             this.pactConfig = pactConfig;
         }
-
-        public void AddMessage(Message message)
-        {
-            this.pactMessage.AddMessage(message);
-        }
-
-        public void ExceptsToRecieve(string messageTopic)
-        {
-            expectedMessageTopic = messageTopic;
-        }
-
-        public Message GetMessage()
-        {
-            return this.pactMessage.GetMessage();
-        }
-
 
         public string GetPactAsJSON()
         {
@@ -91,18 +74,23 @@ namespace PactNet.Mocks.MessagingService
             PersistPactFileToDisk();
         }
 
-        private string GeneratePactFileName()
+        public IPactMessagingBuilder WithContent(Message message)
         {
-            return String.Format("{0}-{1}-{2}.json",
-                pactMessage.Consumer != null ? pactMessage.Consumer.Name.Replace('.', '-') : String.Empty,
-                pactMessage.Provider != null ? pactMessage.Provider.Name.Replace('.', '-') : String.Empty,
-                expectedMessageTopic != null ? expectedMessageTopic.Replace('.', '-') : String.Empty)
-                .ToLowerSnakeCase();
+            this.pactMessage.AddMessage(message);
+
+            return this;
         }
+
+        public IPactMessagingBuilder WithMetaData(Dictionary<string, object> metaData)
+        {
+            this.pactMessage.MetaData = metaData;
+            return this;
+        }
+
 
         private void PersistPactFileToDisk()
         {
-            string fileName = GeneratePactFileName();
+            string fileName = this.pactMessage.GeneratePactFileName();
 
             if(!Directory.Exists(this.pactConfig.PactDir))
             {
@@ -113,5 +101,7 @@ namespace PactNet.Mocks.MessagingService
 
             File.WriteAllText(fullPath, this.GetPactAsJSON());
         }
+
+       
     }
 }
