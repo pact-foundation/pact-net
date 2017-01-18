@@ -24,7 +24,7 @@ namespace PactNet.Tests.Mocks.MessagingService.Consumer.Dsl
         }
 
         [Fact]
-        public void Path_Serializes_()
+        public void Path_Serializes_Content_And_Matchers()
         {
             var dsl = new PactDslJsonBody()
                 .Object("a")
@@ -41,7 +41,8 @@ namespace PactNet.Tests.Mocks.MessagingService.Consumer.Dsl
                     .CloseObject()
                 .CloseObject();
 
-            var test = JsonConvert.SerializeObject(dsl);
+            var expected = "{\"matchingRules\":{\"$.body.a.a1\":[{\"match\":\"type\"}],\"$.body.a.a2\":[{\"match\":\"type\"}],\"$.body.a.a3\":[{\"match\":\"type\"}],\"$.body.a.a4\":[{\"regex\":\"([a-z]).*\"}],\"$.body.a.b.b1\":[{\"match\":\"type\"}],\"$.body.a.b.c.c1\":[{\"match\":\"type\"}],\"$.body.a.b.c.c2\":[{\"regex\":\"([a-z]).*\"}]},\"content\":{\"a\":{\"a1\":{\"a1\":\"test1\"},\"a2\":{\"a2\":\"test2\"},\"a3\":{\"a3\":3},\"a4\":{\"a4\":\"test4\"},\"b\":{\"b1\":{\"b1\":\"test5\"},\"c\":{\"c1\":{\"c1\":5},\"c2\":{\"c2\":\"test6\"}}}}}}";
+           Assert.Equal(expected, JsonConvert.SerializeObject(dsl));
         }
     }
 }
