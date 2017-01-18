@@ -6,6 +6,7 @@ namespace PactNet.Mocks.MockHttpService.Matchers.Regex
 {
     public class RegexMatcher : IMatcher
     {
+        [JsonIgnore]
         public string Type
         {
             get { return RegexMatchDefinition.Name; }
