@@ -32,6 +32,11 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
 
         public override object Value { get { return this.Body; } }
 
+        public PactDslValue<T> DateFormatMatcher(string dateFormat)
+        {
+            return (PactDslValue<T>) this.MatchDateFormat(dateFormat);
+        }
+
         public PactDslValue<T> TypeMatcher()
         {
             return (PactDslValue<T>) this.MatchType();

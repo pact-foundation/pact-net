@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using PactNet.Matchers;
+using PactNet.Matchers.DateFormat;
 using PactNet.Matchers.Regex;
 using PactNet.Matchers.Type;
 
@@ -23,6 +24,13 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             _rootName = rootName;
 
             _matchers = new Dictionary<string, IMatcher>();
+        }
+
+        [JsonIgnore]
+        public DslPart Parent
+        {
+            get { return _parent; }
+            set { _parent = value; }
         }
 
         [JsonIgnore]
@@ -64,6 +72,12 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
         protected DslPart MatchRegex(string regex)
         {
             _matchers["regex"] = new RegexMatcher(regex);
+            return this;
+        }
+
+        protected DslPart MatchDateFormat(string dateFormat)
+        {
+            _matchers["date"] = new DateFormatMatcher(dateFormat);
             return this;
         }
 

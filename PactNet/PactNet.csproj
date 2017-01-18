@@ -104,6 +104,8 @@
     <Compile Include="Comparers\MissingInteractionComparisonFailure.cs" />
     <Compile Include="Comparers\UnexpectedRequestComparisonFailure.cs" />
     <Compile Include="Configuration\Json\JsonConfig.cs" />
+    <Compile Include="Matchers\DateFormat\DateFormatDefinition.cs" />
+    <Compile Include="Matchers\DateFormat\DateFormatMatcher.cs" />
     <Compile Include="Matchers\Match.cs" />
     <Compile Include="Matchers\MatchDefinition.cs" />
     <Compile Include="Matchers\Regex\RegexMatchDefinition.cs" />

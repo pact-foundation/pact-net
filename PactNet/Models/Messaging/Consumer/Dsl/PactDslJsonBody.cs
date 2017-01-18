@@ -66,13 +66,6 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
 
         public override object Value { get { return this.Body; } }
 
-        [JsonIgnore]
-        public DslPart Parent
-        {
-            get { return _parent; }
-            set { _parent = value; }
-        }
-
         public PactDslJsonBody Object(string name)
         {
             Body[name] = new PactDslJsonBody(this, name);
@@ -93,6 +86,27 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             return ((PactDslJsonArray) Body[name]);
         }
 
+        public PactDslJsonBody StringMatcher(string name, string regex, string example)
+        {
+            Body[name] = new PactDslValue<string>(this, name, example).StringMatcher(regex);
+            return this;
+        }
+
+        public PactDslJsonBody GuidMatcher(string name, Guid example)
+        {
+            const string guidRegEx = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+            Body[name] = new PactDslValue<string>(this, name, example.ToString()).StringMatcher(guidRegEx);
+            return this;
+        }
+
+        public PactDslJsonBody DateFormat(string name, string dateFormat, DateTime example)
+        {
+            Body[name] = new PactDslValue<DateTime>(this, name, example).DateFormatMatcher(dateFormat);
+            return this;
+        }
+
+
+        #region TypeMatchers
         public PactDslJsonBody StringType(string name, string example)
         {
             Body[name] = new PactDslValue<string>(this, name, example).TypeMatcher();
@@ -111,22 +125,9 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             return this;
         }
 
-        public PactDslJsonBody StringMatcher(string name, string regex, string example)
+        public PactDslJsonBody BooleanType(string name, bool example)
         {
-            Body[name] = new PactDslValue<string>(this, name, example).StringMatcher(regex);
-            return this;
-        }
-
-        public PactDslJsonBody GuidType(string name, Guid example)
-        {
-            const string guidRegEx = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
-            Body[name] = new PactDslValue<string>(this, name, example.ToString()).StringMatcher(guidRegEx);
-            return this;
-        }
-
-        public PactDslJsonBody DateTimeType(string name, DateTime example)
-        {
-            Body[name] = new PactDslValue<DateTime>(this, name, example).TypeMatcher();
+            Body[name] = new PactDslValue<bool>(this, name, example).TypeMatcher();
             return this;
         }
 
@@ -189,5 +190,6 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             Body[name] = new PactDslValue<ulong>(this, name, example).TypeMatcher();
             return this;
         }
+        #endregion
     }
 }
