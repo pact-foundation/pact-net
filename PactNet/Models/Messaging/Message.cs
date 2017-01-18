@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using PactNet.Matchers;
+using PactNet.Mocks.MessagingService.Consumer.Dsl;
 
 namespace PactNet.Models.Messaging
 {
@@ -10,7 +12,6 @@ namespace PactNet.Models.Messaging
     {
         public Message()
         {
-            Contents = new Dictionary<string, T>();
         }
 
         [JsonProperty(PropertyName = "description")]
@@ -19,8 +20,14 @@ namespace PactNet.Models.Messaging
         [JsonProperty(PropertyName = "providerState")]
         public string ProviderState { get; set; }
 
-        [JsonProperty(PropertyName = "contents")]
-        public Dictionary<string, T> Contents { get; set; }
+        [JsonIgnore]
+        public PactDslJsonBody Body { get; set; }
+
+        [JsonProperty("contents", NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, object> Contents => Body?.Content;
+
+        [JsonProperty("matchingRules", NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, List<IMatcher>> MatchingRules => Body?.Matchers;
 
         [JsonProperty(PropertyName = "metaData")]
         public MetaData MetaData { get; set; }
