@@ -49,6 +49,12 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
         public abstract Dictionary<string, List<IMatcher>> Matchers { get; }
         public abstract Dictionary<string, object> Content { get; }
 
+        [JsonIgnore]
+        public abstract object Value { get; }
+
+        [JsonIgnore]
+        public abstract bool IsPrimitive { get; }
+
         protected DslPart MatchType()
         {
             _matchers["type"] = new TypeMatcher();

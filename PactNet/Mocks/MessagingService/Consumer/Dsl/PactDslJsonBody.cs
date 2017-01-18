@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Newtonsoft.Json;
 using PactNet.Matchers;
 
@@ -9,7 +10,20 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
 {
     public class PactDslJsonBody : DslPart<Dictionary<string, DslPart>>
     {
-        [JsonProperty("matchingRules",  NullValueHandling = NullValueHandling.Ignore)]
+
+        public PactDslJsonBody()
+            :base()
+        {
+            Body = new Dictionary<string, DslPart>();
+        }
+
+        public PactDslJsonBody(DslPart parent, string rootName)
+            :base(parent, rootName)
+        {
+            Body = new Dictionary<string, DslPart>();
+        }
+
+        [JsonProperty("matchingRules", NullValueHandling = NullValueHandling.Ignore)]
         public override Dictionary<string, List<IMatcher>> Matchers
         {
             get
@@ -36,7 +50,10 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
                 var content = new Dictionary<string, object>();
                 foreach (var parts in this.Body.Values)
                 {
-                    content[parts.Name] = parts.Content;
+                    if (parts.IsPrimitive)
+                        content[parts.Name] = parts.Value;
+                    else
+                        content[parts.Name] = parts.Content;
                 }
 
                 if (content.Count > 0)
@@ -46,17 +63,9 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
             }
         }
 
-        public PactDslJsonBody()
-            :base()
-        {
-            Body = new Dictionary<string, DslPart>();
-        }
+        public override bool IsPrimitive { get { return false; } }
 
-        public PactDslJsonBody(DslPart parent, string rootName)
-            :base(parent, rootName)
-        {
-            Body = new Dictionary<string, DslPart>();
-        }
+        public override object Value { get { return this.Body; } }
 
         public PactDslJsonBody Object(string name)
         {

@@ -30,6 +30,10 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
             get { return new Dictionary<string, List<IMatcher>> {{this.Path, _matchers.Values.ToList()}}; }
         }
 
+        public override bool IsPrimitive { get { return true; } }
+
+        public override object Value { get { return this.Body; } }
+
         public PactDslValue<T> TypeMatcher()
         {
             return (PactDslValue<T>) this.MatchType();
