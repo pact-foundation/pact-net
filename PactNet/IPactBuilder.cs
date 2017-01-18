@@ -1,5 +1,9 @@
 ﻿using Newtonsoft.Json;
+using PactNet.Mocks.MessagingService.Consumer.Dsl;
 using PactNet.Mocks.MockHttpService;
+using PactNet.Models.Messaging;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace PactNet
 {
@@ -18,6 +22,8 @@ namespace PactNet
 
     public interface IPactMessagingBuilder : IPactBuilder
     {
-        
+        IPactMessagingBuilder WithContent(Message message);
+
+        IPactMessagingBuilder WithMetaData(Dictionary<string, object> metaData);
     }
 }

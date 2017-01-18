@@ -128,7 +128,7 @@
     <Compile Include="Mocks\MockHttpService\MockProviderServiceTests.cs" />
     <Compile Include="Mocks\MockHttpService\Models\ProviderServiceRequestTests.cs" />
     <Compile Include="Mocks\MockHttpService\Models\HttpBodyContentTests.cs" />
-    <Compile Include="Mocks\MockMessagingService\MessagePactBuilderTests.cs" />
+    <Compile Include="MessagePactBuilderTests.cs" />
     <Compile Include="Models\InteractionTests.cs" />
     <Compile Include="Models\PactDetailsTests.cs" />
     <Compile Include="Models\PactFileTests.cs" />
@@ -158,6 +158,9 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Mocks\MockMessagingService\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />

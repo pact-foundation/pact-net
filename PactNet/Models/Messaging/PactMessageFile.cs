@@ -21,6 +21,9 @@ namespace PactNet.Models.Messaging
             get { return messages.ToArray(); } 
         }
 
+        [JsonProperty(PropertyName = "metaData", NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, object> MetaData { get; set; }
+
         public void AddMessage(Message newMessage)
         {
             messages.Add(newMessage);

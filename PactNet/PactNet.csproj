@@ -111,7 +111,7 @@
     <Compile Include="Mocks\MessagingService\Consumer\Dsl\PactDslValue.cs" />
     <Compile Include="Mocks\MessagingService\Consumer\Dsl\DslPart.cs" />
     <Compile Include="Mocks\MessagingService\Consumer\Dsl\PactDslJsonBody.cs" />
-    <Compile Include="Mocks\MessagingService\MessagePactBuilder.cs" />
+    <Compile Include="PactMessageBuilder.cs" />
     <Compile Include="Mocks\MockHttpService\Matchers\Regex\RegexMatchDefinition.cs" />
     <Compile Include="Mocks\MockHttpService\Matchers\Type\TypeMatchDefinition.cs" />
     <Compile Include="Mocks\MockHttpService\Matchers\DefaultHttpBodyMatcher.cs" />

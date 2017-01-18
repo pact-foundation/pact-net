@@ -29,7 +29,6 @@ namespace PactNet.Models.Messaging
         [JsonProperty("matchingRules", NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, List<IMatcher>> MatchingRules => Body?.Matchers;
 
-        [JsonProperty(PropertyName = "metaData")]
-        public MetaData MetaData { get; set; }
+      
     }
 }
