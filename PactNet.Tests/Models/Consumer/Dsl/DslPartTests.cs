@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Newtonsoft.Json;
-using PactNet.Models.Messaging;
 using PactNet.Models.Messaging.Consumer.Dsl;
 using Xunit;
 
-namespace PactNet.Tests.Mocks.MessagingService.Consumer.Dsl
+namespace PactNet.Tests.Models.Consumer.Dsl
 {
     public class DslPartTests
     {
@@ -30,6 +26,7 @@ namespace PactNet.Tests.Mocks.MessagingService.Consumer.Dsl
                     .StringType("a1", "test1")
                     .StringType("a2", "test2")
                     .Int32Type("a3", 3)
+                    .StringType("a4", "test4a")
                     .StringMatcher("a4", "([a-z]).*", "test4")
                     .Object("b")
                         .StringType("b1", "test5")

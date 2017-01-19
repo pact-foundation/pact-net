@@ -24,9 +24,29 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             set { Console.WriteLine(value); }
         }
 
-        public override Dictionary<string, List<IMatcher>> Matchers
+        public override Dictionary<string, object> Matchers
         {
-            get { return new Dictionary<string, List<IMatcher>> {{this.Path, _matchers.Values.ToList()}}; }
+            get
+            {
+                var matchers = new Dictionary<string, object>();
+                foreach (var matcher in _matchers)
+                    matchers[this.Name] = matcher.Value;
+
+                //TODO: This serializes incorrectly. only uses the last IMatcher in the collection. Update to match the V3 spec:
+                /*
+                 * {
+                      "matchingRules": {
+                        "path": {
+                            "matchers": [
+                              {"match": "A"}
+                            ]
+                        }
+                      }
+                    }
+                 */
+
+                return matchers;
+            }
             set { Console.WriteLine(value);}
         }
 

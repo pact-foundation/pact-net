@@ -43,10 +43,15 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
         {
             var matchers = new Dictionary<string, List<IMatcher>>();
 
-            while (token.HasValues)
+            foreach (var child in token.Children())
             {
-                token = token.Next;
-                //TODO: build flat matchers structure and then figure out how to use JsonPath to map it back to the DslPart structure
+                token = child;
+
+                while (token.HasValues)
+                {
+                    token = token.Next;
+                    //TODO: build flat matchers structure and then figure out how to use JsonPath to map it back to the DslPart structure
+                }
             }
 
             return matchers;

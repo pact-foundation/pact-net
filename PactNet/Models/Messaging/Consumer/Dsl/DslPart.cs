@@ -54,7 +54,7 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             }
         }
 
-        public abstract Dictionary<string, List<IMatcher>> Matchers { get; set; }
+        public abstract Dictionary<string, object> Matchers { get; set; }
         public abstract Dictionary<string, object> Content { get; set; }
 
         [JsonIgnore]

@@ -35,11 +35,11 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             }
         }
 
-        public override Dictionary<string, List<IMatcher>> Matchers
+        public override Dictionary<string, object> Matchers
         {
             get
             {
-                var matchers = new Dictionary<string, List<IMatcher>>();
+                var matchers = new Dictionary<string, object>();
                 foreach (var part in this.Body)
                 {
                     foreach (var match in part.Matchers)
