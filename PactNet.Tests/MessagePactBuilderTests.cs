@@ -57,7 +57,7 @@ namespace PactNet.Tests
             builder.WithContent(m)
              .WithMetaData(metaData);
 
-            const string expectedPact = "{\"provider\":{\"name\":\"Provider\"},\"consumer\":{\"name\":\"Consumer\"},\"messages\":[{\"description\":\"Published credit data\",\"providerState\":\"or maybe 'scenario'? not sure about this\",\"contents\":{\"foo\":\"bar\"},\"matchingRules\":{\"$.body.foo\":[{\"match\":\"type\"}]}}],\"metaData\":{\"contentType\":\"application/json\"}}";
+            const string expectedPact = "{\"provider\":{\"name\":\"Provider\"},\"consumer\":{\"name\":\"Consumer\"},\"messages\":[{\"description\":\"Published credit data\",\"providerState\":\"or maybe \'scenario\'? not sure about this\",\"contents\":{\"foo\":\"bar\"},\"matchingRules\":{\"$.body.foo\":{\"match\":\"type\"}}}],\"metaData\":{\"contentType\":\"application/json\"}}";
             string actual = builder.GetPactAsJSON();
             Assert.Equal<string>(expectedPact, actual);
         }

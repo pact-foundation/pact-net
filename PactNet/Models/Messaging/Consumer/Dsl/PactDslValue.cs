@@ -30,7 +30,7 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             {
                 var matchers = new Dictionary<string, object>();
                 foreach (var matcher in _matchers)
-                    matchers[this.Name] = matcher.Value;
+                    matchers[this.Path] = matcher.Value;
 
                 //TODO: This serializes incorrectly. only uses the last IMatcher in the collection. Update to match the V3 spec:
                 /*
