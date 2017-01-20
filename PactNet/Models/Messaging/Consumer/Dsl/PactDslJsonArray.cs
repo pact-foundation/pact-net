@@ -42,6 +42,9 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
                 var matchers = new Dictionary<string, object>();
                 foreach (var part in this.Body)
                 {
+                    if (part.Matchers == null)
+                        continue;
+
                     foreach (var match in part.Matchers)
                         matchers[match.Key] = match.Value;
                 }

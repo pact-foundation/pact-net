@@ -7,6 +7,8 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
 {
     public class PactDslJsonBody : DslPart<Dictionary<string, DslPart>>
     {
+        private Dictionary<string, object> _matchersJObject;
+        private Dictionary<string, object> _contentJObject;
 
         public PactDslJsonBody()
             :base()
@@ -20,16 +22,20 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             Body = new Dictionary<string, DslPart>();
         }
 
-
-
         [JsonProperty("matchingRules", NullValueHandling = NullValueHandling.Ignore)]
         public override Dictionary<string, object> Matchers
         {
             get
             {
+                if (_matchersJObject != null)
+                    return _matchersJObject;
+
                 var matchers = new Dictionary<string, object>();
                 foreach (var parts in this.Body.Values)
                 {
+                    if (parts.Matchers == null)
+                        continue;
+                    
                     foreach (var match in parts.Matchers)
                         matchers[match.Key] = match.Value;
                 }
@@ -39,7 +45,7 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
 
                 return null;
             }
-            set { Console.WriteLine(value); }
+            set { _matchersJObject = value; }
         }
 
         [JsonProperty("contents", NullValueHandling = NullValueHandling.Ignore)]
@@ -47,6 +53,9 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
         {
             get
             {
+                if (_contentJObject != null)
+                    return _contentJObject;
+
                 var content = new Dictionary<string, object>();
                 foreach (var parts in this.Body.Values)
                 {
@@ -63,7 +72,7 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
 
                 return null;
             }
-            set { Console.WriteLine(value); }
+            set { _contentJObject = value; }
         }
 
         public override bool IsPrimitive { get { return false; } }
