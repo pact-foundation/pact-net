@@ -88,6 +88,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Comparers\Messaging\MessageComparer.cs" />
     <Compile Include="Configuration\Json\Converters\CamelCaseStringEnumConverter.cs" />
     <Compile Include="Configuration\Json\Converters\PreserveCasingDictionaryConverter.cs" />
     <Compile Include="Infrastructure\Logging\ILocalLogMessageHandler.cs" />
@@ -180,6 +181,7 @@
     <Compile Include="Models\PactFile.cs" />
     <Compile Include="Models\Messaging\PactMessageFile.cs" />
     <Compile Include="PactConfig.cs" />
+    <Compile Include="PactMessagingVerifier.cs" />
     <Compile Include="PactUriOptions.cs" />
     <Compile Include="PactVerifier.cs" />
     <Compile Include="Mocks\MockHttpService\Models\ProviderServiceInteraction.cs" />

@@ -25,7 +25,7 @@ namespace PactNet.Models.Messaging
 
         [JsonProperty("contents", NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, object> Contents => Body?.Content;
-
+        
         [JsonProperty("matchingRules", NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, List<IMatcher>> MatchingRules => Body?.Matchers;
 

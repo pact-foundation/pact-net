@@ -20,7 +20,7 @@ namespace Consumer.Tests
             IPactMessagingBuilder builder = new PactMessageBuilder();
 
             builder.ServiceConsumer("Consumer")
-                .HasPactWith("Provider");
+                .HasPactWith("Provider.Messaging");
 
             MessagedEvent testEvent = new MessagedEvent()
             {

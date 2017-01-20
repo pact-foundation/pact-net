@@ -19,7 +19,7 @@ namespace Provider.Api.Web.Tests
             var outputter = new CustomOutputter();
             var config = new PactVerifierConfig();
             config.ReportOutputters.Add(outputter);
-            IPactVerifier pactVerifier = new PactVerifier(() => {}, () => {}, config);
+            IPactHttpVerifier pactVerifier = new PactVerifier(() => {}, () => {}, config);
 
             pactVerifier
                 .ProviderState(
@@ -40,8 +40,8 @@ namespace Provider.Api.Web.Tests
             //Act / Assert
             pactVerifier
                    .ServiceProvider("Event API", _server.HttpClient)
-                   .HonoursPactWith("Consumer")
                    .PactUri("../../../Consumer.Tests/pacts/consumer-event_api.json")
+                   .HonoursPactWith("Consumer")
                    .Verify();
 
             // Verify that verifaction log is also sent to additional reporters defined in the config

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Producer.Models;
+using Provider.Messaging.Models;
 
-namespace Producer
+namespace Provider.Messaging
 {
     class Program
     {

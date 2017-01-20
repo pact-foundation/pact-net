@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Producer.Models;
+using Provider.Messaging.Models;
 using RabbitMQ.Client;
 using Newtonsoft.Json;
 
-namespace Producer
+namespace Provider.Messaging
 {
     public class Messenger
     {

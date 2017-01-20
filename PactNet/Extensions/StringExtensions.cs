@@ -10,5 +10,12 @@ namespace PactNet.Extensions
                 input.Replace(' ', '_').ToLower() :
                 String.Empty;
         }
+
+        public static bool IsWebUri(this string uri)
+        {
+            return uri.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase) ||
+                   uri.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase);
+        }
+
     }
 }
