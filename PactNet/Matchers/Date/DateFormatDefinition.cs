@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace PactNet.Matchers.DateFormat
+namespace PactNet.Matchers.Date
 {
     public class DateFormatMatchDefinition : MatchDefinition
     {

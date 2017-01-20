@@ -59,9 +59,29 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             return (PactDslValue<T>) this.MatchDateFormat(dateFormat);
         }
 
+        public PactDslValue<T> TimestampMatcher(string format)
+        {
+            return (PactDslValue<T>)this.MatchTimestamp(format);
+        }
+
         public PactDslValue<T> TypeMatcher()
         {
             return (PactDslValue<T>) this.MatchType();
+        }
+
+        public PactDslValue<T> EqualityMatcher()
+        {
+            return (PactDslValue<T>)this.MatchEquality();
+        }
+
+        public PactDslValue<T> IntegerMatcher()
+        {
+            return (PactDslValue<T>)this.MatchInteger();
+        }
+
+        public PactDslValue<T> DecimalMatcher()
+        {
+            return (PactDslValue<T>)this.MatchDecimal();
         }
 
         public PactDslValue<T> StringMatcher(string regex)

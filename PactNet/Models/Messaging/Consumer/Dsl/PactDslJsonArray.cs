@@ -102,5 +102,17 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             this.Body.Add(body);
             return this;
         }
+
+        public PactDslJsonArray MinMatcher(int minItems)
+        {
+            MatchMinValue(minItems);
+            return this;
+        }
+
+        public PactDslJsonArray MaxMatcher(int maxItems)
+        {
+            MatchMaxValue(maxItems);
+            return this;
+        }
     }
 }
