@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using Newtonsoft.Json;
 using PactNet.Matchers;
 
-namespace PactNet.Mocks.MessagingService.Consumer.Dsl
+namespace PactNet.Models.Messaging.Consumer.Dsl
 {
     public class PactDslJsonBody : DslPart<Dictionary<string, DslPart>>
     {
+        private Dictionary<string, object> _matchersJObject;
+        private Dictionary<string, object> _contentJObject;
 
         public PactDslJsonBody()
             :base()
@@ -24,13 +23,19 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
         }
 
         [JsonProperty("matchingRules", NullValueHandling = NullValueHandling.Ignore)]
-        public override Dictionary<string, List<IMatcher>> Matchers
+        public override Dictionary<string, object> Matchers
         {
             get
             {
-                var matchers = new Dictionary<string, List<IMatcher>>();
+                if (_matchersJObject != null)
+                    return _matchersJObject;
+
+                var matchers = new Dictionary<string, object>();
                 foreach (var parts in this.Body.Values)
                 {
+                    if (parts.Matchers == null)
+                        continue;
+                    
                     foreach (var match in parts.Matchers)
                         matchers[match.Key] = match.Value;
                 }
@@ -40,13 +45,17 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
 
                 return null;
             }
+            set { _matchersJObject = value; }
         }
 
-        [JsonProperty("content", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("contents", NullValueHandling = NullValueHandling.Ignore)]
         public override Dictionary<string, object> Content
         {
             get
             {
+                if (_contentJObject != null)
+                    return _contentJObject;
+
                 var content = new Dictionary<string, object>();
                 foreach (var parts in this.Body.Values)
                 {
@@ -63,16 +72,19 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
 
                 return null;
             }
+            set { _contentJObject = value; }
         }
 
         public override bool IsPrimitive { get { return false; } }
 
         public override object Value { get { return this.Body; } }
 
-        public DslPart Parent
+        private PactDslValue<T> GetItem<T>(string name, T example) where T : IConvertible
         {
-            get { return _parent; }
-            set { _parent = value; }
+            if (!Body.ContainsKey(name))
+                Body[name] = new PactDslValue<T>(this, name, example);
+
+            return (PactDslValue<T>)Body[name];
         }
 
         public PactDslJsonBody Object(string name)
@@ -95,101 +107,110 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
             return ((PactDslJsonArray) Body[name]);
         }
 
+        public PactDslJsonBody StringMatcher(string name, string regex, string example)
+        {
+            this.GetItem(name, example).StringMatcher(regex);
+            return this;
+        }
+
+        public PactDslJsonBody GuidMatcher(string name, Guid example)
+        {
+            const string guidRegEx = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+            this.GetItem(name, example.ToString()).StringMatcher(guidRegEx);
+            return this;
+        }
+
+        public PactDslJsonBody DateFormat(string name, string dateFormat, DateTime example)
+        {
+            this.GetItem(name, example).DateFormatMatcher(dateFormat);
+            return this;
+        }
+
+
+        #region TypeMatchers
         public PactDslJsonBody StringType(string name, string example)
         {
-            Body[name] = new PactDslValue<string>(this, name, example).TypeMatcher();
+            this.GetItem(name, example).TypeMatcher();
             return this;
         }
 
         public PactDslJsonBody Int32Type(string name, int example)
         {
-            Body[name] = new PactDslValue<int>(this, name, example).TypeMatcher();
+            this.GetItem(name, example).TypeMatcher();
             return this;
         }
 
         public PactDslJsonBody DecimalType(string name, int example)
         {
-            Body[name] = new PactDslValue<decimal>(this, name, example).TypeMatcher();
+            this.GetItem(name, example).TypeMatcher();
             return this;
         }
 
-        public PactDslJsonBody StringMatcher(string name, string regex, string example)
+        public PactDslJsonBody BooleanType(string name, bool example)
         {
-            Body[name] = new PactDslValue<string>(this, name, example).StringMatcher(regex);
-            return this;
-        }
-
-        public PactDslJsonBody GuidType(string name, Guid example)
-        {
-            const string guidRegEx = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
-            Body[name] = new PactDslValue<string>(this, name, example.ToString()).StringMatcher(guidRegEx);
-            return this;
-        }
-
-        public PactDslJsonBody DateTimeType(string name, DateTime example)
-        {
-            Body[name] = new PactDslValue<DateTime>(this, name, example).TypeMatcher();
+            this.GetItem(name, example).TypeMatcher();
             return this;
         }
 
         public PactDslJsonBody DoubleType(string name, double example)
         {
-            Body[name] = new PactDslValue<double>(this, name, example).TypeMatcher();
+            this.GetItem(name, example).TypeMatcher();
             return this;
         }
 
         public PactDslJsonBody DecimalType(string name, decimal example)
         {
-            Body[name] = new PactDslValue<decimal>(this, name, example).TypeMatcher();
+            this.GetItem(name, example).TypeMatcher();
             return this;
         }
 
         public PactDslJsonBody FloatType(string name, float example)
         {
-            Body[name] = new PactDslValue<float>(this, name, example).TypeMatcher();
+            this.GetItem(name, example).TypeMatcher();
             return this;
         }
 
         public PactDslJsonBody Int64Type(string name, Int64 example)
         {
-            Body[name] = new PactDslValue<Int64>(this, name, example).TypeMatcher();
+            this.GetItem(name, example).TypeMatcher();
             return this;
         }
 
         public PactDslJsonBody ShortType(string name, short example)
         {
-            Body[name] = new PactDslValue<short>(this, name, example).TypeMatcher();
+            this.GetItem(name, example).TypeMatcher();
             return this;
         }
 
         public PactDslJsonBody LongType(string name, long example)
         {
-            Body[name] = new PactDslValue<long>(this, name, example).TypeMatcher();
+            this.GetItem(name, example).TypeMatcher();
             return this;
         }
 
         public PactDslJsonBody UShortType(string name, ushort example)
         {
-            Body[name] = new PactDslValue<ushort>(this, name, example).TypeMatcher();
+            this.GetItem(name, example).TypeMatcher();
             return this;
         }
 
         public PactDslJsonBody UIntType(string name, uint example)
         {
-            Body[name] = new PactDslValue<uint>(this, name, example).TypeMatcher();
+            this.GetItem(name, example).TypeMatcher();
             return this;
         }
 
         public PactDslJsonBody UInt64Type(string name, UInt64 example)
         {
-            Body[name] = new PactDslValue<UInt64>(this, name, example).TypeMatcher();
+            this.GetItem(name, example).TypeMatcher();
             return this;
         }
 
         public PactDslJsonBody ULongType(string name, ulong example)
         {
-            Body[name] = new PactDslValue<ulong>(this, name, example).TypeMatcher();
+            this.GetItem(name, example).TypeMatcher();
             return this;
         }
+        #endregion
     }
 }

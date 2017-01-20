@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using PactNet.Matchers;
-using PactNet.Mocks.MockHttpService.Matchers.Regex;
-using PactNet.Mocks.MockHttpService.Matchers.Type;
+using PactNet.Matchers.DateFormat;
+using PactNet.Matchers.Regex;
+using PactNet.Matchers.Type;
 
-namespace PactNet.Mocks.MessagingService.Consumer.Dsl
+namespace PactNet.Models.Messaging.Consumer.Dsl
 {
     public abstract class DslPart
     {
@@ -26,6 +24,13 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
             _rootName = rootName;
 
             _matchers = new Dictionary<string, IMatcher>();
+        }
+
+        [JsonIgnore]
+        public DslPart Parent
+        {
+            get { return _parent; }
+            set { _parent = value; }
         }
 
         [JsonIgnore]
@@ -49,8 +54,8 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
             }
         }
 
-        public abstract Dictionary<string, List<IMatcher>> Matchers { get; }
-        public abstract Dictionary<string, object> Content { get; }
+        public abstract Dictionary<string, object> Matchers { get; set; }
+        public abstract Dictionary<string, object> Content { get; set; }
 
         [JsonIgnore]
         public abstract object Value { get; }
@@ -67,6 +72,12 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
         protected DslPart MatchRegex(string regex)
         {
             _matchers["regex"] = new RegexMatcher(regex);
+            return this;
+        }
+
+        protected DslPart MatchDateFormat(string dateFormat)
+        {
+            _matchers["date"] = new DateFormatMatcher(dateFormat);
             return this;
         }
 

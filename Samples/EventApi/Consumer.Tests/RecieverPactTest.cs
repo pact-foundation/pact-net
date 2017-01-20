@@ -1,5 +1,4 @@
-﻿using PactNet.Mocks.MessagingService;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +6,8 @@ using System.Threading.Tasks;
 using Consumer.Tests.Models;
 using PactNet;
 using Xunit;
-using PactNet.Mocks.MessagingService.Consumer.Dsl;
 using PactNet.Models.Messaging;
+using PactNet.Models.Messaging.Consumer.Dsl;
 
 namespace Consumer.Tests
 {
@@ -37,8 +36,8 @@ namespace Consumer.Tests
             var body = new PactDslJsonBody()
                 .Object("partyInvite")
                     .StringType("eventType", testEvent.EventType)
-                    .GuidType("eventId", testEvent.EventId)
-                    .DateTimeType("timestampt", testEvent.Timestamp)
+                    .GuidMatcher("eventId", testEvent.EventId)
+                    .DateFormat("timestampt", "", testEvent.Timestamp)
                     .Object("location")
                         .Object("latitude")
                             .Int32Type("degrees", testEvent.Location.Latitude.Degrees)

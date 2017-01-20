@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using PactNet.Matchers;
-using PactNet.Mocks.MessagingService.Consumer.Dsl;
+using PactNet.Models.Messaging.Consumer.Dsl;
 
 namespace PactNet.Models.Messaging
 {
@@ -12,6 +12,7 @@ namespace PactNet.Models.Messaging
     {
         public Message()
         {
+            this.Body = new PactDslJsonBody();
         }
 
         [JsonProperty(PropertyName = "description")]
@@ -24,11 +25,17 @@ namespace PactNet.Models.Messaging
         public PactDslJsonBody Body { get; set; }
 
         [JsonProperty("contents", NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, object> Contents => Body?.Content;
+        public Dictionary<string, object> Contents
+        {
+            get { return this.Body.Content; }
+            set { this.Body.Content = value; }
+        }
         
         [JsonProperty("matchingRules", NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, List<IMatcher>> MatchingRules => Body?.Matchers;
-
-      
+        public Dictionary<string, object> MatchingRules
+        {
+            get { return this.Body.Matchers; }
+            set { this.Body.Matchers = value; }
+        }
     }
 }

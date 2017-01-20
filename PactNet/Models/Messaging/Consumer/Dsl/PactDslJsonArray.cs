@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using PactNet.Matchers;
 
-namespace PactNet.Mocks.MessagingService.Consumer.Dsl
+namespace PactNet.Models.Messaging.Consumer.Dsl
 {
     public class PactDslJsonArray : DslPart<List<PactDslJsonBody>>
     {
@@ -37,13 +35,16 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
             }
         }
 
-        public override Dictionary<string, List<IMatcher>> Matchers
+        public override Dictionary<string, object> Matchers
         {
             get
             {
-                var matchers = new Dictionary<string, List<IMatcher>>();
+                var matchers = new Dictionary<string, object>();
                 foreach (var part in this.Body)
                 {
+                    if (part.Matchers == null)
+                        continue;
+
                     foreach (var match in part.Matchers)
                         matchers[match.Key] = match.Value;
                 }
@@ -53,6 +54,7 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
 
                 return null;
             }
+            set { Console.WriteLine(value); }
         }
 
         public override Dictionary<string, object> Content
@@ -68,6 +70,7 @@ namespace PactNet.Mocks.MessagingService.Consumer.Dsl
 
                 return null;
             }
+            set { Console.WriteLine(value); }
         }
 
         public override object Value

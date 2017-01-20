@@ -105,13 +105,21 @@
     <Compile Include="Comparers\MissingInteractionComparisonFailure.cs" />
     <Compile Include="Comparers\UnexpectedRequestComparisonFailure.cs" />
     <Compile Include="Configuration\Json\JsonConfig.cs" />
+    <Compile Include="Matchers\DateFormat\DateFormatDefinition.cs" />
+    <Compile Include="Matchers\DateFormat\DateFormatMatcher.cs" />
     <Compile Include="Matchers\Match.cs" />
     <Compile Include="Matchers\MatchDefinition.cs" />
+    <Compile Include="Matchers\Regex\RegexMatchDefinition.cs" />
+    <Compile Include="Matchers\Regex\RegexMatcher.cs" />
+    <Compile Include="Matchers\Type\TypeMatchDefinition.cs" />
+    <Compile Include="Matchers\Type\TypeMatcher.cs" />
     <Compile Include="Mocks\IMockMessager.cs" />
-    <Compile Include="Mocks\MessagingService\Consumer\Dsl\PactDslJsonArray.cs" />
-    <Compile Include="Mocks\MessagingService\Consumer\Dsl\PactDslValue.cs" />
-    <Compile Include="Mocks\MessagingService\Consumer\Dsl\DslPart.cs" />
-    <Compile Include="Mocks\MessagingService\Consumer\Dsl\PactDslJsonBody.cs" />
+    <Compile Include="Models\Messaging\Consumer\Dsl\DslPartJsonConverter.cs" />
+    <Compile Include="Models\Messaging\Consumer\Dsl\PactDslJsonArray.cs" />
+    <Compile Include="Models\Messaging\Consumer\Dsl\PactDslValue.cs" />
+    <Compile Include="Models\Messaging\Consumer\Dsl\DslPart.cs" />
+    <Compile Include="Models\Messaging\Consumer\Dsl\PactDslJsonBody.cs" />
+    <Compile Include="Models\Messaging\MessageJsonConverter.cs" />
     <Compile Include="PactMessageBuilder.cs" />
     <Compile Include="Mocks\MockHttpService\Matchers\Regex\RegexMatchDefinition.cs" />
     <Compile Include="Mocks\MockHttpService\Matchers\Type\TypeMatchDefinition.cs" />
@@ -176,7 +184,6 @@
     <Compile Include="Mocks\MockHttpService\Validators\IProviderServiceValidator.cs" />
     <Compile Include="Mocks\MockHttpService\Validators\ProviderServiceValidator.cs" />
     <Compile Include="Models\Messaging\Message.cs" />
-    <Compile Include="Models\Messaging\MetaData.cs" />
     <Compile Include="Models\PactDetails.cs" />
     <Compile Include="Models\PactFile.cs" />
     <Compile Include="Models\Messaging\PactMessageFile.cs" />
@@ -219,9 +226,7 @@
     </None>
     <None Include="PactNet.nuspec" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Mocks\MessagingService\Provider\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
