@@ -110,7 +110,7 @@ namespace PactNet.Tests.Models.Consumer.Dsl
                 .CloseObject();
 
             var expected = JsonConvert.SerializeObject(dsl);
-            var actual = JsonConvert.DeserializeObject<PactDslJsonBody>(expected, new DslPartConverter());
+            var actual = JsonConvert.DeserializeObject<PactDslJsonBody>(expected, new DslPartJsonConverter());
 
             Assert.Equal(expected, JsonConvert.SerializeObject(actual));
         }

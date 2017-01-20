@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 using Xunit;
 using PactNet;
 using PactNet.Models.Messaging.Consumer.Dsl;
@@ -60,6 +61,25 @@ namespace PactNet.Tests
             const string expectedPact = "{\"provider\":{\"name\":\"Provider\"},\"consumer\":{\"name\":\"Consumer\"},\"messages\":[{\"description\":\"Published credit data\",\"providerState\":\"or maybe \'scenario\'? not sure about this\",\"contents\":{\"foo\":\"bar\"},\"matchingRules\":{\"$.body.foo\":{\"match\":\"type\"}}}],\"metaData\":{\"contentType\":\"application/json\"}}";
             string actual = builder.GetPactAsJSON();
             Assert.Equal<string>(expectedPact, actual);
+        }
+
+        [Fact]
+        public void Consumes_Pact_Properly()
+        {
+            var body = new PactDslJsonBody()
+                .StringType("foo", "bar");
+
+            Message m = new Message()
+            {
+                ProviderState = "or maybe 'scenario'? not sure about this",
+                Description = "Published credit data",
+                Body = body
+            };
+
+            string expected = JsonConvert.SerializeObject(m);
+            Message actual = JsonConvert.DeserializeObject<Message>(expected, new MessageJsonConverter());
+
+            Assert.Equal(expected, JsonConvert.SerializeObject(actual));
         }
 
         [Fact]

@@ -9,10 +9,21 @@ using PactNet.Matchers;
 
 namespace PactNet.Models.Messaging.Consumer.Dsl
 {
-    public class DslPartConverter : CustomCreationConverter<DslPart>
+    public class DslPartJsonConverter : CustomCreationConverter<DslPart>
     {
         private Dictionary<string, object> _matchers;
         private Dictionary<string, object> _content;
+
+        public DslPartJsonConverter()
+        {
+            
+        }
+
+        public DslPartJsonConverter(Dictionary<string, object> content, Dictionary<string, object> matchers)
+        {
+            _content = content;
+            _matchers = matchers;
+        }
 
         public override DslPart Create(Type objectType)
         {
@@ -28,15 +39,16 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
 
             var root = new PactDslJsonBody();
 
-
-
             foreach (var item in _content)
-                root.Body.Add(item.Key, this.BuildPactDsl((JToken)item.Value, root, item.Key));
+                if (item.Value is JToken)
+                    root.Body.Add(item.Key, this.BuildPactDsl((JToken)item.Value, root, item.Key));
+                else
+                    root.Body.Add(item.Key, this.BuildPactDslValue(root, item.Key, item.Value.ToString()));
 
             return root;
         }
 
-        private DslPart BuildPactDsl(JToken token, DslPart parent, string rootName)
+        public DslPart BuildPactDsl(JToken token, DslPart parent, string rootName)
         {
             JValue value;
             switch (token.Type)
@@ -70,7 +82,7 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             return parent;
         }
 
-        private PactDslJsonBody BuildPactDslJsonBody(DslPart parent, JObject obj, string rootName)
+        public PactDslJsonBody BuildPactDslJsonBody(DslPart parent, JObject obj, string rootName)
         {
             var pactDslBody = new PactDslJsonBody(parent, rootName);
             foreach (var child in obj.Children())
@@ -79,7 +91,7 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             return pactDslBody;
         }
 
-        private PactDslJsonArray BuildPactDslArray(DslPart parent, JArray array, string rootName)
+        public PactDslJsonArray BuildPactDslArray(DslPart parent, JArray array, string rootName)
         {
             var pactDslArray = new PactDslJsonArray(parent, rootName, 1);
             foreach (var item in array.Children())
@@ -88,7 +100,7 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             return pactDslArray;
         }
 
-        private PactDslValue<T> BuildPactDslValue<T>(DslPart parent, string name, T example) where T : IConvertible
+        public PactDslValue<T> BuildPactDslValue<T>(DslPart parent, string name, T example) where T : IConvertible
         {
             var value = new PactDslValue<T>(parent, name, example);
 
