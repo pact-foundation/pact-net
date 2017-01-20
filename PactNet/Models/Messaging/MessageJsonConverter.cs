@@ -20,16 +20,7 @@ namespace PactNet.Models.Messaging
         {
             var message = (Message)base.ReadJson(reader, objectType, existingValue, serializer);
 
-            var dslPartConverter = new DslPartJsonConverter(message.Contents, message.MatchingRules);
-
-            var root = new PactDslJsonBody();
-            foreach (var item in message.Contents)
-                if (item.Value is JToken)
-                    root.Body.Add(item.Key, dslPartConverter.BuildPactDsl((JToken)item.Value, root, item.Key));
-                else
-                    root.Body.Add(item.Key, dslPartConverter.BuildPactDslValue(root, item.Key, item.Value.ToString()));
-
-            message.Body = root;
+            message.Body = new DslPartJsonConverter(message.Contents, message.MatchingRules).Build();
 
             return message;
         }

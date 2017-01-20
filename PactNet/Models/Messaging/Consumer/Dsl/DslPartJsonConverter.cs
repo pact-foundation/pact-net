@@ -37,13 +37,20 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             _matchers = body.Matchers;
             _content = body.Content;
 
+            return this.Build();
+        }
+
+        public PactDslJsonBody Build()
+        {
             var root = new PactDslJsonBody();
 
             foreach (var item in _content)
-                if (item.Value is JToken)
-                    root.Body.Add(item.Key, this.BuildPactDsl((JToken)item.Value, root, item.Key));
-                else
-                    root.Body.Add(item.Key, this.BuildPactDslValue(root, item.Key, item.Value.ToString()));
+            {
+                var token = item.Value as JToken ?? JToken.FromObject(item.Value);
+                //TODO: throw an exception if null maybe?
+
+                root.Body.Add(item.Key, this.BuildPactDsl(token, root, item.Key));
+            }
 
             return root;
         }
