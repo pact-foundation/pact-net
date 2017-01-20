@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading;
+using PactNet.Extensions;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 
@@ -37,7 +38,7 @@ namespace PactNet.Mocks.MockHttpService
 
             var httpRequest = _httpRequestMessageMapper.Convert(request);
 
-            var httpResponse = _httpClient.SendAsync(httpRequest, CancellationToken.None).Result;
+            var httpResponse = _httpClient.SendAsync(httpRequest, CancellationToken.None).RunSync();
             var response = _providerServiceResponseMapper.Convert(httpResponse);
 
             Dispose(httpRequest);

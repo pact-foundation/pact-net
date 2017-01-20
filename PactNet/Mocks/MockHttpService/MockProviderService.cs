@@ -5,8 +5,10 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
+using PactNet.Extensions;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Nancy;
@@ -115,12 +117,12 @@ namespace PactNet.Mocks.MockHttpService
 
             _response = response;
 
-            RegisterInteraction();
+            RegisterInteraction().RunSync();
         }
 
         public void VerifyInteractions()
         {
-            SendAdminHttpRequest(HttpVerb.Get, Constants.InteractionsVerificationPath);
+            SendAdminHttpRequest(HttpVerb.Get, Constants.InteractionsVerificationPath).RunSync();
         }
 
         public void Start()
@@ -140,11 +142,11 @@ namespace PactNet.Mocks.MockHttpService
         {
             if (_host != null)
             {
-                SendAdminHttpRequest(HttpVerb.Delete, Constants.InteractionsPath);
+                SendAdminHttpRequest(HttpVerb.Delete, Constants.InteractionsPath).RunSync();
             }
         }
 
-        public void SendAdminHttpRequest<T>(HttpVerb method, string path, T requestContent, IDictionary<string, string> headers = null) where T : class
+        public async Task SendAdminHttpRequest<T>(HttpVerb method, string path, T requestContent, IDictionary<string, string> headers = null) where T : class
         {
             if (_host == null)
             {
@@ -170,12 +172,12 @@ namespace PactNet.Mocks.MockHttpService
                 request.Content = new StringContent(requestContentJson, Encoding.UTF8, "application/json");
             }
 
-            var response = _httpClient.SendAsync(request, CancellationToken.None).Result;
+            var response = await _httpClient.SendAsync(request, CancellationToken.None);
             var responseStatusCode = response.StatusCode;
 
             if (response.Content != null)
             {
-                responseContent = response.Content.ReadAsStringAsync().Result;
+                responseContent = await response.Content.ReadAsStringAsync();
             }
 
             Dispose(request);
@@ -187,7 +189,7 @@ namespace PactNet.Mocks.MockHttpService
             }
         }
 
-        private void RegisterInteraction()
+        private async Task RegisterInteraction()
         {
             if (String.IsNullOrEmpty(_description))
             {
@@ -214,7 +216,7 @@ namespace PactNet.Mocks.MockHttpService
 
             var testContext = BuildTestContext();
 
-            SendAdminHttpRequest(HttpVerb.Post, Constants.InteractionsPath, interaction, new Dictionary<string, string> { { Constants.AdministrativeRequestTestContextHeaderKey, testContext } });
+            await SendAdminHttpRequest(HttpVerb.Post, Constants.InteractionsPath, interaction, new Dictionary<string, string> { { Constants.AdministrativeRequestTestContextHeaderKey, testContext } });
 
             ClearTrasientState();
         }
@@ -249,9 +251,9 @@ namespace PactNet.Mocks.MockHttpService
             return String.Join(" ", relevantStackFrameSummaries);
         }
 
-        private void SendAdminHttpRequest(HttpVerb method, string path)
+        private async Task SendAdminHttpRequest(HttpVerb method, string path)
         {
-            SendAdminHttpRequest<object>(method, path, null);
+            await SendAdminHttpRequest<object>(method, path, null);
         }
 
         private void StopRunningHost()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using PactNet.Extensions;
 using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
@@ -37,7 +38,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
 
             if(from.Content != null)
             {
-                var responseContent = from.Content.ReadAsByteArrayAsync().Result;
+                var responseContent = from.Content.ReadAsByteArrayAsync().RunSync();
                 if (responseContent != null)
                 {
                     var httpBodyContent = _httpBodyContentMapper.Convert(content: responseContent, headers: to.Headers);
