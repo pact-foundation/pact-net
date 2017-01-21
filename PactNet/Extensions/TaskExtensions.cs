@@ -1,22 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace PactNet.Extensions
 {
     public static class TaskExtensions
     {
-        public static void RunSync(this Task task)
-        {
-            task.ConfigureAwait(false)
-                .GetAwaiter()
-                .GetResult();
-        }
-
         public static T RunSync<T>(this Task<T> task)
         {
-            return task.ConfigureAwait(false)
-                .GetAwaiter()
-                .GetResult();
+            return Task.Factory.StartNew(() => task.Result).Result;
         }
     }
 }
