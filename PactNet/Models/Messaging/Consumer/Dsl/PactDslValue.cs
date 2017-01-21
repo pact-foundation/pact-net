@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 using PactNet.Matchers;
 
 namespace PactNet.Models.Messaging.Consumer.Dsl
@@ -48,6 +49,16 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
                 return matchers;
             }
             set { Console.WriteLine(value);}
+        }
+
+        public override MatcherResult Validate(JToken message)
+        {
+            var result = new MatcherResult();
+
+            foreach (var matcher in _matchers.Values)
+                result.Add(matcher.Match(this.Path, JToken.FromObject(this.Value), message.SelectToken(this.Path)));
+
+            return result;
         }
 
         public override bool IsPrimitive { get { return true; } }

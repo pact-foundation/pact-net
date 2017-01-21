@@ -4,7 +4,12 @@ namespace PactNet.Matchers
 {
     public class MatcherResult
     {
-        public IEnumerable<MatcherCheck> MatcherChecks { get; private set; }
+        public List<MatcherCheck> MatcherChecks { get; private set; }
+
+        public MatcherResult()
+        {
+            MatcherChecks = new List<MatcherCheck>();
+        }
 
         public MatcherResult(MatcherCheck matcherCheck)
         {
@@ -13,7 +18,12 @@ namespace PactNet.Matchers
 
         public MatcherResult(IEnumerable<MatcherCheck> matcherChecks)
         {
-            MatcherChecks = matcherChecks;
+            MatcherChecks = new List<MatcherCheck>(matcherChecks);
+        }
+
+        public void Add(MatcherResult result)
+        {
+            this.MatcherChecks.AddRange(result.MatcherChecks);
         }
     }
 }

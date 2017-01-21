@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using Nancy.Security;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PactNet.Matchers;
 using PactNet.Matchers.Date;
 using PactNet.Matchers.Decimal;
@@ -68,6 +70,8 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
 
         [JsonIgnore]
         public abstract bool IsPrimitive { get; }
+
+        public abstract MatcherResult Validate(JToken message);
 
         protected DslPart MatchType()
         {
