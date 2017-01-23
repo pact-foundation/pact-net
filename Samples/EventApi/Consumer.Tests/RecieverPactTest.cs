@@ -18,8 +18,8 @@ namespace Consumer.Tests
         {
             IPactMessagingBuilder builder = new PactMessageBuilder();
 
-            builder.ServiceConsumer("Consumer")
-                .HasPactWith("Provider.Messaging");
+            builder.ServiceConsumer("Consumer-dotNet")
+                .HasPactWith("Provider.Messaging-dotNet");
 
             MessagedEvent testEvent = new MessagedEvent()
             {
@@ -66,9 +66,12 @@ namespace Consumer.Tests
               .WithMetaData(metaData);
 
             //Saves to disk with the default location from new PactConfig()
-           // builder.Build();
+           builder.Build();
 
-            //TODO: Push to pack broker
+            string uri = "https://pactbroker.sapphirepri.com";
+           // var options = new PactUriOptions(string.Empty, string.Empty);
+        
+            builder.PushToBroker(uri, null);
         }
     }
 }
