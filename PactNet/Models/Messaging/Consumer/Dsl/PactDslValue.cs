@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 using PactNet.Matchers;
 
 namespace PactNet.Models.Messaging.Consumer.Dsl
@@ -50,6 +51,16 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             set { Console.WriteLine(value);}
         }
 
+        public override MatcherResult Validate(JToken message)
+        {
+            var result = new MatcherResult();
+
+            foreach (var matcher in _matchers.Values)
+                result.Add(matcher.Match(this.Path, JToken.FromObject(this.Value), message.SelectToken(this.Path)));
+
+            return result;
+        }
+
         public override bool IsPrimitive { get { return true; } }
 
         public override object Value { get { return this.Body; } }
@@ -59,9 +70,29 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             return (PactDslValue<T>) this.MatchDateFormat(dateFormat);
         }
 
+        public PactDslValue<T> TimestampMatcher(string format)
+        {
+            return (PactDslValue<T>)this.MatchTimestamp(format);
+        }
+
         public PactDslValue<T> TypeMatcher()
         {
             return (PactDslValue<T>) this.MatchType();
+        }
+
+        public PactDslValue<T> EqualityMatcher()
+        {
+            return (PactDslValue<T>)this.MatchEquality();
+        }
+
+        public PactDslValue<T> IntegerMatcher()
+        {
+            return (PactDslValue<T>)this.MatchInteger();
+        }
+
+        public PactDslValue<T> DecimalMatcher()
+        {
+            return (PactDslValue<T>)this.MatchDecimal();
         }
 
         public PactDslValue<T> StringMatcher(string regex)

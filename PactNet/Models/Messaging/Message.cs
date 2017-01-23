@@ -8,6 +8,7 @@ using PactNet.Models.Messaging.Consumer.Dsl;
 
 namespace PactNet.Models.Messaging
 {
+    [JsonConverter(typeof(MessageJsonConverter))]
     public class Message
     {
         public Message()

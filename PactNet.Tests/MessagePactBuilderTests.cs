@@ -77,7 +77,7 @@ namespace PactNet.Tests
             };
 
             string expected = JsonConvert.SerializeObject(m);
-            Message actual = JsonConvert.DeserializeObject<Message>(expected, new MessageJsonConverter());
+            Message actual = JsonConvert.DeserializeObject<Message>(expected);
 
             Assert.Equal(expected, JsonConvert.SerializeObject(actual));
         }

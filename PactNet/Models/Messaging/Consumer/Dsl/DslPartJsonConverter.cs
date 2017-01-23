@@ -37,13 +37,20 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             _matchers = body.Matchers;
             _content = body.Content;
 
+            return this.Build();
+        }
+
+        public PactDslJsonBody Build()
+        {
             var root = new PactDslJsonBody();
 
             foreach (var item in _content)
-                if (item.Value is JToken)
-                    root.Body.Add(item.Key, this.BuildPactDsl((JToken)item.Value, root, item.Key));
-                else
-                    root.Body.Add(item.Key, this.BuildPactDslValue(root, item.Key, item.Value.ToString()));
+            {
+                var token = item.Value as JToken ?? JToken.FromObject(item.Value);
+                //TODO: throw an exception if null maybe?
+
+                root.Body.Add(item.Key, this.BuildPactDsl(token, root, item.Key));
+            }
 
             return root;
         }
@@ -68,6 +75,11 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
                     var property = token as JProperty;
                     ((PactDslJsonBody)parent).Body[property.Name] = this.BuildPactDsl(property.First, parent, property.Name);
                     break;
+                case JTokenType.Guid:
+                case JTokenType.Date:
+                case JTokenType.TimeSpan:
+                case JTokenType.Uri:
+                case JTokenType.Undefined:
                 case JTokenType.String:
                     value = token as JValue;
                     return this.BuildPactDslValue(parent, rootName, value.Value<string>());
@@ -77,6 +89,9 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
                 case JTokenType.Boolean:
                     value = token as JValue;
                     return this.BuildPactDslValue(parent, rootName, value.Value<bool>());
+                case JTokenType.Float:
+                    value = token as JValue;
+                    return this.BuildPactDslValue(parent, rootName, value.Value<decimal>());
             }
 
             return parent;
@@ -93,9 +108,11 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
 
         public PactDslJsonArray BuildPactDslArray(DslPart parent, JArray array, string rootName)
         {
-            var pactDslArray = new PactDslJsonArray(parent, rootName, 1);
+            var pactDslArray = new PactDslJsonArray(parent, rootName, array.Count);
             foreach (var item in array.Children())
                 this.BuildPactDsl(item, pactDslArray, string.Empty);
+
+            //TODO: add min and max matchers (from the array level)
 
             return pactDslArray;
         }
@@ -113,13 +130,30 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
                     switch (matcher.Name)
                     {
                         case "match":
-                            value.TypeMatcher();
+                            switch (matcher.First.Value<string>())
+                            {
+                                case "type":
+                                    value.TypeMatcher();
+                                    break;
+                                case "equality":
+                                    value.EqualityMatcher();
+                                    break;
+                                case "decimal":
+                                    value.DecimalMatcher();
+                                    break;
+                                case "integer":
+                                    value.IntegerMatcher();
+                                    break;
+                            }
                             break;
                         case "regex":
                             value.StringMatcher(matcher.First.Value<string>());
                             break;
                         case "date":
                             value.DateFormatMatcher(matcher.First.Value<string>());
+                            break;
+                        case "timestamp":
+                            value.TimestampMatcher(matcher.First.Value<string>());
                             break;
                     }
                 }

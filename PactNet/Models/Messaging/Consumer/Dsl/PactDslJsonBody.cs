@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PactNet.Matchers;
 
 namespace PactNet.Models.Messaging.Consumer.Dsl
@@ -79,6 +80,19 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
 
         public override object Value { get { return this.Body; } }
 
+        public override MatcherResult Validate(JToken message)
+        {
+            var result = new MatcherResult();
+
+            foreach(var matcher in _matchers.Values)
+                result.Add(matcher.Match(this.Path, JToken.FromObject(this.Value), message.SelectToken(this.Path)));
+
+            foreach(var item in this.Body.Values)
+                result.Add(item.Validate(message));
+
+            return result;
+        }
+
         private PactDslValue<T> GetItem<T>(string name, T example) where T : IConvertible
         {
             if (!Body.ContainsKey(name))
@@ -103,8 +117,14 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
 
         public PactDslJsonArray MinArrayLike(string name, int size)
         {
-            Body[name] = new PactDslJsonArray(this, name, size);
+            Body[name] = new PactDslJsonArray(this, name, size).MinMatcher(size);
             return ((PactDslJsonArray) Body[name]);
+        }
+
+        public PactDslJsonArray MaxArrayLike(string name, int size)
+        {
+            Body[name] = new PactDslJsonArray(this, name, size).MaxMatcher(size);
+            return ((PactDslJsonArray)Body[name]);
         }
 
         public PactDslJsonBody StringMatcher(string name, string regex, string example)
@@ -126,6 +146,11 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             return this;
         }
 
+        public PactDslJsonBody TimestampFormat(string name, string format, DateTime example)
+        {
+            this.GetItem(name, example).TimestampMatcher(format);
+            return this;
+        }
 
         #region TypeMatchers
         public PactDslJsonBody StringType(string name, string example)
