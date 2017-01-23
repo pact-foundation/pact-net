@@ -1,9 +1,11 @@
 ﻿using PactNet;
+using Provider.Messaging.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace Provider.Messaging.Tests
 {
@@ -15,11 +17,22 @@ namespace Provider.Messaging.Tests
             public PactUriOptions Options { get; set; }
         }
 
+        [Fact]
         public void VerifyConsumerPact()
         {
             var config = new PactVerifierConfig();
 
-            Provider.Messaging.Models.Event party = new Models.Event();
+            Provider.Messaging.Models.Event party = new Models.Event()
+            {
+                EventId = Guid.NewGuid(),
+                EventType = "Party",
+                Timestamp = DateTime.UtcNow,
+                Location = new Location()
+                {
+                    Latitude = new Coordinate() { Degrees = 278, Minutes = 10, Seconds = 7.8 },
+                    Longitude = new Coordinate() { Degrees = 8, Minutes = 64, Seconds = 12.0 }
+                }
+            };
 
             PactMessagingVerifier verifier = new PactMessagingVerifier(config);
 
@@ -38,8 +51,8 @@ namespace Provider.Messaging.Tests
             //You should read this from a config or environment var.
             PactConnectionInfo info = new PactConnectionInfo()
             {
-                Uri = string.Empty,
-                Options = new PactUriOptions(string.Empty, string.Empty)
+                Uri = "https://pactbroker.sapphirepri.com",
+            Options = new PactUriOptions(string.Empty, string.Empty)
             };
 
             return info;
