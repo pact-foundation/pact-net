@@ -147,8 +147,8 @@ namespace PactNet.Tests.Models.Consumer.Dsl
                     .CloseObject()
                 .CloseObject();
 
-            string messageJson = JsonConvert.SerializeObject(dsl.Content);
-            var message = JToken.Parse(messageJson);
+            var message = new JObject();
+            message.Add("body", JToken.FromObject(dsl.Content));
 
             var results = dsl.Validate(message);
 

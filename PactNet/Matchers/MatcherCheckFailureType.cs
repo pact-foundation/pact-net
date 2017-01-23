@@ -4,6 +4,12 @@ namespace PactNet.Matchers
     {
         AdditionalItemInArray,
         AdditionalPropertyInObject,
-        ValueDoesNotMatch
+        NotEnoughValuesInArray,
+        ValueDoesNotMatch,
+        ValueNotEqual,
+        ValueNotInteger,
+        ValueNotDecimal,
+        ValueDoesNotMatchDateFormat,
+        ValueDoesNotMatchTimestamp
     }
 }

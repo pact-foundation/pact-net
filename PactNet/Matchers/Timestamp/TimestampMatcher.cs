@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -22,7 +23,16 @@ namespace PactNet.Matchers.Timestamp
 
         public MatcherResult Match(string path, JToken expected, JToken actual)
         {
-            throw new NotImplementedException();
+            var act = actual as JValue;
+
+            DateTime dateTime;
+            var matches = act != null &&
+                          DateTime.TryParseExact(act.Value.ToString(), this.Format, CultureInfo.InvariantCulture,
+                              DateTimeStyles.None, out dateTime);
+
+            return matches ?
+                new MatcherResult(new SuccessfulMatcherCheck(path)) :
+                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotMatchDateFormat));
         }
     }
 }
