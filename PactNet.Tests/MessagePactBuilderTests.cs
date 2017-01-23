@@ -16,7 +16,7 @@ namespace PactNet.Tests
         [Fact]
         public void Can_Add_A_Message()
         {
-            var body = new PactDslJsonBody()
+            var body = new PactDslJsonRoot()
                 .StringType("foo", "bar");
 
             Dictionary<string, object> metaData = new Dictionary<string, object>();
@@ -38,7 +38,7 @@ namespace PactNet.Tests
         [Fact]
         public void Creates_Pact_Properly()
         {
-            var body = new PactDslJsonBody()
+            var body = new PactDslJsonRoot()
                 .StringType("foo", "bar");
 
             Dictionary<string, object> metaData = new Dictionary<string, object>();
@@ -66,7 +66,7 @@ namespace PactNet.Tests
         [Fact]
         public void Consumes_Pact_Properly()
         {
-            var body = new PactDslJsonBody()
+            var body = new PactDslJsonRoot()
                 .StringType("foo", "bar");
 
             Message m = new Message()
@@ -85,7 +85,7 @@ namespace PactNet.Tests
         [Fact]
         public void Saves_Pact_To_Disk()
         {
-            var body = new PactDslJsonBody()
+            var body = new PactDslJsonRoot()
                 .StringType("foo", "bar");
 
             Dictionary<string, object> metaData = new Dictionary<string, object>();

@@ -56,7 +56,7 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
                     else
                         path = _parent.Path;
                 else
-                    path = "$.body" + _rootName;
+                    path = "$." + _rootName;
 
                 return path;
             }
