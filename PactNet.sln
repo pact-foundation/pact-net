@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A7656E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.Messaging", "Producer\Provider.Messaging.csproj", "{53019F40-D5A6-4AEA-B54A-D672D32C2249}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.Messaging.Tests", "Samples\EventApi\Provider.Messaging.Tests\Provider.Messaging.Tests.csproj", "{F35CF30F-C631-494B-A501-FF2FEDA5B4ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{53019F40-D5A6-4AEA-B54A-D672D32C2249}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53019F40-D5A6-4AEA-B54A-D672D32C2249}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53019F40-D5A6-4AEA-B54A-D672D32C2249}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F35CF30F-C631-494B-A501-FF2FEDA5B4ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F35CF30F-C631-494B-A501-FF2FEDA5B4ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F35CF30F-C631-494B-A501-FF2FEDA5B4ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F35CF30F-C631-494B-A501-FF2FEDA5B4ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,5 +80,6 @@ Global
 		{588A65B8-0FCB-48D9-92A8-4338E608F714} = {CE4F7673-F9D8-4ED6-B4A0-630B93DC0668}
 		{CE4F7673-F9D8-4ED6-B4A0-630B93DC0668} = {3EF642AB-53B8-4964-BB52-3C3477556154}
 		{53019F40-D5A6-4AEA-B54A-D672D32C2249} = {CE4F7673-F9D8-4ED6-B4A0-630B93DC0668}
+		{F35CF30F-C631-494B-A501-FF2FEDA5B4ED} = {CE4F7673-F9D8-4ED6-B4A0-630B93DC0668}
 	EndGlobalSection
 EndGlobal

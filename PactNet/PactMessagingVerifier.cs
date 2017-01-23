@@ -14,6 +14,15 @@ namespace PactNet
 {
     public class PactMessagingVerifier : IPactMessagingVerifier
     {
+        class SampleMessage
+        {
+            public string Description { get; set; }
+            public string ProivderState { get; set; }
+            public dynamic ExampleMessage { get; set; }
+        }
+
+        private IList<SampleMessage> supportedMessages;
+
         private readonly PactVerifierConfig config;
         public string PactFileUri { get; private set; }
         public PactUriOptions PactUriOptions { get; private set; }
@@ -29,6 +38,7 @@ namespace PactNet
         public PactMessagingVerifier(PactVerifierConfig config)
         {
             this.config = config;
+            this.supportedMessages = new List<SampleMessage>();
         }
 
         public IPactVerifier HonoursPactWith(string consumerName)
@@ -63,11 +73,28 @@ namespace PactNet
             var loggerName = LogProvider.CurrentLogProvider.AddLogger(this.config.LogDir, ProviderName.ToLowerSnakeCase(), "{0}_verifier.log");
             this.config.LoggerName = loggerName;
 
+            //Filter the messages to only what hte consumer needs
+
+
         }
 
         public IPactMessagingVerifier IAmProvider(string providerName)
         {
             ProviderName = providerName;
+            return this;
+        }
+
+        public IPactMessagingVerifier BroadCast(string messageDescription, string providerState, dynamic exampleMessage)
+        {
+            SampleMessage example = new SampleMessage()
+            {
+                Description = messageDescription,
+                ProivderState = providerState,
+                ExampleMessage = exampleMessage
+            };
+
+            this.supportedMessages.Add(example);
+
             return this;
         }
 
