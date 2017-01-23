@@ -30,7 +30,7 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
                 if (_parent != null)
                     path = string.Format("{0}.{1}[*]", _parent.Path, _rootName);
                 else
-                    path = "$.body" + _rootName;
+                    path = "$" + _rootName;
 
                 return path;
             }
@@ -45,6 +45,9 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
                 {
                     if (part.Matchers == null)
                         continue;
+
+                    foreach (var match in _matchers)
+                        matchers[this.Path.Replace("[*]", string.Empty)] = match.Value;
 
                     foreach (var match in part.Matchers)
                         matchers[match.Key] = match.Value;
@@ -97,7 +100,10 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             var result = new MatcherResult();
 
             foreach (var matcher in _matchers.Values)
-                result.Add(matcher.Match(this.Path, JToken.FromObject(this.Value), message.SelectToken(this.Path)));
+            {
+                var path = this.Path.Replace("[*]", string.Empty);
+                result.Add(matcher.Match(path, JToken.FromObject(this.Value), message.SelectToken(path)));
+            }
 
             foreach (var item in this.Body)
                 result.Add(item.Validate(message));

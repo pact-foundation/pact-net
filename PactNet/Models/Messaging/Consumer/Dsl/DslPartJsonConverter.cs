@@ -40,9 +40,9 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             return this.Build();
         }
 
-        public PactDslJsonBody Build()
+        public PactDslJsonRoot Build()
         {
-            var root = new PactDslJsonBody();
+            var root = new PactDslJsonRoot();
 
             foreach (var item in _content)
             {
@@ -112,7 +112,25 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             foreach (var item in array.Children())
                 this.BuildPactDsl(item, pactDslArray, string.Empty);
 
-            //TODO: add min and max matchers (from the array level)
+            var path = pactDslArray.Path.Replace("[*]", string.Empty);
+
+            if (_matchers.ContainsKey(path))
+            {
+                var matchers = (JToken)_matchers[path];
+
+                foreach (JProperty matcher in matchers.Children())
+                {
+                    switch (matcher.Name)
+                    {
+                        case "min":
+                            pactDslArray.MinMatcher(matcher.First.Value<int>());
+                            break;
+                        case "max":
+                            pactDslArray.MaxMatcher(matcher.First.Value<int>());
+                            break;
+                    }
+                }
+            }
 
             return pactDslArray;
         }

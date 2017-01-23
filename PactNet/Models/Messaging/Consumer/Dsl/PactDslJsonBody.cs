@@ -17,6 +17,12 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             Body = new Dictionary<string, DslPart>();
         }
 
+        public PactDslJsonBody(string rootName)
+            :base(null, rootName)
+        {
+            Body = new Dictionary<string, DslPart>();
+        }
+
         public PactDslJsonBody(DslPart parent, string rootName)
             :base(parent, rootName)
         {
