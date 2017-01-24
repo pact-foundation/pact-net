@@ -10,6 +10,7 @@ namespace PactNet.Matchers
         ValueNotInteger,
         ValueNotDecimal,
         ValueDoesNotMatchDateFormat,
-        ValueDoesNotMatchTimestamp
+        ValueDoesNotMatchTimestamp,
+        ValueDoesNotExist
     }
 }

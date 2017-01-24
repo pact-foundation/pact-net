@@ -159,15 +159,21 @@ namespace PactNet.Tests.Models.Consumer.Dsl
                         .StringType("e1", "test10")
                         .Int32Type("e2", 11)
                     .CloseObject()
-                .CloseObject();
+                .CloseObject()
+                .StringType("z", "ztesttoremove");
+              
 
             var message = new JObject();
-            message.Add("body", JToken.FromObject(dsl.Content));
+            var content = JObject.FromObject(dsl.Content);
+
+            var removed = content.Remove("z");
+            message.Add("body", content);
+
 
             var results = dsl.Validate(message);
 
-            Assert.Equal(29, results.MatcherChecks.Count);
-            Assert.Equal(0, results.MatcherChecks.Count(m => m.GetType() == typeof(FailedMatcherCheck)));
+            Assert.Equal(30, results.MatcherChecks.Count);
+            Assert.Equal(1, results.MatcherChecks.Count(m => m.GetType() == typeof(FailedMatcherCheck)));
         }
     }
 }
