@@ -25,6 +25,5 @@ namespace PactNet
 
         IPactMessagingBuilder WithMetaData(Dictionary<string, object> metaData);
 
-        void PushToBroker(string uri, PactUriOptions brokerSecurityOptions);
     }
 }
