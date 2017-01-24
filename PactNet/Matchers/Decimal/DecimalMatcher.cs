@@ -6,7 +6,6 @@ namespace PactNet.Matchers.Decimal
 {
     public class DecimalMatcher : IMatcher
     {
-        [JsonIgnore]
         public string Type
         {
             get { return DecimalMatchDefinition.Name; }

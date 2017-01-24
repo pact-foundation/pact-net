@@ -6,7 +6,6 @@ namespace PactNet.Matchers.Integer
 {
     public class IntegerMatcher : IMatcher
     {
-        [JsonIgnore]
         public string Type
         {
             get { return IntegerMatchDefinition.Name; }

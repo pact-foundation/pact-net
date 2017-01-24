@@ -25,7 +25,10 @@ namespace PactNet.Comparers.Messaging
                 return result;
             }
 
-            var actualToken = JToken.FromObject(actual);
+            //Need to wrap in a body root so that the expected matchingRules path lines up
+            var actualToken = new JObject();
+            actualToken.Add("body", JToken.FromObject(actual));
+
             var expectedToken = JToken.FromObject(expected);
 
             MatcherResult matchingResults = expected.Body.Validate(actualToken);

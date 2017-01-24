@@ -6,7 +6,6 @@ namespace PactNet.Matchers.Equality
 {
     public class EqualityMatcher : IMatcher
     {
-        [JsonIgnore]
         public string Type
         {
             get { return EqualityMatchDefinition.Name; }
