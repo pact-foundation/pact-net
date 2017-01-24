@@ -146,15 +146,35 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             return this;
         }
 
-        public PactDslJsonBody DateFormat(string name, string dateFormat, DateTime example)
+        public PactDslJsonBody DateFormat(string name, string format, DateTime example)
         {
-            this.GetItem(name, example).DateFormatMatcher(dateFormat);
+            var strDate = example.ToString(format);
+            this.GetItem(name, strDate).DateFormatMatcher(format);
             return this;
         }
 
         public PactDslJsonBody TimestampFormat(string name, string format, DateTime example)
         {
-            this.GetItem(name, example).TimestampMatcher(format);
+            var strDate = example.ToString(format);
+            this.GetItem(name, strDate).TimestampMatcher(format);
+            return this;
+        }
+
+        public PactDslJsonBody IntegerMatcher(string name, int example)
+        {
+            this.GetItem(name, example).IntegerMatcher();
+            return this;
+        }
+
+        public PactDslJsonBody DecimalMatcher(string name, decimal example)
+        {
+            this.GetItem(name, example).DecimalMatcher();
+            return this;
+        }
+
+        public PactDslJsonBody EqualityMatcher(string name, IConvertible example)
+        {
+            this.GetItem(name, example).EqualityMatcher();
             return this;
         }
 
@@ -166,12 +186,6 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
         }
 
         public PactDslJsonBody Int32Type(string name, int example)
-        {
-            this.GetItem(name, example).TypeMatcher();
-            return this;
-        }
-
-        public PactDslJsonBody DecimalType(string name, int example)
         {
             this.GetItem(name, example).TypeMatcher();
             return this;

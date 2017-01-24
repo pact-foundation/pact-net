@@ -21,7 +21,7 @@ namespace PactNet.Matchers.Equality
             var act = actual as JValue;
             var exp = expected as JValue;
 
-            var matches = act != null && exp.Value == act.Value;
+            var matches = act != null && exp.Value.Equals(act.Value);
 
             return matches ?
                 new MatcherResult(new SuccessfulMatcherCheck(path)) :

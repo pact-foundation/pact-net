@@ -24,7 +24,7 @@ namespace PactNet.Matchers.Max
         public MatcherResult Match(string path, JToken expected, JToken actual)
         {
             var act = actual as JArray;
-            var matches = act != null && actual.Count() > this.MaxValue;
+            var matches = act != null && actual.Count() <= this.MaxValue;
 
             return matches ?
                 new MatcherResult(new SuccessfulMatcherCheck(path)) :
