@@ -8,6 +8,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 {
     internal class HttpQueryStringComparer : IHttpQueryStringComparer
     {
+
         public ComparisonResult Compare(string expected, string actual)
         {
             if (String.IsNullOrEmpty(expected) && String.IsNullOrEmpty(actual))
@@ -42,17 +43,26 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                     return result;
                 }
 
-                var expectedValue = expectedQueryItems[expectedKey];
-                var actualValue = actualQueryItems[expectedKey];
-
-                if (expectedValue != actualValue)
+                if (actualQueryItems.AllKeys.Contains(expectedKey))
                 {
-                    result.RecordFailure(new DiffComparisonFailure(normalisedExpectedQuery, normalisedActualQuery));
-                    return result;
+                    var expectedValue = expectedQueryItems[expectedKey];
+                    var actualValue = actualQueryItems[expectedKey];
+
+                    var isWildcard = IsWildcard(expectedValue);
+                    if (!isWildcard && expectedValue != actualValue)
+                    {
+                        result.RecordFailure(new DiffComparisonFailure(normalisedExpectedQuery, normalisedActualQuery));
+                        return result;
+                    }
                 }
             }
 
             return result;
+        }
+
+        private bool IsWildcard(string matchString)
+        {
+            return matchString.Trim() == "*";
         }
 
         private string NormaliseUrlEncodingAndTrimTrailingAmpersand(string query)
