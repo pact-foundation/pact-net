@@ -6,7 +6,6 @@ namespace PactNet.Matchers.Decimal
 {
     public class DecimalMatcher : IMatcher
     {
-        [JsonIgnore]
         public string Type
         {
             get { return DecimalMatchDefinition.Name; }
@@ -18,7 +17,14 @@ namespace PactNet.Matchers.Decimal
 
         public MatcherResult Match(string path, JToken expected, JToken actual)
         {
-            throw new NotImplementedException();
+            var act = actual as JValue;
+            decimal decValue;
+
+            var matches = act != null && decimal.TryParse(act.Value.ToString(), out decValue);
+
+            return matches ?
+                new MatcherResult(new SuccessfulMatcherCheck(path)) :
+                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueNotDecimal));
         }
     }
 }

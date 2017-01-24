@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PactNet.Matchers;
 using PactNet.Models.Messaging.Consumer.Dsl;
 using Xunit;
 
@@ -86,8 +88,14 @@ namespace PactNet.Tests.Models.Consumer.Dsl
                 .Object("a")
                     .StringType("a1", "test1")
                     .StringType("a2", "test2")
-                    .Int32Type("a3", 3)
+                    .IntegerMatcher("a3", 3)
                     .StringMatcher("a4", "([a-z]).*", "test4")
+                    .DecimalMatcher("a5", decimal.Parse("5.03234"))
+                    .EqualityMatcher("a6", "test6")
+                    .EqualityMatcher("a7", 7)
+                    .EqualityMatcher("a8", decimal.Parse("8.123"))
+                    .DateFormat("a9", "MM/dd/yyyy", DateTime.UtcNow)
+                    .TimestampFormat("a10", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", DateTime.Now)
                     .MinArrayLike("b", 1)
                         .Item(new PactDslJsonBody()
                             .StringType("c1", "test6")
@@ -123,8 +131,14 @@ namespace PactNet.Tests.Models.Consumer.Dsl
                 .Object("a")
                     .StringType("a1", "test1")
                     .StringType("a2", "test2")
-                    .Int32Type("a3", 3)
+                    .IntegerMatcher("a3", 3)
                     .StringMatcher("a4", "([a-z]).*", "test4")
+                    .DecimalMatcher("a5", decimal.Parse("5.03234"))
+                    .EqualityMatcher("a6", "test6")
+                    .EqualityMatcher("a7", 7)
+                    .EqualityMatcher("a8", decimal.Parse("8.123"))
+                    .DateFormat("a9","MM/dd/yyyy",DateTime.UtcNow)
+                    .TimestampFormat("a10", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", DateTime.Now)
                     .MinArrayLike("b", 1)
                         .Item(new PactDslJsonBody()
                             .StringType("c1", "test6")
@@ -145,14 +159,21 @@ namespace PactNet.Tests.Models.Consumer.Dsl
                         .StringType("e1", "test10")
                         .Int32Type("e2", 11)
                     .CloseObject()
-                .CloseObject();
+                .CloseObject()
+                .StringType("z", "ztesttoremove");
+              
 
-            string messageJson = JsonConvert.SerializeObject(dsl.Content);
-            var message = JToken.Parse(messageJson);
+            var message = new JObject();
+            var content = JObject.FromObject(dsl.Content);
+
+            var removed = content.Remove("z");
+            message.Add("body", content);
+
 
             var results = dsl.Validate(message);
 
-
+            Assert.Equal(30, results.MatcherChecks.Count);
+            Assert.Equal(1, results.MatcherChecks.Count(m => m.GetType() == typeof(FailedMatcherCheck)));
         }
     }
 }

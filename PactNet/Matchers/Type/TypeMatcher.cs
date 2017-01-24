@@ -11,7 +11,14 @@ namespace PactNet.Matchers.Type
 
         public MatcherResult Match(string path, JToken expected, JToken actual)
         {
-            return new MatcherResult(new SuccessfulMatcherCheck(path));
+            var act = actual as JValue;
+            var exp = expected as JValue;
+
+            var matches = act != null && exp.Type == act.Type;
+
+            return matches ?
+                new MatcherResult(new SuccessfulMatcherCheck(path)) :
+                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotMatch));
         }
     }
 }

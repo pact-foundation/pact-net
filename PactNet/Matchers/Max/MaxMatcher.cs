@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -22,7 +23,12 @@ namespace PactNet.Matchers.Max
 
         public MatcherResult Match(string path, JToken expected, JToken actual)
         {
-            throw new NotImplementedException();
+            var act = actual as JArray;
+            var matches = act != null && actual.Count() <= this.MaxValue;
+
+            return matches ?
+                new MatcherResult(new SuccessfulMatcherCheck(path)) :
+                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.AdditionalItemInArray));
         }
     }
 }

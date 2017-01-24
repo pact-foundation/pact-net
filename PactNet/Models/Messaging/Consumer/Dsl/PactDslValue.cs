@@ -56,7 +56,15 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             var result = new MatcherResult();
 
             foreach (var matcher in _matchers.Values)
-                result.Add(matcher.Match(this.Path, JToken.FromObject(this.Value), message.SelectToken(this.Path)));
+            {
+                var tokens = message.SelectTokens(this.Path).ToList();
+
+                if (!tokens.Any())
+                    result.Add(new MatcherResult(new FailedMatcherCheck(this.Path, MatcherCheckFailureType.ValueDoesNotExist)));
+
+                foreach (var token in tokens)
+                    result.Add(matcher.Match(token.Path, JToken.FromObject(this.Value), token));
+            }
 
             return result;
         }
