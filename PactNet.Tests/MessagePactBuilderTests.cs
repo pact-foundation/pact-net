@@ -52,13 +52,13 @@ namespace PactNet.Tests
             {
                 ProviderState = "or maybe 'scenario'? not sure about this",
                 Description = "Published credit data",
+                MetaData = metaData,
                 Body = body
             };
 
-            builder.WithContent(m)
-             .WithMetaData(metaData);
+            builder.WithContent(m);
 
-            const string expectedPact = "{\"provider\":{\"name\":\"Provider\"},\"consumer\":{\"name\":\"Consumer\"},\"messages\":[{\"description\":\"Published credit data\",\"providerState\":\"or maybe \'scenario\'? not sure about this\",\"contents\":{\"foo\":\"bar\"},\"matchingRules\":{\"$.body.foo\":{\"match\":\"type\"}}}],\"metaData\":{\"contentType\":\"application/json\"}}";
+            const string expectedPact = "{\"provider\":{\"name\":\"Provider\"},\"consumer\":{\"name\":\"Consumer\"},\"messages\":[{\"description\":\"Published credit data\",\"providerState\":\"or maybe \'scenario\'? not sure about this\",\"contents\":{\"foo\":\"bar\"},\"matchingRules\":{\"$.body.foo\":{\"match\":\"type\"}},\"metaData\":{\"contentType\":\"application/json\"}}],\"metadata\":{\"pact-specification\":\"3.0.0\",\"pact-net\":\"0.0.0.1\"}}";
             string actual = builder.GetPactAsJSON();
             Assert.Equal<string>(expectedPact, actual);
         }
@@ -91,29 +91,24 @@ namespace PactNet.Tests
             Dictionary<string, object> metaData = new Dictionary<string, object>();
             metaData.Add("contentType", "application/json");
 
-            PactMessageBuilder builder = new PactMessageBuilder();
-            builder.ServiceConsumer("Consumer");
-            builder.HasPactWith("Provider");
-           
-            Message m = new Message()
-            {
-                ProviderState = "or maybe 'scenario'? not sure about this",
-                Description = "my.random.topic",
-                Body = body
-            };
+            var config = new PactConfig();
 
-            builder.WithContent(m)
-              .WithMetaData(metaData);
+            IPactMessagingBuilder builder = new PactMessageBuilder(config);
 
-            builder.Build();
+            builder.ServiceConsumer("Consumer")
+                .HasPactWith("Provider");
 
-            //var pactConfig = new PactConfig();
-
-            //string expectedFileName = "consumer-provider.json";
-
-            //var generatedPact = File.ReadAllText(pactConfig + expectedFileName);
-
-            //Assert.Equal<string>(builder.GetPactAsJSON(), generatedPact);
+            builder
+                .WithContent(new Message()
+                .Given("or maybe 'scenario'? not sure about this")
+                .ExpectsToRecieve("my.random.topic")
+                .WithMetaData(metaData)
+                .WithContent(body))
+            .WithContent(new Message()
+                .Given("Pact Message can support multiple messages")
+                .ExpectsToRecieve("my.second.random.topic")
+                .WithContent(body))
+            .Build();
         }
     }
 }

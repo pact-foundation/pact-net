@@ -53,12 +53,12 @@ namespace Consumer.Tests
                 .CloseObject();
 
             Dictionary<string, object> metaData = new Dictionary<string, object>();
-            metaData.Add("contentType", "application/json");
 
             Message m = new Message()
             {
                 ProviderState = "or maybe 'scenario'? not sure about this",
                 Description = "my.random.topic",
+                MetaData = metaData,
                 Body = body
             };
 
@@ -67,11 +67,6 @@ namespace Consumer.Tests
 
             //Saves to disk with the default location from new PactConfig()
            builder.Build();
-
-            string uri = "https://pactbroker.sapphirepri.com";
-           // var options = new PactUriOptions(string.Empty, string.Empty);
-        
-            builder.PushToBroker(uri, null);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace PactNet
         public PactMessageBuilder() 
             : this(new PactConfig())
         {
-           
+   
         }
 
         public PactMessageBuilder(PactConfig pactConfig)
@@ -135,16 +135,18 @@ namespace PactNet
                 }
             }
         }
+
         public IPactMessagingBuilder WithContent(Message message)
         {
             this.pactMessage.AddMessage(message);
-
             return this;
         }
 
         public IPactMessagingBuilder WithMetaData(Dictionary<string, object> metaData)
         {
-            this.pactMessage.MetaData = metaData;
+            foreach (var data in metaData)
+                this.pactMessage.MetaData[data.Key] = data.Value;
+
             return this;
         }
 

@@ -22,9 +22,6 @@ namespace PactNet
     public interface IPactMessagingBuilder : IPactBuilder
     {
         IPactMessagingBuilder WithContent(Message message);
-
         IPactMessagingBuilder WithMetaData(Dictionary<string, object> metaData);
-
-        void PushToBroker(string uri, PactUriOptions brokerSecurityOptions);
     }
 }

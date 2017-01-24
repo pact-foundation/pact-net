@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace PactNet.Models.Messaging
@@ -13,15 +14,19 @@ namespace PactNet.Models.Messaging
         public PactMessageFile()
         {
             messages = new List<Message>();
+            MetaData = new Dictionary<string, object>();
+
+            MetaData["pact-specification"] = "3.0.0";
+            MetaData["pact-net"] = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
-        [JsonProperty(PropertyName = "messages")]
+        [JsonProperty(PropertyName = "messages", Order = -1)]
         public Message [] Messages
         {
             get { return messages.ToArray(); } 
         }
 
-        [JsonProperty(PropertyName = "metaData", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "metadata", NullValueHandling = NullValueHandling.Ignore, Order=0)]
         public Dictionary<string, object> MetaData { get; set; }
 
         public void AddMessage(Message newMessage)
