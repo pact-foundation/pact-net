@@ -9,6 +9,11 @@ namespace PactNet.Mocks.MockHttpService.Matchers
     {
         public const string Path = "$..*";
 
+        public string Type
+        {
+            get { return "default"; }
+        }
+
         public bool AllowExtraKeys { get; private set; }
 
         public DefaultHttpBodyMatcher(bool allowExtraKeysInObjects)
