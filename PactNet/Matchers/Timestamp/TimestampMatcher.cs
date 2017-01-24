@@ -32,7 +32,7 @@ namespace PactNet.Matchers.Timestamp
 
             return matches ?
                 new MatcherResult(new SuccessfulMatcherCheck(path)) :
-                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotMatchDateFormat));
+                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotMatchTimestamp));
         }
     }
 }
