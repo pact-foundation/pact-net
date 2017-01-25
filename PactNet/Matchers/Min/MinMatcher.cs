@@ -27,8 +27,8 @@ namespace PactNet.Matchers.Min
             var matches = act != null && actual.Count() >= this.MinValue;
 
             return matches ?
-                new MatcherResult(new SuccessfulMatcherCheck(path)) :
-                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.NotEnoughValuesInArray));
+                new MatcherResult(new SuccessfulMatcherCheck(path, this.MinValue, act.Count)) :
+                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.NotEnoughValuesInArray, this.MinValue, act.Count));
         }
     }
 }

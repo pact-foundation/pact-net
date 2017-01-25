@@ -31,8 +31,8 @@ namespace PactNet.Matchers.Timestamp
                               DateTimeStyles.None, out dateTime);
 
             return matches ?
-                new MatcherResult(new SuccessfulMatcherCheck(path)) :
-                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotMatchTimestamp));
+                new MatcherResult(new SuccessfulMatcherCheck(path, this.Format, act.Value)) :
+                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotMatchTimestamp, this.Format, act.Value));
         }
     }
 }

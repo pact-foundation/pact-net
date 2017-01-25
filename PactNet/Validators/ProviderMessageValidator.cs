@@ -97,6 +97,8 @@ namespace PactNet.Validators
                 {
                     comparisonResult.RecordFailure(new ErrorMessageComparisonFailure(String.Format("No supported message found for provider state {0} or description {1}", m.ProviderState, m.Description)));
                 }
+
+                reporter.ResetIndentation();
             }
 
             reporter.ResetIndentation();

@@ -18,13 +18,14 @@ namespace PactNet.Matchers.Integer
         public MatcherResult Match(string path, JToken expected, JToken actual)
         {
             var act = actual as JValue;
+            var exp = expected as JValue;
             int intValue;
 
             var matches = act != null && int.TryParse(act.Value.ToString(), out intValue);
 
             return matches ?
-                new MatcherResult(new SuccessfulMatcherCheck(path)) :
-                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueNotInteger));
+                new MatcherResult(new SuccessfulMatcherCheck(path, "Integer", act.Value)) :
+                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueNotInteger, "Integer", act.Value));
         }
     }
 }

@@ -23,8 +23,8 @@ namespace PactNet.Matchers.Decimal
             var matches = act != null && decimal.TryParse(act.Value.ToString(), out decValue);
 
             return matches ?
-                new MatcherResult(new SuccessfulMatcherCheck(path)) :
-                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueNotDecimal));
+                new MatcherResult(new SuccessfulMatcherCheck(path, "Decimal", act.Value)) :
+                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueNotDecimal, "Decimal", act.Value));
         }
     }
 }

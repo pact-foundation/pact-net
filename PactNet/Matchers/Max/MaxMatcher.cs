@@ -27,7 +27,7 @@ namespace PactNet.Matchers.Max
             var matches = act != null && actual.Count() <= this.MaxValue;
 
             return matches ?
-                new MatcherResult(new SuccessfulMatcherCheck(path)) :
+                new MatcherResult(new SuccessfulMatcherCheck(path, this.MaxValue, act.Count)) :
                 new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.AdditionalItemInArray));
         }
     }

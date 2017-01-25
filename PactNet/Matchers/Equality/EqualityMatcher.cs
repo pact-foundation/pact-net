@@ -23,8 +23,8 @@ namespace PactNet.Matchers.Equality
             var matches = act != null && exp.Value.Equals(act.Value);
 
             return matches ?
-                new MatcherResult(new SuccessfulMatcherCheck(path)) :
-                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueNotEqual));
+                new MatcherResult(new SuccessfulMatcherCheck(path, exp.Value, act.Value)) :
+                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueNotEqual, exp.Value, act.Value));
         }
     }
 }

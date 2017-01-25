@@ -17,8 +17,8 @@ namespace PactNet.Matchers.Type
             var matches = act != null && exp.Type == act.Type;
 
             return matches ?
-                new MatcherResult(new SuccessfulMatcherCheck(path)) :
-                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotMatch));
+                new MatcherResult(new SuccessfulMatcherCheck(path, exp.Value, act.Value)) :
+                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotMatch, exp.Value, act.Value));
         }
     }
 }

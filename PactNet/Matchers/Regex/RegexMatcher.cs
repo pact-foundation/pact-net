@@ -25,8 +25,8 @@ namespace PactNet.Matchers.Regex
             var matches = act != null && System.Text.RegularExpressions.Regex.IsMatch(act.Value.ToString(), Regex);
 
             return matches ?
-                new MatcherResult(new SuccessfulMatcherCheck(path)) :
-                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotMatch));
+                new MatcherResult(new SuccessfulMatcherCheck(path, this.Regex, act.Value)) :
+                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotMatch, this.Regex, act.Value));
         }
     }
 }

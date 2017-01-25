@@ -29,28 +29,14 @@ namespace PactNet.Comparers.Messaging
             var actualToken = new JObject();
             actualToken.Add("body", JToken.FromObject(actual));
 
-            var expectedToken = JToken.FromObject(expected);
-
             MatcherResult matchingResults = expected.Body.Validate(actualToken);
-           
-            var comparisonFailures = new List<ComparisonFailure>();
 
-          
-            foreach(FailedMatcherCheck failedCheck in matchingResults.MatcherChecks.Where(x => x is FailedMatcherCheck).Cast< FailedMatcherCheck >())
+
+            foreach (FailedMatcherCheck failedCheck in matchingResults.MatcherChecks.Where(x => x is FailedMatcherCheck).Cast<FailedMatcherCheck>())
             {
-                
-                //TODO: We should be able to generate a better output, as we know exactly the path that failed
-                var comparisonFailure = new DiffComparisonFailure(expectedToken, actualToken);
-                if (comparisonFailures.All(x => x.Result != comparisonFailure.Result))
-                {
-                    comparisonFailures.Add(comparisonFailure);
-                }
+                result.RecordFailure(new DiffComparisonFailure(failedCheck.ToString()));
             }
 
-            foreach (var failure in comparisonFailures)
-            {
-                result.RecordFailure(failure);
-            }
             return result;
         }
 
