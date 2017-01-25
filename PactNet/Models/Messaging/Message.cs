@@ -62,7 +62,7 @@ namespace PactNet.Models.Messaging
             return this;
         }
 
-        public Message WithContent(PactDslJsonBody body)
+        public Message WithBody(PactDslJsonBody body)
         {
             this.Body = body;
             return this;
