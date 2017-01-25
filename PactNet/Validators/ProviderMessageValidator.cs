@@ -68,8 +68,6 @@ namespace PactNet.Validators
             //Only grab the messages that this consumer pact is interested in.
             bool ignoreCase = true;
 
-            reporter.ReportInfo(String.Format("Verifying a Pact between {0} and {1}", pactFile.Consumer.Name, pactFile.Provider.Name));
-
             var comparisonResult = new ComparisonResult();
 
             foreach (Message m in pactFile.Messages)
@@ -77,16 +75,14 @@ namespace PactNet.Validators
                 if (!String.IsNullOrWhiteSpace(m.ProviderState))
                 {
                     reporter.Indent();
-                    reporter.ReportInfo(String.Format("Given {0}", m.ProviderState));
+                    reporter.ReportInfo(String.Format("Given Provider State {0}", m.ProviderState));
                 }
 
                 if (!String.IsNullOrWhiteSpace(m.Description))
                 {
-                    reporter.Indent();
-                    reporter.ReportInfo(String.Format("Given {0}", m.Description));
+                    reporter.ReportInfo(String.Format("Given Description {0}", m.Description));
                 }
 
-               
                 var exampleMessage = this.messager.GetMessageByTopicOrProviderState(m.Description, m.ProviderState);
 
                 if(exampleMessage != null)
@@ -112,7 +108,7 @@ namespace PactNet.Validators
                 throw new PactFailureException(String.Format("See test output or {0} for failure details.",
                     !String.IsNullOrWhiteSpace(this.config.LoggerName) ? LogProvider.CurrentLogProvider.ResolveLogPath(this.config.LoggerName) : "logs"));
             }
-            throw new NotImplementedException();
+           
         }
     }
 }

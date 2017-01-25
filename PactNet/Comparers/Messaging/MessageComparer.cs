@@ -12,7 +12,7 @@ namespace PactNet.Comparers.Messaging
     {
         internal ComparisonResult Compare(Message expected, dynamic actual)
         {
-            var result = new ComparisonResult("has a matching body");
+            var result = new ComparisonResult();
 
             if (expected == null)
             {
@@ -32,7 +32,7 @@ namespace PactNet.Comparers.Messaging
             var expectedToken = JToken.FromObject(expected);
 
             MatcherResult matchingResults = expected.Body.Validate(actualToken);
-
+           
             var comparisonFailures = new List<ComparisonFailure>();
 
           
@@ -47,12 +47,16 @@ namespace PactNet.Comparers.Messaging
                 }
             }
 
+            foreach (var failure in comparisonFailures)
+            {
+                result.RecordFailure(failure);
+            }
             return result;
         }
 
         internal ComparisonResult Compare(dynamic expected, dynamic actual, IDictionary<string, IMatcher> matchingRules)
         {
-            var result = new ComparisonResult("has a matching body");
+            var result = new ComparisonResult();
 
             if (expected == null)
             {

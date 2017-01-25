@@ -103,11 +103,11 @@ namespace PactNet.Tests
                 .Given("or maybe 'scenario'? not sure about this")
                 .ExpectsToRecieve("my.random.topic")
                 .WithMetaData(metaData)
-                .WithContent(body))
+                .WithBody(body))
             .WithContent(new Message()
                 .Given("Pact Message can support multiple messages")
                 .ExpectsToRecieve("my.second.random.topic")
-                .WithContent(body))
+                .WithBody(body))
             .Build();
         }
     }

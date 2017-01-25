@@ -139,6 +139,7 @@
     <Compile Include="PactBuilderTests.cs" />
     <Compile Include="PactMessageingVerifierTests.cs" />
     <Compile Include="PactUriOptionsTests.cs" />
+    <Compile Include="ProviderMessageValidatorTests.cs" />
     <Compile Include="ProviderServicePactFileTests.cs" />
     <Compile Include="PactVerifierTests.cs" />
     <Compile Include="Reporters\Outputters\FileReportOutputterTests.cs" />
