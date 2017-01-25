@@ -8,10 +8,7 @@ namespace PactNet
     public interface IPactVerifier
     {
         IPactVerifier HonoursPactWith(string consumerName);
-
-       
         IPactVerifier PactUri(string uri, PactUriOptions options = null);
-
         void Verify(string description = null, string providerState = null);
     }
 

@@ -53,12 +53,12 @@ namespace Consumer.Tests
                 .CloseObject();
 
             Dictionary<string, object> metaData = new Dictionary<string, object>();
-            metaData.Add("contentType", "application/json");
 
             Message m = new Message()
             {
                 ProviderState = "or maybe 'scenario'? not sure about this",
                 Description = "my.random.topic",
+                MetaData = metaData,
                 Body = body
             };
 

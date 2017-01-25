@@ -38,5 +38,35 @@ namespace PactNet.Models.Messaging
             get { return this.Body.Matchers; }
             set { this.Body.Matchers = value; }
         }
+
+        [JsonProperty("metaData", NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, object> MetaData { get; set; }
+
+
+        #region Builder
+        public Message Given(string providerState)
+        {
+            this.ProviderState = providerState;
+            return this;
+        }
+
+        public Message ExpectsToRecieve(string description)
+        {
+            this.Description = description;
+            return this;
+        }
+
+        public Message WithMetaData(Dictionary<string, object> metadata)
+        {
+            this.MetaData = metadata;
+            return this;
+        }
+
+        public Message WithContent(PactDslJsonBody body)
+        {
+            this.Body = body;
+            return this;
+        }
+        #endregion
     }
 }
