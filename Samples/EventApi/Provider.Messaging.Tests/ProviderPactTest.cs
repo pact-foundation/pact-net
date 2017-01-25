@@ -51,8 +51,8 @@ namespace Provider.Messaging.Tests
             //You should read this from a config or environment var.
             PactConnectionInfo info = new PactConnectionInfo()
             {
-                Uri = "https://pactbroker.sapphirepri.com",
-            Options = new PactUriOptions(string.Empty, string.Empty)
+                Uri = "https://yourpackbroker.com/",
+            Options = new PactUriOptions("username", "password")
             };
 
             return info;
