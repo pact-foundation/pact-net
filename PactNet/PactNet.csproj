@@ -126,6 +126,7 @@
     <Compile Include="Matchers\Type\TypeMatchDefinition.cs" />
     <Compile Include="Matchers\Type\TypeMatcher.cs" />
     <Compile Include="Mocks\IMockMessager.cs" />
+    <Compile Include="Mocks\MockMessager\MockMessanger.cs" />
     <Compile Include="Models\Messaging\Consumer\Dsl\DslPartJsonConverter.cs" />
     <Compile Include="Models\Messaging\Consumer\Dsl\PactDslJsonArray.cs" />
     <Compile Include="Models\Messaging\Consumer\Dsl\PactDslJsonRoot.cs" />
@@ -231,6 +232,8 @@
     <Compile Include="Reporters\Outputters\IReportOutputter.cs" />
     <Compile Include="Reporters\Reporter.cs" />
     <Compile Include="Validators\IPactValidator.cs" />
+    <Compile Include="Validators\IProviderMessageValidator.cs" />
+    <Compile Include="Validators\ProviderMessageValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

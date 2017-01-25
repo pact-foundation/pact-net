@@ -150,7 +150,7 @@ namespace PactNet
         {
             if (String.IsNullOrEmpty(uri))
             {
-                throw new ArgumentException("Please supply a non null or empty consumerName");
+                throw new ArgumentException("Please supply a non null or empty uri");
             }
 
             PactFileUri = uri;

@@ -4,13 +4,17 @@ using PactNet.Comparers;
 using PactNet.Comparers.Messaging;
 using PactNet.Extensions;
 using PactNet.Logging;
+using PactNet.Mocks;
 using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Mocks.MockMessager;
 using PactNet.Models.Messaging;
 using PactNet.Reporters;
+using PactNet.Validators;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -19,20 +23,30 @@ namespace PactNet
 {
     public class PactMessagingVerifier : IPactMessagingVerifier
     {
-        class SampleMessage
-        {
-            public string Description { get; set; }
-            public string ProivderState { get; set; }
-            public dynamic ExampleMessage { get; set; }
-        }
 
-        private IList<SampleMessage> supportedMessages;
+        private readonly IMockMessager mockMessager;
+        private readonly IFileSystem fileSystem;
+        private readonly HttpClient httpClient;
+        private readonly Func<IReporter, PactVerifierConfig, IMockMessager, IProviderMessageValidator> providerValidatorFactory;
 
         private readonly PactVerifierConfig config;
+
         public string PactFileUri { get; private set; }
         public PactUriOptions PactUriOptions { get; private set; }
         public string ConsumerName { get; private set; }
         public string ProviderName { get; private set; }
+
+        internal PactMessagingVerifier(IFileSystem fileSystem,
+            HttpClient httpClient,
+            PactVerifierConfig config,
+            Func<IReporter, PactVerifierConfig, IMockMessager, IProviderMessageValidator> providerValidatorFactory)
+        {
+            this.httpClient = httpClient;
+            this.fileSystem = fileSystem;
+            this.config = config ?? new PactVerifierConfig();
+            this.mockMessager = new MockMessanger();
+            this.providerValidatorFactory = providerValidatorFactory;
+        }
 
         public PactMessagingVerifier()
             :this(new PactVerifierConfig())
@@ -41,13 +55,25 @@ namespace PactNet
         }
 
         public PactMessagingVerifier(PactVerifierConfig config)
+            :this(new FileSystem(), 
+                 new HttpClient(),
+                 config,
+                (reporter, verifierConfig, mockMessager) => new ProviderMessageValidator( reporter, verifierConfig, mockMessager))
         {
-            this.config = config;
-            this.supportedMessages = new List<SampleMessage>();
+            
         }
 
         public IPactVerifier HonoursPactWith(string consumerName)
         {
+            if (String.IsNullOrWhiteSpace(consumerName))
+            {
+                throw new ArgumentException("Please supply a non null or empty consumerName");
+            }
+
+            if (!String.IsNullOrEmpty(ConsumerName))
+            {
+                throw new ArgumentException("ConsumerName has already been supplied, please instantiate a new PactVerifier if you want to perform verification for a different consumer");
+            }
             ConsumerName = consumerName;
             return this;
         }
@@ -56,7 +82,7 @@ namespace PactNet
         {
             if (String.IsNullOrWhiteSpace(uri))
             {
-                throw new ArgumentException("Please supply a non null or empty consumerName");
+                throw new ArgumentException("Please supply a non null or empty uri");
             }
 
             PactFileUri = uri;
@@ -78,80 +104,37 @@ namespace PactNet
             var loggerName = LogProvider.CurrentLogProvider.AddLogger(this.config.LogDir, ProviderName.ToLowerSnakeCase(), "{0}_verifier.log");
             this.config.LoggerName = loggerName;
 
-            //Only grab the messages that this consumer pact is interested in.
-           bool ignoreCase = true;
-
-            var reporter = new Reporter(this.config);
-
-            reporter.ReportInfo(String.Format("Verifying a Pact between {0} and {1}", pactFile.Consumer.Name, pactFile.Provider.Name));
-
-            var comparisonResult = new ComparisonResult();
-            
-            foreach (Message m in pactFile.Messages)
+            try
             {
-                if (!String.IsNullOrWhiteSpace(m.ProviderState))
-                {
-                    reporter.Indent();
-                    reporter.ReportInfo(String.Format("Given {0}", m.ProviderState));
-                }
-
-                if (!String.IsNullOrWhiteSpace(m.Description))
-                {
-                    reporter.Indent();
-                    reporter.ReportInfo(String.Format("Given {0}", m.Description));
-                }
-
-                bool messageFound = false;
-
-                foreach (var example in this.supportedMessages)
-                {
-                    if (string.Compare(example.Description, m.Description, ignoreCase, CultureInfo.InvariantCulture) == 0 ||
-                        string.Compare(example.ProivderState, m.ProviderState, ignoreCase, CultureInfo.InvariantCulture) == 0)
-                    {
-                        MessageComparer comparer = new MessageComparer();
-                        var compareResults = comparer.Compare(m, example);
-
-                        comparisonResult.AddChildResult(compareResults);
-                        reporter.Indent();
-                        reporter.ReportSummary(compareResults);
-
-                        messageFound = true;
-                    }                    
-                }
-
-                if(!messageFound)
-                {
-                    comparisonResult.RecordFailure(new ErrorMessageComparisonFailure(String.Format("No supported message found for provider state {0} or description {1}", m.ProviderState, m.Description)));
-                }
+                this.providerValidatorFactory( new Reporter(this.config), this.config, this.mockMessager)
+                    .Validate(pactFile);
+            }
+            finally
+            {
+                LogProvider.CurrentLogProvider.RemoveLogger(this.config.LoggerName);
             }
 
-            reporter.ResetIndentation();
-            reporter.ReportFailureReasons(comparisonResult);
-            reporter.Flush();
-
-            if (comparisonResult.HasFailure)
-            {
-                throw new PactFailureException(String.Format("See test output or {0} for failure details.",
-                    !String.IsNullOrWhiteSpace(this.config.LoggerName) ? LogProvider.CurrentLogProvider.ResolveLogPath(this.config.LoggerName) : "logs"));
-            }
         }
 
         public IPactMessagingVerifier IAmProvider(string providerName)
         {
+            if (String.IsNullOrWhiteSpace(providerName))
+            {
+                throw new ArgumentException("Please supply a non null or empty providerName");
+            }
+
+            if (!String.IsNullOrEmpty(ProviderName))
+            {
+                throw new ArgumentException("ProviderName has already been supplied, please instantiate a new PactVerifier if you want to perform verification for a different provider");
+            }
+
             ProviderName = providerName;
             return this;
         }
 
         public IPactMessagingVerifier BroadCast(string messageDescription, string providerState, dynamic exampleMessage)
         {
-            SampleMessage example = new SampleMessage()
-            {
-                Description = messageDescription,
-                ProivderState = providerState,
-                ExampleMessage = exampleMessage
-            };
-
-            this.supportedMessages.Add(example);
+            this.mockMessager.Publish(messageDescription, providerState, exampleMessage);
 
             return this;
         }
@@ -175,19 +158,18 @@ namespace PactNet
                             request.Headers.Add("Authorization", String.Format("{0} {1}", PactUriOptions.AuthorizationScheme, PactUriOptions.AuthorizationValue));
                         }
 
-                        using (var httpClient = new HttpClient())
+
+                        using (var response = this.httpClient.SendAsync(request).Result)
                         {
-                            using (var response = httpClient.SendAsync(request).Result)
-                            {
-                                response.EnsureSuccessStatusCode();
-                                pactFileJson = response.Content.ReadAsStringAsync().Result;
-                            }
+                            response.EnsureSuccessStatusCode();
+                            pactFileJson = response.Content.ReadAsStringAsync().Result;
                         }
+
                     }
                 }
                 else //Assume it's a file uri, and we will just throw if it does not exist
                 {
-                    pactFileJson = File.ReadAllText(PactFileUri);
+                    pactFileJson = this.fileSystem.File.ReadAllText(PactFileUri);
                 }
 
                 pactFile = JsonConvert.DeserializeObject<PactMessageFile>(pactFileJson);

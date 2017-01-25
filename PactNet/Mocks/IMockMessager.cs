@@ -8,14 +8,15 @@ namespace PactNet.Mocks
 {
     public interface IMockMessager
     {
-        void ExceptsToRecieve(string messageTopic);
+        void Publish(string messageTopic, string providerState, dynamic exampleMessage);
 
-        void AddMessage(Message message);
+      
+        dynamic GetMessageByTopic(string topic);
 
-        /// <summary>
-        /// Gets the first message from queue.
-        /// </summary>
-        /// <returns></returns>
-        Message GetMessage();
+        dynamic GetMessageByProviderState(string providerState);
+
+        dynamic GetMessageByTopicOrProviderState(string topic, string providerState);
+
+
     }
 }
