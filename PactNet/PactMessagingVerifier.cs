@@ -91,31 +91,6 @@ namespace PactNet
             return this;
         }
 
-        public void Verify(string description = null, string providerState = null)
-        {
-            if (String.IsNullOrWhiteSpace(PactFileUri))
-            {
-                throw new InvalidOperationException(
-                    "PactFileUri has not been set, please supply a uri using the PactUri method.");
-            }
-
-            PactMessageFile pactFile = FetchPactFile();
-
-            var loggerName = LogProvider.CurrentLogProvider.AddLogger(this.config.LogDir, ProviderName.ToLowerSnakeCase(), "{0}_verifier.log");
-            this.config.LoggerName = loggerName;
-
-            try
-            {
-                this.providerValidatorFactory( new Reporter(this.config), this.config, this.mockMessager)
-                    .Validate(pactFile);
-            }
-            finally
-            {
-                LogProvider.CurrentLogProvider.RemoveLogger(this.config.LoggerName);
-            }
-
-        }
-
         public IPactMessagingVerifier IAmProvider(string providerName)
         {
             if (String.IsNullOrWhiteSpace(providerName))
@@ -135,8 +110,32 @@ namespace PactNet
         public IPactMessagingVerifier BroadCast(string messageDescription, string providerState, dynamic exampleMessage)
         {
             this.mockMessager.Publish(messageDescription, providerState, exampleMessage);
-
             return this;
+        }
+
+        public void Verify(string description = null, string providerState = null)
+        {
+            if (String.IsNullOrWhiteSpace(PactFileUri))
+            {
+                throw new InvalidOperationException(
+                    "PactFileUri has not been set, please supply a uri using the PactUri method.");
+            }
+
+            PactMessageFile pactFile = FetchPactFile();
+
+            var loggerName = LogProvider.CurrentLogProvider.AddLogger(this.config.LogDir, ProviderName.ToLowerSnakeCase(), "{0}_verifier.log");
+            this.config.LoggerName = loggerName;
+
+            try
+            {
+                this.providerValidatorFactory(new Reporter(this.config), this.config, this.mockMessager)
+                    .Validate(pactFile);
+            }
+            finally
+            {
+                LogProvider.CurrentLogProvider.RemoveLogger(this.config.LoggerName);
+            }
+
         }
 
         private PactMessageFile FetchPactFile()
@@ -182,7 +181,5 @@ namespace PactNet
             return pactFile;
         }
 
-        
-     
     }
 }

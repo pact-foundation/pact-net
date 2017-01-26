@@ -22,7 +22,7 @@ namespace PactNet.Matchers.Decimal
 
             //Check if it's numeric first
             if (act.Type != JTokenType.Float && act.Type != JTokenType.Integer)
-                return new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueNotInteger, "Decimal", string.Format("{0} ({1})", act.Value, act.Type)));
+                return new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueNotDecimal, "Decimal", string.Format("{0} ({1})", act.Value, act.Type)));
 
             var matches = act != null && act.Type == JTokenType.Float && double.TryParse(act.Value.ToString(), out decValue);
 

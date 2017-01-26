@@ -3,8 +3,10 @@ using PactNet.Matchers;
 using PactNet.Models.Messaging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace PactNet.Comparers.Messaging
 {
@@ -25,12 +27,17 @@ namespace PactNet.Comparers.Messaging
                 return result;
             }
 
-            //Need to wrap in a body root so that the expected matchingRules path lines up
+            //Need to wrap in a body root so that the expected matchingRules path lines up.
+
+            var message = JsonConvert.SerializeObject(actual);
+
+            JsonReader reader = new JsonTextReader(new StringReader(message));
+            reader.DateParseHandling = DateParseHandling.None;
+
             var actualToken = new JObject();
-            actualToken.Add("body", JToken.FromObject(actual));
+            actualToken.Add("body", JToken.Load(reader));
 
             MatcherResult matchingResults = expected.Body.Validate(actualToken);
-
 
             foreach (FailedMatcherCheck failedCheck in matchingResults.MatcherChecks.Where(x => x is FailedMatcherCheck).Cast<FailedMatcherCheck>())
             {

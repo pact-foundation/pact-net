@@ -132,7 +132,7 @@ namespace PactNet.Tests
             pactFile.Consumer = new PactNet.Models.Pacticipant() { Name = "consumer" };
             pactFile.Provider = new PactNet.Models.Pacticipant() { Name = "provider" };
 
-            var body = new PactDslJsonBody()
+            var body = new PactDslJsonRoot()
              .Object("partyInvite")
                  .Int32Type("eventType", 1)
              .CloseObject();

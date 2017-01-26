@@ -27,7 +27,7 @@ namespace PactNet.Matchers.Timestamp
 
             DateTime dateTime;
             var matches = act != null &&
-                          DateTime.TryParseExact(act.Value.ToString(), this.Format, CultureInfo.InvariantCulture,
+                          DateTime.TryParseExact(act.Value<string>(), this.Format, CultureInfo.InvariantCulture,
                               DateTimeStyles.None, out dateTime);
 
             return matches ?

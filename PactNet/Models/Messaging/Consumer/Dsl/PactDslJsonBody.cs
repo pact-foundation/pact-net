@@ -166,7 +166,25 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             return this;
         }
 
+        public PactDslJsonBody IntegerMatcher(string name, long example)
+        {
+            this.GetItem(name, example).IntegerMatcher();
+            return this;
+        }
+
         public PactDslJsonBody DecimalMatcher(string name, decimal example)
+        {
+            this.GetItem(name, example).DecimalMatcher();
+            return this;
+        }
+
+        public PactDslJsonBody DecimalMatcher(string name, double example)
+        {
+            this.GetItem(name, example).DecimalMatcher();
+            return this;
+        }
+
+        public PactDslJsonBody DecimalMatcher(string name, float example)
         {
             this.GetItem(name, example).DecimalMatcher();
             return this;

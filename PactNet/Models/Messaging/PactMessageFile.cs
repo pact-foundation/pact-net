@@ -24,6 +24,7 @@ namespace PactNet.Models.Messaging
         public Message [] Messages
         {
             get { return messages.ToArray(); } 
+            set { messages = value.ToList(); }
         }
 
         [JsonProperty(PropertyName = "metadata", NullValueHandling = NullValueHandling.Ignore, Order=0)]

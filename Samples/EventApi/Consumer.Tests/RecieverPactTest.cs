@@ -16,10 +16,6 @@ namespace Consumer.Tests
         [Fact]
         public void ProducePact()
         {
-            IPactMessagingBuilder builder = new PactMessageBuilder();
-
-            builder.ServiceConsumer("Consumer-dotNet")
-                .HasPactWith("Provider.Messaging-dotNet");
 
             MessagedEvent testEvent = new MessagedEvent()
             {
@@ -33,40 +29,34 @@ namespace Consumer.Tests
                 }
             };
 
-            var body = new PactDslJsonBody()
-                .Object("partyInvite")
+            var body = new PactDslJsonRoot()
                     .StringType("eventType", testEvent.EventType)
                     .GuidMatcher("eventId", testEvent.EventId)
-                    .DateFormat("timestampt", "", testEvent.Timestamp)
+                    .TimestampFormat("timestamp", "yyyy-MM-ddTHH:mm:ss.fffffffZ", testEvent.Timestamp)
                     .Object("location")
                         .Object("latitude")
-                            .Int32Type("degrees", testEvent.Location.Latitude.Degrees)
-                            .Int32Type("minutes", testEvent.Location.Latitude.Minutes)
-                            .DoubleType("seconds", testEvent.Location.Latitude.Seconds)
+                            .IntegerMatcher("degrees", testEvent.Location.Latitude.Degrees)
+                            .IntegerMatcher("minutes", testEvent.Location.Latitude.Minutes)
+                            .DecimalMatcher("seconds", testEvent.Location.Latitude.Seconds)
                         .CloseObject()
                         .Object("longitude")
-                            .Int32Type("degrees", testEvent.Location.Longitude.Degrees)
-                            .Int32Type("minutes", testEvent.Location.Longitude.Minutes)
-                            .DoubleType("seconds", testEvent.Location.Longitude.Seconds)
+                            .IntegerMatcher("degrees", testEvent.Location.Longitude.Degrees)
+                            .IntegerMatcher("minutes", testEvent.Location.Longitude.Minutes)
+                            .DecimalMatcher("seconds", testEvent.Location.Longitude.Seconds)
                         .CloseObject()
-                    .CloseObject()            
-                .CloseObject();
+                    .CloseObject();       
 
-            Dictionary<string, object> metaData = new Dictionary<string, object>();
+            IPactMessagingBuilder builder = new PactMessageBuilder();
 
-            Message m = new Message()
-            {
-                ProviderState = "or maybe 'scenario'? not sure about this",
-                Description = "my.random.topic",
-                MetaData = metaData,
-                Body = body
-            };
+            builder.ServiceConsumer("Consumer-dotNet")
+                .HasPactWith("Provider.Messaging-dotNet");
 
-            builder.WithContent(m)
-              .WithMetaData(metaData);
-
-            //Saves to disk with the default location from new PactConfig()
-           builder.Build();
+            builder
+            .WithContent(new Message()
+                .Given("A new party event")
+                .ExpectsToRecieve("event.party")
+                .WithBody(body))
+            .Build();
         }
     }
 }

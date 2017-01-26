@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NSubstitute.Core;
 using PactNet.Matchers;
@@ -124,7 +125,7 @@ namespace PactNet.Tests.Matchers
         {
             var matcher = new DecimalMatcher();
 
-            var actual = new JValue("1.8");
+            var actual = new JValue(1.5); //has to be a decimal type (not string type)
             var expected = new JValue(1.8);
 
             var result = matcher.Match(string.Empty, expected, actual);
@@ -138,7 +139,7 @@ namespace PactNet.Tests.Matchers
         {
             var matcher = new DecimalMatcher();
 
-            var actual = new JValue("notdecimal");
+            var actual = new JValue("1.5");
             var expected = new JValue(1.8);
 
             var result = matcher.Match(string.Empty, expected, actual);

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace Provider.Messaging.Tests
@@ -20,9 +21,7 @@ namespace Provider.Messaging.Tests
         [Fact]
         public void VerifyConsumerPact()
         {
-            var config = new PactVerifierConfig();
-
-            Provider.Messaging.Models.Event party = new Models.Event()
+            Event party = new Event()
             {
                 EventId = Guid.NewGuid(),
                 EventType = "Party",
@@ -34,15 +33,12 @@ namespace Provider.Messaging.Tests
                 }
             };
 
-            PactMessagingVerifier verifier = new PactMessagingVerifier(config);
+            PactMessagingVerifier verifier = new PactMessagingVerifier();
 
-
-            PactConnectionInfo connectionInfo = GetPactConnectionInfo();
-
-            verifier.IAmProvider("Provider")
-                .BroadCast("my.random.topic", string.Empty, party)
-                .HonoursPactWith("Consumer")
-                .PactUri(connectionInfo.Uri, connectionInfo.Options)
+            verifier.IAmProvider("Provider.Messaging-dotNet")
+                .BroadCast("event.party", string.Empty, party)
+                .HonoursPactWith("Consumer-dotNet")
+                .PactUri("../../../Consumer.Tests/pacts/consumer-dotnet-provider.messaging-dotnet.json")
                 .Verify();
         }
 
