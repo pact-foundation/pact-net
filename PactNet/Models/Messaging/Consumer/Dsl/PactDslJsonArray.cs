@@ -105,6 +105,8 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
                 result.Add(matcher.Match(path, JToken.FromObject(this.Value), message.SelectToken(path)));
             }
 
+            //TODO: How do we validate missing elements of an array item?
+
             foreach (var item in this.Body)
                 result.Add(item.Validate(message));
 

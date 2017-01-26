@@ -20,7 +20,8 @@ namespace PactNet.Matchers.Equality
             var act = actual as JValue;
             var exp = expected as JValue;
 
-            var matches = act != null && exp.Value.Equals(act.Value);
+            //Comparing string representation for equality to avoid numeric type variations
+            var matches = act != null && string.CompareOrdinal(exp.Value<string>(), act.Value<string>()) == 0;
 
             return matches ?
                 new MatcherResult(new SuccessfulMatcherCheck(path, exp.Value, act.Value)) :

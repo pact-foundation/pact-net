@@ -107,6 +107,7 @@
     <Compile Include="IntegrationTests\Specification\Models\ResponseTestCase.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Matchers\MatcherTests.cs" />
     <Compile Include="Models\Consumer\Dsl\DslPartTests.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\HttpQueryStringComparerTests.cs" />
     <Compile Include="Mocks\MockHttpService\CustomRequestSenderTests.cs" />

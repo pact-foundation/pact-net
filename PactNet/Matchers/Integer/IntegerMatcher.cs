@@ -19,9 +19,12 @@ namespace PactNet.Matchers.Integer
         {
             var act = actual as JValue;
             var exp = expected as JValue;
-            int intValue;
+            long intValue;
 
-            var matches = act != null && int.TryParse(act.Value.ToString(), out intValue);
+            if (act.Type != JTokenType.Integer)
+                return new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueNotInteger, "Integer", string.Format("{0} ({1})", act.Value, act.Type)));
+
+            var matches = act != null && long.TryParse(act.Value.ToString(), out intValue);
 
             return matches ?
                 new MatcherResult(new SuccessfulMatcherCheck(path, "Integer", act.Value)) :

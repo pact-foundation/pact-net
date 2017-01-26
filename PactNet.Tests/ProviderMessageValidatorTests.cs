@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace PactNet.Tests
@@ -337,6 +338,69 @@ namespace PactNet.Tests
             pactFile.AddMessage(myPactMessage2);
 
             Assert.DoesNotThrow(() => sut.Validate(pactFile));
+        }
+
+        [Fact]
+        public void Validator_Reports_ComparisonResults_Appropriately()
+        {
+            var dsl = new PactDslJsonRoot()
+                .Object("a")
+                    .StringType("a1", "test1")
+                    .StringType("a2", "test2")
+                    .IntegerMatcher("a3", 3)
+                    .StringMatcher("a4", "([a-z]).*", "test4")
+                    .DecimalMatcher("a5", decimal.Parse("5.03234"))
+                    .EqualityMatcher("a6", "test6")
+                    .EqualityMatcher("a7", 7)
+                    .EqualityMatcher("a8", decimal.Parse("8.123"))
+                    .DateFormat("a9", "MM/dd/yyyy", DateTime.UtcNow)
+                    .TimestampFormat("a10", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", DateTime.Now)
+                    .MinArrayLike("b", 1)
+                        .Item(new PactDslJsonBody()
+                            .StringType("c1", "test6")
+                            .StringMatcher("c3", "([a-z]).*", "test7")
+                            .Object("d")
+                                .Int32Type("d1", 8)
+                                .StringType("d2", "test9")
+                            .CloseObject())
+                        .Item(new PactDslJsonBody()
+                            .StringType("c1", "test6")
+                            .StringMatcher("c3", "([a-z]).*", "test7")
+                            .Object("d")
+                                .Int32Type("d1", 8)
+                                .StringType("d2", "test9")
+                            .CloseObject())
+                    .CloseArray()
+                    .Object("e")
+                        .StringType("e1", "test10")
+                        .Int32Type("e2", 11)
+                    .CloseObject()
+                .CloseObject();
+
+            var badmsg1 = "{\r\n    \"a\": {\r\n        \"a1\": \"test1\",\r\n        \"a10\": \"2017-01-26T09:11:53.SSSZ\",\r\n        \"a2\": \"test2\",\r\n        \"a3\": \"3\",\r\n        \"a5\": \"5.03234\",\r\n        \"a6\": \"test6\",\r\n        \"a7\": 8,\r\n        \"a8\": 8.123,\r\n        \"a9\": \"01/26/2017\",\r\n        \"b\": [\r\n            {\r\n                \"d\": {\r\n                    \"d1\": 8,\r\n                    \"d2\": \"test9\"\r\n                }\r\n            },\r\n            {\r\n                \"c1\": \"test6\",\r\n                \"c3\": \"test7\",\r\n                \"d\": {\r\n                    \"d1\": 8,\r\n                    \"d2\": \"test9\"\r\n                }\r\n            }\r\n        ],\r\n        \"e\": {\r\n            \"e1\": \"test10\",\r\n            \"e2\": 11\r\n        }\r\n    }\r\n}";
+            var badmsg2 = "{\r\n    \"a\": {\r\n        \"a1\": \"test1\",\r\n        \"a10\": \"01-26-2017T09:11:53.SSSZ\",\r\n        \"a2\": \"test2\",\r\n        \"a3\": 3,\r\n        \"a4\": \"test4\",\r\n        \"a5\": 5.03234,\r\n        \"a6\": \"test6\",\r\n        \"a7\": 7,\r\n        \"a8\": 8.123,\r\n        \"a9\": \"01-27-2017\",\r\n        \"b\": [\r\n            {\r\n                \"c1\": \"test6\",\r\n                \"c3\": \"test7\",\r\n                \"d\": {\r\n                    \"d1\": 8,\r\n                    \"d2\": \"test9\"\r\n                }\r\n            },\r\n            {\r\n                \"c1\": \"test6\",\r\n                \"c3\": \"test7\",\r\n                \"d\": {\r\n                    \"d1\": 8,\r\n                    \"d2\": \"test9\"\r\n                }\r\n            }\r\n        ],\r\n        \"e\": {\r\n            \"e1\": \"test10\",\r\n            \"e2\": 11\r\n        }\r\n    }\r\n}";
+            var messager = new MockMessanger();
+
+            messager.Publish("my.test.topic", "my provider state", JObject.Parse(badmsg1));
+            messager.Publish("my.second.test.topic", "my provider state 2", JObject.Parse(badmsg2));
+
+            ProviderMessageValidator sut = GetSystemUnderTest(messager);
+
+            PactMessageFile pactFile = new PactMessageFile();
+            pactFile.Consumer = new PactNet.Models.Pacticipant() { Name = "consumer" };
+            pactFile.Provider = new PactNet.Models.Pacticipant() { Name = "provider" };
+
+            pactFile.AddMessage(new Message()
+                .Given("I can create a report!")
+                .ExpectsToRecieve("my.test.topic")
+                .WithBody(dsl));
+
+            pactFile.AddMessage(new Message()
+                .Given("I can create a second report!")
+                .ExpectsToRecieve("my.second.test.topic")
+                .WithBody(dsl));
+
+            Assert.Throws<PactFailureException>(() => sut.Validate(pactFile));
         }
     }
 }
