@@ -56,7 +56,7 @@
       <Project>{7024b146-2cb2-4de2-b079-58cf9c44640b}</Project>
       <Name>PactNet</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Producer\Provider.Messaging.csproj">
+    <ProjectReference Include="..\Provider.Messaging\Provider.Messaging.csproj">
       <Project>{53019f40-d5a6-4aea-b54a-d672d32c2249}</Project>
       <Name>Provider.Messaging</Name>
     </ProjectReference>
