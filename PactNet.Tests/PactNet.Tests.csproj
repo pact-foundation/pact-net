@@ -136,6 +136,7 @@
     <Compile Include="Models\PactMessageFileTests.cs" />
     <Compile Include="Models\ProviderStatesTests.cs" />
     <Compile Include="Models\ProviderStateTests.cs" />
+    <Compile Include="PactBrokerClientTests.cs" />
     <Compile Include="PactConfigTests.cs" />
     <Compile Include="PactBuilderTests.cs" />
     <Compile Include="PactMessageingVerifierTests.cs" />

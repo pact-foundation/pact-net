@@ -16,6 +16,9 @@ namespace PactNet
     {
         IPactMessagingVerifier IAmProvider(string providerName);
         IPactMessagingVerifier BroadCast(string messageDescription, string providerState, dynamic exampleMessage);
+        IPactMessagingVerifier UsingPactBroker(string url, PactUriOptions options = null);
+        IPactMessagingVerifier UsingPactBroker(PactBrokerClient broker);
+        IPactMessagingVerifier UsingPactFile(string filePath);
     }
 
     public interface IPactHttpVerifier : IPactVerifier

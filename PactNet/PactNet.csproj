@@ -134,6 +134,7 @@
     <Compile Include="Models\Messaging\Consumer\Dsl\DslPart.cs" />
     <Compile Include="Models\Messaging\Consumer\Dsl\PactDslJsonBody.cs" />
     <Compile Include="Models\Messaging\MessageJsonConverter.cs" />
+    <Compile Include="PactBrokerClient.cs" />
     <Compile Include="PactMessageBuilder.cs" />
     <Compile Include="Mocks\MockHttpService\Matchers\Regex\RegexMatchDefinition.cs" />
     <Compile Include="Mocks\MockHttpService\Matchers\Type\TypeMatchDefinition.cs" />

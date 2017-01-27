@@ -11,6 +11,13 @@ namespace PactNet.Extensions
                 String.Empty;
         }
 
+        public static string ToSnakeCase(this string input)
+        {
+            return !String.IsNullOrEmpty(input) ?
+                input.Replace(' ', '_'):
+                String.Empty;
+        }
+
         public static bool IsWebUri(this string uri)
         {
             return uri.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase) ||

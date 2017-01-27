@@ -2,7 +2,7 @@
 using System.Text;
 
 namespace PactNet
-{
+{ 
     public class PactUriOptions
     {
         private const string AuthScheme = "Basic";

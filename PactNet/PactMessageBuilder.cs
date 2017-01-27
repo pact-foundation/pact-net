@@ -77,7 +77,7 @@ namespace PactNet
 
 
 
-  public IPactMessagingBuilder WithContent(Message message)
+        public IPactMessagingBuilder WithContent(Message message)
         {
             this.pactMessage.AddMessage(message);
             return this;

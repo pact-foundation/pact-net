@@ -66,8 +66,6 @@ namespace PactNet.Validators
             }
 
             //Only grab the messages that this consumer pact is interested in.
-            bool ignoreCase = true;
-
             var comparisonResult = new ComparisonResult();
 
             foreach (Message m in pactFile.Messages)

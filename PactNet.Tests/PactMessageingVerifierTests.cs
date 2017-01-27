@@ -27,9 +27,9 @@ namespace PactNet.Tests
 
         private IPactMessagingVerifier GetSystemUnderTest()
         {
-            return new PactMessagingVerifier(mockFileSystem,
-                new System.Net.Http.HttpClient(this.fakeHttpMessageHandler),
+            return new PactMessagingVerifier(
                 null,
+                this.mockFileSystem,
                 (reporter, verifierConfig, mockMessager) => this.mockValidator);
         }
 
@@ -103,20 +103,7 @@ namespace PactNet.Tests
 
             pactVerifier.PactUri(pactFileUri);
 
-            Assert.Equal(pactFileUri, ((PactMessagingVerifier)pactVerifier).PactFileUri);
-        }
-
-        [Fact]
-        public void PactUri_WhenCalledWithPactOptions_SetsPactOptions()
-        {
-            const string pactFileUri = "../../../Consumer.Tests/pacts/my_client-event_message.json";
-            var pactVerifier = new PactMessagingVerifier();
-            PactUriOptions options = new PactUriOptions("userName", "password");
-
-            pactVerifier.PactUri(pactFileUri, options);
-
-            Assert.Equal<string>(options.AuthorizationValue, ((PactMessagingVerifier)pactVerifier).PactUriOptions.AuthorizationValue);
-            Assert.Equal<string>(options.AuthorizationScheme, ((PactMessagingVerifier)pactVerifier).PactUriOptions.AuthorizationScheme);
+            Assert.Equal(pactFileUri, ((PactMessagingVerifier)pactVerifier).PactFiles[0]);
         }
 
         [Fact]
@@ -221,17 +208,17 @@ namespace PactNet.Tests
 
             this.fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.OK)
             {
-                Content = new StringContent(pactFileJson, Encoding.UTF8, "application/json")
+                Content = new StringContent(pactFileJson, Encoding.UTF8, "application/hal+json")
             };
 
             sut.IAmProvider(messageProvider)
-                .HonoursPactWith(messageConsumer)
-                .PactUri(pactUri);
+                .HonoursPactWith(messageConsumer);
 
+            sut.UsingPactBroker(new PactBrokerClient(new Uri(pactUri), null, new HttpClient(this.fakeHttpMessageHandler)));
             sut.Verify();
 
             Assert.Equal(HttpMethod.Get, this.fakeHttpMessageHandler.RequestsReceived.Single().Method);
-            Assert.Equal("application/json", this.fakeHttpMessageHandler.RequestsReceived.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
+            Assert.Equal("application/hal+json", this.fakeHttpMessageHandler.RequestsReceived.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
         }
 
         [Fact]
@@ -246,17 +233,17 @@ namespace PactNet.Tests
 
             this.fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.OK)
             {
-                Content = new StringContent(pactFileJson, Encoding.UTF8, "application/json")
+                Content = new StringContent(pactFileJson, Encoding.UTF8, "application/hal+json")
             };
 
             sut.IAmProvider(messageProvider)
-                .HonoursPactWith(messageConsumer)
-                .PactUri(pactUri);
+                .HonoursPactWith(messageConsumer);
 
+            sut.UsingPactBroker(new PactBrokerClient(new Uri(pactUri), null, new HttpClient(this.fakeHttpMessageHandler)));
             sut.Verify();
 
             Assert.Equal(HttpMethod.Get, this.fakeHttpMessageHandler.RequestsReceived.Single().Method);
-            Assert.Equal("application/json", this.fakeHttpMessageHandler.RequestsReceived.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
+            Assert.Equal("application/hal+json", this.fakeHttpMessageHandler.RequestsReceived.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
         }
 
         [Fact]
@@ -273,17 +260,17 @@ namespace PactNet.Tests
 
             this.fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.OK)
             {
-                Content = new StringContent(pactFileJson, Encoding.UTF8, "application/json")
+                Content = new StringContent(pactFileJson, Encoding.UTF8, "application/hal+json")
             };
 
             sut.IAmProvider(messageProvider)
-                .HonoursPactWith(messageConsumer)
-                .PactUri(pactUri, options);
+                .HonoursPactWith(messageConsumer);
 
+            sut.UsingPactBroker(new PactBrokerClient(new Uri(pactUri), options, new HttpClient(this.fakeHttpMessageHandler)));
             sut.Verify();
 
             Assert.Equal(HttpMethod.Get, this.fakeHttpMessageHandler.RequestsReceived.Single().Method);
-            Assert.Equal("application/json", this.fakeHttpMessageHandler.RequestsReceived.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
+            Assert.Equal("application/hal+json", this.fakeHttpMessageHandler.RequestsReceived.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
             Assert.Equal(this.fakeHttpMessageHandler.RequestsReceived.Single().Headers.Authorization.Scheme, options.AuthorizationScheme);
             Assert.Equal(this.fakeHttpMessageHandler.RequestsReceived.Single().Headers.Authorization.Parameter, options.AuthorizationValue);
         }
@@ -320,8 +307,9 @@ namespace PactNet.Tests
             this.fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
 
             sut.IAmProvider(messageProvider)
-                 .HonoursPactWith(messageConsumer)
-                 .PactUri(pactUri);
+                .HonoursPactWith(messageConsumer);
+
+            sut.UsingPactBroker(new PactBrokerClient(new Uri(pactUri), null, new HttpClient(this.fakeHttpMessageHandler)));
 
             Assert.Throws<InvalidOperationException>(() => sut.Verify());
 

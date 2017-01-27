@@ -32,7 +32,7 @@ namespace Consumer.Tests
             var body = new PactDslJsonRoot()
                     .StringType("eventType", testEvent.EventType)
                     .GuidMatcher("eventId", testEvent.EventId)
-                    .TimestampFormat("timestamp", "yyyy-MM-ddTHH:mm:ss.fffffffZ", testEvent.Timestamp)
+                    .TimestampFormat("timestamp", "yyyy-MM-ddTHH:mm:ss.ffffffZ", testEvent.Timestamp)
                     .Object("location")
                         .Object("latitude")
                             .IntegerMatcher("degrees", testEvent.Location.Latitude.Degrees)

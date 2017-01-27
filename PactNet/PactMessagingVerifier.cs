@@ -25,27 +25,27 @@ namespace PactNet
     {
 
         private readonly IMockMessager mockMessager;
-        private readonly IFileSystem fileSystem;
-        private readonly HttpClient httpClient;
         private readonly Func<IReporter, PactVerifierConfig, IMockMessager, IProviderMessageValidator> providerValidatorFactory;
 
         private readonly PactVerifierConfig config;
 
-        public string PactFileUri { get; private set; }
-        public PactUriOptions PactUriOptions { get; private set; }
+        private IFileSystem _fileSystem;
+        private PactBrokerClient _pactBroker;
+
+        public List<string> PactFiles { get; private set; }
         public string ConsumerName { get; private set; }
         public string ProviderName { get; private set; }
 
-        internal PactMessagingVerifier(IFileSystem fileSystem,
-            HttpClient httpClient,
+        internal PactMessagingVerifier(
             PactVerifierConfig config,
+            IFileSystem fileSystem,
             Func<IReporter, PactVerifierConfig, IMockMessager, IProviderMessageValidator> providerValidatorFactory)
         {
-            this.httpClient = httpClient;
-            this.fileSystem = fileSystem;
             this.config = config ?? new PactVerifierConfig();
             this.mockMessager = new MockMessanger();
+            this._fileSystem = fileSystem;
             this.providerValidatorFactory = providerValidatorFactory;
+            this.PactFiles = new List<string>();
         }
 
         public PactMessagingVerifier()
@@ -55,9 +55,8 @@ namespace PactNet
         }
 
         public PactMessagingVerifier(PactVerifierConfig config)
-            :this(new FileSystem(), 
-                 new HttpClient(),
-                 config,
+            :this(config,
+                new FileSystem(), 
                 (reporter, verifierConfig, mockMessager) => new ProviderMessageValidator( reporter, verifierConfig, mockMessager))
         {
             
@@ -85,10 +84,10 @@ namespace PactNet
                 throw new ArgumentException("Please supply a non null or empty uri");
             }
 
-            PactFileUri = uri;
-            PactUriOptions = options;
+            if (uri.IsWebUri())
+                return this.UsingPactBroker(uri, options);
 
-            return this;
+            return this.UsingPactFile(uri);
         }
 
         public IPactMessagingVerifier IAmProvider(string providerName)
@@ -113,72 +112,73 @@ namespace PactNet
             return this;
         }
 
-        public void Verify(string description = null, string providerState = null)
+        public IPactMessagingVerifier UsingPactBroker(string url, PactUriOptions options = null)
         {
-            if (String.IsNullOrWhiteSpace(PactFileUri))
-            {
-                throw new InvalidOperationException(
-                    "PactFileUri has not been set, please supply a uri using the PactUri method.");
-            }
+            if (options != null)
+                _pactBroker = new PactBrokerClient(new Uri(url), options);
+            else
+                _pactBroker = new PactBrokerClient(new Uri(url));
 
-            PactMessageFile pactFile = FetchPactFile();
-
-            var loggerName = LogProvider.CurrentLogProvider.AddLogger(this.config.LogDir, ProviderName.ToLowerSnakeCase(), "{0}_verifier.log");
-            this.config.LoggerName = loggerName;
-
-            try
-            {
-                this.providerValidatorFactory(new Reporter(this.config), this.config, this.mockMessager)
-                    .Validate(pactFile);
-            }
-            finally
-            {
-                LogProvider.CurrentLogProvider.RemoveLogger(this.config.LoggerName);
-            }
-
+            return this;
         }
 
-        private PactMessageFile FetchPactFile()
+        public IPactMessagingVerifier UsingPactBroker(PactBrokerClient broker)
         {
-            PactMessageFile pactFile;
+            _pactBroker = broker;
+            return this;
+        }
+
+        public IPactMessagingVerifier UsingPactFile(string filePath)
+        {
+            this.PactFiles.Add(filePath);
+            return this;
+        }
+
+        public void Verify(string description = null, string providerState = null)
+        {
+
+            foreach (var pactFile in FetchPactFiles())
+            {
+                try
+                {
+                    var loggerName = LogProvider.CurrentLogProvider.AddLogger(this.config.LogDir, ProviderName.ToLowerSnakeCase(), "{0}_verifier.log");
+                    this.config.LoggerName = loggerName;
+
+                    this.providerValidatorFactory(new Reporter(this.config), this.config, this.mockMessager)
+                        .Validate(pactFile);
+                }
+                finally
+                {
+                    LogProvider.CurrentLogProvider.RemoveLogger(this.config.LoggerName);
+                }
+            }
+        }
+
+        private List<PactMessageFile> FetchPactFiles()
+        {
+            var pactFiles = new List<PactMessageFile>();
 
             try
             {
-                string pactFileJson;
+                if (_pactBroker != null)
+                    foreach (var pactJson in this._pactBroker.GetPactsByProvider(this.ProviderName))
+                        pactFiles.Add(JsonConvert.DeserializeObject<PactMessageFile>(pactJson));
 
-                if (PactFileUri.IsWebUri())
+                if (this.PactFiles.Count > 0)
                 {
-                    using (var request = new HttpRequestMessage(HttpMethod.Get, PactFileUri))
+                    foreach (var pactFile in this.PactFiles)
                     {
-                        request.Headers.Add("Accept", "application/json");
-
-                        if (PactUriOptions != null)
-                        {
-                            request.Headers.Add("Authorization", String.Format("{0} {1}", PactUriOptions.AuthorizationScheme, PactUriOptions.AuthorizationValue));
-                        }
-
-
-                        using (var response = this.httpClient.SendAsync(request).Result)
-                        {
-                            response.EnsureSuccessStatusCode();
-                            pactFileJson = response.Content.ReadAsStringAsync().Result;
-                        }
-
+                        var pactJson = this._fileSystem.File.ReadAllText(pactFile);
+                        pactFiles.Add(JsonConvert.DeserializeObject<PactMessageFile>(pactJson));
                     }
                 }
-                else //Assume it's a file uri, and we will just throw if it does not exist
-                {
-                    pactFileJson = this.fileSystem.File.ReadAllText(PactFileUri);
-                }
-
-                pactFile = JsonConvert.DeserializeObject<PactMessageFile>(pactFileJson);
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException(String.Format("Json Pact file could not be retrieved using uri \'{0}\'.", PactFileUri), ex);
+                throw new InvalidOperationException("Json Pact file could not be retrieved", ex);
             }
 
-            return pactFile;
+            return pactFiles;
         }
 
     }
