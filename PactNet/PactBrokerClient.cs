@@ -95,9 +95,27 @@ namespace PactNet
             return this.GetPactFile(provider, consumer, "latest");
         }
 
-        public void PutPactFile(string provider, string consumer, string version)
+        public void PutPactFile(string pactJson, string provider, string consumer, string version)
         {
-            throw new NotImplementedException();
+            var pactUri = new Uri(_baseUri,
+                string.Format("pacts/provider/{0}/consumer/{1}/version/{2}", provider, consumer, version));
+
+            using (var request = new HttpRequestMessage(HttpMethod.Put, pactUri))
+            {
+                request.Headers.Add("Content-Type", "application/json");
+
+                if (_options != null)
+                {
+                    request.Headers.Add("Authorization", String.Format("{0} {1}", _options.AuthorizationScheme, _options.AuthorizationValue));
+                }
+
+                request.Content = new StringContent(pactJson);
+
+                using (var response = _httpClient.SendAsync(request).Result)
+                {
+                    response.EnsureSuccessStatusCode();
+                }
+            }
         }
 
         public void Dispose()

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using PactNet.Extensions;
 
 namespace PactNet.Models.Messaging
 {
@@ -47,6 +48,12 @@ namespace PactNet.Models.Messaging
             return m;
         }
 
-        
+        public override string GeneratePactFileName()
+        {
+            return String.Format("{0}-{1}.json",
+                Consumer != null ? Consumer.Name : String.Empty,
+                Provider != null ? Provider.Name : String.Empty)
+                .ToSnakeCase();
+        }
     }
 }
