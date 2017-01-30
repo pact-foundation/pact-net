@@ -242,6 +242,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="PactNet.nuspec" />
+    <None Include="Scripts\Publish.ps1" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
