@@ -5,21 +5,21 @@ using PactNet.Matchers;
 
 namespace PactNet.Models.Messaging.Consumer.Dsl
 {
-    public class PactDslJsonArray : DslPart<List<PactDslJsonBody>>
+    public class PactDslJsonArray : DslPart<List<DslPart>>
     {
         protected int Size;
 
         public PactDslJsonArray()
             : base()
         {
-            Body = new List<PactDslJsonBody>();
+            Body = new List<DslPart>();
         }
 
         public PactDslJsonArray(DslPart parent, string rootName, int size)
             : base(parent, rootName)
         {
             Size = size;
-            Body = new List<PactDslJsonBody>();
+            Body = new List<DslPart>();
         }
 
         public override string Path
@@ -81,6 +81,17 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
         {
             get
             {
+                //We have a primitive like array
+                if (this.Body.TrueForAll(x => x.IsPrimitive))
+                {
+                    var values = new List<object>();
+
+                    foreach (var parts in this.Body)
+                        values.Add(parts.Value);
+
+                    return values;
+                }
+
                 var items = new List<Dictionary<string, object>>();
 
                 foreach (var parts in this.Body)
@@ -120,8 +131,22 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
 
         public PactDslJsonArray Item(PactDslJsonBody body)
         {
+            if (this.Body.Count > 0 && !(this.Body[0] is PactDslJsonBody))
+                throw new InvalidOperationException("Items added to the array must be the same type");
+
             body.Parent = this;
             this.Body.Add(body);
+            return this;
+        }
+
+        public PactDslJsonArray Item<T>(T value) where T : IConvertible
+        {
+            if (this.Body.Count > 0 && !(this.Body[0] is PactDslValue<T>))
+                throw new InvalidOperationException("Invalid type added to array. Array items must be the same type");
+
+            //TODO: Support for different matchers for an array item
+            var item = new PactDslValue<T>(this, string.Empty, value).TypeMatcher();
+            this.Body.Add(item);
             return this;
         }
 

@@ -151,12 +151,6 @@
     <Compile Include="Mocks\MockHttpService\Validators\ProviderServiceValidatorTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PactNet\PactNet.csproj">
-      <Project>{7024b146-2cb2-4de2-b079-58cf9c44640b}</Project>
-      <Name>PactNet</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +160,12 @@
   <ItemGroup>
     <Folder Include="Mocks\MessagingService\" />
     <Folder Include="Mocks\MockMessagingService\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PactNet\PactNet.csproj">
+      <Project>{7024b146-2cb2-4de2-b079-58cf9c44640b}</Project>
+      <Name>PactNet</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />

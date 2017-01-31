@@ -274,6 +274,12 @@ namespace PactNet.Models.Messaging.Consumer.Dsl
             this.GetItem(name, example).TypeMatcher();
             return this;
         }
+
+        public PactDslJsonBody DateTimeType(string name, DateTime example)
+        {
+            this.GetItem(name, example).TypeMatcher();
+            return this;
+        }
         #endregion
     }
 }

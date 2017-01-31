@@ -159,6 +159,10 @@ namespace PactNet.Tests.Models.Consumer.Dsl
                         .StringType("e1", "test10")
                         .Int32Type("e2", 11)
                     .CloseObject()
+                    .MinArrayLike("x", 1)
+                        .Item("item1")
+                        .Item("item2")
+                    .CloseArray()
                 .CloseObject()
                 .StringType("z", "ztesttoremove");
               
@@ -172,7 +176,7 @@ namespace PactNet.Tests.Models.Consumer.Dsl
 
             var results = dsl.Validate(message);
 
-            Assert.Equal(30, results.MatcherChecks.Count);
+            Assert.Equal(35, results.MatcherChecks.Count);
             Assert.Equal(1, results.MatcherChecks.Count(m => m.GetType() == typeof(FailedMatcherCheck)));
         }
     }
