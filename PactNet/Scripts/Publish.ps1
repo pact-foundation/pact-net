@@ -6,12 +6,20 @@
 	[string]$pactBrokerPw
 )
 
-Write-Host("PactDir: $pactDir")
-Write-Host("PactBroker: $pactBroker")
-Write-Host("AppVersion: $appVersion")
-Write-Host("PactBrokerUser: $pactBrokerUser")
-Write-Host("PactBrokerPassword: $pactBrokerPw")
-Write-Host("")
+try
+{
+	Write-Host("PactDir: $pactDir")
+	Write-Host("PactBroker: $pactBroker")
+	Write-Host("AppVersion: $appVersion")
+	Write-Host("PactBrokerUser: $pactBrokerUser")
+	Write-Host("PactBrokerPassword: $pactBrokerPw")
+	Write-Host("")
+}
+catch
+{
+	Write-Error $_.Message
+	exit 1
+}
 
 function Convert-Version
 {
@@ -34,11 +42,23 @@ function Publish-Pact
 	}
 
 	$uri = "$pactBroker/pacts/provider/$provider/consumer/$consumer/version/$version"
-	$response = Invoke-WebRequest -UseBasicParsing -Uri $uri -Method Put -Headers $headers -Body $content -ContentType: application/json
-
-	if (-not $response.StatusCode -eq 200)
+	
+	try
 	{
-		Write-Error "PactBroker returned an error status: $($response.StatusCode) - $($response.StatusDescription)"
+		$response = Invoke-WebRequest -UseBasicParsing -Uri $uri -Method Put -Headers $headers -Body $content -ContentType: application/json
+
+		if (-not $response.StatusCode -eq 200)
+		{
+			throw "PactBroker returned an error status: $($response.StatusCode) - $($response.StatusDescription)"
+		}
+		else
+		{
+			Write-Output "Success"
+		}
+	}
+	catch
+	{
+		Write-Error $_
 		exit 1
 	}
 }
@@ -57,9 +77,17 @@ if ((Get-ChildItem $pactDir -Filter *.json | Measure-Object).Count -eq 0)
 
 Get-ChildItem $pactDir -Filter *.json | 
 Foreach-Object {
-    $content = Get-Content -Raw $_.FullName
-	$json = $content | ConvertFrom-Json
+	try
+	{
+		Write-Output "Found pactfile: $($_.FullName | Split-Path -Leaf)"
 
-	Write-Output "Found pactfile: $($_.FullName | Split-Path -Leaf)"
-	Publish-Pact -consumer $json.consumer.name -provider $json.provider.name $json. -content $content
+		$content = Get-Content -Raw $_.FullName
+		$json = $content | ConvertFrom-Json
+
+		Publish-Pact -consumer $json.consumer.name -provider $json.provider.name $json. -content $content
+	}
+	catch
+	{
+		Write-Error $_
+	}
 }
