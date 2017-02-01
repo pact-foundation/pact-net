@@ -24,11 +24,15 @@ namespace PactNet.Matchers.Max
         public MatcherResult Match(string path, JToken expected, JToken actual)
         {
             var act = actual as JArray;
-            var matches = act != null && actual.Count() <= this.MaxValue;
+
+            if (act == null)
+                return new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotExist, this.MaxValue, "(null)"));
+
+            var matches = act.Count <= this.MaxValue;
 
             return matches ?
                 new MatcherResult(new SuccessfulMatcherCheck(path, this.MaxValue, act.Count)) :
-                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.AdditionalItemInArray));
+                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.AdditionalItemInArray, this.MaxValue, act.Count));
         }
     }
 }

@@ -24,7 +24,11 @@ namespace PactNet.Matchers.Min
         public MatcherResult Match(string path, JToken expected, JToken actual)
         {
             var act = actual as JArray;
-            var matches = act != null && actual.Count() >= this.MinValue;
+
+            if (act == null)
+                return new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotExist, this.MinValue, "(null)"));
+
+            var matches = actual.Count() >= this.MinValue;
 
             return matches ?
                 new MatcherResult(new SuccessfulMatcherCheck(path, this.MinValue, act.Count)) :

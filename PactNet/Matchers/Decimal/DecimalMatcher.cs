@@ -20,11 +20,15 @@ namespace PactNet.Matchers.Decimal
             var act = actual as JValue;
             double decValue;
 
-            //Check if it's numeric first
+            //Check if it's null
+            if (act == null)
+                return new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotExist, "Decimal", "(null)"));
+
+            //Check if it's numeric
             if (act.Type != JTokenType.Float && act.Type != JTokenType.Integer)
                 return new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueNotDecimal, "Decimal", string.Format("{0} ({1})", act.Value, act.Type)));
 
-            var matches = act != null && act.Type == JTokenType.Float && double.TryParse(act.Value.ToString(), out decValue);
+            var matches = act.Type == JTokenType.Float && double.TryParse(act.Value.ToString(), out decValue);
 
             return matches ?
                 new MatcherResult(new SuccessfulMatcherCheck(path, "Decimal", act.Value)) :

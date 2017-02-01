@@ -25,9 +25,11 @@ namespace PactNet.Matchers.Date
         {
             var act = actual as JValue;
 
+            if (act == null)
+                return new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotExist, this.DateFormat, "(null)"));
+
             DateTime dateTime;
-            var matches = act != null &&
-                          DateTime.TryParseExact(act.Value.ToString(), this.DateFormat, CultureInfo.InvariantCulture,
+            var matches = DateTime.TryParseExact(act.Value.ToString(), this.DateFormat, CultureInfo.InvariantCulture,
                               DateTimeStyles.None, out dateTime);
 
             return matches ?

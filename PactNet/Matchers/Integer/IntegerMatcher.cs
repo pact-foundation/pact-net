@@ -21,6 +21,9 @@ namespace PactNet.Matchers.Integer
             var exp = expected as JValue;
             long intValue;
 
+            if (act == null)
+                return new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotExist, "Integer", "(null)"));
+
             if (act.Type != JTokenType.Integer)
                 return new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueNotInteger, "Integer", string.Format("{0} ({1})", act.Value, act.Type)));
 
