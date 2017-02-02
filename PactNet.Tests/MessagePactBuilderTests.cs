@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Newtonsoft.Json;
 using Xunit;
@@ -56,11 +57,14 @@ namespace PactNet.Tests
                 Body = body
             };
 
-            builder.WithContent(m);
+            builder.WithContent(m)
+                .WithMetaData(new Dictionary<string, object>());
 
-            const string expectedPact = "{\"provider\":{\"name\":\"Provider\"},\"consumer\":{\"name\":\"Consumer\"},\"messages\":[{\"description\":\"Published credit data\",\"providerState\":\"or maybe \'scenario\'? not sure about this\",\"contents\":{\"foo\":\"bar\"},\"matchingRules\":{\"$.body.foo\":{\"match\":\"type\"}},\"metaData\":{\"contentType\":\"application/json\"}}],\"metadata\":{\"pact-specification\":\"3.0.0\",\"pact-net\":\"0.0.0.1\"}}";
+            const string expectedPact = "{\"provider\":{\"name\":\"Provider\"},\"consumer\":{\"name\":\"Consumer\"},\"messages\":[{\"description\":\"Published credit data\",\"providerState\":\"or maybe \'scenario\'? not sure about this\",\"contents\":{\"foo\":\"bar\"},\"matchingRules\":{\"$.body.foo\":{\"match\":\"type\"}},\"metaData\":{\"contentType\":\"application/json\"}}],\"metadata\":{\"pact-specification\":\"3.0.0\",\"pact-net\":\"[version]\"}}";
             string actual = builder.GetPactAsJSON();
-            Assert.Equal<string>(expectedPact, actual);
+
+            
+            Assert.Equal<string>(expectedPact.Replace("[version]", typeof(PactMessageFile).Assembly.GetName().Version.ToString()), actual);
         }
 
         [Fact]
