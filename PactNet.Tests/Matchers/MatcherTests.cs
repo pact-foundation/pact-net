@@ -172,7 +172,7 @@ namespace PactNet.Tests.Matchers
         {
             var matcher = new DateFormatMatcher("MM/dd/yyyy");
 
-            var actual = new JValue("2017/01/01");
+            var actual = new JValue("notadateatall");
             var expected = new JValue("01/01/2017");
 
             var result = matcher.Match(string.Empty, expected, actual);
@@ -180,7 +180,7 @@ namespace PactNet.Tests.Matchers
             Assert.Equal(0, result.MatcherChecks.Count(m => m.GetType() == typeof(SuccessfulMatcherCheck)));
             Assert.Equal(1, result.MatcherChecks.Count(m => m.GetType() == typeof(FailedMatcherCheck)));
 
-            Assert.Equal(MatcherCheckFailureType.ValueDoesNotMatchDateFormat,
+            Assert.Equal(MatcherCheckFailureType.ValueDoesNotMatchValidDate,
                 ((FailedMatcherCheck)result.MatcherChecks.First(m => m.GetType() == typeof(FailedMatcherCheck)))
                 .FailureType);
 

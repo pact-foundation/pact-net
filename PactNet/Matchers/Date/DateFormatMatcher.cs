@@ -29,12 +29,12 @@ namespace PactNet.Matchers.Date
                 return new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotExist, this.DateFormat, "(null)"));
 
             DateTime dateTime;
-            var matches = DateTime.TryParseExact(act.Value.ToString(), this.DateFormat, CultureInfo.InvariantCulture,
+            var matches = DateTime.TryParse(act.Value.ToString(), CultureInfo.InvariantCulture,
                               DateTimeStyles.None, out dateTime);
 
             return matches ?
                 new MatcherResult(new SuccessfulMatcherCheck(path, this.DateFormat, act.Value)) :
-                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotMatchDateFormat, this.DateFormat, act.Value));
+                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotMatchValidDate, this.DateFormat, act.Value));
         }
     }
 }
