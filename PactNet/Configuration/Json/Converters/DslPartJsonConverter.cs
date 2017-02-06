@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
-using PactNet.Matchers;
+using PactNet.Models.Messaging.Consumer.Dsl;
 
-namespace PactNet.Models.Messaging.Consumer.Dsl
+namespace PactNet.Configuration.Json.Converters
 {
     public class DslPartJsonConverter : CustomCreationConverter<DslPart>
     {

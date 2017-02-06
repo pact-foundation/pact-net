@@ -2,6 +2,7 @@
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PactNet.Configuration.Json.Converters;
 using PactNet.Matchers;
 using PactNet.Models.Messaging.Consumer.Dsl;
 using Xunit;

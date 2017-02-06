@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using PactNet.Configuration.Json.Converters;
 using PactNet.Matchers;
 using PactNet.Models.Messaging.Consumer.Dsl;
 

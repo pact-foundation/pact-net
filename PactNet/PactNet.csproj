@@ -128,13 +128,13 @@
     <Compile Include="Matchers\Type\TypeMatcher.cs" />
     <Compile Include="Mocks\IMockMessager.cs" />
     <Compile Include="Mocks\MockMessager\MockMessanger.cs" />
-    <Compile Include="Models\Messaging\Consumer\Dsl\DslPartJsonConverter.cs" />
+    <Compile Include="Configuration\Json\Converters\DslPartJsonConverter.cs" />
     <Compile Include="Models\Messaging\Consumer\Dsl\PactDslJsonArray.cs" />
     <Compile Include="Models\Messaging\Consumer\Dsl\PactDslJsonRoot.cs" />
     <Compile Include="Models\Messaging\Consumer\Dsl\PactDslValue.cs" />
     <Compile Include="Models\Messaging\Consumer\Dsl\DslPart.cs" />
     <Compile Include="Models\Messaging\Consumer\Dsl\PactDslJsonBody.cs" />
-    <Compile Include="Models\Messaging\MessageJsonConverter.cs" />
+    <Compile Include="Configuration\Json\Converters\MessageJsonConverter.cs" />
     <Compile Include="PactBrokerClient.cs" />
     <Compile Include="PactMessageBuilder.cs" />
     <Compile Include="Matchers\DefaultHttpBodyMatcher.cs" />

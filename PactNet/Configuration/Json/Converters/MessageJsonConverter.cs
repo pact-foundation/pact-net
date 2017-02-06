@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
-using PactNet.Models.Messaging.Consumer.Dsl;
+using PactNet.Models.Messaging;
 
-namespace PactNet.Models.Messaging
+namespace PactNet.Configuration.Json.Converters
 {
     public class MessageJsonConverter : CustomCreationConverter<Message>
     {
