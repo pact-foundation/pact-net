@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Consumer.Tests.Models;
+using Consumer.Models;
 using PactNet;
 using Xunit;
 using PactNet.Models.Messaging;
