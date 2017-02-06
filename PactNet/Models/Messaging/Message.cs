@@ -67,6 +67,12 @@ namespace PactNet.Models.Messaging
             this.Body = body;
             return this;
         }
+
+        public Message WithBody(dynamic body)
+        {
+            this.Body = PactDslJsonBody.Parse(body);
+            return this;
+        }
         #endregion
     }
 }
