@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
-using PactNet.Matchers;
 
-namespace PactNet.Mocks.MockHttpService.Matchers
+namespace PactNet.Matchers
 {
     internal class DefaultHttpBodyMatcher : IMatcher
     {

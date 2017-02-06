@@ -1,5 +1,5 @@
-﻿using PactNet.Mocks.MockHttpService.Matchers.Regex;
-using PactNet.Mocks.MockHttpService.Matchers.Type;
+﻿using PactNet.Matchers.Regex;
+using PactNet.Matchers.Type;
 
 namespace PactNet.Matchers
 {

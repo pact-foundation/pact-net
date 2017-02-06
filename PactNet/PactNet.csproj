@@ -136,9 +136,7 @@
     <Compile Include="Models\Messaging\MessageJsonConverter.cs" />
     <Compile Include="PactBrokerClient.cs" />
     <Compile Include="PactMessageBuilder.cs" />
-    <Compile Include="Mocks\MockHttpService\Matchers\Regex\RegexMatchDefinition.cs" />
-    <Compile Include="Mocks\MockHttpService\Matchers\Type\TypeMatchDefinition.cs" />
-    <Compile Include="Mocks\MockHttpService\Matchers\DefaultHttpBodyMatcher.cs" />
+    <Compile Include="Matchers\DefaultHttpBodyMatcher.cs" />
     <Compile Include="Matchers\FailedMatcherCheck.cs" />
     <Compile Include="Matchers\MatcherCheckFailureType.cs" />
     <Compile Include="Matchers\IMatcher.cs" />
@@ -161,8 +159,6 @@
     <Compile Include="Mocks\MockHttpService\Comparers\IHttpQueryStringComparer.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Mocks\MockHttpService\IHttpHost.cs" />
-    <Compile Include="Mocks\MockHttpService\Matchers\Regex\RegexMatcher.cs" />
-    <Compile Include="Mocks\MockHttpService\Matchers\Type\TypeMatcher.cs" />
     <Compile Include="Mocks\MockHttpService\Models\IHttpMessage.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\NancyHttpHost.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\IMockProviderAdminRequestHandler.cs" />

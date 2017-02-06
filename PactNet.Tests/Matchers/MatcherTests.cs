@@ -12,9 +12,9 @@ using PactNet.Matchers.Equality;
 using PactNet.Matchers.Integer;
 using PactNet.Matchers.Max;
 using PactNet.Matchers.Min;
+using PactNet.Matchers.Regex;
 using PactNet.Matchers.Timestamp;
 using PactNet.Matchers.Type;
-using PactNet.Mocks.MockHttpService.Matchers.Regex;
 using Xunit;
 
 namespace PactNet.Tests.Matchers

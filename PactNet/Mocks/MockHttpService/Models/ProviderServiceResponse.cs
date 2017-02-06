@@ -7,9 +7,8 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using PactNet.Configuration.Json.Converters;
 using PactNet.Matchers;
-using PactNet.Mocks.MockHttpService.Matchers;
-using PactNet.Mocks.MockHttpService.Matchers.Regex;
-using PactNet.Mocks.MockHttpService.Matchers.Type;
+using PactNet.Matchers.Regex;
+using PactNet.Matchers.Type;
 
 namespace PactNet.Mocks.MockHttpService.Models
 {
