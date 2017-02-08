@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
-using PactNet.Models.Messaging.Consumer.Dsl;
+using PactNet.Models.Consumer.Dsl;
 
 namespace PactNet.Configuration.Json.Converters
 {

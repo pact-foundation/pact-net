@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-using PactNet.Models;
 
-namespace PactNet.Mocks.MockHttpService.Models
+namespace PactNet.Models.ProviderService
 {
     public class ProviderServicePactFile : PactFile
     {

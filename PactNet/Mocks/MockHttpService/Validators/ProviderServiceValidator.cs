@@ -3,8 +3,8 @@ using System.Linq;
 using PactNet.Comparers;
 using PactNet.Logging;
 using PactNet.Mocks.MockHttpService.Comparers;
-using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
+using PactNet.Models.ProviderService;
 using PactNet.Reporters;
 
 namespace PactNet.Mocks.MockHttpService.Validators

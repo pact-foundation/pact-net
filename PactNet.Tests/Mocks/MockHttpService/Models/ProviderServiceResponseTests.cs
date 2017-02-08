@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using PactNet.Configuration.Json;
-using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Models.ProviderService;
 using Xunit;
 
 namespace PactNet.Tests.Mocks.MockHttpService.Models

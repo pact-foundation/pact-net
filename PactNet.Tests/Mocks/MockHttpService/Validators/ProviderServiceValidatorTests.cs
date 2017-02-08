@@ -5,9 +5,9 @@ using NSubstitute;
 using PactNet.Comparers;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Comparers;
-using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Validators;
 using PactNet.Models;
+using PactNet.Models.ProviderService;
 using PactNet.Reporters;
 using Xunit;
 

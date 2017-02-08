@@ -1,4 +1,4 @@
-﻿namespace PactNet.Mocks.MockHttpService.Models
+﻿namespace PactNet.Models.ProviderService
 {
     public enum HttpVerb
     {

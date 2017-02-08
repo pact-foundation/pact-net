@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using PactNet.Mocks.MockHttpService;
-using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Models.ProviderService;
 using Xunit;
 
 namespace PactNet.Tests.IntegrationTests

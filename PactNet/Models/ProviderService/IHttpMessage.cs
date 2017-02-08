@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PactNet.Mocks.MockHttpService.Models
+namespace PactNet.Models.ProviderService
 {
     internal interface IHttpMessage
     {

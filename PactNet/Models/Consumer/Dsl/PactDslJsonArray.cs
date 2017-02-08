@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using PactNet.Matchers;
 
-namespace PactNet.Models.Messaging.Consumer.Dsl
+namespace PactNet.Models.Consumer.Dsl
 {
     public class PactDslJsonArray : DslPart<List<DslPart>>
     {

@@ -4,7 +4,7 @@ using System.Text;
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
 
-namespace PactNet.Mocks.MockHttpService.Models
+namespace PactNet.Models.ProviderService
 {
     internal class HttpBodyContent
     {

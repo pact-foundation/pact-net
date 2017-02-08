@@ -5,7 +5,6 @@ using PactNet.Comparers.Messaging;
 using PactNet.Extensions;
 using PactNet.Logging;
 using PactNet.Mocks;
-using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockMessager;
 using PactNet.Models.Messaging;
 using PactNet.Reporters;

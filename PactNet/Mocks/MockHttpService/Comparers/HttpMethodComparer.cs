@@ -1,5 +1,5 @@
 using PactNet.Comparers;
-using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Models.ProviderService;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {

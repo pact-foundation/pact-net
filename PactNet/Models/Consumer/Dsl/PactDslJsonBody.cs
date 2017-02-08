@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Dynamic;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using PactNet.Matchers;
-using PactNet.Matchers.Regex;
-using PactNet.Matchers.Type;
 
-namespace PactNet.Models.Messaging.Consumer.Dsl
+namespace PactNet.Models.Consumer.Dsl
 {
     public class PactDslJsonBody : DslPart<Dictionary<string, DslPart>>
     {

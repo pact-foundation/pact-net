@@ -7,7 +7,7 @@ using NSubstitute;
 using PactNet.Configuration.Json;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Mappers;
-using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Models.ProviderService;
 using PactNet.Tests.Fakes;
 using Xunit;
 

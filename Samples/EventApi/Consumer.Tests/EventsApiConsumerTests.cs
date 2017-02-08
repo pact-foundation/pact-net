@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using PactNet.Mocks.MockHttpService;
-using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Models.ProviderService;
 using Xunit;
 
 namespace Consumer.Tests

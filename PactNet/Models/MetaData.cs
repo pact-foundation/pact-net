@@ -8,12 +8,12 @@ namespace PactNet.Models
         public MetaData()
         {
             PactSpecification = new PactSpecification();
-            PactNet = new pactNet();
+            PactNet = new PactNet();
         }
 
         [JsonProperty(PropertyName = "pact-specification")]
         public PactSpecification PactSpecification { get; set; }
         [JsonProperty(PropertyName = "pact-net")]
-        public pactNet PactNet { get; set; }
+        public PactNet PactNet { get; set; }
     }
 }

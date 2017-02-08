@@ -10,7 +10,7 @@ using PactNet.Matchers;
 using PactNet.Matchers.Regex;
 using PactNet.Matchers.Type;
 
-namespace PactNet.Mocks.MockHttpService.Models
+namespace PactNet.Models.ProviderService
 {
     public class ProviderServiceResponse : IHttpMessage
     {

@@ -6,11 +6,11 @@ using Newtonsoft.Json;
 using PactNet.Extensions;
 using PactNet.Logging;
 using PactNet.Mocks.MockHttpService;
-using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Validators;
 using PactNet.Models;
 using PactNet.Reporters;
 using System.Text;
+using PactNet.Models.ProviderService;
 
 namespace PactNet
 {

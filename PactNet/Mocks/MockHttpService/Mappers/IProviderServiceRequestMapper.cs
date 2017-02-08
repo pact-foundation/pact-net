@@ -1,6 +1,6 @@
 ﻿using Nancy;
 using PactNet.Mappers;
-using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Models.ProviderService;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {

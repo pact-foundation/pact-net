@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Nancy.Security;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PactNet.Matchers;
@@ -13,7 +12,7 @@ using PactNet.Matchers.Regex;
 using PactNet.Matchers.Timestamp;
 using PactNet.Matchers.Type;
 
-namespace PactNet.Models.Messaging.Consumer.Dsl
+namespace PactNet.Models.Consumer.Dsl
 {
     public abstract class DslPart
     {

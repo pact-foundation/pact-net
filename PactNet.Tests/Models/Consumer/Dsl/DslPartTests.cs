@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PactNet.Configuration.Json.Converters;
 using PactNet.Matchers;
-using PactNet.Models.Messaging.Consumer.Dsl;
+using PactNet.Models.Consumer.Dsl;
 using Xunit;
 
 namespace PactNet.Tests.Models.Consumer.Dsl

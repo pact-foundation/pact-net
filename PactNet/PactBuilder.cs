@@ -2,8 +2,8 @@
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
 using PactNet.Mocks.MockHttpService;
-using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
+using PactNet.Models.ProviderService;
 
 namespace PactNet
 {

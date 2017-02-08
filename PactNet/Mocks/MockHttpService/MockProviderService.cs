@@ -8,8 +8,8 @@ using System.Threading;
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
 using PactNet.Mocks.MockHttpService.Mappers;
-using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Nancy;
+using PactNet.Models.ProviderService;
 
 namespace PactNet.Mocks.MockHttpService
 {

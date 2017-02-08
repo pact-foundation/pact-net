@@ -8,7 +8,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Xunit;
 using PactNet;
-using PactNet.Models.Messaging.Consumer.Dsl;
+using PactNet.Models.Consumer.Dsl;
 
 namespace PactNet.Tests
 {

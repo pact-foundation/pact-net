@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
-using PactNet.Models;
 
-namespace PactNet.Mocks.MockHttpService.Models
+namespace PactNet.Models.ProviderService
 {
     public class ProviderServiceInteraction : Interaction
     {

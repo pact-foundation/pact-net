@@ -2,7 +2,6 @@
 using PactNet.Mocks;
 using PactNet.Mocks.MockMessager;
 using PactNet.Models.Messaging;
-using PactNet.Models.Messaging.Consumer.Dsl;
 using PactNet.Reporters;
 using PactNet.Validators;
 using System;
@@ -10,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json.Linq;
+using PactNet.Models.Consumer.Dsl;
 using Xunit;
 
 namespace PactNet.Tests

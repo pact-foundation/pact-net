@@ -6,7 +6,7 @@ using System.Text;
 
 namespace PactNet.Models
 {
-    public class pactNet
+    public class PactNet
     {
         [JsonProperty(PropertyName = "version")]
         public string Version { get; set; }

@@ -5,8 +5,6 @@ namespace PactNet.Models
 {
     public class PactFile : PactDetails
     {
-       
-
         [JsonProperty(PropertyName = "metadata")]
         public dynamic Metadata { get; private set; }
 
@@ -15,7 +13,7 @@ namespace PactNet.Models
             MetaData metaData = new MetaData()
             {
                 PactSpecification = new PactSpecification() { Version = "3.0.0" },
-                PactNet = new pactNet() { Version = Assembly.GetExecutingAssembly().GetName().Version.ToString() }
+                PactNet = new PactNet() { Version = Assembly.GetExecutingAssembly().GetName().Version.ToString() }
             };
 
             Metadata = metaData;

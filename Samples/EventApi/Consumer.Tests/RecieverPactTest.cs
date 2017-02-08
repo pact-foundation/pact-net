@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Consumer.Models;
 using PactNet;
+using PactNet.Models.Consumer.Dsl;
 using Xunit;
 using PactNet.Models.Messaging;
-using PactNet.Models.Messaging.Consumer.Dsl;
 
 namespace Consumer.Tests
 {
