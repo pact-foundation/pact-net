@@ -8,6 +8,6 @@ namespace PactNet.Validators
 {
     interface IProviderMessageValidator
     {
-        void Validate(PactMessageFile pactFile);
+        void Validate(MessagingPactFile pactFile);
     }
 }

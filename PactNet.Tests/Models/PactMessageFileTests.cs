@@ -10,6 +10,14 @@ namespace PactNet.Tests.Models
 {
     public class PactMessageFileTests
     {
-       
+       [Fact]
+       public void Ctor_SetsPactVersionTo3_0()
+        {
+            var sut = new MessagingPactFile();
+
+           // Assert.Equal("3.0.0", sut.Metadata.pactSpecificationVersion);
+
+            string json = JsonConvert.SerializeObject(sut);
+        }
     }
 }

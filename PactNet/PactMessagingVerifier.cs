@@ -154,22 +154,22 @@ namespace PactNet
             }
         }
 
-        private List<PactMessageFile> FetchPactFiles()
+        private List<MessagingPactFile> FetchPactFiles()
         {
-            var pactFiles = new List<PactMessageFile>();
+            var pactFiles = new List<MessagingPactFile>();
 
             try
             {
                 if (_pactBroker != null)
                     foreach (var pactJson in this._pactBroker.GetPactsByProvider(this.ProviderName))
-                        pactFiles.Add(JsonConvert.DeserializeObject<PactMessageFile>(pactJson));
+                        pactFiles.Add(JsonConvert.DeserializeObject<MessagingPactFile>(pactJson));
 
                 if (this.PactFiles.Count > 0)
                 {
                     foreach (var pactFile in this.PactFiles)
                     {
                         var pactJson = this._fileSystem.File.ReadAllText(pactFile);
-                        pactFiles.Add(JsonConvert.DeserializeObject<PactMessageFile>(pactJson));
+                        pactFiles.Add(JsonConvert.DeserializeObject<MessagingPactFile>(pactJson));
                     }
                 }
             }

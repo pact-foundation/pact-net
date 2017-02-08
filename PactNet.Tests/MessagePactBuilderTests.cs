@@ -60,11 +60,11 @@ namespace PactNet.Tests
             builder.WithContent(m)
                 .WithMetaData(new Dictionary<string, object>());
 
-            const string expectedPact = "{\"provider\":{\"name\":\"Provider\"},\"consumer\":{\"name\":\"Consumer\"},\"messages\":[{\"description\":\"Published credit data\",\"providerState\":\"or maybe \'scenario\'? not sure about this\",\"contents\":{\"foo\":\"bar\"},\"matchingRules\":{\"$.body.foo\":{\"match\":\"type\"}},\"metaData\":{\"contentType\":\"application/json\"}}],\"metadata\":{\"pact-specification\":\"3.0.0\",\"pact-net\":\"[version]\"}}";
+            const string expectedPact = "{\"provider\":{\"name\":\"Provider\"},\"consumer\":{\"name\":\"Consumer\"},\"messages\":[{\"description\":\"Published credit data\",\"providerState\":\"or maybe \'scenario\'? not sure about this\",\"contents\":{\"foo\":\"bar\"},\"matchingRules\":{\"$.body.foo\":{\"match\":\"type\"}},\"metaData\":{\"contentType\":\"application/json\"}}],\"metadata\":{\"pact-specification\":{\"version\":\"3.0.0\"},\"pact-net\":{\"version\":\"0.0.0.1\"}}}";
             string actual = builder.GetPactAsJSON();
 
             
-            Assert.Equal<string>(expectedPact.Replace("[version]", typeof(PactMessageFile).Assembly.GetName().Version.ToString()), actual);
+            Assert.Equal<string>(expectedPact.Replace("[version]", typeof(MessagingPactFile).Assembly.GetName().Version.ToString()), actual);
         }
 
         [Fact]
