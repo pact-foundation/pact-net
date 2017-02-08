@@ -12,29 +12,37 @@ namespace PactNet
     {
         private HttpClient _httpClient;
         private PactUriOptions _options;
-        private Uri _baseUri;
 
-        public PactBrokerClient(Uri baseUri, PactUriOptions options, HttpClient client)
+        public PactBrokerClient(PactUriOptions options, HttpClient client)
         {
-            _baseUri = baseUri;
             _options = options;
             _httpClient = client;
         }
 
-        public PactBrokerClient(Uri baseUri, PactUriOptions options)
-            :this(baseUri, options, new HttpClient())
+        public PactBrokerClient(PactUriOptions options)
+            :this(options, new HttpClient())
         {
         }
 
-        public PactBrokerClient(Uri baseUri)
-            :this(baseUri, null, new HttpClient())
+        public PactBrokerClient(HttpClient client)
+            :this(null, client)
         {
-            
         }
 
-        public IEnumerable<string> GetPactsByProvider(string provider)
+        public PactBrokerClient()
+            :this(null, new HttpClient())
         {
-            var uri = new Uri(_baseUri, string.Format("pacts/provider/{0}/latest", provider));
+        }
+
+        public PactUriOptions Options
+        {
+            get { return _options; }
+            set { _options = value; }
+        }
+
+        public IEnumerable<string> GetPactsByProvider(Uri baseUri, string provider)
+        {
+            var uri = new Uri(baseUri, string.Format("pacts/provider/{0}/latest", provider));
 
             var pactFiles = new List<string>();
             using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
@@ -84,20 +92,20 @@ namespace PactNet
             return pactFile;
         }
 
-        public string GetPactFile(string provider, string consumer, string version)
+        public string GetPactFile(Uri baseUri, string provider, string consumer, string version)
         {
-            return this.GetPactFile(new Uri(_baseUri,
+            return this.GetPactFile(new Uri(baseUri,
                     string.Format("pacts/provider/{0}/consumer/{1}/version/{2}", provider, consumer, version)));
         }
 
-        public string GetPactFile(string provider, string consumer)
+        public string GetPactFile(Uri baseUri, string provider, string consumer)
         {
-            return this.GetPactFile(provider, consumer, "latest");
+            return this.GetPactFile(baseUri, provider, consumer, "latest");
         }
 
-        public void PutPactFile(string pactJson, string provider, string consumer, string version)
+        public void PutPactFile(Uri baseUri, string pactJson, string provider, string consumer, string version)
         {
-            var pactUri = new Uri(_baseUri,
+            var pactUri = new Uri(baseUri,
                 string.Format("pacts/provider/{0}/consumer/{1}/version/{2}", provider, consumer, version));
 
             using (var request = new HttpRequestMessage(HttpMethod.Put, pactUri))

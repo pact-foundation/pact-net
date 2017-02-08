@@ -32,20 +32,21 @@ namespace PactNet
         private IFileSystem _fileSystem;
         private PactBrokerClient _pactBroker;
 
-        public List<string> PactFiles { get; private set; }
+        public string PactFileUri { get; private set; }
         public string ConsumerName { get; private set; }
         public string ProviderName { get; private set; }
 
         internal PactMessagingVerifier(
             PactVerifierConfig config,
             IFileSystem fileSystem,
+            HttpClient httpClient,
             Func<IReporter, PactVerifierConfig, IMockMessager, IProviderMessageValidator> providerValidatorFactory)
         {
             this.config = config ?? new PactVerifierConfig();
             this.mockMessager = new MockMessanger();
             this._fileSystem = fileSystem;
+            this._pactBroker = new PactBrokerClient(httpClient);
             this.providerValidatorFactory = providerValidatorFactory;
-            this.PactFiles = new List<string>();
         }
 
         public PactMessagingVerifier()
@@ -57,6 +58,7 @@ namespace PactNet
         public PactMessagingVerifier(PactVerifierConfig config)
             :this(config,
                 new FileSystem(), 
+                new HttpClient(), 
                 (reporter, verifierConfig, mockMessager) => new ProviderMessageValidator( reporter, verifierConfig, mockMessager))
         {
             
@@ -84,10 +86,15 @@ namespace PactNet
                 throw new ArgumentException("Please supply a non null or empty uri");
             }
 
-            if (uri.IsWebUri())
-                return this.UsingPactBroker(uri, options);
+            if (!string.IsNullOrEmpty(PactFileUri))
+            {
+                throw new ArgumentException("PactUri has already been supplied");
+            }
 
-            return this.UsingPactFile(uri);
+            _pactBroker.Options = options;
+            PactFileUri = uri;
+
+            return this;
         }
 
         public IPactMessagingVerifier IAmProvider(string providerName)
@@ -112,30 +119,10 @@ namespace PactNet
             return this;
         }
 
-        public IPactMessagingVerifier UsingPactBroker(string url, PactUriOptions options = null)
-        {
-            if (options != null)
-                _pactBroker = new PactBrokerClient(new Uri(url), options);
-            else
-                _pactBroker = new PactBrokerClient(new Uri(url));
-
-            return this;
-        }
-
-        public IPactMessagingVerifier UsingPactBroker(PactBrokerClient broker)
-        {
-            _pactBroker = broker;
-            return this;
-        }
-
-        public IPactMessagingVerifier UsingPactFile(string filePath)
-        {
-            this.PactFiles.Add(filePath);
-            return this;
-        }
-
         public void Verify(string description = null, string providerState = null)
         {
+            if (string.IsNullOrEmpty(PactFileUri))
+                throw new ArgumentException("PactUri has not been set.");
 
             foreach (var pactFile in FetchPactFiles())
             {
@@ -160,18 +147,19 @@ namespace PactNet
 
             try
             {
-                if (_pactBroker != null)
-                    foreach (var pactJson in this._pactBroker.GetPactsByProvider(this.ProviderName))
-                        pactFiles.Add(JsonConvert.DeserializeObject<MessagingPactFile>(pactJson));
-
-                if (this.PactFiles.Count > 0)
+                if (PactFileUri.IsWebUri())
                 {
-                    foreach (var pactFile in this.PactFiles)
-                    {
-                        var pactJson = this._fileSystem.File.ReadAllText(pactFile);
+                    var uri = new Uri(PactFileUri);
+
+                    foreach (var pactJson in this._pactBroker.GetPactsByProvider(uri, this.ProviderName))
                         pactFiles.Add(JsonConvert.DeserializeObject<MessagingPactFile>(pactJson));
-                    }
                 }
+                else
+                {
+                    var pactJson = this._fileSystem.File.ReadAllText(PactFileUri);
+                    pactFiles.Add(JsonConvert.DeserializeObject<MessagingPactFile>(pactJson));
+                }
+
             }
             catch (Exception ex)
             {

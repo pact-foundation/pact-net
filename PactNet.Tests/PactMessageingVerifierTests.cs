@@ -30,6 +30,7 @@ namespace PactNet.Tests
             return new PactMessagingVerifier(
                 null,
                 this.mockFileSystem,
+                new HttpClient(this.fakeHttpMessageHandler), 
                 (reporter, verifierConfig, mockMessager) => this.mockValidator);
         }
 
@@ -103,7 +104,7 @@ namespace PactNet.Tests
 
             pactVerifier.PactUri(pactFileUri);
 
-            Assert.Equal(pactFileUri, ((PactMessagingVerifier)pactVerifier).PactFiles[0]);
+            Assert.Equal(pactFileUri, ((PactMessagingVerifier)pactVerifier).PactFileUri);
         }
 
         [Fact]
@@ -214,7 +215,7 @@ namespace PactNet.Tests
             sut.IAmProvider(messageProvider)
                 .HonoursPactWith(messageConsumer);
 
-            sut.UsingPactBroker(new PactBrokerClient(new Uri(pactUri), null, new HttpClient(this.fakeHttpMessageHandler)));
+            sut.PactUri(pactUri);
             sut.Verify();
 
             Assert.Equal(HttpMethod.Get, this.fakeHttpMessageHandler.RequestsReceived.Single().Method);
@@ -239,7 +240,7 @@ namespace PactNet.Tests
             sut.IAmProvider(messageProvider)
                 .HonoursPactWith(messageConsumer);
 
-            sut.UsingPactBroker(new PactBrokerClient(new Uri(pactUri), null, new HttpClient(this.fakeHttpMessageHandler)));
+            sut.PactUri(pactUri);
             sut.Verify();
 
             Assert.Equal(HttpMethod.Get, this.fakeHttpMessageHandler.RequestsReceived.Single().Method);
@@ -266,7 +267,7 @@ namespace PactNet.Tests
             sut.IAmProvider(messageProvider)
                 .HonoursPactWith(messageConsumer);
 
-            sut.UsingPactBroker(new PactBrokerClient(new Uri(pactUri), options, new HttpClient(this.fakeHttpMessageHandler)));
+            sut.PactUri(pactUri, options);
             sut.Verify();
 
             Assert.Equal(HttpMethod.Get, this.fakeHttpMessageHandler.RequestsReceived.Single().Method);
@@ -309,7 +310,7 @@ namespace PactNet.Tests
             sut.IAmProvider(messageProvider)
                 .HonoursPactWith(messageConsumer);
 
-            sut.UsingPactBroker(new PactBrokerClient(new Uri(pactUri), null, new HttpClient(this.fakeHttpMessageHandler)));
+            sut.PactUri(pactUri);
 
             Assert.Throws<InvalidOperationException>(() => sut.Verify());
 
