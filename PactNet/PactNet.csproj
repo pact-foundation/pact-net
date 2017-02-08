@@ -135,6 +135,9 @@
     <Compile Include="Models\Messaging\Consumer\Dsl\DslPart.cs" />
     <Compile Include="Models\Messaging\Consumer\Dsl\PactDslJsonBody.cs" />
     <Compile Include="Configuration\Json\Converters\MessageJsonConverter.cs" />
+    <Compile Include="Models\MetaData.cs" />
+    <Compile Include="Models\pactNet.cs" />
+    <Compile Include="Models\PactSpecification.cs" />
     <Compile Include="PactBrokerClient.cs" />
     <Compile Include="PactMessageBuilder.cs" />
     <Compile Include="Matchers\DefaultHttpBodyMatcher.cs" />

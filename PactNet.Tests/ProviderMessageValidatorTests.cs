@@ -58,7 +58,7 @@ namespace PactNet.Tests
         {
             ProviderMessageValidator sut = GetSystemUnderTest(new MockMessanger());
 
-            PactMessageFile pactFile = new PactMessageFile();
+            MessagingPactFile pactFile = new MessagingPactFile();
 
             Assert.Throws<ArgumentException>(() => sut.Validate(pactFile));
         }
@@ -68,7 +68,7 @@ namespace PactNet.Tests
         {
             ProviderMessageValidator sut = GetSystemUnderTest(new MockMessanger());
 
-            PactMessageFile pactFile = new PactMessageFile();
+            MessagingPactFile pactFile = new MessagingPactFile();
             pactFile.Consumer = new PactNet.Models.Pacticipant() { Name = "consumer" };
 
             Assert.Throws<ArgumentException>(() => sut.Validate(pactFile));
@@ -79,7 +79,7 @@ namespace PactNet.Tests
         {
             ProviderMessageValidator sut = GetSystemUnderTest(new MockMessanger());
 
-            PactMessageFile pactFile = new PactMessageFile();
+            MessagingPactFile pactFile = new MessagingPactFile();
             pactFile.Consumer = new PactNet.Models.Pacticipant() { Name = "consumer" };
 
             pactFile.Provider = new PactNet.Models.Pacticipant() { Name = "provider" };
@@ -95,7 +95,7 @@ namespace PactNet.Tests
 
             ProviderMessageValidator sut = GetSystemUnderTest(messager);
 
-            PactMessageFile pactFile = new PactMessageFile();
+            MessagingPactFile pactFile = new MessagingPactFile();
             pactFile.Consumer = new PactNet.Models.Pacticipant() { Name = "consumer" };
             pactFile.Provider = new PactNet.Models.Pacticipant() { Name = "provider" };
 
@@ -128,7 +128,7 @@ namespace PactNet.Tests
 
             ProviderMessageValidator sut = GetSystemUnderTest(messager);
 
-            PactMessageFile pactFile = new PactMessageFile();
+            MessagingPactFile pactFile = new MessagingPactFile();
             pactFile.Consumer = new PactNet.Models.Pacticipant() { Name = "consumer" };
             pactFile.Provider = new PactNet.Models.Pacticipant() { Name = "provider" };
 
@@ -166,7 +166,7 @@ namespace PactNet.Tests
 
             ProviderMessageValidator sut = GetSystemUnderTest(messager);
 
-            PactMessageFile pactFile = new PactMessageFile();
+            MessagingPactFile pactFile = new MessagingPactFile();
             pactFile.Consumer = new PactNet.Models.Pacticipant() { Name = "consumer" };
             pactFile.Provider = new PactNet.Models.Pacticipant() { Name = "provider" };
 
@@ -210,7 +210,7 @@ namespace PactNet.Tests
 
             ProviderMessageValidator sut = GetSystemUnderTest(messager);
 
-            PactMessageFile pactFile = new PactMessageFile();
+            MessagingPactFile pactFile = new MessagingPactFile();
             pactFile.Consumer = new PactNet.Models.Pacticipant() { Name = "consumer" };
             pactFile.Provider = new PactNet.Models.Pacticipant() { Name = "provider" };
 
@@ -255,7 +255,7 @@ namespace PactNet.Tests
 
             ProviderMessageValidator sut = GetSystemUnderTest(messager);
 
-            PactMessageFile pactFile = new PactMessageFile();
+            MessagingPactFile pactFile = new MessagingPactFile();
             pactFile.Consumer = new PactNet.Models.Pacticipant() { Name = "consumer" };
             pactFile.Provider = new PactNet.Models.Pacticipant() { Name = "provider" };
 
@@ -302,7 +302,7 @@ namespace PactNet.Tests
 
             ProviderMessageValidator sut = GetSystemUnderTest(messager);
 
-            PactMessageFile pactFile = new PactMessageFile();
+            MessagingPactFile pactFile = new MessagingPactFile();
             pactFile.Consumer = new PactNet.Models.Pacticipant() { Name = "consumer" };
             pactFile.Provider = new PactNet.Models.Pacticipant() { Name = "provider" };
 
@@ -386,7 +386,7 @@ namespace PactNet.Tests
 
             ProviderMessageValidator sut = GetSystemUnderTest(messager);
 
-            PactMessageFile pactFile = new PactMessageFile();
+            MessagingPactFile pactFile = new MessagingPactFile();
             pactFile.Consumer = new PactNet.Models.Pacticipant() { Name = "consumer" };
             pactFile.Provider = new PactNet.Models.Pacticipant() { Name = "provider" };
 

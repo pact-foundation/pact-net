@@ -15,7 +15,7 @@ namespace PactNet
 {
     public class PactMessageBuilder : IPactMessagingBuilder
     {
-        private readonly PactMessageFile pactMessage;
+        private readonly MessagingPactFile pactMessage;
         private readonly PactConfig pactConfig;
 
         public PactMessageBuilder() 
@@ -26,7 +26,7 @@ namespace PactNet
 
         public PactMessageBuilder(PactConfig pactConfig)
         {
-            this.pactMessage = new PactMessageFile();
+            this.pactMessage = new MessagingPactFile();
             this.pactConfig = pactConfig;
         }
 
@@ -85,8 +85,8 @@ namespace PactNet
 
         public IPactMessagingBuilder WithMetaData(Dictionary<string, object> metaData)
         {
-            foreach (var data in metaData)
-                this.pactMessage.MetaData[data.Key] = data.Value;
+            //foreach (var data in metaData)
+            //    this.pactMessage.MetaData[data.Key] = data.Value;
 
             return this;
         }

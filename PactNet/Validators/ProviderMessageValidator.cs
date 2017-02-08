@@ -42,7 +42,7 @@ namespace PactNet.Validators
         {
         }
 
-        public void Validate(PactMessageFile pactFile)
+        public void Validate(MessagingPactFile pactFile)
         {
             if (pactFile == null)
             {

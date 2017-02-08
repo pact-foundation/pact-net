@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PactNet.Comparers;
 using PactNet.Comparers.Messaging;
@@ -141,9 +141,9 @@ namespace PactNet
             }
         }
 
-        private List<PactMessageFile> FetchPactFiles()
+        private List<MessagingPactFile> FetchPactFiles()
         {
-            var pactFiles = new List<PactMessageFile>();
+            var pactFiles = new List<MessagingPactFile>();
 
             try
             {
@@ -153,14 +153,14 @@ namespace PactNet
 
                     if (uri.AbsolutePath == "/")
                         foreach (var pactJson in this._pactBroker.GetPactsByProvider(uri, this.ProviderName))
-                            pactFiles.Add(JsonConvert.DeserializeObject<PactMessageFile>(pactJson));
+                            pactFiles.Add(JsonConvert.DeserializeObject<MessagingPactFile>(pactJson));
                     else
-                        pactFiles.Add(JsonConvert.DeserializeObject<PactMessageFile>(this._pactBroker.GetPactFile(uri)));
+                        pactFiles.Add(JsonConvert.DeserializeObject<MessagingPactFile>(this._pactBroker.GetPactFile(uri)));
                 }
                 else
                 {
                     var pactJson = this._fileSystem.File.ReadAllText(PactFileUri);
-                    pactFiles.Add(JsonConvert.DeserializeObject<PactMessageFile>(pactJson));
+                    pactFiles.Add(JsonConvert.DeserializeObject<MessagingPactFile>(pactJson));
                 }
 
             }
