@@ -1,7 +1,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PactNet.Comparers;
-using PactNet.Comparers.Messaging;
 using PactNet.Extensions;
 using PactNet.Logging;
 using PactNet.Mocks;
@@ -17,6 +16,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using PactNet.Mocks.MockMessager.Validators;
 
 namespace PactNet
 {
@@ -24,7 +24,7 @@ namespace PactNet
     {
 
         private readonly IMockMessager mockMessager;
-        private readonly Func<IReporter, PactVerifierConfig, IMockMessager, IProviderMessageValidator> providerValidatorFactory;
+        private readonly Func<IReporter, PactVerifierConfig, IMockMessager, IPactValidator<MessagingPactFile>> providerValidatorFactory;
 
         private readonly PactVerifierConfig config;
 
@@ -39,7 +39,7 @@ namespace PactNet
             PactVerifierConfig config,
             IFileSystem fileSystem,
             HttpClient httpClient,
-            Func<IReporter, PactVerifierConfig, IMockMessager, IProviderMessageValidator> providerValidatorFactory)
+            Func<IReporter, PactVerifierConfig, IMockMessager, IPactValidator<MessagingPactFile>> providerValidatorFactory)
         {
             this.config = config ?? new PactVerifierConfig();
             this.mockMessager = new MockMessanger();
@@ -161,7 +161,6 @@ namespace PactNet
                     var pactJson = this._fileSystem.File.ReadAllText(PactFileUri);
                     pactFiles.Add(JsonConvert.DeserializeObject<MessagingPactFile>(pactJson));
                 }
-
             }
             catch (Exception ex)
             {

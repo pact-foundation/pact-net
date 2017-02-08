@@ -88,7 +88,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Comparers\Messaging\MessageComparer.cs" />
+    <Compile Include="Mocks\MockMessager\Comparers\MessageComparer.cs" />
     <Compile Include="Configuration\Json\Converters\CamelCaseStringEnumConverter.cs" />
     <Compile Include="Configuration\Json\Converters\PreserveCasingDictionaryConverter.cs" />
     <Compile Include="Infrastructure\Logging\ILocalLogMessageHandler.cs" />
@@ -233,8 +233,7 @@
     <Compile Include="Reporters\Outputters\IReportOutputter.cs" />
     <Compile Include="Reporters\Reporter.cs" />
     <Compile Include="Validators\IPactValidator.cs" />
-    <Compile Include="Validators\IProviderMessageValidator.cs" />
-    <Compile Include="Validators\ProviderMessageValidator.cs" />
+    <Compile Include="Mocks\MockMessager\Validators\ProviderMessageValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

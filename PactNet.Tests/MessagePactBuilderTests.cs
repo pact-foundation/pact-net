@@ -31,9 +31,7 @@ namespace PactNet.Tests
                 Body = body
             };
 
-
-            builder.WithContent(m)
-                .WithMetaData(metaData);
+            builder.WithContent(m);
         }
 
         [Fact]
@@ -57,8 +55,7 @@ namespace PactNet.Tests
                 Body = body
             };
 
-            builder.WithContent(m)
-                .WithMetaData(new Dictionary<string, object>());
+            builder.WithContent(m);
 
             const string expectedPact = "{\"provider\":{\"name\":\"Provider\"},\"consumer\":{\"name\":\"Consumer\"},\"messages\":[{\"description\":\"Published credit data\",\"providerState\":\"or maybe \'scenario\'? not sure about this\",\"contents\":{\"foo\":\"bar\"},\"matchingRules\":{\"$.body.foo\":{\"match\":\"type\"}},\"metaData\":{\"contentType\":\"application/json\"}}],\"metadata\":{\"pact-specification\":{\"version\":\"3.0.0\"},\"pact-net\":{\"version\":\"[version]\"}}}";
             string actual = builder.GetPactAsJSON();

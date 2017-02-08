@@ -11,7 +11,7 @@ namespace PactNet.Tests.Models
         [Fact]
         public void Ctor_WhenInstantiated_SetsPactSpecificationVersionMetaDataTo3()
         {
-            var pactFile = new PactFile();
+            var pactFile = new PactFile("3.0.0");
 
             Assert.Equal("3.0.0", pactFile.Metadata.PactSpecification.Version);
             Assert.Equal(pactFile.GetType().Assembly.GetName().Version.ToString(), pactFile.Metadata.PactNet.Version);

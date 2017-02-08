@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json.Linq;
+using PactNet.Mocks.MockMessager.Validators;
 using PactNet.Models.Consumer.Dsl;
 using Xunit;
 

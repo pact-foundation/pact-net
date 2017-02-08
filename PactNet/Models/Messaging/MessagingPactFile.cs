@@ -13,6 +13,7 @@ namespace PactNet.Models.Messaging
         private List<Message> messages;
 
         public MessagingPactFile()
+            :base("3.0.0")
         {
             messages = new List<Message>();
         }

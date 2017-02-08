@@ -8,11 +8,11 @@ namespace PactNet.Models
         [JsonProperty(PropertyName = "metadata")]
         public dynamic Metadata { get; private set; }
 
-        public PactFile()
+        public PactFile(string version)
         {
             MetaData metaData = new MetaData()
             {
-                PactSpecification = new PactSpecification() { Version = "3.0.0" },
+                PactSpecification = new PactSpecification() { Version = version },
                 PactNet = new PactNet() { Version = Assembly.GetExecutingAssembly().GetName().Version.ToString() }
             };
 

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using PactNet.Models.Messaging;
 using Xunit;
 
 namespace PactNet.Tests
@@ -16,12 +17,12 @@ namespace PactNet.Tests
     {
         private IFileSystem mockFileSystem;
         private FakeHttpMessageHandler fakeHttpMessageHandler;
-        private IProviderMessageValidator mockValidator;
+        private IPactValidator<MessagingPactFile> mockValidator;
 
         public PactMessageingVerifierTests()
         {
             this.mockFileSystem = Substitute.For<IFileSystem>();
-            this.mockValidator = Substitute.For<IProviderMessageValidator>();
+            this.mockValidator = Substitute.For<IPactValidator<MessagingPactFile>>();
             this.fakeHttpMessageHandler = new FakeHttpMessageHandler();
         }
 

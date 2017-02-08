@@ -83,15 +83,6 @@ namespace PactNet
             return this;
         }
 
-        public IPactMessagingBuilder WithMetaData(Dictionary<string, object> metaData)
-        {
-            //foreach (var data in metaData)
-            //    this.pactMessage.MetaData[data.Key] = data.Value;
-
-            return this;
-        }
-
-
         private void PersistPactFileToDisk()
         {
             string fileName = this.pactMessage.GeneratePactFileName();

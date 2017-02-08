@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using PactNet.Models.Messaging;
-using PactNet.Comparers.Messaging;
-using PactNet.Reporters;
 using PactNet.Comparers;
-using System.Globalization;
 using PactNet.Logging;
-using PactNet.Mocks;
+using PactNet.Mocks.MockMessager.Comparers;
+using PactNet.Models;
+using PactNet.Models.Messaging;
+using PactNet.Reporters;
+using PactNet.Validators;
 
-namespace PactNet.Validators
+namespace PactNet.Mocks.MockMessager.Validators
 {
-    internal class ProviderMessageValidator : IProviderMessageValidator
+    internal class ProviderMessageValidator : IPactValidator<MessagingPactFile>
     {
         private readonly MessageComparer providerMessageComparer;
         private readonly IReporter reporter;
@@ -109,6 +107,11 @@ namespace PactNet.Validators
                     !String.IsNullOrWhiteSpace(this.config.LoggerName) ? LogProvider.CurrentLogProvider.ResolveLogPath(this.config.LoggerName) : "logs"));
             }
            
+        }
+
+        public void Validate(MessagingPactFile pactFile, ProviderStates providerStates)
+        {
+            throw new NotImplementedException();
         }
     }
 }

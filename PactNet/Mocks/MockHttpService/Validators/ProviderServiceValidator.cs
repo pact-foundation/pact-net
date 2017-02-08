@@ -130,6 +130,11 @@ namespace PactNet.Mocks.MockHttpService.Validators
             }
         }
 
+        public void Validate(ProviderServicePactFile pactFile)
+        {
+            throw new NotImplementedException();
+        }
+
         private ComparisonResult ValidateInteraction(ProviderServiceInteraction interaction)
         {
             var expectedResponse = interaction.Response;
