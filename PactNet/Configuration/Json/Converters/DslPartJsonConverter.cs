@@ -46,7 +46,7 @@ namespace PactNet.Configuration.Json.Converters
             {
                 var token = item.Value as JToken ?? JToken.FromObject(item.Value);
                 //TODO: throw an exception if null maybe?
-
+                //TODO: Handle if root is a JArray
                 root.Body.Add(item.Key, this.BuildPactDsl(token, root, item.Key));
             }
 
@@ -139,7 +139,7 @@ namespace PactNet.Configuration.Json.Converters
 
             if (_matchers.ContainsKey(value.Path))
             {
-                var matchers = (JToken)_matchers[value.Path];
+                var matchers = _matchers[value.Path] as JToken ?? JToken.FromObject(_matchers[value.Path]);
 
                 foreach (JProperty matcher in matchers.Children())
                 {

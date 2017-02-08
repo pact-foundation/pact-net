@@ -5,6 +5,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using PactNet.Configuration.Json.Converters;
 using PactNet.Matchers;
 
 namespace PactNet.Models.Consumer.Dsl
@@ -14,43 +15,31 @@ namespace PactNet.Models.Consumer.Dsl
         #region Static Methods
         public static PactDslJsonBody Parse(dynamic body)
         {
-            //TODO: Placeholder for converting a dynamicly built pact body
-
-            var matchingRules = new Dictionary<string, object>
-            {
-                { DefaultHttpBodyMatcher.Path, new DefaultHttpBodyMatcher(true) }
-            };
+            var matchingRules = new Dictionary<string, object>();
 
             if (body == null)
             {
-                return null;
+                return new PactDslJsonRoot();
             }
 
             var bodyToken = JToken.FromObject(body);
 
-            if (bodyToken is JValue)
-            {
-                return body;
-            }
-
             var matcherTypes = ((JToken)bodyToken).SelectTokens("$..*.$pactMatcherType").ToList();
-
-            if (!matcherTypes.Any())
-            {
-                return body;
-            }
 
             var matchersToRemove = new Stack<dynamic>();
 
             var matcherFactory = new MatcherFactory();
 
-            foreach (var matcherType in matcherTypes.Where(x => x is JValue).Cast<JValue>())
+            if (matcherTypes.Any())
             {
-                var matcherDefinition = matcherType.Parent.Parent;
-                var example = matcherDefinition["example"].Value<dynamic>();
+                foreach (var matcherType in matcherTypes.Where(x => x is JValue).Cast<JValue>())
+                {
+                    var matcherDefinition = matcherType.Parent.Parent;
+                    var example = matcherDefinition["example"].Value<dynamic>();
 
-                matchersToRemove.Push(new { Path = matcherDefinition.Path, Example = example });
-                matchingRules.Add(matcherDefinition.Path, matcherFactory[matcherDefinition["$pactMatcherType"].Value<string>()](matcherDefinition));
+                    matchersToRemove.Push(new { Path = matcherDefinition.Path, Example = example });
+                    matchingRules.Add("$.body." + matcherDefinition.Path, matcherFactory[matcherDefinition["$pactMatcherType"].Value<string>()](matcherDefinition));
+                }
             }
 
             foreach (var item in matchersToRemove)
@@ -62,12 +51,7 @@ namespace PactNet.Models.Consumer.Dsl
             //http://www.tomdupont.net/2014/02/deserialize-to-expandoobject-with.html
             //http://gotoanswer.com/?q=Deserialize+json+object+into+dynamic+object+using+Json.net
 
-            bodyToken = bodyToken is JArray
-                ? JsonConvert.DeserializeObject<IEnumerable<ExpandoObject>>(bodyToken.ToString(), new ExpandoObjectConverter())
-                : JsonConvert.DeserializeObject<ExpandoObject>(bodyToken.ToString(), new ExpandoObjectConverter());
-
-            throw new NotImplementedException();
-            return new PactDslJsonBody {Matchers = matchingRules, Content = bodyToken};
+            return new DslPartJsonConverter(JsonConvert.DeserializeObject<Dictionary<string,object>>(bodyToken.ToString()), matchingRules).Build();
         }
 
         #endregion
