@@ -248,6 +248,54 @@ namespace PactNet.Tests
         }
 
         [Fact]
+        public void Verify_WithHttpsPactFileUri_GetsAllPactsForProviderWhenBasePactUri()
+        {
+            var messageProvider = "Event Message";
+            var messageConsumer = "My client";
+            var pactUri = "https://yourpactserver.com";
+
+            IPactMessagingVerifier sut = GetSystemUnderTest();
+
+            this.fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent("{result:\"links to pact files\"}", Encoding.UTF8, "application/hal+json")
+            };
+
+            sut.IAmProvider(messageProvider)
+                .HonoursPactWith(messageConsumer);
+
+            sut.PactUri(pactUri);
+            sut.Verify();
+
+            Assert.Equal(HttpMethod.Get, this.fakeHttpMessageHandler.RequestsReceived.Single().Method);
+            Assert.Equal("application/hal+json", this.fakeHttpMessageHandler.RequestsReceived.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
+        }
+
+        [Fact]
+        public void Verify_WithHttpsPactFileUri_GetsAllPactsForProviderWhenActualPactUri()
+        {
+            var messageProvider = "Event Message";
+            var messageConsumer = "My client";
+            var pactUri = "https://yourpactserver.com/path/to/pact/file";
+
+            IPactMessagingVerifier sut = GetSystemUnderTest();
+
+            this.fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent("{result:\"actual pact file\"}", Encoding.UTF8, "application/json")
+            };
+
+            sut.IAmProvider(messageProvider)
+                .HonoursPactWith(messageConsumer);
+
+            sut.PactUri(pactUri);
+            sut.Verify();
+
+            Assert.Equal(HttpMethod.Get, this.fakeHttpMessageHandler.RequestsReceived.Single().Method);
+            Assert.Equal("application/json", this.fakeHttpMessageHandler.RequestsReceived.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
+        }
+
+        [Fact]
         public void Verify_WithHttpsPactFileUriAndBasicAuthUriOptions_CallsHttpClientWithJsonGetRequestAndBasicAuthorizationHeader()
         {
             var messageProvider = "Event Message";

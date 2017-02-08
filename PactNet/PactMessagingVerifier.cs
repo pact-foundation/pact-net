@@ -151,8 +151,11 @@ namespace PactNet
                 {
                     var uri = new Uri(PactFileUri);
 
-                    foreach (var pactJson in this._pactBroker.GetPactsByProvider(uri, this.ProviderName))
-                        pactFiles.Add(JsonConvert.DeserializeObject<PactMessageFile>(pactJson));
+                    if (uri.AbsolutePath == "/")
+                        foreach (var pactJson in this._pactBroker.GetPactsByProvider(uri, this.ProviderName))
+                            pactFiles.Add(JsonConvert.DeserializeObject<PactMessageFile>(pactJson));
+                    else
+                        pactFiles.Add(JsonConvert.DeserializeObject<PactMessageFile>(this._pactBroker.GetPactFile(uri)));
                 }
                 else
                 {
