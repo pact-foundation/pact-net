@@ -202,14 +202,14 @@ namespace PactNet.Tests
         {
             var messageProvider = "Event Message";
             var messageConsumer = "My client";
-            var pactUri = "http://yourpactserver.com/getlatestpactfile";
+            var pactUri = "http://yourpactserver.com/path/to/pact/file";
             var pactFileJson = "{\"provider\":{\"name\":\"Event Message\"},\"consumer\":{\"name\":\"My client\"},\"messages\":[{\"description\":\"Published credit data\",\"providerState\":\"or maybe \'scenario\'? not sure about this\",\"contents\":{\"foo\":\"bar\"},\"matchingRules\":{\"$.body.foo\":{\"match\":\"type\"}}}],\"metaData\":{\"contentType\":\"application/json\"}}";
 
             IPactMessagingVerifier sut = GetSystemUnderTest();
 
             this.fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.OK)
             {
-                Content = new StringContent(pactFileJson, Encoding.UTF8, "application/hal+json")
+                Content = new StringContent(pactFileJson, Encoding.UTF8, "application/json")
             };
 
             sut.IAmProvider(messageProvider)
@@ -219,32 +219,7 @@ namespace PactNet.Tests
             sut.Verify();
 
             Assert.Equal(HttpMethod.Get, this.fakeHttpMessageHandler.RequestsReceived.Single().Method);
-            Assert.Equal("application/hal+json", this.fakeHttpMessageHandler.RequestsReceived.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
-        }
-
-        [Fact]
-        public void Verify_WithHttpsPactFileUri_CallsHttpClientWithJsonGetRequest()
-        {
-            var messageProvider = "Event Message";
-            var messageConsumer = "My client";
-            var pactUri = "https://yourpactserver.com/getlatestpactfile";
-            var pactFileJson = "{\"provider\":{\"name\":\"Event Message\"},\"consumer\":{\"name\":\"My client\"},\"messages\":[{\"description\":\"Published credit data\",\"providerState\":\"or maybe \'scenario\'? not sure about this\",\"contents\":{\"foo\":\"bar\"},\"matchingRules\":{\"$.body.foo\":{\"match\":\"type\"}}}],\"metaData\":{\"contentType\":\"application/json\"}}";
-
-            IPactMessagingVerifier sut = GetSystemUnderTest();
-
-            this.fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent(pactFileJson, Encoding.UTF8, "application/hal+json")
-            };
-
-            sut.IAmProvider(messageProvider)
-                .HonoursPactWith(messageConsumer);
-
-            sut.PactUri(pactUri);
-            sut.Verify();
-
-            Assert.Equal(HttpMethod.Get, this.fakeHttpMessageHandler.RequestsReceived.Single().Method);
-            Assert.Equal("application/hal+json", this.fakeHttpMessageHandler.RequestsReceived.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
+            Assert.Equal("application/json", this.fakeHttpMessageHandler.RequestsReceived.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
         }
 
         [Fact]
@@ -300,7 +275,7 @@ namespace PactNet.Tests
         {
             var messageProvider = "Event Message";
             var messageConsumer = "My client";
-            var pactUri = "https://yourpactserver.com/getlatestpactfile";
+            var pactUri = "https://yourpactserver.com/path/to/pact/file";
             var pactFileJson = "{\"provider\":{\"name\":\"Event Message\"},\"consumer\":{\"name\":\"My client\"},\"messages\":[{\"description\":\"Published credit data\",\"providerState\":\"or maybe \'scenario\'? not sure about this\",\"contents\":{\"foo\":\"bar\"},\"matchingRules\":{\"$.body.foo\":{\"match\":\"type\"}}}],\"metaData\":{\"contentType\":\"application/json\"}}";
 
             var options = new PactUriOptions("someuser", "somepassword");
@@ -309,7 +284,7 @@ namespace PactNet.Tests
 
             this.fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.OK)
             {
-                Content = new StringContent(pactFileJson, Encoding.UTF8, "application/hal+json")
+                Content = new StringContent(pactFileJson, Encoding.UTF8, "application/json")
             };
 
             sut.IAmProvider(messageProvider)
@@ -319,7 +294,7 @@ namespace PactNet.Tests
             sut.Verify();
 
             Assert.Equal(HttpMethod.Get, this.fakeHttpMessageHandler.RequestsReceived.Single().Method);
-            Assert.Equal("application/hal+json", this.fakeHttpMessageHandler.RequestsReceived.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
+            Assert.Equal("application/json", this.fakeHttpMessageHandler.RequestsReceived.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
             Assert.Equal(this.fakeHttpMessageHandler.RequestsReceived.Single().Headers.Authorization.Scheme, options.AuthorizationScheme);
             Assert.Equal(this.fakeHttpMessageHandler.RequestsReceived.Single().Headers.Authorization.Parameter, options.AuthorizationValue);
         }
