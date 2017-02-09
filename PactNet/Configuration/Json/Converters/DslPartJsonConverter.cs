@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using PactNet.Matchers;
 using PactNet.Models.Consumer.Dsl;
 
 namespace PactNet.Configuration.Json.Converters
 {
     public class DslPartJsonConverter : CustomCreationConverter<DslPart>
     {
-        private Dictionary<string, object> _matchers;
+        private Dictionary<string, IMatcher> _matchers;
         private Dictionary<string, object> _content;
 
         public DslPartJsonConverter()
@@ -17,7 +18,7 @@ namespace PactNet.Configuration.Json.Converters
             
         }
 
-        public DslPartJsonConverter(Dictionary<string, object> content, Dictionary<string, object> matchers)
+        public DslPartJsonConverter(Dictionary<string, object> content, Dictionary<string, IMatcher> matchers)
         {
             _content = content;
             _matchers = matchers;
@@ -115,20 +116,7 @@ namespace PactNet.Configuration.Json.Converters
 
             if (_matchers.ContainsKey(path))
             {
-                var matchers = (JToken)_matchers[path];
-
-                foreach (JProperty matcher in matchers.Children())
-                {
-                    switch (matcher.Name)
-                    {
-                        case "min":
-                            pactDslArray.MinMatcher(matcher.First.Value<int>());
-                            break;
-                        case "max":
-                            pactDslArray.MaxMatcher(matcher.First.Value<int>());
-                            break;
-                    }
-                }
+                pactDslArray.Matchers = new Dictionary<string, IMatcher> { { String.Empty, _matchers[path] } };
             }
 
             return pactDslArray;
@@ -138,44 +126,11 @@ namespace PactNet.Configuration.Json.Converters
         {
             var value = new PactDslValue<T>(parent, name, example);
 
+            //TODO: need to handle a collection of matchers here
             if (_matchers.ContainsKey(value.Path))
             {
-                var matchers = _matchers[value.Path] as JToken ?? JToken.FromObject(_matchers[value.Path]);
-
-                foreach (JProperty matcher in matchers.Children())
-                {
-                    switch (matcher.Name)
-                    {
-                        case "match":
-                            switch (matcher.First.Value<string>())
-                            {
-                                case "type":
-                                    value.TypeMatcher();
-                                    break;
-                                case "equality":
-                                    value.EqualityMatcher();
-                                    break;
-                                case "decimal":
-                                    value.DecimalMatcher();
-                                    break;
-                                case "integer":
-                                    value.IntegerMatcher();
-                                    break;
-                            }
-                            break;
-                        case "regex":
-                            value.StringMatcher(matcher.First.Value<string>());
-                            break;
-                        case "date":
-                            value.DateFormatMatcher(matcher.First.Value<string>());
-                            break;
-                        case "timestamp":
-                            value.TimestampMatcher(matcher.First.Value<string>());
-                            break;
-                    }
-                }
+                value.Matchers = new Dictionary<string, IMatcher> { {String.Empty, _matchers[value.Path]} };
             }
-
 
             return value;
         }

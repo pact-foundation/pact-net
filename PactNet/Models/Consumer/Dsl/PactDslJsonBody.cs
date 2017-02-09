@@ -15,7 +15,7 @@ namespace PactNet.Models.Consumer.Dsl
         #region Static Methods
         public static PactDslJsonBody Parse(dynamic body)
         {
-            var matchingRules = new Dictionary<string, object>();
+            var matchingRules = new Dictionary<string, IMatcher>();
 
             if (body == null)
             {
@@ -56,7 +56,7 @@ namespace PactNet.Models.Consumer.Dsl
 
         #endregion
 
-        private Dictionary<string, object> _matchersJObject;
+        private Dictionary<string, IMatcher> _matchersJObject;
         private Dictionary<string, object> _contentJObject;
 
         public PactDslJsonBody()
@@ -78,14 +78,14 @@ namespace PactNet.Models.Consumer.Dsl
         }
 
         [JsonProperty("matchingRules", NullValueHandling = NullValueHandling.Ignore)]
-        public override Dictionary<string, object> Matchers
+        public override Dictionary<string, IMatcher> Matchers
         {
             get
             {
                 if (_matchersJObject != null)
                     return _matchersJObject;
 
-                var matchers = new Dictionary<string, object>();
+                var matchers = new Dictionary<string, IMatcher>();
                 foreach (var parts in this.Body.Values)
                 {
                     if (parts.Matchers == null)
@@ -138,7 +138,7 @@ namespace PactNet.Models.Consumer.Dsl
         {
             var result = new MatcherResult();
 
-            foreach(var matcher in _matchers.Values)
+            foreach(var matcher in _matchers)
                 result.Add(matcher.Match(this.Path, JToken.FromObject(this.Value), message.SelectToken(this.Path)));
 
             foreach(var item in this.Body.Values)

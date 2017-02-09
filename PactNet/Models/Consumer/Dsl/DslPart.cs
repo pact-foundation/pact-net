@@ -18,7 +18,7 @@ namespace PactNet.Models.Consumer.Dsl
     {
         protected DslPart _parent;
         protected string _rootName;
-        protected Dictionary<string, IMatcher> _matchers;
+        protected List<IMatcher> _matchers;
 
         protected DslPart()
             : this(null, string.Empty)
@@ -30,7 +30,7 @@ namespace PactNet.Models.Consumer.Dsl
             _parent = parent;
             _rootName = rootName;
 
-            _matchers = new Dictionary<string, IMatcher>();
+            _matchers = new List<IMatcher>();
         }
 
         [JsonIgnore]
@@ -61,7 +61,7 @@ namespace PactNet.Models.Consumer.Dsl
             }
         }
 
-        public abstract Dictionary<string, object> Matchers { get; set; }
+        public abstract Dictionary<string, IMatcher> Matchers { get; set; }
         public abstract Dictionary<string, object> Content { get; set; }
 
         [JsonIgnore]
@@ -74,55 +74,55 @@ namespace PactNet.Models.Consumer.Dsl
 
         protected DslPart MatchType()
         {
-            _matchers["type"] = new TypeMatcher();
+            _matchers.Add(new TypeMatcher());
             return this;
         }
 
         protected DslPart MatchEquality()
         {
-            _matchers["equality"] = new EqualityMatcher();
+            _matchers.Add(new EqualityMatcher());
             return this;
         }
 
         protected DslPart MatchInteger()
         {
-            _matchers["integer"] = new IntegerMatcher();
+            _matchers.Add(new IntegerMatcher());
             return this;
         }
 
         protected DslPart MatchDecimal()
         {
-            _matchers["decimal"] = new DecimalMatcher();
+            _matchers.Add(new DecimalMatcher());
             return this;
         }
 
         protected DslPart MatchRegex(string regex)
         {
-            _matchers["regex"] = new RegexMatcher(regex);
+            _matchers.Add(new RegexMatcher(regex));
             return this;
         }
 
         protected DslPart MatchDateFormat(string format)
         {
-            _matchers["date"] = new DateFormatMatcher(format);
+            _matchers.Add(new DateFormatMatcher(format));
             return this;
         }
 
         protected DslPart MatchTimestamp(string format)
         {
-            _matchers["timestamp"] = new TimestampMatcher(format);
+            _matchers.Add(new TimestampMatcher(format));
             return this;
         }
 
         protected DslPart MatchMinValue(int minValue)
         {
-            _matchers["min"] = new MinMatcher(minValue);
+            _matchers.Add(new MinMatcher(minValue));
             return this;
         }
 
         protected DslPart MatchMaxValue(int maxValue)
         {
-            _matchers["max"] = new MaxMatcher(maxValue);
+            _matchers.Add(new MaxMatcher(maxValue));
             return this;
         }
     }

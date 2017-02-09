@@ -25,13 +25,13 @@ namespace PactNet.Models.Consumer.Dsl
             set { Console.WriteLine(value); }
         }
 
-        public override Dictionary<string, object> Matchers
+        public override Dictionary<string, IMatcher> Matchers
         {
             get
             {
-                var matchers = new Dictionary<string, object>();
+                var matchers = new Dictionary<string, IMatcher>();
                 foreach (var matcher in _matchers)
-                    matchers[this.Path] = matcher.Value;
+                    matchers[this.Path] = matcher;
 
                 //TODO: This serializes incorrectly. only uses the last IMatcher in the collection. Update to match the V3 spec:
                 /*
@@ -48,14 +48,14 @@ namespace PactNet.Models.Consumer.Dsl
 
                 return matchers;
             }
-            set { Console.WriteLine(value);}
+            set { _matchers.AddRange(value.Values); }
         }
 
         public override MatcherResult Validate(JToken message)
         {
             var result = new MatcherResult();
 
-            foreach (var matcher in _matchers.Values)
+            foreach (var matcher in _matchers)
             {
                 var tokens = message.SelectTokens(this.Path).ToList();
 

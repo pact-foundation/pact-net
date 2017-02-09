@@ -36,18 +36,18 @@ namespace PactNet.Models.Consumer.Dsl
             }
         }
 
-        public override Dictionary<string, object> Matchers
+        public override Dictionary<string, IMatcher> Matchers
         {
             get
             {
-                var matchers = new Dictionary<string, object>();
+                var matchers = new Dictionary<string, IMatcher>();
                 foreach (var part in this.Body)
                 {
                     if (part.Matchers == null)
                         continue;
 
                     foreach (var match in _matchers)
-                        matchers[this.Path.Replace("[*]", string.Empty)] = match.Value;
+                        matchers[this.Path.Replace("[*]", string.Empty)] = match;
 
                     foreach (var match in part.Matchers)
                         matchers[match.Key] = match.Value;
@@ -58,7 +58,7 @@ namespace PactNet.Models.Consumer.Dsl
 
                 return null;
             }
-            set { Console.WriteLine(value); }
+            set { _matchers.AddRange(value.Values); }
         }
 
         public override Dictionary<string, object> Content
@@ -110,7 +110,7 @@ namespace PactNet.Models.Consumer.Dsl
         {
             var result = new MatcherResult();
 
-            foreach (var matcher in _matchers.Values)
+            foreach (var matcher in _matchers)
             {
                 var path = this.Path.Replace("[*]", string.Empty);
                 result.Add(matcher.Match(path, JToken.FromObject(this.Value), message.SelectToken(path)));

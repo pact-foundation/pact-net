@@ -90,6 +90,8 @@
   <ItemGroup>
     <Compile Include="Comparers\DslPartComparer.cs" />
     <Compile Include="Comparers\IDslPartComparer.cs" />
+    <Compile Include="Configuration\Json\Converters\MatcherJsonConverter.cs" />
+    <Compile Include="Matchers\MatchingRules.cs" />
     <Compile Include="Mocks\MockMessager\Comparers\IMessageComparer.cs" />
     <Compile Include="Mocks\MockMessager\Comparers\MessageComparer.cs" />
     <Compile Include="Configuration\Json\Converters\CamelCaseStringEnumConverter.cs" />
