@@ -9,9 +9,16 @@ using PactNet.Models.Messaging;
 
 namespace PactNet.Mocks.MockMessager.Comparers
 {
-    internal class MessageComparer
+    internal class MessageComparer : IMessageComparer
     {
-        internal ComparisonResult Compare(Message expected, dynamic actual)
+        private IDslPartComparer _bodyComparer;
+
+        public MessageComparer()
+        {
+            _bodyComparer = new DslPartComparer();
+        }
+
+        public ComparisonResult Compare(Message expected, dynamic actual)
         {
             var result = new ComparisonResult();
 
@@ -36,12 +43,7 @@ namespace PactNet.Mocks.MockMessager.Comparers
             var actualToken = new JObject();
             actualToken.Add("body", JToken.Load(reader));
 
-            MatcherResult matchingResults = expected.Body.Validate(actualToken);
-
-            foreach (FailedMatcherCheck failedCheck in matchingResults.MatcherChecks.Where(x => x is FailedMatcherCheck).Cast<FailedMatcherCheck>())
-            {
-                result.RecordFailure(new DiffComparisonFailure(failedCheck.ToString()));
-            }
+            result = _bodyComparer.Compare(expected.Body, actualToken);
 
             return result;
         }

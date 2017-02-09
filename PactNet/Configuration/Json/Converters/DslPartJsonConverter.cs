@@ -47,6 +47,7 @@ namespace PactNet.Configuration.Json.Converters
                 var token = item.Value as JToken ?? JToken.FromObject(item.Value);
                 //TODO: throw an exception if null maybe?
                 //TODO: Handle if root is a JArray
+                //TODO: Handle if root is JValue
                 root.Body.Add(item.Key, this.BuildPactDsl(token, root, item.Key));
             }
 
