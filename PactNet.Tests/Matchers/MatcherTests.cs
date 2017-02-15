@@ -15,6 +15,7 @@ using PactNet.Matchers.Min;
 using PactNet.Matchers.Regex;
 using PactNet.Matchers.Timestamp;
 using PactNet.Matchers.Type;
+using PactNet.Matchers.Include;
 using Xunit;
 
 namespace PactNet.Tests.Matchers
@@ -337,5 +338,50 @@ namespace PactNet.Tests.Matchers
                 .FailureType);
 
         }
-    }
+
+		[Fact]
+		public void Include_Succeeds_When_Contains_Matching_String()
+		{
+			var matcher = new IncludeMatcher();
+
+			var actual = new JValue("Here Is the actual text");
+			var expected = new JValue("text");
+
+			var result = matcher.Match(string.Empty, expected, actual);
+
+			Assert.Equal(1, result.MatcherChecks.Count(m => m.GetType() == typeof(SuccessfulMatcherCheck)));
+			Assert.Equal(0, result.MatcherChecks.Count(m => m.GetType() == typeof(FailedMatcherCheck)));
+
+		}
+
+		[Fact]
+		public void Include_Fails_When_Case_Does_Not_Match()
+		{
+			var matcher = new IncludeMatcher();
+
+			var actual = new JValue("Here Is the actual text");
+			var expected = new JValue("TEXT");
+
+			var result = matcher.Match(string.Empty, expected, actual);
+
+			Assert.Equal(0, result.MatcherChecks.Count(m => m.GetType() == typeof(SuccessfulMatcherCheck)));
+			Assert.Equal(1, result.MatcherChecks.Count(m => m.GetType() == typeof(FailedMatcherCheck)));
+
+		}
+
+		[Fact]
+		public void Include_Fails_When_Does_Not_Contain_Matching_String()
+		{
+			var matcher = new IncludeMatcher();
+
+			var actual = new JValue("Here Is the actual text");
+			var expected = new JValue("where am I");
+
+			var result = matcher.Match(string.Empty, expected, actual);
+
+			Assert.Equal(0, result.MatcherChecks.Count(m => m.GetType() == typeof(SuccessfulMatcherCheck)));
+			Assert.Equal(1, result.MatcherChecks.Count(m => m.GetType() == typeof(FailedMatcherCheck)));
+
+		}
+	}
 }
