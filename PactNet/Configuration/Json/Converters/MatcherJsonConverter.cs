@@ -37,7 +37,7 @@ namespace PactNet.Configuration.Json.Converters
             if (matcher == null)
                 throw new InvalidOperationException("Could not deserialize Matcher - invalid format");
 
-            var result = default(IMatcher);
+			IMatcher result;
 
             //TODO: This assumes the matcher's first element. 
             //TODO: Probably should use something more reliable as it will likely break when refactoring the matcher serialization
