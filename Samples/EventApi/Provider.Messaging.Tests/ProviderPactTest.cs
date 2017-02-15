@@ -24,7 +24,7 @@ namespace Provider.Messaging.Tests
             Event party = new Event()
             {
                 EventId = Guid.NewGuid(),
-                EventType = "Party",
+                EventType = "Parking Lot Party",
                 Timestamp = DateTime.UtcNow,
                 Location = new Location()
                 {

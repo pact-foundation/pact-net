@@ -20,7 +20,7 @@ namespace Consumer.Tests
             MessagedEvent testEvent = new MessagedEvent()
             {
                 EventId = Guid.NewGuid(),
-                EventType = "Parking Lot Party",
+                EventType = "Party",
                 Timestamp = DateTime.UtcNow,
                 Location = new Location()
                 {
@@ -30,7 +30,7 @@ namespace Consumer.Tests
             };
 
             var body = new PactDslJsonRoot()
-                    .StringType("eventType", testEvent.EventType)
+                    .IncludeMatcher("eventType", testEvent.EventType)
                     .GuidMatcher("eventId", testEvent.EventId)
                     .DateFormat("timestamp", "O", testEvent.Timestamp)
                     .Object("location")
