@@ -16,6 +16,7 @@ using PactNet.Matchers.Regex;
 using PactNet.Matchers.Timestamp;
 using PactNet.Matchers.Type;
 using PactNet.Models.Messaging;
+using PactNet.Matchers.Include;
 
 namespace PactNet.Configuration.Json.Converters
 {
@@ -57,7 +58,10 @@ namespace PactNet.Configuration.Json.Converters
                         case "integer":
                             result = new IntegerMatcher();
                             break;
-                        default:
+						case "include":
+							result = new IncludeMatcher();
+							break;
+						default:
                             throw new InvalidOperationException(string.Format("Invalid matcher {0}", matcher.First.Value<string>()));
                     }
                     break;
@@ -75,7 +79,7 @@ namespace PactNet.Configuration.Json.Converters
                     break;
                 case "max":
                     result = new MaxMatcher(matcher.First.Value<int>());
-                    break;
+                    break;				
                 default:
                     throw new InvalidOperationException(string.Format("Invalid matcher identifier {0}", matcher.Name));
             }

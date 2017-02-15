@@ -107,5 +107,10 @@ namespace PactNet.Models.Consumer.Dsl
         {
             return (PactDslValue<T>)this.MatchRegex(regex);
         }
+
+		public PactDslValue<T> IncludeMatcher()
+		{			
+			return (PactDslValue<T>)this.MatchInclude();
+		}
     }
 }

@@ -11,6 +11,7 @@ using PactNet.Matchers.Min;
 using PactNet.Matchers.Regex;
 using PactNet.Matchers.Timestamp;
 using PactNet.Matchers.Type;
+using PactNet.Matchers.Include;
 
 namespace PactNet.Models.Consumer.Dsl
 {
@@ -125,6 +126,12 @@ namespace PactNet.Models.Consumer.Dsl
             _matchers.Add(new MaxMatcher(maxValue));
             return this;
         }
+
+		protected DslPart MatchInclude()
+		{
+			_matchers.Add(new IncludeMatcher());
+			return this;
+		}
     }
 
     public abstract class DslPart<T> : DslPart

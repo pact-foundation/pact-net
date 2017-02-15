@@ -244,8 +244,14 @@ namespace PactNet.Models.Consumer.Dsl
             return this;
         }
 
-        #region TypeMatchers
-        public PactDslJsonBody StringType(string name, string example)
+		public PactDslJsonBody IncludeMatcher(string name, string expectedText)
+		{
+			this.GetItem(name, expectedText).IncludeMatcher();
+			return this;
+		}
+
+		#region TypeMatchers
+		public PactDslJsonBody StringType(string name, string example)
         {
             this.GetItem(name, example).TypeMatcher();
             return this;
