@@ -8,6 +8,11 @@ namespace PactNet.Matchers.Include
 {
 	public class IncludeMatcher : IMatcher
 	{
+
+		public IncludeMatcher()
+		{
+		}
+
 		public string Type
 		{
 			get	{ return IncludeMatchDefinition.Name; }
@@ -17,8 +22,7 @@ namespace PactNet.Matchers.Include
 		{
 			var act = actual as JValue;
 			var exp = expected as JValue;
-			long intValue;
-
+			
 			if (act == null)
 				return new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotExist, "Include", "(null)"));
 
@@ -26,7 +30,7 @@ namespace PactNet.Matchers.Include
 
 			return matches ?
 				new MatcherResult(new SuccessfulMatcherCheck(path, "Include", act.Value)) :
-				new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueNotInteger, "Include", act.Value));
+				new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotMatch, exp.Value.ToString(), act.Value));
 		}
 	}
 }
