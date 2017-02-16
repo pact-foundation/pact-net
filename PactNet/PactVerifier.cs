@@ -6,15 +6,15 @@ using Newtonsoft.Json;
 using PactNet.Extensions;
 using PactNet.Logging;
 using PactNet.Mocks.MockHttpService;
-using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Validators;
 using PactNet.Models;
 using PactNet.Reporters;
 using System.Text;
+using PactNet.Models.ProviderService;
 
 namespace PactNet
 {
-    public class PactVerifier : IPactVerifier
+    public class PactVerifier : IPactHttpVerifier
     {
         private readonly IFileSystem _fileSystem;
         private readonly Func<IHttpRequestSender, IReporter, PactVerifierConfig, IProviderServiceValidator> _providerServiceValidatorFactory;
@@ -70,7 +70,7 @@ namespace PactNet
         /// <param name="providerState">The name of the provider state as defined by the consumer interaction, which lives in the Pact file.</param>
         /// <param name="setUp">A set up action that will be run before the interaction verify, if the provider has specified it in the interaction. If no action is required please use an empty lambda () => {}.</param>
         /// <param name="tearDown">A tear down action that will be run after the interaction verify, if the provider has specified it in the interaction. If no action is required please use an empty lambda () => {}.</param>
-        public IPactVerifier ProviderState(string providerState, Action setUp = null, Action tearDown = null)
+        public IPactHttpVerifier ProviderState(string providerState, Action setUp = null, Action tearDown = null)
         {
             if (String.IsNullOrEmpty(providerState))
             {
@@ -83,7 +83,7 @@ namespace PactNet
             return this;
         }
 
-        public IPactVerifier ServiceProvider(string providerName, HttpClient httpClient)
+        public IPactHttpVerifier ServiceProvider(string providerName, HttpClient httpClient)
         {
             if (String.IsNullOrEmpty(providerName))
             {
@@ -106,7 +106,7 @@ namespace PactNet
             return this;
         }
 
-        public IPactVerifier ServiceProvider(string providerName, Func<ProviderServiceRequest, ProviderServiceResponse> httpRequestSender)
+        public IPactHttpVerifier ServiceProvider(string providerName, Func<ProviderServiceRequest, ProviderServiceResponse> httpRequestSender)
         {
             if (String.IsNullOrEmpty(providerName))
             {
@@ -150,7 +150,7 @@ namespace PactNet
         {
             if (String.IsNullOrEmpty(uri))
             {
-                throw new ArgumentException("Please supply a non null or empty consumerName");
+                throw new ArgumentException("Please supply a non null or empty uri");
             }
 
             PactFileUri = uri;
@@ -178,7 +178,7 @@ namespace PactNet
             {
                 string pactFileJson;
 
-                if (IsWebUri(PactFileUri))
+                if (PactFileUri.IsWebUri())
                 {
                     var request = new HttpRequestMessage(HttpMethod.Get, PactFileUri);
                     request.Headers.Add("Accept", "application/json");
@@ -242,12 +242,6 @@ namespace PactNet
             {
                 LogProvider.CurrentLogProvider.RemoveLogger(_config.LoggerName);
             }
-        }
-
-        private static bool IsWebUri(string uri)
-        {
-            return uri.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase) ||
-                   uri.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase);
         }
 
         private static void Dispose(IDisposable disposable)

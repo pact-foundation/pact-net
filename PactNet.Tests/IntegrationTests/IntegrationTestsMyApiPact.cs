@@ -8,7 +8,7 @@ namespace PactNet.Tests.IntegrationTests
 {
     public class IntegrationTestsMyApiPact : IDisposable
     {
-        public IPactBuilder PactBuilder { get; private set; }
+        public IPactHttpServiceBuilder PactBuilder { get; private set; }
         public IMockProviderService MockProviderService { get; private set; }
 
         public int MockServerPort { get { return 4321; } }
@@ -23,7 +23,9 @@ namespace PactNet.Tests.IntegrationTests
                         baseUri => new NancyHttpHost(baseUri, "MyApi", pactConfig, new IntegrationTestingMockProviderNancyBootstrapper(pactConfig)),
                         port, enableSsl,
                         baseUri => new HttpClient { BaseAddress = new Uri(baseUri) },
-                        new HttpMethodMapper()))
+                        new HttpMethodMapper()));
+
+            PactBuilder
                 .ServiceConsumer("IntegrationTests")
                 .HasPactWith("MyApi");
 

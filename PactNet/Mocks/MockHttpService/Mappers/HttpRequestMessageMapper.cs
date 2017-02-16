@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Models.ProviderService;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {

@@ -1,4 +1,4 @@
-﻿using PactNet.Mocks.MockHttpService.Models;
+﻿using PactNet.Models.ProviderService;
 using PactNet.Validators;
 
 namespace PactNet.Mocks.MockHttpService.Validators

@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PactNet.Configuration.Json.Converters;
 
 namespace PactNet.Matchers
 {
-    internal interface IMatcher
+    [JsonConverter(typeof(MatcherJsonConverter))]
+    public interface IMatcher
     {
         [JsonProperty("match")]
         string Type { get; }

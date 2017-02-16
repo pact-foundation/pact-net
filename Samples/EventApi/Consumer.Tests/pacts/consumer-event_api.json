@@ -7,6 +7,83 @@
   },
   "interactions": [
     {
+      "description": "a request to create a new event",
+      "request": {
+        "method": "post",
+        "path": "/events",
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": {
+          "eventId": "1f587704-2dcc-4313-a233-7b62b4b469db",
+          "timestamp": "2011-07-01T01:41:03",
+          "eventType": "DetailsView"
+        }
+      },
+      "response": {
+        "status": 201
+      }
+    },
+    {
+      "description": "a request to check the api status",
+      "request": {
+        "method": "get",
+        "path": "/stats/status",
+        "headers": {
+          "Accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": {
+          "alive": true,
+          "_links": {
+            "uptime": {
+              "href": "/stats/uptime"
+            }
+          }
+        }
+      }
+    },
+    {
+      "description": "a request to retrieve all events",
+      "provider_state": "there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'",
+      "request": {
+        "method": "get",
+        "path": "/events",
+        "headers": {
+          "Accept": "application/json",
+          "Authorization": "Bearer SomeValidAuthToken"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": [
+          {
+            "eventId": "45d80d13-d5a2-48d7-8353-cbb4c0eaabf5",
+            "timestamp": "2014-06-30T01:37:41.0660548",
+            "eventType": "SearchView"
+          },
+          {
+            "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
+            "timestamp": "2014-06-30T01:37:52.2618864",
+            "eventType": "DetailsView"
+          },
+          {
+            "eventId": "3e83a96b-2a0c-49b1-9959-26df23f83aeb",
+            "timestamp": "2014-06-30T01:38:00.8518952",
+            "eventType": "SearchView"
+          }
+        ]
+      }
+    },
+    {
       "description": "a request to get a new blob by id",
       "request": {
         "method": "get",
@@ -21,18 +98,14 @@
       }
     },
     {
-      "description": "a request to create a new event",
+      "description": "a request to create a new blob",
       "request": {
         "method": "post",
-        "path": "/events",
+        "path": "/blobs/38c3976b-5ae8-4f2f-a8ec-46f6aee826e2",
         "headers": {
-          "Content-Type": "application/json; charset=utf-8"
+          "Content-Type": "application/octet-stream"
         },
-        "body": {
-          "eventId": "1f587704-2dcc-4313-a233-7b62b4b469db",
-          "timestamp": "2011-07-01T01:41:03",
-          "eventType": "DetailsView"
-        }
+        "body": "VGhpcyBpcyBhIHRlc3Q="
       },
       "response": {
         "status": 201
@@ -63,10 +136,11 @@
       }
     },
     {
-      "description": "a request to check the api status",
+      "description": "a request to retrieve event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
+      "provider_state": "there is an event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
       "request": {
         "method": "get",
-        "path": "/stats/status",
+        "path": "/events/83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
         "headers": {
           "Accept": "application/json"
         }
@@ -77,12 +151,7 @@
           "Content-Type": "application/json; charset=utf-8"
         },
         "body": {
-          "alive": true,
-          "_links": {
-            "uptime": {
-              "href": "/stats/uptime"
-            }
-          }
+          "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9"
         }
       }
     },
@@ -124,78 +193,14 @@
           "message": "Authorization has been denied for this request."
         }
       }
-    },
-    {
-      "description": "a request to retrieve all events",
-      "provider_state": "there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'",
-      "request": {
-        "method": "get",
-        "path": "/events",
-        "headers": {
-          "Accept": "application/json",
-          "Authorization": "Bearer SomeValidAuthToken"
-        }
-      },
-      "response": {
-        "status": 200,
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": [
-          {
-            "eventId": "45d80d13-d5a2-48d7-8353-cbb4c0eaabf5",
-            "timestamp": "2014-06-30T01:37:41.0660548",
-            "eventType": "SearchView"
-          },
-          {
-            "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
-            "timestamp": "2014-06-30T01:37:52.2618864",
-            "eventType": "DetailsView"
-          },
-          {
-            "eventId": "3e83a96b-2a0c-49b1-9959-26df23f83aeb",
-            "timestamp": "2014-06-30T01:38:00.8518952",
-            "eventType": "SearchView"
-          }
-        ]
-      }
-    },
-    {
-      "description": "a request to create a new blob",
-      "request": {
-        "method": "post",
-        "path": "/blobs/38c3976b-5ae8-4f2f-a8ec-46f6aee826e2",
-        "headers": {
-          "Content-Type": "application/octet-stream"
-        },
-        "body": "VGhpcyBpcyBhIHRlc3Q="
-      },
-      "response": {
-        "status": 201
-      }
-    },
-    {
-      "description": "a request to retrieve event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
-      "provider_state": "there is an event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
-      "request": {
-        "method": "get",
-        "path": "/events/83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
-        "headers": {
-          "Accept": "application/json"
-        }
-      },
-      "response": {
-        "status": 200,
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": {
-          "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9"
-        }
-      }
     }
   ],
   "metadata": {
-    "pactSpecificationVersion": "1.1.0"
+    "pact-specification": {
+      "version": "3.0.0"
+    },
+    "pact-net": {
+      "version": "0.0.0.1"
+    }
   }
 }

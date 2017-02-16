@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Reflection;
 
 namespace PactNet.Models
 {
@@ -7,12 +8,15 @@ namespace PactNet.Models
         [JsonProperty(PropertyName = "metadata")]
         public dynamic Metadata { get; private set; }
 
-        public PactFile()
+        public PactFile(string version)
         {
-            Metadata = new
+            MetaData metaData = new MetaData()
             {
-                pactSpecificationVersion = "1.1.0"
+                PactSpecification = new PactSpecification() { Version = version },
+                PactNet = new PactNet() { Version = Assembly.GetExecutingAssembly().GetName().Version.ToString() }
             };
+
+            Metadata = metaData;
         }
     }
 }

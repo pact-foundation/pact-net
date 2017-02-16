@@ -9,8 +9,8 @@ using Newtonsoft.Json;
 using PactNet.Comparers;
 using PactNet.Configuration.Json;
 using PactNet.Logging;
-using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
+using PactNet.Models.ProviderService;
 
 namespace PactNet.Mocks.MockHttpService.Nancy
 {

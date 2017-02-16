@@ -107,6 +107,8 @@
     <Compile Include="IntegrationTests\Specification\Models\ResponseTestCase.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Matchers\MatcherTests.cs" />
+    <Compile Include="Models\Consumer\Dsl\DslPartTests.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\HttpQueryStringComparerTests.cs" />
     <Compile Include="Mocks\MockHttpService\CustomRequestSenderTests.cs" />
     <Compile Include="Mocks\MockHttpService\HttpClientRequestSenderTests.cs" />
@@ -127,14 +129,19 @@
     <Compile Include="Mocks\MockHttpService\MockProviderServiceTests.cs" />
     <Compile Include="Mocks\MockHttpService\Models\ProviderServiceRequestTests.cs" />
     <Compile Include="Mocks\MockHttpService\Models\HttpBodyContentTests.cs" />
+    <Compile Include="MessagePactBuilderTests.cs" />
     <Compile Include="Models\InteractionTests.cs" />
     <Compile Include="Models\PactDetailsTests.cs" />
     <Compile Include="Models\PactFileTests.cs" />
+    <Compile Include="Models\PactMessageFileTests.cs" />
     <Compile Include="Models\ProviderStatesTests.cs" />
     <Compile Include="Models\ProviderStateTests.cs" />
+    <Compile Include="PactBrokerClientTests.cs" />
     <Compile Include="PactConfigTests.cs" />
     <Compile Include="PactBuilderTests.cs" />
+    <Compile Include="PactMessageingVerifierTests.cs" />
     <Compile Include="PactUriOptionsTests.cs" />
+    <Compile Include="ProviderMessageValidatorTests.cs" />
     <Compile Include="ProviderServicePactFileTests.cs" />
     <Compile Include="PactVerifierTests.cs" />
     <Compile Include="Reporters\Outputters\FileReportOutputterTests.cs" />
@@ -144,17 +151,21 @@
     <Compile Include="Mocks\MockHttpService\Validators\ProviderServiceValidatorTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PactNet\PactNet.csproj">
-      <Project>{7024b146-2cb2-4de2-b079-58cf9c44640b}</Project>
-      <Name>PactNet</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Mocks\MessagingService\" />
+    <Folder Include="Mocks\MockMessagingService\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PactNet\PactNet.csproj">
+      <Project>{7024b146-2cb2-4de2-b079-58cf9c44640b}</Project>
+      <Name>PactNet</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />

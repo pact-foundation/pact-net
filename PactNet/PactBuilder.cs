@@ -2,12 +2,12 @@
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
 using PactNet.Mocks.MockHttpService;
-using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
+using PactNet.Models.ProviderService;
 
 namespace PactNet
 {
-    public class PactBuilder : IPactBuilder
+    public class PactBuilder : IPactHttpServiceBuilder
     {
         public string ConsumerName { get; private set; }
         public string ProviderName { get; private set; }

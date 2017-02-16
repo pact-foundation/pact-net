@@ -7,9 +7,9 @@ using System.Net.Http;
 using System.Text;
 using NSubstitute;
 using PactNet.Mocks.MockHttpService;
-using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Validators;
 using PactNet.Models;
+using PactNet.Models.ProviderService;
 using PactNet.Tests.Fakes;
 using Xunit;
 using Xunit.Sdk;
@@ -24,7 +24,7 @@ namespace PactNet.Tests
         private IProviderServiceValidator _mockProviderServiceValidator;
         private FakeHttpMessageHandler _fakeHttpMessageHandler;
 
-        private IPactVerifier GetSubject()
+        private IPactHttpVerifier GetSubject()
         {
             _providerServiceValidatorFactoryCallInfo = null;
             _mockFileSystem = Substitute.For<IFileSystem>();

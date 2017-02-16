@@ -11,9 +11,9 @@ using Newtonsoft.Json;
 using PactNet.Configuration.Json;
 using PactNet.Logging;
 using PactNet.Mocks.MockHttpService;
-using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Nancy;
 using PactNet.Models;
+using PactNet.Models.ProviderService;
 using Xunit;
 
 namespace PactNet.Tests.Mocks.MockHttpService.Nancy

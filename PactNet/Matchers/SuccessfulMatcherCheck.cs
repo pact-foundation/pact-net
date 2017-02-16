@@ -2,9 +2,18 @@
 {
     internal class SuccessfulMatcherCheck : MatcherCheck
     {
-        public SuccessfulMatcherCheck(string path)
+        public SuccessfulMatcherCheck()
         {
-            Path = path;
+        }
+
+        public SuccessfulMatcherCheck(string path)
+            :base(path)
+        {
+        }
+
+        public SuccessfulMatcherCheck(string path, object expected, object actual)
+            :base(path, expected, actual)
+        {
         }
     }
 }

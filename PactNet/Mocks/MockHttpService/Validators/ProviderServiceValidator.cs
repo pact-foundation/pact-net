@@ -3,8 +3,8 @@ using System.Linq;
 using PactNet.Comparers;
 using PactNet.Logging;
 using PactNet.Mocks.MockHttpService.Comparers;
-using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
+using PactNet.Models.ProviderService;
 using PactNet.Reporters;
 
 namespace PactNet.Mocks.MockHttpService.Validators
@@ -128,6 +128,11 @@ namespace PactNet.Mocks.MockHttpService.Validators
                         !String.IsNullOrEmpty(_config.LoggerName) ? LogProvider.CurrentLogProvider.ResolveLogPath(_config.LoggerName) : "logs"));
                 }
             }
+        }
+
+        public void Validate(ProviderServicePactFile pactFile)
+        {
+            throw new NotImplementedException();
         }
 
         private ComparisonResult ValidateInteraction(ProviderServiceInteraction interaction)

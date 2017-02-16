@@ -6,7 +6,7 @@ namespace Consumer.Tests
 {
     public class ConsumerEventApiPact : IDisposable
     {
-        public IPactBuilder PactBuilder { get; private set; }
+        public IPactHttpServiceBuilder PactBuilder { get; private set; }
         public IMockProviderService MockProviderService { get; private set; }
 
         public int MockServerPort { get { return 1234; } }
@@ -14,7 +14,8 @@ namespace Consumer.Tests
 
         public ConsumerEventApiPact()
         {
-            PactBuilder = new PactBuilder()
+            PactBuilder = new PactBuilder();
+            PactBuilder
                 .ServiceConsumer("Consumer")
                 .HasPactWith("Event API");
 

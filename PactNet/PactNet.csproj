@@ -88,6 +88,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Comparers\DslPartComparer.cs" />
+    <Compile Include="Comparers\IDslPartComparer.cs" />
+    <Compile Include="Configuration\Json\Converters\MatcherJsonConverter.cs" />
+    <Compile Include="Matchers\Include\IncludeMatchDefinition.cs" />
+    <Compile Include="Matchers\Include\IncludeMatcher.cs" />
+    <Compile Include="Matchers\MatchingRules.cs" />
+    <Compile Include="Mocks\MockMessager\Comparers\IMessageComparer.cs" />
+    <Compile Include="Mocks\MockMessager\Comparers\MessageComparer.cs" />
     <Compile Include="Configuration\Json\Converters\CamelCaseStringEnumConverter.cs" />
     <Compile Include="Configuration\Json\Converters\PreserveCasingDictionaryConverter.cs" />
     <Compile Include="Infrastructure\Logging\ILocalLogMessageHandler.cs" />
@@ -104,11 +112,42 @@
     <Compile Include="Comparers\MissingInteractionComparisonFailure.cs" />
     <Compile Include="Comparers\UnexpectedRequestComparisonFailure.cs" />
     <Compile Include="Configuration\Json\JsonConfig.cs" />
+    <Compile Include="Matchers\MatcherFactory.cs" />
+    <Compile Include="Matchers\Timestamp\TimestampDefinition.cs" />
+    <Compile Include="Matchers\Timestamp\TimestampMatcher.cs" />
+    <Compile Include="Matchers\Date\DateFormatDefinition.cs" />
+    <Compile Include="Matchers\Date\DateFormatMatcher.cs" />
+    <Compile Include="Matchers\Decimal\DecimalMatchDefinition.cs" />
+    <Compile Include="Matchers\Decimal\DecimalMatcher.cs" />
+    <Compile Include="Matchers\Integer\IntegerMatchDefinition.cs" />
+    <Compile Include="Matchers\Integer\IntegerMatcher.cs" />
     <Compile Include="Matchers\Match.cs" />
     <Compile Include="Matchers\MatchDefinition.cs" />
-    <Compile Include="Mocks\MockHttpService\Matchers\Regex\RegexMatchDefinition.cs" />
-    <Compile Include="Mocks\MockHttpService\Matchers\Type\TypeMatchDefinition.cs" />
-    <Compile Include="Mocks\MockHttpService\Matchers\DefaultHttpBodyMatcher.cs" />
+    <Compile Include="Matchers\Max\MaxMatchDefinition.cs" />
+    <Compile Include="Matchers\Max\MaxMatcher.cs" />
+    <Compile Include="Matchers\Equality\EqualityMatchDefinition.cs" />
+    <Compile Include="Matchers\Equality\EqualityMatcher.cs" />
+    <Compile Include="Matchers\Min\MinMatchDefinition.cs" />
+    <Compile Include="Matchers\Min\MinMatcher.cs" />
+    <Compile Include="Matchers\Regex\RegexMatchDefinition.cs" />
+    <Compile Include="Matchers\Regex\RegexMatcher.cs" />
+    <Compile Include="Matchers\Type\TypeMatchDefinition.cs" />
+    <Compile Include="Matchers\Type\TypeMatcher.cs" />
+    <Compile Include="Mocks\IMockMessager.cs" />
+    <Compile Include="Mocks\MockMessager\MockMessanger.cs" />
+    <Compile Include="Configuration\Json\Converters\DslPartJsonConverter.cs" />
+    <Compile Include="Models\Consumer\Dsl\PactDslJsonArray.cs" />
+    <Compile Include="Models\Consumer\Dsl\PactDslJsonRoot.cs" />
+    <Compile Include="Models\Consumer\Dsl\PactDslValue.cs" />
+    <Compile Include="Models\Consumer\Dsl\DslPart.cs" />
+    <Compile Include="Models\Consumer\Dsl\PactDslJsonBody.cs" />
+    <Compile Include="Configuration\Json\Converters\MessageJsonConverter.cs" />
+    <Compile Include="Models\MetaData.cs" />
+    <Compile Include="Models\pactNet.cs" />
+    <Compile Include="Models\PactSpecification.cs" />
+    <Compile Include="PactBrokerClient.cs" />
+    <Compile Include="PactMessageBuilder.cs" />
+    <Compile Include="Matchers\DefaultHttpBodyMatcher.cs" />
     <Compile Include="Matchers\FailedMatcherCheck.cs" />
     <Compile Include="Matchers\MatcherCheckFailureType.cs" />
     <Compile Include="Matchers\IMatcher.cs" />
@@ -131,9 +170,7 @@
     <Compile Include="Mocks\MockHttpService\Comparers\IHttpQueryStringComparer.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Mocks\MockHttpService\IHttpHost.cs" />
-    <Compile Include="Mocks\MockHttpService\Matchers\Regex\RegexMatcher.cs" />
-    <Compile Include="Mocks\MockHttpService\Matchers\Type\TypeMatcher.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\IHttpMessage.cs" />
+    <Compile Include="Models\ProviderService\IHttpMessage.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\NancyHttpHost.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\IMockProviderAdminRequestHandler.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\IMockProviderNancyRequestHandler.cs" />
@@ -144,7 +181,7 @@
     <Compile Include="Mocks\MockHttpService\IMockProviderRepository.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\MockProviderAdminRequestHandler.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\MockProviderRequestHandler.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\HttpBodyContent.cs" />
+    <Compile Include="Models\ProviderService\HttpBodyContent.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\HttpBodyContentMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\IHttpBodyContentMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\INancyResponseMapper.cs" />
@@ -161,28 +198,31 @@
     <Compile Include="Mocks\MockHttpService\Nancy\MockProviderNancyBootstrapper.cs" />
     <Compile Include="Mocks\MockHttpService\Nancy\MockProviderNancyRequestDispatcher.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\ProviderServiceRequestMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\HttpVerb.cs" />
+    <Compile Include="Models\ProviderService\HttpVerb.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\ProviderServiceResponseMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\HandledRequest.cs" />
+    <Compile Include="Models\ProviderService\HandledRequest.cs" />
     <Compile Include="Mocks\MockHttpService\MockProviderRepository.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Mocks\MockHttpService\Validators\IProviderServiceValidator.cs" />
     <Compile Include="Mocks\MockHttpService\Validators\ProviderServiceValidator.cs" />
+    <Compile Include="Models\Messaging\Message.cs" />
     <Compile Include="Models\PactDetails.cs" />
     <Compile Include="Models\PactFile.cs" />
+    <Compile Include="Models\Messaging\MessagingPactFile.cs" />
     <Compile Include="PactConfig.cs" />
+    <Compile Include="PactMessagingVerifier.cs" />
     <Compile Include="PactUriOptions.cs" />
     <Compile Include="PactVerifier.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\ProviderServiceInteraction.cs" />
+    <Compile Include="Models\ProviderService\ProviderServiceInteraction.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\IProviderServiceResponseComparer.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\ProviderServiceResponseComparer.cs" />
     <Compile Include="PactFailureException.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\ProviderServicePactFile.cs" />
+    <Compile Include="Models\ProviderService\ProviderServicePactFile.cs" />
     <Compile Include="Models\Interaction.cs" />
     <Compile Include="Models\Pacticipant.cs" />
     <Compile Include="PactBuilder.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\ProviderServiceRequest.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\ProviderServiceResponse.cs" />
+    <Compile Include="Models\ProviderService\ProviderServiceRequest.cs" />
+    <Compile Include="Models\ProviderService\ProviderServiceResponse.cs" />
     <Compile Include="PactVerifierConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IPactVerifier.cs" />
@@ -200,6 +240,7 @@
     <Compile Include="Reporters\Outputters\IReportOutputter.cs" />
     <Compile Include="Reporters\Reporter.cs" />
     <Compile Include="Validators\IPactValidator.cs" />
+    <Compile Include="Mocks\MockMessager\Validators\ProviderMessageValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -207,6 +248,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="PactNet.nuspec" />
+    <None Include="Scripts\Publish.ps1" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

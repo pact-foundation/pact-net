@@ -8,5 +8,10 @@ namespace PactNet.Comparers
         {
             Result = String.Format("Expected: {0}, Actual: {1}", expected ?? "null", actual ?? "null");
         }
+
+        public DiffComparisonFailure(string result)
+        {
+            Result = result;
+        }
     }
 }

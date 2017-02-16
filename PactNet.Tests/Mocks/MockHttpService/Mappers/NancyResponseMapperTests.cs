@@ -6,7 +6,7 @@ using System.Text;
 using Nancy;
 using NSubstitute;
 using PactNet.Mocks.MockHttpService.Mappers;
-using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Models.ProviderService;
 using Xunit;
 
 namespace PactNet.Tests.Mocks.MockHttpService.Mappers
