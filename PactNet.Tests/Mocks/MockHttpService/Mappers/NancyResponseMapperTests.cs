@@ -80,13 +80,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
             var result = mapper.Convert(response);
 
-            var stream = new MemoryStream();
-            result.Contents(stream);
-            Assert.Equal(0, stream.Length);
-            Assert.Equal("Content-Length", result.Headers.Last().Key);
-            Assert.Equal("100", result.Headers.Last().Value);
-            stream.Close();
-            stream.Dispose();
+            using (var stream = new MemoryStream())
+            {
+                result.Contents(stream);
+                Assert.Equal(0, stream.Length);
+                Assert.Equal("Content-Length", result.Headers.Last().Key);
+                Assert.Equal("100", result.Headers.Last().Value);
+            }
         }
 
         [Fact]

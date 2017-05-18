@@ -112,7 +112,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             const string parameterName = "date-format";
             const string parameterValue = "json";
             const string charSet = "IBM285";
-            var encoding = Encoding.GetEncoding(charSet);
+
+#if NETCOREAPP1_0
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+#endif
+
+            Encoding encoding = Encoding.GetEncoding(charSet);
 
             var headers = new Dictionary<string, string>
             {

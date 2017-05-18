@@ -14,7 +14,7 @@ namespace PactNet.Tests.IntegrationTests.Specification
         [Fact]
         public void ValidateRequestSpecification()
         {
-            var failedTestCases = RunPactSpecificationTests<RequestTestCase>("..\\..\\IntegrationTests\\Specification\\pact-specification\\testcases\\request");
+            var failedTestCases = RunPactSpecificationTests<RequestTestCase>(@"../../../IntegrationTests/Specification/pact-specification/testcases/request");
 
             if (failedTestCases.Any())
             {
@@ -31,7 +31,7 @@ namespace PactNet.Tests.IntegrationTests.Specification
         [Fact]
         public void ValidateResponseSpecification()
         {
-            var failedTestCases = RunPactSpecificationTests<ResponseTestCase>("..\\..\\IntegrationTests\\Specification\\pact-specification\\testcases\\response");
+            var failedTestCases = RunPactSpecificationTests<ResponseTestCase>(@"../../../IntegrationTests/Specification/pact-specification/testcases/response");
 
             if (failedTestCases.Any())
             {

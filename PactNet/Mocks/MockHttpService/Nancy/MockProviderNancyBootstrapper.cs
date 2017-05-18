@@ -1,12 +1,13 @@
-using System.Collections.Generic;
-using System.IO.Abstractions;
 using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Diagnostics;
 using Nancy.TinyIoc;
+using PactNet.Infrastructure;
 using PactNet.Logging;
 using PactNet.Mocks.MockHttpService.Comparers;
 using PactNet.Mocks.MockHttpService.Mappers;
+using System;
+using System.Collections.Generic;
 
 namespace PactNet.Mocks.MockHttpService.Nancy
 {
@@ -19,12 +20,13 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             _config = config;
         }
 
-        protected override IEnumerable<ModuleRegistration> Modules
-        {
-            get { return new List<ModuleRegistration>(); }
-        }
+        protected override IEnumerable<ModuleRegistration> Modules => new List<ModuleRegistration>();
 
+#if NET40
         protected override NancyInternalConfiguration InternalConfiguration
+#elif NETSTANDARD1_6
+        protected override Func<ITypeCatalog, NancyInternalConfiguration> InternalConfiguration
+#endif
         {
             get
             {

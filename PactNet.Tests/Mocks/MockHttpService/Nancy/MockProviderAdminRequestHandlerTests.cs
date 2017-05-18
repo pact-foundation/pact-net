@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
 using NSubstitute;
@@ -9,6 +8,7 @@ using Nancy;
 using Nancy.IO;
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
+using PactNet.Infrastructure;
 using PactNet.Logging;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using NSubstitute;
+using PactNet.Infrastructure;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Validators;

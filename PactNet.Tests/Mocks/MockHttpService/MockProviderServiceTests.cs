@@ -373,7 +373,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             var actualRequest = _fakeHttpMessageHandler.RequestsReceived.Single();
 
-            Assert.True(actualRequest.Headers.Single(x => x.Key == Constants.AdministrativeRequestTestContextHeaderKey).Value.Single().EndsWith("MockProviderServiceTests.WillRespondWith_WithValidInteraction_PerformsAdminInteractionsPostRequestWithTestContext"));
+            Assert.True(actualRequest.Headers.Single(x => x.Key == Constants.AdministrativeRequestTestContextHeaderKey).Value.Single().Contains(nameof(WillRespondWith_WithValidInteraction_PerformsAdminInteractionsPostRequestWithTestContext)));
         }
 
         [Fact]

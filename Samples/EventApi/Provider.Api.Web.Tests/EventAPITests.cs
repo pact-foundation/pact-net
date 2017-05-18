@@ -41,7 +41,7 @@ namespace Provider.Api.Web.Tests
             pactVerifier
                    .ServiceProvider("Event API", _server.HttpClient)
                    .HonoursPactWith("Consumer")
-                   .PactUri("../../../Consumer.Tests/pacts/consumer-event_api.json")
+                   .PactUri("../../../../Consumer.Tests/pacts/consumer-event_api.json")
                    .Verify();
 
             // Verify that verifaction log is also sent to additional reporters defined in the config

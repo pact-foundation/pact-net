@@ -62,7 +62,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
         private IDictionary<string, string> MakeDictionaryCaseInsensitive(IDictionary<string, string> from)
         {
-            return new Dictionary<string, string>(from, StringComparer.InvariantCultureIgnoreCase);
+            return new Dictionary<string, string>(from, StringComparer.OrdinalIgnoreCase);
         }
     }
 }
