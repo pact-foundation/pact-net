@@ -59,7 +59,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
 
             if (from.Body != null)
             {
-                HttpBodyContent bodyContent = _httpBodyContentMapper.Convert(body: from.Body, headers: from.Headers);
+                HttpBodyContent bodyContent = _httpBodyContentMapper.Convert(new DynamicBodyMapRequest { Body = from.Body, Headers = from.Headers });
                 var httpContent = _httpContentMapper.Convert(bodyContent);
 
                 //Set the content related headers

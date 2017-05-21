@@ -102,11 +102,11 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 },
                 Body = "This is a plain body"
             };
-            var httpBodyContent = new HttpBodyContent(body: response.Body, contentType: new MediaTypeHeaderValue(contentTypeString) { CharSet = "utf-8" });
+            var httpBodyContent = new HttpBodyContent(new DynamicBody { Body = response.Body, ContentType = new MediaTypeHeaderValue(contentTypeString) { CharSet = "utf-8" } });
 
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
 
-            mockHttpBodyContentMapper.Convert(body: Arg.Any<object>(), headers: response.Headers)
+            mockHttpBodyContentMapper.Convert(Arg.Is<DynamicBodyMapRequest>(mapRequest => mapRequest.Headers == response.Headers))
                 .Returns(httpBodyContent);
 
             var mapper = new NancyResponseMapper(mockHttpBodyContentMapper);
@@ -125,7 +125,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             }
 
             Assert.Equal(response.Body, content);
-            mockHttpBodyContentMapper.Received(1).Convert(body: Arg.Any<object>(), headers: response.Headers);
+            mockHttpBodyContentMapper.Received(1).Convert(Arg.Is<DynamicBodyMapRequest>(mapRequest => mapRequest.Headers == response.Headers));
         }
 
         [Fact]
@@ -146,11 +146,11 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 }
             };
             var jsonBody = "{\"Test\":\"tester\",\"Test2\":1}";
-            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(jsonBody), contentType: new MediaTypeHeaderValue(contentTypeString) { CharSet = "utf-8" });
+            var httpBodyContent = new HttpBodyContent(new BinaryContent { Content = Encoding.UTF8.GetBytes(jsonBody), ContentType = new MediaTypeHeaderValue(contentTypeString) { CharSet = "utf-8" } });
 
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
 
-            mockHttpBodyContentMapper.Convert(body: Arg.Any<object>(), headers: response.Headers)
+            mockHttpBodyContentMapper.Convert(Arg.Is<DynamicBodyMapRequest>(mapRequest => mapRequest.Headers == response.Headers))
                 .Returns(httpBodyContent);
 
             var mapper = new NancyResponseMapper(mockHttpBodyContentMapper);
@@ -169,7 +169,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             }
 
             Assert.Equal(jsonBody, content);
-            mockHttpBodyContentMapper.Received(1).Convert(body: Arg.Any<object>(), headers: response.Headers);
+            mockHttpBodyContentMapper.Received(1).Convert(Arg.Is<DynamicBodyMapRequest>(mapRequest => mapRequest.Headers == response.Headers));
         }
     }
 }

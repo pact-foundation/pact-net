@@ -9,18 +9,18 @@ namespace PactNet.Mocks.MockHttpService.Mappers
 {
     internal class HttpBodyContentMapper : IHttpBodyContentMapper
     {
-        public HttpBodyContent Convert(dynamic body, IDictionary<string, string> headers)
+        public HttpBodyContent Convert(DynamicBodyMapRequest request)
         {
-            return body == null
-                ? null
-                : new HttpBodyContent(body, this.ParseContentTypeHeader(headers));
+            return request?.Body == null
+                ? null 
+                : new HttpBodyContent(new DynamicBody { Body = request.Body, ContentType = ParseContentTypeHeader(request.Headers) });
         }
 
-        public HttpBodyContent Convert(byte[] content, IDictionary<string, string> headers)
+        public HttpBodyContent Convert(BinaryContentMapRequest request)
         {
-            return content == null
+            return request?.Content == null
                 ? null
-                : new HttpBodyContent(content, this.ParseContentTypeHeader(headers));
+                : new HttpBodyContent(new BinaryContent { Content = request.Content, ContentType = ParseContentTypeHeader(request.Headers) });
         }
 
         private MediaTypeHeaderValue ParseContentTypeHeader(IDictionary<string, string> headers)

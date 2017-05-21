@@ -67,7 +67,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             };
 
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
-            mockHttpBodyContentMapper.Convert(Arg.Any<byte[]>(), Arg.Any<IDictionary<string, string>>()).Returns(new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: new MediaTypeHeaderValue("text/plain") { CharSet = "utf-8" }));
+            mockHttpBodyContentMapper.Convert(Arg.Any<BinaryContentMapRequest>()).Returns(new HttpBodyContent(new BinaryContent { Content = Encoding.UTF8.GetBytes(String.Empty), ContentType = new MediaTypeHeaderValue("text/plain") { CharSet = "utf-8" } }));
 
             IProviderServiceResponseMapper mapper = new ProviderServiceResponseMapper(mockHttpBodyContentMapper);
 
@@ -90,7 +90,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             message.Headers.Add("X-Custom", headerValue);
 
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
-            mockHttpBodyContentMapper.Convert(Arg.Any<byte[]>(), Arg.Any<IDictionary<string, string>>()).Returns(new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: new MediaTypeHeaderValue("text/plain") { CharSet = "utf-8" }));
+            mockHttpBodyContentMapper.Convert(Arg.Any<BinaryContentMapRequest>()).Returns(new HttpBodyContent(new BinaryContent { Content = Encoding.UTF8.GetBytes(String.Empty), ContentType = new MediaTypeHeaderValue("text/plain") { CharSet = "utf-8" } }));
 
             IProviderServiceResponseMapper mapper = new ProviderServiceResponseMapper(mockHttpBodyContentMapper);
 
@@ -114,14 +114,14 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             };
 
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
-            mockHttpBodyContentMapper.Convert(Arg.Any<byte[]>(), Arg.Any<IDictionary<string, string>>()).Returns(new HttpBodyContent(content: Encoding.UTF8.GetBytes(content), contentType: new MediaTypeHeaderValue("text/plain") { CharSet = "utf-8" }));
+            mockHttpBodyContentMapper.Convert(Arg.Any<BinaryContentMapRequest>()).Returns(new HttpBodyContent(new BinaryContent { Content = Encoding.UTF8.GetBytes(content), ContentType = new MediaTypeHeaderValue("text/plain") { CharSet = "utf-8" } }));
 
             IProviderServiceResponseMapper mapper = new ProviderServiceResponseMapper(mockHttpBodyContentMapper);
 
             var result = mapper.Convert(message);
 
             Assert.Equal(content, result.Body);
-            mockHttpBodyContentMapper.Received(1).Convert(Arg.Is<byte[]>(x => CompareBytes(Encoding.UTF8.GetBytes(content), x)), Arg.Any<Dictionary<string, string>>());
+            mockHttpBodyContentMapper.Received(1).Convert(Arg.Is<BinaryContentMapRequest>(mapRequest => CompareBytes(Encoding.UTF8.GetBytes(content), mapRequest.Content)));
         }
 
         [Fact]
@@ -143,7 +143,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             };
 
             var mockHttpBodyContentMapper = Substitute.For<IHttpBodyContentMapper>();
-            mockHttpBodyContentMapper.Convert(Arg.Any<byte[]>(), Arg.Any<IDictionary<string, string>>()).Returns(new HttpBodyContent(content: Encoding.UTF8.GetBytes(content), contentType: new MediaTypeHeaderValue("application/json") { CharSet = "utf-8" }));
+            mockHttpBodyContentMapper.Convert(Arg.Any<BinaryContentMapRequest>()).Returns(new HttpBodyContent(new BinaryContent { Content = Encoding.UTF8.GetBytes(content), ContentType = new MediaTypeHeaderValue("application/json") { CharSet = "utf-8" } }));
 
             IProviderServiceResponseMapper mapper = new ProviderServiceResponseMapper(mockHttpBodyContentMapper);
 
@@ -151,7 +151,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
 
             Assert.Equal(body.Test, (string)result.Body.Test);
             Assert.Equal(body.test2, (int)result.Body.test2);
-            mockHttpBodyContentMapper.Received(1).Convert(Arg.Is<byte[]>(x => CompareBytes(Encoding.UTF8.GetBytes(content), x)), Arg.Any<Dictionary<string, string>>());
+            mockHttpBodyContentMapper.Received(1).Convert(Arg.Is<BinaryContentMapRequest>(mapRequest => CompareBytes(Encoding.UTF8.GetBytes(content), mapRequest.Content)));
         }
 
         private static bool CompareBytes(byte[] expected, byte[] actual)

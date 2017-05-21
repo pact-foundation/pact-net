@@ -3,9 +3,9 @@ using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
-    public interface IHttpBodyContentMapper
+    internal interface IHttpBodyContentMapper
     {
-        HttpBodyContent Convert(dynamic body, IDictionary<string, string> headers);
-        HttpBodyContent Convert(byte[] content, IDictionary<string, string> headers);
+        HttpBodyContent Convert(DynamicBodyMapRequest request);
+        HttpBodyContent Convert(BinaryContentMapRequest request);
     }
 }
