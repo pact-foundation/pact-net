@@ -1,4 +1,4 @@
-﻿#if NET40
+﻿#if NET4X
 
 using Nancy.Bootstrapper;
 using Nancy.Hosting.Self;

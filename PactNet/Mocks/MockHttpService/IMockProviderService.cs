@@ -7,7 +7,7 @@ namespace PactNet.Mocks.MockHttpService
     public interface IMockProviderService : IMockProvider<IMockProviderService>
     {
         IMockProviderService With(ProviderServiceRequest request);
-#if NET40
+#if NET4X
         void WillRespondWith(ProviderServiceResponse response);
 #elif NETSTANDARD1_6
         void WillRespondWith(

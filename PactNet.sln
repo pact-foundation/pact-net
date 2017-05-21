@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.22823.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26510.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PactNet", "PactNet\PactNet.csproj", "{7024B146-2CB2-4DE2-B079-58CF9C44640B}"
 EndProject
@@ -18,14 +18,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{3EF642AB-53B8-4964-BB52-3C3477556154}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EventApi", "EventApi", "{CE4F7673-F9D8-4ED6-B4A0-630B93DC0668}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A7656E1F-1D8A-464F-B393-6736B2A92022}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-		.nuget\packages.config = .nuget\packages.config
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,10 +54,10 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{CE4F7673-F9D8-4ED6-B4A0-630B93DC0668} = {3EF642AB-53B8-4964-BB52-3C3477556154}
-		{4DF20682-F8DD-4271-86CA-17FA2B3D8D29} = {CE4F7673-F9D8-4ED6-B4A0-630B93DC0668}
-		{588A65B8-0FCB-48D9-92A8-4338E608F714} = {CE4F7673-F9D8-4ED6-B4A0-630B93DC0668}
 		{E85C47D3-F985-4C1F-A598-A4AEB5740DA2} = {CE4F7673-F9D8-4ED6-B4A0-630B93DC0668}
 		{9FAFB3C5-5872-470A-98A5-19603EDF1D1A} = {CE4F7673-F9D8-4ED6-B4A0-630B93DC0668}
+		{4DF20682-F8DD-4271-86CA-17FA2B3D8D29} = {CE4F7673-F9D8-4ED6-B4A0-630B93DC0668}
+		{588A65B8-0FCB-48D9-92A8-4338E608F714} = {CE4F7673-F9D8-4ED6-B4A0-630B93DC0668}
+		{CE4F7673-F9D8-4ED6-B4A0-630B93DC0668} = {3EF642AB-53B8-4964-BB52-3C3477556154}
 	EndGlobalSection
 EndGlobal

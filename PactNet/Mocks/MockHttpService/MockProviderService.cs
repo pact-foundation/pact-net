@@ -99,11 +99,11 @@ namespace PactNet.Mocks.MockHttpService
             return this;
         }
 
-#if NET40
+#if NET4X
         public void WillRespondWith(ProviderServiceResponse response)
 #elif NETSTANDARD1_6
         public void WillRespondWith(
-            ProviderServiceResponse response, [CallerMemberName] string callerMemberName = "", [CallerFilePath] string callerFilePath = "", 
+            ProviderServiceResponse response, [CallerMemberName] string callerMemberName = "", [CallerFilePath] string callerFilePath = "",
             [CallerLineNumber] int callerLineNumber = 0)
 #endif
         {
@@ -124,7 +124,7 @@ namespace PactNet.Mocks.MockHttpService
 
             _response = response;
 
-#if NET40
+#if NET4X
             RegisterInteraction();
 #elif NETSTANDARD1_6
             RegisterInteraction(callerMemberName, callerFilePath, callerLineNumber);
@@ -200,7 +200,7 @@ namespace PactNet.Mocks.MockHttpService
             }
         }
 
-#if NET40
+#if NET4X
         private void RegisterInteraction()
 #elif NETSTANDARD1_6
         private void RegisterInteraction(string callerMemberName, string callerFilePath, int callerLineNumber)
@@ -230,7 +230,7 @@ namespace PactNet.Mocks.MockHttpService
             };
 
             string testContext =
-#if NET40
+#if NET4X
                 BuildTestContext();
 #elif NETSTANDARD1_6
                 $"{callerMemberName} in {callerFilePath}:line {callerLineNumber}";
@@ -241,7 +241,7 @@ namespace PactNet.Mocks.MockHttpService
             ClearTrasientState();
         }
 
-#if NET40
+#if NET4X
         private static string BuildTestContext()
         {
             var stack = new StackTrace(true);

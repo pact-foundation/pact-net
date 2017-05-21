@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.6;net4</TargetFrameworks>
+    <TargetFrameworks>netstandard1.6;net40;net45</TargetFrameworks>
     <AssemblyName>PactNet</AssemblyName>
     <PackageId>PactNet</PackageId>
     <Description>A .NET version of Pact, which enables consumer driven contract testing.</Description>
@@ -9,23 +9,47 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <AssemblyVersion>0.0.0.1</AssemblyVersion>
     <FileVersion>0.0.0.1</FileVersion>
+    <NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
+    <PackageId>PactNet</PackageId>
+    <PackageIconUrl>http://www.newtonsoft.com/content/images/nugeticon.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/SEEK-Jobs/pact-net</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/SEEK-Jobs/pact-net/master/LICENSE.txt</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/SEEK-Jobs/pact-net</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <NeutralLanguage>en-AU</NeutralLanguage>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
+    <AssemblyTitle>PactNet .NET Standard 1.6</AssemblyTitle>
     <DefineConstants>$(DefineConstants);LIBLOG_PORTABLE</DefineConstants>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="LibLog" Version="4.2.2" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net40'">
+    <AssemblyTitle>PactNet .NET 4.0</AssemblyTitle>
+    <DefineConstants>$(DefineConstants);NET4X</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net45'">
+    <AssemblyTitle>PactNet .NET 4.5</AssemblyTitle>
+    <DefineConstants>$(DefineConstants);NET4X</DefineConstants>
+  </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="Nancy" Version="2.0.0-clinteastwood" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Owin" Version="1.0.0" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net4'">
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
+    <Reference Include="Microsoft.CSharp" />
     <PackageReference Include="Nancy" Version="0.23.1" />
     <PackageReference Include="Nancy.Hosting.Self" Version="0.23.1" />
     <PackageReference Include="Newtonsoft.Json" Version="6.0.3" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net40'">
     <PackageReference Include="Microsoft.Net.Http" Version="2.2.28" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="readme.txt" Pack="true" PackagePath="readme.txt" />
+    <None Include="../LICENSE.txt" Pack="true" PackagePath="LICENSE.txt" />
   </ItemGroup>
 </Project>
