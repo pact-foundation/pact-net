@@ -5,8 +5,10 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
+using PactNet.Extensions;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Nancy;
@@ -170,12 +172,12 @@ namespace PactNet.Mocks.MockHttpService
                 request.Content = new StringContent(requestContentJson, Encoding.UTF8, "application/json");
             }
 
-            var response = _httpClient.SendAsync(request, CancellationToken.None).Result;
+            var response = _httpClient.SendAsync(request, CancellationToken.None).RunSync();
             var responseStatusCode = response.StatusCode;
 
             if (response.Content != null)
             {
-                responseContent = response.Content.ReadAsStringAsync().Result;
+                responseContent = response.Content.ReadAsStringAsync().RunSync();
             }
 
             Dispose(request);

@@ -62,7 +62,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             handler.Handle(context);
 
-            _mockLog.Received(1).Log(LogLevel.Info, Arg.Any<Func<string>>(), null, Arg.Is<object[]>(x => x.Single() == testContext));
+            _mockLog.Received(1).Log(LogLevel.Info, Arg.Any<Func<string>>(), null, Arg.Is<object[]>(x => x.Single().ToString() == testContext));
         }
 
         [Fact]
@@ -114,7 +114,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             handler.Handle(context);
 
-            _mockLog.Received(0).Log(LogLevel.Info, Arg.Any<Func<string>>(), null, Arg.Is<object[]>(x => x.Single() == testContext));
+            _mockLog.Received(0).Log(LogLevel.Info, Arg.Any<Func<string>>(), null, Arg.Is<object[]>(x => x.Single().ToString() == testContext));
         }
 
         [Fact]

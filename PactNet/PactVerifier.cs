@@ -188,12 +188,12 @@ namespace PactNet
                         request.Headers.Add("Authorization", String.Format("{0} {1}", PactUriOptions.AuthorizationScheme, PactUriOptions.AuthorizationValue));
                     }
 
-                    var response = _httpClient.SendAsync(request).Result;
+                    var response = _httpClient.SendAsync(request).RunSync();
 
                     try
                     {
                         response.EnsureSuccessStatusCode();
-                        pactFileJson = response.Content.ReadAsStringAsync().Result;
+                        pactFileJson = response.Content.ReadAsStringAsync().RunSync();
                     }
                     finally
                     {
