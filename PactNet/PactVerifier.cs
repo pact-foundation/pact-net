@@ -1,9 +1,9 @@
 ﻿using System;
-using System.IO.Abstractions;
 using System.Linq;
 using System.Net.Http;
 using Newtonsoft.Json;
 using PactNet.Extensions;
+using PactNet.Infrastructure;
 using PactNet.Logging;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
@@ -246,8 +246,8 @@ namespace PactNet
 
         private static bool IsWebUri(string uri)
         {
-            return uri.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase) ||
-                   uri.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase);
+            return uri.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+                   uri.StartsWith("https://", StringComparison.OrdinalIgnoreCase);
         }
 
         private static void Dispose(IDisposable disposable)

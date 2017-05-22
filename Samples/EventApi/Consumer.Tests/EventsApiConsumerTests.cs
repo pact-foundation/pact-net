@@ -9,12 +9,13 @@ using Xunit;
 
 namespace Consumer.Tests
 {
-    public class EventsApiConsumerTests : IUseFixture<ConsumerEventApiPact>
+    [Collection("ConsumerEventApiPactCollection")]
+    public class EventsApiConsumerTests
     {
         private IMockProviderService _mockProviderService;
         private string _mockProviderServiceBaseUri;
             
-        public void SetFixture(ConsumerEventApiPact data)
+        public EventsApiConsumerTests(ConsumerEventApiPact data)
         {
             _mockProviderService = data.MockProviderService;
             _mockProviderServiceBaseUri = data.MockProviderServiceBaseUri;

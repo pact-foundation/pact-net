@@ -11,7 +11,7 @@ namespace PactNet.Tests.IntegrationTests
         public IPactBuilder PactBuilder { get; private set; }
         public IMockProviderService MockProviderService { get; private set; }
 
-        public int MockServerPort { get { return 4321; } }
+        public int MockServerPort { get { return 5678; } }
         public string MockProviderServiceBaseUri { get { return String.Format("http://localhost:{0}", MockServerPort); } }
 
         public FailureIntegrationTestsMyApiPact()
@@ -20,7 +20,7 @@ namespace PactNet.Tests.IntegrationTests
 
             PactBuilder = new PactBuilder((port, enableSsl, providerName, bindOnAllAdapters) => 
                     new MockProviderService(
-                        baseUri => new NancyHttpHost(baseUri, "MyApi",  pactConfig, new IntegrationTestingMockProviderNancyBootstrapper(pactConfig)), 
+                        baseUri => new HttpHost(baseUri, "MyApi",  pactConfig, new IntegrationTestingMockProviderNancyBootstrapper(pactConfig)), 
                         port, enableSsl, 
                         baseUri => new HttpClient { BaseAddress = new Uri(baseUri) },
                         new HttpMethodMapper()))

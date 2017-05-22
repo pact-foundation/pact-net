@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using PactNet.Configuration.Json;
+using System;
 using System.Net.Http.Headers;
 using System.Text;
-using Newtonsoft.Json;
-using PactNet.Configuration.Json;
 
 namespace PactNet.Mocks.MockHttpService.Models
 {
@@ -37,7 +37,7 @@ namespace PactNet.Mocks.MockHttpService.Models
         {
             if (contentType == null)
             {
-                throw new ArgumentNullException(nameof(contentType));
+                throw new ArgumentException("Content Type must be provided");
             }
 
             if (contentType.CharSet == null)
@@ -49,11 +49,13 @@ namespace PactNet.Mocks.MockHttpService.Models
             Encoding = Encoding.GetEncoding(contentType.CharSet);
         }
 
-        public HttpBodyContent(dynamic body, MediaTypeHeaderValue contentType) : this(contentType)
+        public HttpBodyContent(DynamicBody content) : this(content?.ContentType)
         {
+            dynamic body = content?.Body;
+
             if (body == null)
             {
-                throw new ArgumentNullException(nameof(body));
+                throw new ArgumentException("Body must be provided");
             }
 
             if (IsJsonContentType())
@@ -82,12 +84,14 @@ namespace PactNet.Mocks.MockHttpService.Models
                 Body = body;
             }
         }
-
-        public HttpBodyContent(byte[] content, MediaTypeHeaderValue contentType) : this(contentType)
+        
+        public HttpBodyContent(BinaryContent binaryContent) : this(binaryContent?.ContentType)
         {
+            dynamic content = binaryContent?.Content;
+
             if (content == null)
             {
-                throw new ArgumentNullException(nameof(content));
+                throw new ArgumentException("Content must be provided");
             }
 
             if (IsJsonContentType())
@@ -111,14 +115,14 @@ namespace PactNet.Mocks.MockHttpService.Models
 
         private bool IsJsonContentType()
         {
-            return ContentType.MediaType.IndexOf("application/", StringComparison.InvariantCultureIgnoreCase) == 0 &&
-                ContentType.MediaType.IndexOf("json", StringComparison.InvariantCultureIgnoreCase) > 0;
+            return ContentType.MediaType.IndexOf("application/", StringComparison.OrdinalIgnoreCase) == 0 &&
+                ContentType.MediaType.IndexOf("json", StringComparison.OrdinalIgnoreCase) > 0;
         }
 
         private bool IsBinaryContentType()
         {
-            return ContentType.MediaType.IndexOf("application/", StringComparison.InvariantCultureIgnoreCase) == 0 &&
-                ContentType.MediaType.IndexOf("octet-stream", StringComparison.InvariantCultureIgnoreCase) > 0;
+            return ContentType.MediaType.IndexOf("application/", StringComparison.OrdinalIgnoreCase) == 0 &&
+                ContentType.MediaType.IndexOf("octet-stream", StringComparison.OrdinalIgnoreCase) > 0;
         }
     }
 }

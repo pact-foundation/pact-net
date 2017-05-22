@@ -49,7 +49,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
 
             if (from.Body != null && from.Body.Length > 0)
             {
-                var httpBodyContent = _httpBodyContentMapper.Convert(content: ConvertStreamToBytes(from.Body), headers: to.Headers);
+                var httpBodyContent = _httpBodyContentMapper.Convert(new BinaryContentMapRequest { Content = ConvertStreamToBytes(from.Body), Headers = to.Headers });
 
                 to.Body = httpBodyContent.Body;
             }

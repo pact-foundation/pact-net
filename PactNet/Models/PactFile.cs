@@ -5,14 +5,12 @@ namespace PactNet.Models
     public class PactFile : PactDetails
     {
         [JsonProperty(PropertyName = "metadata")]
-        public dynamic Metadata { get; private set; }
+        public PactFileMetaData Metadata { get; } = new PactFileMetaData();
 
-        public PactFile()
+        public class PactFileMetaData
         {
-            Metadata = new
-            {
-                pactSpecificationVersion = "1.1.0"
-            };
+            [JsonProperty(PropertyName = "pactSpecificationVersion")]
+            public string PactSpecificationVersion { get; } = "1.1.0";
         }
     }
 }

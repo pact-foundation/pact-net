@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
 using Nancy;
 using Newtonsoft.Json;
 using PactNet.Comparers;
 using PactNet.Configuration.Json;
+using PactNet.Infrastructure;
 using PactNet.Logging;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
@@ -44,25 +44,25 @@ namespace PactNet.Mocks.MockHttpService.Nancy
                 _log.InfoFormat("Test context {0}", _mockProviderRepository.TestContext);
             }
 
-            if (context.Request.Method.Equals("DELETE", StringComparison.InvariantCultureIgnoreCase) &&
+            if (context.Request.Method.Equals("DELETE", StringComparison.OrdinalIgnoreCase) &&
                 context.Request.Path == Constants.InteractionsPath)
             {
                 return HandleDeleteInteractionsRequest();
             }
 
-            if (context.Request.Method.Equals("POST", StringComparison.InvariantCultureIgnoreCase) &&
+            if (context.Request.Method.Equals("POST", StringComparison.OrdinalIgnoreCase) &&
                 context.Request.Path == Constants.InteractionsPath)
             {
                 return HandlePostInteractionsRequest(context);
             }
 
-            if (context.Request.Method.Equals("GET", StringComparison.InvariantCultureIgnoreCase) &&
+            if (context.Request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase) &&
                 context.Request.Path == Constants.InteractionsVerificationPath)
             {
                 return HandleGetInteractionsVerificationRequest();
             }
 
-            if (context.Request.Method.Equals("POST", StringComparison.InvariantCultureIgnoreCase) &&
+            if (context.Request.Method.Equals("POST", StringComparison.OrdinalIgnoreCase) &&
                 context.Request.Path == Constants.PactPath)
             {
                 return HandlePostPactRequest(context);
