@@ -7,9 +7,9 @@ namespace PactNet.Mocks.MockHttpService
     public interface IMockProviderService : IMockProvider<IMockProviderService>
     {
         IMockProviderService With(ProviderServiceRequest request);
-#if NET4X
+#if USE_STACKTRACE
         void WillRespondWith(ProviderServiceResponse response);
-#elif NETSTANDARD1_6
+#elif USE_CALLER_INFO
         void WillRespondWith(
             ProviderServiceResponse response, [CallerMemberName] string callerMemberName = "", [CallerFilePath] string callerFilePath = "", 
             [CallerLineNumber] int callerLineNumber = 0);

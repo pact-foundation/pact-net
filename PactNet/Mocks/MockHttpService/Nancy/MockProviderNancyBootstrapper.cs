@@ -22,9 +22,9 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
         protected override IEnumerable<ModuleRegistration> Modules => new List<ModuleRegistration>();
 
-#if NET4X
+#if USE_NANCY_HOST
         protected override NancyInternalConfiguration InternalConfiguration
-#elif NETSTANDARD1_6
+#elif USE_KESTREL_HOST
         protected override Func<ITypeCatalog, NancyInternalConfiguration> InternalConfiguration
 #endif
         {

@@ -1,4 +1,4 @@
-﻿#if NETSTANDARD1_6
+﻿#if USE_TYPE_EXTENSIONS
 using System;
 using System.Reflection;
 

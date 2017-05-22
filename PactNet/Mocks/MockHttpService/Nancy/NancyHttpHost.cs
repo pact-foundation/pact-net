@@ -1,4 +1,4 @@
-﻿#if NET4X
+﻿#if USE_NANCY_HOST
 
 using Nancy.Bootstrapper;
 using Nancy.Hosting.Self;

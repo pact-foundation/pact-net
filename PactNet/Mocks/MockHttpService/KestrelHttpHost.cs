@@ -1,4 +1,4 @@
-﻿#if NETSTANDARD1_6
+﻿#if USE_KESTREL_HOST
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
