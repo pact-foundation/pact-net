@@ -1,8 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using PactNet.Mocks.MockHttpService.Models;
+using System;
 using System.Linq;
-using Nancy;
-using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Mappers
 {
@@ -25,20 +23,20 @@ namespace PactNet.Mocks.MockHttpService.Mappers
         {
         }
 
-        public ProviderServiceRequest Convert(Request from)
+        public ProviderServiceRequest Convert(IRequestWrapper from)
         {
             if (from == null)
             {
                 return null;
             }
-                
+
             var httpVerb = _httpVerbMapper.Convert(from.Method.ToUpper());
 
             var to = new ProviderServiceRequest
             {
                 Method = httpVerb,
                 Path = from.Path,
-                Query = !String.IsNullOrEmpty(from.Url.Query) ? from.Url.Query.TrimStart('?') : null
+                Query = !String.IsNullOrEmpty(from.Query) ? from.Query.TrimStart('?') : null
             };
 
             if (from.Headers != null && from.Headers.Any())
@@ -49,21 +47,12 @@ namespace PactNet.Mocks.MockHttpService.Mappers
 
             if (from.Body != null && from.Body.Length > 0)
             {
-                var httpBodyContent = _httpBodyContentMapper.Convert(new BinaryContentMapRequest { Content = ConvertStreamToBytes(from.Body), Headers = to.Headers });
+                var httpBodyContent = _httpBodyContentMapper.Convert(new BinaryContentMapRequest { Content = from.Body, Headers = to.Headers });
 
                 to.Body = httpBodyContent.Body;
             }
 
             return to;
-        }
-
-        private static byte[] ConvertStreamToBytes(Stream content)
-        {
-            using (var memoryStream = new MemoryStream())
-            {
-                content.CopyTo(memoryStream);
-                return memoryStream.ToArray();
-            }
         }
     }
 }

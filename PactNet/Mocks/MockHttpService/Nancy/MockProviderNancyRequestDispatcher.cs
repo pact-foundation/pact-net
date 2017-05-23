@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if USE_NANCY
+using System;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -49,9 +50,22 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
             try
             {
-                response = IsAdminRequest(context.Request) ?
-                    _adminRequestHandler.Handle(context) :
-                    _requestHandler.Handle(context);
+                IRequestWrapper request = NancyRequest.Create(context.Request);
+                ResponseWrapper responseWrapper = IsAdminRequest(context.Request) 
+                    ?_adminRequestHandler.Handle(request) 
+                    :_requestHandler.Handle(request);
+
+                response = new Response
+                {
+                    Contents = s =>
+                    {
+                        byte[] bytes = responseWrapper.Contents;
+                        s.Write(bytes, 0, bytes.Length);
+                        s.Flush();
+                    },
+                    Headers = responseWrapper.Headers,
+                    StatusCode = (HttpStatusCode)responseWrapper.StatusCode
+                };
             }
             catch (Exception ex)
             {
@@ -90,3 +104,4 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         }
     }
 }
+#endif

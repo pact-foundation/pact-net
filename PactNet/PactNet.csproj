@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.6;net40;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;net40;net45</TargetFrameworks>
     <AssemblyName>PactNet</AssemblyName>
     <PackageId>PactNet</PackageId>
     <Description>A .NET version of Pact, which enables consumer driven contract testing.</Description>
@@ -18,23 +18,21 @@
     <RepositoryType>git</RepositoryType>
     <NeutralLanguage>en-AU</NeutralLanguage>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
-    <AssemblyTitle>PactNet .NET Standard 1.6</AssemblyTitle>
-    <DefineConstants>$(DefineConstants);LIBLOG_PORTABLE;USE_KESTREL_HOST;USE_TYPE_EXTENSIONS;USE_CALLER_INFO</DefineConstants>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <AssemblyTitle>PactNet .NET Standard 1.3</AssemblyTitle>
+    <DefineConstants>$(DefineConstants);LIBLOG_PORTABLE;USE_KESTREL;USE_TYPE_EXTENSIONS;USE_CALLER_INFO</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'net40'">
     <AssemblyTitle>PactNet .NET 4.0</AssemblyTitle>
-    <DefineConstants>$(DefineConstants);USE_NANCY_HOST;USE_STACKTRACE</DefineConstants>
+    <DefineConstants>$(DefineConstants);USE_NANCY;USE_STACKTRACE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'net45'">
     <AssemblyTitle>PactNet .NET 4.5</AssemblyTitle>
-    <DefineConstants>$(DefineConstants);USE_NANCY_HOST;USE_STACKTRACE</DefineConstants>
+    <DefineConstants>$(DefineConstants);USE_NANCY;USE_STACKTRACE</DefineConstants>
   </PropertyGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-    <PackageReference Include="Nancy" Version="2.0.0-clinteastwood" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Owin" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
     <Reference Include="Microsoft.CSharp" />

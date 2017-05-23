@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if USE_NANCY
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -31,6 +32,11 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         [Fact]
         public void Dispatch_WithNancyContext_CallsRequestHandlerWithContext()
         {
+            var request = Substitute.For<IRequestWrapper>();
+
+            request.Method.Returns("GET");
+            request.Path.Returns("/Test");
+            
             var nancyContext = new NancyContext
             {
                 Request = new Request("GET", "/Test", "HTTP")
@@ -38,11 +44,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             var requestDispatcher = GetSubject();
 
-            _mockRequestHandler.Handle(nancyContext).Returns(new Response());
+            _mockRequestHandler.Handle(request).Returns(new ResponseWrapper());
 
             requestDispatcher.Dispatch(nancyContext, CancellationToken.None);
 
-            _mockRequestHandler.Received(1).Handle(nancyContext);
+            _mockRequestHandler.Received(1).Handle(
+                Arg.Is<NancyRequest>(nr => nr.Method == request.Method && nr.Path == request.Path));
         }
 
         [Fact]
@@ -52,6 +59,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             {
                 { Constants.AdministrativeRequestHeaderKey, new List<string> { "true" } }
             };
+
+            var request = Substitute.For<IRequestWrapper>();
+
+            request.Method.Returns("GET");
+            request.Path.Returns("/Test");
+            request.Headers.Returns(headers);
 
             var nancyContext = new NancyContext
             {
@@ -64,11 +77,12 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
 
             var requestDispatcher = GetSubject();
 
-            _mockAdminRequestHandler.Handle(nancyContext).Returns(new Response());
+            _mockAdminRequestHandler.Handle(request).Returns(new ResponseWrapper());
 
             requestDispatcher.Dispatch(nancyContext, CancellationToken.None);
 
-            _mockAdminRequestHandler.Received(1).Handle(nancyContext);
+            _mockAdminRequestHandler.Received(1).Handle(
+                Arg.Is<NancyRequest>(nr => nr.Method == request.Method && nr.Path == request.Path &&  nr.Headers.SequenceEqual(request.Headers)));
         }
 
         [Fact]
@@ -88,19 +102,15 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             {
                 Request = new Request("GET", "/Test", "HTTP")
             };
-
-            var nancyResponse = new Response
-            {
-                StatusCode = HttpStatusCode.OK
-            };
-
+            
             var requestDispatcher = GetSubject();
 
-            _mockRequestHandler.Handle(nancyContext).Returns(nancyResponse);
+            _mockRequestHandler.Handle(
+                Arg.Is<NancyRequest>(request => request.Method == "GET" && request.Path == "/Test")).Returns(new ResponseWrapper { StatusCode = System.Net.HttpStatusCode.OK });
 
             requestDispatcher.Dispatch(nancyContext, CancellationToken.None);
 
-            Assert.Equal(nancyResponse, nancyContext.Response);
+            Assert.Equal(HttpStatusCode.OK, nancyContext.Response.StatusCode);
         }
 
         [Fact]
@@ -111,36 +121,32 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
                 Request = new Request("GET", "/Test", "HTTP")
             };
 
-            var nancyResponse = new Response
-            {
-                StatusCode = HttpStatusCode.OK
-            };
-
             var requestDispatcher = GetSubject();
 
-            _mockRequestHandler.Handle(nancyContext).Returns(nancyResponse);
+            _mockRequestHandler.Handle(
+                Arg.Is<NancyRequest>(request => request.Method == "GET" && request.Path == "/Test")).Returns(new ResponseWrapper { StatusCode = System.Net.HttpStatusCode.OK });
 
             var response = requestDispatcher.Dispatch(nancyContext, CancellationToken.None);
 
-            Assert.Equal(nancyResponse, response.Result);
+            Assert.Equal(HttpStatusCode.OK, response.Result.StatusCode);
         }
 
         [Fact]
         public void Dispatch_WithNancyContext_NoExceptionIsSetOnTask()
         {
+            var request = Substitute.For<IRequestWrapper>();
+
+            request.Method.Returns("GET");
+            request.Path.Returns("/Test");
+
             var nancyContext = new NancyContext
             {
                 Request = new Request("GET", "/Test", "HTTP")
             };
 
-            var nancyResponse = new Response
-            {
-                StatusCode = HttpStatusCode.OK
-            };
-
             var requestDispatcher = GetSubject();
 
-            _mockRequestHandler.Handle(nancyContext).Returns(nancyResponse);
+            _mockRequestHandler.Handle(request).Returns(new ResponseWrapper { StatusCode = System.Net.HttpStatusCode.OK });
 
             var response = requestDispatcher.Dispatch(nancyContext, CancellationToken.None);
 
@@ -150,21 +156,21 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         [Fact]
         public void Dispatch_WithCanceledCancellationToken_OperationCanceledExceptionIsSetOnTask()
         {
+            var request = Substitute.For<IRequestWrapper>();
+
+            request.Method.Returns("GET");
+            request.Path.Returns("/Test");
+            
             var nancyContext = new NancyContext
             {
                 Request = new Request("GET", "/Test", "HTTP")
-            };
-
-            var nancyResponse = new Response
-            {
-                StatusCode = HttpStatusCode.OK
             };
 
             var cancellationToken = new CancellationToken(true);
 
             var requestDispatcher = GetSubject();
 
-            _mockRequestHandler.Handle(nancyContext).Returns(nancyResponse);
+            _mockRequestHandler.Handle(request).Returns(new ResponseWrapper { StatusCode = System.Net.HttpStatusCode.OK });
 
             var response = requestDispatcher.Dispatch(nancyContext, cancellationToken);
 
@@ -184,7 +190,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             var requestDispatcher = GetSubject();
 
             _mockRequestHandler
-                .When(x => x.Handle(Arg.Any<NancyContext>()))
+                .When(x => x.Handle(Arg.Any<IRequestWrapper>()))
                 .Do(x => { throw exception; });
             
             var response = requestDispatcher.Dispatch(nancyContext, CancellationToken.None).Result;
@@ -207,7 +213,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             var requestDispatcher = GetSubject();
 
             _mockRequestHandler
-                .When(x => x.Handle(Arg.Any<NancyContext>()))
+                .When(x => x.Handle(Arg.Any<IRequestWrapper>()))
                 .Do(x => { throw exception; });
 
             var response = requestDispatcher.Dispatch(nancyContext, CancellationToken.None).Result;
@@ -228,7 +234,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             var requestDispatcher = GetSubject();
 
             _mockRequestHandler
-                .When(x => x.Handle(Arg.Any<NancyContext>()))
+                .When(x => x.Handle(Arg.Any<IRequestWrapper>()))
                 .Do(x => { throw exception; });
 
             var response = requestDispatcher.Dispatch(nancyContext, CancellationToken.None).Result;
@@ -248,7 +254,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
             var requestDispatcher = GetSubject();
 
             _mockRequestHandler
-                .When(x => x.Handle(Arg.Any<NancyContext>()))
+                .When(x => x.Handle(Arg.Any<IRequestWrapper>()))
                 .Do(x => { throw exception; });
 
             var response = requestDispatcher.Dispatch(nancyContext, CancellationToken.None).Result;
@@ -273,3 +279,4 @@ namespace PactNet.Tests.Mocks.MockHttpService.Nancy
         }
     }
 }
+#endif

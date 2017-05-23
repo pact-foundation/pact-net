@@ -12,7 +12,6 @@ using PactNet.Configuration.Json;
 using PactNet.Extensions;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
-using PactNet.Mocks.MockHttpService.Nancy;
 
 namespace PactNet.Mocks.MockHttpService
 {

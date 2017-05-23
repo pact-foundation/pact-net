@@ -4,7 +4,10 @@
     <AssemblyName>PactNet.Tests</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition="$(TargetFramework.StartsWith('netcoreapp1.'))">
-    <DefineConstants>$(DefineConstants);USE_CODE_PAGES</DefineConstants>
+    <DefineConstants>$(DefineConstants);USE_CODE_PAGES;USE_KESTREL</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net452'">
+    <DefineConstants>$(DefineConstants);USE_NANCY</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />

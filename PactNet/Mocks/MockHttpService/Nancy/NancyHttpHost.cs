@@ -1,12 +1,13 @@
-﻿#if USE_NANCY_HOST
+﻿#if USE_NANCY
 
 using Nancy.Bootstrapper;
 using Nancy.Hosting.Self;
 using PactNet.Extensions;
 using PactNet.Logging;
+using PactNet.Mocks.MockHttpService.Nancy;
 using System;
 
-namespace PactNet.Mocks.MockHttpService.Nancy
+namespace PactNet.Mocks.MockHttpService
 {
     internal class HttpHost : IHttpHost
     {

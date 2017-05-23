@@ -113,7 +113,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             const string parameterValue = "json";
             const string charSet = "IBM285";
 
-#if NETCOREAPP1_X
+#if USE_CODE_PAGES
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 #endif
 

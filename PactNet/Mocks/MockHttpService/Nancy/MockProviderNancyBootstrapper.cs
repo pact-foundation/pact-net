@@ -1,3 +1,4 @@
+#if USE_NANCY
 using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Diagnostics;
@@ -22,11 +23,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
 
         protected override IEnumerable<ModuleRegistration> Modules => new List<ModuleRegistration>();
 
-#if USE_NANCY_HOST
         protected override NancyInternalConfiguration InternalConfiguration
-#elif USE_KESTREL_HOST
-        protected override Func<ITypeCatalog, NancyInternalConfiguration> InternalConfiguration
-#endif
         {
             get
             {
@@ -54,7 +51,7 @@ namespace PactNet.Mocks.MockHttpService.Nancy
             container.Register(typeof(PactConfig), (c, o) => _config);
             container.Register<IProviderServiceRequestMapper, ProviderServiceRequestMapper>().AsMultiInstance();
             container.Register<IProviderServiceRequestComparer, ProviderServiceRequestComparer>().AsMultiInstance();
-            container.Register<INancyResponseMapper, NancyResponseMapper>().AsMultiInstance();
+            container.Register<IResponseMapper, ResponseMapper>().AsMultiInstance();
             container.Register<IMockProviderRequestHandler, MockProviderRequestHandler>().AsMultiInstance();
             container.Register<IMockProviderAdminRequestHandler, MockProviderAdminRequestHandler>().AsMultiInstance();
             container.Register<IMockProviderRepository, MockProviderRepository>().AsSingleton();
@@ -63,3 +60,4 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         }
     }
 }
+#endif

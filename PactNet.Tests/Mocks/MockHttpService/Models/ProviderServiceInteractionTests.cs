@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Nancy;
+using System.Net;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
 

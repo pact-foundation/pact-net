@@ -8,7 +8,7 @@ namespace PactNet.Extensions
     {
         public static bool IsAssignableFrom(this Type type, Type c)
         {
-            return type.GetTypeInfo().IsAssignableFrom(c);
+            return type.GetTypeInfo().IsAssignableFrom(c.GetTypeInfo());
         }
     }
 }
