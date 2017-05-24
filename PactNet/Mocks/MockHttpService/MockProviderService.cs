@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +12,6 @@ using PactNet.Configuration.Json;
 using PactNet.Extensions;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
-using PactNet.Mocks.MockHttpService.Nancy;
 
 namespace PactNet.Mocks.MockHttpService
 {
@@ -44,7 +44,7 @@ namespace PactNet.Mocks.MockHttpService
 
         public MockProviderService(int port, bool enableSsl, string providerName, PactConfig config, bool bindOnAllAdapters = false)
             : this(
-            baseUri => new NancyHttpHost(baseUri, providerName, config, bindOnAllAdapters),
+            baseUri => new HttpHost(baseUri, providerName, config, bindOnAllAdapters),
             port,
             enableSsl,
             baseUri => new HttpClient { BaseAddress = new Uri(baseUri) },
@@ -98,7 +98,13 @@ namespace PactNet.Mocks.MockHttpService
             return this;
         }
 
+#if USE_STACKTRACE
         public void WillRespondWith(ProviderServiceResponse response)
+#elif USE_CALLER_INFO
+        public void WillRespondWith(
+            ProviderServiceResponse response, [CallerMemberName] string callerMemberName = "", [CallerFilePath] string callerFilePath = "",
+            [CallerLineNumber] int callerLineNumber = 0)
+#endif
         {
             if (response == null)
             {
@@ -117,7 +123,11 @@ namespace PactNet.Mocks.MockHttpService
 
             _response = response;
 
+#if USE_STACKTRACE
             RegisterInteraction();
+#elif USE_CALLER_INFO
+            RegisterInteraction(callerMemberName, callerFilePath, callerLineNumber);
+#endif
         }
 
         public void VerifyInteractions()
@@ -189,7 +199,11 @@ namespace PactNet.Mocks.MockHttpService
             }
         }
 
+#if USE_STACKTRACE
         private void RegisterInteraction()
+#elif USE_CALLER_INFO
+        private void RegisterInteraction(string callerMemberName, string callerFilePath, int callerLineNumber)
+#endif
         {
             if (String.IsNullOrEmpty(_description))
             {
@@ -214,13 +228,19 @@ namespace PactNet.Mocks.MockHttpService
                 Response = _response
             };
 
-            var testContext = BuildTestContext();
+            string testContext =
+#if USE_STACKTRACE
+                BuildTestContext();
+#elif USE_CALLER_INFO
+                $"{callerMemberName} in {callerFilePath}:line {callerLineNumber}";
+#endif
 
             SendAdminHttpRequest(HttpVerb.Post, Constants.InteractionsPath, interaction, new Dictionary<string, string> { { Constants.AdministrativeRequestTestContextHeaderKey, testContext } });
 
             ClearTrasientState();
         }
 
+#if USE_STACKTRACE
         private static string BuildTestContext()
         {
             var stack = new StackTrace(true);
@@ -250,6 +270,7 @@ namespace PactNet.Mocks.MockHttpService
 
             return String.Join(" ", relevantStackFrameSummaries);
         }
+#endif
 
         private void SendAdminHttpRequest(HttpVerb method, string path)
         {
@@ -290,7 +311,7 @@ namespace PactNet.Mocks.MockHttpService
             IDictionary<string, string> headers = null;
             if (message.Headers != null)
             {
-                headers = new Dictionary<string, string>(message.Headers, StringComparer.InvariantCultureIgnoreCase);
+                headers = new Dictionary<string, string>(message.Headers, StringComparer.OrdinalIgnoreCase);
             }
 
             return headers != null && headers.ContainsKey("Content-Type");

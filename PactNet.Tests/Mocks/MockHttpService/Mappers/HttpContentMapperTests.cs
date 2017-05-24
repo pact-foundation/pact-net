@@ -28,7 +28,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
         [Fact]
         public void Convert_WithEmptyContent_ReturnsNull()
         {
-            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(String.Empty), contentType: new MediaTypeHeaderValue("text/plain") { CharSet = "utf-8" });
+            var httpBodyContent = new HttpBodyContent(new BinaryContent { Content = Encoding.UTF8.GetBytes(String.Empty), ContentType = new MediaTypeHeaderValue("text/plain") { CharSet = "utf-8" } });
             var mapper = GetSubject();
 
             var result = mapper.Convert(httpBodyContent);
@@ -44,8 +44,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             NameValueHeaderValue versionParameter = new NameValueHeaderValue("version", "1");
 
             var httpBodyContent = new HttpBodyContent(
-                content: Encoding.UTF8.GetBytes(content),
-                contentType: new MediaTypeHeaderValue(contentType) { CharSet = "utf-8", Parameters = { versionParameter } });
+                new BinaryContent { Content = Encoding.UTF8.GetBytes(content), ContentType = new MediaTypeHeaderValue(contentType) { CharSet = "utf-8", Parameters = { versionParameter } } });
             IHttpContentMapper mapper = GetSubject();
 
             HttpContent result = mapper.Convert(httpBodyContent);

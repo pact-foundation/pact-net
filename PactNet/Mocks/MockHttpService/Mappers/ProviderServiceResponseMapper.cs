@@ -41,7 +41,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
                 var responseContent = from.Content.ReadAsByteArrayAsync().RunSync();
                 if (responseContent != null)
                 {
-                    var httpBodyContent = _httpBodyContentMapper.Convert(content: responseContent, headers: to.Headers);
+                    var httpBodyContent = _httpBodyContentMapper.Convert(new BinaryContentMapRequest { Content = responseContent, Headers = to.Headers });
 
                     to.Body = httpBodyContent.Body;
                 }

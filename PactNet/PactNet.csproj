@@ -1,229 +1,53 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" />
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7024B146-2CB2-4DE2-B079-58CF9C44640B}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PactNet</RootNamespace>
+    <TargetFrameworks>netstandard1.3;net40;net45</TargetFrameworks>
     <AssemblyName>PactNet</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
-    <NuGetPackageImportStamp>bfacaa92</NuGetPackageImportStamp>
+    <PackageId>PactNet</PackageId>
+    <Description>A .NET version of Pact, which enables consumer driven contract testing.</Description>
+    <Product>PactNet</Product>
+    <Version>1.0.0.0</Version>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <AssemblyVersion>0.0.0.1</AssemblyVersion>
+    <FileVersion>0.0.0.1</FileVersion>
+    <NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
+    <PackageId>PactNet</PackageId>
+    <PackageIconUrl>http://www.newtonsoft.com/content/images/nugeticon.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/SEEK-Jobs/pact-net</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/SEEK-Jobs/pact-net/master/LICENSE.txt</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/SEEK-Jobs/pact-net</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <NeutralLanguage>en-AU</NeutralLanguage>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\PactNet.XML</DocumentationFile>
-    <NoWarn>1591</NoWarn>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <AssemblyTitle>PactNet .NET Standard 1.3</AssemblyTitle>
+    <DefineConstants>$(DefineConstants);LIBLOG_PORTABLE;USE_KESTREL;USE_TYPE_EXTENSIONS;USE_CALLER_INFO</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\PactNet.XML</DocumentationFile>
-    <NoWarn>1591</NoWarn>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net40'">
+    <AssemblyTitle>PactNet .NET 4.0</AssemblyTitle>
+    <DefineConstants>$(DefineConstants);USE_NANCY;USE_STACKTRACE</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net45'">
+    <AssemblyTitle>PactNet .NET 4.5</AssemblyTitle>
+    <DefineConstants>$(DefineConstants);USE_NANCY;USE_STACKTRACE</DefineConstants>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="Nancy, Version=0.23.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Nancy.0.23.1\lib\net40\Nancy.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Hosting.Self, Version=0.23.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Nancy.Hosting.Self.0.23.1\lib\net40\Nancy.Hosting.Self.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.0.0" />
+  </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.IO">
-      <HintPath>..\packages\Microsoft.Bcl.1.1.9\lib\net40\System.IO.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.IO.Abstractions, Version=1.4.0.86, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\System.IO.Abstractions.1.4.0.86\lib\net35\System.IO.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net" />
-    <Reference Include="System.Net.Http, Version=2.2.28.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.28\lib\net40\System.Net.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Extensions">
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.28\lib\net40\System.Net.Http.Extensions.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Net.Http.Primitives">
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.28\lib\net40\System.Net.Http.Primitives.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.WebRequest, Version=2.2.28.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.28\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime">
-      <HintPath>..\packages\Microsoft.Bcl.1.1.9\lib\net40\System.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Threading.Tasks">
-      <HintPath>..\packages\Microsoft.Bcl.1.1.9\lib\net40\System.Threading.Tasks.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Nancy" Version="0.23.1" />
+    <PackageReference Include="Nancy.Hosting.Self" Version="0.23.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="6.0.3" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net40'">
+    <PackageReference Include="Microsoft.Net.Http" Version="2.2.28" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\Json\Converters\CamelCaseStringEnumConverter.cs" />
-    <Compile Include="Configuration\Json\Converters\PreserveCasingDictionaryConverter.cs" />
-    <Compile Include="Extensions\TaskExtensions.cs" />
-    <Compile Include="Infrastructure\Logging\ILocalLogMessageHandler.cs" />
-    <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
-    <Compile Include="Infrastructure\Logging\LocalLogger.cs" />
-    <Compile Include="Infrastructure\Logging\LocalLogMessage.cs" />
-    <Compile Include="Infrastructure\Logging\LocalLogProvider.cs" />
-    <Compile Include="Infrastructure\Logging\LocalRollingLogFileMessageHandler.cs" />
-    <Compile Include="Comparers\ComparisonResult.cs" />
-    <Compile Include="Comparers\DiffComparisonFailure.cs" />
-    <Compile Include="Comparers\ErrorMessageComparisonFailure.cs" />
-    <Compile Include="Comparers\IComparer.cs" />
-    <Compile Include="Comparers\ComparisonFailure.cs" />
-    <Compile Include="Comparers\MissingInteractionComparisonFailure.cs" />
-    <Compile Include="Comparers\UnexpectedRequestComparisonFailure.cs" />
-    <Compile Include="Configuration\Json\JsonConfig.cs" />
-    <Compile Include="Mocks\MockHttpService\Matchers\DefaultHttpBodyMatcher.cs" />
-    <Compile Include="Matchers\FailedMatcherCheck.cs" />
-    <Compile Include="Matchers\MatcherCheckFailureType.cs" />
-    <Compile Include="Matchers\IMatcher.cs" />
-    <Compile Include="Matchers\MatcherCheck.cs" />
-    <Compile Include="Matchers\MatcherResult.cs" />
-    <Compile Include="Matchers\SuccessfulMatcherCheck.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\HttpStatusCodeComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\IHttpStatusCodeComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\CustomRequestSender.cs" />
-    <Compile Include="Mocks\MockHttpService\IHttpRequestSender.cs" />
-    <Compile Include="Mocks\MockHttpService\HttpClientRequestSender.cs" />
-    <Compile Include="IPactBuilder.cs" />
-    <Compile Include="Mappers\IMapper.cs" />
-    <Compile Include="Mocks\IMockProvider.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\HttpMethodComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\HttpPathComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\HttpQueryStringComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\IHttpMethodComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\IHttpPathComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\IHttpQueryStringComparer.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="Mocks\MockHttpService\IHttpHost.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\IHttpMessage.cs" />
-    <Compile Include="Mocks\MockHttpService\Nancy\NancyHttpHost.cs" />
-    <Compile Include="Mocks\MockHttpService\Nancy\IMockProviderAdminRequestHandler.cs" />
-    <Compile Include="Mocks\MockHttpService\Nancy\IMockProviderNancyRequestHandler.cs" />
-    <Compile Include="Mocks\MockHttpService\IMockProviderService.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\HttpVerbMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\IHttpVerbMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Nancy\IMockProviderRequestHandler.cs" />
-    <Compile Include="Mocks\MockHttpService\IMockProviderRepository.cs" />
-    <Compile Include="Mocks\MockHttpService\Nancy\MockProviderAdminRequestHandler.cs" />
-    <Compile Include="Mocks\MockHttpService\Nancy\MockProviderRequestHandler.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\HttpBodyContent.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\HttpBodyContentMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\IHttpBodyContentMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\INancyResponseMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\IProviderServiceRequestMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\MockProviderService.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\HttpContentMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\HttpMethodMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\HttpRequestMessageMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\IHttpContentMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\IHttpMethodMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\IHttpRequestMessageMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\IProviderServiceResponseMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\NancyResponseMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Nancy\MockProviderNancyBootstrapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Nancy\MockProviderNancyRequestDispatcher.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\ProviderServiceRequestMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\HttpVerb.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\ProviderServiceResponseMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\HandledRequest.cs" />
-    <Compile Include="Mocks\MockHttpService\MockProviderRepository.cs" />
-    <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Mocks\MockHttpService\Validators\IProviderServiceValidator.cs" />
-    <Compile Include="Mocks\MockHttpService\Validators\ProviderServiceValidator.cs" />
-    <Compile Include="Models\PactDetails.cs" />
-    <Compile Include="Models\PactFile.cs" />
-    <Compile Include="PactConfig.cs" />
-    <Compile Include="PactUriOptions.cs" />
-    <Compile Include="PactVerifier.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\ProviderServiceInteraction.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\IProviderServiceResponseComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\ProviderServiceResponseComparer.cs" />
-    <Compile Include="PactFailureException.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\ProviderServicePactFile.cs" />
-    <Compile Include="Models\Interaction.cs" />
-    <Compile Include="Models\Pacticipant.cs" />
-    <Compile Include="PactBuilder.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\ProviderServiceRequest.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\ProviderServiceResponse.cs" />
-    <Compile Include="PactVerifierConfig.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="IPactVerifier.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\HttpBodyComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\HttpHeaderComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\IHttpBodyComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\IHttpHeaderComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\IProviderServiceRequestComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\ProviderServiceRequestComparer.cs" />
-    <Compile Include="Models\ProviderState.cs" />
-    <Compile Include="Models\ProviderStates.cs" />
-    <Compile Include="Reporters\Outputters\ConsoleReportOutputter.cs" />
-    <Compile Include="Reporters\Outputters\FileReportOutputter.cs" />
-    <Compile Include="Reporters\IReporter.cs" />
-    <Compile Include="Reporters\Outputters\IReportOutputter.cs" />
-    <Compile Include="Reporters\Reporter.cs" />
-    <Compile Include="Validators\IPactValidator.cs" />
+    <None Include="readme.txt" Pack="true" PackagePath="readme.txt" />
+    <None Include="../LICENSE.txt" Pack="true" PackagePath="LICENSE.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="PactNet.nuspec" />
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
-  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
-    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
-    <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
-  </Target>
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props'))" />
-  </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

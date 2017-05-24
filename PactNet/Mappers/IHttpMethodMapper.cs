@@ -1,5 +1,5 @@
-﻿using System.Net.Http;
-using PactNet.Models;
+﻿using PactNet.Mocks.MockHttpService.Models;
+using System.Net.Http;
 
 namespace PactNet.Mappers
 {

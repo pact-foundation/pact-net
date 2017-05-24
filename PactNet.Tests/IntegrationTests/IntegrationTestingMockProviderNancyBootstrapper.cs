@@ -1,5 +1,6 @@
-﻿using System.IO.Abstractions;
+﻿#if USE_NANCY
 using NSubstitute;
+using PactNet.Infrastructure;
 using PactNet.Mocks.MockHttpService.Nancy;
 
 namespace PactNet.Tests.IntegrationTests
@@ -19,3 +20,4 @@ namespace PactNet.Tests.IntegrationTests
         }
     }
 }
+#endif

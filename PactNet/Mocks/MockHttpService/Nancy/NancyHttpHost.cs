@@ -1,12 +1,15 @@
-﻿using System;
+﻿#if USE_NANCY
+
 using Nancy.Bootstrapper;
 using Nancy.Hosting.Self;
 using PactNet.Extensions;
 using PactNet.Logging;
+using PactNet.Mocks.MockHttpService.Nancy;
+using System;
 
-namespace PactNet.Mocks.MockHttpService.Nancy
+namespace PactNet.Mocks.MockHttpService
 {
-    internal class NancyHttpHost : IHttpHost
+    internal class HttpHost : IHttpHost
     {
         private readonly Uri _baseUri;
         private readonly INancyBootstrapper _bootstrapper;
@@ -15,13 +18,13 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         private readonly HostConfiguration _nancyConfiguration;
         private NancyHost _host;
 
-        internal NancyHttpHost(Uri baseUri, string providerName, PactConfig config, INancyBootstrapper bootstrapper) :
+        internal HttpHost(Uri baseUri, string providerName, PactConfig config, INancyBootstrapper bootstrapper) :
             this(baseUri, providerName, config, false)
         {
             _bootstrapper = bootstrapper;
         }
 
-        internal NancyHttpHost(Uri baseUri, string providerName, PactConfig config, bool bindOnAllAdapters)
+        internal HttpHost(Uri baseUri, string providerName, PactConfig config, bool bindOnAllAdapters)
         {
             var loggerName = LogProvider.CurrentLogProvider.AddLogger(config.LogDir, providerName.ToLowerSnakeCase(), "{0}_mock_service.log");
             config.LoggerName = loggerName;
@@ -95,3 +98,5 @@ namespace PactNet.Mocks.MockHttpService.Nancy
         }
     }
 }
+
+#endif

@@ -47,7 +47,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
                 foreach (var requestHeader in from.Headers)
                 {
                     //Strip any Content- headers as they need to be attached to Request content when using a HttpRequestMessage
-                    if (requestHeader.Key.IndexOf("Content-", StringComparison.InvariantCultureIgnoreCase) == 0)
+                    if (requestHeader.Key.IndexOf("Content-", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         contentRelatedHeaders.Add(requestHeader.Key, requestHeader.Value);
                         continue;
@@ -59,7 +59,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
 
             if (from.Body != null)
             {
-                HttpBodyContent bodyContent = _httpBodyContentMapper.Convert(body: from.Body, headers: from.Headers);
+                HttpBodyContent bodyContent = _httpBodyContentMapper.Convert(new DynamicBodyMapRequest { Body = from.Body, Headers = from.Headers });
                 var httpContent = _httpContentMapper.Convert(bodyContent);
 
                 //Set the content related headers
@@ -67,8 +67,8 @@ namespace PactNet.Mocks.MockHttpService.Mappers
                 {
                     foreach (var contentHeader in contentRelatedHeaders)
                     {
-                        if (contentHeader.Key.Equals("Content-Type", StringComparison.InvariantCultureIgnoreCase) && 
-                            httpContent.Headers.Any(x => x.Key.Equals("Content-Type", StringComparison.InvariantCultureIgnoreCase)))
+                        if (contentHeader.Key.Equals("Content-Type", StringComparison.OrdinalIgnoreCase) &&
+                            httpContent.Headers.Any(x => x.Key.Equals("Content-Type", StringComparison.OrdinalIgnoreCase)))
                         {
                             continue;
                         }
