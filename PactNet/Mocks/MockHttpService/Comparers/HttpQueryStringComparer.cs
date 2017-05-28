@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Linq;
 using System.Text.RegularExpressions;
-using Nancy.Helpers;
 using PactNet.Comparers;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
@@ -25,7 +23,8 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                 return result;
             }
 
-            var expectedQueryItems = HttpUtility.ParseQueryString(normalisedExpectedQuery);
+            //TODO: This needs to be replaced before the provider verification will work again
+            /*var expectedQueryItems = HttpUtility.ParseQueryString(normalisedExpectedQuery);
             var actualQueryItems = HttpUtility.ParseQueryString(normalisedActualQuery);
 
             if (expectedQueryItems.Count != actualQueryItems.Count)
@@ -50,7 +49,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                     result.RecordFailure(new DiffComparisonFailure(normalisedExpectedQuery, normalisedActualQuery));
                     return result;
                 }
-            }
+            }*/
 
             return result;
         }

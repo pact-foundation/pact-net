@@ -14,7 +14,7 @@ namespace PactNet.Configuration.Json.Converters
             }
             else
             {
-                var dictionary = (IDictionary<string, string>) value;
+                var dictionary = (IDictionary<string, object>) value;
 
                 writer.WriteStartObject();
 
@@ -40,7 +40,7 @@ namespace PactNet.Configuration.Json.Converters
 
         public override bool CanConvert(Type objectType)
         {
-            return typeof(IDictionary<string, string>).IsAssignableFrom(objectType);
+            return typeof(IDictionary<string, object>).IsAssignableFrom(objectType);
         }
     }
 }

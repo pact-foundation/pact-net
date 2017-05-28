@@ -5,7 +5,7 @@ using PactNet.Matchers;
 
 namespace PactNet.Mocks.MockHttpService.Matchers
 {
-    internal class DefaultHttpBodyMatcher : IMatcher
+    internal class DefaultHttpBodyMatcher : PactNet.Matchers.IMatcher
     {
         public const string Path = "$..*";
 

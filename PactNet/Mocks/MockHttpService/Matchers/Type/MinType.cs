@@ -3,7 +3,7 @@ using PactNet.Matchers;
 
 namespace PactNet.Mocks.MockHttpService.Matchers.Type
 {
-    public class TypeMatcher : IMatcher
+    public class MinType : IMatcher
     {
         //Generate JSON using the Ruby spec for now
 
@@ -13,11 +13,14 @@ namespace PactNet.Mocks.MockHttpService.Matchers.Type
         [JsonProperty(PropertyName = "contents")]
         public dynamic Example { get; set; }
 
-        internal TypeMatcher(dynamic example)
+        [JsonProperty(PropertyName = "min")]
+        public int Min { get; set; }
+
+        internal MinType(string example, int min)
         {
-            
-            Match = "Pact::SomethingLike";
+            Match = "Pact::ArrayLike";
             Example = example;
+            Min = min;
         }
     }
 }

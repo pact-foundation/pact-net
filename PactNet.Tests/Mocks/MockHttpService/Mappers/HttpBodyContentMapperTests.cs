@@ -45,7 +45,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 Test = "tester",
                 Test2 = 1
             };
-            var headers = new Dictionary<string, string>
+            var headers = new Dictionary<string, object>
             {
                 { "Content-Type", contentTypeString }
             };
@@ -67,7 +67,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 Test = "testeR",
                 tesT2 = 1
             };
-            var headers = new Dictionary<string, string>
+            var headers = new Dictionary<string, object>
             {
                 { "content-type", "Application/Json" }
             };
@@ -89,7 +89,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             const string charSet = "us-ascii";
             var encoding = Encoding.GetEncoding(charSet);
 
-            var headers = new Dictionary<string, string>
+            var headers = new Dictionary<string, object>
             {
                 { "Content-Type", $"{contentTypeString}; charset={charSet}" }
             };
@@ -114,7 +114,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             const string charSet = "IBM285";
             var encoding = Encoding.GetEncoding(charSet);
 
-            var headers = new Dictionary<string, string>
+            var headers = new Dictionary<string, object>
             {
                 { "Content-Type", $"{contentTypeString}; {parameterName}={parameterValue}; charset={charSet}" }
             };
@@ -161,7 +161,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
                 Test = "testeR",
                 tesT2 = 1
             };
-            var headers = new Dictionary<string, string>
+            var headers = new Dictionary<string, object>
             {
                 { "content-type", "Application/Json" }
             };
@@ -184,7 +184,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             const string charSet = "us-ascii";
             var encoding = Encoding.GetEncoding(charSet);
 
-            var headers = new Dictionary<string, string>
+            var headers = new Dictionary<string, object>
             {
                 { "Content-Type", $"{contentTypeString}; charset={charSet}" }
             };
@@ -209,7 +209,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             const string charSet = "IBM285";
             var encoding = Encoding.GetEncoding(charSet);
 
-            var headers = new Dictionary<string, string>
+            var headers = new Dictionary<string, object>
             {
                 { "Content-Type", $"{contentTypeString}; {parameterName}={parameterValue}; charset={charSet}" }
             };

@@ -28,7 +28,7 @@ namespace PactNet.Tests.IntegrationTests
             {
                 Method = HttpVerb.Post,
                 Path = "/things",
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "Content-Type", "application/json; charset=utf-8" }
                 },
@@ -65,7 +65,7 @@ namespace PactNet.Tests.IntegrationTests
                 {
                     Method = HttpVerb.Post,
                     Path = "/things",
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
                         { "Content-Type", "application/json; charset=utf-8" }
                     },
@@ -124,7 +124,7 @@ namespace PactNet.Tests.IntegrationTests
                     Method = HttpVerb.Get,
                     Path = "/things",
                     Query = "type=awesome",
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
                         { "Accept", "application/json; charset=utf-8" }
                     },

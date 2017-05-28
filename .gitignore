@@ -46,3 +46,5 @@ Build/PactNet*.nupkg
 /Build/coverage
 [Ll]ogs
 *.DotSettings
+pact-mock-service-win32
+pact-provider-verifier-win32

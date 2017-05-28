@@ -97,9 +97,7 @@ public class ConsumerMyApiPact : IDisposable
 
 		MockProviderService = PactBuilder.MockService(MockServerPort); //Configure the http mock server
 		//or
-		MockProviderService = PactBuilder.MockService(MockServerPort, true); //By passing true as the second param, you can enabled SSL. This will however require a valid SSL certificate installed and bound with netsh (netsh http add sslcert ipport=0.0.0.0:port certhash=thumbprint appid={app-guid}) on the machine running the test. See https://groups.google.com/forum/#!topic/nancy-web-framework/t75dKyfgzpg
-		//or
-		MockProviderService = PactBuilder.MockService(MockServerPort, bindOnAllAdapters: true); //By passing true as the bindOnAllAdapters parameter the http mock server will be able to accept external network requests, but will require admin privileges in order to run
+		MockProviderService = PactBuilder.MockService(MockServerPort, true); //By passing true as the second param, you can enabled SSL. A self signed SSL cert will be provisioned by default.
 		//or
 		MockProviderService = PactBuilder.MockService(MockServerPort, new JsonSerializerSettings()); //You can also change the default Json serialization settings using this overload		
 	}
@@ -152,7 +150,7 @@ public class SomethingApiConsumerTests : IUseFixture<ConsumerMyApiPact>
 			{
 				Method = HttpVerb.Get,
 				Path = "/somethings/tester",
-				Headers = new Dictionary<string, string>
+				Headers = new Dictionary<string, object>
 				{
 					{ "Accept", "application/json" }
 				}
@@ -160,7 +158,7 @@ public class SomethingApiConsumerTests : IUseFixture<ConsumerMyApiPact>
 			.WillRespondWith(new ProviderServiceResponse
 			{
 				Status = 200,
-				Headers = new Dictionary<string, string>
+				Headers = new Dictionary<string, object>
 				{
 					{ "Content-Type", "application/json; charset=utf-8" }
 				},

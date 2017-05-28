@@ -3,12 +3,14 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using PactNet.Comparers;
 using PactNet.Matchers;
+using PactNet.Mocks.MockHttpService.Matchers;
+using IMatcher = PactNet.Matchers.IMatcher;
 
 namespace PactNet.Mocks.MockHttpService.Comparers
 {
     internal class HttpBodyComparer : IHttpBodyComparer
     {
-        public ComparisonResult Compare(dynamic expected, dynamic actual, IDictionary<string, IMatcher> matchingRules)
+        public ComparisonResult Compare(dynamic expected, dynamic actual, bool allowExtraKeys)
         {
             var result = new ComparisonResult("has a matching body");
 
@@ -25,6 +27,11 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 
             var expectedToken = JToken.FromObject(expected);
             var actualToken = JToken.FromObject(actual);
+
+            var matchingRules = new Dictionary<string, IMatcher>
+            {
+                { DefaultHttpBodyMatcher.Path, new DefaultHttpBodyMatcher(allowExtraKeys) }
+            };
 
             foreach (var rule in matchingRules)
             {

@@ -42,14 +42,6 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Nancy, Version=0.23.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Nancy.0.23.1\lib\net40\Nancy.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Hosting.Self, Version=0.23.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Nancy.Hosting.Self.0.23.1\lib\net40\Nancy.Hosting.Self.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
@@ -65,6 +57,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\System.IO.Abstractions.1.4.0.86\lib\net35\System.IO.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="System.Management" />
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http, Version=2.2.28.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -91,6 +84,7 @@
   <ItemGroup>
     <Compile Include="Configuration\Json\Converters\CamelCaseStringEnumConverter.cs" />
     <Compile Include="Configuration\Json\Converters\PreserveCasingDictionaryConverter.cs" />
+    <Compile Include="Core\PactProcessHost.cs" />
     <Compile Include="Extensions\TaskExtensions.cs" />
     <Compile Include="Infrastructure\Logging\ILocalLogMessageHandler.cs" />
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
@@ -106,68 +100,64 @@
     <Compile Include="Comparers\MissingInteractionComparisonFailure.cs" />
     <Compile Include="Comparers\UnexpectedRequestComparisonFailure.cs" />
     <Compile Include="Configuration\Json\JsonConfig.cs" />
+    <Compile Include="Mocks\MockHttpService\Matchers\IMatcher.cs" />
     <Compile Include="Matchers\Match.cs" />
-    <Compile Include="Matchers\MatchDefinition.cs" />
-    <Compile Include="Mocks\MockHttpService\Matchers\Regex\RegexMatchDefinition.cs" />
-    <Compile Include="Mocks\MockHttpService\Matchers\Type\TypeMatchDefinition.cs" />
-    <Compile Include="Mocks\MockHttpService\Matchers\DefaultHttpBodyMatcher.cs" />
     <Compile Include="Matchers\FailedMatcherCheck.cs" />
     <Compile Include="Matchers\MatcherCheckFailureType.cs" />
     <Compile Include="Matchers\IMatcher.cs" />
     <Compile Include="Matchers\MatcherCheck.cs" />
     <Compile Include="Matchers\MatcherResult.cs" />
+    <Compile Include="Mocks\MockHttpService\Matchers\Regex\RegexMatcher.cs" />
+    <Compile Include="Mocks\MockHttpService\Matchers\Type\TypeMatcher.cs" />
+    <Compile Include="Mocks\MockHttpService\Matchers\Type\MinType.cs" />
     <Compile Include="Matchers\SuccessfulMatcherCheck.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\HttpBodyComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\HttpHeaderComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\HttpMethodComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\HttpPathComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\HttpQueryStringComparer.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\HttpStatusCodeComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\IHttpBodyComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\IHttpHeaderComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\IHttpMethodComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\IHttpPathComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\IHttpQueryStringComparer.cs" />
     <Compile Include="Mocks\MockHttpService\Comparers\IHttpStatusCodeComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\IProviderServiceRequestComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\IProviderServiceResponseComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\ProviderServiceRequestComparer.cs" />
+    <Compile Include="Mocks\MockHttpService\Comparers\ProviderServiceResponseComparer.cs" />
     <Compile Include="Mocks\MockHttpService\CustomRequestSender.cs" />
     <Compile Include="Mocks\MockHttpService\IHttpRequestSender.cs" />
     <Compile Include="Mocks\MockHttpService\HttpClientRequestSender.cs" />
     <Compile Include="IPactBuilder.cs" />
     <Compile Include="Mappers\IMapper.cs" />
     <Compile Include="Mocks\IMockProvider.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\HttpMethodComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\HttpPathComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\HttpQueryStringComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\IHttpMethodComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\IHttpPathComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\IHttpQueryStringComparer.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Mocks\MockHttpService\IHttpHost.cs" />
-    <Compile Include="Mocks\MockHttpService\Matchers\Regex\RegexMatcher.cs" />
-    <Compile Include="Mocks\MockHttpService\Matchers\Type\TypeMatcher.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\IHttpMessage.cs" />
-    <Compile Include="Mocks\MockHttpService\Nancy\NancyHttpHost.cs" />
-    <Compile Include="Mocks\MockHttpService\Nancy\IMockProviderAdminRequestHandler.cs" />
-    <Compile Include="Mocks\MockHttpService\Nancy\IMockProviderNancyRequestHandler.cs" />
-    <Compile Include="Mocks\MockHttpService\IMockProviderService.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\HttpVerbMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\IHttpVerbMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Nancy\IMockProviderRequestHandler.cs" />
-    <Compile Include="Mocks\MockHttpService\IMockProviderRepository.cs" />
-    <Compile Include="Mocks\MockHttpService\Nancy\MockProviderAdminRequestHandler.cs" />
-    <Compile Include="Mocks\MockHttpService\Nancy\MockProviderRequestHandler.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\HttpBodyContent.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\HttpBodyContentMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\IHttpBodyContentMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\INancyResponseMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\IProviderServiceRequestMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\MockProviderService.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\HttpContentMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\HttpMethodMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\HttpRequestMessageMapper.cs" />
+    <Compile Include="Mocks\MockHttpService\Mappers\HttpVerbMapper.cs" />
+    <Compile Include="Mocks\MockHttpService\Mappers\IHttpBodyContentMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\IHttpContentMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\IHttpMethodMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\IHttpRequestMessageMapper.cs" />
+    <Compile Include="Mocks\MockHttpService\Mappers\IHttpVerbMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\IProviderServiceResponseMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\NancyResponseMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Nancy\MockProviderNancyBootstrapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Nancy\MockProviderNancyRequestDispatcher.cs" />
-    <Compile Include="Mocks\MockHttpService\Mappers\ProviderServiceRequestMapper.cs" />
-    <Compile Include="Mocks\MockHttpService\Models\HttpVerb.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\ProviderServiceResponseMapper.cs" />
+    <Compile Include="Mocks\MockHttpService\Matchers\DefaultHttpBodyMatcher.cs" />
+    <Compile Include="Mocks\MockHttpService\Models\IHttpMessage.cs" />
+    <Compile Include="Mocks\MockHttpService\IMockProviderService.cs" />
+    <Compile Include="Mocks\MockHttpService\IMockProviderRepository.cs" />
+    <Compile Include="Mocks\MockHttpService\Models\HttpBodyContent.cs" />
+    <Compile Include="Mocks\MockHttpService\MockProviderService.cs" />
+    <Compile Include="Mocks\MockHttpService\Models\HttpVerb.cs" />
     <Compile Include="Mocks\MockHttpService\Models\HandledRequest.cs" />
     <Compile Include="Mocks\MockHttpService\MockProviderRepository.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Mocks\MockHttpService\Ruby\RubyHttpHost.cs" />
     <Compile Include="Mocks\MockHttpService\Validators\IProviderServiceValidator.cs" />
     <Compile Include="Mocks\MockHttpService\Validators\ProviderServiceValidator.cs" />
     <Compile Include="Models\PactDetails.cs" />
@@ -176,8 +166,6 @@
     <Compile Include="PactUriOptions.cs" />
     <Compile Include="PactVerifier.cs" />
     <Compile Include="Mocks\MockHttpService\Models\ProviderServiceInteraction.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\IProviderServiceResponseComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\ProviderServiceResponseComparer.cs" />
     <Compile Include="PactFailureException.cs" />
     <Compile Include="Mocks\MockHttpService\Models\ProviderServicePactFile.cs" />
     <Compile Include="Models\Interaction.cs" />
@@ -188,12 +176,6 @@
     <Compile Include="PactVerifierConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IPactVerifier.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\HttpBodyComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\HttpHeaderComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\IHttpBodyComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\IHttpHeaderComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\IProviderServiceRequestComparer.cs" />
-    <Compile Include="Mocks\MockHttpService\Comparers\ProviderServiceRequestComparer.cs" />
     <Compile Include="Models\ProviderState.cs" />
     <Compile Include="Models\ProviderStates.cs" />
     <Compile Include="Reporters\Outputters\ConsoleReportOutputter.cs" />

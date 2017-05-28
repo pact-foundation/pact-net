@@ -60,7 +60,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var expected = new ProviderServiceResponse
             {
                 Status = 201,
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "Content-Type", "application/json" }
                 }
@@ -69,7 +69,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var actual = new ProviderServiceResponse
             {
                 Status = 201,
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "Content-Type", "application/json" }
                 }
@@ -88,7 +88,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var expected = new ProviderServiceResponse
             {
                 Status = 201,
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "content-Type", "application/json" }
                 }
@@ -97,7 +97,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var actual = new ProviderServiceResponse
             {
                 Status = 201,
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "Content-Type", "application/json" }
                 }
@@ -116,7 +116,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var expected = new ProviderServiceResponse
             {
                 Status = 201,
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "Content-Type", "Application/Json" }
                 }
@@ -125,7 +125,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var actual = new ProviderServiceResponse
             {
                 Status = 201,
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "Content-Type", "application/json" }
                 }
@@ -144,7 +144,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var expected = new ProviderServiceResponse
             {
                 Status = 201,
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "Content-Type", "application/json" }
                 }
@@ -153,7 +153,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var actual = new ProviderServiceResponse
             {
                 Status = 201,
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "X-Test", "MyCustomThing" },
                     { "X-Test-2", "MyCustomThing2" },
@@ -174,7 +174,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var expected = new ProviderServiceResponse
             {
                 Status = 201,
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "Content-Type", "application/json" }
                 }
@@ -183,7 +183,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var actual = new ProviderServiceResponse
             {
                 Status = 201,
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "Content-Type", "text/plain" }
                 }
@@ -202,7 +202,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var expected = new ProviderServiceResponse
             {
                 Status = 201,
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     {"Content-Type", "application/json"}
                 }
@@ -211,7 +211,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var actual = new ProviderServiceResponse
             {
                 Status = 201,
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     {"X-Test", "Tester"}
                 }
@@ -230,7 +230,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Comparers
             var expected = new ProviderServiceResponse
             {
                 Status = 201,
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     {"Content-Type", "application/json"}
                 }

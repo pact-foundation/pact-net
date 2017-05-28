@@ -61,7 +61,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             {
                 Method = HttpVerb.Post,
                 Path = "/events",
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "X-Custom", "Tester" }
                 }
@@ -86,7 +86,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             {
                 Method = HttpVerb.Post,
                 Path = "/events",
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "Content-Type", contentTypeString }
                 },
@@ -113,7 +113,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             {
                 Method = HttpVerb.Post,
                 Path = "/events",
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "content-type", contentTypeString }
                 },
@@ -142,7 +142,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             {
                 Method = HttpVerb.Post,
                 Path = "/events",
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "Content-Type", contentTypeString + "; charset=" + encodingString }
                 },
@@ -172,7 +172,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             {
                 Method = HttpVerb.Post,
                 Path = "/events",
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "Content-Type", contentTypeString + "; charset=" + encodingString }
                 },
@@ -200,7 +200,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             {
                 Method = HttpVerb.Post,
                 Path = "/events",
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "Content-Type", contentTypeString },
                     { "X-Custom", "My Custom header" }
@@ -227,7 +227,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             {
                 Method = HttpVerb.Post,
                 Path = "/events",
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "Content-Length", "12" }
                 },
@@ -250,7 +250,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             {
                 Method = HttpVerb.Post,
                 Path = "/events",
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "Content-Length", "12" }
                 },
@@ -262,7 +262,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             var mapper = GetSubject();
 
             _mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
-            _mockHttpBodyContentMapper.Convert(Arg.Any<string>(), Arg.Any<IDictionary<string, string>>()).Returns(httpBodyContent);
+            _mockHttpBodyContentMapper.Convert(Arg.Any<string>(), Arg.Any<IDictionary<string, object>>()).Returns(httpBodyContent);
             _mockHttpContentMapper.Convert(httpBodyContent).Returns(stringContent);
 
             var result = mapper.Convert(request);
@@ -278,7 +278,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             {
                 Method = HttpVerb.Post,
                 Path = "/events",
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "Content-Type", "text/plain" }
                 },
@@ -290,7 +290,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             var mapper = GetSubject();
 
             _mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
-            _mockHttpBodyContentMapper.Convert(Arg.Any<string>(), Arg.Any<IDictionary<string, string>>()).Returns(httpBodyContent);
+            _mockHttpBodyContentMapper.Convert(Arg.Any<string>(), Arg.Any<IDictionary<string, object>>()).Returns(httpBodyContent);
             _mockHttpContentMapper.Convert(httpBodyContent).Returns(stringContent);
 
             var result = mapper.Convert(request);
@@ -307,7 +307,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             {
                 Method = HttpVerb.Post,
                 Path = "/events",
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "Content-Type", "application/octet-stream" }
                 },
@@ -319,7 +319,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             var mapper = GetSubject();
 
             _mockHttpMethodMapper.Convert(HttpVerb.Post).Returns(HttpMethod.Post);
-            _mockHttpBodyContentMapper.Convert(body: Arg.Any<byte[]>(), headers: Arg.Any<IDictionary<string, string>>()).Returns(httpBodyContent);
+            _mockHttpBodyContentMapper.Convert(body: Arg.Any<byte[]>(), headers: Arg.Any<IDictionary<string, object>>()).Returns(httpBodyContent);
             _mockHttpContentMapper.Convert(httpBodyContent).Returns(byteArrayContent);
 
             var result = mapper.Convert(request);
@@ -362,7 +362,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             {
                 Method = HttpVerb.Get,
                 Path = "/events",
-                Headers = new Dictionary<string, string>
+                Headers = new Dictionary<string, object>
                 {
                     { "Content-Type", contentTypeString + "; charset=" + encodingString },
                     { "X-Custom", "My Custom header" },

@@ -7,7 +7,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 {
     internal class HttpHeaderComparer : IHttpHeaderComparer
     {
-        public ComparisonResult Compare(IDictionary<string, string> expected, IDictionary<string, string> actual)
+        public ComparisonResult Compare(IDictionary<string, object> expected, IDictionary<string, object> actual)
         {
             var result = new ComparisonResult("includes headers");
 
@@ -23,13 +23,13 @@ namespace PactNet.Mocks.MockHttpService.Comparers
             {
                 var headerResult = new ComparisonResult("'{0}' with value {1}", header.Key, header.Value);
 
-                string actualValue;
+                object actualValue;
 
                 if (actual.TryGetValue(header.Key, out actualValue))
                 {
                     var expectedValue = header.Value;
 
-                    var actualValueSplit = actualValue.Split(new[] { ',', ';' });
+                    var actualValueSplit = actualValue.ToString().Split(new[] { ',', ';' });
                     if (actualValueSplit.Length == 1)
                     {
                         if (!header.Value.Equals(actualValue))
@@ -39,7 +39,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
                     }
                     else
                     {
-                        var expectedValueSplit = expectedValue.Split(new[] {',', ';'});
+                        var expectedValueSplit = expectedValue.ToString().Split(new[] {',', ';'});
                         var expectedValueSplitJoined = String.Join(",", expectedValueSplit.Select(x => x.Trim()));
                         var actualValueSplitJoined = String.Join(",", actualValueSplit.Select(x => x.Trim()));
 
@@ -60,9 +60,9 @@ namespace PactNet.Mocks.MockHttpService.Comparers
             return result;
         }
 
-        private IDictionary<string, string> MakeDictionaryCaseInsensitive(IDictionary<string, string> from)
+        private IDictionary<string, object> MakeDictionaryCaseInsensitive(IDictionary<string, object> from)
         {
-            return new Dictionary<string, string>(from, StringComparer.InvariantCultureIgnoreCase);
+            return new Dictionary<string, object>(from, StringComparer.InvariantCultureIgnoreCase);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using PactNet.Matchers;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
@@ -31,7 +32,7 @@ namespace Consumer.Tests
                 {
                     Method = HttpVerb.Get,
                     Path = "/events",
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
                         { "Accept", "application/json" }
                     }
@@ -39,7 +40,7 @@ namespace Consumer.Tests
                 .WillRespondWith(new ProviderServiceResponse
                 {
                     Status = 401,
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
                         { "Content-Type", "application/json; charset=utf-8" }
                     },
@@ -85,7 +86,7 @@ namespace Consumer.Tests
             var res = new ProviderServiceResponse
                       {
                           Status = 200,
-                          Headers = new Dictionary<string, string>
+                          Headers = new Dictionary<string, object>
                                     {
                                         {"Content-Type", "application/json; charset=utf-8"}
                                     },
@@ -101,7 +102,7 @@ namespace Consumer.Tests
                 {
                     Method = HttpVerb.Get,
                     Path = "/events",
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
                         { "Accept", "application/json" },
                         { "Authorization", $"Bearer {testAuthToken}" }
@@ -135,7 +136,7 @@ namespace Consumer.Tests
                 {
                     Method = HttpVerb.Post,
                     Path = "/events",
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
                         { "Content-Type", "application/json; charset=utf-8" }
                     },
@@ -167,13 +168,13 @@ namespace Consumer.Tests
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
-                    Headers = new Dictionary<string, string> { { "Accept", "application/json" } },
+                    Headers = new Dictionary<string, object> { { "Accept", "application/json" } },
                     Path = "/stats/status"
                 })
                 .WillRespondWith(new ProviderServiceResponse
                 {
                     Status = 200,
-                    Headers = new Dictionary<string, string> { { "Content-Type", "application/json; charset=utf-8" } },
+                    Headers = new Dictionary<string, object> { { "Content-Type", "application/json; charset=utf-8" } },
                     Body = new
                     {
                         alive = true,
@@ -208,13 +209,13 @@ namespace Consumer.Tests
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
-                    Headers = new Dictionary<string, string> { { "Accept", "application/json" } },
+                    Headers = new Dictionary<string, object> { { "Accept", "application/json" } },
                     Path = "/stats/status"
                 })
                 .WillRespondWith(new ProviderServiceResponse
                 {
                     Status = 200,
-                    Headers = new Dictionary<string, string> { { "Content-Type", "application/json; charset=utf-8" } },
+                    Headers = new Dictionary<string, object> { { "Content-Type", "application/json; charset=utf-8" } },
                     Body = new
                     {
                         alive = true,
@@ -233,13 +234,13 @@ namespace Consumer.Tests
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
-                    Headers = new Dictionary<string, string> { { "Accept", "application/json" } },
+                    Headers = new Dictionary<string, object> { { "Accept", "application/json" } },
                     Path = "/stats/uptime"
                 })
                 .WillRespondWith(new ProviderServiceResponse
                 {
                     Status = 200,
-                    Headers = new Dictionary<string, string> { { "Content-Type", "application/json; charset=utf-8" } },
+                    Headers = new Dictionary<string, object> { { "Content-Type", "application/json; charset=utf-8" } },
                     Body = new
                     {
                         upSince = upSinceDate
@@ -262,27 +263,31 @@ namespace Consumer.Tests
         {
             //Arrange
             var eventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9");
+            var eventType = "DetailsView";
+            var eventTimestamp = DateTime.UtcNow;
             _mockProviderService.Given(String.Format("there is an event with id '{0}'", eventId))
                 .UponReceiving(String.Format("a request to retrieve event with id '{0}'", eventId))
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
                     Path = "/events/" + eventId,
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
-                        { "Accept", "application/json" }
+                        { "Accept", Match.Type("application/json") }
                     }
                 })
                 .WillRespondWith(new ProviderServiceResponse
                 {
                     Status = 200,
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
                         { "Content-Type", "application/json; charset=utf-8" }
                     },
                     Body = new
                     {
-                        eventId = eventId
+                        eventId = eventId,
+                        eventType = Match.Type(eventType),
+                        timestamp = Match.Regex(eventTimestamp.ToString("o"), "^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|0[1-9]|[1-2][0-9])T(2[0-3]|[0-1][0-9]):([0-5][0-9]):([0-5][0-9])(\\.[0-9]+)?(Z|[+-](?:2[0-3]|[0-1][0-9]):[0-5][0-9])?$")
                     }
                 });
 
@@ -293,6 +298,8 @@ namespace Consumer.Tests
 
             //Assert
             Assert.Equal(eventId, result.EventId);
+            Assert.Equal(eventType, result.EventType);
+            Assert.Equal(eventTimestamp, result.Timestamp);
 
             _mockProviderService.VerifyInteractions();
         }
@@ -309,7 +316,7 @@ namespace Consumer.Tests
                     Method = HttpVerb.Get,
                     Path = "/events",
                     Query = "type=" + eventType,
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
                         { "Accept", "application/json" }
                     },
@@ -318,7 +325,7 @@ namespace Consumer.Tests
                 .WillRespondWith(new ProviderServiceResponse
                 {
                     Status = 200,
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
                         { "Content-Type", "application/json; charset=utf-8" }
                     },
@@ -354,7 +361,7 @@ namespace Consumer.Tests
                 {
                     Method = HttpVerb.Post,
                     Path = String.Format("/blobs/{0}", blobId),
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
                         { "Content-Type", "application/octet-stream" }
                     },
@@ -389,7 +396,7 @@ namespace Consumer.Tests
                 .WillRespondWith(new ProviderServiceResponse
                 {
                     Status = 201,
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
                         { "Content-Type", "text/plain" }
                     },

@@ -50,7 +50,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
             return to;
         }
 
-        private Dictionary<string, string> ConvertHeaders(HttpResponseHeaders responseHeaders, HttpContent httpContent)
+        private Dictionary<string, object> ConvertHeaders(HttpResponseHeaders responseHeaders, HttpContent httpContent)
         {
             if ((responseHeaders == null || !responseHeaders.Any()) &&
                 (httpContent == null || (httpContent.Headers == null || !httpContent.Headers.Any())))
@@ -58,7 +58,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
                 return null;
             }
 
-            var headers = new Dictionary<string, string>();
+            var headers = new Dictionary<string, object>();
 
             if (responseHeaders != null && responseHeaders.Any())
             {

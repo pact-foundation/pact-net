@@ -41,7 +41,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
 
             var to = new HttpRequestMessage(requestHttpMethod, requestPath);
 
-            var contentRelatedHeaders = new Dictionary<string, string>();
+            var contentRelatedHeaders = new Dictionary<string, object>();
             if (from.Headers != null && from.Headers.Any())
             {
                 foreach (var requestHeader in from.Headers)
@@ -53,7 +53,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
                         continue;
                     }
 
-                    to.Headers.Add(requestHeader.Key, requestHeader.Value);
+                    to.Headers.Add(requestHeader.Key, requestHeader.Value.ToString());
                 }
             }
 
@@ -73,7 +73,7 @@ namespace PactNet.Mocks.MockHttpService.Mappers
                             continue;
                         }
 
-                        httpContent.Headers.Add(contentHeader.Key, contentHeader.Value);
+                        httpContent.Headers.Add(contentHeader.Key, contentHeader.Value.ToString());
                     }
                 }
 

@@ -4,7 +4,7 @@ namespace PactNet.Mocks.MockHttpService.Comparers
 {
     using PactNet.Comparers;
 
-    internal interface IHttpHeaderComparer : IComparer<IDictionary<string, string>>
+    internal interface IHttpHeaderComparer : IComparer<IDictionary<string, object>>
     {
     }
 }

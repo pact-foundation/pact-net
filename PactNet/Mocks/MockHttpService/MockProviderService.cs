@@ -5,13 +5,12 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
 using PactNet.Extensions;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
-using PactNet.Mocks.MockHttpService.Nancy;
+using PactNet.Mocks.MockHttpService.Ruby;
 
 namespace PactNet.Mocks.MockHttpService
 {
@@ -37,14 +36,14 @@ namespace PactNet.Mocks.MockHttpService
             IHttpMethodMapper httpMethodMapper)
         {
             _hostFactory = hostFactory;
-            BaseUri = String.Format("{0}://localhost:{1}", enableSsl ? "https" : "http", port);
+            BaseUri = String.Format("{0}://localhost:{1}", enableSsl ? "https" : "http", port); //TODO: This is also done in RubyHttpHost
             _httpClient = httpClientFactory(BaseUri);
             _httpMethodMapper = httpMethodMapper;
         }
 
-        public MockProviderService(int port, bool enableSsl, string providerName, PactConfig config, bool bindOnAllAdapters = false)
+        public MockProviderService(int port, bool enableSsl, string providerName, PactConfig config)
             : this(
-            baseUri => new NancyHttpHost(baseUri, providerName, config, bindOnAllAdapters),
+            baseUri => new RubyHttpHost(port, enableSsl, providerName, config), //TODO: Fix this func
             port,
             enableSsl,
             baseUri => new HttpClient { BaseAddress = new Uri(baseUri) },
@@ -287,10 +286,10 @@ namespace PactNet.Mocks.MockHttpService
                 return true;
             }
 
-            IDictionary<string, string> headers = null;
+            IDictionary<string, object> headers = null;
             if (message.Headers != null)
             {
-                headers = new Dictionary<string, string>(message.Headers, StringComparer.InvariantCultureIgnoreCase);
+                headers = new Dictionary<string, object>(message.Headers, StringComparer.InvariantCultureIgnoreCase);
             }
 
             return headers != null && headers.ContainsKey("Content-Type");

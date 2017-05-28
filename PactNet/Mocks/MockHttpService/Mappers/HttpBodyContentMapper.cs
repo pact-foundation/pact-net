@@ -9,25 +9,25 @@ namespace PactNet.Mocks.MockHttpService.Mappers
 {
     internal class HttpBodyContentMapper : IHttpBodyContentMapper
     {
-        public HttpBodyContent Convert(dynamic body, IDictionary<string, string> headers)
+        public HttpBodyContent Convert(dynamic body, IDictionary<string, object> headers)
         {
             return body == null
                 ? null
                 : new HttpBodyContent(body, this.ParseContentTypeHeader(headers));
         }
 
-        public HttpBodyContent Convert(byte[] content, IDictionary<string, string> headers)
+        public HttpBodyContent Convert(byte[] content, IDictionary<string, object> headers)
         {
             return content == null
                 ? null
                 : new HttpBodyContent(content, this.ParseContentTypeHeader(headers));
         }
 
-        private MediaTypeHeaderValue ParseContentTypeHeader(IDictionary<string, string> headers)
+        private MediaTypeHeaderValue ParseContentTypeHeader(IDictionary<string, object> headers)
         {
             string contentType = headers?
                 .Where(hdr => hdr.Key.Equals("Content-Type", StringComparison.InvariantCultureIgnoreCase))
-                .Select(hdr => hdr.Value)
+                .Select(hdr => hdr.Value.ToString())
                 .FirstOrDefault();
 
             MediaTypeHeaderValue contentTypeHeader = (contentType == null)

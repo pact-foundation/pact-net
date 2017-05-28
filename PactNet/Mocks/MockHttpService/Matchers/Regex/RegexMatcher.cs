@@ -1,32 +1,32 @@
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
 using PactNet.Matchers;
 
 namespace PactNet.Mocks.MockHttpService.Matchers.Regex
 {
-    internal class RegexMatcher : IMatcher
+    public class RegexMatcher : IMatcher
     {
-        public string Type
-        {
-            get { return RegexMatchDefinition.Name; }
-        }
+        //Generate JSON using the Ruby spec for now
 
-        [JsonProperty("regex")]
-        public string Regex { get; protected set; }
-        
-        public RegexMatcher(string regex)
-        {
-            Regex = regex;
-        }
+        [JsonProperty(PropertyName = "json_class")]
+        public string Match { get; set; }
 
-        public MatcherResult Match(string path, JToken expected, JToken actual)
-        {
-            var act = actual as JValue;
-            var matches = act != null && System.Text.RegularExpressions.Regex.IsMatch(act.Value.ToString(), Regex);
+        [JsonProperty(PropertyName = "data")]
+        public dynamic Example { get; set; }
 
-            return matches ?
-                new MatcherResult(new SuccessfulMatcherCheck(path)) :
-                new MatcherResult(new FailedMatcherCheck(path, MatcherCheckFailureType.ValueDoesNotMatch));
+        //TODO: Needs to be valid Ruby regex
+        internal RegexMatcher(string example, string regex)
+        {
+            Match = "Pact::Term";
+            Example = new
+            {
+                generate = example,
+                matcher = new
+                {
+                    json_class = "Regexp",
+                    o = 0,
+                    s = regex
+                }
+            };
         }
     }
 }
