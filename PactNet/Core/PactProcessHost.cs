@@ -6,6 +6,22 @@ using PactNet.Extensions;
 
 namespace PactNet.Core
 {
+    internal class PactVerifierConfiguration : IPactProcessConfiguration
+    {
+        public string Path { get; }
+        public string Arguments { get; }
+        public bool WaitForExit { get; }
+
+        public PactVerifierConfiguration(string baseUri, string pactUri, string providerStateUri)
+        {
+            var providerStateOption = !String.IsNullOrEmpty(providerStateUri) ? $" --provider-states-url {providerStateUri} --provider-states-setup-url {providerStateUri}" : "";
+
+            Path = "C:\\src\\os\\concord\\PactNet\\Core\\pact-provider-verifier-win32\\bin\\pact-provider-verifier.bat";
+            Arguments = $"--pact-urls \"{pactUri}\" --provider-base-url {baseUri}{providerStateOption}";
+            WaitForExit = true;
+        }
+    }
+
     internal class MockProviderConfiguration : IPactProcessConfiguration
     {
         public string Path { get; }
@@ -16,7 +32,7 @@ namespace PactNet.Core
         {
             config.SpecificationVersion = "2.0.0"; //TODO: Remove this
 
-            var logFile = $"{config.LogDir}\\{providerName.ToLowerSnakeCase()}_mock_service.log";
+            var logFile = $"{config.LogDir}{providerName.ToLowerSnakeCase()}_mock_service.log";
             var sslOption = enableSsl ? " --ssl" : "";
 
             Path = "C:\\src\\os\\concord\\PactNet\\Core\\pact-mock-service-win32\\bin\\pact-mock-service.bat";

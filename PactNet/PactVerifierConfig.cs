@@ -9,6 +9,8 @@ namespace PactNet
 
         public IList<IReportOutputter> ReportOutputters { get; private set; }
 
+        public string ProviderStatesUrl { get; set; }
+
         internal string LoggerName;
 
         public PactVerifierConfig()

@@ -1,16 +1,12 @@
 ﻿using System;
 using System.IO.Abstractions;
-using System.Linq;
 using System.Net.Http;
-using Newtonsoft.Json;
-using PactNet.Extensions;
-using PactNet.Logging;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Validators;
 using PactNet.Models;
 using PactNet.Reporters;
-using System.Text;
+using PactNet.Core;
 
 namespace PactNet
 {
@@ -20,8 +16,9 @@ namespace PactNet
         private readonly Func<IHttpRequestSender, IReporter, PactVerifierConfig, IProviderServiceValidator> _providerServiceValidatorFactory;
         private readonly HttpClient _httpClient;
         private readonly PactVerifierConfig _config;
-
+        
         private IHttpRequestSender _httpRequestSender;
+        private string _uri;
 
         public string ConsumerName { get; private set; }
         public string ProviderName { get; private set; }
@@ -129,6 +126,29 @@ namespace PactNet
             return this;
         }
 
+        public IPactVerifier ServiceProvider(string providerName, string uri)
+        {
+            if (String.IsNullOrEmpty(providerName))
+            {
+                throw new ArgumentException("Please supply a non null or empty providerName");
+            }
+
+            if (!String.IsNullOrEmpty(ProviderName))
+            {
+                throw new ArgumentException("ProviderName has already been supplied, please instantiate a new PactVerifier if you want to perform verification for a different provider");
+            }
+
+            if (String.IsNullOrEmpty(uri))
+            {
+                throw new ArgumentException("Please supply a non null uri");
+            }
+
+            ProviderName = providerName;
+            _uri = uri;
+                
+            return this;
+        }
+
         public IPactVerifier HonoursPactWith(string consumerName)
         {
             if (String.IsNullOrEmpty(consumerName))
@@ -161,10 +181,10 @@ namespace PactNet
 
         public void Verify(string description = null, string providerState = null)
         {
-            if (_httpRequestSender == null)
+            if (String.IsNullOrEmpty(_uri))
             {
                 throw new InvalidOperationException(
-                    "httpRequestSender has not been set, please supply a httpClient or httpRequestSenderFunc using the ServiceProvider method.");
+                    "uri has not been set, please supply a service uri using the ServiceProvider method.");
             }
 
             if (String.IsNullOrEmpty(PactFileUri))
@@ -173,7 +193,12 @@ namespace PactNet
                     "PactFileUri has not been set, please supply a uri using the PactUri method.");
             }
 
-            ProviderServicePactFile pactFile;
+            var processHost = new PactProcessHost<PactVerifierConfiguration>(
+                new PactVerifierConfiguration(_uri, PactFileUri, _config.ProviderStatesUrl));
+
+            processHost.Start();
+
+            /*ProviderServicePactFile pactFile;
             try
             {
                 string pactFileJson;
@@ -241,7 +266,7 @@ namespace PactNet
             finally
             {
                 LogProvider.CurrentLogProvider.RemoveLogger(_config.LoggerName);
-            }
+            }*/
         }
 
         private static bool IsWebUri(string uri)

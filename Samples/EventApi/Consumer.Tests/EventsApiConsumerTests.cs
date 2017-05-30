@@ -87,9 +87,9 @@ namespace Consumer.Tests
                       {
                           Status = 200,
                           Headers = new Dictionary<string, object>
-                                    {
-                                        {"Content-Type", "application/json; charset=utf-8"}
-                                    },
+                          {
+                              {"Content-Type", "application/json; charset=utf-8"}
+                          },
                           Body = test
                       };
 
@@ -273,7 +273,7 @@ namespace Consumer.Tests
                     Path = "/events/" + eventId,
                     Headers = new Dictionary<string, object>
                     {
-                        { "Accept", Match.Type("application/json") }
+                        { "Accept", "application/json" }
                     }
                 })
                 .WillRespondWith(new ProviderServiceResponse
@@ -281,7 +281,8 @@ namespace Consumer.Tests
                     Status = 200,
                     Headers = new Dictionary<string, object>
                     {
-                        { "Content-Type", "application/json; charset=utf-8" }
+                        { "Content-Type", "application/json; charset=utf-8" },
+                        { "Server", Match.Type("RubyServer") }
                     },
                     Body = new
                     {
