@@ -1,4 +1,5 @@
-﻿using PactNet.Mocks.MockHttpService;
+﻿using System;
+using PactNet.Mocks.MockHttpService;
 using Xunit;
 
 namespace PactNet.Tests.IntegrationTests
@@ -6,7 +7,7 @@ namespace PactNet.Tests.IntegrationTests
     public class PactBuilderIntegrationTests : IUseFixture<IntegrationTestsMyApiPact>
     {
         private IMockProviderService _mockProviderService;
-        private string _mockProviderServiceBaseUri;
+        private Uri _mockProviderServiceBaseUri;
 
         public void SetFixture(IntegrationTestsMyApiPact data)
         {

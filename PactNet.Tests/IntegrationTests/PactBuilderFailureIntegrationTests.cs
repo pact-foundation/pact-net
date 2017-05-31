@@ -11,7 +11,7 @@ namespace PactNet.Tests.IntegrationTests
     public class PactBuilderFailureIntegrationTests : IUseFixture<FailureIntegrationTestsMyApiPact>
     {
         private IMockProviderService _mockProviderService;
-        private string _mockProviderServiceBaseUri;
+        private Uri _mockProviderServiceBaseUri;
 
         public void SetFixture(FailureIntegrationTestsMyApiPact data)
         {
@@ -98,7 +98,7 @@ namespace PactNet.Tests.IntegrationTests
                     Status = 200
                 });
 
-            var httpClient = new HttpClient {BaseAddress = new Uri(_mockProviderServiceBaseUri)};
+            var httpClient = new HttpClient { BaseAddress = _mockProviderServiceBaseUri };
 
             var request1 = new HttpRequestMessage(HttpMethod.Get, "/things/1234");
             var request2 = new HttpRequestMessage(HttpMethod.Get, "/things/1234");
@@ -134,7 +134,7 @@ namespace PactNet.Tests.IntegrationTests
                     Status = 200
                 });
 
-            var httpClient = new HttpClient { BaseAddress = new Uri(_mockProviderServiceBaseUri) };
+            var httpClient = new HttpClient { BaseAddress = _mockProviderServiceBaseUri };
 
             var request = new HttpRequestMessage(HttpMethod.Get, "/things?type=awesome");
 

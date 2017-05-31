@@ -11,6 +11,7 @@ using PactNet.Extensions;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Mocks.MockHttpService.Ruby;
+using static System.String;
 
 namespace PactNet.Mocks.MockHttpService
 {
@@ -26,34 +27,34 @@ namespace PactNet.Mocks.MockHttpService
         private ProviderServiceRequest _request;
         private ProviderServiceResponse _response;
 
-        public string BaseUri { get; private set; }
+        public Uri BaseUri { get; }
 
         internal MockProviderService(
             Func<Uri, IHttpHost> hostFactory,
             int port,
             bool enableSsl,
-            Func<string, HttpClient> httpClientFactory,
+            Func<Uri, HttpClient> httpClientFactory,
             IHttpMethodMapper httpMethodMapper)
         {
             _hostFactory = hostFactory;
-            BaseUri = String.Format("{0}://localhost:{1}", enableSsl ? "https" : "http", port); //TODO: This is also done in RubyHttpHost
+            BaseUri = new Uri($"{(enableSsl ? "https" : "http")}://localhost:{port}");
             _httpClient = httpClientFactory(BaseUri);
             _httpMethodMapper = httpMethodMapper;
         }
 
         public MockProviderService(int port, bool enableSsl, string providerName, PactConfig config)
             : this(
-            baseUri => new RubyHttpHost(port, enableSsl, providerName, config), //TODO: Fix this func
+            baseUri => new RubyHttpHost(baseUri, providerName, config),
             port,
             enableSsl,
-            baseUri => new HttpClient { BaseAddress = new Uri(baseUri) },
+            baseUri => new HttpClient { BaseAddress = baseUri },
             new HttpMethodMapper())
         {
         }
 
         public IMockProviderService Given(string providerState)
         {
-            if (String.IsNullOrEmpty(providerState))
+            if (IsNullOrEmpty(providerState))
             {
                 throw new ArgumentException("Please supply a non null or empty providerState");
             }
@@ -65,7 +66,7 @@ namespace PactNet.Mocks.MockHttpService
 
         public IMockProviderService UponReceiving(string description)
         {
-            if (String.IsNullOrEmpty(description))
+            if (IsNullOrEmpty(description))
             {
                 throw new ArgumentException("Please supply a non null or empty description");
             }
@@ -127,7 +128,7 @@ namespace PactNet.Mocks.MockHttpService
         public void Start()
         {
             StopRunningHost();
-            _host = _hostFactory(new Uri(BaseUri));
+            _host = _hostFactory(BaseUri);
             _host.Start();
         }
 
@@ -152,7 +153,7 @@ namespace PactNet.Mocks.MockHttpService
                 throw new InvalidOperationException("Unable to perform operation because the mock provider service is not running.");
             }
 
-            var responseContent = String.Empty;
+            var responseContent = Empty;
 
             var request = new HttpRequestMessage(_httpMethodMapper.Convert(method), path);
             request.Headers.Add(Constants.AdministrativeRequestHeaderKey, "true");
@@ -190,7 +191,7 @@ namespace PactNet.Mocks.MockHttpService
 
         private void RegisterInteraction()
         {
-            if (String.IsNullOrEmpty(_description))
+            if (IsNullOrEmpty(_description))
             {
                 throw new InvalidOperationException("description has not been set, please supply using the UponReceiving method.");
             }
@@ -215,11 +216,13 @@ namespace PactNet.Mocks.MockHttpService
 
             var testContext = BuildTestContext();
 
+            //TODO: Get test context working properly
             SendAdminHttpRequest(HttpVerb.Post, Constants.InteractionsPath, interaction, new Dictionary<string, string> { { Constants.AdministrativeRequestTestContextHeaderKey, testContext } });
 
             ClearTrasientState();
         }
 
+        //TODO: Need to make this work correctly in the logs
         private static string BuildTestContext()
         {
             var stack = new StackTrace(true);
@@ -244,10 +247,10 @@ namespace PactNet.Mocks.MockHttpService
                     break;
                 }
 
-                relevantStackFrameSummaries.Add(String.Format("{0}.{1}", type.Name, stackFrame.GetMethod().Name));
+                relevantStackFrameSummaries.Add(Format("{0}.{1}", type.Name, stackFrame.GetMethod().Name));
             }
 
-            return String.Join(" ", relevantStackFrameSummaries);
+            return Join(" ", relevantStackFrameSummaries);
         }
 
         private void SendAdminHttpRequest(HttpVerb method, string path)

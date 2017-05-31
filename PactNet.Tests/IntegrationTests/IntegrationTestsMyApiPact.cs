@@ -11,8 +11,8 @@ namespace PactNet.Tests.IntegrationTests
         public IPactBuilder PactBuilder { get; private set; }
         public IMockProviderService MockProviderService { get; private set; }
 
-        public int MockServerPort { get { return 4321; } }
-        public string MockProviderServiceBaseUri { get { return String.Format("http://localhost:{0}", MockServerPort); } }
+        public int MockServerPort => 4321;
+        public Uri MockProviderServiceBaseUri => new Uri($"http://localhost:{MockServerPort}");
 
         public IntegrationTestsMyApiPact()
         {
@@ -20,9 +20,9 @@ namespace PactNet.Tests.IntegrationTests
 
             PactBuilder = new PactBuilder((port, enableSsl, providerName) =>
                     new MockProviderService(
-                        baseUri => new RubyHttpHost(MockServerPort, false, "MyApi", pactConfig),
+                        baseUri => new RubyHttpHost(baseUri, "MyApi", pactConfig),
                         port, enableSsl,
-                        baseUri => new HttpClient { BaseAddress = new Uri(baseUri) },
+                        baseUri => new HttpClient { BaseAddress = baseUri },
                         new HttpMethodMapper()))
                 .ServiceConsumer("IntegrationTests")
                 .HasPactWith("MyApi");

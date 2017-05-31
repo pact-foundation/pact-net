@@ -33,7 +33,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 },
                 port,
                 enableSsl,
-                baseUri => new HttpClient(_fakeHttpMessageHandler) { BaseAddress = new Uri(baseUri) },
+                baseUri => new HttpClient(_fakeHttpMessageHandler) { BaseAddress = baseUri },
                 new HttpMethodMapper());
         }
 
@@ -44,7 +44,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var expectedBaseUri = String.Format("http://localhost:{0}", port);
             var mockService = GetSubject(port);
 
-            Assert.Equal(expectedBaseUri, ((MockProviderService)mockService).BaseUri);
+            Assert.Equal(expectedBaseUri, ((MockProviderService)mockService).BaseUri.OriginalString);
         }
 
         [Fact]
@@ -52,7 +52,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             var mockService = GetSubject(enableSsl: false);
 
-            Assert.True(((MockProviderService)mockService).BaseUri.StartsWith("http"), "BaseUri has a http scheme");
+            Assert.True(((MockProviderService)mockService).BaseUri.Scheme.ToUpperInvariant().Equals("HTTP"), "BaseUri has a http scheme");
         }
 
         [Fact]
@@ -60,7 +60,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             var mockService = GetSubject(enableSsl: true);
 
-            Assert.True(((MockProviderService)mockService).BaseUri.StartsWith("https"), "BaseUri has a https scheme");
+            Assert.True(((MockProviderService)mockService).BaseUri.Scheme.ToUpperInvariant().Equals("HTTPS"), "BaseUri has a https scheme");
         }
 
         [Fact]

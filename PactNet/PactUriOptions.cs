@@ -3,6 +3,7 @@ using System.Text;
 
 namespace PactNet
 {
+    //TODO: Suss out how to handle this
     public class PactUriOptions
     {
         private const string AuthScheme = "Basic";

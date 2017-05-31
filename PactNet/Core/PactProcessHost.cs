@@ -2,57 +2,9 @@ using System;
 using System.Diagnostics;
 using System.Management;
 using System.Text.RegularExpressions;
-using PactNet.Extensions;
 
 namespace PactNet.Core
 {
-    internal class PactVerifierConfiguration : IPactProcessConfiguration
-    {
-        public string Path { get; }
-        public string Arguments { get; }
-        public bool WaitForExit { get; }
-
-        public PactVerifierConfiguration(string baseUri, string pactUri, string providerStateUri)
-        {
-            var providerStateOption = !String.IsNullOrEmpty(providerStateUri) ? $" --provider-states-url {providerStateUri} --provider-states-setup-url {providerStateUri}" : "";
-
-            Path = "C:\\src\\os\\concord\\PactNet\\Core\\pact-provider-verifier-win32\\bin\\pact-provider-verifier.bat";
-            Arguments = $"--pact-urls \"{pactUri}\" --provider-base-url {baseUri}{providerStateOption}";
-            WaitForExit = true;
-        }
-    }
-
-    internal class MockProviderConfiguration : IPactProcessConfiguration
-    {
-        public string Path { get; }
-        public string Arguments { get; }
-        public bool WaitForExit { get; }
-
-        public MockProviderConfiguration(int port, bool enableSsl, string providerName, PactConfig config)
-        {
-            config.SpecificationVersion = "2.0.0"; //TODO: Remove this
-
-            var logFile = $"{config.LogDir}{providerName.ToLowerSnakeCase()}_mock_service.log";
-            var sslOption = enableSsl ? " --ssl" : "";
-
-            Path = "C:\\src\\os\\concord\\PactNet\\Core\\pact-mock-service-win32\\bin\\pact-mock-service.bat";
-            Arguments = $"-p {port} -l \"{FixPathForRuby(logFile)}\" --pact-dir \"{FixPathForRuby(config.PactDir)}\" --pact-specification-version \"{config.SpecificationVersion}\"{sslOption}";
-            WaitForExit = false;
-        }
-
-        private string FixPathForRuby(string path)
-        {
-            return path.Replace("\\", "/");
-        }
-    }
-
-    internal interface IPactProcessConfiguration
-    {
-        string Path { get; }
-        string Arguments { get; }
-        bool WaitForExit { get; }
-    }
-
     internal class PactProcessHost<T> where T : IPactProcessConfiguration
     {
         private readonly Process _process;
@@ -68,18 +20,18 @@ namespace PactNet.Core
             //TODO: Add support for supplying your own ssl cert
 
             _process = new Process
-                       {
-                           StartInfo = new ProcessStartInfo
-                                       {
-                                           WindowStyle = ProcessWindowStyle.Hidden,
-                                           FileName = _configuration.Path,
-                                           Arguments = _configuration.Arguments,
-                                           UseShellExecute = false,
-                                           RedirectStandardInput = true,
-                                           RedirectStandardOutput = true,
-                                           RedirectStandardError = true
-                                       }
-                       };
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    FileName = _configuration.Path,
+                    Arguments = _configuration.Arguments,
+                    UseShellExecute = false,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                }
+            };
 
             AppDomain.CurrentDomain.DomainUnload += CurrentDomainDomainUnload;
         }

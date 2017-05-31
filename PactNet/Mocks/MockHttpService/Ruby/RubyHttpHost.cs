@@ -10,13 +10,15 @@ namespace PactNet.Mocks.MockHttpService.Ruby
         private readonly PactProcessHost<MockProviderConfiguration> _processHost;
         private readonly HttpClient _httpClient;
 
-        public RubyHttpHost(int port, bool enableSsl, string providerName, PactConfig config)
+        public RubyHttpHost(Uri baseUri, string providerName, PactConfig config)
         {
+            var enableSsl = baseUri.Scheme.ToUpperInvariant().Equals("HTTPS");
+
             _processHost = new PactProcessHost<MockProviderConfiguration>(
-                new MockProviderConfiguration(port, enableSsl, providerName, config));
+                new MockProviderConfiguration(baseUri.Port, enableSsl, providerName, config));
 
             //TODO: Use the admin http client once extracted
-            _httpClient = new HttpClient { BaseAddress = new Uri($"{(enableSsl ? "https" : "http")}://localhost:{port}") };
+            _httpClient = new HttpClient { BaseAddress = baseUri };
         }
 
         private bool IsMockProviderServiceRunning()
