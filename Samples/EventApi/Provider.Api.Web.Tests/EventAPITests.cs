@@ -23,10 +23,10 @@ namespace Provider.Api.Web.Tests
                 //Act / Assert
                 IPactVerifier pactVerifier = new PactVerifier(config);
                 pactVerifier
-                    .ProviderState(new Uri($"{serviceUri}/provider-states"))
-                    .ServiceProvider("Event API", new Uri(serviceUri))
+                    .ProviderState($"{serviceUri}/provider-states")
+                    .ServiceProvider("Event API", serviceUri)
                     .HonoursPactWith("Event API Consumer")
-                    .PactUri("../../../Consumer.Tests/pacts/event_api_consumer-event_api.json") //TODO: What to do when we want to talk to multiple brokers
+                    .PactUri("..\\..\\..\\Consumer.Tests\\pacts\\event_api_consumer-event_api.json") //TODO: What to do when we want to talk to multiple brokers
                     .Verify();
 
                 // Verify that verifaction log is also sent to additional reporters defined in the config

@@ -4,10 +4,10 @@ namespace PactNet
 {
     public interface IPactVerifier
     {
-        IPactVerifier ProviderState(Uri providerStateSetupUri);
-        IPactVerifier ServiceProvider(string providerName, Uri baseUri);
+        IPactVerifier ProviderState(string providerStateSetupUri);
+        IPactVerifier ServiceProvider(string providerName, string baseUri);
         IPactVerifier HonoursPactWith(string consumerName);
-        IPactVerifier PactUri(string uri, PactUriOptions options = null);
+        IPactVerifier PactUri(string fileUri, PactUriOptions options = null);
         void Verify();
     }
 }

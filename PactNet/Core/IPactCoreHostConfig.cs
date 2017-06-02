@@ -1,6 +1,6 @@
 namespace PactNet.Core
 {
-    internal interface IPactProcessConfiguration
+    internal interface IPactCoreHostConfig
     {
         string Path { get; }
         string Arguments { get; }

@@ -1,4 +1,4 @@
-﻿namespace PactNet.Mocks.MockHttpService
+﻿namespace PactNet.Mocks.MockHttpService.Host
 {
     internal interface IHttpHost
     {

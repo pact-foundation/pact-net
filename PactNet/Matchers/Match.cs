@@ -1,6 +1,5 @@
-﻿using PactNet.Mocks.MockHttpService.Matchers;
-using PactNet.Mocks.MockHttpService.Matchers.Regex;
-using PactNet.Mocks.MockHttpService.Matchers.Type;
+﻿using PactNet.Matchers.Regex;
+using PactNet.Matchers.Type;
 
 namespace PactNet.Matchers
 {
@@ -18,7 +17,7 @@ namespace PactNet.Matchers
 
         public static IMatcher MinType(dynamic example, int min)
         {
-            return new MinType(example, min);
+            return new MinTypeMatcher(example, min);
         }
     }
 }

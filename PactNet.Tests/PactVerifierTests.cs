@@ -1,58 +1,34 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
 using NSubstitute;
-using PactNet.Mocks.MockHttpService;
-using PactNet.Mocks.MockHttpService.Models;
-using PactNet.Models;
+using PactNet.Core;
 using Xunit;
 
 namespace PactNet.Tests
 {
     public class PactVerifierTests
     {
-        //TODO: Write the equivalent test
-        /*
-        private Tuple<bool, IHttpRequestSender> _providerServiceValidatorFactoryCallInfo;
-
-        private IProviderServiceValidator _mockProviderServiceValidator;
+        private IPactCoreHost _mockVerifierCoreHost;
 
         private IPactVerifier GetSubject()
         {
-            _providerServiceValidatorFactoryCallInfo = null;
-            _mockProviderServiceValidator = Substitute.For<IProviderServiceValidator>();
-
-            return new PactVerifier(() => {}, () => {}, (httpRequestSender, reporter, config) =>
-            {
-                _providerServiceValidatorFactoryCallInfo = new Tuple<bool, IHttpRequestSender>(true, httpRequestSender);
-                
-                return _mockProviderServiceValidator;
-            }, null);
+            _mockVerifierCoreHost = Substitute.For<IPactCoreHost>();
+            return new PactVerifier(hostConfig => _mockVerifierCoreHost, new PactVerifierConfig());
         }
 
         [Fact]
-        public void ProviderState_WhenCalledWithSetUpAndTearDown_SetsProviderStateWithSetUpAndTearDownActions()
+        public void ProviderState_WhenCalledWithSetupUri_SetsProviderStateSetupUri()
         {
-            const string providerState = "There is an event with id 1234 in the database";
-            Action providerStateSetUpAction = () => { };
-            Action providerStateTearDownAction = () => { };
-
+            const string providerStateSetupUri = "http://localhost:223/states";
             var pactVerifier = (PactVerifier)GetSubject();
 
             pactVerifier
-                .ProviderState(providerState, providerStateSetUpAction, providerStateTearDownAction);
+                .ProviderState(providerStateSetupUri);
 
-            var providerStateItem = pactVerifier.ProviderStates.Find(providerState);
-
-            Assert.Equal(providerStateSetUpAction, providerStateItem.SetUp);
-            Assert.Equal(providerStateTearDownAction, providerStateItem.TearDown);
+            Assert.Equal(providerStateSetupUri, pactVerifier.ProviderStateSetupUri.OriginalString);
         }
 
         [Fact]
-        public void ProviderState_WhenCalledWithNullProviderState_ThrowsArgumentException()
+        public void ProviderState_WhenCalledWithNullSetupUri_ThrowsArgumentException()
         {
             var pactVerifier = GetSubject();
 
@@ -62,7 +38,7 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void ProviderState_WhenCalledWithEmptyProviderState_ThrowsArgumentException()
+        public void ProviderState_WhenCalledWithEmptySetupUri_ThrowsArgumentException()
         {
             var pactVerifier = GetSubject();
 
@@ -76,7 +52,7 @@ namespace PactNet.Tests
         {
             var pactVerifier = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider(null, new HttpClient()));
+            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider(null, "http://localhost:3442"));
         }
 
         [Fact]
@@ -84,7 +60,7 @@ namespace PactNet.Tests
         {
             var pactVerifier = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider(String.Empty, new HttpClient()));
+            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider(String.Empty, "http://localhost:3442"));
         }
 
         [Fact]
@@ -93,28 +69,17 @@ namespace PactNet.Tests
             const string providerName = "My API";
             var pactVerifier = GetSubject();
 
-            pactVerifier.ServiceProvider(providerName, new HttpClient());
+            pactVerifier.ServiceProvider(providerName, "http://localhost:3442");
 
-            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider(providerName, new HttpClient()));
+            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider(providerName, "http://localhost:3442"));
         }
 
         [Fact]
-        public void ServiceProviderOverload_WhenCalledWithAnAlreadySetProviderName_ThrowsArgumentException()
-        {
-            const string providerName = "My API";
-            var pactVerifier = GetSubject();
-
-            pactVerifier.ServiceProvider(providerName, request => null);
-
-            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider(providerName, request => null));
-        }
-
-        [Fact]
-        public void ServiceProvider_WhenCalledWithNullHttpClient_ThrowsArgumentException()
+        public void ServiceProvider_WhenCalledWithNullBaseUri_ThrowsArgumentException()
         {
             var pactVerifier = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider("Event API", httpClient: null));
+            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider("Event API", null));
         }
 
         [Fact]
@@ -123,58 +88,20 @@ namespace PactNet.Tests
             const string providerName = "Event API";
             var pactVerifier = GetSubject();
 
-            pactVerifier.ServiceProvider(providerName, new HttpClient());
+            pactVerifier.ServiceProvider(providerName, "https://localhost:3442");
 
             Assert.Equal(providerName, ((PactVerifier)pactVerifier).ProviderName);
         }
 
         [Fact]
-        public void ServiceProvider_WhenCalledWithHttpClient_HttpClientRequestSenderIsPassedIntoProviderServiceValidatorFactoryWhenVerifyIsCalled()
+        public void ServiceProvider_WhenCalledWithBaseUri_HttpClientRequestSenderIsPassedIntoProviderServiceValidatorFactoryWhenVerifyIsCalled()
         {
-            var httpClient = new HttpClient();
+            const string baseUri = "https://localhost:3442";
             var pactVerifier = GetSubject();
 
-            pactVerifier.ServiceProvider("Event API", httpClient);
+            pactVerifier.ServiceProvider("Event API", baseUri);
 
-            pactVerifier
-                .HonoursPactWith("My client")
-                .PactUri("../../../Consumer.Tests/pacts/my_client-event_api.json")
-                .Verify();
-
-            Assert.True(_providerServiceValidatorFactoryCallInfo.Item1, "_providerServiceValidatorFactory was called");
-            Assert.IsType(typeof(HttpClientRequestSender), _providerServiceValidatorFactoryCallInfo.Item2); //was called with type
-        }
-
-        [Fact]
-        public void ServiceProvider_WhenCalledWithNullProviderNameAndCustomRequestSender_ThrowsArgumentException()
-        {
-            var pactVerifier = GetSubject();
-
-            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider(null, request => new ProviderServiceResponse()));
-        }
-
-        [Fact]
-        public void ServiceProvider_WhenCalledWithNullRequestSender_ThrowsArgumentException()
-        {
-            var pactVerifier = GetSubject();
-
-            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider("Event API", (Func<ProviderServiceRequest, ProviderServiceResponse>) null));
-        }
-
-        [Fact]
-        public void ServiceProvider_WhenCalledWithCustomRequestSender_CustomRequestSenderIsPassedIntoProviderServiceValidatorFactoryWhenVerifyIsCalled()
-        {
-            var pactVerifier = GetSubject();
-
-            pactVerifier.ServiceProvider("Event API", request => new ProviderServiceResponse());
-
-            pactVerifier
-                .HonoursPactWith("My client")
-                .PactUri("../../../Consumer.Tests/pacts/my_client-event_api.json")
-                .Verify();
-
-            Assert.True(_providerServiceValidatorFactoryCallInfo.Item1, "_providerServiceValidatorFactory was called");
-            Assert.IsType(typeof(CustomRequestSender), _providerServiceValidatorFactoryCallInfo.Item2); //was called with type
+            Assert.Equal(baseUri, ((PactVerifier)pactVerifier).ServiceBaseUri.OriginalString);
         }
 
         [Fact]
@@ -243,7 +170,18 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void Verify_WhenHttpRequestSenderIsNull_ThrowsInvalidOperationException()
+        public void PactUri_WhenCalledWithUriInADifferentFormat_SetsPactFileUri()
+        {
+            const string pactFileUri = "..\\..\\..\\Consumer.Tests\\pacts\\my_client-event_api.json";
+            var pactVerifier = GetSubject();
+
+            pactVerifier.PactUri(pactFileUri);
+
+            Assert.Equal(pactFileUri, ((PactVerifier)pactVerifier).PactFileUri);
+        }
+        
+        [Fact]
+        public void Verify_WhenServiceBaseUriIsNull_ThrowsInvalidOperationException()
         {
             var pactVerifier = GetSubject();
             pactVerifier.PactUri("../../../Consumer.Tests/pacts/my_client-event_api.json");
@@ -255,350 +193,45 @@ namespace PactNet.Tests
         public void Verify_WhenPactFileUriIsNull_ThrowsInvalidOperationException()
         {
             var pactVerifier = GetSubject();
-            pactVerifier.ServiceProvider("Event API", new HttpClient());
+            pactVerifier.ServiceProvider("Event API", "http://localhost:2839");
 
             Assert.Throws<InvalidOperationException>(() => pactVerifier.Verify());
         }
 
         [Fact]
-        public void Verify_WithFileSystemPactFileUri_CallsFileReadAllText()
-        {
-            var serviceProvider = "Event API";
-            var serviceConsumer = "My client";
-            var pactUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
-            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description\", \"provider_state\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
-
-            var pactVerifier = GetSubject();
-
-            _mockFileSystem.File.ReadAllText(pactUri).Returns(pactFileJson);
-
-            pactVerifier
-                .ServiceProvider(serviceProvider, new HttpClient())
-                .HonoursPactWith(serviceConsumer)
-                .PactUri(pactUri);
-
-            pactVerifier.Verify();
-
-            _mockFileSystem.File.Received(1).ReadAllText(pactUri);
-        }*/
-
-        //TODO: Write the equivalent test
-        /*[Fact]
-        public void Verify_WithHttpPactFileUri_CallsHttpClientWithJsonGetRequest()
-        {
-            var serviceProvider = "Event API";
-            var serviceConsumer = "My client";
-            var pactUri = "http://yourpactserver.com/getlatestpactfile";
-            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description\", \"provider_state\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
-
-            var pactVerifier = GetSubject();
-
-            _fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent(pactFileJson, Encoding.UTF8, "application/json")
-            };
-
-            pactVerifier
-                .ServiceProvider(serviceProvider, new HttpClient())
-                .HonoursPactWith(serviceConsumer)
-                .PactUri(pactUri);
-
-            pactVerifier.Verify();
-
-            Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsReceived.Single().Method);
-            Assert.Equal("application/json", _fakeHttpMessageHandler.RequestsReceived.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
-        }*/
-
-        //TODO: Write the equivalent test
-        /*[Fact]
-        public void Verify_WithHttpsPactFileUri_CallsHttpClientWithJsonGetRequest()
-        {
-            var serviceProvider = "Event API";
-            var serviceConsumer = "My client";
-            var pactUri = "https://yourpactserver.com/getlatestpactfile";
-            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description\", \"provider_state\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
-
-            var pactVerifier = GetSubject();
-
-            _fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent(pactFileJson, Encoding.UTF8, "application/json")
-            };
-
-            pactVerifier
-                .ServiceProvider(serviceProvider, new HttpClient())
-                .HonoursPactWith(serviceConsumer)
-                .PactUri(pactUri);
-
-            pactVerifier.Verify();
-
-            Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsReceived.Single().Method);
-            Assert.Equal("application/json", _fakeHttpMessageHandler.RequestsReceived.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
-        }*/
-
-        //TODO: Write the equivalent test
-        /*[Fact]
-        public void Verify_WithHttpsPactFileUriAndBasicAuthUriOptions_CallsHttpClientWithJsonGetRequestAndBasicAuthorizationHeader()
-        {
-            var serviceProvider = "Event API";
-            var serviceConsumer = "My client";
-            var pactUri = "https://yourpactserver.com/getlatestpactfile";
-            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description\", \"provider_state\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
-            var options = new PactUriOptions("someuser", "somepassword");
-
-            var pactVerifier = GetSubject();
-
-            _fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent(pactFileJson, Encoding.UTF8, "application/json")
-            };
-
-            pactVerifier
-                .ServiceProvider(serviceProvider, new HttpClient())
-                .HonoursPactWith(serviceConsumer)
-                .PactUri(pactUri, options);
-
-            pactVerifier.Verify();
-
-            Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsReceived.Single().Method);
-            Assert.Equal("application/json", _fakeHttpMessageHandler.RequestsReceived.Single().Headers.Single(x => x.Key == "Accept").Value.Single());
-            Assert.Equal(_fakeHttpMessageHandler.RequestsReceived.Single().Headers.Authorization.Scheme, options.AuthorizationScheme);
-            Assert.Equal(_fakeHttpMessageHandler.RequestsReceived.Single().Headers.Authorization.Parameter, options.AuthorizationValue);
-        }*/
-
-        //TODO: Write the equivalent test
-        /*[Fact]
-        public void Verify_WithFileUriAndWhenFileDoesNotExistOnFileSystem_ThrowsInvalidOperationException()
+        public void Verify_WhenTheVerifierIsCorrectlySetUpWithALocalPactFile_PactVerifyCoreHostIsStarted()
         {
             var serviceProvider = "Event API";
             var serviceConsumer = "My client";
             var pactUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
 
             var pactVerifier = GetSubject();
-
-            _mockFileSystem.File.ReadAllText(pactUri).Returns(x => { throw new FileNotFoundException(); });
-
             pactVerifier
-                .ServiceProvider(serviceProvider, new HttpClient())
-                .HonoursPactWith(serviceConsumer)
-                .PactUri(pactUri);
+               .ServiceProvider(serviceProvider, "http://localhost")
+               .HonoursPactWith(serviceConsumer)
+               .PactUri(pactUri);
 
-            Assert.Throws<InvalidOperationException>(() => pactVerifier.Verify());
+            pactVerifier.Verify();
 
-            _mockFileSystem.File.Received(1).ReadAllText(pactUri);
-        }*/
+            _mockVerifierCoreHost.Received(1).Start();
+        }
 
-        //TODO: Write the equivalent test
-        /*[Fact]
-        public void Verify_WithHttpUriAndNonSuccessfulStatusCodeIsReturned_ThrowsInvalidOperationException()
+        [Fact]
+        public void Verify_WhenTheVerifierIsCorrectlySetUpWithAHttpPactFile_PactVerifyCoreHostIsStarted()
         {
             var serviceProvider = "Event API";
             var serviceConsumer = "My client";
-            var pactUri = "http://yourpactserver.com/getlatestpactfile";
+            var pactUri = "http://broker/consumer/test/provider/hello/latest";
 
             var pactVerifier = GetSubject();
-
-            _fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
-
             pactVerifier
-                .ServiceProvider(serviceProvider, new HttpClient())
-                .HonoursPactWith(serviceConsumer)
-                .PactUri(pactUri);
-
-            Assert.Throws<InvalidOperationException>(() => pactVerifier.Verify());
-
-            Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsReceived.Single().Method);
-        }*/
-
-        //TODO: Write the equivalent test
-        /*[Fact]
-        public void Verify_WhenPactFileWithNoInteractionsExistOnFileSystem_CallsPactProviderValidator()
-        {
-            var serviceProvider = "Event API";
-            var serviceConsumer = "My client";
-            var pactUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
-            var pactFileJson = "{ \"provider\": { \"name\": \"" + serviceProvider + "\" }, \"consumer\": { \"name\": \"" + serviceConsumer + "\" }, \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
-            var httpClient = new HttpClient();
-
-            var pactVerifier = GetSubject();
-
-            _mockFileSystem.File.ReadAllText(pactUri).Returns(pactFileJson);
-
-            pactVerifier
-                .ServiceProvider(serviceProvider, httpClient)
-                .HonoursPactWith(serviceConsumer)
-                .PactUri(pactUri);
+               .ServiceProvider(serviceProvider, "http://localhost")
+               .HonoursPactWith(serviceConsumer)
+               .PactUri(pactUri);
 
             pactVerifier.Verify();
 
-            _mockFileSystem.File.Received(1).ReadAllText(pactUri);
-
-            _mockProviderServiceValidator.Received(1).Validate(Arg.Any<ProviderServicePactFile>(), Arg.Any<ProviderStates>());
-        }*/
-
-        //TODO: Write the equivalent test
-        /*[Fact]
-        public void Verify_WithNoProviderDescriptionOrProviderStateSupplied_CallsProviderServiceValidatorWithAll3Interactions()
-        {
-            var pactUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
-            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description\", \"provider_state\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
-            var httpClient = new HttpClient();
-
-            var pactVerifier = GetSubject();
-
-            _mockFileSystem.File.ReadAllText(pactUri).Returns(pactFileJson);
-
-            pactVerifier
-                .ProviderState("My Provider State")
-                .ProviderState("My Provider State 2");
-
-            pactVerifier.ServiceProvider("Event API", httpClient)
-                .HonoursPactWith("My client")
-                .PactUri(pactUri);
-
-            pactVerifier.Verify();
-
-            _mockProviderServiceValidator.Received(1).Validate(
-                Arg.Is<ProviderServicePactFile>(x => x.Interactions.Count() == 3),
-                Arg.Any<ProviderStates>());
-        }*/
-
-        //TODO: Write the equivalent test
-        /*[Fact]
-        public void Verify_WithDescription_CallsProviderServiceValidatorWith2FilteredInteractions()
-        {
-            var description = "My Description";
-            var pactUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
-            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description\", \"provider_state\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
-            var httpClient = new HttpClient();
-
-            var pactVerifier = GetSubject();
-
-            _mockFileSystem.File.ReadAllText(pactUri).Returns(pactFileJson);
-
-            pactVerifier
-                .ProviderState("My Provider State")
-                .ProviderState("My Provider State 2");
-
-            pactVerifier.ServiceProvider("Event API", httpClient)
-                .HonoursPactWith("My client")
-                .PactUri(pactUri);
-
-            pactVerifier.Verify(description: description);
-
-            _mockProviderServiceValidator.Received(1).Validate(
-                Arg.Is<ProviderServicePactFile>(x => x.Interactions.Count() == 2 && x.Interactions.All(i => i.Description.Equals(description))),
-                Arg.Any<ProviderStates>());
-        }*/
-
-        //TODO: Write the equivalent test
-        /*[Fact]
-        public void Verify_WithProviderState_CallsProviderServiceValidatorWith2FilteredInteractions()
-        {
-            var providerState = "My Provider State";
-            var pactUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
-            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description\", \"provider_state\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
-            var httpClient = new HttpClient();
-
-            var pactVerifier = GetSubject();
-
-            _mockFileSystem.File.ReadAllText(pactUri).Returns(pactFileJson);
-
-            pactVerifier
-                .ProviderState("My Provider State")
-                .ProviderState("My Provider State 2");
-
-            pactVerifier.ServiceProvider("Event API", httpClient)
-                .HonoursPactWith("My client")
-                .PactUri(pactUri);
-
-            pactVerifier.Verify(providerState: providerState);
-
-            _mockProviderServiceValidator.Received(1).Validate(
-                Arg.Is<ProviderServicePactFile>(x => x.Interactions.Count() == 2 && x.Interactions.All(i => i.ProviderState.Equals(providerState))), 
-                Arg.Any<ProviderStates>());
-        }*/
-
-        //TODO: Write the equivalent test
-        /*[Fact]
-        public void Verify_WithDescriptionAndProviderState_CallsProviderServiceValidatorWith1FilteredInteractions()
-        {
-            var description = "My Description";
-            var providerState = "My Provider State";
-            var pactUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
-            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description\", \"provider_state\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
-            var httpClient = new HttpClient();
-
-            var pactVerifier = GetSubject();
-
-            _mockFileSystem.File.ReadAllText(pactUri).Returns(pactFileJson);
-
-            pactVerifier
-                .ProviderState("My Provider State")
-                .ProviderState("My Provider State 2");
-
-            pactVerifier.ServiceProvider("Event API", httpClient)
-                .HonoursPactWith("My client")
-                .PactUri(pactUri);
-
-            pactVerifier.Verify(description: description, providerState: providerState);
-
-            _mockProviderServiceValidator.Received(1).Validate(
-                Arg.Is<ProviderServicePactFile>(x => x.Interactions.Count() == 1 && x.Interactions.All(i => i.ProviderState.Equals(providerState) && i.Description.Equals(description))), 
-                Arg.Any<ProviderStates>());
-        }*/
-
-        //TODO: Write the equivalent test
-        /*[Fact]
-        public void Verify_WithDescriptionThatYieldsNoInteractions_ThrowsArgumentException()
-        {
-            var description = "Description that does not match an interaction";
-            var pactUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
-            var pactFileJson = "{ \"provider\": { \"name\": \"Event API\" }, \"consumer\": { \"name\": \"My client\" }, \"interactions\": [{ \"description\": \"My Description\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description 2\", \"provider_state\": \"My Provider State\" }, { \"description\": \"My Description\", \"provider_state\": \"My Provider State 2\" }], \"metadata\": { \"pactSpecificationVersion\": \"1.0.0\" } }";
-            var httpClient = new HttpClient();
-
-            var pactVerifier = GetSubject();
-
-            _mockFileSystem.File.ReadAllText(pactUri).Returns(pactFileJson);
-
-            pactVerifier
-                .ProviderState("My Provider State")
-                .ProviderState("My Provider State 2");
-
-            pactVerifier.ServiceProvider("Event API", httpClient)
-                .HonoursPactWith("My client")
-                .PactUri(pactUri);
-
-            Assert.Throws<ArgumentException>(() => pactVerifier.Verify(description: description));
-
-            _mockProviderServiceValidator.DidNotReceive().Validate(
-                Arg.Any<ProviderServicePactFile>(),
-                Arg.Any<ProviderStates>());
-        }*/
-
-        //TODO: Write the equivalent test
-        /*[Fact]
-        public void Verify_WithProviderStateSet_CallsProviderServiceValidatorWithProviderState()
-        {
-            var httpClient = new HttpClient();
-
-            var pactVerifier = GetSubject();
-
-            _mockFileSystem.File.ReadAllText(Arg.Any<string>()).Returns("{}");
-
-            pactVerifier
-                .ProviderState("My Provider State")
-                .ProviderState("My Provider State 2");
-
-            pactVerifier.ServiceProvider("Event API", httpClient)
-                .HonoursPactWith("My client")
-                .PactUri("/test.json");
-
-            pactVerifier.Verify();
-
-            _mockProviderServiceValidator.Received(1).Validate(
-                Arg.Any<ProviderServicePactFile>(),
-                (pactVerifier as PactVerifier).ProviderStates);
-        }*/
+            _mockVerifierCoreHost.Received(1).Start();
+        }
     }
 }

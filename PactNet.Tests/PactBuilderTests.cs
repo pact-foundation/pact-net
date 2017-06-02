@@ -211,7 +211,7 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void Build_WhenCalledWithTheMockProviderServiceIsInitialised_CallsSendAdminHttpRequestOnTheMockProviderService()
+        public void Build_WhenCalledWithTheMockProviderServiceInitialised_CallsSendAdminHttpRequestOnTheMockProviderService()
         {
             const string testConsumerName = "Event Client";
             const string testProviderName = "Event API";
@@ -229,7 +229,7 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void Build_WhenCalledWithAnInitialisedMockProviderService_StopIsCallOnTheMockServiceProvider()
+        public void Build_WhenCalledWithAnInitialisedMockProviderService_StopIsCalledOnTheMockServiceProvider()
         {
             var mockMockProviderService = Substitute.For<IMockProviderService>();
 

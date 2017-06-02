@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
-using PactNet.Matchers;
 
-namespace PactNet.Mocks.MockHttpService.Matchers.Type
+namespace PactNet.Matchers.Type
 {
-    public class MinType : IMatcher
+    public class MinTypeMatcher : IMatcher
     {
         //Generate JSON using the Ruby spec for now
 
@@ -16,7 +15,7 @@ namespace PactNet.Mocks.MockHttpService.Matchers.Type
         [JsonProperty(PropertyName = "min")]
         public int Min { get; set; }
 
-        internal MinType(string example, int min)
+        internal MinTypeMatcher(dynamic example, int min)
         {
             Match = "Pact::ArrayLike";
             Example = example;

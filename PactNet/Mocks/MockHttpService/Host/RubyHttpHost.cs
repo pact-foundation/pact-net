@@ -3,22 +3,26 @@ using System.Net.Http;
 using System.Threading;
 using PactNet.Core;
 
-namespace PactNet.Mocks.MockHttpService.Ruby
+namespace PactNet.Mocks.MockHttpService.Host
 {
     internal class RubyHttpHost : IHttpHost
     {
-        private readonly PactProcessHost<MockProviderConfiguration> _processHost;
+        private readonly IPactCoreHost _coreHost;
         private readonly HttpClient _httpClient;
 
-        public RubyHttpHost(Uri baseUri, string providerName, PactConfig config)
+        internal RubyHttpHost(IPactCoreHost coreHost, HttpClient httpClient)
         {
-            var enableSsl = baseUri.Scheme.ToUpperInvariant().Equals("HTTPS");
+            _coreHost = coreHost;
+            _httpClient = httpClient; //TODO: Use the admin http client once extracted
+        }
 
-            _processHost = new PactProcessHost<MockProviderConfiguration>(
-                new MockProviderConfiguration(baseUri.Port, enableSsl, providerName, config));
-
-            //TODO: Use the admin http client once extracted
-            _httpClient = new HttpClient { BaseAddress = baseUri };
+        public RubyHttpHost(Uri baseUri, string providerName, PactConfig config) : 
+            this(new PactCoreHost<MockProviderHostConfig>(
+                new MockProviderHostConfig(baseUri.Port, 
+                    baseUri.Scheme.ToUpperInvariant().Equals("HTTPS"), 
+                    providerName, config)),
+                new HttpClient { BaseAddress = baseUri })
+        {
         }
 
         private bool IsMockProviderServiceRunning()
@@ -32,7 +36,7 @@ namespace PactNet.Mocks.MockHttpService.Ruby
 
         public void Start()
         {
-            _processHost.Start();
+            _coreHost.Start();
 
             var aliveChecks = 1;
             while (!IsMockProviderServiceRunning())
@@ -49,7 +53,7 @@ namespace PactNet.Mocks.MockHttpService.Ruby
 
         public void Stop()
         {
-            _processHost.Stop();
+            _coreHost.Stop();
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
-using PactNet.Matchers;
 
-namespace PactNet.Mocks.MockHttpService.Matchers.Regex
+namespace PactNet.Matchers.Regex
 {
     public class RegexMatcher : IMatcher
     {

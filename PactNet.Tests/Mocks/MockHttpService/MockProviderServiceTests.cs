@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using NSubstitute;
 using PactNet.Configuration.Json;
 using PactNet.Mocks.MockHttpService;
+using PactNet.Mocks.MockHttpService.Host;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Tests.Fakes;
@@ -386,7 +387,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             var mockService = GetSubject();
 
-            _fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
+            _fakeHttpMessageHandler.ResponseFactory = () => new HttpResponseMessage(HttpStatusCode.InternalServerError);
 
             mockService
                 .Given(providerState)
@@ -428,7 +429,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             var mockService = GetSubject();
 
-            _fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.Forbidden);
+            _fakeHttpMessageHandler.ResponseFactory = () => new HttpResponseMessage(HttpStatusCode.Forbidden);
 
             mockService.Start();
 
@@ -465,7 +466,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             var mockService = GetSubject();
 
-            _fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
+            _fakeHttpMessageHandler.ResponseFactory = () => new HttpResponseMessage(HttpStatusCode.InternalServerError);
 
             mockService.Start();
 

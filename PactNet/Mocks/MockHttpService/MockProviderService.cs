@@ -8,9 +8,9 @@ using System.Threading;
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
 using PactNet.Extensions;
+using PactNet.Mocks.MockHttpService.Host;
 using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
-using PactNet.Mocks.MockHttpService.Ruby;
 using static System.String;
 
 namespace PactNet.Mocks.MockHttpService

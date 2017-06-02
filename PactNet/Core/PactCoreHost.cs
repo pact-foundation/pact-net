@@ -5,16 +5,15 @@ using System.Text.RegularExpressions;
 
 namespace PactNet.Core
 {
-    internal class PactProcessHost<T> where T : IPactProcessConfiguration
+    internal class PactCoreHost<T> : IPactCoreHost where T : IPactCoreHostConfig
     {
         private readonly Process _process;
-        private readonly IPactProcessConfiguration _configuration;
+        private readonly IPactCoreHostConfig _config;
 
-        public PactProcessHost(T configuration)
+        public PactCoreHost(T config)
         {
-            _configuration = configuration;
+            _config = config;
 
-            //TODO: Add a way to configure the spec version
             //TODO: Make this work in a cross platform way
             //TODO: Nuget to download this core stuff
             //TODO: Add support for supplying your own ssl cert
@@ -24,8 +23,8 @@ namespace PactNet.Core
                 StartInfo = new ProcessStartInfo
                 {
                     WindowStyle = ProcessWindowStyle.Hidden,
-                    FileName = _configuration.Path,
-                    Arguments = _configuration.Arguments,
+                    FileName = _config.Path,
+                    Arguments = _config.Arguments,
                     UseShellExecute = false,
                     RedirectStandardInput = true,
                     RedirectStandardOutput = true,
@@ -44,7 +43,7 @@ namespace PactNet.Core
             }
         }
 
-        internal void Start()
+        public void Start()
         {
             _process.OutputDataReceived += (sender, args) => WriteLineToConsole(args.Data);
             _process.ErrorDataReceived += (sender, args) => WriteLineToConsole(args.Data);
@@ -54,18 +53,18 @@ namespace PactNet.Core
             _process.BeginOutputReadLine();
             _process.BeginErrorReadLine();
 
-            if (_configuration.WaitForExit)
+            if (_config.WaitForExit)
             {
                 _process.WaitForExit();
 
                 if (_process.ExitCode != 0)
                 {
-                    throw new PactFailureException("Non zero exit code");
+                    throw new PactFailureException("Non zero exit code"); //TODO: Give this a better message
                 }
             }
         }
 
-        internal void Stop()
+        public void Stop()
         {
             try
             {
@@ -99,7 +98,7 @@ namespace PactNet.Core
             }
             catch (ArgumentException)
             {
-                // Process already exited.
+                // Already exited
             }
         }
     }

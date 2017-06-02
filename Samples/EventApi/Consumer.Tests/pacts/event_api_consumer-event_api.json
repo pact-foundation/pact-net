@@ -7,6 +7,93 @@
   },
   "interactions": [
     {
+      "description": "a request to retrieve events with type 'DetailsView'",
+      "providerState": "there is one event with type 'DetailsView'",
+      "request": {
+        "method": "get",
+        "path": "/events",
+        "query": "type=DetailsView",
+        "headers": {
+          "Accept": "application/json"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": [
+          {
+            "eventType": "DetailsView"
+          }
+        ]
+      }
+    },
+    {
+      "description": "a request to check the api status",
+      "request": {
+        "method": "get",
+        "path": "/stats/status",
+        "headers": {
+          "Accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": {
+          "alive": true,
+          "_links": {
+            "uptime": {
+              "href": "/stats/uptime"
+            }
+          }
+        }
+      }
+    },
+    {
+      "description": "a request to retrieve all events with no authorization",
+      "providerState": "there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'",
+      "request": {
+        "method": "get",
+        "path": "/events",
+        "headers": {
+          "Accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 401,
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": {
+          "message": "Authorization has been denied for this request."
+        }
+      }
+    },
+    {
+      "description": "a request to check the api uptime",
+      "request": {
+        "method": "get",
+        "path": "/stats/uptime",
+        "headers": {
+          "Accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": {
+          "upSince": "2014-06-27T23:51:12Z"
+        }
+      }
+    },
+    {
       "description": "a request to create a new event",
       "request": {
         "method": "post",
@@ -63,93 +150,6 @@
       }
     },
     {
-      "description": "a request to check the api status",
-      "request": {
-        "method": "get",
-        "path": "/stats/status",
-        "headers": {
-          "Accept": "application/json"
-        }
-      },
-      "response": {
-        "status": 200,
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": {
-          "alive": true,
-          "_links": {
-            "uptime": {
-              "href": "/stats/uptime"
-            }
-          }
-        }
-      }
-    },
-    {
-      "description": "a request to check the api uptime",
-      "request": {
-        "method": "get",
-        "path": "/stats/uptime",
-        "headers": {
-          "Accept": "application/json"
-        }
-      },
-      "response": {
-        "status": 200,
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": {
-          "upSince": "2014-06-27T23:51:12Z"
-        }
-      }
-    },
-    {
-      "description": "a request to retrieve all events with no authorization",
-      "providerState": "there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'",
-      "request": {
-        "method": "get",
-        "path": "/events",
-        "headers": {
-          "Accept": "application/json"
-        }
-      },
-      "response": {
-        "status": 401,
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": {
-          "message": "Authorization has been denied for this request."
-        }
-      }
-    },
-    {
-      "description": "a request to retrieve events with type 'DetailsView'",
-      "providerState": "there is one event with type 'DetailsView'",
-      "request": {
-        "method": "get",
-        "path": "/events",
-        "query": "type=DetailsView",
-        "headers": {
-          "Accept": "application/json"
-        },
-        "body": null
-      },
-      "response": {
-        "status": 200,
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": [
-          {
-            "eventType": "DetailsView"
-          }
-        ]
-      }
-    },
-    {
       "description": "a request to get a new blob by id",
       "request": {
         "method": "get",
@@ -182,7 +182,7 @@
         "body": {
           "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
           "eventType": "DetailsView",
-          "timestamp": "2017-05-30T12:46:34.5886919Z"
+          "timestamp": "2017-06-01T12:20:40.1554882Z"
         },
         "matchingRules": {
           "$.headers.Server": {

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Net.Http;
 using PactNet.Mocks.MockHttpService;
+using PactNet.Mocks.MockHttpService.Host;
 using PactNet.Mocks.MockHttpService.Mappers;
-using PactNet.Mocks.MockHttpService.Ruby;
 
 namespace PactNet.Tests.IntegrationTests
 {

@@ -1,67 +1,77 @@
 ﻿using System;
 using PactNet.Core;
+using static System.String;
 
 namespace PactNet
 {
     public class PactVerifier : IPactVerifier
     {
         private readonly PactVerifierConfig _config; //TODO: Do we need the config? Should we write the output to file?
-        private Uri _serviceBaseUri;
+        private readonly Func<PactVerifierHostConfig, IPactCoreHost> _pactVerifierHostFactory;
 
         public Uri ProviderStateSetupUri { get; private set; }
+        public Uri ServiceBaseUri { get; private set; }
         public string ConsumerName { get; private set; }
         public string ProviderName { get; private set; }
         public string PactFileUri { get; private set; }
         public PactUriOptions PactUriOptions { get; private set; }
 
-        public PactVerifier(PactVerifierConfig config)
+        internal PactVerifier(Func<PactVerifierHostConfig, IPactCoreHost> pactVerifierHostFactory, PactVerifierConfig config)
         {
-            _config = config ?? new PactVerifierConfig();
+            _pactVerifierHostFactory = pactVerifierHostFactory;
+            _config = config;
         }
 
-        public IPactVerifier ProviderState(Uri providerStateSetupUri)
+        public PactVerifier(PactVerifierConfig config) : 
+            this(
+            hostConfig => new PactCoreHost<PactVerifierHostConfig>(hostConfig), 
+            config ?? new PactVerifierConfig())
         {
-            if (providerStateSetupUri == null)
+        }
+
+        public IPactVerifier ProviderState(string providerStateSetupUri)
+        {
+            if (IsNullOrEmpty(providerStateSetupUri))
             {
-                throw new ArgumentException("Please supply a non null providerStateSetupUri");
+                throw new ArgumentException("Please supply a non null or empty providerStateSetupUri");
             }
 
-            ProviderStateSetupUri = providerStateSetupUri;
+            ProviderStateSetupUri = new Uri(providerStateSetupUri);
 
             return this;
         }
 
-        public IPactVerifier ServiceProvider(string providerName, Uri baseUri) //TODO: Should the providerStatesUri get defined here or on the ?
+        public IPactVerifier ServiceProvider(string providerName, string baseUri) //TODO: Should the providerStatesUri get defined here or on the ?
         {
-            if (String.IsNullOrEmpty(providerName))
+            if (IsNullOrEmpty(providerName))
             {
                 throw new ArgumentException("Please supply a non null or empty providerName");
             }
 
-            if (!String.IsNullOrEmpty(ProviderName))
+            if (!IsNullOrEmpty(ProviderName))
             {
                 throw new ArgumentException("ProviderName has already been supplied, please instantiate a new PactVerifier if you want to perform verification for a different provider");
             }
 
-            if (baseUri == null)
+            if (IsNullOrEmpty(baseUri))
             {
-                throw new ArgumentException("Please supply a non null baseUri");
+                throw new ArgumentException("Please supply a non null or empty baseUri");
             }
 
             ProviderName = providerName;
-            _serviceBaseUri = baseUri;
+            ServiceBaseUri = new Uri(baseUri);
                 
             return this;
         }
 
         public IPactVerifier HonoursPactWith(string consumerName)
         {
-            if (String.IsNullOrEmpty(consumerName))
+            if (IsNullOrEmpty(consumerName))
             {
                 throw new ArgumentException("Please supply a non null or empty consumerName");
             }
 
-            if (!String.IsNullOrEmpty(ConsumerName))
+            if (!IsNullOrEmpty(ConsumerName))
             {
                 throw new ArgumentException("ConsumerName has already been supplied, please instantiate a new PactVerifier if you want to perform verification for a different consumer");
             }
@@ -71,14 +81,14 @@ namespace PactNet
             return this;
         }
 
-        public IPactVerifier PactUri(string uri, PactUriOptions options = null)
+        public IPactVerifier PactUri(string fileUri, PactUriOptions options = null)
         {
-            if (String.IsNullOrEmpty(uri))
+            if (IsNullOrEmpty(fileUri))
             {
-                throw new ArgumentException("Please supply a non null or empty consumerName");
+                throw new ArgumentException("Please supply a non null or empty fileUri");
             }
 
-            PactFileUri = uri;
+            PactFileUri = fileUri;
             PactUriOptions = options;
 
             return this;
@@ -86,22 +96,21 @@ namespace PactNet
 
         public void Verify()
         {
-            if (_serviceBaseUri == null)
+            if (ServiceBaseUri == null)
             {
                 throw new InvalidOperationException(
-                    "uri has not been set, please supply a service uri using the ServiceProvider method.");
+                    "baseUri has not been set, please supply a service baseUri using the ServiceProvider method.");
             }
 
-            if (String.IsNullOrEmpty(PactFileUri))
+            if (PactFileUri == null)
             {
                 throw new InvalidOperationException(
                     "PactFileUri has not been set, please supply a uri using the PactUri method.");
             }
 
-            var processHost = new PactProcessHost<PactVerifierConfiguration>(
-                new PactVerifierConfiguration(_serviceBaseUri, PactFileUri, ProviderStateSetupUri));
-
-            processHost.Start();
+            var pactVerifier = _pactVerifierHostFactory(
+                new PactVerifierHostConfig(ServiceBaseUri, PactFileUri, ProviderStateSetupUri));
+            pactVerifier.Start();
         }
     }
 }

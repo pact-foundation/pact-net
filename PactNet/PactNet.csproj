@@ -84,10 +84,11 @@
   <ItemGroup>
     <Compile Include="Configuration\Json\Converters\CamelCaseStringEnumConverter.cs" />
     <Compile Include="Configuration\Json\Converters\PreserveCasingDictionaryConverter.cs" />
-    <Compile Include="Core\IPactProcessConfiguration.cs" />
-    <Compile Include="Core\MockProviderConfiguration.cs" />
-    <Compile Include="Core\PactProcessHost.cs" />
-    <Compile Include="Core\PactVerifierConfiguration.cs" />
+    <Compile Include="Core\IPactCoreHostConfig.cs" />
+    <Compile Include="Core\IPactCoreHost.cs" />
+    <Compile Include="Core\MockProviderHostConfig.cs" />
+    <Compile Include="Core\PactCoreHost.cs" />
+    <Compile Include="Core\PactVerifierHostConfig.cs" />
     <Compile Include="Extensions\TaskExtensions.cs" />
     <Compile Include="Infrastructure\Logging\ILocalLogMessageHandler.cs" />
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
@@ -96,16 +97,16 @@
     <Compile Include="Infrastructure\Logging\LocalLogProvider.cs" />
     <Compile Include="Infrastructure\Logging\LocalRollingLogFileMessageHandler.cs" />
     <Compile Include="Configuration\Json\JsonConfig.cs" />
-    <Compile Include="Mocks\MockHttpService\Matchers\IMatcher.cs" />
+    <Compile Include="Matchers\IMatcher.cs" />
     <Compile Include="Matchers\Match.cs" />
-    <Compile Include="Mocks\MockHttpService\Matchers\Regex\RegexMatcher.cs" />
-    <Compile Include="Mocks\MockHttpService\Matchers\Type\TypeMatcher.cs" />
-    <Compile Include="Mocks\MockHttpService\Matchers\Type\MinType.cs" />
+    <Compile Include="Matchers\Regex\RegexMatcher.cs" />
+    <Compile Include="Matchers\Type\TypeMatcher.cs" />
+    <Compile Include="Matchers\Type\MinTypeMatcher.cs" />
     <Compile Include="IPactBuilder.cs" />
     <Compile Include="Mappers\IMapper.cs" />
     <Compile Include="Mocks\IMockProvider.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Mocks\MockHttpService\IHttpHost.cs" />
+    <Compile Include="Mocks\MockHttpService\Host\IHttpHost.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\HttpMethodMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\IHttpMethodMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Models\IHttpMessage.cs" />
@@ -113,7 +114,7 @@
     <Compile Include="Mocks\MockHttpService\MockProviderService.cs" />
     <Compile Include="Mocks\MockHttpService\Models\HttpVerb.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Mocks\MockHttpService\Ruby\RubyHttpHost.cs" />
+    <Compile Include="Mocks\MockHttpService\Host\RubyHttpHost.cs" />
     <Compile Include="Models\Interaction.cs" />
     <Compile Include="Models\PactDetails.cs" />
     <Compile Include="PactConfig.cs" />

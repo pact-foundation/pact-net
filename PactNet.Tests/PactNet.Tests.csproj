@@ -82,6 +82,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\MockProviderHostConfigTests.cs" />
+    <Compile Include="Core\PactVerifierHostConfigTests.cs" />
     <Compile Include="Fakes\FakeHttpMessageHandler.cs" />
     <Compile Include="IntegrationTests\FailureIntegrationTestsMyApiPact.cs" />
     <Compile Include="IntegrationTests\IntegrationTestsMyApiPact.cs" />
@@ -99,6 +101,11 @@
     <Compile Include="IntegrationTests\Specification\Models\ResponseTestCase.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Matchers\MatchTests.cs" />
+    <Compile Include="Matchers\Regex\RegexMatcherTests.cs" />
+    <Compile Include="Matchers\Type\MinTypeMatcherTests.cs" />
+    <Compile Include="Matchers\Type\TypeMatcherTests.cs" />
+    <Compile Include="Mocks\MockHttpService\Host\RubyHttpHostTests.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\HttpMethodMapperTests.cs" />
     <Compile Include="Mocks\MockHttpService\Models\ProviderServiceInteractionTests.cs" />
     <Compile Include="Mocks\MockHttpService\Models\ProviderServiceResponseTests.cs" />

@@ -1,4 +1,4 @@
-﻿namespace PactNet.Mocks.MockHttpService.Matchers
+﻿namespace PactNet.Matchers
 {
     public interface IMatcher
     {
