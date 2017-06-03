@@ -19,7 +19,7 @@ namespace PactNet.Tests.Core
         {
             var config = GetSubject();
 
-            Assert.Equal("C:\\src\\os\\concord\\PactNet\\Core\\pact-provider-verifier-win32\\bin\\pact-provider-verifier.bat", config.Path);
+            Assert.Equal(".\\pact-provider-verifier-win32\\bin\\pact-provider-verifier.bat", config.Path);
         }
 
         [Fact]

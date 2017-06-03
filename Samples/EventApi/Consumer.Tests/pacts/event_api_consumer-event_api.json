@@ -7,6 +7,60 @@
   },
   "interactions": [
     {
+      "description": "a request to retrieve all events with no authorization",
+      "providerState": "there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'",
+      "request": {
+        "method": "get",
+        "path": "/events",
+        "headers": {
+          "Accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 401,
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": {
+          "message": "Authorization has been denied for this request."
+        }
+      }
+    },
+    {
+      "description": "a request to get a new blob by id",
+      "request": {
+        "method": "get",
+        "path": "/blobs/38c3976b-5ae8-4f2f-a8ec-46f6aee826e2"
+      },
+      "response": {
+        "status": 201,
+        "headers": {
+          "Content-Type": "text/plain"
+        },
+        "body": "This is a test"
+      }
+    },
+    {
+      "description": "a request to create a new event",
+      "request": {
+        "method": "post",
+        "path": "/events",
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": {
+          "eventId": "1f587704-2dcc-4313-a233-7b62b4b469db",
+          "timestamp": "2011-07-01T01:41:03.0000000",
+          "eventType": "DetailsView"
+        }
+      },
+      "response": {
+        "status": 201,
+        "headers": {
+        }
+      }
+    },
+    {
       "description": "a request to retrieve events with type 'DetailsView'",
       "providerState": "there is one event with type 'DetailsView'",
       "request": {
@@ -28,6 +82,41 @@
             "eventType": "DetailsView"
           }
         ]
+      }
+    },
+    {
+      "description": "a request to retrieve event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
+      "providerState": "there is an event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
+      "request": {
+        "method": "get",
+        "path": "/events/83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
+        "headers": {
+          "Accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8",
+          "Server": "RubyServer"
+        },
+        "body": {
+          "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
+          "eventType": "DetailsView",
+          "timestamp": "2017-06-03T22:36:28.9380146Z"
+        },
+        "matchingRules": {
+          "$.headers.Server": {
+            "match": "type"
+          },
+          "$.body.eventType": {
+            "match": "type"
+          },
+          "$.body.timestamp": {
+            "match": "regex",
+            "regex": "^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|0[1-9]|[1-2][0-9])T(2[0-3]|[0-1][0-9]):([0-5][0-9]):([0-5][0-9])(\\.[0-9]+)?(Z|[+-](?:2[0-3]|[0-1][0-9]):[0-5][0-9])?$"
+          }
+        }
       }
     },
     {
@@ -55,26 +144,6 @@
       }
     },
     {
-      "description": "a request to retrieve all events with no authorization",
-      "providerState": "there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'",
-      "request": {
-        "method": "get",
-        "path": "/events",
-        "headers": {
-          "Accept": "application/json"
-        }
-      },
-      "response": {
-        "status": 401,
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": {
-          "message": "Authorization has been denied for this request."
-        }
-      }
-    },
-    {
       "description": "a request to check the api uptime",
       "request": {
         "method": "get",
@@ -90,27 +159,6 @@
         },
         "body": {
           "upSince": "2014-06-27T23:51:12Z"
-        }
-      }
-    },
-    {
-      "description": "a request to create a new event",
-      "request": {
-        "method": "post",
-        "path": "/events",
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": {
-          "eventId": "1f587704-2dcc-4313-a233-7b62b4b469db",
-          "timestamp": "2011-07-01T01:41:03.0000000",
-          "eventType": "DetailsView"
-        }
-      },
-      "response": {
-        "status": 201,
-        "headers": {
-
         }
       }
     },
@@ -147,55 +195,6 @@
             "eventType": "SearchView"
           }
         ]
-      }
-    },
-    {
-      "description": "a request to get a new blob by id",
-      "request": {
-        "method": "get",
-        "path": "/blobs/38c3976b-5ae8-4f2f-a8ec-46f6aee826e2"
-      },
-      "response": {
-        "status": 201,
-        "headers": {
-          "Content-Type": "text/plain"
-        },
-        "body": "This is a test"
-      }
-    },
-    {
-      "description": "a request to retrieve event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
-      "providerState": "there is an event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
-      "request": {
-        "method": "get",
-        "path": "/events/83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
-        "headers": {
-          "Accept": "application/json"
-        }
-      },
-      "response": {
-        "status": 200,
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8",
-          "Server": "RubyServer"
-        },
-        "body": {
-          "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
-          "eventType": "DetailsView",
-          "timestamp": "2017-06-01T12:20:40.1554882Z"
-        },
-        "matchingRules": {
-          "$.headers.Server": {
-            "match": "type"
-          },
-          "$.body.eventType": {
-            "match": "type"
-          },
-          "$.body.timestamp": {
-            "match": "regex",
-            "regex": "^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|0[1-9]|[1-2][0-9])T(2[0-3]|[0-1][0-9]):([0-5][0-9]):([0-5][0-9])(\\.[0-9]+)?(Z|[+-](?:2[0-3]|[0-1][0-9]):[0-5][0-9])?$"
-          }
-        }
       }
     }
   ],

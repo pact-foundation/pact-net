@@ -12,7 +12,7 @@ namespace PactNet.Core
         {
             var providerStateOption = providerStateSetupUri != null ? $" --provider-states-url {providerStateSetupUri.OriginalString} --provider-states-setup-url {providerStateSetupUri.OriginalString}" : "";
 
-            Path = "C:\\src\\os\\concord\\PactNet\\Core\\pact-provider-verifier-win32\\bin\\pact-provider-verifier.bat";
+            Path = ".\\pact-provider-verifier-win32\\bin\\pact-provider-verifier.bat";
             Arguments = $"--pact-urls \"{FixPathForRuby(pactUri)}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}";
             WaitForExit = true;
         }

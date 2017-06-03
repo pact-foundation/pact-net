@@ -13,7 +13,7 @@ namespace PactNet.Core
             var logFile = $"{config.LogDir}{providerName.ToLowerSnakeCase()}_mock_service.log";
             var sslOption = enableSsl ? " --ssl" : "";
 
-            Path = "C:\\src\\os\\concord\\PactNet\\Core\\pact-mock-service-win32\\bin\\pact-mock-service.bat";
+            Path = ".\\pact-mock-service-win32\\bin\\pact-mock-service.bat";
             Arguments = $"-p {port} -l \"{FixPathForRuby(logFile)}\" --pact-dir \"{FixPathForRuby(config.PactDir)}\" --pact-specification-version \"{config.SpecificationVersion}\"{sslOption}";
             WaitForExit = false;
         }

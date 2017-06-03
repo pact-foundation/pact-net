@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using Newtonsoft.Json;
+using static System.String;
 
 namespace Provider.Api.Web.Tests
 {
@@ -71,12 +72,15 @@ namespace Provider.Api.Web.Tests
 
                     var providerState = JsonConvert.DeserializeObject<ProviderState>(jsonRequestBody);
 
-                    if (providerState.Consumer == ConsumerName)
+                    //A null or empty provider state key must be handled
+                    if (providerState != null &&
+                        IsNullOrEmpty(providerState.State) && 
+                        providerState.Consumer == ConsumerName)
                     {
                         _providerStates[providerState.State].Invoke();
                     }
 
-                    await context.Response.WriteAsync(String.Empty);
+                    await context.Response.WriteAsync(Empty);
                 }
                 else
                 {

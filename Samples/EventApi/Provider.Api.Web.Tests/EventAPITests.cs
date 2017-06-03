@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.Owin.Hosting;
 using PactNet;
 using Xunit;
@@ -10,6 +11,11 @@ namespace Provider.Api.Web.Tests
         [Fact]
         public void EnsureEventApiHonoursPactWithConsumer()
         {
+            if (!File.Exists(".\\pact-provider-verifier-win32\\bin\\pact-provider-verifier.bat"))
+            {
+                throw new Exception("Please run '.\\Build\\Download-Standalone-Core.ps1' from the project root to download the standalone provider verifier, then 'Clean' and 'Rebuild' the solution.");
+            }
+
             //Arrange
             const string serviceUri = "http://localhost:9222";
             //var outputter = new CustomOutputter();

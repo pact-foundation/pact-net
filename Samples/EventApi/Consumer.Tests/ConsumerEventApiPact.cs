@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Configuration;
+using System.IO;
 using PactNet;
 using PactNet.Mocks.MockHttpService;
 
@@ -14,6 +16,11 @@ namespace Consumer.Tests
 
         public ConsumerEventApiPact()
         {
+            if (!File.Exists(".\\pact-mock-service-win32\\bin\\pact-mock-service.bat"))
+            {
+                throw new Exception("Please run '.\\Build\\Download-Standalone-Core.ps1' from the project root to download the standalone mock provider service.");
+            }
+
             PactBuilder = new PactBuilder(new PactConfig { SpecificationVersion = "2.0.0" })
                 .ServiceConsumer("Event API Consumer")
                 .HasPactWith("Event API");

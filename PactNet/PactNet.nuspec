@@ -29,6 +29,8 @@
     <file src="bin\Release\PactNet.pdb" target="lib\net40" />
     <file src="bin\Release\PactNet.dll.config" target="lib\net40" />
     <file src="bin\Release\PactNet.xml" target="lib\net40" />
+    <file src="Core\standalone\**" target="build\core" />
+    <file src="PactNet.targets" target="build" />
     <file src="readme.txt" target="" />
   </files>
 </package>

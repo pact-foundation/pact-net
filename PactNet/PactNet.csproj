@@ -136,6 +136,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="PactNet.nuspec" />
+    <None Include="PactNet.targets" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
