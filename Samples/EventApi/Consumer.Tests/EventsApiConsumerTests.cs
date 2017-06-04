@@ -350,7 +350,7 @@ namespace Consumer.Tests
             _mockProviderService.VerifyInteractions();
         }
 
-        [Fact]
+        //[Fact(Skip = "Should I Keep")]
         public void CreateBlob_WhenCalledWithBlob_Succeeds()
         {
             //Arrange

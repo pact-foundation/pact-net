@@ -74,7 +74,7 @@ namespace Provider.Api.Web.Tests
 
                     //A null or empty provider state key must be handled
                     if (providerState != null &&
-                        IsNullOrEmpty(providerState.State) && 
+                        !IsNullOrEmpty(providerState.State) && 
                         providerState.Consumer == ConsumerName)
                     {
                         _providerStates[providerState.State].Invoke();

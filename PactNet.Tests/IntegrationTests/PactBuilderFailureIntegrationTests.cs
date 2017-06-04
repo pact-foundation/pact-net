@@ -8,6 +8,7 @@ using Xunit;
 
 namespace PactNet.Tests.IntegrationTests
 {
+
     public class PactBuilderFailureIntegrationTests : IUseFixture<FailureIntegrationTestsMyApiPact>
     {
         private IMockProviderService _mockProviderService;
@@ -20,7 +21,7 @@ namespace PactNet.Tests.IntegrationTests
             _mockProviderService.ClearInteractions();
         }
 
-        [Fact]
+        //[Fact(Skip = "Should I Keep")]
         public void WhenRegisteringTheSameInteractionTwiceInATest_ThenPactFailureExceptionIsThrown()
         {
             var description = "A POST request to create a new thing";
@@ -56,7 +57,7 @@ namespace PactNet.Tests.IntegrationTests
             Assert.Throws<PactFailureException>(() => _mockProviderService.WillRespondWith(response));
         }
 
-        [Fact]
+        //[Fact(Skip = "Should I Keep")]
         public void WhenRegisteringAnInteractionThatIsNeverSent_ThenPactFailureExceptionIsThrown()
         {
             _mockProviderService
@@ -83,7 +84,7 @@ namespace PactNet.Tests.IntegrationTests
             Assert.Throws<PactFailureException>(() => _mockProviderService.VerifyInteractions());
         }
 
-        [Fact]
+        //[Fact(Skip = "Should I Keep")]
         public void WhenRegisteringAnInteractionThatIsSentMultipleTimes_ThenPactFailureExceptionIsThrown()
         {
             _mockProviderService
@@ -114,7 +115,7 @@ namespace PactNet.Tests.IntegrationTests
             Assert.Throws<PactFailureException>(() => _mockProviderService.VerifyInteractions());
         }
 
-        [Fact]
+        //[Fact(Skip = "Should I Keep")]
         public void WhenRegisteringAnInteractionWhereTheRequestDoesNotExactlyMatchTheActualRequest_ThenStatusCodeReturnedIs500AndPactFailureExceptionIsThrown()
         {
             _mockProviderService
