@@ -58,9 +58,8 @@ namespace PactNet.Mocks.MockHttpService.Models
 
             if (IsJsonContentType())
             {
-                string c = JsonConvert.SerializeObject(body, JsonConfig.ApiSerializerSettings);
-                Content = c;
-                Body = body;
+                Content = JsonConvert.SerializeObject(body, JsonConfig.ApiSerializerSettings);
+                Body = IsJsonObjectOrArray(Content) ? body : Content;
             }
             else if (IsBinaryContentType())
             {
@@ -90,21 +89,19 @@ namespace PactNet.Mocks.MockHttpService.Models
                 throw new ArgumentNullException(nameof(content));
             }
 
+            var stringContent = Encoding.GetString(content);
+            Content = stringContent;
+
             if (IsJsonContentType())
             {
-                var jsonContent = Encoding.GetString(content);
-                Content = jsonContent;
-                Body = JsonConvert.DeserializeObject<dynamic>(jsonContent);
+                Body = IsJsonObjectOrArray(stringContent) ? JsonConvert.DeserializeObject<dynamic>(stringContent) : stringContent;
             }
             else if (IsBinaryContentType())
             {
-                Content = Encoding.GetString(content);
                 Body = Convert.ToBase64String(content);
             }
             else
             {
-                var stringContent = Encoding.GetString(content);
-                Content = stringContent;
                 Body = stringContent;
             }
         }
@@ -119,6 +116,14 @@ namespace PactNet.Mocks.MockHttpService.Models
         {
             return ContentType.MediaType.IndexOf("application/", StringComparison.InvariantCultureIgnoreCase) == 0 &&
                 ContentType.MediaType.IndexOf("octet-stream", StringComparison.InvariantCultureIgnoreCase) > 0;
+        }
+
+        private bool IsJsonObjectOrArray(string stringContent)
+        {
+            var s = stringContent.Trim();
+
+            return (s.StartsWith("{", StringComparison.InvariantCultureIgnoreCase) && s.EndsWith("}", StringComparison.InvariantCultureIgnoreCase)) ||
+                (s.StartsWith("[", StringComparison.InvariantCultureIgnoreCase) && s.EndsWith("]", StringComparison.InvariantCultureIgnoreCase));
         }
     }
 }
