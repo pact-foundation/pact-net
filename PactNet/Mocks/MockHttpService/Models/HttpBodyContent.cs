@@ -59,7 +59,7 @@ namespace PactNet.Mocks.MockHttpService.Models
             if (IsJsonContentType())
             {
                 Content = JsonConvert.SerializeObject(body, JsonConfig.ApiSerializerSettings);
-                Body = IsJsonObjectOrArray(Content) ? body : Content;
+                Body = IsJsonString(Content) ? Content : body;
             }
             else if (IsBinaryContentType())
             {
@@ -94,7 +94,7 @@ namespace PactNet.Mocks.MockHttpService.Models
 
             if (IsJsonContentType())
             {
-                Body = IsJsonObjectOrArray(stringContent) ? JsonConvert.DeserializeObject<dynamic>(stringContent) : stringContent;
+                Body = IsJsonString(stringContent) ? stringContent : JsonConvert.DeserializeObject<dynamic>(stringContent);
             }
             else if (IsBinaryContentType())
             {
@@ -118,12 +118,13 @@ namespace PactNet.Mocks.MockHttpService.Models
                 ContentType.MediaType.IndexOf("octet-stream", StringComparison.InvariantCultureIgnoreCase) > 0;
         }
 
-        private bool IsJsonObjectOrArray(string stringContent)
+        private bool IsJsonString(string stringContent)
         {
-            var s = stringContent.Trim();
-
-            return (s.StartsWith("{", StringComparison.InvariantCultureIgnoreCase) && s.EndsWith("}", StringComparison.InvariantCultureIgnoreCase)) ||
-                (s.StartsWith("[", StringComparison.InvariantCultureIgnoreCase) && s.EndsWith("]", StringComparison.InvariantCultureIgnoreCase));
+            //Json string data types get serialized/deserialized differently than other non-string types,
+            //and so we have to make sure to preserve the extra double-quotes.
+            //Serialization Guide: http://www.newtonsoft.com/json/help/html/SerializationGuide.htm
+            return stringContent.StartsWith("\"", StringComparison.InvariantCultureIgnoreCase) &&
+                stringContent.EndsWith("\"", StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }
