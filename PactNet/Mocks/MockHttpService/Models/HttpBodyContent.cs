@@ -58,9 +58,8 @@ namespace PactNet.Mocks.MockHttpService.Models
 
             if (IsJsonContentType())
             {
-                string c = JsonConvert.SerializeObject(body, JsonConfig.ApiSerializerSettings);
-                Content = c;
-                Body = body;
+                Content = JsonConvert.SerializeObject(body, JsonConfig.ApiSerializerSettings);
+                Body = IsJsonString(Content) ? Content : body;
             }
             else if (IsBinaryContentType())
             {
@@ -90,21 +89,19 @@ namespace PactNet.Mocks.MockHttpService.Models
                 throw new ArgumentNullException(nameof(content));
             }
 
+            var stringContent = Encoding.GetString(content);
+            Content = stringContent;
+
             if (IsJsonContentType())
             {
-                var jsonContent = Encoding.GetString(content);
-                Content = jsonContent;
-                Body = JsonConvert.DeserializeObject<dynamic>(jsonContent);
+                Body = IsJsonString(stringContent) ? stringContent : JsonConvert.DeserializeObject<dynamic>(stringContent);
             }
             else if (IsBinaryContentType())
             {
-                Content = Encoding.GetString(content);
                 Body = Convert.ToBase64String(content);
             }
             else
             {
-                var stringContent = Encoding.GetString(content);
-                Content = stringContent;
                 Body = stringContent;
             }
         }
@@ -119,6 +116,15 @@ namespace PactNet.Mocks.MockHttpService.Models
         {
             return ContentType.MediaType.IndexOf("application/", StringComparison.InvariantCultureIgnoreCase) == 0 &&
                 ContentType.MediaType.IndexOf("octet-stream", StringComparison.InvariantCultureIgnoreCase) > 0;
+        }
+
+        private bool IsJsonString(string stringContent)
+        {
+            //Json string data types get serialized/deserialized differently than other non-string types,
+            //and so we have to make sure to preserve the extra double-quotes.
+            //Serialization Guide: http://www.newtonsoft.com/json/help/html/SerializationGuide.htm
+            return stringContent.StartsWith("\"", StringComparison.InvariantCultureIgnoreCase) &&
+                stringContent.EndsWith("\"", StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }
