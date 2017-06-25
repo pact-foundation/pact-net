@@ -27,11 +27,18 @@ namespace PactNet.Mocks.MockHttpService.Host
 
         private bool IsMockProviderServiceRunning()
         {
-            var aliveRequest = new HttpRequestMessage(HttpMethod.Get, "/");
-            aliveRequest.Headers.Add(Constants.AdministrativeRequestHeaderKey, "true");
+            try
+            {
+                var aliveRequest = new HttpRequestMessage(HttpMethod.Get, "/");
+                aliveRequest.Headers.Add(Constants.AdministrativeRequestHeaderKey, "true");
 
-            var responseMessage = _httpClient.SendAsync(aliveRequest).Result;
-            return responseMessage.IsSuccessStatusCode;
+                var responseMessage = _httpClient.SendAsync(aliveRequest).Result;
+                return responseMessage.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public void Start()
