@@ -1,6 +1,7 @@
 - Update base target to be net45
 - Decide what to do with the test I have Ignored
 - Update readme to take into account the changes
+	- Add note about ruby regex
 - Run the mock provider service as a non admin (work out if it's possible)
 - Decide if we want to log the provider verification output
 	- How does the ruby output look with xUnit 2.0?

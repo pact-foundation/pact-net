@@ -16,7 +16,7 @@ namespace Consumer.Tests
 
         public ConsumerEventApiPact()
         {
-            if (!File.Exists(".\\pact-mock-service-win32\\bin\\pact-mock-service.bat"))
+            if (!File.Exists(".\\pact\\bin\\pact-mock-service.bat"))
             {
                 throw new Exception("Please run '.\\Build\\Download-Standalone-Core.ps1' from the project root to download the standalone mock provider service.");
             }

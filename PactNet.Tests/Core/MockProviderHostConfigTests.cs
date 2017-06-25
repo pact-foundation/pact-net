@@ -16,7 +16,7 @@ namespace PactNet.Tests.Core
         {
             var config = GetSubject();
 
-            Assert.Equal(".\\pact-mock-service-win32\\bin\\pact-mock-service.bat", config.Path);
+            Assert.Equal(".\\pact\\bin\\pact-mock-service.bat", config.Path);
         }
 
         [Fact]
