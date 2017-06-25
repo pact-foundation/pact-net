@@ -53,10 +53,6 @@
       <HintPath>..\packages\Microsoft.Bcl.1.1.9\lib\net40\System.IO.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.IO.Abstractions, Version=1.4.0.86, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\System.IO.Abstractions.1.4.0.86\lib\net35\System.IO.Abstractions.dll</HintPath>
-    </Reference>
     <Reference Include="System.Management" />
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http, Version=2.2.28.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -84,19 +80,15 @@
   <ItemGroup>
     <Compile Include="Configuration\Json\Converters\CamelCaseStringEnumConverter.cs" />
     <Compile Include="Configuration\Json\Converters\PreserveCasingDictionaryConverter.cs" />
+    <Compile Include="Infrastructure\Output\ConsoleOutput.cs" />
     <Compile Include="Core\IPactCoreHostConfig.cs" />
     <Compile Include="Core\IPactCoreHost.cs" />
     <Compile Include="Core\MockProviderHostConfig.cs" />
     <Compile Include="Core\PactCoreHost.cs" />
     <Compile Include="Core\PactVerifierHostConfig.cs" />
     <Compile Include="Extensions\TaskExtensions.cs" />
-    <Compile Include="Infrastructure\Logging\ILocalLogMessageHandler.cs" />
-    <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
-    <Compile Include="Infrastructure\Logging\LocalLogger.cs" />
-    <Compile Include="Infrastructure\Logging\LocalLogMessage.cs" />
-    <Compile Include="Infrastructure\Logging\LocalLogProvider.cs" />
-    <Compile Include="Infrastructure\Logging\LocalRollingLogFileMessageHandler.cs" />
     <Compile Include="Configuration\Json\JsonConfig.cs" />
+    <Compile Include="Infrastructure\Output\IOutput.cs" />
     <Compile Include="Matchers\IMatcher.cs" />
     <Compile Include="Matchers\Match.cs" />
     <Compile Include="Matchers\Regex\RegexMatcher.cs" />

@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using PactNet.Extensions;
+using PactNet.Infrastructure.Output;
 
 namespace PactNet.Core
 {
@@ -7,6 +9,7 @@ namespace PactNet.Core
         public string Path { get; }
         public string Arguments { get; }
         public bool WaitForExit { get; }
+        public IEnumerable<IOutput> Outputters { get; }
 
         public MockProviderHostConfig(int port, bool enableSsl, string providerName, PactConfig config)
         {
@@ -16,6 +19,7 @@ namespace PactNet.Core
             Path = ".\\pact\\bin\\pact-mock-service.bat";
             Arguments = $"-p {port} -l \"{FixPathForRuby(logFile)}\" --pact-dir \"{FixPathForRuby(config.PactDir)}\" --pact-specification-version \"{config.SpecificationVersion}\"{sslOption}";
             WaitForExit = false;
+            Outputters = config?.Outputters;
         }
 
         private string FixPathForRuby(string path)

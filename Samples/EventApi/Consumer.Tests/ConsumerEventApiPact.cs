@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using System.IO;
 using PactNet;
 using PactNet.Mocks.MockHttpService;
@@ -13,6 +12,7 @@ namespace Consumer.Tests
 
         public int MockServerPort => 9222;
         public string MockProviderServiceBaseUri => $"http://localhost:{MockServerPort}";
+        public PactConfig Config { get; }
 
         public ConsumerEventApiPact()
         {

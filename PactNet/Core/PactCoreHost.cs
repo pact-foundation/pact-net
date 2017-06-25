@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Management;
 using System.Text.RegularExpressions;
 
@@ -14,8 +15,6 @@ namespace PactNet.Core
         {
             _config = config;
 
-            //TODO: Make this work in a cross platform way
-            //TODO: Nuget to download this core stuff
             //TODO: Add support for supplying your own ssl cert
 
             _process = new Process
@@ -35,18 +34,24 @@ namespace PactNet.Core
             AppDomain.CurrentDomain.DomainUnload += CurrentDomainDomainUnload;
         }
 
-        private void WriteLineToConsole(string data)
+        private void WriteLineToOutput(string data)
         {
             if (data != null)
             {
-                Console.WriteLine(Regex.Replace(data, @"\e\[(\d+;)*(\d+)?[ABCDHJKfmsu]", ""));
+                if (_config.Outputters != null && _config.Outputters.Any())
+                {
+                    foreach (var output in _config.Outputters)
+                    {
+                        output.WriteLine(Regex.Replace(data, @"\e\[(\d+;)*(\d+)?[ABCDHJKfmsu]", ""));
+                    }
+                }
             }
         }
 
         public void Start()
         {
-            _process.OutputDataReceived += (sender, args) => WriteLineToConsole(args.Data);
-            _process.ErrorDataReceived += (sender, args) => WriteLineToConsole(args.Data);
+            _process.OutputDataReceived += (sender, args) => WriteLineToOutput(args.Data);
+            _process.ErrorDataReceived += (sender, args) => WriteLineToOutput(args.Data);
 
             _process.Start();
 
@@ -59,7 +64,7 @@ namespace PactNet.Core
 
                 if (_process.ExitCode != 0)
                 {
-                    throw new PactFailureException("Non zero exit code"); //TODO: Give this a better message
+                    throw new PactFailureException("Pact verification failed. See output for details. \nIf the output is empty please provide a custom config.Outputters (IOutput) for your test framework, as we couldn't write to the console.");
                 }
             }
         }

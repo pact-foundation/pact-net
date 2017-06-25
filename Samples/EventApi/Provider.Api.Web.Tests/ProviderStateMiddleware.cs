@@ -82,15 +82,6 @@ namespace Provider.Api.Web.Tests
 
                     await context.Response.WriteAsync(Empty);
                 }
-                else
-                {
-                    var res = new Dictionary<string, IEnumerable<string>>
-                    {
-                        { ConsumerName, _providerStates.Keys.AsEnumerable() }
-                    };
-
-                    await context.Response.WriteAsync(JsonConvert.SerializeObject(res));
-                }
             }
             else
             {

@@ -6,7 +6,7 @@ namespace PactNet
 {
     public class PactVerifier : IPactVerifier
     {
-        private readonly PactVerifierConfig _config; //TODO: Do we need the config? Should we write the output to file?
+        private readonly PactVerifierConfig _config;
         private readonly Func<PactVerifierHostConfig, IPactCoreHost> _pactVerifierHostFactory;
 
         public Uri ProviderStateSetupUri { get; private set; }
@@ -109,7 +109,7 @@ namespace PactNet
             }
 
             var pactVerifier = _pactVerifierHostFactory(
-                new PactVerifierHostConfig(ServiceBaseUri, PactFileUri, ProviderStateSetupUri));
+                new PactVerifierHostConfig(ServiceBaseUri, PactFileUri, ProviderStateSetupUri, _config));
             pactVerifier.Start();
         }
     }

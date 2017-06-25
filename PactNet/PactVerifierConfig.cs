@@ -1,22 +1,18 @@
+using System.Collections.Generic;
+using PactNet.Infrastructure.Output;
+
 namespace PactNet
 {
     public class PactVerifierConfig
     {
-        public string LogDir { get; set; }
-
-        //TODO: Do we still want do have this?
-        //public IList<IReportOutputter> ReportOutputters { get; private set; }
-
-        internal string LoggerName;
+        public IEnumerable<IOutput> Outputters { get; set; }
 
         public PactVerifierConfig()
         {
-            LogDir = Constants.DefaultLogDir;
-            /*ReportOutputters = new List<IReportOutputter>
+            Outputters = new List<IOutput>
             {
-                new ConsoleReportOutputter(),
-                new FileReportOutputter(() => LoggerName)
-            };*/
+                new ConsoleOutput()
+            };
         }
     }
 }

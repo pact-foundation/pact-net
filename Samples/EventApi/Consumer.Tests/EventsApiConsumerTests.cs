@@ -10,12 +10,12 @@ using Xunit;
 
 namespace Consumer.Tests
 {
-    public class EventsApiConsumerTests : IUseFixture<ConsumerEventApiPact>
+    public class EventsApiConsumerTests : IClassFixture<ConsumerEventApiPact>
     {
-        private IMockProviderService _mockProviderService;
-        private string _mockProviderServiceBaseUri;
-            
-        public void SetFixture(ConsumerEventApiPact data)
+        private readonly IMockProviderService _mockProviderService;
+        private readonly string _mockProviderServiceBaseUri;
+
+        public EventsApiConsumerTests(ConsumerEventApiPact data)
         {
             _mockProviderService = data.MockProviderService;
             _mockProviderServiceBaseUri = data.MockProviderServiceBaseUri;
@@ -34,7 +34,7 @@ namespace Consumer.Tests
                     Path = "/events",
                     Headers = new Dictionary<string, object>
                     {
-                        { "Accept", "application/json" }
+                        { "Accept", "application/json" },
                     }
                 })
                 .WillRespondWith(new ProviderServiceResponse

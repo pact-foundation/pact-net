@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PactNet
+﻿namespace PactNet
 {
     public interface IPactVerifier
     {

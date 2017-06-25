@@ -1,17 +1,23 @@
 - Update base target to be net45
+
 - Decide what to do with the test I have Ignored
+
 - Update readme to take into account the changes
 	- Add note about ruby regex
-- Run the mock provider service as a non admin (work out if it's possible)
+	- Document self signed cert and how to tell the HttpClient to ignore validation isuses (ServicePointManager.ServerCertificateValidationCallback +=
+    (sender, cert, chain, sslPolicyErrors) => true;)
+	
 - Decide if we want to log the provider verification output
 	- How does the ruby output look with xUnit 2.0?
-	- Depending on the outcome delete or refactor logging code and associated dependencies
-- Add support for .NET core
-	- Remove System.IO.Abstractions
-	- Add support for other platforms other than windows
-- Add support for user provided SSL cert pem files(https://gist.github.com/mefellows/1d9d6e76412b9326b4f96dfe7ee7e3c8)
-- Document self signed cert and how to tell the HttpClient to ignore validation isuses (ServicePointManager.ServerCertificateValidationCallback +=
-    (sender, cert, chain, sslPolicyErrors) => true;)
+	
+- Go through TODO comments in code and make sure they are actioned
+
+- Add support for a non json object/array
+
+
+
 - Should we package the standalone core into the nuget package on download on package install/init?
 	- How does this work cross platform?
-- Go through TODO comments in code and make sure they are actioned
+- Add support for user provided SSL cert pem files(https://gist.github.com/mefellows/1d9d6e76412b9326b4f96dfe7ee7e3c8)
+- Add support for .NET core
+	- Add support for other platforms other than windows

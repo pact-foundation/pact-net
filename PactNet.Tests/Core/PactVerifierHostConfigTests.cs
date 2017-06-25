@@ -6,12 +6,13 @@ namespace PactNet.Tests.Core
 {
     public class PactVerifierHostConfigTests
     {
-        private IPactCoreHostConfig GetSubject(Uri baseUri = null, string pactUri = "../test/pact.json", Uri providerStateSetupUri = null)
+        private IPactCoreHostConfig GetSubject(Uri baseUri = null, string pactUri = "../test/pact.json", Uri providerStateSetupUri = null, PactVerifierConfig verifierConfig = null)
         {
             return new PactVerifierHostConfig(
                 baseUri ?? new Uri("http://localhost:2833"), 
                 pactUri,
-                providerStateSetupUri);
+                providerStateSetupUri,
+                verifierConfig);
         }
 
         [Fact]
@@ -69,6 +70,23 @@ namespace PactNet.Tests.Core
             var config = GetSubject();
 
             Assert.Equal(true, config.WaitForExit);
+        }
+
+        [Fact]
+        public void Ctor_WhenCalled_SetsOutputters()
+        {
+            var verifierConfig = new PactVerifierConfig();
+            var config = GetSubject(verifierConfig: verifierConfig);
+
+            Assert.Equal(verifierConfig.Outputters, config.Outputters);
+        }
+
+        [Fact]
+        public void Ctor_WhenVerifierConfigIsNull_SetsOutputtersToNull()
+        {
+            var config = GetSubject();
+
+            Assert.Equal(null, config.Outputters);
         }
 
         private string BuildExpectedArguments(

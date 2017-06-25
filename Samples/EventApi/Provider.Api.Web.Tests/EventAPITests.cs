@@ -1,13 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.Owin.Hosting;
 using PactNet;
+using PactNet.Infrastructure.Output;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Provider.Api.Web.Tests
 {
     public class EventApiTests : IDisposable
     {
+        private readonly ITestOutputHelper _output;
+
+        public EventApiTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Fact]
         public void EnsureEventApiHonoursPactWithConsumer()
         {
@@ -18,11 +28,13 @@ namespace Provider.Api.Web.Tests
 
             //Arrange
             const string serviceUri = "http://localhost:9222";
-            //var outputter = new CustomOutputter();
-            var config = new PactVerifierConfig();
-
-            //TODO: What do we want to do about this
-            //config.ReportOutputters.Add(outputter);
+            var config = new PactVerifierConfig
+            {
+                Outputters = new List<IOutput>
+                {
+                    new XUnitOutput(_output)
+                }
+            };
             
             using (WebApp.Start<TestStartup>(serviceUri))
             {
@@ -34,24 +46,11 @@ namespace Provider.Api.Web.Tests
                     .HonoursPactWith("Event API Consumer")
                     .PactUri("..\\..\\..\\Consumer.Tests\\pacts\\event_api_consumer-event_api.json") //TODO: What to do when we want to talk to multiple brokers
                     .Verify();
-
-                // Verify that verifaction log is also sent to additional reporters defined in the config
-                //Assert.Contains("Verifying a Pact between Consumer and Event API", outputter.Output);
             }
         }
 
         public virtual void Dispose()
         {
         }
-
-        /*private class CustomOutputter : IReportOutputter
-        {
-            public string Output { get; private set; }
-
-            public void Write(string report)
-            {
-                Output += report;
-            }
-        }*/
     }
 }

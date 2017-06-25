@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using PactNet.Infrastructure.Output;
+
 namespace PactNet
 {
     public class PactConfig
@@ -18,6 +21,8 @@ namespace PactNet
 
         public string SpecificationVersion { get; set; } //TODO: Maybe this is better as an enum?
 
+        public IEnumerable<IOutput> Outputters { get; set; }
+
         internal string LoggerName;
 
         public PactConfig()
@@ -25,6 +30,12 @@ namespace PactNet
             PactDir = Constants.DefaultPactDir;
             LogDir = Constants.DefaultLogDir;
             SpecificationVersion = "1.1.0";
+
+            //The output can be directed elsewhere, however there isn't really anything interesting being written here.
+            Outputters = new List<IOutput>
+            {
+                new ConsoleOutput()
+            };
         }
 
         private static string ConvertToDirectory(string path)
