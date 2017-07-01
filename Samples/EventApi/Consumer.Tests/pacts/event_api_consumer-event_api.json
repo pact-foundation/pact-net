@@ -31,20 +31,6 @@
       }
     },
     {
-      "description": "a request to get a new blob by id",
-      "request": {
-        "method": "get",
-        "path": "/blobs/38c3976b-5ae8-4f2f-a8ec-46f6aee826e2"
-      },
-      "response": {
-        "status": 201,
-        "headers": {
-          "Content-Type": "text/plain"
-        },
-        "body": "This is a test"
-      }
-    },
-    {
       "description": "a request to check the api uptime",
       "request": {
         "method": "get",
@@ -82,7 +68,7 @@
         "body": {
           "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
           "eventType": "DetailsView",
-          "timestamp": "2017-07-01T07:19:11.6392230Z"
+          "timestamp": "2017-07-01T07:39:41.1067400Z"
         },
         "matchingRules": {
           "$.headers.Server": {

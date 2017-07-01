@@ -21,43 +21,7 @@ namespace PactNet.Tests.IntegrationTests
             _mockProviderService.ClearInteractions();
         }
 
-        //[Fact(Skip = "Should I Keep")]
-        public void WhenRegisteringTheSameInteractionTwiceInATest_ThenPactFailureExceptionIsThrown()
-        {
-            var description = "A POST request to create a new thing";
-            var request = new ProviderServiceRequest
-            {
-                Method = HttpVerb.Post,
-                Path = "/things",
-                Headers = new Dictionary<string, object>
-                {
-                    { "Content-Type", "application/json; charset=utf-8" }
-                },
-                Body = new
-                {
-                    thingId = 1234,
-                    type = "Awesome"
-                }
-            };
-
-            var response = new ProviderServiceResponse
-            {
-                Status = 201
-            };
-
-            _mockProviderService
-                .UponReceiving(description)
-                .With(request)
-                .WillRespondWith(response);
-
-            _mockProviderService
-                .UponReceiving(description)
-                .With(request);
-                
-            Assert.Throws<PactFailureException>(() => _mockProviderService.WillRespondWith(response));
-        }
-
-        //[Fact(Skip = "Should I Keep")]
+        [Fact]
         public void WhenRegisteringAnInteractionThatIsNeverSent_ThenPactFailureExceptionIsThrown()
         {
             _mockProviderService
@@ -84,8 +48,8 @@ namespace PactNet.Tests.IntegrationTests
             Assert.Throws<PactFailureException>(() => _mockProviderService.VerifyInteractions());
         }
 
-        //[Fact(Skip = "Should I Keep")]
-        public void WhenRegisteringAnInteractionThatIsSentMultipleTimes_ThenPactFailureExceptionIsThrown()
+        [Fact]
+        public void WhenRegisteringAnInteractionThatIsSentMultipleTimes_ThenNoExceptionIsThrown()
         {
             _mockProviderService
                 .UponReceiving("A GET request to retrieve a thing")
@@ -112,10 +76,10 @@ namespace PactNet.Tests.IntegrationTests
                 throw new Exception(String.Format("Wrong status code '{0} and {1}' was returned", response1.StatusCode, response2.StatusCode));
             }
 
-            Assert.Throws<PactFailureException>(() => _mockProviderService.VerifyInteractions());
+            _mockProviderService.VerifyInteractions();
         }
 
-        //[Fact(Skip = "Should I Keep")]
+        [Fact]
         public void WhenRegisteringAnInteractionWhereTheRequestDoesNotExactlyMatchTheActualRequest_ThenStatusCodeReturnedIs500AndPactFailureExceptionIsThrown()
         {
             _mockProviderService

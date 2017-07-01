@@ -16,7 +16,7 @@ namespace PactNet.Tests.IntegrationTests
             _mockProviderService.ClearInteractions();
         }
 
-        //[Fact(Skip = "Should I Keep")]
+        [Fact]
         public void WhenNotRegisteringAnyInteractions_VerificationSucceeds()
         {
             _mockProviderService.VerifyInteractions();

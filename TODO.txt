@@ -1,13 +1,9 @@
 - Update base target to be net45
 
-- Decide what to do with the test I have Ignored
-
 - Update readme to take into account the changes
 	- Add note about ruby regex
 	- Document self signed cert and how to tell the HttpClient to ignore validation isuses (ServicePointManager.ServerCertificateValidationCallback +=
     (sender, cert, chain, sslPolicyErrors) => true;)
-	
-- Go through TODO comments in code and make sure they are actioned
 
 - Should we package the standalone core into the nuget package on download on package install/init?
 	- How does this work cross platform?
