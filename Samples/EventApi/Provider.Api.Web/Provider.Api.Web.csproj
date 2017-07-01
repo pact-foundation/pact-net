@@ -118,6 +118,7 @@
   <ItemGroup>
     <Compile Include="Controllers\BlobsController.cs" />
     <Compile Include="Controllers\EventsController.cs" />
+    <Compile Include="Controllers\VersionController.cs" />
     <Compile Include="Models\Event.cs" />
     <Compile Include="Models\HypermediaLink.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

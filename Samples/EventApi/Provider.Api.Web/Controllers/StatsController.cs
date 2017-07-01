@@ -8,7 +8,7 @@ namespace Provider.Api.Web.Controllers
     public class StatsController : ApiController
     {
         [Route("stats/status")]
-        public dynamic GetAlive()
+        public dynamic GetStatus()
         {
             return new
             {
@@ -16,7 +16,8 @@ namespace Provider.Api.Web.Controllers
                 _links = new Dictionary<string, HypermediaLink>
                 {
                     { "self", new HypermediaLink("/stats/status") },
-                    { "uptime", new HypermediaLink("/stats/uptime") }
+                    { "uptime", new HypermediaLink("/stats/uptime") },
+                    { "version", new HypermediaLink("/stats/version") }
                 }
             };
         }

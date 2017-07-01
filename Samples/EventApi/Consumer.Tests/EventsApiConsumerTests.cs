@@ -200,6 +200,36 @@ namespace Consumer.Tests
         }
 
         [Fact]
+        public void Version_WhenVersionIsCalled_ReturnsVersionNumber()
+        {
+            //Arrange
+            const string version = "1.0.22";
+            _mockProviderService.UponReceiving("a request to check the api version")
+                .With(new ProviderServiceRequest
+                {
+                    Method = HttpVerb.Get,
+                    Headers = new Dictionary<string, object> { { "Accept", "application/json" } },
+                    Path = "/version"
+                })
+                .WillRespondWith(new ProviderServiceResponse
+                {
+                    Status = 200,
+                    Headers = new Dictionary<string, object> { { "Content-Type", "application/json; charset=utf-8" } },
+                    Body = version
+                });
+
+            var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
+
+            //Act
+            var result = consumer.Version();
+
+            //Assert
+            Assert.Equal(version, result);
+
+            _mockProviderService.VerifyInteractions();
+        }
+
+        [Fact]
         public void UpSince_WhenApiIsAliveAndWeRetrieveUptime_ReturnsUpSinceDate()
         {
             //Arrange

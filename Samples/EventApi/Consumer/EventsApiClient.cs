@@ -299,5 +299,30 @@ namespace Consumer
 
             return null;
         }
+
+        public string Version()
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "/version");
+            request.Headers.Add("Accept", "application/json");
+
+            var response = _httpClient.SendAsync(request);
+
+            try
+            {
+                var result = response.Result;
+                if (result.StatusCode == HttpStatusCode.OK)
+                {
+                    return result.Content.ReadAsStringAsync().Result;
+                }
+
+                RaiseResponseError(request, result);
+            }
+            finally
+            {
+                Dispose(request, response);
+            }
+
+            return null;
+        }
     }
 }
