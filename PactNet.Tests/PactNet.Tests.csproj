@@ -86,18 +86,6 @@
     <Compile Include="IntegrationTests\IntegrationTestsMyApiPact.cs" />
     <Compile Include="IntegrationTests\PactBuilderFailureIntegrationTests.cs" />
     <Compile Include="IntegrationTests\PactBuilderIntegrationTests.cs" />
-    <Compile Include="IntegrationTests\Specification\MockHttpServiceSpecificationTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="IntegrationTests\Specification\Models\IVerifiable.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="IntegrationTests\Specification\Models\RequestTestCase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="IntegrationTests\Specification\Models\ResponseTestCase.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Matchers\MatchTests.cs" />
     <Compile Include="Matchers\Regex\RegexMatcherTests.cs" />
     <Compile Include="Matchers\Type\MinTypeMatcherTests.cs" />
