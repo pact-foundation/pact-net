@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\MockProviderHostConfigTests.cs" />
+    <Compile Include="Core\PactCoreHostTests.cs" />
     <Compile Include="Core\PactVerifierHostConfigTests.cs" />
     <Compile Include="Fakes\FakeHttpMessageHandler.cs" />
     <Compile Include="IntegrationTests\FailureIntegrationTestsMyApiPact.cs" />
@@ -125,6 +126,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Core\PactCoreHostOutput.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

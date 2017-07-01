@@ -41,7 +41,7 @@ namespace PactNet
             return this;
         }
 
-        public IPactVerifier ServiceProvider(string providerName, string baseUri) //TODO: Should the providerStatesUri get defined here or on the ?
+        public IPactVerifier ServiceProvider(string providerName, string baseUri)
         {
             if (IsNullOrEmpty(providerName))
             {

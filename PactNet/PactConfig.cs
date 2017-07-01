@@ -19,7 +19,7 @@ namespace PactNet
             set { _logDir = ConvertToDirectory(value); }
         }
 
-        public string SpecificationVersion { get; set; } //TODO: Maybe this is better as an enum?
+        public string SpecificationVersion { get; set; }
 
         public IEnumerable<IOutput> Outputters { get; set; }
 
