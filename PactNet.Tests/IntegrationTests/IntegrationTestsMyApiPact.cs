@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Net.Http;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Host;
-using PactNet.Mocks.MockHttpService.Mappers;
 
 namespace PactNet.Tests.IntegrationTests
 {
@@ -22,8 +20,7 @@ namespace PactNet.Tests.IntegrationTests
                     new MockProviderService(
                         baseUri => new RubyHttpHost(baseUri, "MyApi", pactConfig),
                         port, enableSsl,
-                        baseUri => new HttpClient { BaseAddress = baseUri },
-                        new HttpMethodMapper()))
+                        baseUri => new AdminHttpClient(baseUri)))
                 .ServiceConsumer("IntegrationTests")
                 .HasPactWith("MyApi");
 

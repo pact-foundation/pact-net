@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using NSubstitute;
 using PactNet.Core;
+using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Host;
 using PactNet.Tests.Fakes;
 using Xunit;
@@ -26,7 +27,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Host
 
             return new RubyHttpHost(
                 _mockCoreHost, 
-                new HttpClient(_fakeHttpMessageHandler) { BaseAddress = baseUri });
+                new AdminHttpClient(baseUri, _fakeHttpMessageHandler));
         }
     
         [Fact]

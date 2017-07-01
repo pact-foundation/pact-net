@@ -7,14 +7,7 @@
 	- Document self signed cert and how to tell the HttpClient to ignore validation isuses (ServicePointManager.ServerCertificateValidationCallback +=
     (sender, cert, chain, sslPolicyErrors) => true;)
 	
-- Decide if we want to log the provider verification output
-	- How does the ruby output look with xUnit 2.0?
-	
 - Go through TODO comments in code and make sure they are actioned
-
-- Add support for a non json object/array
-
-
 
 - Should we package the standalone core into the nuget package on download on package install/init?
 	- How does this work cross platform?

@@ -1,15 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading;
-using Newtonsoft.Json;
-using PactNet.Configuration.Json;
-using PactNet.Extensions;
 using PactNet.Mocks.MockHttpService.Host;
-using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 using static System.String;
 
@@ -19,8 +11,7 @@ namespace PactNet.Mocks.MockHttpService
     {
         private readonly Func<Uri, IHttpHost> _hostFactory;
         private IHttpHost _host;
-        private readonly HttpClient _httpClient;
-        private readonly IHttpMethodMapper _httpMethodMapper;
+        private readonly AdminHttpClient _adminHttpClient;
 
         private string _providerState;
         private string _description;
@@ -28,18 +19,16 @@ namespace PactNet.Mocks.MockHttpService
         private ProviderServiceResponse _response;
 
         public Uri BaseUri { get; }
-
+        
         internal MockProviderService(
             Func<Uri, IHttpHost> hostFactory,
             int port,
             bool enableSsl,
-            Func<Uri, HttpClient> httpClientFactory,
-            IHttpMethodMapper httpMethodMapper)
+            Func<Uri, AdminHttpClient> adminHttpClientFactory)
         {
             _hostFactory = hostFactory;
             BaseUri = new Uri($"{(enableSsl ? "https" : "http")}://localhost:{port}");
-            _httpClient = httpClientFactory(BaseUri);
-            _httpMethodMapper = httpMethodMapper;
+            _adminHttpClient = adminHttpClientFactory(BaseUri);
         }
 
         public MockProviderService(int port, bool enableSsl, string providerName, PactConfig config)
@@ -47,8 +36,7 @@ namespace PactNet.Mocks.MockHttpService
             baseUri => new RubyHttpHost(baseUri, providerName, config),
             port,
             enableSsl,
-            baseUri => new HttpClient { BaseAddress = baseUri },
-            new HttpMethodMapper())
+            baseUri => new AdminHttpClient(baseUri))
         {
         }
 
@@ -122,7 +110,13 @@ namespace PactNet.Mocks.MockHttpService
 
         public void VerifyInteractions()
         {
-            SendAdminHttpRequest(HttpVerb.Get, Constants.InteractionsVerificationPath);
+            var testContext = BuildTestContext();
+            _adminHttpClient.SendAdminHttpRequest(HttpVerb.Get, Constants.InteractionsVerificationPath + $"?example_description={testContext}");
+        }
+
+        public void SendAdminHttpRequest<T>(HttpVerb method, string path, T requestContent, IDictionary<string, string> headers = null) where T : class
+        {
+            _adminHttpClient.SendAdminHttpRequest(method, path, requestContent, headers);
         }
 
         public void Start()
@@ -142,50 +136,8 @@ namespace PactNet.Mocks.MockHttpService
         {
             if (_host != null)
             {
-                SendAdminHttpRequest(HttpVerb.Delete, Constants.InteractionsPath);
-            }
-        }
-
-        public void SendAdminHttpRequest<T>(HttpVerb method, string path, T requestContent, IDictionary<string, string> headers = null) where T : class
-        {
-            if (_host == null)
-            {
-                throw new InvalidOperationException("Unable to perform operation because the mock provider service is not running.");
-            }
-
-            var responseContent = Empty;
-
-            var request = new HttpRequestMessage(_httpMethodMapper.Convert(method), path);
-            request.Headers.Add(Constants.AdministrativeRequestHeaderKey, "true");
-
-            if (headers != null)
-            {
-                foreach (var header in headers)
-                {
-                    request.Headers.Add(header.Key, header.Value);
-                }
-            }
-
-            if (requestContent != null)
-            {
-                var requestContentJson = JsonConvert.SerializeObject(requestContent, JsonConfig.ApiSerializerSettings);
-                request.Content = new StringContent(requestContentJson, Encoding.UTF8, "application/json");
-            }
-
-            var response = _httpClient.SendAsync(request, CancellationToken.None).RunSync();
-            var responseStatusCode = response.StatusCode;
-
-            if (response.Content != null)
-            {
-                responseContent = response.Content.ReadAsStringAsync().RunSync();
-            }
-
-            Dispose(request);
-            Dispose(response);
-
-            if (responseStatusCode != HttpStatusCode.OK)
-            {
-                throw new PactFailureException(responseContent);
+                var testContext = BuildTestContext();
+                _adminHttpClient.SendAdminHttpRequest(HttpVerb.Delete, Constants.InteractionsPath + $"?example_description={testContext}");
             }
         }
 
@@ -214,15 +166,11 @@ namespace PactNet.Mocks.MockHttpService
                 Response = _response
             };
 
-            var testContext = BuildTestContext();
-
-            //TODO: Get test context working properly
-            SendAdminHttpRequest(HttpVerb.Post, Constants.InteractionsPath, interaction, new Dictionary<string, string> { { Constants.AdministrativeRequestTestContextHeaderKey, testContext } });
+            _adminHttpClient.SendAdminHttpRequest(HttpVerb.Post, Constants.InteractionsPath, interaction);
 
             ClearTrasientState();
         }
 
-        //TODO: Need to make this work correctly in the logs
         private static string BuildTestContext()
         {
             var stack = new StackTrace(true);
@@ -251,11 +199,6 @@ namespace PactNet.Mocks.MockHttpService
             }
 
             return Join(" ", relevantStackFrameSummaries);
-        }
-
-        private void SendAdminHttpRequest(HttpVerb method, string path)
-        {
-            SendAdminHttpRequest<object>(method, path, null);
         }
 
         private void StopRunningHost()
@@ -296,14 +239,6 @@ namespace PactNet.Mocks.MockHttpService
             }
 
             return headers != null && headers.ContainsKey("Content-Type");
-        }
-
-        private void Dispose(IDisposable disposable)
-        {
-            if (disposable != null)
-            {
-                disposable.Dispose();
-            }
         }
     }
 }

@@ -44,7 +44,7 @@ namespace Provider.Api.Web.Tests
                     .ProviderState($"{serviceUri}/provider-states")
                     .ServiceProvider("Event API", serviceUri)
                     .HonoursPactWith("Event API Consumer")
-                    .PactUri("..\\..\\..\\Consumer.Tests\\pacts\\event_api_consumer-event_api.json") //TODO: What to do when we want to talk to multiple brokers
+                    .PactUri("..\\..\\..\\Consumer.Tests\\pacts\\event_api_consumer-event_api.json")
                     .Verify();
             }
         }

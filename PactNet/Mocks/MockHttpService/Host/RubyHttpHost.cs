@@ -1,19 +1,21 @@
 using System;
-using System.Net.Http;
 using System.Threading;
 using PactNet.Core;
+using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService.Host
 {
     internal class RubyHttpHost : IHttpHost
     {
         private readonly IPactCoreHost _coreHost;
-        private readonly HttpClient _httpClient;
+        private readonly AdminHttpClient _adminHttpClient;
 
-        internal RubyHttpHost(IPactCoreHost coreHost, HttpClient httpClient)
+        internal RubyHttpHost(
+            IPactCoreHost coreHost, 
+            AdminHttpClient adminHttpClient)
         {
             _coreHost = coreHost;
-            _httpClient = httpClient; //TODO: Use the admin http client once extracted
+            _adminHttpClient = adminHttpClient;
         }
 
         public RubyHttpHost(Uri baseUri, string providerName, PactConfig config) : 
@@ -21,7 +23,7 @@ namespace PactNet.Mocks.MockHttpService.Host
                 new MockProviderHostConfig(baseUri.Port, 
                     baseUri.Scheme.ToUpperInvariant().Equals("HTTPS"), 
                     providerName, config)),
-                new HttpClient { BaseAddress = baseUri })
+                new AdminHttpClient(baseUri))
         {
         }
 
@@ -29,11 +31,8 @@ namespace PactNet.Mocks.MockHttpService.Host
         {
             try
             {
-                var aliveRequest = new HttpRequestMessage(HttpMethod.Get, "/");
-                aliveRequest.Headers.Add(Constants.AdministrativeRequestHeaderKey, "true");
-
-                var responseMessage = _httpClient.SendAsync(aliveRequest).Result;
-                return responseMessage.IsSuccessStatusCode;
+                _adminHttpClient.SendAdminHttpRequest(HttpVerb.Get, "/");
+                return true;
             }
             catch
             {

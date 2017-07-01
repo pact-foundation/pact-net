@@ -15,8 +15,6 @@ namespace PactNet.Core
         {
             _config = config;
 
-            //TODO: Add support for supplying your own ssl cert
-
             _process = new Process
             {
                 StartInfo = new ProcessStartInfo

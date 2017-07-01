@@ -94,7 +94,7 @@ namespace PactNet.Tests.Core
             string pactUri, 
             Uri providerStateSetupUri)
         {
-            var providerStateOption = providerStateSetupUri != null ? $" --provider-states-url {providerStateSetupUri.OriginalString} --provider-states-setup-url {providerStateSetupUri.OriginalString}" : "";
+            var providerStateOption = providerStateSetupUri != null ? $" --provider-states-setup-url {providerStateSetupUri.OriginalString}" : "";
             return $"--pact-urls \"{pactUri}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}";
         }
     }

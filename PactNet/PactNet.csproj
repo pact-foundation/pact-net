@@ -98,6 +98,7 @@
     <Compile Include="Mappers\IMapper.cs" />
     <Compile Include="Mocks\IMockProvider.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Mocks\MockHttpService\AdminHttpClient.cs" />
     <Compile Include="Mocks\MockHttpService\Host\IHttpHost.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\HttpMethodMapper.cs" />
     <Compile Include="Mocks\MockHttpService\Mappers\IHttpMethodMapper.cs" />

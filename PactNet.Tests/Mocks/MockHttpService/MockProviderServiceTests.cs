@@ -7,7 +7,6 @@ using NSubstitute;
 using PactNet.Configuration.Json;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Host;
-using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Tests.Fakes;
 using Xunit;
@@ -34,8 +33,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 },
                 port,
                 enableSsl,
-                baseUri => new HttpClient(_fakeHttpMessageHandler) { BaseAddress = baseUri },
-                new HttpMethodMapper());
+                baseUri => new AdminHttpClient(baseUri, _fakeHttpMessageHandler));
         }
 
         [Fact]
@@ -349,35 +347,6 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void WillRespondWith_WithValidInteraction_PerformsAdminInteractionsPostRequestWithTestContext()
-        {
-            var providerState = "My provider state";
-            var description = "My description";
-            var request = new ProviderServiceRequest
-            {
-                Method = HttpVerb.Head,
-                Path = "/tester/testing/1"
-            };
-            var response = new ProviderServiceResponse
-            {
-                Status = (int)HttpStatusCode.ProxyAuthenticationRequired
-            };
-
-            var mockService = GetSubject();
-            mockService.Start();
-
-            mockService
-                .Given(providerState)
-                .UponReceiving(description)
-                .With(request)
-                .WillRespondWith(response);
-
-            var actualRequest = _fakeHttpMessageHandler.RequestsReceived.Single();
-
-            Assert.True(actualRequest.Headers.Single(x => x.Key == Constants.AdministrativeRequestTestContextHeaderKey).Value.Single().EndsWith("MockProviderServiceTests.WillRespondWith_WithValidInteraction_PerformsAdminInteractionsPostRequestWithTestContext"));
-        }
-
-        [Fact]
         public void WillRespondWith_WhenResponseFromHostIsNotOk_ThrowsPactFailureException()
         {
             var providerState = "My provider state";
@@ -400,17 +369,6 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void VerifyInteractions_WhenHostIsNull_ThrowsInvalidOperationException()
-        {
-            var mockService = GetSubject();
-
-            mockService.Stop();
-
-            Assert.Throws<InvalidOperationException>(() => mockService.VerifyInteractions());
-            Assert.Equal(0, _fakeHttpMessageHandler.RequestsReceived.Count());
-        }
-
-        [Fact]
         public void VerifyInteractions_WhenHostIsNotNull_PerformsAdminInteractionsVerificationGetRequest()
         {
             var mockService = GetSubject();
@@ -421,7 +379,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             Assert.Equal(1, _fakeHttpMessageHandler.RequestsReceived.Count());
             Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsReceived.First().Method);
-            Assert.Equal("http://localhost:1234/interactions/verification", _fakeHttpMessageHandler.RequestsReceived.First().RequestUri.ToString());
+            Assert.Equal("http://localhost:1234/interactions/verification?example_description=MockProviderServiceTests.VerifyInteractions_WhenHostIsNotNull_PerformsAdminInteractionsVerificationGetRequest", _fakeHttpMessageHandler.RequestsReceived.First().RequestUri.ToString());
         }
 
         [Fact]
@@ -458,7 +416,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             Assert.Equal(1, _fakeHttpMessageHandler.RequestsReceived.Count());
             Assert.Equal(HttpMethod.Delete, _fakeHttpMessageHandler.RequestsReceived.First().Method);
-            Assert.Equal("http://localhost:1234/interactions", _fakeHttpMessageHandler.RequestsReceived.First().RequestUri.ToString());
+            Assert.Equal("http://localhost:1234/interactions?example_description=MockProviderServiceTests.ClearInteractions_WhenHostIsNotNull_PerformsAdminInteractionsDeleteRequest", _fakeHttpMessageHandler.RequestsReceived.First().RequestUri.ToString());
         }
 
         [Fact]

@@ -12,7 +12,6 @@ namespace PactNet.Matchers.Regex
         [JsonProperty(PropertyName = "data")]
         public dynamic Example { get; set; }
 
-        //TODO: Needs to be valid Ruby regex
         internal RegexMatcher(string example, string regex)
         {
             Match = "Pact::Term";
