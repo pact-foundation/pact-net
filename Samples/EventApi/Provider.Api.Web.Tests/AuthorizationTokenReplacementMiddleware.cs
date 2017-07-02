@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
+using Microsoft.Owin;
 using Microsoft.Owin.Security.DataProtection;
 
 namespace Provider.Api.Web.Tests
 {
     public class AuthorizationTokenReplacementMiddleware
     {
+        private const string AuthorizationKey = "Authorization";
         private readonly Func<IDictionary<string, object>, Task> _next;
         private readonly TokenGenerator _tokenGenerator;
 
@@ -19,15 +20,16 @@ namespace Provider.Api.Web.Tests
 
         public async Task Invoke(IDictionary<string, object> environment)
         {
-            var headers = environment["owin.RequestHeaders"] as IDictionary<string, string[]>;
+            IOwinContext context = new OwinContext(environment);
 
-            Debug.Assert(headers != null, "headers != null");
-            if (headers.ContainsKey("Authorization") && headers["Authorization"][0] == "Bearer SomeValidAuthToken")
+            if (context.Request.Headers != null &&
+                context.Request.Headers.ContainsKey(AuthorizationKey) &&
+                context.Request.Headers[AuthorizationKey] == "Bearer SomeValidAuthToken")
             {
-                headers["Authorization"][0] = $"Bearer {_tokenGenerator.Generate()}";
+                context.Request.Headers[AuthorizationKey] = $"Bearer {_tokenGenerator.Generate()}";
             }
 
-            await _next.Invoke(environment);
+            await _next.Invoke(context.Environment);
         }
     }
 }

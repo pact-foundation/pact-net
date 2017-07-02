@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Nancy;
+using System.Net;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
 
@@ -20,7 +20,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
                     {
                         test = "hello"
                     },
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
                         { "Accept", "application/json" }
                     },
@@ -34,7 +34,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
                     {
                         yep = "it worked"
                     },
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
                         { "Content-Type", "application/json" }
                     }

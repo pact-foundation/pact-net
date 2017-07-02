@@ -15,7 +15,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
             var request = new ProviderServiceResponse
             {
                 Status = 200,
-                Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
+                Headers = new Dictionary<string, object> { { "Content-Type", "application/json" } },
                 Body = new
                 {
                     Test1 = "hi",
@@ -47,7 +47,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
             var response = new ProviderServiceResponse
             {
                 Status = 200,
-                Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
+                Headers = new Dictionary<string, object> { { "Content-Type", "application/json" } },
                 Body = new
                 {
                     Test1 = "hi",

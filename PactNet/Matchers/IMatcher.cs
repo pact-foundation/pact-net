@@ -1,9 +1,8 @@
-﻿using Newtonsoft.Json.Linq;
-
-namespace PactNet.Matchers
+﻿namespace PactNet.Matchers
 {
-    internal interface IMatcher
+    public interface IMatcher
     {
-        MatcherResult Match(string path, JToken expected, JToken actual);
+        string Match { get; }
+        dynamic Example { get; }
     }
 }

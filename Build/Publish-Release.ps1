@@ -17,7 +17,7 @@ $NuGetExe = Join-Path $BuildRoot -ChildPath '..\.nuget\nuget.exe'
 
 # Build the NuGet package
 $ProjectPath = Join-Path -Path $SolutionRoot -ChildPath 'PactNet\PactNet.nuspec'
-& $NuGetExe pack $ProjectPath -Prop Configuration=Release -OutputDirectory $BuildRoot -Version $ReleaseVersionNumber
+& $NuGetExe pack $ProjectPath -Properties Configuration=Release -OutputDirectory $BuildRoot -Version $ReleaseVersionNumber -NoPackageAnalysis -NoDefaultExcludes
 if (-not $?)
 {
 	throw 'The NuGet process returned an error code.'

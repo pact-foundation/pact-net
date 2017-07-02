@@ -64,7 +64,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
             var request = new ProviderServiceRequest
             {
                 Method = HttpVerb.Get,
-                Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
+                Headers = new Dictionary<string, object> { { "Content-Type", "application/json" } },
                 Body = new
                 {
                     Test1 = "hi",
@@ -96,7 +96,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
             var request = new ProviderServiceRequest
             {
                 Method = HttpVerb.Get,
-                Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
+                Headers = new Dictionary<string, object> { { "Content-Type", "application/json" } },
                 Body = new
                 {
                     Test1 = "hi",

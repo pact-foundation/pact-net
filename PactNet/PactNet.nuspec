@@ -11,14 +11,10 @@
     <description>A .NET version of Pact, which enables consumer driven contract testing.</description>
     <dependencies>
       <group targetFramework="net45">
-        <dependency id="Nancy.Hosting.Self" version="0.23.1" />
         <dependency id="Newtonsoft.Json" version="6.0.3" />
-        <dependency id="System.IO.Abstractions" version="1.4.0.86" />
       </group>
       <group targetFramework="net40">
-        <dependency id="Nancy.Hosting.Self" version="0.23.1" />
         <dependency id="Newtonsoft.Json" version="6.0.3" />
-        <dependency id="System.IO.Abstractions" version="1.4.0.86" />
         <dependency id="Microsoft.Net.Http" version="2.2.28" />
       </group>
     </dependencies>
@@ -31,6 +27,8 @@
     <file src="bin\Release\PactNet.pdb" target="lib\net40" />
     <file src="bin\Release\PactNet.dll.config" target="lib\net40" />
     <file src="bin\Release\PactNet.xml" target="lib\net40" />
+    <file src="Core\standalone\**" target="build\core" />
+    <file src="PactNet.targets" target="build" />
     <file src="readme.txt" target="" />
   </files>
 </package>

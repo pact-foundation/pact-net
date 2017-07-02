@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using NSubstitute;
 using PactNet.Configuration.Json;
 using PactNet.Mocks.MockHttpService;
-using PactNet.Mocks.MockHttpService.Mappers;
+using PactNet.Mocks.MockHttpService.Host;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Tests.Fakes;
 using Xunit;
@@ -33,8 +33,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 },
                 port,
                 enableSsl,
-                baseUri => new HttpClient(_fakeHttpMessageHandler) { BaseAddress = new Uri(baseUri) },
-                new HttpMethodMapper());
+                baseUri => new AdminHttpClient(baseUri, _fakeHttpMessageHandler));
         }
 
         [Fact]
@@ -44,7 +43,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var expectedBaseUri = String.Format("http://localhost:{0}", port);
             var mockService = GetSubject(port);
 
-            Assert.Equal(expectedBaseUri, ((MockProviderService)mockService).BaseUri);
+            Assert.Equal(expectedBaseUri, ((MockProviderService)mockService).BaseUri.OriginalString);
         }
 
         [Fact]
@@ -52,7 +51,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             var mockService = GetSubject(enableSsl: false);
 
-            Assert.True(((MockProviderService)mockService).BaseUri.StartsWith("http"), "BaseUri has a http scheme");
+            Assert.True(((MockProviderService)mockService).BaseUri.Scheme.ToUpperInvariant().Equals("HTTP"), "BaseUri has a http scheme");
         }
 
         [Fact]
@@ -60,7 +59,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             var mockService = GetSubject(enableSsl: true);
 
-            Assert.True(((MockProviderService)mockService).BaseUri.StartsWith("https"), "BaseUri has a https scheme");
+            Assert.True(((MockProviderService)mockService).BaseUri.Scheme.ToUpperInvariant().Equals("HTTPS"), "BaseUri has a https scheme");
         }
 
         [Fact]
@@ -348,35 +347,6 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void WillRespondWith_WithValidInteraction_PerformsAdminInteractionsPostRequestWithTestContext()
-        {
-            var providerState = "My provider state";
-            var description = "My description";
-            var request = new ProviderServiceRequest
-            {
-                Method = HttpVerb.Head,
-                Path = "/tester/testing/1"
-            };
-            var response = new ProviderServiceResponse
-            {
-                Status = (int)HttpStatusCode.ProxyAuthenticationRequired
-            };
-
-            var mockService = GetSubject();
-            mockService.Start();
-
-            mockService
-                .Given(providerState)
-                .UponReceiving(description)
-                .With(request)
-                .WillRespondWith(response);
-
-            var actualRequest = _fakeHttpMessageHandler.RequestsReceived.Single();
-
-            Assert.True(actualRequest.Headers.Single(x => x.Key == Constants.AdministrativeRequestTestContextHeaderKey).Value.Single().EndsWith("MockProviderServiceTests.WillRespondWith_WithValidInteraction_PerformsAdminInteractionsPostRequestWithTestContext"));
-        }
-
-        [Fact]
         public void WillRespondWith_WhenResponseFromHostIsNotOk_ThrowsPactFailureException()
         {
             var providerState = "My provider state";
@@ -386,7 +356,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             var mockService = GetSubject();
 
-            _fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
+            _fakeHttpMessageHandler.ResponseFactory = () => new HttpResponseMessage(HttpStatusCode.InternalServerError);
 
             mockService
                 .Given(providerState)
@@ -396,17 +366,6 @@ namespace PactNet.Tests.Mocks.MockHttpService
             mockService.Start();
 
             Assert.Throws<PactFailureException>(() => mockService.WillRespondWith(response));
-        }
-
-        [Fact]
-        public void VerifyInteractions_WhenHostIsNull_ThrowsInvalidOperationException()
-        {
-            var mockService = GetSubject();
-
-            mockService.Stop();
-
-            Assert.Throws<InvalidOperationException>(() => mockService.VerifyInteractions());
-            Assert.Equal(0, _fakeHttpMessageHandler.RequestsReceived.Count());
         }
 
         [Fact]
@@ -420,7 +379,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             Assert.Equal(1, _fakeHttpMessageHandler.RequestsReceived.Count());
             Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsReceived.First().Method);
-            Assert.Equal("http://localhost:1234/interactions/verification", _fakeHttpMessageHandler.RequestsReceived.First().RequestUri.ToString());
+            Assert.Equal("http://localhost:1234/interactions/verification?example_description=MockProviderServiceTests.VerifyInteractions_WhenHostIsNotNull_PerformsAdminInteractionsVerificationGetRequest", _fakeHttpMessageHandler.RequestsReceived.First().RequestUri.ToString());
         }
 
         [Fact]
@@ -428,7 +387,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             var mockService = GetSubject();
 
-            _fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.Forbidden);
+            _fakeHttpMessageHandler.ResponseFactory = () => new HttpResponseMessage(HttpStatusCode.Forbidden);
 
             mockService.Start();
 
@@ -457,7 +416,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             Assert.Equal(1, _fakeHttpMessageHandler.RequestsReceived.Count());
             Assert.Equal(HttpMethod.Delete, _fakeHttpMessageHandler.RequestsReceived.First().Method);
-            Assert.Equal("http://localhost:1234/interactions", _fakeHttpMessageHandler.RequestsReceived.First().RequestUri.ToString());
+            Assert.Equal("http://localhost:1234/interactions?example_description=MockProviderServiceTests.ClearInteractions_WhenHostIsNotNull_PerformsAdminInteractionsDeleteRequest", _fakeHttpMessageHandler.RequestsReceived.First().RequestUri.ToString());
         }
 
         [Fact]
@@ -465,7 +424,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         {
             var mockService = GetSubject();
 
-            _fakeHttpMessageHandler.Response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
+            _fakeHttpMessageHandler.ResponseFactory = () => new HttpResponseMessage(HttpStatusCode.InternalServerError);
 
             mockService.Start();
 

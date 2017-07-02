@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
+using PactNet.Matchers;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
 
 namespace Consumer.Tests
 {
-    public class EventsApiConsumerTests : IUseFixture<ConsumerEventApiPact>
+    public class EventsApiConsumerTests : IClassFixture<ConsumerEventApiPact>
     {
-        private IMockProviderService _mockProviderService;
-        private string _mockProviderServiceBaseUri;
-            
-        public void SetFixture(ConsumerEventApiPact data)
+        private readonly IMockProviderService _mockProviderService;
+        private readonly string _mockProviderServiceBaseUri;
+
+        public EventsApiConsumerTests(ConsumerEventApiPact data)
         {
             _mockProviderService = data.MockProviderService;
             _mockProviderServiceBaseUri = data.MockProviderServiceBaseUri;
@@ -31,15 +31,15 @@ namespace Consumer.Tests
                 {
                     Method = HttpVerb.Get,
                     Path = "/events",
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
-                        { "Accept", "application/json" }
+                        { "Accept", "application/json" },
                     }
                 })
                 .WillRespondWith(new ProviderServiceResponse
                 {
                     Status = 401,
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
                         { "Content-Type", "application/json; charset=utf-8" }
                     },
@@ -60,6 +60,38 @@ namespace Consumer.Tests
         [Fact]
         public void GetAllEvents_WhenCalled_ReturnsAllEvents()
         {
+            var test = new[]
+            {
+                new
+                {
+                    eventId = Guid.Parse("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5"),
+                    timestamp = "2014-06-30T01:37:41.0660548",
+                    eventType = "SearchView"
+                },
+                new
+                {
+                    eventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9"),
+                    timestamp = "2014-06-30T01:37:52.2618864",
+                    eventType = "DetailsView"
+                },
+                new
+                {
+                    eventId = Guid.Parse("3E83A96B-2A0C-49B1-9959-26DF23F83AEB"),
+                    timestamp = "2014-06-30T01:38:00.8518952",
+                    eventType = "SearchView"
+                }
+            };
+
+            var res = new ProviderServiceResponse
+            {
+                Status = 200,
+                Headers = new Dictionary<string, object>
+                {
+                    {"Content-Type", "application/json; charset=utf-8"}
+                },
+                Body = test
+            };
+
             //Arrange
             var testAuthToken = "SomeValidAuthToken";
 
@@ -69,41 +101,13 @@ namespace Consumer.Tests
                 {
                     Method = HttpVerb.Get,
                     Path = "/events",
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
                         { "Accept", "application/json" },
                         { "Authorization", $"Bearer {testAuthToken}" }
                     }
                 })
-                .WillRespondWith(new ProviderServiceResponse
-                {
-                    Status = 200,
-                    Headers = new Dictionary<string, string>
-                    {
-                        { "Content-Type", "application/json; charset=utf-8" }
-                    },
-                    Body = new []
-                    {
-                        new 
-                        {
-                            eventId = Guid.Parse("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5"),
-                            timestamp = "2014-06-30T01:37:41.0660548",
-                            eventType = "SearchView"
-                        },
-                        new
-                        {
-                            eventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9"),
-                            timestamp = "2014-06-30T01:37:52.2618864",
-                            eventType = "DetailsView"
-                        },
-                        new
-                        {
-                            eventId = Guid.Parse("3E83A96B-2A0C-49B1-9959-26DF23F83AEB"),
-                            timestamp = "2014-06-30T01:38:00.8518952",
-                            eventType = "SearchView"
-                        }
-                    }
-                });
+                .WillRespondWith(res);
 
             var consumer = new EventsApiClient(_mockProviderServiceBaseUri, testAuthToken);
 
@@ -131,7 +135,7 @@ namespace Consumer.Tests
                 {
                     Method = HttpVerb.Post,
                     Path = "/events",
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
                         { "Content-Type", "application/json; charset=utf-8" }
                     },
@@ -163,13 +167,13 @@ namespace Consumer.Tests
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
-                    Headers = new Dictionary<string, string> { { "Accept", "application/json" } },
+                    Headers = new Dictionary<string, object> { { "Accept", "application/json" } },
                     Path = "/stats/status"
                 })
                 .WillRespondWith(new ProviderServiceResponse
                 {
                     Status = 200,
-                    Headers = new Dictionary<string, string> { { "Content-Type", "application/json; charset=utf-8" } },
+                    Headers = new Dictionary<string, object> { { "Content-Type", "application/json; charset=utf-8" } },
                     Body = new
                     {
                         alive = true,
@@ -195,6 +199,36 @@ namespace Consumer.Tests
         }
 
         [Fact]
+        public void Version_WhenVersionIsCalled_ReturnsVersionNumber()
+        {
+            //Arrange
+            const string version = "1.0.22";
+            _mockProviderService.UponReceiving("a request to check the api version")
+                .With(new ProviderServiceRequest
+                {
+                    Method = HttpVerb.Get,
+                    Headers = new Dictionary<string, object> { { "Accept", "application/json" } },
+                    Path = "/version"
+                })
+                .WillRespondWith(new ProviderServiceResponse
+                {
+                    Status = 200,
+                    Headers = new Dictionary<string, object> { { "Content-Type", "application/json; charset=utf-8" } },
+                    Body = version
+                });
+
+            var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
+
+            //Act
+            var result = consumer.Version();
+
+            //Assert
+            Assert.Equal(version, result);
+
+            _mockProviderService.VerifyInteractions();
+        }
+
+        [Fact]
         public void UpSince_WhenApiIsAliveAndWeRetrieveUptime_ReturnsUpSinceDate()
         {
             //Arrange
@@ -204,13 +238,13 @@ namespace Consumer.Tests
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
-                    Headers = new Dictionary<string, string> { { "Accept", "application/json" } },
+                    Headers = new Dictionary<string, object> { { "Accept", "application/json" } },
                     Path = "/stats/status"
                 })
                 .WillRespondWith(new ProviderServiceResponse
                 {
                     Status = 200,
-                    Headers = new Dictionary<string, string> { { "Content-Type", "application/json; charset=utf-8" } },
+                    Headers = new Dictionary<string, object> { { "Content-Type", "application/json; charset=utf-8" } },
                     Body = new
                     {
                         alive = true,
@@ -229,13 +263,13 @@ namespace Consumer.Tests
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
-                    Headers = new Dictionary<string, string> { { "Accept", "application/json" } },
+                    Headers = new Dictionary<string, object> { { "Accept", "application/json" } },
                     Path = "/stats/uptime"
                 })
                 .WillRespondWith(new ProviderServiceResponse
                 {
                     Status = 200,
-                    Headers = new Dictionary<string, string> { { "Content-Type", "application/json; charset=utf-8" } },
+                    Headers = new Dictionary<string, object> { { "Content-Type", "application/json; charset=utf-8" } },
                     Body = new
                     {
                         upSince = upSinceDate
@@ -258,13 +292,15 @@ namespace Consumer.Tests
         {
             //Arrange
             var eventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9");
+            var eventType = "DetailsView";
+            var eventTimestamp = DateTime.UtcNow;
             _mockProviderService.Given(String.Format("there is an event with id '{0}'", eventId))
                 .UponReceiving(String.Format("a request to retrieve event with id '{0}'", eventId))
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
                     Path = "/events/" + eventId,
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
                         { "Accept", "application/json" }
                     }
@@ -272,13 +308,16 @@ namespace Consumer.Tests
                 .WillRespondWith(new ProviderServiceResponse
                 {
                     Status = 200,
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
-                        { "Content-Type", "application/json; charset=utf-8" }
+                        { "Content-Type", "application/json; charset=utf-8" },
+                        { "Server", Match.Type("RubyServer") }
                     },
                     Body = new
                     {
-                        eventId = eventId
+                        eventId = eventId,
+                        eventType = Match.Type(eventType),
+                        timestamp = Match.Regex(eventTimestamp.ToString("o"), "^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|0[1-9]|[1-2][0-9])T(2[0-3]|[0-1][0-9]):([0-5][0-9]):([0-5][0-9])(\\.[0-9]+)?(Z|[+-](?:2[0-3]|[0-1][0-9]):[0-5][0-9])?$")
                     }
                 });
 
@@ -289,6 +328,8 @@ namespace Consumer.Tests
 
             //Assert
             Assert.Equal(eventId, result.EventId);
+            Assert.Equal(eventType, result.EventType);
+            Assert.Equal(eventTimestamp, result.Timestamp);
 
             _mockProviderService.VerifyInteractions();
         }
@@ -305,7 +346,7 @@ namespace Consumer.Tests
                     Method = HttpVerb.Get,
                     Path = "/events",
                     Query = "type=" + eventType,
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
                         { "Accept", "application/json" }
                     },
@@ -314,7 +355,7 @@ namespace Consumer.Tests
                 .WillRespondWith(new ProviderServiceResponse
                 {
                     Status = 200,
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
                         { "Content-Type", "application/json; charset=utf-8" }
                     },
@@ -334,70 +375,6 @@ namespace Consumer.Tests
 
             //Assert
             Assert.Equal(eventType, result.First().EventType);
-
-            _mockProviderService.VerifyInteractions();
-        }
-
-        [Fact]
-        public void CreateBlob_WhenCalledWithBlob_Succeeds()
-        {
-            //Arrange
-            var blobId = Guid.Parse("38C3976B-5AE8-4F2F-A8EC-46F6AEE826E2");
-            var bytes = Encoding.UTF8.GetBytes("This is a test");
-
-            _mockProviderService.UponReceiving("a request to create a new blob")
-                .With(new ProviderServiceRequest
-                {
-                    Method = HttpVerb.Post,
-                    Path = String.Format("/blobs/{0}", blobId),
-                    Headers = new Dictionary<string, string>
-                    {
-                        { "Content-Type", "application/octet-stream" }
-                    },
-                    Body = bytes
-                })
-                .WillRespondWith(new ProviderServiceResponse
-                {
-                    Status = 201
-                });
-
-            var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
-
-            //Act / Assert
-            consumer.CreateBlob(blobId, bytes, "test.txt");
-
-            _mockProviderService.VerifyInteractions();
-        }
-
-        [Fact]
-        public void GetBlob_WhenCalledWithId_Succeeds()
-        {
-            //Arrange
-            var blobId = Guid.Parse("38C3976B-5AE8-4F2F-A8EC-46F6AEE826E2");
-            var bytes = Encoding.UTF8.GetBytes("This is a test");
-
-            _mockProviderService.UponReceiving("a request to get a new blob by id")
-                .With(new ProviderServiceRequest
-                {
-                    Method = HttpVerb.Get,
-                    Path = String.Format("/blobs/{0}", blobId)
-                })
-                .WillRespondWith(new ProviderServiceResponse
-                {
-                    Status = 201,
-                    Headers = new Dictionary<string, string>
-                    {
-                        { "Content-Type", "text/plain" }
-                    },
-                    Body = "This is a test"
-                });
-
-            var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
-
-            //Act / Assert
-            var content = consumer.GetBlob(blobId);
-
-            Assert.True(bytes.SequenceEqual(content));
 
             _mockProviderService.VerifyInteractions();
         }

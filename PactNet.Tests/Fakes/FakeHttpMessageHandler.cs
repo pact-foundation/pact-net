@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -9,16 +10,23 @@ namespace PactNet.Tests.Fakes
     public class FakeHttpMessageHandler : DelegatingHandler
     {
         private readonly IList<HttpRequestMessage> _requestsReceived;
-        public IEnumerable<HttpRequestMessage> RequestsReceived { get { return _requestsReceived; } }
+        public IEnumerable<HttpRequestMessage> RequestsReceived => _requestsReceived;
 
         private readonly IList<string> _requestContentReceived;
-        public IEnumerable<string> RequestContentReceived { get { return _requestContentReceived; } }
+        public IEnumerable<string> RequestContentReceived => _requestContentReceived;
 
-        public HttpResponseMessage Response { get; set; }
+        public Func<HttpResponseMessage> ResponseFactory { get; set; }
 
         public FakeHttpMessageHandler(HttpResponseMessage response = null)
         {
-            Response = response ?? new HttpResponseMessage(HttpStatusCode.OK);
+            ResponseFactory = () => response ?? new HttpResponseMessage(HttpStatusCode.OK);
+            _requestsReceived = new List<HttpRequestMessage>();
+            _requestContentReceived = new List<string>();
+        }
+
+        public FakeHttpMessageHandler(Func<HttpResponseMessage> responseFactory)
+        {
+            ResponseFactory = responseFactory;
             _requestsReceived = new List<HttpRequestMessage>();
             _requestContentReceived = new List<string>();
         }
@@ -32,7 +40,7 @@ namespace PactNet.Tests.Fakes
             }
 
             var tcs = new TaskCompletionSource<HttpResponseMessage>();
-            tcs.SetResult(Response);
+            tcs.SetResult(ResponseFactory());
 
             return tcs.Task;
         }

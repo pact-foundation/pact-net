@@ -8,52 +8,17 @@ using Xunit;
 
 namespace PactNet.Tests.IntegrationTests
 {
+
     public class PactBuilderFailureIntegrationTests : IUseFixture<FailureIntegrationTestsMyApiPact>
     {
         private IMockProviderService _mockProviderService;
-        private string _mockProviderServiceBaseUri;
+        private Uri _mockProviderServiceBaseUri;
 
         public void SetFixture(FailureIntegrationTestsMyApiPact data)
         {
             _mockProviderService = data.MockProviderService;
             _mockProviderServiceBaseUri = data.MockProviderServiceBaseUri;
             _mockProviderService.ClearInteractions();
-        }
-
-        [Fact]
-        public void WhenRegisteringTheSameInteractionTwiceInATest_ThenPactFailureExceptionIsThrown()
-        {
-            var description = "A POST request to create a new thing";
-            var request = new ProviderServiceRequest
-            {
-                Method = HttpVerb.Post,
-                Path = "/things",
-                Headers = new Dictionary<string, string>
-                {
-                    { "Content-Type", "application/json; charset=utf-8" }
-                },
-                Body = new
-                {
-                    thingId = 1234,
-                    type = "Awesome"
-                }
-            };
-
-            var response = new ProviderServiceResponse
-            {
-                Status = 201
-            };
-
-            _mockProviderService
-                .UponReceiving(description)
-                .With(request)
-                .WillRespondWith(response);
-
-            _mockProviderService
-                .UponReceiving(description)
-                .With(request);
-                
-            Assert.Throws<PactFailureException>(() => _mockProviderService.WillRespondWith(response));
         }
 
         [Fact]
@@ -65,7 +30,7 @@ namespace PactNet.Tests.IntegrationTests
                 {
                     Method = HttpVerb.Post,
                     Path = "/things",
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
                         { "Content-Type", "application/json; charset=utf-8" }
                     },
@@ -84,7 +49,7 @@ namespace PactNet.Tests.IntegrationTests
         }
 
         [Fact]
-        public void WhenRegisteringAnInteractionThatIsSentMultipleTimes_ThenPactFailureExceptionIsThrown()
+        public void WhenRegisteringAnInteractionThatIsSentMultipleTimes_ThenNoExceptionIsThrown()
         {
             _mockProviderService
                 .UponReceiving("A GET request to retrieve a thing")
@@ -98,7 +63,7 @@ namespace PactNet.Tests.IntegrationTests
                     Status = 200
                 });
 
-            var httpClient = new HttpClient {BaseAddress = new Uri(_mockProviderServiceBaseUri)};
+            var httpClient = new HttpClient { BaseAddress = _mockProviderServiceBaseUri };
 
             var request1 = new HttpRequestMessage(HttpMethod.Get, "/things/1234");
             var request2 = new HttpRequestMessage(HttpMethod.Get, "/things/1234");
@@ -111,7 +76,7 @@ namespace PactNet.Tests.IntegrationTests
                 throw new Exception(String.Format("Wrong status code '{0} and {1}' was returned", response1.StatusCode, response2.StatusCode));
             }
 
-            Assert.Throws<PactFailureException>(() => _mockProviderService.VerifyInteractions());
+            _mockProviderService.VerifyInteractions();
         }
 
         [Fact]
@@ -124,7 +89,7 @@ namespace PactNet.Tests.IntegrationTests
                     Method = HttpVerb.Get,
                     Path = "/things",
                     Query = "type=awesome",
-                    Headers = new Dictionary<string, string>
+                    Headers = new Dictionary<string, object>
                     {
                         { "Accept", "application/json; charset=utf-8" }
                     },
@@ -134,7 +99,7 @@ namespace PactNet.Tests.IntegrationTests
                     Status = 200
                 });
 
-            var httpClient = new HttpClient { BaseAddress = new Uri(_mockProviderServiceBaseUri) };
+            var httpClient = new HttpClient { BaseAddress = _mockProviderServiceBaseUri };
 
             var request = new HttpRequestMessage(HttpMethod.Get, "/things?type=awesome");
 
