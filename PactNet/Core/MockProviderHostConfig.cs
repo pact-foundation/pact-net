@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using PactNet.Extensions;
-using PactNet.Infrastructure.Output;
+using PactNet.Infrastructure.Outputters;
 
 namespace PactNet.Core
 {

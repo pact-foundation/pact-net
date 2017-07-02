@@ -1,4 +1,4 @@
-using PactNet.Infrastructure.Output;
+using PactNet.Infrastructure.Outputters;
 using Xunit.Abstractions;
 
 namespace Provider.Api.Web.Tests

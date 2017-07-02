@@ -80,7 +80,7 @@
   <ItemGroup>
     <Compile Include="Configuration\Json\Converters\CamelCaseStringEnumConverter.cs" />
     <Compile Include="Configuration\Json\Converters\PreserveCasingDictionaryConverter.cs" />
-    <Compile Include="Infrastructure\Output\ConsoleOutput.cs" />
+    <Compile Include="Infrastructure\Outputters\ConsoleOutput.cs" />
     <Compile Include="Core\IPactCoreHostConfig.cs" />
     <Compile Include="Core\IPactCoreHost.cs" />
     <Compile Include="Core\MockProviderHostConfig.cs" />
@@ -88,7 +88,7 @@
     <Compile Include="Core\PactVerifierHostConfig.cs" />
     <Compile Include="Extensions\TaskExtensions.cs" />
     <Compile Include="Configuration\Json\JsonConfig.cs" />
-    <Compile Include="Infrastructure\Output\IOutput.cs" />
+    <Compile Include="Infrastructure\Outputters\IOutput.cs" />
     <Compile Include="Matchers\IMatcher.cs" />
     <Compile Include="Matchers\Match.cs" />
     <Compile Include="Matchers\Regex\RegexMatcher.cs" />

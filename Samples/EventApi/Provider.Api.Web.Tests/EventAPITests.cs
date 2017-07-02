@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.Owin.Hosting;
 using PactNet;
-using PactNet.Infrastructure.Output;
+using PactNet.Infrastructure.Outputters;
 using Xunit;
 using Xunit.Abstractions;
 
