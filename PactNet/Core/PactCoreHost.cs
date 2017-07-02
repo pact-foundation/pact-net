@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Management;
 using System.Text.RegularExpressions;
 
 namespace PactNet.Core
@@ -30,25 +31,6 @@ namespace PactNet.Core
             };
 
             AppDomain.CurrentDomain.DomainUnload += CurrentDomainUnload;
-        }
-
-        private void WriteLineToOutput(object sender, DataReceivedEventArgs eventArgs)
-        {
-            if (eventArgs.Data != null)
-            {
-                WriteToOutputters(Regex.Replace(eventArgs.Data, @"\e\[(\d+;)*(\d+)?[ABCDHJKfmsu]", ""));
-            }
-        }
-
-        private void WriteToOutputters(string line)
-        {
-            if (_config.Outputters != null && _config.Outputters.Any())
-            {
-                foreach (var output in _config.Outputters)
-                {
-                    output.WriteLine(line);
-                }
-            }
         }
 
         public void Start()
@@ -81,35 +63,60 @@ namespace PactNet.Core
         {
             try
             {
-                WriteToOutputters($"PID: {_process.Id}");
-
-                //if (!_process.)
-                //{
-                    _process.OutputDataReceived -= WriteLineToOutput;
-                    _process.ErrorDataReceived -= WriteLineToOutput;
-                    _process.CancelOutputRead();
-                    _process.CancelErrorRead();
-                    _process.CloseMainWindow();
-                    _process.Close();
-                    _process.Dispose();
-                //}
+                _process.OutputDataReceived -= WriteLineToOutput;
+                _process.ErrorDataReceived -= WriteLineToOutput;
+                _process.CancelOutputRead();
+                _process.CancelErrorRead();
+                KillProcessAndChildren(_process.Id);
             }
             catch (Exception)
             {
-                try
-                {
-                    _process.Kill();
-                }
-                catch (Exception)
-                {
-                    WriteToOutputters("Could not terminate the Pact Core Host please manually kill the 'Ruby interpreter' process");
-                }
+                WriteToOutputters("Could not terminate the Pact Core Host please manually kill the 'Ruby interpreter' process");
             }
         }
 
         private void CurrentDomainUnload(object sender, EventArgs e)
         {
             Stop();
+        }
+
+        private static void KillProcessAndChildren(int pid)
+        {
+            var searcher = new ManagementObjectSearcher("Select * From Win32_Process Where ParentProcessID=" + pid);
+            ManagementObjectCollection moc = searcher.Get();
+            foreach (var o in moc)
+            {
+                var mo = (ManagementObject)o;
+                KillProcessAndChildren(Convert.ToInt32(mo["ProcessID"]));
+            }
+            try
+            {
+                var proc = Process.GetProcessById(pid);
+                proc.Kill();
+            }
+            catch (ArgumentException)
+            {
+                // Already exited
+            }
+        }
+
+        private void WriteLineToOutput(object sender, DataReceivedEventArgs eventArgs)
+        {
+            if (eventArgs.Data != null)
+            {
+                WriteToOutputters(Regex.Replace(eventArgs.Data, @"\e\[(\d+;)*(\d+)?[ABCDHJKfmsu]", ""));
+            }
+        }
+
+        private void WriteToOutputters(string line)
+        {
+            if (_config.Outputters != null && _config.Outputters.Any())
+            {
+                foreach (var output in _config.Outputters)
+                {
+                    output.WriteLine(line);
+                }
+            }
         }
     }
 }
