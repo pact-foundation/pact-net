@@ -63,8 +63,6 @@ namespace PactNet.Core
                 throw new PactFailureException("Could not start the Pact Core Host");
             }
 
-            WriteToOutputters($"PID: {_process.Id}");
-
             _process.BeginOutputReadLine();
             _process.BeginErrorReadLine();
 
@@ -83,6 +81,8 @@ namespace PactNet.Core
         {
             try
             {
+                WriteToOutputters($"PID: {_process.Id}");
+
                 if (!_process.HasExited)
                 {
                     _process.OutputDataReceived -= WriteLineToOutput;
