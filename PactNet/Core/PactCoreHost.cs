@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Management;
 using System.Text.RegularExpressions;
 
 namespace PactNet.Core
@@ -19,29 +18,29 @@ namespace PactNet.Core
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    WindowStyle = ProcessWindowStyle.Hidden,
+                    WindowStyle = ProcessWindowStyle.Minimized,
                     FileName = _config.Path,
                     Arguments = _config.Arguments,
-                    UseShellExecute = false,
+                    UseShellExecute = false, //Important so that the correct process is killed
                     RedirectStandardInput = true,
                     RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true
+                    RedirectStandardError = true
+                    //NOTE: Do Not set CreateNoWindow = true, as it will spawn the ruby process as a child and we then can't kill it without using System.Management
                 }
             };
 
-            AppDomain.CurrentDomain.DomainUnload += CurrentDomainDomainUnload;
+            AppDomain.CurrentDomain.DomainUnload += CurrentDomainUnload;
         }
 
-        private void WriteLineToOutput(string data)
+        private void WriteLineToOutput(object sender, DataReceivedEventArgs eventArgs)
         {
-            if (data != null)
+            if (eventArgs.Data != null)
             {
                 if (_config.Outputters != null && _config.Outputters.Any())
                 {
                     foreach (var output in _config.Outputters)
                     {
-                        output.WriteLine(Regex.Replace(data, @"\e\[(\d+;)*(\d+)?[ABCDHJKfmsu]", ""));
+                        output.WriteLine(Regex.Replace(eventArgs.Data, @"\e\[(\d+;)*(\d+)?[ABCDHJKfmsu]", ""));
                     }
                 }
             }
@@ -49,8 +48,8 @@ namespace PactNet.Core
 
         public void Start()
         {
-            _process.OutputDataReceived += (sender, args) => WriteLineToOutput(args.Data);
-            _process.ErrorDataReceived += (sender, args) => WriteLineToOutput(args.Data);
+            _process.OutputDataReceived += WriteLineToOutput;
+            _process.ErrorDataReceived += WriteLineToOutput;
 
             _process.Start();
 
@@ -70,40 +69,35 @@ namespace PactNet.Core
 
         public void Stop()
         {
-            try
+            if (!_process.HasExited)
             {
-                _process.StandardInput.Close();
-                KillProcessAndChildren(_process.Id);
-                _process.Dispose();
-            }
-            catch (Exception)
-            {
+                try
+                {
+                    _process.OutputDataReceived -= WriteLineToOutput;
+                    _process.ErrorDataReceived -= WriteLineToOutput;
+                    _process.CancelOutputRead();
+                    _process.CancelErrorRead();
+                    _process.CloseMainWindow();
+                    _process.Close();
+                    _process.Dispose();
+                }
+                catch (Exception)
+                {
+                    try
+                    {
+                        _process.Kill();
+                    }
+                    catch (Exception)
+                    {
+                        throw new PactFailureException("Could not terminate the pact core host, please manually kill the 'Ruby interpreter' process");
+                    }
+                }
             }
         }
 
-        private void CurrentDomainDomainUnload(object sender, EventArgs e)
+        private void CurrentDomainUnload(object sender, EventArgs e)
         {
             Stop();
-        }
-
-        private static void KillProcessAndChildren(int pid)
-        {
-            var searcher = new ManagementObjectSearcher("Select * From Win32_Process Where ParentProcessID=" + pid);
-            ManagementObjectCollection moc = searcher.Get();
-            foreach (var o in moc)
-            {
-                var mo = (ManagementObject)o;
-                KillProcessAndChildren(Convert.ToInt32(mo["ProcessID"]));
-            }
-            try
-            {
-                var proc = Process.GetProcessById(pid);
-                proc.Kill();
-            }
-            catch (ArgumentException)
-            {
-                // Already exited
-            }
         }
     }
 }
