@@ -80,8 +80,10 @@ namespace PactNet.Core
             Stop();
         }
 
-        private static void KillProcessAndChildren(int pid)
+        private void KillProcessAndChildren(int pid)
         {
+            WriteToOutputters($"Killing PID: {pid}");
+
             var searcher = new ManagementObjectSearcher("Select * From Win32_Process Where ParentProcessID=" + pid);
             ManagementObjectCollection moc = searcher.Get();
             foreach (var o in moc)
