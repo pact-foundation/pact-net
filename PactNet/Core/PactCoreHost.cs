@@ -63,6 +63,8 @@ namespace PactNet.Core
                 throw new PactFailureException("Could not start the Pact Core Host");
             }
 
+            WriteToOutputters($"PID: {_process.Id}");
+
             _process.BeginOutputReadLine();
             _process.BeginErrorReadLine();
 
