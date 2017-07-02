@@ -83,8 +83,8 @@ namespace PactNet.Core
             {
                 WriteToOutputters($"PID: {_process.Id}");
 
-                if (!_process.HasExited)
-                {
+                //if (!_process.)
+                //{
                     _process.OutputDataReceived -= WriteLineToOutput;
                     _process.ErrorDataReceived -= WriteLineToOutput;
                     _process.CancelOutputRead();
@@ -92,7 +92,7 @@ namespace PactNet.Core
                     _process.CloseMainWindow();
                     _process.Close();
                     _process.Dispose();
-                }
+                //}
             }
             catch (Exception)
             {
