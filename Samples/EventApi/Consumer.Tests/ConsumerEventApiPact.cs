@@ -17,7 +17,7 @@ namespace Consumer.Tests
         {
             if (!File.Exists(".\\pact\\bin\\pact-mock-service.bat"))
             {
-                throw new Exception("Please run '.\\Build\\Download-Standalone-Core.ps1' from the project root to download the standalone mock provider service.");
+                throw new Exception("Please run '.\\Build\\Download-Standalone-Core.ps1' from the project root to download the standalone mock provider service and then Rebuild solution");
             }
 
             PactBuilder = new PactBuilder(new PactConfig { SpecificationVersion = "2.0.0" })

@@ -36,12 +36,17 @@ namespace PactNet.Core
         {
             if (eventArgs.Data != null)
             {
-                if (_config.Outputters != null && _config.Outputters.Any())
+                WriteToOutputters(Regex.Replace(eventArgs.Data, @"\e\[(\d+;)*(\d+)?[ABCDHJKfmsu]", ""));
+            }
+        }
+
+        private void WriteToOutputters(string line)
+        {
+            if (_config.Outputters != null && _config.Outputters.Any())
+            {
+                foreach (var output in _config.Outputters)
                 {
-                    foreach (var output in _config.Outputters)
-                    {
-                        output.WriteLine(Regex.Replace(eventArgs.Data, @"\e\[(\d+;)*(\d+)?[ABCDHJKfmsu]", ""));
-                    }
+                    output.WriteLine(line);
                 }
             }
         }
@@ -69,9 +74,9 @@ namespace PactNet.Core
 
         public void Stop()
         {
-            if (!_process.HasExited)
+            try
             {
-                try
+                if (!_process.HasExited)
                 {
                     _process.OutputDataReceived -= WriteLineToOutput;
                     _process.ErrorDataReceived -= WriteLineToOutput;
@@ -81,16 +86,16 @@ namespace PactNet.Core
                     _process.Close();
                     _process.Dispose();
                 }
+            }
+            catch (Exception)
+            {
+                try
+                {
+                    _process.Kill();
+                }
                 catch (Exception)
                 {
-                    try
-                    {
-                        _process.Kill();
-                    }
-                    catch (Exception)
-                    {
-                        throw new PactFailureException("Could not terminate the pact core host, please manually kill the 'Ruby interpreter' process");
-                    }
+                    WriteToOutputters("Could not terminate the pact core host, please manually kill the 'Ruby interpreter' process");
                 }
             }
         }
