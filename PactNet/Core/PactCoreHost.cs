@@ -22,7 +22,7 @@ namespace PactNet.Core
                     FileName = _config.Path,
                     Arguments = _config.Arguments,
                     UseShellExecute = false, //Important so that the correct process is killed
-                    RedirectStandardInput = true,
+                    RedirectStandardInput = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true
                     //NOTE: Do Not set CreateNoWindow = true, as it will spawn the ruby process as a child and we then can't kill it without using System.Management
