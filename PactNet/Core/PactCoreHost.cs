@@ -56,7 +56,12 @@ namespace PactNet.Core
             _process.OutputDataReceived += WriteLineToOutput;
             _process.ErrorDataReceived += WriteLineToOutput;
 
-            _process.Start();
+            var success = _process.Start();
+
+            if (!success)
+            {
+                throw new PactFailureException("Could not start the Pact Core Host");
+            }
 
             _process.BeginOutputReadLine();
             _process.BeginErrorReadLine();
@@ -95,7 +100,7 @@ namespace PactNet.Core
                 }
                 catch (Exception)
                 {
-                    WriteToOutputters("Could not terminate the pact core host, please manually kill the 'Ruby interpreter' process");
+                    WriteToOutputters("Could not terminate the Pact Core Host please manually kill the 'Ruby interpreter' process");
                 }
             }
         }
