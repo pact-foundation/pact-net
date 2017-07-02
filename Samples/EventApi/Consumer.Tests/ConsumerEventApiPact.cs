@@ -12,7 +12,6 @@ namespace Consumer.Tests
 
         public int MockServerPort => 9222;
         public string MockProviderServiceBaseUri => $"http://localhost:{MockServerPort}";
-        public PactConfig Config { get; }
 
         public ConsumerEventApiPact()
         {
