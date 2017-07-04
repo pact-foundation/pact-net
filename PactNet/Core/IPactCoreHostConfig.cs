@@ -8,6 +8,7 @@ namespace PactNet.Core
         string Path { get; }
         string Arguments { get; }
         bool WaitForExit { get; }
+        IDictionary<string, string> EnvironmentVariables { get; }
         IEnumerable<IOutput> Outputters { get; }
     }
 }

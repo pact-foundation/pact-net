@@ -14,6 +14,7 @@ namespace PactNet.Tests.Core
             public string Path { get; }
             public string Arguments { get; }
             public bool WaitForExit { get; }
+            public IDictionary<string, string> EnvironmentVariables { get; }
             public IEnumerable<IOutput> Outputters { get; }
 
             public TestHostConfig(IEnumerable<IOutput> outputters)

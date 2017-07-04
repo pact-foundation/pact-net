@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Management;
 using System.Text.RegularExpressions;
 
 namespace PactNet.Core
@@ -15,19 +14,29 @@ namespace PactNet.Core
         {
             _config = config;
 
+            var startInfo = new ProcessStartInfo
+            {
+                WindowStyle = ProcessWindowStyle.Hidden,
+                FileName = _config.Path,
+                Arguments = _config.Arguments,
+                UseShellExecute = false,
+                RedirectStandardInput = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true
+            };
+
+            if (_config.EnvironmentVariables != null)
+            {
+                foreach (var ev in _config.EnvironmentVariables)
+                {
+                    startInfo.EnvironmentVariables.Add(ev.Key, ev.Value);
+                }
+            }
+
             _process = new Process
             {
-                StartInfo = new ProcessStartInfo
-                {
-                    WindowStyle = ProcessWindowStyle.Minimized,
-                    FileName = _config.Path,
-                    Arguments = _config.Arguments,
-                    UseShellExecute = false, //Important so that the correct process is killed
-                    RedirectStandardInput = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true
-                    //NOTE: Do Not set CreateNoWindow = true, as it will spawn the ruby process as a child and we then can't kill it without using System.Management
-                }
+                StartInfo = startInfo
             };
 
             AppDomain.CurrentDomain.DomainUnload += CurrentDomainUnload;
@@ -61,43 +70,38 @@ namespace PactNet.Core
 
         public void Stop()
         {
+            var hasExited = false;
+
             try
             {
-                _process.OutputDataReceived -= WriteLineToOutput;
-                _process.ErrorDataReceived -= WriteLineToOutput;
-                _process.CancelOutputRead();
-                _process.CancelErrorRead();
-                KillProcessAndChildren(_process.Id);
+                hasExited = _process.HasExited;
             }
-            catch (Exception)
+            catch (InvalidOperationException)
             {
-                WriteToOutputters("Could not terminate the Pact Core Host please manually kill the 'Ruby interpreter' process");
+                hasExited = true;
+            }
+
+            if (!hasExited)
+            {
+                try
+                {
+                    _process.OutputDataReceived -= WriteLineToOutput;
+                    _process.ErrorDataReceived -= WriteLineToOutput;
+                    _process.CancelOutputRead();
+                    _process.CancelErrorRead();
+                    _process.Kill();
+                    _process.Dispose();
+                }
+                catch (Exception)
+                {
+                    throw new PactFailureException("Could not terminate the Pact Core Host, please manually kill the 'Ruby interpreter' process");
+                }
             }
         }
 
         private void CurrentDomainUnload(object sender, EventArgs e)
         {
             Stop();
-        }
-
-        private void KillProcessAndChildren(int pid)
-        {
-            var searcher = new ManagementObjectSearcher("Select * From Win32_Process Where ParentProcessID=" + pid);
-            ManagementObjectCollection moc = searcher.Get();
-            foreach (var o in moc)
-            {
-                var mo = (ManagementObject)o;
-                KillProcessAndChildren(Convert.ToInt32(mo["ProcessID"]));
-            }
-            try
-            {
-                var proc = Process.GetProcessById(pid);
-                proc.Kill();
-            }
-            catch (ArgumentException)
-            {
-                // Already exited
-            }
         }
 
         private void WriteLineToOutput(object sender, DataReceivedEventArgs eventArgs)

@@ -9,6 +9,7 @@ namespace PactNet.Core
         public string Path { get; }
         public string Arguments { get; }
         public bool WaitForExit { get; }
+        public IDictionary<string, string> EnvironmentVariables { get; }
         public IEnumerable<IOutput> Outputters { get; }
 
         public PactVerifierHostConfig(Uri baseUri, string pactUri, Uri providerStateSetupUri, PactVerifierConfig config)
@@ -19,6 +20,7 @@ namespace PactNet.Core
             Arguments = $"--pact-urls \"{FixPathForRuby(pactUri)}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}";
             WaitForExit = true;
             Outputters = config?.Outputters;
+            EnvironmentVariables = new Dictionary<string, string>();
         }
 
         private string FixPathForRuby(string path)
