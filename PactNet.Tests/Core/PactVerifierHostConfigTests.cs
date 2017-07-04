@@ -16,11 +16,11 @@ namespace PactNet.Tests.Core
         }
 
         [Fact]
-        public void Ctor_WhenCalled_SetsTheCorrectPath()
+        public void Ctor_WhenCalled_SetsTheCorrectScript()
         {
             var config = GetSubject();
 
-            Assert.Equal(".\\pact\\bin\\pact-provider-verifier.bat", config.Path);
+            Assert.Equal("pact-provider-verifier.rb", config.Script);
         }
 
         [Fact]

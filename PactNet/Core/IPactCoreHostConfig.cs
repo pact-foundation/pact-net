@@ -5,10 +5,9 @@ namespace PactNet.Core
 {
     internal interface IPactCoreHostConfig
     {
-        string Path { get; }
+        string Script { get; }
         string Arguments { get; }
         bool WaitForExit { get; }
-        IDictionary<string, string> EnvironmentVariables { get; }
         IEnumerable<IOutput> Outputters { get; }
     }
 }

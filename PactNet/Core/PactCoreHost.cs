@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -9,34 +10,37 @@ namespace PactNet.Core
     {
         private readonly Process _process;
         private readonly IPactCoreHostConfig _config;
+        private const string RubyVersion = "2.2.0";
+        private const string RubyArch = "i386-mingw32";
 
         public PactCoreHost(T config)
         {
             _config = config;
 
-            var startInfo = new ProcessStartInfo
-            {
-                WindowStyle = ProcessWindowStyle.Hidden,
-                FileName = _config.Path,
-                Arguments = _config.Arguments,
-                UseShellExecute = false,
-                RedirectStandardInput = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true
-            };
-
-            if (_config.EnvironmentVariables != null)
-            {
-                foreach (var ev in _config.EnvironmentVariables)
-                {
-                    startInfo.EnvironmentVariables.Add(ev.Key, ev.Value);
-                }
-            }
+            var currentDir = Directory.GetCurrentDirectory();
+            var pactCoreDir = $"{currentDir}\\pact";
 
             _process = new Process
             {
-                StartInfo = startInfo
+                StartInfo = new ProcessStartInfo
+                {
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    FileName = $"{pactCoreDir}\\lib\\ruby\\bin.real\\ruby.exe",
+                    Arguments = $"-rbundler/setup -I\"{pactCoreDir}\\lib\\app\\lib\" \"{pactCoreDir}\\lib\\app\\{_config.Script}\" {_config.Arguments}",
+                    UseShellExecute = false,
+                    RedirectStandardInput = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
+                    EnvironmentVariables =
+                    {
+                        { "ROOT_PATH", pactCoreDir },
+                        { "RUNNING_PATH", $"{pactCoreDir}\\bin\\" },
+                        { "BUNDLE_GEMFILE", $"{pactCoreDir}\\lib\\vendor\\Gemfile" },
+                        { "RUBYLIB", $"{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby\\{RubyVersion}\\{RubyArch};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby\\{RubyVersion}\\{RubyArch};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\{RubyVersion}\\{RubyArch}" },
+                        { "SSL_CERT_FILE", $"{pactCoreDir}\\lib\\ruby\\lib\\ca-bundle.crt" }
+                    }
+                }
             };
 
             AppDomain.CurrentDomain.DomainUnload += CurrentDomainUnload;
@@ -70,7 +74,7 @@ namespace PactNet.Core
 
         public void Stop()
         {
-            var hasExited = false;
+            bool hasExited;
 
             try
             {

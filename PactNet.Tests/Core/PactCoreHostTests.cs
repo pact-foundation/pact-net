@@ -11,15 +11,14 @@ namespace PactNet.Tests.Core
     {
         internal class TestHostConfig : IPactCoreHostConfig
         {
-            public string Path { get; }
+            public string Script { get; }
             public string Arguments { get; }
             public bool WaitForExit { get; }
-            public IDictionary<string, string> EnvironmentVariables { get; }
             public IEnumerable<IOutput> Outputters { get; }
 
-            public TestHostConfig(IEnumerable<IOutput> outputters)
+            public TestHostConfig(string script, IEnumerable<IOutput> outputters)
             {
-                Path = ".\\Core\\PactCoreHostOutput.bat";
+                Script = script;
                 Arguments = "";
                 WaitForExit = true;
                 Outputters = outputters;
@@ -28,7 +27,7 @@ namespace PactNet.Tests.Core
 
         private IEnumerable<IOutput> _mockOutputters;
 
-        private IPactCoreHost GetSubject()
+        private IPactCoreHost GetSubject(string script)
         {
             _mockOutputters = new List<IOutput>
             {
@@ -37,7 +36,7 @@ namespace PactNet.Tests.Core
                 Substitute.For<IOutput>()
             };
 
-            var config = new TestHostConfig(_mockOutputters);
+            var config = new TestHostConfig(script, _mockOutputters);
 
             return new PactCoreHost<TestHostConfig>(config);
         }
@@ -45,7 +44,7 @@ namespace PactNet.Tests.Core
         [Fact]
         public void Start_WhenStdOutIsWrittendTo_LinesAreWrittenToTheOutputters()
         {
-            var pactCoreHost = GetSubject();
+            var pactCoreHost = GetSubject("write-to-stdout.rb");
 
             pactCoreHost.Start();
 
@@ -57,7 +56,7 @@ namespace PactNet.Tests.Core
         [Fact]
         public void Start_WhenCalled_OuttersAreSubscribedToTheStdErr()
         {
-            var pactCoreHost = GetSubject();
+            var pactCoreHost = GetSubject("write-to-stderr.rb");
 
             pactCoreHost.Start();
 

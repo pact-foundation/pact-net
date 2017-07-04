@@ -1,5 +1,4 @@
-﻿using System.IO;
-using PactNet.Core;
+﻿using PactNet.Core;
 using PactNet.Extensions;
 using Xunit;
 
@@ -13,12 +12,11 @@ namespace PactNet.Tests.Core
         }
 
         [Fact]
-        public void Ctor_WhenCalled_SetsTheCorrectPath()
+        public void Ctor_WhenCalled_SetsTheCorrectScript()
         {
             var config = GetSubject();
 
-            var currentDir = Directory.GetCurrentDirectory();
-            Assert.Equal($"{currentDir}\\pact\\lib\\ruby\\bin.real\\ruby.exe", config.Path);
+            Assert.Equal("pact-mock-service.rb", config.Script);
         }
 
         [Fact]
@@ -117,8 +115,7 @@ namespace PactNet.Tests.Core
         {
 
             var sslOption = enableSsl ? " --ssl" : "";
-            var currentDir = Directory.GetCurrentDirectory();
-            return $"-rbundler/setup -I{currentDir}\\pact\\lib\\app\\lib \"{currentDir}\\pact\\lib\\app\\pact-mock-service.rb\" -p {port} -l \"{logFilePath}\" --pact-dir \"{pactFileDir}\" --pact-specification-version \"{pactSpecificationVersion}\"{sslOption}";
+            return $"-p {port} -l \"{logFilePath}\" --pact-dir \"{pactFileDir}\" --pact-specification-version \"{pactSpecificationVersion}\"{sslOption}";
         }
     }
 }
