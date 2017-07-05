@@ -294,7 +294,7 @@ public class ProviderStateMiddleware
                 context.Request.Body != null)
             {
                 string jsonRequestBody;
-                using (var reader = new StreamReader(context.Request.Body, Encoding.UTF8, true, 1024, true))
+                using (var reader = new StreamReader(context.Request.Body, Encoding.UTF8))
                 {
                     jsonRequestBody = reader.ReadToEnd();
                 }
