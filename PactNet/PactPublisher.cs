@@ -16,14 +16,15 @@ namespace PactNet
     public class PactPublisher
     {
         private readonly HttpClient _httpClient;
+        private readonly PactUriOptions _brokerUriOptions;
 
         internal PactPublisher(
             Uri baseUri,
             PactUriOptions brokerUriOptions,
             HttpMessageHandler handler)
         {
-            //TODO: Handle basic auth stuff
             _httpClient = new HttpClient(handler) { BaseAddress = baseUri };
+            _brokerUriOptions = brokerUriOptions;
         }
 
         public PactPublisher(Uri brokerBaseUri, PactUriOptions brokerUriOptions = null) : 
@@ -47,6 +48,12 @@ namespace PactNet
             var pactFile = JsonConvert.DeserializeObject<PactFile>(pactFileText);
 
             var request = new HttpRequestMessage(HttpMethod.Put, $"/pacts/provider/{pactFile.Provider.Name}/consumer/{pactFile.Consumer.Name}/version/{consumerVersion}");
+
+            if (_brokerUriOptions != null)
+            {
+                request.Headers.Add("Authorization", $"{_brokerUriOptions.AuthorizationScheme} {_brokerUriOptions.AuthorizationValue}");
+            }
+
             var requestContentJson = JsonConvert.SerializeObject(request, JsonConfig.ApiSerializerSettings);
             request.Content = new StringContent(requestContentJson, Encoding.UTF8, "application/json");
 
@@ -72,6 +79,11 @@ namespace PactNet
                 foreach (var tag in tags)
                 {
                     var tagRequest = new HttpRequestMessage(HttpMethod.Put, $"/pacticipants/{pactFile.Consumer.Name}/versions/{consumerVersion}/tags/{tag}");
+
+                    if (_brokerUriOptions != null)
+                    {
+                        tagRequest.Headers.Add("Authorization", $"{_brokerUriOptions.AuthorizationScheme} {_brokerUriOptions.AuthorizationValue}");
+                    }
 
                     var tagResponse = _httpClient.SendAsync(tagRequest, CancellationToken.None).RunSync();
                     var tagResponseStatusCode = tagResponse.StatusCode;

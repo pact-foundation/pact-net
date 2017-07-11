@@ -6,23 +6,11 @@ namespace PactNet
     public class PactUriOptions
     {
         private const string AuthScheme = "Basic";
-        private readonly string _username;
-        private readonly string _password;
 
-        internal string AuthorizationScheme
-        {
-            get { return AuthScheme; }
-        }
-
-        internal string AuthorizationValue
-        {
-            get
-            {
-                return Convert.ToBase64String(
-                    Encoding.UTF8.GetBytes(
-                    String.Format("{0}:{1}", _username, _password)));
-            }
-        }
+        internal string Username { get; }
+        internal string Password { get; }
+        internal string AuthorizationScheme => AuthScheme;
+        internal string AuthorizationValue => Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Username}:{Password}"));
 
         public PactUriOptions(string username, string password)
         {
@@ -41,8 +29,8 @@ namespace PactNet
                 throw new ArgumentException("password is null or empty.");
             }
 
-            _username = username;
-            _password = password;
+            Username = username;
+            Password = password;
         }
     }
 }

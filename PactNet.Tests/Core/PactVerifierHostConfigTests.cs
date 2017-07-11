@@ -6,11 +6,12 @@ namespace PactNet.Tests.Core
 {
     public class PactVerifierHostConfigTests
     {
-        private IPactCoreHostConfig GetSubject(Uri baseUri = null, string pactUri = "../test/pact.json", Uri providerStateSetupUri = null, PactVerifierConfig verifierConfig = null)
+        private IPactCoreHostConfig GetSubject(Uri baseUri = null, string pactUri = "../test/pact.json", PactUriOptions pactBrokerUriOptions = null, Uri providerStateSetupUri = null, PactVerifierConfig verifierConfig = null)
         {
             return new PactVerifierHostConfig(
                 baseUri ?? new Uri("http://localhost:2833"), 
                 pactUri,
+                pactBrokerUriOptions,
                 providerStateSetupUri,
                 verifierConfig);
         }
@@ -30,7 +31,7 @@ namespace PactNet.Tests.Core
             var pactUri = "./tester-pact/pact-file.json";
             var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
 
-            var config = GetSubject(baseUri, pactUri, providerStateSetupUri);
+            var config = GetSubject(baseUri, pactUri, null, providerStateSetupUri);
 
             var expectedArguments = BuildExpectedArguments(baseUri, pactUri, providerStateSetupUri);
 
@@ -44,7 +45,7 @@ namespace PactNet.Tests.Core
             var pactUri = "https://broker:9292/test";
             var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
 
-            var config = GetSubject(baseUri, pactUri, providerStateSetupUri);
+            var config = GetSubject(baseUri, pactUri, null, providerStateSetupUri);
 
             var expectedArguments = BuildExpectedArguments(baseUri, pactUri, providerStateSetupUri);
 

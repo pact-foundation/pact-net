@@ -109,7 +109,7 @@ namespace PactNet
             }
 
             var pactVerifier = _pactVerifierHostFactory(
-                new PactVerifierHostConfig(ServiceBaseUri, PactFileUri, ProviderStateSetupUri, _config));
+                new PactVerifierHostConfig(ServiceBaseUri, PactFileUri, PactUriOptions, ProviderStateSetupUri, _config));
             pactVerifier.Start();
         }
     }
