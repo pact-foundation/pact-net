@@ -1,4 +1,6 @@
+using PactNet.Extensions;
 using System;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -20,27 +22,26 @@ namespace PactNet.Core
             var currentDir = Directory.GetCurrentDirectory();
             var pactCoreDir = $"{currentDir}\\pact";
 
+            var startInfo = new ProcessStartInfo
+            {
+                WindowStyle = ProcessWindowStyle.Hidden,
+                FileName = $"{pactCoreDir}\\lib\\ruby\\bin.real\\ruby.exe",
+                Arguments = $"-rbundler/setup -I\"{pactCoreDir}\\lib\\app\\lib\" \"{pactCoreDir}\\lib\\app\\{_config.Script}\" {_config.Arguments}",
+                UseShellExecute = false,
+                RedirectStandardInput = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true
+            };
+            startInfo.EnvironmentVariables["ROOT_PATH"] = pactCoreDir;
+            startInfo.EnvironmentVariables["RUNNING_PATH"] = $"{pactCoreDir}\\bin\\";
+            startInfo.EnvironmentVariables["BUNDLE_GEMFILE"] = $"{pactCoreDir}\\lib\\vendor\\Gemfile";
+            startInfo.EnvironmentVariables["RUBYLIB"] = $"{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby\\{RubyVersion}\\{RubyArch};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby\\{RubyVersion}\\{RubyArch};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\{RubyVersion}\\{RubyArch}";
+            startInfo.EnvironmentVariables["SSL_CERT_FILE"] = $"{pactCoreDir}\\lib\\ruby\\lib\\ca-bundle.crt";
+            
             _process = new Process
             {
-                StartInfo = new ProcessStartInfo
-                {
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    FileName = $"{pactCoreDir}\\lib\\ruby\\bin.real\\ruby.exe",
-                    Arguments = $"-rbundler/setup -I\"{pactCoreDir}\\lib\\app\\lib\" \"{pactCoreDir}\\lib\\app\\{_config.Script}\" {_config.Arguments}",
-                    UseShellExecute = false,
-                    RedirectStandardInput = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true,
-                    EnvironmentVariables =
-                    {
-                        { "ROOT_PATH", pactCoreDir },
-                        { "RUNNING_PATH", $"{pactCoreDir}\\bin\\" },
-                        { "BUNDLE_GEMFILE", $"{pactCoreDir}\\lib\\vendor\\Gemfile" },
-                        { "RUBYLIB", $"{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby\\{RubyVersion}\\{RubyArch};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby\\{RubyVersion}\\{RubyArch};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\{RubyVersion}\\{RubyArch}" },
-                        { "SSL_CERT_FILE", $"{pactCoreDir}\\lib\\ruby\\lib\\ca-bundle.crt" }
-                    }
-                }
+                StartInfo = startInfo
             };
 
             AppDomain.CurrentDomain.DomainUnload += CurrentDomainUnload;
