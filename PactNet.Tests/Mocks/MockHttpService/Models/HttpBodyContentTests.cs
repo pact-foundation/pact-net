@@ -86,7 +86,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
         }
 
         [Fact]
-        public void Ctor1_WithJsonObjectBody_SetsBodyAndContent()
+        public void Ctor1_WithJsonBody_SetsBodyAndContent()
         {
             var body = new
             {
@@ -100,60 +100,8 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
             Assert.Equal(body, httpBodyContent.Body);
         }
 
-
         [Fact]
-        public void Ctor1_WithJsonArrayBody_SetsBodyAndContent()
-        {
-            var body = new[] {
-                new {
-                    Test = "tester",
-                    tesTer = 1
-                }
-            };
-            const string content = "[{\"Test\":\"tester\",\"tesTer\":1}]";
-            var httpBodyContent = new HttpBodyContent(body: body, contentType: new MediaTypeHeaderValue("application/json") { CharSet = "utf-8" });
-
-            Assert.Equal(content, httpBodyContent.Content);
-            Assert.Equal(body, httpBodyContent.Body);
-        }
-
-        [Fact]
-        public void Ctor1_WithJsonStringBody_SetsBodyAndContent()
-        {
-            const string bodyIn = "Some json string body";
-            const string bodyOut = "\"Some json string body\"";
-            const string content = "\"Some json string body\"";
-            var httpBodyContent = new HttpBodyContent(body: bodyIn, contentType: new MediaTypeHeaderValue("application/json") { CharSet = "utf-8" });
-
-            Assert.Equal(content, httpBodyContent.Content);
-            Assert.Equal(bodyOut, (string)httpBodyContent.Body);
-        }
-
-        [Fact]
-        public void Ctor1_WithJsonIntBody_SetsBodyAndContent()
-        {
-            const int body = 5;
-            const string content = "5";
-            var httpBodyContent = new HttpBodyContent(body: body, contentType: new MediaTypeHeaderValue("application/json") { CharSet = "utf-8" });
-
-            Assert.Equal(content, httpBodyContent.Content);
-            Assert.Equal(body, (int)httpBodyContent.Body);
-        }
-
-        [Fact]
-        public void Ctor1_WithJsonGuidBody_SetsBodyAndContent()
-        {
-            Guid bodyIn = Guid.NewGuid();
-            string bodyOut = "\"" + bodyIn + "\"";
-            string content = "\"" + bodyIn + "\"";
-            var httpBodyContent = new HttpBodyContent(body: bodyIn, contentType: new MediaTypeHeaderValue("application/json") { CharSet = "utf-8" });
-
-            Assert.Equal(content, httpBodyContent.Content);
-            Assert.Equal(bodyOut, (string)httpBodyContent.Body);
-        }
-
-        [Fact]
-        public void Ctor1_WithJsonObjectBodyAndTitleCasedContentType_SetsBodyAndContent()
+        public void Ctor1_WithJsonBodyAndTitleCasedContentType_SetsBodyAndContent()
         {
             var body = new
             {
@@ -183,7 +131,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
         }
 
         [Fact]
-        public void Ctor2_WithJsonObjectContent_SetsBodyAndContent()
+        public void Ctor2_WithJsonContent_SetsBodyAndContent()
         {
             var body = new
             {
@@ -196,57 +144,6 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
             Assert.Equal(content, httpBodyContent.Content);
             Assert.Equal(body.Test, (string)httpBodyContent.Body.Test);
             Assert.Equal(body.tesTer, (int)httpBodyContent.Body.tesTer);
-        }
-
-        [Fact]
-        public void Ctor2_WithJsonArrayContent_SetsBodyAndContent()
-        {
-            var body = new[] {
-                new {
-                    Test = "tester",
-                    tesTer = 1
-                }
-            };
-            const string content = "[{\"Test\":\"tester\",\"tesTer\":1}]";
-            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(content), contentType: new MediaTypeHeaderValue("application/json") { CharSet = "utf-8" });
-
-            Assert.Equal(content, httpBodyContent.Content);
-            Assert.Equal(body[0].Test, (string)httpBodyContent.Body[0].Test);
-            Assert.Equal(body[0].tesTer, (int)httpBodyContent.Body[0].tesTer);
-        }
-
-        [Fact]
-        public void Ctor2_WithJsonStringContent_SetsBodyAndContent()
-        {
-            const string body = "\"Some json string body\"";
-            const string content = "\"Some json string body\"";
-            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(content), contentType: new MediaTypeHeaderValue("application/json") { CharSet = "utf-8" });
-
-            Assert.Equal(content, httpBodyContent.Content);
-            Assert.Equal(body, (string)httpBodyContent.Body);
-        }
-
-        [Fact]
-        public void Ctor2_WithJsonIntContent_SetsBodyAndContent()
-        {
-            const int body = 5;
-            const string content = "5";
-            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(content), contentType: new MediaTypeHeaderValue("application/json") { CharSet = "utf-8" });
-
-            Assert.Equal(content, httpBodyContent.Content);
-            Assert.Equal(body, (int)httpBodyContent.Body);
-        }
-
-        [Fact]
-        public void Ctor2_WithJsonGuidContent_SetsBodyAndContent()
-        {
-            var g = Guid.NewGuid();
-            string body = "\"" + g + "\"";
-            string content = "\"" + g + "\"";
-            var httpBodyContent = new HttpBodyContent(content: Encoding.UTF8.GetBytes(content), contentType: new MediaTypeHeaderValue("application/json") { CharSet = "utf-8" });
-
-            Assert.Equal(content, httpBodyContent.Content);
-            Assert.Equal(body, (string)httpBodyContent.Body);
         }
 
         [Fact]
