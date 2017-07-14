@@ -12,22 +12,22 @@ function Unzip
 $PSScriptFilePath = (Get-Item $MyInvocation.MyCommand.Path).FullName
 $BuildRoot = Split-Path -Path $PSScriptFilePath -Parent
 $SolutionRoot = Split-Path -Path $BuildRoot -Parent
+$OutputPath = Join-Path $SolutionRoot -ChildPath 'tools'
+
+If (Test-Path $OutputPath)
+{
+    Write-Output "Standalone Core has already been downloaded"
+    exit   
+}
 
 $StandaloneCoreVersion = '1.1.0'
 $StandaloneCoreFileName = "pact-$StandaloneCoreVersion-win32"
-$OutputPath = Join-Path $SolutionRoot -ChildPath 'PactNet\Core\standalone'
-$Client = New-Object System.Net.WebClient
-
-
 $StandaloneCoreFilePath = "$OutputPath\$StandaloneCoreFileName.zip"
 $StandaloneCoreDownload = "https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v$StandaloneCoreVersion/$StandaloneCoreFileName.zip";
 
-If(!(Test-Path $OutputPath))
-{
-	New-Item -ItemType directory -Path $OutputPath | Out-Null
-}
-
+New-Item -ItemType directory -Path $OutputPath | Out-Null
 Write-Output "Downloading the Standalone Core from '$StandaloneCoreDownload'..."
+$Client = New-Object System.Net.WebClient
 $Client.DownloadFile($StandaloneCoreDownload, $StandaloneCoreFilePath)
 Write-Output "Done"
 

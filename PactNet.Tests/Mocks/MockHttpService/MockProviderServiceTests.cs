@@ -379,7 +379,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             Assert.Equal(1, _fakeHttpMessageHandler.RequestsReceived.Count());
             Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsReceived.First().Method);
-            Assert.Equal("http://localhost:1234/interactions/verification?example_description=MockProviderServiceTests.VerifyInteractions_WhenHostIsNotNull_PerformsAdminInteractionsVerificationGetRequest", _fakeHttpMessageHandler.RequestsReceived.First().RequestUri.ToString());
+            Assert.Equal("http://localhost:1234/interactions/verification", _fakeHttpMessageHandler.RequestsReceived.First().RequestUri.ToString());
         }
 
         [Fact]
@@ -416,7 +416,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             Assert.Equal(1, _fakeHttpMessageHandler.RequestsReceived.Count());
             Assert.Equal(HttpMethod.Delete, _fakeHttpMessageHandler.RequestsReceived.First().Method);
-            Assert.Equal("http://localhost:1234/interactions?example_description=MockProviderServiceTests.ClearInteractions_WhenHostIsNotNull_PerformsAdminInteractionsDeleteRequest", _fakeHttpMessageHandler.RequestsReceived.First().RequestUri.ToString());
+            Assert.Equal("http://localhost:1234/interactions", _fakeHttpMessageHandler.RequestsReceived.First().RequestUri.ToString());
         }
 
         [Fact]

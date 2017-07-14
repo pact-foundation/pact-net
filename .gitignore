@@ -46,5 +46,6 @@ Build/PactNet*.nupkg
 /Build/coverage
 [Ll]ogs
 *.DotSettings
-PactNet/Core/standalone/pact/
 PactNet/Files/pact/
+.vs/
+tools/
