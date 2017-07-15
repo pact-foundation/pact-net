@@ -99,6 +99,7 @@
     <Compile Include="Models\InteractionTests.cs" />
     <Compile Include="PactConfigTests.cs" />
     <Compile Include="PactBuilderTests.cs" />
+    <Compile Include="PactPublisherTests.cs" />
     <Compile Include="PactUriOptionsTests.cs" />
     <Compile Include="PactVerifierTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

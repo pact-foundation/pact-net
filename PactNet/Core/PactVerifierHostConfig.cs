@@ -14,10 +14,10 @@ namespace PactNet.Core
         public PactVerifierHostConfig(Uri baseUri, string pactUri, PactUriOptions pactBrokerUriOptions, Uri providerStateSetupUri, PactVerifierConfig config)
         {
             var providerStateOption = providerStateSetupUri != null ? $" --provider-states-setup-url {providerStateSetupUri.OriginalString}" : "";
-            var brokerCredentials = pactBrokerUriOptions != null ? $" --broker-user \"{pactBrokerUriOptions.Username}\" --broker-password \"{pactBrokerUriOptions.Password}\"" : "";
+            var brokerCredentials = pactBrokerUriOptions != null ? $" --broker-username \"{pactBrokerUriOptions.Username}\" --broker-password \"{pactBrokerUriOptions.Password}\"" : "";
 
             Script = "pact-provider-verifier.rb";
-            Arguments = $"--pact-urls \"{FixPathForRuby(pactUri)}\"{brokerCredentials} --provider-base-url {baseUri.OriginalString}{providerStateOption}";
+            Arguments = $"--pact-urls \"{FixPathForRuby(pactUri)}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}{brokerCredentials}";
             WaitForExit = true;
             Outputters = config?.Outputters;
         }

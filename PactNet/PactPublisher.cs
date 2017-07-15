@@ -7,7 +7,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
-using PactNet.Configuration.Json;
 using PactNet.Extensions;
 using PactNet.Models;
 
@@ -19,15 +18,15 @@ namespace PactNet
         private readonly PactUriOptions _brokerUriOptions;
 
         internal PactPublisher(
-            Uri baseUri,
+            string brokerBaseUri,
             PactUriOptions brokerUriOptions,
             HttpMessageHandler handler)
         {
-            _httpClient = new HttpClient(handler) { BaseAddress = baseUri };
+            _httpClient = new HttpClient(handler) { BaseAddress = new Uri(brokerBaseUri) };
             _brokerUriOptions = brokerUriOptions;
         }
 
-        public PactPublisher(Uri brokerBaseUri, PactUriOptions brokerUriOptions = null) : 
+        public PactPublisher(string brokerBaseUri, PactUriOptions brokerUriOptions = null) : 
             this(brokerBaseUri, brokerUriOptions, new HttpClientHandler())
         {
         }
@@ -45,40 +44,40 @@ namespace PactNet
             }
 
             var pactFileText = File.ReadAllText(pactFileUri);
-            var pactFile = JsonConvert.DeserializeObject<PactFile>(pactFileText);
+            var pactDetails = JsonConvert.DeserializeObject<PactDetails>(pactFileText);
 
-            var request = new HttpRequestMessage(HttpMethod.Put, $"/pacts/provider/{pactFile.Provider.Name}/consumer/{pactFile.Consumer.Name}/version/{consumerVersion}");
+            var request = new HttpRequestMessage(HttpMethod.Put, $"/pacts/provider/{Uri.EscapeDataString(pactDetails.Provider.Name)}/consumer/{Uri.EscapeDataString(pactDetails.Consumer.Name)}/version/{consumerVersion}");
 
             if (_brokerUriOptions != null)
             {
                 request.Headers.Add("Authorization", $"{_brokerUriOptions.AuthorizationScheme} {_brokerUriOptions.AuthorizationValue}");
             }
 
-            var requestContentJson = JsonConvert.SerializeObject(request, JsonConfig.ApiSerializerSettings);
-            request.Content = new StringContent(requestContentJson, Encoding.UTF8, "application/json");
+            request.Content = new StringContent(pactFileText, Encoding.UTF8, "application/json");
 
             var response = _httpClient.SendAsync(request, CancellationToken.None).RunSync();
             var responseStatusCode = response.StatusCode;
             var responseContent = String.Empty;
-
-            Dispose(request);
-            Dispose(response);
 
             if (response.Content != null)
             {
                 responseContent = response.Content.ReadAsStringAsync().RunSync();
             }
 
-            if (responseStatusCode != HttpStatusCode.OK)
+            Dispose(request);
+            Dispose(response);
+
+            if (!IsSuccessStatusCode(responseStatusCode))
             {
-                throw new PactFailureException($"Failed to publish Pact to the broker: {responseContent}");
+                throw new PactFailureException($"Failed to publish Pact to the broker with http status {responseStatusCode}: {responseContent}");
             }
 
             if (tags != null && tags.Any())
             {
                 foreach (var tag in tags)
                 {
-                    var tagRequest = new HttpRequestMessage(HttpMethod.Put, $"/pacticipants/{pactFile.Consumer.Name}/versions/{consumerVersion}/tags/{tag}");
+                    var tagRequest = new HttpRequestMessage(HttpMethod.Put, $"/pacticipants/{Uri.EscapeDataString(pactDetails.Consumer.Name)}/versions/{consumerVersion}/tags/{Uri.EscapeDataString(tag)}");
+                    tagRequest.Content = new StringContent("", Encoding.UTF8, "application/json");
 
                     if (_brokerUriOptions != null)
                     {
@@ -97,12 +96,21 @@ namespace PactNet
                     Dispose(tagRequest);
                     Dispose(tagResponse);
 
-                    if (tagResponseStatusCode != HttpStatusCode.OK)
+                    if (!IsSuccessStatusCode(tagResponseStatusCode))
                     {
-                        throw new PactFailureException($"Failed to add Pact tag '{tag}' to the broker: {tagResponseContent}");
+                        throw new PactFailureException($"Failed to add Pact tag '{tag}' to the broker with http status {tagResponseStatusCode}: {tagResponseContent}");
                     }
                 }
             }
+        }
+
+        private bool IsSuccessStatusCode(HttpStatusCode statusCode)
+        {
+            if (statusCode >= HttpStatusCode.OK)
+            {
+                return statusCode <= (HttpStatusCode)299;
+            }
+            return false;
         }
 
         private void Dispose(IDisposable disposable)
