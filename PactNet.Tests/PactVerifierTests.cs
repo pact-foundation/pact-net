@@ -233,5 +233,24 @@ namespace PactNet.Tests
 
             _mockVerifierCoreHost.Received(1).Start();
         }
+
+        [Fact]
+        public void Verify_WhenTheVerifierIsCorrectlySetUpWithAHttpsPactFileWithCredentials_PactVerifyCoreHostIsStarted()
+        {
+            var serviceProvider = "Event API";
+            var serviceConsumer = "My client";
+            var pactUri = "https://broker/consumer/test/provider/hello/latest";
+            var pactUriOptions = new PactUriOptions("username", "password");
+
+            var pactVerifier = GetSubject();
+            pactVerifier
+               .ServiceProvider(serviceProvider, "http://localhost")
+               .HonoursPactWith(serviceConsumer)
+               .PactUri(pactUri, pactUriOptions);
+
+            pactVerifier.Verify();
+
+            _mockVerifierCoreHost.Received(1).Start();
+        }
     }
 }

@@ -45,5 +45,17 @@ namespace PactNet.Tests
             Assert.Equal(expectedAuthScheme, options.AuthorizationScheme);
             Assert.Equal(expectedAuthValue, options.AuthorizationValue);
         }
+
+        [Fact]
+        public void Ctor_WithValidUsernameAndPassword_ReturnsCorrectUsernameAndPassword()
+        {
+            const string username = "Aladdin";
+            const string password = "open sesame";
+
+            var options = new PactUriOptions(username, password);
+
+            Assert.Equal(username, options.Username);
+            Assert.Equal(password, options.Password);
+        }
     }
 }

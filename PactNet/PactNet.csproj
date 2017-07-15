@@ -111,6 +111,7 @@
     <Compile Include="Models\Interaction.cs" />
     <Compile Include="Models\PactDetails.cs" />
     <Compile Include="PactConfig.cs" />
+    <Compile Include="PactPublisher.cs" />
     <Compile Include="PactUriOptions.cs" />
     <Compile Include="PactVerifier.cs" />
     <Compile Include="Mocks\MockHttpService\Models\ProviderServiceInteraction.cs" />

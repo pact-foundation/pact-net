@@ -344,8 +344,23 @@ Again, please note: we advise using a TDD approach when using this library, howe
 
 For further examples please refer to the [Samples](https://github.com/SEEK-Jobs/pact-net/tree/master/Samples) in the solution.
 
-#### Related Tools
+### Publishing Pacts to a Broker
+The Pact broker is a useful tool that can be used to share pacts between the consumer and provider. In order to make this easy, below are a couple of options for publishing your Pacts to a Pact Broker.
 
+#### Using PowerShell on your build server
+[Checkout this gist](https://gist.github.com/neilcampbell/bc1fb7d409425894ece0) to see an example of how you can do this.
+
+#### Using the C# client
+If you use build tools like Fake and Cake, you may want create a broker publish task and using the PactPublisher.
+
+```c#
+var pactPublisher = new PactPublisher("http://test.pact.dius.com.au", new PactUriOptions("username", "password"));
+pactPublisher.PublishToBroker(
+    "..\\..\\..\\Samples\\EventApi\\Consumer.Tests\\pacts\\event_api_consumer-event_api.json",
+    "1.0.2", new [] { "master" });
+```
+
+#### Related Tools
 You might also find the following tool and library helpful:
 
 * [Pact based service simulator](https://github.com/seek-oss/seek.automation.phantom): leverage pacts to isolate your services

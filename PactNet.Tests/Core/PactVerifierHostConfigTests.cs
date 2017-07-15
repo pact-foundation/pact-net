@@ -6,11 +6,12 @@ namespace PactNet.Tests.Core
 {
     public class PactVerifierHostConfigTests
     {
-        private IPactCoreHostConfig GetSubject(Uri baseUri = null, string pactUri = "../test/pact.json", Uri providerStateSetupUri = null, PactVerifierConfig verifierConfig = null)
+        private IPactCoreHostConfig GetSubject(Uri baseUri = null, string pactUri = "../test/pact.json", PactUriOptions pactBrokerUriOptions = null, Uri providerStateSetupUri = null, PactVerifierConfig verifierConfig = null)
         {
             return new PactVerifierHostConfig(
                 baseUri ?? new Uri("http://localhost:2833"), 
                 pactUri,
+                pactBrokerUriOptions,
                 providerStateSetupUri,
                 verifierConfig);
         }
@@ -30,7 +31,7 @@ namespace PactNet.Tests.Core
             var pactUri = "./tester-pact/pact-file.json";
             var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
 
-            var config = GetSubject(baseUri, pactUri, providerStateSetupUri);
+            var config = GetSubject(baseUri, pactUri, null, providerStateSetupUri);
 
             var expectedArguments = BuildExpectedArguments(baseUri, pactUri, providerStateSetupUri);
 
@@ -38,15 +39,30 @@ namespace PactNet.Tests.Core
         }
 
         [Fact]
-        public void Ctor_WhenCalledWithAHttpsPactUri_SetsTheCorrectArgs()
+        public void Ctor_WhenCalledWithAHttpPactUri_SetsTheCorrectArgs()
+        {
+            var baseUri = new Uri("http://127.0.0.1");
+            var pactUri = "http://broker:9292/test";
+            var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
+
+            var config = GetSubject(baseUri, pactUri, null, providerStateSetupUri);
+
+            var expectedArguments = BuildExpectedArguments(baseUri, pactUri, providerStateSetupUri);
+
+            Assert.Equal(expectedArguments, config.Arguments);
+        }
+
+        [Fact]
+        public void Ctor_WhenCalledWithAAuthenticatedHttpsPactUri_SetsTheCorrectArgs()
         {
             var baseUri = new Uri("http://127.0.0.1");
             var pactUri = "https://broker:9292/test";
+            var pactUriOptions = new PactUriOptions("username", "password");
             var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
 
-            var config = GetSubject(baseUri, pactUri, providerStateSetupUri);
+            var config = GetSubject(baseUri, pactUri, pactUriOptions, providerStateSetupUri);
 
-            var expectedArguments = BuildExpectedArguments(baseUri, pactUri, providerStateSetupUri);
+            var expectedArguments = BuildExpectedArguments(baseUri, pactUri, providerStateSetupUri, pactUriOptions);
 
             Assert.Equal(expectedArguments, config.Arguments);
         }
@@ -92,10 +108,13 @@ namespace PactNet.Tests.Core
         private string BuildExpectedArguments(
             Uri baseUri, 
             string pactUri, 
-            Uri providerStateSetupUri)
+            Uri providerStateSetupUri,
+            PactUriOptions pactUriOptions = null)
         {
             var providerStateOption = providerStateSetupUri != null ? $" --provider-states-setup-url {providerStateSetupUri.OriginalString}" : "";
-            return $"--pact-urls \"{pactUri}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}";
+            var brokerCredentials = pactUriOptions != null ? $" --broker-username \"{pactUriOptions.Username}\" --broker-password \"{pactUriOptions.Password}\"" : "";
+
+            return $"--pact-urls \"{pactUri}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}{brokerCredentials}";
         }
     }
 }
