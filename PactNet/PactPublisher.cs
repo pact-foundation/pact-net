@@ -46,32 +46,6 @@ namespace PactNet
             var pactFileText = File.ReadAllText(pactFileUri);
             var pactDetails = JsonConvert.DeserializeObject<PactDetails>(pactFileText);
 
-            var request = new HttpRequestMessage(HttpMethod.Put, $"/pacts/provider/{Uri.EscapeDataString(pactDetails.Provider.Name)}/consumer/{Uri.EscapeDataString(pactDetails.Consumer.Name)}/version/{consumerVersion}");
-
-            if (_brokerUriOptions != null)
-            {
-                request.Headers.Add("Authorization", $"{_brokerUriOptions.AuthorizationScheme} {_brokerUriOptions.AuthorizationValue}");
-            }
-
-            request.Content = new StringContent(pactFileText, Encoding.UTF8, "application/json");
-
-            var response = _httpClient.SendAsync(request, CancellationToken.None).RunSync();
-            var responseStatusCode = response.StatusCode;
-            var responseContent = String.Empty;
-
-            if (response.Content != null)
-            {
-                responseContent = response.Content.ReadAsStringAsync().RunSync();
-            }
-
-            Dispose(request);
-            Dispose(response);
-
-            if (!IsSuccessStatusCode(responseStatusCode))
-            {
-                throw new PactFailureException($"Failed to publish Pact to the broker with http status {responseStatusCode}: {responseContent}");
-            }
-
             if (tags != null && tags.Any())
             {
                 foreach (var tag in tags)
@@ -101,6 +75,32 @@ namespace PactNet
                         throw new PactFailureException($"Failed to add Pact tag '{tag}' to the broker with http status {tagResponseStatusCode}: {tagResponseContent}");
                     }
                 }
+            }
+
+            var request = new HttpRequestMessage(HttpMethod.Put, $"/pacts/provider/{Uri.EscapeDataString(pactDetails.Provider.Name)}/consumer/{Uri.EscapeDataString(pactDetails.Consumer.Name)}/version/{consumerVersion}");
+
+            if (_brokerUriOptions != null)
+            {
+                request.Headers.Add("Authorization", $"{_brokerUriOptions.AuthorizationScheme} {_brokerUriOptions.AuthorizationValue}");
+            }
+
+            request.Content = new StringContent(pactFileText, Encoding.UTF8, "application/json");
+
+            var response = _httpClient.SendAsync(request, CancellationToken.None).RunSync();
+            var responseStatusCode = response.StatusCode;
+            var responseContent = String.Empty;
+
+            if (response.Content != null)
+            {
+                responseContent = response.Content.ReadAsStringAsync().RunSync();
+            }
+
+            Dispose(request);
+            Dispose(response);
+
+            if (!IsSuccessStatusCode(responseStatusCode))
+            {
+                throw new PactFailureException($"Failed to publish Pact to the broker with http status {responseStatusCode}: {responseContent}");
             }
         }
 

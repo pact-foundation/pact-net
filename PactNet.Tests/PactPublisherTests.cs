@@ -120,9 +120,9 @@ namespace PactNet.Tests
 
             var requestsReceived = _fakeHttpMessageHandler.RequestsReceived;
             Assert.Equal(3, requestsReceived.Count());
-            Assert.True(ValidPactPublishRequest(requestsReceived.ElementAt(0), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(0), brokerBaseUri, pactDetails, pactFileText, pactVersion, pactUriOptions));
-            Assert.True(ValidPactTagRequest(requestsReceived.ElementAt(1), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(1), brokerBaseUri, pactDetails, pactVersion, tags.ElementAt(0), pactUriOptions));
-            Assert.True(ValidPactTagRequest(requestsReceived.ElementAt(2), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(2), brokerBaseUri, pactDetails, pactVersion, tags.ElementAt(1), pactUriOptions));
+            Assert.True(ValidPactTagRequest(requestsReceived.ElementAt(0), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(0), brokerBaseUri, pactDetails, pactVersion, tags.ElementAt(0), pactUriOptions));
+            Assert.True(ValidPactTagRequest(requestsReceived.ElementAt(1), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(1), brokerBaseUri, pactDetails, pactVersion, tags.ElementAt(1), pactUriOptions));
+            Assert.True(ValidPactPublishRequest(requestsReceived.ElementAt(2), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(2), brokerBaseUri, pactDetails, pactFileText, pactVersion, pactUriOptions));
         }
 
         private bool ValidPactPublishRequest(
