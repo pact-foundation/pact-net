@@ -58,15 +58,15 @@ namespace PactNet.Tests
             var brokerBaseUri = "http://test.pact.dius.com.au";
             var pactPublisher = GetSubject(brokerBaseUri);
             var pactFilePath = "..\\..\\..\\Samples\\EventApi\\Consumer.Tests\\pacts\\event_api_consumer-event_api.json";
-            var pactVersion = "1.0.2";
+            var consumerVersion = "1.0.2";
             var pactFileText = File.ReadAllText(pactFilePath);
             var pactDetails = JsonConvert.DeserializeObject<PactDetails>(pactFileText);
 
-            pactPublisher.PublishToBroker(pactFilePath, pactVersion);
+            pactPublisher.PublishToBroker(pactFilePath, consumerVersion);
 
             var requestsReceived = _fakeHttpMessageHandler.RequestsReceived;
             Assert.Equal(1, requestsReceived.Count());
-            Assert.True(ValidPactPublishRequest(requestsReceived.ElementAt(0), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(0), brokerBaseUri, pactDetails, pactFileText, pactVersion));
+            Assert.True(ValidPactPublishRequest(requestsReceived.ElementAt(0), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(0), brokerBaseUri, pactDetails, pactFileText, consumerVersion));
         }
 
         [Fact]
@@ -76,15 +76,15 @@ namespace PactNet.Tests
             var pactUriOptions = new PactUriOptions("username", "password");
             var pactPublisher = GetSubject(brokerBaseUri, pactUriOptions);
             var pactFilePath = "..\\..\\..\\Samples\\EventApi\\Consumer.Tests\\pacts\\event_api_consumer-event_api.json";
-            var pactVersion = "1.0.2";
+            var consumerVersion = "1.0.2";
             var pactFileText = File.ReadAllText(pactFilePath);
             var pactDetails = JsonConvert.DeserializeObject<PactDetails>(pactFileText);
 
-            pactPublisher.PublishToBroker(pactFilePath, pactVersion);
+            pactPublisher.PublishToBroker(pactFilePath, consumerVersion);
 
             var requestsReceived = _fakeHttpMessageHandler.RequestsReceived;
             Assert.Equal(1, requestsReceived.Count());
-            Assert.True(ValidPactPublishRequest(requestsReceived.ElementAt(0), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(0), brokerBaseUri, pactDetails, pactFileText, pactVersion, pactUriOptions));
+            Assert.True(ValidPactPublishRequest(requestsReceived.ElementAt(0), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(0), brokerBaseUri, pactDetails, pactFileText, consumerVersion, pactUriOptions));
         }
 
         [Fact]
@@ -93,15 +93,15 @@ namespace PactNet.Tests
             var brokerBaseUri = "https://test.pact.dius.com.au";
             var pactPublisher = GetSubject(brokerBaseUri);
             var pactFilePath = "..\\..\\..\\Samples\\EventApi\\Consumer.Tests\\pacts\\event_api_consumer-event_api.json";
-            var pactVersion = "1.0.2";
+            var consumerVersion = "1.0.2";
             var pactFileText = File.ReadAllText(pactFilePath);
             var pactDetails = JsonConvert.DeserializeObject<PactDetails>(pactFileText);
 
-            pactPublisher.PublishToBroker(pactFilePath, pactVersion);
+            pactPublisher.PublishToBroker(pactFilePath, consumerVersion);
 
             var requestsReceived = _fakeHttpMessageHandler.RequestsReceived;
             Assert.Equal(1, requestsReceived.Count());
-            Assert.True(ValidPactPublishRequest(requestsReceived.ElementAt(0), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(0), brokerBaseUri, pactDetails, pactFileText, pactVersion));
+            Assert.True(ValidPactPublishRequest(requestsReceived.ElementAt(0), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(0), brokerBaseUri, pactDetails, pactFileText, consumerVersion));
         }
 
         [Fact]
@@ -111,18 +111,18 @@ namespace PactNet.Tests
             var pactUriOptions = new PactUriOptions("username", "password");
             var pactPublisher = GetSubject(brokerBaseUri, pactUriOptions);
             var pactFilePath = "..\\..\\..\\Samples\\EventApi\\Consumer.Tests\\pacts\\event_api_consumer-event_api.json";
-            var pactVersion = "1.0.2";
+            var consumerVersion = "1.0.2";
             var pactFileText = File.ReadAllText(pactFilePath);
             var tags = new[] { "master", "something-else" };
             var pactDetails = JsonConvert.DeserializeObject<PactDetails>(pactFileText);
 
-            pactPublisher.PublishToBroker(pactFilePath, pactVersion, tags);
+            pactPublisher.PublishToBroker(pactFilePath, consumerVersion, tags);
 
             var requestsReceived = _fakeHttpMessageHandler.RequestsReceived;
             Assert.Equal(3, requestsReceived.Count());
-            Assert.True(ValidPactTagRequest(requestsReceived.ElementAt(0), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(0), brokerBaseUri, pactDetails, pactVersion, tags.ElementAt(0), pactUriOptions));
-            Assert.True(ValidPactTagRequest(requestsReceived.ElementAt(1), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(1), brokerBaseUri, pactDetails, pactVersion, tags.ElementAt(1), pactUriOptions));
-            Assert.True(ValidPactPublishRequest(requestsReceived.ElementAt(2), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(2), brokerBaseUri, pactDetails, pactFileText, pactVersion, pactUriOptions));
+            Assert.True(ValidPactTagRequest(requestsReceived.ElementAt(0), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(0), brokerBaseUri, pactDetails, consumerVersion, tags.ElementAt(0), pactUriOptions));
+            Assert.True(ValidPactTagRequest(requestsReceived.ElementAt(1), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(1), brokerBaseUri, pactDetails, consumerVersion, tags.ElementAt(1), pactUriOptions));
+            Assert.True(ValidPactPublishRequest(requestsReceived.ElementAt(2), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(2), brokerBaseUri, pactDetails, pactFileText, consumerVersion, pactUriOptions));
         }
 
         private bool ValidPactPublishRequest(
