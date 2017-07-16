@@ -291,6 +291,7 @@ namespace Consumer.Tests
         public void GetEventById_WhenTheEventExists_ReturnsEvent()
         {
             //Arrange
+            var guidRegex = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
             var eventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9");
             var eventType = "DetailsView";
             var eventTimestamp = DateTime.UtcNow;
@@ -299,7 +300,7 @@ namespace Consumer.Tests
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
-                    Path = "/events/" + eventId,
+                    Path = Match.Regex($"/events/{eventId}", $"^\\/events\\/{guidRegex}$"),
                     Headers = new Dictionary<string, object>
                     {
                         { "Accept", "application/json" }
@@ -315,7 +316,7 @@ namespace Consumer.Tests
                     },
                     Body = new
                     {
-                        eventId = eventId,
+                        eventId = Match.Regex(eventId.ToString(), $"^{guidRegex}$"),
                         eventType = Match.Type(eventType),
                         timestamp = Match.Regex(eventTimestamp.ToString("o"), "^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|0[1-9]|[1-2][0-9])T(2[0-3]|[0-1][0-9]):([0-5][0-9]):([0-5][0-9])(\\.[0-9]+)?(Z|[+-](?:2[0-3]|[0-1][0-9]):[0-5][0-9])?$")
                     }
@@ -345,7 +346,7 @@ namespace Consumer.Tests
                 {
                     Method = HttpVerb.Get,
                     Path = "/events",
-                    Query = "type=" + eventType,
+                    Query = Match.Regex($"type={eventType}", "^type=(DetailsView|SearchView)$"),
                     Headers = new Dictionary<string, object>
                     {
                         { "Accept", "application/json" }

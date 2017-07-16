@@ -57,6 +57,12 @@
         "path": "/events/83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
         "headers": {
           "Accept": "application/json"
+        },
+        "matchingRules": {
+          "$.path": {
+            "match": "regex",
+            "regex": "^\\/events\\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+          }
         }
       },
       "response": {
@@ -68,11 +74,15 @@
         "body": {
           "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
           "eventType": "DetailsView",
-          "timestamp": "2017-07-02T06:32:10.6656640Z"
+          "timestamp": "2017-07-16T08:55:02.6705264Z"
         },
         "matchingRules": {
           "$.headers.Server": {
             "match": "type"
+          },
+          "$.body.eventId": {
+            "match": "regex",
+            "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
           },
           "$.body.eventType": {
             "match": "type"
@@ -131,7 +141,13 @@
         "headers": {
           "Accept": "application/json"
         },
-        "body": null
+        "body": null,
+        "matchingRules": {
+          "$.query": {
+            "match": "regex",
+            "regex": "^type=(DetailsView|SearchView)$"
+          }
+        }
       },
       "response": {
         "status": 200,

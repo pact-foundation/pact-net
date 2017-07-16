@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using PactNet.Configuration.Json.Converters;
 
@@ -15,10 +14,10 @@ namespace PactNet.Mocks.MockHttpService.Models
         public HttpVerb Method { get; set; }
 
         [JsonProperty(PropertyName = "path")]
-        public string Path { get; set; }
+        public object Path { get; set; }
 
         [JsonProperty(PropertyName = "query")]
-        public string Query { get; set; }
+        public object Query { get; set; }
 
         [JsonProperty(PropertyName = "headers")]
         [JsonConverter(typeof(PreserveCasingDictionaryConverter))]
@@ -39,18 +38,6 @@ namespace PactNet.Mocks.MockHttpService.Models
         public bool ShouldSerializeBody()
         {
             return _bodyWasSet;
-        }
-
-        public string PathWithQuery()
-        {
-            if (String.IsNullOrEmpty(Path) && !String.IsNullOrEmpty(Query))
-            {
-                throw new InvalidOperationException("Query has been supplied, however Path has not. Please specify as Path.");
-            }
-
-            return !String.IsNullOrEmpty(Query) ?
-                    String.Format("{0}?{1}", Path, Query) :
-                    Path;
         }
     }
 }
