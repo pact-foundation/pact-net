@@ -5,7 +5,7 @@ namespace PactNet.Matchers
 {
     public static class Match
     {
-        public static IMatcher Regex(dynamic example, string regex)
+        public static IMatcher Regex(string example, string regex)
         {
             return new RegexMatcher(example, regex);
         }
