@@ -22,7 +22,7 @@
       </group>
     </dependencies>
     <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System.Net.Http" targetFramework="net45" />
+      <frameworkAssembly assemblyName="System.Net.Http" targetFramework="net46" />
     </frameworkAssemblies>
   </metadata>
   <files>
