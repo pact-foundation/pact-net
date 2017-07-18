@@ -32,7 +32,7 @@
     <file src="bin\Release\net46\PactNet.dll" target="lib\net46" />
     <file src="bin\Release\net46\PactNet.pdb" target="lib\net46" />
     <file src="bin\Release\net46\PactNet.xml" target="lib\net46" />
-    <file src="..\tools\**\*.*" target="tools\" />
+    <file src="..\tools\**" target="tools\" />
     <file src="PactNet.targets" target="build" />
     <file src="readme.txt" target="" />
   </files>
