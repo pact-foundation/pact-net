@@ -98,6 +98,24 @@ namespace PactNet.Tests.Core
         }
 
         [Fact]
+        public void Ctor_WhenCalledWithPublishVerificationResults_SetsTheCorrectArgs()
+        {
+            var baseUri = new Uri("http://127.0.0.1");
+            var pactUri = "./tester-pact/pact-file.json";
+            var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
+
+            var verifierConfig = new PactVerifierConfig();
+            verifierConfig.PublishVerificationResults = true;
+            verifierConfig.ProviderVersion = "1.0.0";
+
+            var config = GetSubject(baseUri: baseUri, pactUri: pactUri, providerStateSetupUri: providerStateSetupUri, verifierConfig: verifierConfig);
+
+            var expectedArguments = BuildExpectedArguments(baseUri, pactUri, providerStateSetupUri, publishVerificationResults: true, providerVersion: "1.0.0");
+
+            Assert.Equal(expectedArguments, config.Arguments);
+        }
+
+        [Fact]
         public void Ctor_WhenVerifierConfigIsNull_SetsOutputtersToNull()
         {
             var config = GetSubject();
@@ -109,12 +127,15 @@ namespace PactNet.Tests.Core
             Uri baseUri, 
             string pactUri, 
             Uri providerStateSetupUri,
-            PactUriOptions pactUriOptions = null)
+            PactUriOptions pactUriOptions = null,
+            bool publishVerificationResults = false,
+            string providerVersion = "")
         {
             var providerStateOption = providerStateSetupUri != null ? $" --provider-states-setup-url {providerStateSetupUri.OriginalString}" : "";
             var brokerCredentials = pactUriOptions != null ? $" --broker-username \"{pactUriOptions.Username}\" --broker-password \"{pactUriOptions.Password}\"" : "";
+            var publishResults = publishVerificationResults ? $" --publish-verification-results=true --provider-app-version=\"{providerVersion}\"" : string.Empty;
 
-            return $"--pact-urls \"{pactUri}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}{brokerCredentials}";
+            return $"--pact-urls \"{pactUri}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}{brokerCredentials}{publishResults}";
         }
     }
 }

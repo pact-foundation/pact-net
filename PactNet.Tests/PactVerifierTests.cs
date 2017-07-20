@@ -16,6 +16,16 @@ namespace PactNet.Tests
         }
 
         [Fact]
+        public void PactVerifier_WhenCalledWithPublishVerificationResultsAndNoProviderVersion_ThrowsArgumentException()
+        {
+            var config = new PactVerifierConfig();
+            config.PublishVerificationResults = true;
+            config.ProviderVersion = string.Empty;
+
+            Assert.Throws<ArgumentException>(() => new PactVerifier(config));
+        }
+
+        [Fact]
         public void ProviderState_WhenCalledWithSetupUri_SetsProviderStateSetupUri()
         {
             const string providerStateSetupUri = "http://localhost:223/states";

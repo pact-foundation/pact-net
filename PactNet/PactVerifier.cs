@@ -27,6 +27,10 @@ namespace PactNet
             hostConfig => new PactCoreHost<PactVerifierHostConfig>(hostConfig), 
             config ?? new PactVerifierConfig())
         {
+            if (config.PublishVerificationResults && string.IsNullOrEmpty(config.ProviderVersion))
+            {
+                throw new ArgumentException($"{nameof(config.ProviderVersion)} is required when {nameof(config.PublishVerificationResults)} is true.");
+            }
         }
 
         public IPactVerifier ProviderState(string providerStateSetupUri)
