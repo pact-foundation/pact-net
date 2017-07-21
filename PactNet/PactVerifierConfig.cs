@@ -6,6 +6,10 @@ namespace PactNet
     public class PactVerifierConfig
     {
         public IEnumerable<IOutput> Outputters { get; set; }
+        
+        public bool PublishVerificationResults { get; set; }
+
+        public string ProviderVersion { get; set; }
 
         public PactVerifierConfig()
         {

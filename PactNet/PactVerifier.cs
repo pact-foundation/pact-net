@@ -20,6 +20,11 @@ namespace PactNet
         {
             _pactVerifierHostFactory = pactVerifierHostFactory;
             _config = config;
+
+            if (config.PublishVerificationResults && IsNullOrEmpty(config.ProviderVersion))
+            {
+                throw new ArgumentException($"config.{nameof(config.ProviderVersion)} is required when config.{nameof(config.PublishVerificationResults)} is true.");
+            }
         }
 
         public PactVerifier(PactVerifierConfig config) : 
