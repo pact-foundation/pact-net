@@ -20,6 +20,11 @@ namespace PactNet
         {
             _pactVerifierHostFactory = pactVerifierHostFactory;
             _config = config;
+
+            if (config.PublishVerificationResults && IsNullOrEmpty(config.ProviderVersion))
+            {
+                throw new ArgumentException($"config.{nameof(config.ProviderVersion)} is required when config.{nameof(config.PublishVerificationResults)} is true.");
+            }
         }
 
         public PactVerifier(PactVerifierConfig config) : 
@@ -27,10 +32,6 @@ namespace PactNet
             hostConfig => new PactCoreHost<PactVerifierHostConfig>(hostConfig), 
             config ?? new PactVerifierConfig())
         {
-            if (config.PublishVerificationResults && string.IsNullOrEmpty(config.ProviderVersion))
-            {
-                throw new ArgumentException($"{nameof(config.ProviderVersion)} is required when {nameof(config.PublishVerificationResults)} is true.");
-            }
         }
 
         public IPactVerifier ProviderState(string providerStateSetupUri)
