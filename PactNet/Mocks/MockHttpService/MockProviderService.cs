@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using PactNet.Mocks.MockHttpService.Host;
 using PactNet.Mocks.MockHttpService.Models;
 using static System.String;
@@ -19,7 +18,7 @@ namespace PactNet.Mocks.MockHttpService
         private ProviderServiceResponse _response;
 
         public Uri BaseUri { get; }
-        
+
         internal MockProviderService(
             Func<Uri, IHttpHost> hostFactory,
             int port,
@@ -110,8 +109,7 @@ namespace PactNet.Mocks.MockHttpService
 
         public void VerifyInteractions()
         {
-            var testContext = BuildTestContext();
-            _adminHttpClient.SendAdminHttpRequest(HttpVerb.Get, Constants.InteractionsVerificationPath + $"?example_description={testContext}");
+            _adminHttpClient.SendAdminHttpRequest(HttpVerb.Get, Constants.InteractionsVerificationPath/* + $"?example_description={testName}"*/);
         }
 
         public void SendAdminHttpRequest<T>(HttpVerb method, string path, T requestContent, IDictionary<string, string> headers = null) where T : class
@@ -122,6 +120,7 @@ namespace PactNet.Mocks.MockHttpService
         public void Start()
         {
             StopRunningHost();
+
             _host = _hostFactory(BaseUri);
             _host.Start();
         }
@@ -136,8 +135,7 @@ namespace PactNet.Mocks.MockHttpService
         {
             if (_host != null)
             {
-                var testContext = BuildTestContext();
-                _adminHttpClient.SendAdminHttpRequest(HttpVerb.Delete, Constants.InteractionsPath + $"?example_description={testContext}");
+                _adminHttpClient.SendAdminHttpRequest(HttpVerb.Delete, Constants.InteractionsPath/* + $"?example_description={testName}"*/);
             }
         }
 
@@ -169,36 +167,6 @@ namespace PactNet.Mocks.MockHttpService
             _adminHttpClient.SendAdminHttpRequest(HttpVerb.Post, Constants.InteractionsPath, interaction);
 
             ClearTrasientState();
-        }
-
-        private static string BuildTestContext()
-        {
-            var stack = new StackTrace(true);
-            var stackFrames = stack.GetFrames() ?? new StackFrame[0];
-
-            var relevantStackFrameSummaries = new List<string>();
-
-            foreach (var stackFrame in stackFrames)
-            {
-                var type = stackFrame.GetMethod().ReflectedType;
-
-                if (type == null || 
-                    (type.Assembly.GetName().Name.StartsWith("PactNet", StringComparison.CurrentCultureIgnoreCase) &&
-                    !type.Assembly.GetName().Name.Equals("PactNet.Tests", StringComparison.CurrentCultureIgnoreCase)))
-                {
-                    continue;
-                }
-
-                //Don't care about any mscorlib frames down
-                if (type.Assembly.GetName().Name.Equals("mscorlib", StringComparison.CurrentCultureIgnoreCase))
-                {
-                    break;
-                }
-
-                relevantStackFrameSummaries.Add(Format("{0}.{1}", type.Name, stackFrame.GetMethod().Name));
-            }
-
-            return Join(" ", relevantStackFrameSummaries);
         }
 
         private void StopRunningHost()
@@ -235,7 +203,7 @@ namespace PactNet.Mocks.MockHttpService
             IDictionary<string, object> headers = null;
             if (message.Headers != null)
             {
-                headers = new Dictionary<string, object>(message.Headers, StringComparer.InvariantCultureIgnoreCase);
+                headers = new Dictionary<string, object>(message.Headers, StringComparer.OrdinalIgnoreCase);
             }
 
             return headers != null && headers.ContainsKey("Content-Type");

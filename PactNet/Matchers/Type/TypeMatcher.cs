@@ -14,7 +14,6 @@ namespace PactNet.Matchers.Type
 
         internal TypeMatcher(dynamic example)
         {
-            
             Match = "Pact::SomethingLike";
             Example = example;
         }

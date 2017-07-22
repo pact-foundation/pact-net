@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Newtonsoft.Json;
 
 namespace PactNet.Configuration.Json.Converters
@@ -40,7 +41,7 @@ namespace PactNet.Configuration.Json.Converters
 
         public override bool CanConvert(Type objectType)
         {
-            return typeof(IDictionary<string, object>).IsAssignableFrom(objectType);
+            return typeof(IDictionary<string, object>).GetTypeInfo().IsAssignableFrom(objectType);
         }
     }
 }

@@ -10,24 +10,29 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A .NET version of Pact, which enables consumer driven contract testing.</description>
     <dependencies>
-      <group targetFramework="net45">
-        <dependency id="Newtonsoft.Json" version="6.0.3" />
+      <group targetFramework="net46">
+        <dependency id="Newtonsoft.Json" version="10.0.3" />
       </group>
-      <group targetFramework="net40">
-        <dependency id="Newtonsoft.Json" version="6.0.3" />
-        <dependency id="Microsoft.Net.Http" version="2.2.28" />
+      <group targetFramework="netstandard1.5">
+        <dependency id="Newtonsoft.Json" version="10.0.3" />
+        <dependency id="System.Diagnostics.Process" version="4.3.0" />
+        <dependency id="System.Net.Http" version="4.3.0" />
+        <dependency id="System.Runtime.Loader" version="4.3.0" />
+        <dependency id="System.Threading.Thread" version="4.3.0" />
       </group>
     </dependencies>
     <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System.Net.Http" targetFramework="net45" />
+      <frameworkAssembly assemblyName="System.Net.Http" targetFramework="net46" />
     </frameworkAssemblies>
   </metadata>
   <files>
-    <file src="bin\Release\PactNet.dll" target="lib\net40" />
-    <file src="bin\Release\PactNet.pdb" target="lib\net40" />
-    <file src="bin\Release\PactNet.dll.config" target="lib\net40" />
-    <file src="bin\Release\PactNet.xml" target="lib\net40" />
-    <file src="Core\standalone\**" target="build\core" />
+    <file src="bin\Release\netstandard1.5\PactNet.dll" target="lib\netstandard1.5" />
+    <file src="bin\Release\netstandard1.5\PactNet.pdb" target="lib\netstandard1.5" />
+    <file src="bin\Release\netstandard1.5\PactNet.xml" target="lib\netstandard1.5" />
+    <file src="bin\Release\net46\PactNet.dll" target="lib\net46" />
+    <file src="bin\Release\net46\PactNet.pdb" target="lib\net46" />
+    <file src="bin\Release\net46\PactNet.xml" target="lib\net46" />
+    <file src="..\tools\**" target="tools\" />
     <file src="PactNet.targets" target="build" />
     <file src="readme.txt" target="" />
   </files>
