@@ -8,7 +8,7 @@ namespace Consumer.Tests
     public class ConsumerEventApiPact : IDisposable
     {
         public IPactBuilder PactBuilder { get; }
-        public IMockProviderService MockProviderService { get; private set; }
+        public IMockProviderService MockProviderService { get; }
 
         public int MockServerPort => 9222;
         public string MockProviderServiceBaseUri => $"http://localhost:{MockServerPort}";
@@ -20,7 +20,12 @@ namespace Consumer.Tests
                 throw new Exception("Please run '.\\Build\\Download-Standalone-Core.ps1' from the project root to download the standalone mock provider service and then Rebuild solution");
             }
 
-            PactBuilder = new PactBuilder(new PactConfig { SpecificationVersion = "2.0.0" })
+            PactBuilder = new PactBuilder(new PactConfig
+                {
+                    SpecificationVersion = "2.0.0",
+                    LogDir = @"..\..\..\logs\",
+                    PactDir = @"..\..\..\pacts\"
+                })
                 .ServiceConsumer("Event API Consumer")
                 .HasPactWith("Event API");
 

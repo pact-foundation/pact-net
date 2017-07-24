@@ -6,10 +6,10 @@ namespace PactNet.Tests.IntegrationTests
 {
     public class IntegrationTestsMyApiPact : IDisposable
     {
-        public IPactBuilder PactBuilder { get; private set; }
-        public IMockProviderService MockProviderService { get; private set; }
+        public IPactBuilder PactBuilder { get; }
+        public IMockProviderService MockProviderService { get; }
 
-        public int MockServerPort => 4321;
+        public int MockServerPort => 4322;
         public Uri MockProviderServiceBaseUri => new Uri($"http://localhost:{MockServerPort}");
 
         public IntegrationTestsMyApiPact()

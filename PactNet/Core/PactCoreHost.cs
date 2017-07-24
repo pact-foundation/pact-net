@@ -99,7 +99,6 @@ namespace PactNet.Core
                     _process.CancelOutputRead();
                     _process.CancelErrorRead();
                     _process.Kill();
-                    _process.WaitForExit();
                     _process.Dispose();
                 }
                 catch (Exception)
