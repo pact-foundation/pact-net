@@ -4,12 +4,12 @@ using Xunit;
 
 namespace PactNet.Tests.IntegrationTests
 {
-    public class PactBuilderIntegrationTests : IUseFixture<IntegrationTestsMyApiPact>
+    public class PactBuilderIntegrationTests : IClassFixture<IntegrationTestsMyApiPact>
     {
-        private IMockProviderService _mockProviderService;
-        private Uri _mockProviderServiceBaseUri;
+        private readonly IMockProviderService _mockProviderService;
+        private readonly Uri _mockProviderServiceBaseUri;
 
-        public void SetFixture(IntegrationTestsMyApiPact data)
+        public PactBuilderIntegrationTests(IntegrationTestsMyApiPact data)
         {
             _mockProviderService = data.MockProviderService;
             _mockProviderServiceBaseUri = data.MockProviderServiceBaseUri;

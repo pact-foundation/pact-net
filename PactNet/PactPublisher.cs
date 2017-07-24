@@ -7,7 +7,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
-using PactNet.Extensions;
 using PactNet.Models;
 
 namespace PactNet
@@ -58,13 +57,13 @@ namespace PactNet
                         tagRequest.Headers.Add("Authorization", $"{_brokerUriOptions.AuthorizationScheme} {_brokerUriOptions.AuthorizationValue}");
                     }
 
-                    var tagResponse = _httpClient.SendAsync(tagRequest, CancellationToken.None).RunSync();
+                    var tagResponse = _httpClient.SendAsync(tagRequest, CancellationToken.None).Result;
                     var tagResponseStatusCode = tagResponse.StatusCode;
                     var tagResponseContent = String.Empty;
 
                     if (tagResponse.Content != null)
                     {
-                        tagResponseContent = tagResponse.Content.ReadAsStringAsync().RunSync();
+                        tagResponseContent = tagResponse.Content.ReadAsStringAsync().Result;
                     }
 
                     Dispose(tagRequest);
@@ -86,13 +85,13 @@ namespace PactNet
 
             request.Content = new StringContent(pactFileText, Encoding.UTF8, "application/json");
 
-            var response = _httpClient.SendAsync(request, CancellationToken.None).RunSync();
+            var response = _httpClient.SendAsync(request, CancellationToken.None).Result;
             var responseStatusCode = response.StatusCode;
             var responseContent = String.Empty;
 
             if (response.Content != null)
             {
-                responseContent = response.Content.ReadAsStringAsync().RunSync();
+                responseContent = response.Content.ReadAsStringAsync().Result;
             }
 
             Dispose(request);

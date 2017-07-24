@@ -15,7 +15,7 @@ namespace PactNet.Matchers.Type
         [JsonProperty(PropertyName = "min")]
         public int Min { get; set; }
 
-        internal MinTypeMatcher(dynamic example, int min)
+        public MinTypeMatcher(dynamic example, int min)
         {
             Match = "Pact::ArrayLike";
             Example = example;

@@ -1,6 +1,4 @@
-using PactNet.Extensions;
 using System;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -24,7 +22,9 @@ namespace PactNet.Core
 
             var startInfo = new ProcessStartInfo
             {
+#if !NETSTANDARD1_5
                 WindowStyle = ProcessWindowStyle.Hidden,
+#endif
                 FileName = $"{pactCoreDir}\\lib\\ruby\\bin.real\\ruby.exe",
                 Arguments = $"-rbundler/setup -I\"{pactCoreDir}\\lib\\app\\lib\" \"{pactCoreDir}\\lib\\app\\{_config.Script}\" {_config.Arguments}",
                 UseShellExecute = false,
@@ -33,18 +33,22 @@ namespace PactNet.Core
                 RedirectStandardError = true,
                 CreateNoWindow = true
             };
-            startInfo.EnvironmentVariables["ROOT_PATH"] = pactCoreDir;
-            startInfo.EnvironmentVariables["RUNNING_PATH"] = $"{pactCoreDir}\\bin\\";
-            startInfo.EnvironmentVariables["BUNDLE_GEMFILE"] = $"{pactCoreDir}\\lib\\vendor\\Gemfile";
-            startInfo.EnvironmentVariables["RUBYLIB"] = $"{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby\\{RubyVersion}\\{RubyArch};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby\\{RubyVersion}\\{RubyArch};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\{RubyVersion}\\{RubyArch}";
-            startInfo.EnvironmentVariables["SSL_CERT_FILE"] = $"{pactCoreDir}\\lib\\ruby\\lib\\ca-bundle.crt";
+            startInfo.Environment["ROOT_PATH"] = pactCoreDir;
+            startInfo.Environment["RUNNING_PATH"] = $"{pactCoreDir}\\bin\\";
+            startInfo.Environment["BUNDLE_GEMFILE"] = $"{pactCoreDir}\\lib\\vendor\\Gemfile";
+            startInfo.Environment["RUBYLIB"] = $"{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby\\{RubyVersion}\\{RubyArch};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby\\{RubyVersion}\\{RubyArch};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\{RubyVersion}\\{RubyArch}";
+            startInfo.Environment["SSL_CERT_FILE"] = $"{pactCoreDir}\\lib\\ruby\\lib\\ca-bundle.crt";
             
             _process = new Process
             {
                 StartInfo = startInfo
             };
 
-            AppDomain.CurrentDomain.DomainUnload += CurrentDomainUnload;
+#if NETSTANDARD1_5
+            System.Runtime.Loader.AssemblyLoadContext.Default.Unloading += context => Stop();
+#else
+            AppDomain.CurrentDomain.DomainUnload += (o, e) => Stop();
+#endif
         }
 
         public void Start()
@@ -102,11 +106,6 @@ namespace PactNet.Core
                     throw new PactFailureException("Could not terminate the Pact Core Host, please manually kill the 'Ruby interpreter' process");
                 }
             }
-        }
-
-        private void CurrentDomainUnload(object sender, EventArgs e)
-        {
-            Stop();
         }
 
         private void WriteLineToOutput(object sender, DataReceivedEventArgs eventArgs)
