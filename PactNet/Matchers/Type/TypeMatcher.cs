@@ -12,7 +12,7 @@ namespace PactNet.Matchers.Type
         [JsonProperty(PropertyName = "contents")]
         public dynamic Example { get; set; }
 
-        internal TypeMatcher(dynamic example)
+        public TypeMatcher(dynamic example)
         {
             Match = "Pact::SomethingLike";
             Example = example;

@@ -7,7 +7,7 @@ namespace PactNet.Tests.IntegrationTests
     public class FailureIntegrationTestsMyApiPact : IDisposable
     {
         public IPactBuilder PactBuilder { get; }
-        public IMockProviderService MockProviderService { get; private set; }
+        public IMockProviderService MockProviderService { get; }
 
         public int MockServerPort => 4321;
         public Uri MockProviderServiceBaseUri => new Uri($"http://localhost:{MockServerPort}");
