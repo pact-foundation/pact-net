@@ -52,7 +52,7 @@ namespace Consumer.Tests
             var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
 
             //Act //Assert
-            Assert.Throws<HttpRequestException>(() => consumer.GetAllEvents());
+            Assert.ThrowsAny<Exception>(() => consumer.GetAllEvents());
             
             _mockProviderService.VerifyInteractions();
         }
