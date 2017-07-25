@@ -46,7 +46,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Host
         }
 
         [Fact]
-        public void Start_WhenCalledAndTheCoreHostSlowlyQuickly_ShouldStartTheCoreHostAndEnsureItIsRunning()
+        public void Start_WhenCalledAndTheCoreHostStartsSlowly_ShouldStartTheCoreHostAndEnsureItIsRunning()
         {
             var count = 0;
             var host = GetSubject(() =>

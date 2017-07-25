@@ -27,16 +27,16 @@ namespace PactNet.Mocks.MockHttpService.Host
         {
         }
 
-        private bool IsMockProviderServiceRunning()
+        private Tuple<bool, Exception> IsMockProviderServiceRunning()
         {
             try
             {
                 _adminHttpClient.SendAdminHttpRequest(HttpVerb.Get, "/");
-                return true;
+                return new Tuple<bool, Exception>(true, null);
             }
-            catch
+            catch(Exception ex)
             {
-                return false;
+                return new Tuple<bool, Exception>(false, ex);
             }
         }
 
@@ -45,14 +45,17 @@ namespace PactNet.Mocks.MockHttpService.Host
             _coreHost.Start();
 
             var aliveChecks = 1;
-            while (!IsMockProviderServiceRunning())
+
+            var lastOutput = IsMockProviderServiceRunning();
+            while (!lastOutput.Item1)
             {
                 if (aliveChecks >= 20)
                 {
-                    throw new PactFailureException("Could not start the mock provider service");
+                    throw lastOutput.Item2;
                 }
 
                 Thread.Sleep(200);
+                lastOutput = IsMockProviderServiceRunning();
                 aliveChecks++;
             }
         }

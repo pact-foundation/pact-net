@@ -30,7 +30,7 @@ configuration: Release
 
 build:
   project: PactNet.sln
-  verbosity: normal
+  verbosity: minimal
 
 before_build:
   - nuget restore
