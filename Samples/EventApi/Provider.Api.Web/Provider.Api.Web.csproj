@@ -2,6 +2,13 @@
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
   </PropertyGroup>
+  <PropertyGroup>
+	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+	<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+	<ApplicationIcon />
+	<OutputTypeEx>library</OutputTypeEx>
+	<StartupObject />
+  </PropertyGroup>
   <ItemGroup>
 	<Reference Include="Microsoft.CSharp" />
     <PackageReference Include="Autofac.WebApi2.Owin" Version="4.0.0" />
