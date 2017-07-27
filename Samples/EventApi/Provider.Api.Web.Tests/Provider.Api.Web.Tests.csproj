@@ -8,6 +8,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+	<Reference Include="System.Net.Http" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
     <PackageReference Include="Microsoft.Owin.Host.HttpListener" Version="3.1.0" />
     <PackageReference Include="Microsoft.Owin.Security.OAuth" Version="3.1.0" />
