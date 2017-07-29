@@ -5,7 +5,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
     <NoWarn>CS1591</NoWarn>
-	<DefineConstants>$(DefineConstants);USE_NET4X</DefineConstants>
+    <DefineConstants>$(DefineConstants);USE_NET4X</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="$(TargetFramework.StartsWith('netstandard'))">
     <NoWarn>CS1591</NoWarn>
@@ -14,14 +14,14 @@
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>
   <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
-	<Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard'))">
     <PackageReference Include="System.Net.Http" Version="4.3.1" />
-	<PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
-	<PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
-	<PackageReference Include="System.Threading.Thread" Version="4.3.0" />
+    <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
+    <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
   </ItemGroup>
   <Import Project="PactNet.targets" />
 </Project>

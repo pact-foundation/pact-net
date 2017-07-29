@@ -54,7 +54,7 @@ namespace PactNet.Tests.Core
         }
 
         [Fact]
-        public void Start_WhenCalled_OuttersAreSubscribedToTheStdErr()
+        public void Start_WhenStdErrIsWrittendTo_LinesAreWrittenToTheOutputters()
         {
             var pactCoreHost = GetSubject("write-to-stderr.rb");
 
