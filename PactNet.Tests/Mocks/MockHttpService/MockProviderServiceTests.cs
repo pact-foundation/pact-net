@@ -378,7 +378,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             mockService.VerifyInteractions();
 
             var testContext = String.Empty;
-#if USE_STACKTRACE
+#if USE_NET4X
             testContext = "MockProviderServiceTests.VerifyInteractions_WhenHostIsNotNull_PerformsAdminInteractionsVerificationGetRequest";
 # endif
             Assert.Equal(1, _fakeHttpMessageHandler.RequestsReceived.Count());
@@ -419,7 +419,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
             mockService.ClearInteractions();
 
             var testContext = String.Empty;
-#if USE_STACKTRACE
+#if USE_NET4X
             testContext = "MockProviderServiceTests.ClearInteractions_WhenHostIsNotNull_PerformsAdminInteractionsDeleteRequest";
 # endif
             Assert.Equal(1, _fakeHttpMessageHandler.RequestsReceived.Count());

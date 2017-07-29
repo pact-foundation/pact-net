@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace PactNet.Core
 
             var startInfo = new ProcessStartInfo
             {
-#if !NETSTANDARD1_5
+#if USE_NET4X
                 WindowStyle = ProcessWindowStyle.Hidden,
 #endif
                 FileName = $"{pactCoreDir}\\lib\\ruby\\bin.real\\ruby.exe",
@@ -33,21 +34,34 @@ namespace PactNet.Core
                 RedirectStandardError = true,
                 CreateNoWindow = true
             };
-            startInfo.Environment["ROOT_PATH"] = pactCoreDir;
-            startInfo.Environment["RUNNING_PATH"] = $"{pactCoreDir}\\bin\\";
-            startInfo.Environment["BUNDLE_GEMFILE"] = $"{pactCoreDir}\\lib\\vendor\\Gemfile";
-            startInfo.Environment["RUBYLIB"] = $"{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby\\{RubyVersion}\\{RubyArch};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby\\{RubyVersion}\\{RubyArch};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\{RubyVersion}\\{RubyArch}";
-            startInfo.Environment["SSL_CERT_FILE"] = $"{pactCoreDir}\\lib\\ruby\\lib\\ca-bundle.crt";
-            
+
+            var envVars = new Dictionary<string, string>
+            {
+                { "ROOT_PATH", pactCoreDir },
+                { "RUNNING_PATH", $"{pactCoreDir}\\bin\\" },
+                { "BUNDLE_GEMFILE", $"{pactCoreDir}\\lib\\vendor\\Gemfile" },
+                { "RUBYLIB", $"{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby\\{RubyVersion}\\{RubyArch};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby\\{RubyVersion}\\{RubyArch};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\{RubyVersion}\\{RubyArch}" },
+                { "SSL_CERT_FILE", $"{pactCoreDir}\\lib\\ruby\\lib\\ca-bundle.crt" }
+            };
+
+            foreach (var envVar in envVars)
+            {
+#if USE_NET4X
+                startInfo.EnvironmentVariables[envVar.Key] = envVar.Value;
+#else
+                startInfo.Environment[envVar.Key] = envVar.Value;
+#endif
+            }
+
             _process = new Process
             {
                 StartInfo = startInfo
             };
 
-#if NETSTANDARD1_5
-            System.Runtime.Loader.AssemblyLoadContext.Default.Unloading += context => Stop();
-#else
+#if USE_NET4X
             AppDomain.CurrentDomain.DomainUnload += (o, e) => Stop();
+#else
+            System.Runtime.Loader.AssemblyLoadContext.Default.Unloading += context => Stop();
 #endif
         }
 

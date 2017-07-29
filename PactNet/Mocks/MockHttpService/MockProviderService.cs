@@ -213,7 +213,7 @@ namespace PactNet.Mocks.MockHttpService
 
         private static string BuildTestContext()
         {
-#if USE_STACKTRACE
+#if USE_NET4X
             var stack = new System.Diagnostics.StackTrace(true);
             var stackFrames = stack.GetFrames() ?? new System.Diagnostics.StackFrame[0];
 

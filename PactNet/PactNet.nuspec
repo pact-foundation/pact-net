@@ -10,7 +10,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A .NET version of Pact, which enables consumer driven contract testing.</description>
     <dependencies>
-      <group targetFramework="net46">
+      <group targetFramework="net45">
         <dependency id="Newtonsoft.Json" version="10.0.3" />
       </group>
       <group targetFramework="netstandard1.5">
@@ -22,7 +22,7 @@
       </group>
     </dependencies>
     <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System.Net.Http" targetFramework="net46" />
+      <frameworkAssembly assemblyName="System.Net.Http" targetFramework="net45" />
     </frameworkAssemblies>
   </metadata>
   <files>
