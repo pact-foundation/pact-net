@@ -109,7 +109,8 @@ namespace PactNet.Mocks.MockHttpService
 
         public void VerifyInteractions()
         {
-            _adminHttpClient.SendAdminHttpRequest(HttpVerb.Get, Constants.InteractionsVerificationPath/* + $"?example_description={testName}"*/);
+            var testContext = BuildTestContext();
+            _adminHttpClient.SendAdminHttpRequest(HttpVerb.Get, $"{Constants.InteractionsVerificationPath}?example_description={testContext}");
         }
 
         public void SendAdminHttpRequest<T>(HttpVerb method, string path, T requestContent, IDictionary<string, string> headers = null) where T : class
@@ -135,7 +136,8 @@ namespace PactNet.Mocks.MockHttpService
         {
             if (_host != null)
             {
-                _adminHttpClient.SendAdminHttpRequest(HttpVerb.Delete, Constants.InteractionsPath/* + $"?example_description={testName}"*/);
+                var testContext = BuildTestContext();
+                _adminHttpClient.SendAdminHttpRequest(HttpVerb.Delete, $"{Constants.InteractionsPath}?example_description={testContext}");
             }
         }
 
@@ -207,6 +209,41 @@ namespace PactNet.Mocks.MockHttpService
             }
 
             return headers != null && headers.ContainsKey("Content-Type");
+        }
+
+        private static string BuildTestContext()
+        {
+#if USE_STACKTRACE
+            var stack = new System.Diagnostics.StackTrace(true);
+            var stackFrames = stack.GetFrames() ?? new System.Diagnostics.StackFrame[0];
+
+            var relevantStackFrameSummaries = new List<string>();
+
+            foreach (var stackFrame in stackFrames)
+            {
+                var type = stackFrame.GetMethod().ReflectedType;
+
+                if (type == null ||
+                    (type.Assembly.GetName().Name.StartsWith("PactNet", StringComparison.CurrentCultureIgnoreCase) &&
+                     !type.Assembly.GetName().Name.Equals("PactNet.Tests", StringComparison.CurrentCultureIgnoreCase)))
+                {
+                    continue;
+                }
+
+                //Don't care about any mscorlib frames down
+                if (type.Assembly.GetName().Name.Equals("mscorlib", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    break;
+                }
+
+                relevantStackFrameSummaries.Add(Format("{0}.{1}", type.Name, stackFrame.GetMethod().Name));
+            }
+
+            return Join(" ", relevantStackFrameSummaries);
+
+#else
+            return String.Empty;
+#endif
         }
     }
 }

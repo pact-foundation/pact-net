@@ -377,9 +377,13 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.VerifyInteractions();
 
+            var testContext = String.Empty;
+#if USE_STACKTRACE
+            testContext = "MockProviderServiceTests.VerifyInteractions_WhenHostIsNotNull_PerformsAdminInteractionsVerificationGetRequest";
+# endif
             Assert.Equal(1, _fakeHttpMessageHandler.RequestsReceived.Count());
             Assert.Equal(HttpMethod.Get, _fakeHttpMessageHandler.RequestsReceived.First().Method);
-            Assert.Equal("http://localhost:1234/interactions/verification", _fakeHttpMessageHandler.RequestsReceived.First().RequestUri.ToString());
+            Assert.Equal($"http://localhost:1234/interactions/verification?example_description={testContext}", _fakeHttpMessageHandler.RequestsReceived.First().RequestUri.ToString());
         }
 
         [Fact]
@@ -414,9 +418,13 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.ClearInteractions();
 
+            var testContext = String.Empty;
+#if USE_STACKTRACE
+            testContext = "MockProviderServiceTests.ClearInteractions_WhenHostIsNotNull_PerformsAdminInteractionsDeleteRequest";
+# endif
             Assert.Equal(1, _fakeHttpMessageHandler.RequestsReceived.Count());
             Assert.Equal(HttpMethod.Delete, _fakeHttpMessageHandler.RequestsReceived.First().Method);
-            Assert.Equal("http://localhost:1234/interactions", _fakeHttpMessageHandler.RequestsReceived.First().RequestUri.ToString());
+            Assert.Equal($"http://localhost:1234/interactions?example_description={testContext}", _fakeHttpMessageHandler.RequestsReceived.First().RequestUri.ToString());
         }
 
         [Fact]

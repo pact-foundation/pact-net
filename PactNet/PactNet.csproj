@@ -3,10 +3,11 @@
     <TargetFrameworks>netstandard1.5;net46</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.5|AnyCPU'">
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
     <NoWarn>CS1591</NoWarn>
+	<DefineConstants>$(DefineConstants);USE_STACKTRACE</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.5|AnyCPU'">
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('netstandard'))">
     <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
@@ -16,10 +17,10 @@
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" Condition="'$(TargetFramework)' == 'netstandard1.5'" />
     <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
     <Reference Include="System.Net.Http" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
+  <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard'))">
     <PackageReference Include="System.Net.Http" Version="4.3.1" />
   </ItemGroup>
   <Import Project="PactNet.targets" />

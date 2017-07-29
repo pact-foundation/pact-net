@@ -2,6 +2,9 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp1.1;net46</TargetFrameworks>
   </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
+	<DefineConstants>$(DefineConstants);USE_STACKTRACE</DefineConstants>
+  </PropertyGroup>
   <PropertyGroup>
 	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 	<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
