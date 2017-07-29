@@ -12,11 +12,12 @@
   <ItemGroup>
 	<Reference Include="Microsoft.CSharp" />
 	<Reference Include="System.Net.Http" />
-    <PackageReference Include="Autofac.WebApi2.Owin" Version="4.0.0" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.Owin" Version="5.2.3" />
-    <PackageReference Include="Microsoft.Owin.Host.SystemWeb" Version="3.1.0" />
-    <PackageReference Include="Microsoft.Owin.Hosting" Version="3.1.0" />
-    <PackageReference Include="Microsoft.Owin.Security.OAuth" Version="3.1.0" />
+    <PackageReference Include="Autofac.WebApi2.Owin" Version="3.0.1" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Owin" Version="5.1.2" />
+    <PackageReference Include="Microsoft.Owin.Host.SystemWeb" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Owin.Hosting" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Owin.Security.OAuth" Version="2.1.0" />
+	<PackageReference Include="Microsoft.Owin.Host.HttpListener" Version="3.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>
 </Project>

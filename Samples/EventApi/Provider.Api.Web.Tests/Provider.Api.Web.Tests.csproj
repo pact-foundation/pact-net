@@ -10,10 +10,10 @@
     <Reference Include="Microsoft.CSharp" />
 	<Reference Include="System.Net.Http" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
-    <PackageReference Include="Microsoft.Owin.Host.HttpListener" Version="3.1.0" />
-    <PackageReference Include="Microsoft.Owin.Security.OAuth" Version="3.1.0" />
-    <PackageReference Include="Microsoft.Owin.Testing" Version="3.1.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+	<PackageReference Include="Microsoft.Owin.Hosting" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Owin.Security.OAuth" Version="2.1.0" />
+	<PackageReference Include="Microsoft.Owin.Host.HttpListener" Version="3.1.0" />
+	<PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="xunit" Version="2.2.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
   </ItemGroup>
