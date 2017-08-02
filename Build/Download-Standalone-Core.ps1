@@ -20,7 +20,7 @@ If (Test-Path $OutputPath)
     exit   
 }
 
-$StandaloneCoreVersion = '1.1.1'
+$StandaloneCoreVersion = '1.1.2'
 $StandaloneCoreFileName = "pact-$StandaloneCoreVersion-win32"
 $StandaloneCoreFilePath = "$OutputPath\$StandaloneCoreFileName.zip"
 $StandaloneCoreDownload = "https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v$StandaloneCoreVersion/$StandaloneCoreFileName.zip";
