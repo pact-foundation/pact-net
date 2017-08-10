@@ -32,8 +32,6 @@
     <file src="bin\Release\net45\PactNet.dll" target="lib\net45" />
     <file src="bin\Release\net45\PactNet.pdb" target="lib\net45" />
     <file src="bin\Release\net45\PactNet.xml" target="lib\net45" />
-    <file src="..\tools\**" target="tools\" />
-    <file src="PactNet.targets" target="build" />
     <file src="readme.txt" target="" />
   </files>
 </package>

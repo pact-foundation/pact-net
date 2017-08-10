@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using PactNet.Models;
 
 namespace PactNet.Core
 {
@@ -19,7 +20,55 @@ namespace PactNet.Core
             _config = config;
 
             var currentDir = Directory.GetCurrentDirectory();
-            var pactCoreDir = $"{currentDir}\\pact";
+            var pactCoreDir = $"{currentDir}\\"; //OS specific version will be appended
+
+            var platform = Platform.Windows;
+
+#if !USE_NET4X
+            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+            {
+                platform = Platform.Windows;
+            }
+            else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
+            {
+                platform = Platform.Osx;
+            }
+            else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux) &&
+                System.Runtime.InteropServices.RuntimeInformation.OSArchitecture == System.Runtime.InteropServices.Architecture.X86)
+            {
+                platform = Platform.LinuxX86;
+            }
+            else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux) &&
+                     System.Runtime.InteropServices.RuntimeInformation.OSArchitecture == System.Runtime.InteropServices.Architecture.X64)
+            {
+                platform = Platform.LinuxX64;
+            }
+            else
+            {
+                throw new PactFailureException("Sorry your current OS platform or architecture is not supported");
+            }
+#endif
+
+            switch (platform)
+            {
+                case Platform.Windows:
+                    pactCoreDir += "pact-win32";
+                    break;
+                case Platform.Osx:
+                    pactCoreDir += "pact-osx";
+                    break;
+                case Platform.LinuxX86:
+                    pactCoreDir += "pact-linux-x86";
+                    break;
+                case Platform.LinuxX64:
+                    pactCoreDir += "pact-linux-x86_64";
+                    break;
+            }
+
+            if (!Directory.Exists(pactCoreDir))
+            {
+                //TODO: Fall back to using the locally install ruby and packaged assets
+            }
 
             var startInfo = new ProcessStartInfo
             {
