@@ -16,6 +16,6 @@
   <files>
     <file src="..\tools\pact-osx\**" target="tools\pact-osx\" />
     <file src="config.json" target="tools\pact-osx\config.json" />
-    <file src="..\PactNet.targets" target="build" />
+    <file src="..\PactNet.targets" target="build\PactNet-OSX.targets" />
   </files>
 </package>

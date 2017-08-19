@@ -16,6 +16,6 @@
   <files>
     <file src="..\tools\pact-linux-x86_64\**" target="tools\pact-linux-x86_64\" />
     <file src="config.json" target="tools\pact-linux-x86_64\config.json" />
-    <file src="..\PactNet.targets" target="build" />
+    <file src="..\PactNet.targets" target="build\PactNet-Linux-x64.targets" />
   </files>
 </package>
