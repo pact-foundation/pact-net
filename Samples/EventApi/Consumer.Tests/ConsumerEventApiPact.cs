@@ -18,8 +18,8 @@ namespace Consumer.Tests
             PactBuilder = new PactBuilder(new PactConfig
                 {
                     SpecificationVersion = "2.0.0",
-                    LogDir = @"..\..\..\logs\",
-                    PactDir = @"..\..\..\pacts\"
+                    LogDir = Path.GetFullPath(@"..\..\..\logs\"),
+                    PactDir = Path.GetFullPath(@"..\..\..\pacts\")
                 })
                 .ServiceConsumer("Event API Consumer")
                 .HasPactWith("Event API");

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>PactNet-Windows</id>
+    <version>$version$</version>
+    <authors>seek.com.au</authors>
+    <owners>seek.com.au</owners>
+    <licenseUrl>https://github.com/SEEK-Jobs/pact-net/blob/master/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/SEEK-Jobs/pact-net</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A .NET version of Pact, which enables consumer driven contract testing. This package contains the Windows specific core engine.</description>
+    <dependencies>
+      <dependency id="PactNet" version="$version$" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\tools\pact-win32\**" target="tools\pact-win32\" />
+    <file src="config.json" target="tools\pact-win32\config.json" />
+    <file src="..\PactNet.targets" target="build\PactNet-Windows.targets" />
+  </files>
+</package>

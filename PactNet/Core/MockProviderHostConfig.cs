@@ -16,7 +16,7 @@ namespace PactNet.Core
             var logFile = $"{config.LogDir}{providerName.ToLowerSnakeCase()}_mock_service.log";
             var sslOption = enableSsl ? " --ssl" : "";
 
-            Script = "pact-mock-service.rb";
+            Script = "pact-mock-service";
             Arguments = $"-p {port} -l \"{FixPathForRuby(logFile)}\" --pact-dir \"{FixPathForRuby(config.PactDir)}\" --pact-specification-version \"{config.SpecificationVersion}\"{sslOption}";
             WaitForExit = false;
             Outputters = config?.Outputters;

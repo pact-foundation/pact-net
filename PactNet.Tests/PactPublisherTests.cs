@@ -11,7 +11,7 @@ namespace PactNet.Tests
 {
     public class PactPublisherTests
     {
-        private const string PactFilePath = @"..\..\..\..\Samples\EventApi\Consumer.Tests\pacts\event_api_consumer-event_api.json";
+        private static string PactFilePath = Path.GetFullPath(@"..\..\..\..\Samples\EventApi\Consumer.Tests\pacts\event_api_consumer-event_api.json");
         private const string ConsumerVersion = "1.0.2";
         private const string BrokerBaseUriHttp = "http://test.pact.dius.com.au";
         private const string BrokerBaseUriHttps = "https://test.pact.dius.com.au";

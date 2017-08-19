@@ -20,7 +20,8 @@ $StandaloneCoreReleases = @('PactNet-Windows','PactNet-OSX','PactNet-Linux-x64',
 foreach ($StandaloneCoreRelease in $StandaloneCoreReleases)
 {
 	# Build the NuGet package
-	$ProjectPath = Join-Path -Path $SolutionRoot -ChildPath "Build\$StandaloneCoreRelease.nuspec"
+	$ReleaseSource = $StandaloneCoreRelease.Replace('PactNet-', '').ToLower()
+	$ProjectPath = Join-Path -Path $SolutionRoot -ChildPath "Build\$ReleaseSource\$StandaloneCoreRelease.nuspec"
 	& $NuGetExe pack $ProjectPath -Properties Configuration=Release -OutputDirectory $BuildRoot -Version $ReleaseVersionNumber -NoPackageAnalysis -NoDefaultExcludes
 	if (-not $?)
 	{

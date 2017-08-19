@@ -39,7 +39,7 @@ namespace Provider.Api.Web.Tests
                     .ProviderState($"{serviceUri}/provider-states")
                     .ServiceProvider("Event API", serviceUri)
                     .HonoursPactWith("Event API Consumer")
-                    .PactUri(@"..\..\..\..\Consumer.Tests\pacts\event_api_consumer-event_api.json")
+                    .PactUri(Path.GetFullPath(@"..\..\..\..\Consumer.Tests\pacts\event_api_consumer-event_api.json"))
                     .Verify();
             }
         }

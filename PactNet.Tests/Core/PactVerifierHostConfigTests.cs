@@ -21,7 +21,7 @@ namespace PactNet.Tests.Core
         {
             var config = GetSubject();
 
-            Assert.Equal("pact-provider-verifier.rb", config.Script);
+            Assert.Equal("pact-provider-verifier", config.Script);
         }
 
         [Fact]
@@ -104,9 +104,11 @@ namespace PactNet.Tests.Core
             var pactUri = "./tester-pact/pact-file.json";
             var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
 
-            var verifierConfig = new PactVerifierConfig();
-            verifierConfig.PublishVerificationResults = true;
-            verifierConfig.ProviderVersion = "1.0.0";
+            var verifierConfig = new PactVerifierConfig
+            {
+                PublishVerificationResults = true,
+                ProviderVersion = "1.0.0"
+            };
 
             var config = GetSubject(baseUri: baseUri, pactUri: pactUri, providerStateSetupUri: providerStateSetupUri, verifierConfig: verifierConfig);
 

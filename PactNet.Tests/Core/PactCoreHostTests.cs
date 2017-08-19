@@ -44,7 +44,7 @@ namespace PactNet.Tests.Core
         [Fact]
         public void Start_WhenStdOutIsWrittendTo_LinesAreWrittenToTheOutputters()
         {
-            var pactCoreHost = GetSubject("write-to-stdout.rb");
+            var pactCoreHost = GetSubject("write-to-stdout");
 
             pactCoreHost.Start();
 
@@ -56,7 +56,7 @@ namespace PactNet.Tests.Core
         [Fact]
         public void Start_WhenStdErrIsWrittendTo_LinesAreWrittenToTheOutputters()
         {
-            var pactCoreHost = GetSubject("write-to-stderr.rb");
+            var pactCoreHost = GetSubject("write-to-stderr");
 
             pactCoreHost.Start();
 

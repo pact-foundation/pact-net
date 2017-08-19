@@ -16,7 +16,7 @@ namespace PactNet.Tests.Core
         {
             var config = GetSubject();
 
-            Assert.Equal("pact-mock-service.rb", config.Script);
+            Assert.Equal("pact-mock-service", config.Script);
         }
 
         [Fact]

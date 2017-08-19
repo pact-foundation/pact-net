@@ -1,9 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 using PactNet.Models;
 
 namespace PactNet.Core
@@ -12,8 +12,6 @@ namespace PactNet.Core
     {
         private readonly Process _process;
         private readonly IPactCoreHostConfig _config;
-        private const string RubyVersion = "2.2.0";
-        private const string RubyArch = "i386-mingw32";
 
         public PactCoreHost(T config)
         {
@@ -21,27 +19,33 @@ namespace PactNet.Core
 
             var currentDir = Directory.GetCurrentDirectory();
             var pactCoreDir = $"{currentDir}\\"; //OS specific version will be appended
+            var expectedPackage = String.Empty;
 
-            var platform = Platform.Windows;
-
-#if !USE_NET4X
+#if USE_NET4X
+            pactCoreDir += "pact-win32";
+            expectedPackage = "PactNet-Windows";
+#else
             if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
             {
-                platform = Platform.Windows;
+                pactCoreDir += "pact-win32";
+                expectedPackage = "PactNet-Windows";
             }
             else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
             {
-                platform = Platform.Osx;
+                pactCoreDir += "pact-osx";
+                expectedPackage = "PactNet-OSX";
             }
             else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux) &&
                 System.Runtime.InteropServices.RuntimeInformation.OSArchitecture == System.Runtime.InteropServices.Architecture.X86)
             {
-                platform = Platform.LinuxX86;
+                pactCoreDir += "pact-linux-x86";
+                expectedPackage = "PactNet-Linux-x86";
             }
             else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux) &&
                      System.Runtime.InteropServices.RuntimeInformation.OSArchitecture == System.Runtime.InteropServices.Architecture.X64)
             {
-                platform = Platform.LinuxX64;
+                pactCoreDir += "pact-linux-x86_64";
+                expectedPackage = "PactNet-Linux-x64";
             }
             else
             {
@@ -49,34 +53,23 @@ namespace PactNet.Core
             }
 #endif
 
-            switch (platform)
-            {
-                case Platform.Windows:
-                    pactCoreDir += "pact-win32";
-                    break;
-                case Platform.Osx:
-                    pactCoreDir += "pact-osx";
-                    break;
-                case Platform.LinuxX86:
-                    pactCoreDir += "pact-linux-x86";
-                    break;
-                case Platform.LinuxX64:
-                    pactCoreDir += "pact-linux-x86_64";
-                    break;
-            }
-
             if (!Directory.Exists(pactCoreDir))
             {
-                //TODO: Fall back to using the locally install ruby and packaged assets
+                throw new PactFailureException($"Please install the relevant platform and architecture specific PactNet dependency from Nuget. Based on your current setup you should install '{expectedPackage}'.");
+
+                //TODO: Fall back to using the locally installed ruby and packaged assets
             }
+
+            var configPath = Path.GetFullPath($"{pactCoreDir}\\config.json");
+            var platformConfig = JsonConvert.DeserializeObject<PlatformCoreConfig>(File.ReadAllText(configPath));
 
             var startInfo = new ProcessStartInfo
             {
 #if USE_NET4X
                 WindowStyle = ProcessWindowStyle.Hidden,
 #endif
-                FileName = $"{pactCoreDir}\\lib\\ruby\\bin.real\\ruby.exe",
-                Arguments = $"-rbundler/setup -I\"{pactCoreDir}\\lib\\app\\lib\" \"{pactCoreDir}\\lib\\app\\{_config.Script}\" {_config.Arguments}",
+                FileName = ReplaceConfigParams(platformConfig.FileName, pactCoreDir, _config.Script),
+                Arguments = $"{ReplaceConfigParams(platformConfig.Arguments, pactCoreDir, _config.Script)} {_config.Arguments}",
                 UseShellExecute = false,
                 RedirectStandardInput = false,
                 RedirectStandardOutput = true,
@@ -84,22 +77,17 @@ namespace PactNet.Core
                 CreateNoWindow = true
             };
 
-            var envVars = new Dictionary<string, string>
+            if (platformConfig.Environment != null)
             {
-                { "ROOT_PATH", pactCoreDir },
-                { "RUNNING_PATH", $"{pactCoreDir}\\bin\\" },
-                { "BUNDLE_GEMFILE", $"{pactCoreDir}\\lib\\vendor\\Gemfile" },
-                { "RUBYLIB", $"{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby\\{RubyVersion}\\{RubyArch};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby\\{RubyVersion}\\{RubyArch};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\{RubyVersion};{pactCoreDir}\\lib\\ruby\\lib\\ruby\\{RubyVersion}\\{RubyArch}" },
-                { "SSL_CERT_FILE", $"{pactCoreDir}\\lib\\ruby\\lib\\ca-bundle.crt" }
-            };
-
-            foreach (var envVar in envVars)
-            {
+                foreach (var envVar in platformConfig.Environment)
+                {
+                    var value = ReplaceConfigParams(envVar.Value, pactCoreDir, _config.Script);
 #if USE_NET4X
-                startInfo.EnvironmentVariables[envVar.Key] = envVar.Value;
+                    startInfo.EnvironmentVariables[envVar.Key] = value;
 #else
-                startInfo.Environment[envVar.Key] = envVar.Value;
+                    startInfo.Environment[envVar.Key] = value;
 #endif
+                }
             }
 
             _process = new Process
@@ -188,6 +176,13 @@ namespace PactNet.Core
                     output.WriteLine(line);
                 }
             }
+        }
+
+        private string ReplaceConfigParams(string input, string pactCoreDir, string script)
+        {
+            return !String.IsNullOrEmpty(input) ? 
+                input.Replace("{pactCoreDir}", pactCoreDir).Replace("{script}", script) : 
+                String.Empty;
         }
     }
 }

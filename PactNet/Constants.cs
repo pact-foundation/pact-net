@@ -1,4 +1,6 @@
-﻿namespace PactNet
+﻿using System.IO;
+
+namespace PactNet
 {
     internal static class Constants
     {
@@ -6,7 +8,7 @@
         public const string InteractionsPath = "/interactions";
         public const string InteractionsVerificationPath = "/interactions/verification";
         public const string PactPath = "/pact";
-        public const string DefaultPactDir = @"..\..\pacts\";
-        public const string DefaultLogDir = @"..\..\logs\";
+        public static string DefaultPactDir = Path.GetFullPath(@"..\..\pacts\");
+        public static string DefaultLogDir = Path.GetFullPath(@"..\..\logs\");
     }
 }
