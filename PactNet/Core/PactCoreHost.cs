@@ -16,15 +16,16 @@ namespace PactNet.Core
         public PactCoreHost(T config)
         {
             _config = config;
-
-            var currentDir = Directory.GetCurrentDirectory();
-            var pactCoreDir = $"{currentDir}{Path.DirectorySeparatorChar}"; //OS specific version will be appended
+            
             var expectedPackage = String.Empty;
 
 #if USE_NET4X
+            var pactCoreDir = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}"; //OS specific version will be appended
             pactCoreDir += "pact-win32";
             expectedPackage = "PactNet-Windows";
 #else
+            var pactCoreDir = $"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}"; //OS specific version will be appended
+
             if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
             {
                 pactCoreDir += "pact-win32";
