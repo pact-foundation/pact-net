@@ -16,6 +16,6 @@
   <files>
     <file src="..\tools\pact-win32\**" target="tools\pact-win32\" />
     <file src="config.json" target="tools\pact-win32\config.json" />
-    <file src="..\PactNet.targets" target="build\PactNet-Windows.targets" />
+    <file src="PactNet-Windows.targets" target="build\PactNet-Windows.targets" />
   </files>
 </package>
