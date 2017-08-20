@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using PactNet.Infrastructure.Outputters;
 
 namespace PactNet
@@ -42,7 +43,7 @@ namespace PactNet
         {
             if (!path.EndsWith("/") && !path.EndsWith("\\"))
             {
-                return path + "\\";
+                return path + Path.DirectorySeparatorChar;
             }
 
             return path;
