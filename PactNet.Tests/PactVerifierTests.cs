@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using NSubstitute;
 using PactNet.Core;
 using Xunit;
@@ -18,9 +19,11 @@ namespace PactNet.Tests
         [Fact]
         public void PactVerifier_WhenCalledWithPublishVerificationResultsAndNoProviderVersion_ThrowsArgumentException()
         {
-            var config = new PactVerifierConfig();
-            config.PublishVerificationResults = true;
-            config.ProviderVersion = string.Empty;
+            var config = new PactVerifierConfig
+            {
+                PublishVerificationResults = true,
+                ProviderVersion = string.Empty
+            };
 
             Assert.Throws<ArgumentException>(() => new PactVerifier(config));
         }
@@ -171,7 +174,7 @@ namespace PactNet.Tests
         [Fact]
         public void PactUri_WhenCalledWithUri_SetsPactFileUri()
         {
-            const string pactFileUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
+            var pactFileUri = $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}Consumer.Tests{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}my_client-event_api.json";
             var pactVerifier = GetSubject();
 
             pactVerifier.PactUri(pactFileUri);
@@ -182,7 +185,7 @@ namespace PactNet.Tests
         [Fact]
         public void PactUri_WhenCalledWithUriInADifferentFormat_SetsPactFileUri()
         {
-            const string pactFileUri = "..\\..\\..\\Consumer.Tests\\pacts\\my_client-event_api.json";
+            var pactFileUri = $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}Consumer.Tests{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}my_client-event_api.json";
             var pactVerifier = GetSubject();
 
             pactVerifier.PactUri(pactFileUri);
@@ -194,7 +197,7 @@ namespace PactNet.Tests
         public void Verify_WhenServiceBaseUriIsNull_ThrowsInvalidOperationException()
         {
             var pactVerifier = GetSubject();
-            pactVerifier.PactUri("../../../Consumer.Tests/pacts/my_client-event_api.json");
+            pactVerifier.PactUri($"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}Consumer.Tests{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}my_client-event_api.json");
 
             Assert.Throws<InvalidOperationException>(() => pactVerifier.Verify());
         }
@@ -213,7 +216,7 @@ namespace PactNet.Tests
         {
             var serviceProvider = "Event API";
             var serviceConsumer = "My client";
-            var pactUri = "../../../Consumer.Tests/pacts/my_client-event_api.json";
+            var pactUri = $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}Consumer.Tests{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}my_client-event_api.json";
 
             var pactVerifier = GetSubject();
             pactVerifier

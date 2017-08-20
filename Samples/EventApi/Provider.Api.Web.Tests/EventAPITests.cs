@@ -21,11 +21,6 @@ namespace Provider.Api.Web.Tests
         [Fact]
         public void EnsureEventApiHonoursPactWithConsumer()
         {
-            if (!File.Exists(@".\pact\bin\pact-provider-verifier.bat"))
-            {
-                throw new Exception("Please run '.\\Build\\Download-Standalone-Core.ps1' from the project root to download the standalone provider verifier, then 'Clean' and 'Rebuild' the solution.");
-            }
-
             //Arrange
             const string serviceUri = "http://localhost:9222";
             var config = new PactVerifierConfig
@@ -44,7 +39,7 @@ namespace Provider.Api.Web.Tests
                     .ProviderState($"{serviceUri}/provider-states")
                     .ServiceProvider("Event API", serviceUri)
                     .HonoursPactWith("Event API Consumer")
-                    .PactUri(@"..\..\..\..\Consumer.Tests\pacts\event_api_consumer-event_api.json")
+                    .PactUri($"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}Consumer.Tests{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}event_api_consumer-event_api.json")
                     .Verify();
             }
         }

@@ -15,16 +15,11 @@ namespace Consumer.Tests
 
         public ConsumerEventApiPact()
         {
-            if (!File.Exists(@".\pact\bin\pact-mock-service.bat"))
-            {
-                throw new Exception("Please run '.\\Build\\Download-Standalone-Core.ps1' from the project root to download the standalone mock provider service and then Rebuild solution");
-            }
-
             PactBuilder = new PactBuilder(new PactConfig
                 {
                     SpecificationVersion = "2.0.0",
-                    LogDir = @"..\..\..\logs\",
-                    PactDir = @"..\..\..\pacts\"
+                    LogDir = $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}logs{Path.DirectorySeparatorChar}",
+                    PactDir = $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}"
                 })
                 .ServiceConsumer("Event API Consumer")
                 .HasPactWith("Event API");

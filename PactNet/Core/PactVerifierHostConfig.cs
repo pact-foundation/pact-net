@@ -17,7 +17,7 @@ namespace PactNet.Core
             var brokerCredentials = pactBrokerUriOptions != null ? $" --broker-username \"{pactBrokerUriOptions.Username}\" --broker-password \"{pactBrokerUriOptions.Password}\"" : string.Empty;
             var publishResults = config?.PublishVerificationResults == true ? $" --publish-verification-results=true --provider-app-version=\"{config.ProviderVersion}\"" : string.Empty;
 
-            Script = "pact-provider-verifier.rb";
+            Script = "pact-provider-verifier";
             Arguments = $"--pact-urls \"{FixPathForRuby(pactUri)}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}{brokerCredentials}{publishResults}";
             WaitForExit = true;
             Outputters = config?.Outputters;

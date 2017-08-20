@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>PactNet-Linux-x64</id>
+    <version>$version$</version>
+    <authors>seek.com.au</authors>
+    <owners>seek.com.au</owners>
+    <licenseUrl>https://github.com/SEEK-Jobs/pact-net/blob/master/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/SEEK-Jobs/pact-net</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A .NET version of Pact, which enables consumer driven contract testing. This package contains the 64-bit Linux specific core engine.</description>
+    <dependencies>
+      <dependency id="PactNet" version="$version$" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\tools\pact-linux-x86_64\**" target="tools\pact-linux-x86_64\" />
+    <file src="config.json" target="tools\pact-linux-x86_64\config.json" />
+    <file src="PactNet-Linux-x64.targets" target="build\PactNet-Linux-x64.targets" />
+  </files>
+</package>

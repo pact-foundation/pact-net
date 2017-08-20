@@ -15,7 +15,7 @@ $OpenCoverExe = Join-Path $BuildRoot -ChildPath '..\packages\OpenCover.4.6.519\t
 $XUnitExe = Join-Path $BuildRoot -ChildPath '..\packages\xunit.runner.console.2.2.0\tools\xunit.console.exe'
 $ReportGenExe = Join-Path $BuildRoot -ChildPath '..\packages\ReportGenerator.1.9.1.0\ReportGenerator.exe'
 
-& $NuGetExe install "$SolutionRoot\.nuget\packages.config" -outputdirectory "$SolutionRoot\packages"
+& $NuGetExe install "$SolutionRoot\.nuget\coverage\packages.config" -outputdirectory "$SolutionRoot\packages"
 
 New-Item -ItemType directory -Path "$BuildRoot\coverage" -ErrorAction:ignore
 

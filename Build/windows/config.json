@@ -1,0 +1,11 @@
+{
+  "fileName": "{pactCoreDir}\\lib\\ruby\\bin.real\\ruby.exe",
+  "arguments": "-rbundler/setup -I\"{pactCoreDir}\\lib\\app\\lib\" \"{pactCoreDir}\\lib\\app\\{script}.rb\"",
+  "environment": {
+    "ROOT_PATH": "{pactCoreDir}",
+    "RUNNING_PATH": "{pactCoreDir}\\bin\\",
+    "BUNDLE_GEMFILE": "{pactCoreDir}\\lib\\vendor\\Gemfile",
+    "RUBYLIB": "{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby\\2.2.0;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby\\2.2.0\\i386-mingw32;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\site_ruby;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby\\2.2.0;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby\\2.2.0\\i386-mingw32;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\vendor_ruby;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\2.2.0;{pactCoreDir}\\lib\\ruby\\lib\\ruby\\2.2.0\\i386-mingw32",
+    "SSL_CERT_FILE": "{pactCoreDir}\\lib\\ruby\\lib\\ca-bundle.crt"
+  }
+}

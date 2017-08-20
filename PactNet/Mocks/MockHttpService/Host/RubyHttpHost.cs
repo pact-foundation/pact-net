@@ -54,7 +54,7 @@ namespace PactNet.Mocks.MockHttpService.Host
                     throw lastOutput.Item2;
                 }
 
-                Thread.Sleep(200);
+                Thread.Sleep(1000);
                 lastOutput = IsMockProviderServiceRunning();
                 aliveChecks++;
             }

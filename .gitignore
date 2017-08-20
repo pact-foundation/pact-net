@@ -49,3 +49,4 @@ Build/PactNet*.nupkg
 PactNet/Files/pact/
 .vs/
 tools/
+build/tools/
