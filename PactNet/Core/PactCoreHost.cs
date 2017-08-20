@@ -18,7 +18,7 @@ namespace PactNet.Core
             _config = config;
 
             var currentDir = Directory.GetCurrentDirectory();
-            var pactCoreDir = $"{currentDir}\\"; //OS specific version will be appended
+            var pactCoreDir = $"{currentDir}{Path.DirectorySeparatorChar}"; //OS specific version will be appended
             var expectedPackage = String.Empty;
 
 #if USE_NET4X
@@ -60,7 +60,7 @@ namespace PactNet.Core
                 //TODO: Fall back to using the locally installed ruby and packaged assets
             }
 
-            var configPath = Path.GetFullPath($"{pactCoreDir}\\config.json");
+            var configPath = $"{pactCoreDir}{Path.DirectorySeparatorChar}config.json";
             var platformConfig = JsonConvert.DeserializeObject<PlatformCoreConfig>(File.ReadAllText(configPath));
 
             var startInfo = new ProcessStartInfo
