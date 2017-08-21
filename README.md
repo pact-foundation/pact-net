@@ -19,6 +19,7 @@ From the [Pact Specification repo](https://github.com/pact-foundation/pact-speci
 Read more about Pact and the problems it solves at https://docs.pact.io/
 
 Please feel free to contribute, we do accept pull requests.
+This solution has been built using VS2017, you will need it to open this project.
 
 ## Usage
 Below are some samples of usage.  
@@ -33,7 +34,22 @@ We have also written some `//NOTE:` comments inline in the code to help explain 
 
 ### Installing
 
-Via Nuget with [Install-Package PactNet](http://www.nuget.org/packages/PactNet)
+Via Nuget 
+**Windows**
+https://www.nuget.org/packages/PactNet-Windows
+`Install-Package PactNet-Windows`
+
+**OSX**
+https://www.nuget.org/packages/PactNet-OSX
+`Install-Package PactNet-OSX`
+
+**Linux x64 (64-bit)**
+https://www.nuget.org/packages/PactNet-Linux-x64
+`Install-Package PactNet-Linux-x64`
+
+**Linux x86 (32-bit)**
+https://www.nuget.org/packages/PactNet-Linux-x86
+`Install-Package PactNet-Linux-x86`
 
 ### Service Consumer
 
