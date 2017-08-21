@@ -1,5 +1,5 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Target Name="FixFilePermissions" BeforeTargets="BeforeBuild">
+  <Target Name="FixFilePermissions" BeforeTargets="BeforeBuild" Condition="'$(OS)' != 'Windows_NT'">
     <!-- Ensure the various files are executable.  See https://github.com/NuGet/Home/issues/4424 -->
     <Exec Command="chmod u+x $(MSBuildThisFileDirectory)../tools/pact-linux-x86_64/bin/pact-mock-service" />
     <Exec Command="chmod u+x $(MSBuildThisFileDirectory)../tools/pact-linux-x86_64/bin/pact-provider-verifier" />
