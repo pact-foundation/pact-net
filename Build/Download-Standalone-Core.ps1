@@ -18,7 +18,7 @@ $7ZipSnapIn = Join-Path $BuildRoot -ChildPath '..\packages\7Zip4PowerShell.1.8.0
 
 If(Test-Path $OutputPath)
 {
-	Remove-Item $OutputPath -Recurse | Out-Null
+	Remove-Item $OutputPath -Recurse -Force | Out-Null
 }
 New-Item -ItemType directory -Path $OutputPath | Out-Null
 
@@ -26,7 +26,7 @@ New-Item -ItemType directory -Path $OutputPath | Out-Null
 
 Import-Module -Name $7ZipSnapIn
 
-$StandaloneCoreVersion = '1.1.2'
+$StandaloneCoreVersion = '1.4.4'
 $StandaloneCoreDownloadBaseUri = "https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v$StandaloneCoreVersion"
 
 # Download and extract the Windows core
