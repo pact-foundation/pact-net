@@ -319,8 +319,7 @@ namespace Consumer.Tests
                     Headers = new Dictionary<string, object>
                     {
                         { "Accept", "application/json" }
-                    },
-                    Body = null
+                    }
                 })
                 .WillRespondWith(new ProviderServiceResponse
                 {
