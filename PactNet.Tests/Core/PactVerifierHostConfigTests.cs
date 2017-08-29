@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using PactNet.Core;
 using Xunit;
 
@@ -118,6 +119,47 @@ namespace PactNet.Tests.Core
         }
 
         [Fact]
+        public void Ctor_WhenCalledWithCustomHeader_SetsTheCorrectArgs()
+        {
+            var baseUri = new Uri("http://127.0.0.1");
+            var pactUri = "./tester-pact/pact-file.json";
+            var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
+            var customHeader = new KeyValuePair<string, string>("Authorization", "Basic VGVzdA==");
+
+            var verifierConfig = new PactVerifierConfig
+            {
+                CustomHeader = customHeader,
+                ProviderVersion = "1.0.0"
+            };
+
+            var config = GetSubject(baseUri: baseUri, pactUri: pactUri, providerStateSetupUri: providerStateSetupUri, verifierConfig: verifierConfig);
+
+            var expectedArguments = BuildExpectedArguments(baseUri, pactUri, providerStateSetupUri, providerVersion: "1.0.0", customHeader: customHeader);
+
+            Assert.Equal(expectedArguments, config.Arguments);
+        }
+
+        [Fact]
+        public void Ctor_WhenCalledWithVerboseTrue_SetsTheCorrectArgs()
+        {
+            var baseUri = new Uri("http://127.0.0.1");
+            var pactUri = "./tester-pact/pact-file.json";
+            var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
+
+            var verifierConfig = new PactVerifierConfig
+            {
+                Verbose = true,
+                ProviderVersion = "1.0.0"
+            };
+
+            var config = GetSubject(baseUri: baseUri, pactUri: pactUri, providerStateSetupUri: providerStateSetupUri, verifierConfig: verifierConfig);
+
+            var expectedArguments = BuildExpectedArguments(baseUri, pactUri, providerStateSetupUri, providerVersion: "1.0.0", verbose: true);
+
+            Assert.Equal(expectedArguments, config.Arguments);
+        }
+
+        [Fact]
         public void Ctor_WhenVerifierConfigIsNull_SetsOutputtersToNull()
         {
             var config = GetSubject();
@@ -131,13 +173,19 @@ namespace PactNet.Tests.Core
             Uri providerStateSetupUri,
             PactUriOptions pactUriOptions = null,
             bool publishVerificationResults = false,
-            string providerVersion = "")
+            string providerVersion = "",
+            KeyValuePair<string, string>? customHeader = null,
+            bool verbose = false)
         {
             var providerStateOption = providerStateSetupUri != null ? $" --provider-states-setup-url {providerStateSetupUri.OriginalString}" : "";
             var brokerCredentials = pactUriOptions != null ? $" --broker-username \"{pactUriOptions.Username}\" --broker-password \"{pactUriOptions.Password}\"" : "";
             var publishResults = publishVerificationResults ? $" --publish-verification-results=true --provider-app-version=\"{providerVersion}\"" : string.Empty;
+            var customProviderHeader = customHeader != null ?
+                $" --custom-provider-header \"{customHeader.Value.Key}:{customHeader.Value.Value}\"" :
+                string.Empty;
+            var verboseOutput = verbose ? " --verbose true" : string.Empty;
 
-            return $"--pact-urls \"{pactUri}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}{brokerCredentials}{publishResults}";
+            return $"--pact-urls \"{pactUri}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}{brokerCredentials}{publishResults}{customProviderHeader}{verboseOutput}";
         }
     }
 }

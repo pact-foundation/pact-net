@@ -11,6 +11,10 @@ namespace PactNet
 
         public string ProviderVersion { get; set; }
 
+        public KeyValuePair<string, string>? CustomHeader { get; set; }
+
+        public bool Verbose { get; set; }
+
         public PactVerifierConfig()
         {
             Outputters = new List<IOutput>

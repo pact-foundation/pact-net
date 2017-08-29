@@ -240,7 +240,9 @@ public class SomethingApiTests
         Outputters = new List<IOutput> //NOTE: We default to using a ConsoleOutput, however xUnit 2 does not capture the console output, so a custom outputter is required.
         {
             new XUnitOutput(_output)
-        }
+        },
+		CustomHeader = new KeyValuePair<string, string>("Authorization", "Basic VGVzdA=="), //This allows the user to set a request header that will be sent with every request the verifier sends to the provider
+		Verbose = true //Output verbose verification logs to the test output
     };
 
     using (WebApp.Start<TestStartup>(serviceUri))
