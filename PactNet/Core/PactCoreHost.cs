@@ -20,7 +20,8 @@ namespace PactNet.Core
             var expectedPackage = String.Empty;
 
 #if USE_NET4X
-            var pactCoreDir = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}"; //OS specific version will be appended
+            var outputDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
+            var pactCoreDir = $"{new Uri(outputDir).LocalPath}{Path.DirectorySeparatorChar}"; //OS specific version will be appended
             pactCoreDir += "pact-win32";
             expectedPackage = "PactNet-Windows";
 #else
