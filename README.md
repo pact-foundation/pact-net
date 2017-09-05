@@ -37,20 +37,20 @@ We have also written some `//NOTE:` comments inline in the code to help explain 
 Via Nuget  
 
 **Windows**  
-https://www.nuget.org/packages/PactNet-Windows  
-`Install-Package PactNet-Windows`
+https://www.nuget.org/packages/PactNet.Windows  
+`Install-Package PactNet.Windows`
 
 **OSX**  
-https://www.nuget.org/packages/PactNet-OSX  
-`Install-Package PactNet-OSX`
+https://www.nuget.org/packages/PactNet.OSX  
+`Install-Package PactNet.OSX`
 
 **Linux x64 (64-bit)**  
-https://www.nuget.org/packages/PactNet-Linux-x64  
-`Install-Package PactNet-Linux-x64`
+https://www.nuget.org/packages/PactNet.Linux.x64  
+`Install-Package PactNet.Linux.x64`
 
 **Linux x86 (32-bit)**  
-https://www.nuget.org/packages/PactNet-Linux-x86  
-`Install-Package PactNet-Linux-x86`
+https://www.nuget.org/packages/PactNet.Linux.x86  
+`Install-Package PactNet.Linux.x86`
 
 ### Service Consumer
 

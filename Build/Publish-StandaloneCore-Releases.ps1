@@ -5,7 +5,7 @@
 	$ReleaseVersionNumber,
 
 	[switch]$Push,
-	
+
 	[string]$ApiKey
 )
 
@@ -15,12 +15,12 @@ $BuildRoot = Split-Path -Path $PSScriptFilePath -Parent
 $SolutionRoot = Split-Path -Path $BuildRoot -Parent
 $NuGetExe = Join-Path $BuildRoot -ChildPath '..\.nuget\nuget.exe'
 
-$StandaloneCoreReleases = @('PactNet-Windows','PactNet-OSX','PactNet-Linux-x64','PactNet-Linux-x86')
+$StandaloneCoreReleases = @('PactNet.Windows','PactNet.OSX','PactNet.Linux.x64','PactNet.Linux.x86')
 
 foreach ($StandaloneCoreRelease in $StandaloneCoreReleases)
 {
 	# Build the NuGet package
-	$ReleaseSource = $StandaloneCoreRelease.Replace('PactNet-', '').ToLower()
+	$ReleaseSource = $StandaloneCoreRelease.Replace('.', '-').Replace('PactNet-', '').ToLower()
 	$ProjectPath = Join-Path -Path $SolutionRoot -ChildPath "Build\$ReleaseSource\$StandaloneCoreRelease.nuspec"
 	& $NuGetExe pack $ProjectPath -Properties Configuration=Release -OutputDirectory $BuildRoot -Version $ReleaseVersionNumber -NoPackageAnalysis -NoDefaultExcludes
 	if (-not $?)
@@ -44,4 +44,3 @@ foreach ($StandaloneCoreRelease in $StandaloneCoreReleases)
 		}
 	}
 }
-

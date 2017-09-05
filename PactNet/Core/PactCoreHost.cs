@@ -16,37 +16,37 @@ namespace PactNet.Core
         public PactCoreHost(T config)
         {
             _config = config;
-            
+
             var expectedPackage = String.Empty;
 
 #if USE_NET4X
             var pactCoreDir = $"{Constants.BuildDirectory}{Path.DirectorySeparatorChar}"; //OS specific version will be appended
             pactCoreDir += "pact-win32";
-            expectedPackage = "PactNet-Windows";
+            expectedPackage = "PactNet.Windows";
 #else
             var pactCoreDir = $"{Constants.BuildDirectory}{Path.DirectorySeparatorChar}"; //OS specific version will be appended
 
             if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
             {
                 pactCoreDir += "pact-win32";
-                expectedPackage = "PactNet-Windows";
+                expectedPackage = "PactNet.Windows";
             }
             else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
             {
                 pactCoreDir += "pact-osx";
-                expectedPackage = "PactNet-OSX";
+                expectedPackage = "PactNet.OSX";
             }
             else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux) &&
                 System.Runtime.InteropServices.RuntimeInformation.OSArchitecture == System.Runtime.InteropServices.Architecture.X86)
             {
                 pactCoreDir += "pact-linux-x86";
-                expectedPackage = "PactNet-Linux-x86";
+                expectedPackage = "PactNet.Linux.x86";
             }
             else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux) &&
                      System.Runtime.InteropServices.RuntimeInformation.OSArchitecture == System.Runtime.InteropServices.Architecture.X64)
             {
                 pactCoreDir += "pact-linux-x86_64";
-                expectedPackage = "PactNet-Linux-x64";
+                expectedPackage = "PactNet.Linux.x64";
             }
             else
             {
@@ -181,8 +181,8 @@ namespace PactNet.Core
 
         private string ReplaceConfigParams(string input, string pactCoreDir, string script)
         {
-            return !String.IsNullOrEmpty(input) ? 
-                input.Replace("{pactCoreDir}", pactCoreDir).Replace("{script}", script) : 
+            return !String.IsNullOrEmpty(input) ?
+                input.Replace("{pactCoreDir}", pactCoreDir).Replace("{script}", script) :
                 String.Empty;
         }
     }
