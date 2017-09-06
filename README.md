@@ -32,6 +32,9 @@ We have also written some `//NOTE:` comments inline in the code to help explain 
 2. If you want to use SSL, you will need to ignore certification validation errors globally (currently we just generate a self signed cert). You can do this in the tests by adding `ServicePointManager.ServerCertificateValidationCallback +=
     (sender, cert, chain, sslPolicyErrors) => true;` before any HTTP clients and the PactBuilder objects are instantiated. NOTE: DO NOT add this configuration to your production code!
 
+## Known Issues
+1. When debugging a test locally (either consumer or provider) if you click the stop button in your test runner, it will abort the process abruptly and the ruby runtime will not get cleaned up. If you do this, simply kill the ruby process from your task/process manager. We recommend you play the test through to the end to avoid this issue. See https://github.com/SEEK-Jobs/pact-net/issues/108 for more details.
+
 ### Installing
 
 Via Nuget  
