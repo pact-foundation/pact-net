@@ -140,18 +140,6 @@ public class ConsumerMyApiPact : IDisposable
   }
 }
 
-public class SomethingApiConsumerTests : IClassFixture<ConsumerMyApiPact>
-{
-  private IMockProviderService _mockProviderService;
-  private string _mockProviderServiceBaseUri;
-
-  public SomethingApiConsumerTests(ConsumerMyApiPact data)
-  {
-    _mockProviderService = data.MockProviderService;
-        _mockProviderServiceBaseUri = data.MockProviderServiceBaseUri;
-    data.MockProviderService.ClearInteractions(); //NOTE: Clears any previously registered interactions before the test is run
-  }
-}
 ```
 
 #### 3. Write your test
