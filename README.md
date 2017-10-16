@@ -156,8 +156,7 @@ public class SomethingApiConsumerTests : IClassFixture<ConsumerMyApiPact>
     _mockProviderService = data.MockProviderService;
     _mockProviderService.ClearInteractions(); //NOTE: Clears any previously registered interactions before the test is run
     _mockProviderServiceBaseUri = data.MockProviderServiceBaseUri;
-
-}
+  }
 
   [Fact]
   public void GetSomething_WhenTheTesterSomethingExists_ReturnsTheSomething()
