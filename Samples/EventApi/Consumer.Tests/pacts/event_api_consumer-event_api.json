@@ -74,7 +74,7 @@
         "body": {
           "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
           "eventType": "DetailsView",
-          "timestamp": "2017-08-28T11:59:29.7068433Z"
+          "timestamp": "2017-10-19T01:16:09.3557066Z"
         },
         "matchingRules": {
           "$.headers.Server": {
@@ -195,7 +195,6 @@
       "response": {
         "status": 201,
         "headers": {
-
         }
       }
     }
