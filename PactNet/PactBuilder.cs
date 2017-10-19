@@ -11,10 +11,10 @@ namespace PactNet
     {
         public string ConsumerName { get; private set; }
         public string ProviderName { get; private set; }
-        private readonly Func<int, bool, string, IMockProviderService> _mockProviderServiceFactory;
+        private readonly Func<int, bool, string, string, IMockProviderService> _mockProviderServiceFactory;
         private IMockProviderService _mockProviderService;
 
-        internal PactBuilder(Func<int, bool, string, IMockProviderService> mockProviderServiceFactory)
+        internal PactBuilder(Func<int, bool, string, string, IMockProviderService> mockProviderServiceFactory)
         {
             _mockProviderServiceFactory = mockProviderServiceFactory;
         }
@@ -25,7 +25,7 @@ namespace PactNet
         }
 
         public PactBuilder(PactConfig config)
-            : this((port, enableSsl, providerName) => new MockProviderService(port, enableSsl, providerName, config))
+            : this((port, enableSsl, consumerName, providerName) => new MockProviderService(port, enableSsl, consumerName, providerName, config))
         {
         }
 
@@ -58,9 +58,18 @@ namespace PactNet
             return MockService(port, jsonSerializerSettings: null, enableSsl: enableSsl);
         }
     
-
         public IMockProviderService MockService(int port, JsonSerializerSettings jsonSerializerSettings, bool enableSsl = false)
         {
+            if (String.IsNullOrEmpty(ConsumerName))
+            {
+                throw new InvalidOperationException("ConsumerName has not been set, please supply a consumer name using the ServiceConsumer method.");
+            }
+
+            if (String.IsNullOrEmpty(ProviderName))
+            {
+                throw new InvalidOperationException("ProviderName has not been set, please supply a provider name using the HasPactWith method.");
+            }
+
             if (_mockProviderService != null)
             {
                 _mockProviderService.Stop();
@@ -71,7 +80,7 @@ namespace PactNet
                 JsonConfig.ApiSerializerSettings = jsonSerializerSettings;
             }
 
-            _mockProviderService = _mockProviderServiceFactory(port, enableSsl, ProviderName);
+            _mockProviderService = _mockProviderServiceFactory(port, enableSsl, ConsumerName, ProviderName);
 
             _mockProviderService.Start();
 
@@ -91,23 +100,7 @@ namespace PactNet
 
         private void PersistPactFile()
         {
-            if (String.IsNullOrEmpty(ConsumerName))
-            {
-                throw new InvalidOperationException("ConsumerName has not been set, please supply a consumer name using the ServiceConsumer method.");
-            }
-
-            if (String.IsNullOrEmpty(ProviderName))
-            {
-                throw new InvalidOperationException("ProviderName has not been set, please supply a provider name using the HasPactWith method.");
-            }
-
-            var pactDetails = new PactDetails
-            {
-                Provider = new Pacticipant { Name = ProviderName },
-                Consumer = new Pacticipant { Name = ConsumerName }
-            };
-
-            _mockProviderService.SendAdminHttpRequest(HttpVerb.Post, Constants.PactPath, pactDetails);
+            _mockProviderService.SendAdminHttpRequest(HttpVerb.Post, Constants.PactPath);
         }
     }
 }

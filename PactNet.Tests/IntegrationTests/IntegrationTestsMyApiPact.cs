@@ -16,9 +16,9 @@ namespace PactNet.Tests.IntegrationTests
         {
             var pactConfig = new PactConfig();
 
-            PactBuilder = new PactBuilder((port, enableSsl, providerName) =>
+            PactBuilder = new PactBuilder((port, enableSsl, consumerName, providerName) =>
                     new MockProviderService(
-                        baseUri => new RubyHttpHost(baseUri, "MyApi", pactConfig),
+                        baseUri => new RubyHttpHost(baseUri, "MyConsumer", "MyApi", pactConfig),
                         port, enableSsl,
                         baseUri => new AdminHttpClient(baseUri)))
                 .ServiceConsumer("IntegrationTests")

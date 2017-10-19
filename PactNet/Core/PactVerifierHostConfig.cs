@@ -22,7 +22,7 @@ namespace PactNet.Core
             var verbose = config?.Verbose == true ? " --verbose true" : string.Empty;
 
             Script = "pact-provider-verifier";
-            Arguments = $"--pact-urls \"{FixPathForRuby(pactUri)}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}{brokerCredentials}{publishResults}{customHeader}{verbose}";
+            Arguments = $"\"{FixPathForRuby(pactUri)}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}{brokerCredentials}{publishResults}{customHeader}{verbose}";
             WaitForExit = true;
             Outputters = config?.Outputters;
         }

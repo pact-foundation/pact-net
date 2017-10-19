@@ -185,7 +185,7 @@ namespace PactNet.Tests.Core
                 string.Empty;
             var verboseOutput = verbose ? " --verbose true" : string.Empty;
 
-            return $"--pact-urls \"{pactUri}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}{brokerCredentials}{publishResults}{customProviderHeader}{verboseOutput}";
+            return $"\"{pactUri}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}{brokerCredentials}{publishResults}{customProviderHeader}{verboseOutput}";
         }
     }
 }

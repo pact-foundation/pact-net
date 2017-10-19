@@ -30,9 +30,9 @@ namespace PactNet.Mocks.MockHttpService
             _adminHttpClient = adminHttpClientFactory(BaseUri);
         }
 
-        public MockProviderService(int port, bool enableSsl, string providerName, PactConfig config)
+        public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config)
             : this(
-            baseUri => new RubyHttpHost(baseUri, providerName, config),
+            baseUri => new RubyHttpHost(baseUri, consumerName, providerName, config),
             port,
             enableSsl,
             baseUri => new AdminHttpClient(baseUri))
@@ -113,9 +113,9 @@ namespace PactNet.Mocks.MockHttpService
             _adminHttpClient.SendAdminHttpRequest(HttpVerb.Get, $"{Constants.InteractionsVerificationPath}?example_description={testContext}");
         }
 
-        public void SendAdminHttpRequest<T>(HttpVerb method, string path, T requestContent, IDictionary<string, string> headers = null) where T : class
+        public void SendAdminHttpRequest(HttpVerb method, string path)
         {
-            _adminHttpClient.SendAdminHttpRequest(method, path, requestContent, headers);
+            _adminHttpClient.SendAdminHttpRequest(method, path);
         }
 
         public void Start()

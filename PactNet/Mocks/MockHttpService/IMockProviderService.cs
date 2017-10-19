@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using PactNet.Mocks.MockHttpService.Models;
 
 namespace PactNet.Mocks.MockHttpService
@@ -11,6 +10,6 @@ namespace PactNet.Mocks.MockHttpService
         void Stop();
         void ClearInteractions();
         void VerifyInteractions();
-        void SendAdminHttpRequest<T>(HttpVerb method, string path, T requestContent, IDictionary<string, string> headers = null) where T : class;
+        void SendAdminHttpRequest(HttpVerb method, string path);
     }
 }

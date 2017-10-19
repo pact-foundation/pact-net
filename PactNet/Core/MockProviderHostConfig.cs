@@ -11,13 +11,13 @@ namespace PactNet.Core
         public bool WaitForExit { get; }
         public IEnumerable<IOutput> Outputters { get; }
 
-        public MockProviderHostConfig(int port, bool enableSsl, string providerName, PactConfig config)
+        public MockProviderHostConfig(int port, bool enableSsl, string consumerName, string providerName, PactConfig config)
         {
             var logFile = $"{config.LogDir}{providerName.ToLowerSnakeCase()}_mock_service.log";
             var sslOption = enableSsl ? " --ssl" : "";
 
             Script = "pact-mock-service";
-            Arguments = $"-p {port} -l \"{FixPathForRuby(logFile)}\" --pact-dir \"{FixPathForRuby(config.PactDir)}\" --pact-specification-version \"{config.SpecificationVersion}\"{sslOption}";
+            Arguments = $"-p {port} -l \"{FixPathForRuby(logFile)}\" --pact-dir \"{FixPathForRuby(config.PactDir)}\" --pact-specification-version \"{config.SpecificationVersion}\" --consumer \"{consumerName}\" --provider \"{providerName}\"{sslOption}";
             WaitForExit = false;
             Outputters = config?.Outputters;
         }

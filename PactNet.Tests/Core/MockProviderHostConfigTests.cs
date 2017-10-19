@@ -6,9 +6,9 @@ namespace PactNet.Tests.Core
 {
     public class MockProviderHostConfigTests
     {
-        private IPactCoreHostConfig GetSubject(int port = 2322, bool enableSsl = false, string providerName = "My Test Provider", PactConfig pactConfig = null)
+        private IPactCoreHostConfig GetSubject(int port = 2322, bool enableSsl = false, string consumerName = "My Test Consumer", string providerName = "My Test Provider", PactConfig pactConfig = null)
         {
-            return new MockProviderHostConfig(port, enableSsl, providerName, pactConfig ?? new PactConfig());
+            return new MockProviderHostConfig(port, enableSsl, consumerName, providerName, pactConfig ?? new PactConfig());
         }
 
         [Fact]
@@ -24,13 +24,14 @@ namespace PactNet.Tests.Core
         {
             var port = 9332;
             var pactConfig = new PactConfig();
+            var consumerName = "Cons";
             var providerName = "The best one";
 
-            var config = GetSubject(port, false, providerName, pactConfig);
+            var config = GetSubject(port, false, consumerName, providerName, pactConfig);
 
             var expectedLogFilePath = BuildExpectedLogFilePath(pactConfig.LogDir, providerName);
             var expectedPactDir = BuildExpectedPactDir(pactConfig.PactDir);
-            var expectedArguments = BuildExpectedArguments(port, expectedLogFilePath, expectedPactDir, pactConfig.SpecificationVersion);
+            var expectedArguments = BuildExpectedArguments(port, expectedLogFilePath, expectedPactDir, pactConfig.SpecificationVersion, consumerName, providerName);
 
             Assert.Equal(expectedArguments, config.Arguments);
         }
@@ -40,14 +41,15 @@ namespace PactNet.Tests.Core
         {
             var port = 9332;
             var pactConfig = new PactConfig();
+            var consumerName = "Cons";
             var providerName = "The best one";
             var enableSsl = true;
 
-            var config = GetSubject(port, enableSsl, providerName, pactConfig);
+            var config = GetSubject(port, enableSsl, consumerName, providerName, pactConfig);
 
             var expectedLogFilePath = BuildExpectedLogFilePath(pactConfig.LogDir, providerName);
             var expectedPactDir = BuildExpectedPactDir(pactConfig.PactDir);
-            var expectedArguments = BuildExpectedArguments(port, expectedLogFilePath, expectedPactDir, pactConfig.SpecificationVersion, enableSsl);
+            var expectedArguments = BuildExpectedArguments(port, expectedLogFilePath, expectedPactDir, pactConfig.SpecificationVersion, consumerName, providerName, enableSsl);
 
             Assert.Equal(expectedArguments, config.Arguments);
         }
@@ -58,14 +60,15 @@ namespace PactNet.Tests.Core
             var port = 9332;
             var logDir = "./test";
             var pactConfig = new PactConfig { LogDir = logDir };
+            var consumerName = "Cons";
             var providerName = "The best one";
             var enableSsl = true;
 
-            var config = GetSubject(port, enableSsl, providerName, pactConfig);
+            var config = GetSubject(port, enableSsl, consumerName, providerName, pactConfig);
 
             var expectedLogFilePath = BuildExpectedLogFilePath(logDir + "\\", providerName);
             var expectedPactDir = BuildExpectedPactDir(pactConfig.PactDir);
-            var expectedArguments = BuildExpectedArguments(port, expectedLogFilePath, expectedPactDir, pactConfig.SpecificationVersion, enableSsl);
+            var expectedArguments = BuildExpectedArguments(port, expectedLogFilePath, expectedPactDir, pactConfig.SpecificationVersion, consumerName, providerName, enableSsl);
 
             Assert.Equal(expectedArguments, config.Arguments);
         }
@@ -76,14 +79,15 @@ namespace PactNet.Tests.Core
             var port = 9332;
             var pactDir = "./test";
             var pactConfig = new PactConfig { PactDir = pactDir };
+            var consumerName = "Cons";
             var providerName = "The best one";
             var enableSsl = true;
 
-            var config = GetSubject(port, enableSsl, providerName, pactConfig);
+            var config = GetSubject(port, enableSsl, consumerName, providerName, pactConfig);
 
             var expectedLogFilePath = BuildExpectedLogFilePath(pactConfig.LogDir, providerName);
             var expectedPactDir = BuildExpectedPactDir(pactDir + "\\");
-            var expectedArguments = BuildExpectedArguments(port, expectedLogFilePath, expectedPactDir, pactConfig.SpecificationVersion, enableSsl);
+            var expectedArguments = BuildExpectedArguments(port, expectedLogFilePath, expectedPactDir, pactConfig.SpecificationVersion, consumerName, providerName, enableSsl);
 
             Assert.Equal(expectedArguments, config.Arguments);
         }
@@ -111,11 +115,13 @@ namespace PactNet.Tests.Core
             string logFilePath, 
             string pactFileDir,
             string pactSpecificationVersion,
+            string consumerName,
+            string providerName,
             bool enableSsl = false)
         {
 
             var sslOption = enableSsl ? " --ssl" : "";
-            return $"-p {port} -l \"{logFilePath}\" --pact-dir \"{pactFileDir}\" --pact-specification-version \"{pactSpecificationVersion}\"{sslOption}";
+            return $"-p {port} -l \"{logFilePath}\" --pact-dir \"{pactFileDir}\" --pact-specification-version \"{pactSpecificationVersion}\" --consumer \"{consumerName}\" --provider \"{providerName}\"{sslOption}";
         }
     }
 }
