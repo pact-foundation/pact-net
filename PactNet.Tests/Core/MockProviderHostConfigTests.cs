@@ -6,9 +6,9 @@ namespace PactNet.Tests.Core
 {
     public class MockProviderHostConfigTests
     {
-        private IPactCoreHostConfig GetSubject(int port = 2322, bool enableSsl = false, string consumerName = "My Test Consumer", string providerName = "My Test Provider", PactConfig pactConfig = null)
+        private IPactCoreHostConfig GetSubject(int port = 2322, bool enableSsl = false, string consumerName = "My Test Consumer", string providerName = "My Test Provider", PactConfig pactConfig = null, string host = "")
         {
-            return new MockProviderHostConfig(port, enableSsl, consumerName, providerName, pactConfig ?? new PactConfig());
+            return new MockProviderHostConfig(port, enableSsl, consumerName, providerName, pactConfig ?? new PactConfig(), host);
         }
 
         [Fact]
@@ -50,6 +50,25 @@ namespace PactNet.Tests.Core
             var expectedLogFilePath = BuildExpectedLogFilePath(pactConfig.LogDir, providerName);
             var expectedPactDir = BuildExpectedPactDir(pactConfig.PactDir);
             var expectedArguments = BuildExpectedArguments(port, expectedLogFilePath, expectedPactDir, pactConfig.SpecificationVersion, consumerName, providerName, enableSsl);
+
+            Assert.Equal(expectedArguments, config.Arguments);
+        }
+
+        [Fact]
+        public void Ctor_WhenCalledWithHost_SetsTheCorrectArgs()
+        {
+            var port = 9332;
+            var pactConfig = new PactConfig();
+            var consumerName = "Cons";
+            var providerName = "The best one";
+            var enableSsl = true;
+            var host = "0.0.0.0";
+
+            var config = GetSubject(port, enableSsl, consumerName, providerName, pactConfig, host);
+
+            var expectedLogFilePath = BuildExpectedLogFilePath(pactConfig.LogDir, providerName);
+            var expectedPactDir = BuildExpectedPactDir(pactConfig.PactDir);
+            var expectedArguments = BuildExpectedArguments(port, expectedLogFilePath, expectedPactDir, pactConfig.SpecificationVersion, consumerName, providerName, enableSsl, host);
 
             Assert.Equal(expectedArguments, config.Arguments);
         }
@@ -111,17 +130,20 @@ namespace PactNet.Tests.Core
         }
 
         private string BuildExpectedArguments(
-            int port, 
-            string logFilePath, 
+            int port,
+            string logFilePath,
             string pactFileDir,
             string pactSpecificationVersion,
             string consumerName,
             string providerName,
-            bool enableSsl = false)
+            bool enableSsl = false,
+            string host = "")
         {
 
             var sslOption = enableSsl ? " --ssl" : "";
-            return $"-p {port} -l \"{logFilePath}\" --pact-dir \"{pactFileDir}\" --pact-specification-version \"{pactSpecificationVersion}\" --consumer \"{consumerName}\" --provider \"{providerName}\"{sslOption}";
+            var hostOption = string.IsNullOrWhiteSpace(host) ? "" : $" --host={host}";
+
+            return $"-p {port} -l \"{logFilePath}\" --pact-dir \"{pactFileDir}\" --pact-specification-version \"{pactSpecificationVersion}\" --consumer \"{consumerName}\" --provider \"{providerName}\"{sslOption}{hostOption}";
         }
     }
 }
