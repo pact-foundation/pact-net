@@ -141,7 +141,7 @@ namespace PactNet.Tests.Core
         {
 
             var sslOption = enableSsl ? " --ssl" : "";
-            var hostOption = string.IsNullOrWhiteSpace(host) ? "" : $" --host={host}";
+            var hostOption = !string.IsNullOrWhiteSpace(host) ? $" --host={host}" : "";
 
             return $"-p {port} -l \"{logFilePath}\" --pact-dir \"{pactFileDir}\" --pact-specification-version \"{pactSpecificationVersion}\" --consumer \"{consumerName}\" --provider \"{providerName}\"{sslOption}{hostOption}";
         }
