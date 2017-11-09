@@ -75,7 +75,7 @@ namespace PactNet.Tests
         {
             var mockMockProviderService = Substitute.For<IMockProviderService>();
 
-            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl, consumerName, providerName) => mockMockProviderService);
+            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl, consumerName, providerName, host) => mockMockProviderService);
 
             pactBuilder
                 .ServiceConsumer("Event Client")
@@ -92,7 +92,7 @@ namespace PactNet.Tests
         {
             var mockMockProviderService = Substitute.For<IMockProviderService>();
 
-            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl, consumerName, providerName) => mockMockProviderService);
+            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl, consumerName, providerName, host) => mockMockProviderService);
 
             pactBuilder
                 .ServiceConsumer("Event Client")
@@ -111,7 +111,7 @@ namespace PactNet.Tests
             var calledWithSslEnabled = false;
             var mockMockProviderService = Substitute.For<IMockProviderService>();
 
-            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl, consumerName, providerName) =>
+            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl, consumerName, providerName, host) =>
             {
                 calledWithSslEnabled = enableSsl;
                 return mockMockProviderService;
@@ -132,7 +132,7 @@ namespace PactNet.Tests
             var calledWithSslEnabled = false;
             var mockMockProviderService = Substitute.For<IMockProviderService>();
 
-            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl, consumerName, providerName) =>
+            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl, consumerName, providerName, host) =>
             {
                 calledWithSslEnabled = enableSsl;
                 return mockMockProviderService;
@@ -153,7 +153,7 @@ namespace PactNet.Tests
             var calledWithSslEnabled = false;
             var mockMockProviderService = Substitute.For<IMockProviderService>();
 
-            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl, consumerName, providerName) =>
+            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl, consumerName, providerName, host) =>
             {
                 calledWithSslEnabled = enableSsl;
                 return mockMockProviderService;
@@ -174,7 +174,7 @@ namespace PactNet.Tests
             var serializerSettings = new JsonSerializerSettings();
             var mockMockProviderService = Substitute.For<IMockProviderService>();
 
-            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl, consumerName, providerName) => mockMockProviderService);
+            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl, consumerName, providerName, host) => mockMockProviderService);
 
             pactBuilder
                 .ServiceConsumer("Event Client")
@@ -197,7 +197,7 @@ namespace PactNet.Tests
         {
             var mockMockProviderService = Substitute.For<IMockProviderService>();
 
-            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl, consumerName, providerName) => mockMockProviderService);
+            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl, consumerName, providerName, host) => mockMockProviderService);
 
             pactBuilder
                 .ServiceConsumer("Event Client")
@@ -211,7 +211,7 @@ namespace PactNet.Tests
         [Fact]
         public void MockService_WhenCalledWithoutConsumerNameSet_ThrowsInvalidOperationException()
         {
-            IPactBuilder pactBuilder = new PactBuilder((port, ssl, consumerName, providerName) => Substitute.For<IMockProviderService>());
+            IPactBuilder pactBuilder = new PactBuilder((port, ssl, consumerName, providerName, host) => Substitute.For<IMockProviderService>());
             pactBuilder
                 .HasPactWith("Event API");
 
@@ -221,7 +221,7 @@ namespace PactNet.Tests
         [Fact]
         public void MockService_WhenCalledWithoutProviderNameSet_ThrowsInvalidOperationException()
         {
-            IPactBuilder pactBuilder = new PactBuilder((port, ssl, consumerName, providerName) => Substitute.For<IMockProviderService>());
+            IPactBuilder pactBuilder = new PactBuilder((port, ssl, consumerName, providerName, hsot) => Substitute.For<IMockProviderService>());
             pactBuilder
                 .ServiceConsumer("Event Client");
 
@@ -243,7 +243,7 @@ namespace PactNet.Tests
             const string testProviderName = "Event API";
             var mockProviderService = Substitute.For<IMockProviderService>();
 
-            IPactBuilder pactBuilder = new PactBuilder((port, ssl, consumerName, providerName) => mockProviderService);
+            IPactBuilder pactBuilder = new PactBuilder((port, ssl, consumerName, providerName, host) => mockProviderService);
             pactBuilder
                 .ServiceConsumer(testConsumerName)
                 .HasPactWith(testProviderName);
@@ -260,7 +260,7 @@ namespace PactNet.Tests
         {
             var mockMockProviderService = Substitute.For<IMockProviderService>();
 
-            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl, consumerName, providerName) => mockMockProviderService)
+            IPactBuilder pactBuilder = new PactBuilder((port, enableSsl, consumerName, providerName, host) => mockMockProviderService)
                 .ServiceConsumer("Event Client")
                 .HasPactWith("Event API");
 

@@ -23,19 +23,22 @@ namespace PactNet.Mocks.MockHttpService
             Func<Uri, IHttpHost> hostFactory,
             int port,
             bool enableSsl,
-            Func<Uri, AdminHttpClient> adminHttpClientFactory)
+            Func<Uri, AdminHttpClient> adminHttpClientFactory,
+            string host = "")
         {
             _hostFactory = hostFactory;
-            BaseUri = new Uri($"{(enableSsl ? "https" : "http")}://localhost:{port}");
+            BaseUri = new Uri(
+                $"{(enableSsl ? "https" : "http")}://{(IsNullOrWhiteSpace(host) ? "localhost" : host)}:{port}");
             _adminHttpClient = adminHttpClientFactory(BaseUri);
         }
 
-        public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config)
+        public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, string host = "")
             : this(
             baseUri => new RubyHttpHost(baseUri, consumerName, providerName, config),
             port,
             enableSsl,
-            baseUri => new AdminHttpClient(baseUri))
+            baseUri => new AdminHttpClient(baseUri),
+            host)
         {
         }
 
@@ -81,7 +84,7 @@ namespace PactNet.Mocks.MockHttpService
             }
 
             _request = request;
-            
+
             return this;
         }
 

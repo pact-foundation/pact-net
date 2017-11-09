@@ -11,19 +11,21 @@ namespace PactNet.Mocks.MockHttpService.Host
         private readonly AdminHttpClient _adminHttpClient;
 
         internal RubyHttpHost(
-            IPactCoreHost coreHost, 
+            IPactCoreHost coreHost,
             AdminHttpClient adminHttpClient)
         {
             _coreHost = coreHost;
             _adminHttpClient = adminHttpClient;
         }
 
-        public RubyHttpHost(Uri baseUri, string consumerName, string providerName, PactConfig config) : 
+        public RubyHttpHost(Uri baseUri, string consumerName, string providerName, PactConfig config) :
             this(new PactCoreHost<MockProviderHostConfig>(
-                new MockProviderHostConfig(baseUri.Port, 
-                    baseUri.Scheme.ToUpperInvariant().Equals("HTTPS"), 
+                new MockProviderHostConfig(baseUri.Port,
+                    baseUri.Scheme.Equals("HTTPS", StringComparison.OrdinalIgnoreCase),
                     consumerName,
-                    providerName, config)),
+                    providerName,
+                    config,
+                    baseUri.Host)),
                 new AdminHttpClient(baseUri))
         {
         }
@@ -35,7 +37,7 @@ namespace PactNet.Mocks.MockHttpService.Host
                 _adminHttpClient.SendAdminHttpRequest(HttpVerb.Get, "/");
                 return new Tuple<bool, Exception>(true, null);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return new Tuple<bool, Exception>(false, ex);
             }
