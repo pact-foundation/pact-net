@@ -6,7 +6,7 @@ namespace PactNet.Tests.Core
 {
     public class MockProviderHostConfigTests
     {
-        private IPactCoreHostConfig GetSubject(int port = 2322, bool enableSsl = false, string consumerName = "My Test Consumer", string providerName = "My Test Provider", PactConfig pactConfig = null, string host = "")
+        private IPactCoreHostConfig GetSubject(int port = 2322, bool enableSsl = false, string consumerName = "My Test Consumer", string providerName = "My Test Provider", PactConfig pactConfig = null, string host = null)
         {
             return new MockProviderHostConfig(port, enableSsl, consumerName, providerName, pactConfig ?? new PactConfig(), host);
         }
@@ -137,11 +137,11 @@ namespace PactNet.Tests.Core
             string consumerName,
             string providerName,
             bool enableSsl = false,
-            string host = "")
+            string host = null)
         {
 
             var sslOption = enableSsl ? " --ssl" : "";
-            var hostOption = !string.IsNullOrWhiteSpace(host) ? $" --host={host}" : "";
+            var hostOption = host != null ? $" --host={host}" : "";
 
             return $"-p {port} -l \"{logFilePath}\" --pact-dir \"{pactFileDir}\" --pact-specification-version \"{pactSpecificationVersion}\" --consumer \"{consumerName}\" --provider \"{providerName}\"{sslOption}{hostOption}";
         }

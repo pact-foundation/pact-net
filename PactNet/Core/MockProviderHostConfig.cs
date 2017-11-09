@@ -11,11 +11,11 @@ namespace PactNet.Core
         public bool WaitForExit { get; }
         public IEnumerable<IOutput> Outputters { get; }
 
-        public MockProviderHostConfig(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, string host = "")
+        public MockProviderHostConfig(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, string host = null)
         {
             var logFile = $"{config.LogDir}{providerName.ToLowerSnakeCase()}_mock_service.log";
             var sslOption = enableSsl ? " --ssl" : "";
-            var hostOption = string.IsNullOrWhiteSpace(host) ? "" : $" --host={host}";
+            var hostOption = host == null ? "" : $" --host={host}";
 
             Script = "pact-mock-service";
             Arguments = $"-p {port} -l \"{FixPathForRuby(logFile)}\" --pact-dir \"{FixPathForRuby(config.PactDir)}\" --pact-specification-version \"{config.SpecificationVersion}\" --consumer \"{consumerName}\" --provider \"{providerName}\"{sslOption}{hostOption}";

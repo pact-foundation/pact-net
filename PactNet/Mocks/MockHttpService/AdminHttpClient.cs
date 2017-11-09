@@ -21,8 +21,17 @@ namespace PactNet.Mocks.MockHttpService
             Uri baseUri,
             HttpMessageHandler handler)
         {
+            if (baseUri.Host == "0.0.0.0")
+            {
+                baseUri = GetLocalhostUri(baseUri);
+            }
             _httpClient = new HttpClient(handler) { BaseAddress = baseUri };
             _httpMethodMapper = new HttpMethodMapper();
+        }
+
+        private static Uri GetLocalhostUri(Uri baseUri)
+        {
+            return new Uri(baseUri.AbsolutePath.Replace("0.0.0.0", "localhost"));
         }
 
         public AdminHttpClient(Uri baseUri) : 
