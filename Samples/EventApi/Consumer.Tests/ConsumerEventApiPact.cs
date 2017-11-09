@@ -24,7 +24,7 @@ namespace Consumer.Tests
                 .ServiceConsumer("Event API Consumer")
                 .HasPactWith("Event API");
 
-            MockProviderService = PactBuilder.MockService(MockServerPort);
+            MockProviderService = PactBuilder.MockService(MockServerPort,false,"0.0.0.0");
         }
 
         public void Dispose()
