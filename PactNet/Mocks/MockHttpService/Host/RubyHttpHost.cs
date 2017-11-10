@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using PactNet.Core;
 using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Models;
 
 namespace PactNet.Mocks.MockHttpService.Host
 {
@@ -18,14 +19,14 @@ namespace PactNet.Mocks.MockHttpService.Host
             _adminHttpClient = adminHttpClient;
         }
 
-        public RubyHttpHost(Uri baseUri, string consumerName, string providerName, PactConfig config) :
+        public RubyHttpHost(Uri baseUri, string consumerName, string providerName, PactConfig config,IPAddress ipAddress = IPAddress.Loopback) :
             this(new PactCoreHost<MockProviderHostConfig>(
                 new MockProviderHostConfig(baseUri.Port,
                     baseUri.Scheme.Equals("HTTPS", StringComparison.OrdinalIgnoreCase),
                     consumerName,
                     providerName,
                     config,
-                    baseUri.Host)),
+                    ipAddress)),
                 new AdminHttpClient(baseUri))
         {
         }

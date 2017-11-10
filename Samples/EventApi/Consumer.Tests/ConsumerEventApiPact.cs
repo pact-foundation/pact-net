@@ -2,6 +2,7 @@
 using System.IO;
 using PactNet;
 using PactNet.Mocks.MockHttpService;
+using PactNet.Models;
 
 namespace Consumer.Tests
 {
@@ -16,15 +17,15 @@ namespace Consumer.Tests
         public ConsumerEventApiPact()
         {
             PactBuilder = new PactBuilder(new PactConfig
-                {
-                    SpecificationVersion = "2.0.0",
-                    LogDir = $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}logs{Path.DirectorySeparatorChar}",
-                    PactDir = $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}"
-                })
+            {
+                SpecificationVersion = "2.0.0",
+                LogDir = $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}logs{Path.DirectorySeparatorChar}",
+                PactDir = $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}"
+            })
                 .ServiceConsumer("Event API Consumer")
                 .HasPactWith("Event API");
 
-            MockProviderService = PactBuilder.MockService(MockServerPort,false,"0.0.0.0");
+            MockProviderService = PactBuilder.MockService(MockServerPort, false, IPAddress.Any);
         }
 
         public void Dispose()

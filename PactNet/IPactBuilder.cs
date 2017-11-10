@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using PactNet.Mocks.MockHttpService;
+using PactNet.Models;
 
 namespace PactNet
 {
@@ -7,8 +8,8 @@ namespace PactNet
     {
         IPactBuilder ServiceConsumer(string consumerName);
         IPactBuilder HasPactWith(string providerName);
-        IMockProviderService MockService(int port, bool enableSsl = false, string host = null);
-        IMockProviderService MockService(int port, JsonSerializerSettings jsonSerializerSettings, bool enableSsl = false, string host = null);
+        IMockProviderService MockService(int port, bool enableSsl = false, IPAddress listeningIpAddress = IPAddress.Loopback);
+        IMockProviderService MockService(int port, JsonSerializerSettings jsonSerializerSettings, bool enableSsl = false, IPAddress listeningIpAddress = IPAddress.Loopback);
         void Build();
     }
 }
