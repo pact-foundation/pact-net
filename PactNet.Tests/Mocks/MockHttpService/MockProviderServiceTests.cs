@@ -19,12 +19,11 @@ namespace PactNet.Tests.Mocks.MockHttpService
         private FakeHttpMessageHandler _fakeHttpMessageHandler;
         private int _mockHttpHostFactoryCallCount;
 
-        private IMockProviderService GetSubject(int port = 1234, bool enableSsl = false, string host = "")
+        private IMockProviderService GetSubject(int port = 1234, bool enableSsl = false)
         {
             _mockHttpHost = Substitute.For<IHttpHost>();
             _fakeHttpMessageHandler = new FakeHttpMessageHandler();
             _mockHttpHostFactoryCallCount = 0;
-
             return new MockProviderService(
                 baseUri =>
                 {
@@ -33,8 +32,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 },
                 port,
                 enableSsl,
-                baseUri => new AdminHttpClient(baseUri, _fakeHttpMessageHandler),
-                host);
+                baseUri => new AdminHttpClient(baseUri, _fakeHttpMessageHandler));
         }
 
         [Fact]
@@ -61,14 +59,6 @@ namespace PactNet.Tests.Mocks.MockHttpService
             var mockService = GetSubject(enableSsl: true);
 
             Assert.True(((MockProviderService)mockService).BaseUri.Scheme.Equals("HTTPS", StringComparison.OrdinalIgnoreCase), "BaseUri has a https scheme");
-        }
-
-        [Fact]
-        public void Ctor_WhenCalledWithHost_UsesTheHostInsteadOfLocalhost()
-        {
-            var mockService = GetSubject(host: "0.0.0.0");
-
-            Assert.True(((MockProviderService)mockService).BaseUri.Host.Equals("0.0.0.0"), "BaseUri has a 0.0.0.0  as a host");
         }
 
         [Fact]

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using PactNet.Mocks.MockHttpService.Host;
 using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Models;
 using static System.String;
 
 namespace PactNet.Mocks.MockHttpService
@@ -23,22 +24,20 @@ namespace PactNet.Mocks.MockHttpService
             Func<Uri, IHttpHost> hostFactory,
             int port,
             bool enableSsl,
-            Func<Uri, AdminHttpClient> adminHttpClientFactory,
-            string host = "")
+            Func<Uri, AdminHttpClient> adminHttpClientFactory)
         {
             _hostFactory = hostFactory;
             BaseUri = new Uri(
-                $"{(enableSsl ? "https" : "http")}://{(IsNullOrWhiteSpace(host) ? "localhost" : host)}:{port}");
+                $"{(enableSsl ? "https" : "http")}://localhost:{port}");
             _adminHttpClient = adminHttpClientFactory(BaseUri);
         }
 
-        public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, string host = "")
+        public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress = IPAddress.Loopback)
             : this(
-            baseUri => new RubyHttpHost(baseUri, consumerName, providerName, config),
+            baseUri => new RubyHttpHost(baseUri, consumerName, providerName, config, ipAddress),
             port,
             enableSsl,
-            baseUri => new AdminHttpClient(baseUri),
-            host)
+            baseUri => new AdminHttpClient(baseUri))
         {
         }
 
