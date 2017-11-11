@@ -19,14 +19,14 @@ namespace PactNet.Mocks.MockHttpService.Host
             _adminHttpClient = adminHttpClient;
         }
 
-        public RubyHttpHost(Uri baseUri, string consumerName, string providerName, PactConfig config,IPAddress ipAddress = IPAddress.Loopback) :
+        public RubyHttpHost(Uri baseUri, string consumerName, string providerName, PactConfig config, IPAddress host = IPAddress.Loopback) :
             this(new PactCoreHost<MockProviderHostConfig>(
                 new MockProviderHostConfig(baseUri.Port,
                     baseUri.Scheme.Equals("HTTPS", StringComparison.OrdinalIgnoreCase),
                     consumerName,
                     providerName,
                     config,
-                    ipAddress)),
+                    host)),
                 new AdminHttpClient(baseUri))
         {
         }

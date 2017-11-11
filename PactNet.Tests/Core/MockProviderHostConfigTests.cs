@@ -7,9 +7,9 @@ namespace PactNet.Tests.Core
 {
     public class MockProviderHostConfigTests
     {
-        private IPactCoreHostConfig GetSubject(int port = 2322, bool enableSsl = false, string consumerName = "My Test Consumer", string providerName = "My Test Provider", PactConfig pactConfig = null, IPAddress listeningIpAddress= IPAddress.Loopback)
+        private IPactCoreHostConfig GetSubject(int port = 2322, bool enableSsl = false, string consumerName = "My Test Consumer", string providerName = "My Test Provider", PactConfig pactConfig = null, IPAddress host = IPAddress.Loopback)
         {
-            return new MockProviderHostConfig(port, enableSsl, consumerName, providerName, pactConfig ?? new PactConfig(), listeningIpAddress);
+            return new MockProviderHostConfig(port, enableSsl, consumerName, providerName, pactConfig ?? new PactConfig(), host);
         }
 
         [Fact]
@@ -63,13 +63,13 @@ namespace PactNet.Tests.Core
             var consumerName = "Cons";
             var providerName = "The best one";
             var enableSsl = true;
-            var listeningIpAddress = IPAddress.Any;
+            var host = IPAddress.Any;
 
-            var config = GetSubject(port, enableSsl, consumerName, providerName, pactConfig, listeningIpAddress);
+            var config = GetSubject(port, enableSsl, consumerName, providerName, pactConfig, host);
 
             var expectedLogFilePath = BuildExpectedLogFilePath(pactConfig.LogDir, providerName);
             var expectedPactDir = BuildExpectedPactDir(pactConfig.PactDir);
-            var expectedArguments = BuildExpectedArguments(port, expectedLogFilePath, expectedPactDir, pactConfig.SpecificationVersion, consumerName, providerName, enableSsl, listeningIpAddress);
+            var expectedArguments = BuildExpectedArguments(port, expectedLogFilePath, expectedPactDir, pactConfig.SpecificationVersion, consumerName, providerName, enableSsl, host);
 
             Assert.Equal(expectedArguments, config.Arguments);
         }
@@ -138,11 +138,11 @@ namespace PactNet.Tests.Core
             string consumerName,
             string providerName,
             bool enableSsl = false,
-            IPAddress listeningIpAddress= IPAddress.Loopback)
+            IPAddress host = IPAddress.Loopback)
         {
 
             var sslOption = enableSsl ? " --ssl" : "";
-            var hostOption = listeningIpAddress == IPAddress.Any  ? " --host=0.0.0.0" : "";
+            var hostOption = host == IPAddress.Any  ? " --host=0.0.0.0" : "";
 
             return $"-p {port} -l \"{logFilePath}\" --pact-dir \"{pactFileDir}\" --pact-specification-version \"{pactSpecificationVersion}\" --consumer \"{consumerName}\" --provider \"{providerName}\"{sslOption}{hostOption}";
         }

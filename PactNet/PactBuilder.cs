@@ -26,7 +26,7 @@ namespace PactNet
         }
 
         public PactBuilder(PactConfig config)
-            : this((port, enableSsl, consumerName, providerName, listeningIpAddress) => new MockProviderService(port, enableSsl, consumerName, providerName, config, listeningIpAddress))
+            : this((port, enableSsl, consumerName, providerName, host) => new MockProviderService(port, enableSsl, consumerName, providerName, config, host))
         {
         }
 
@@ -54,12 +54,12 @@ namespace PactNet
             return this;
         }
 
-        public IMockProviderService MockService(int port, bool enableSsl = false, IPAddress listeningIpAddress = IPAddress.Loopback)
+        public IMockProviderService MockService(int port, bool enableSsl = false, IPAddress host = IPAddress.Loopback)
         {
-            return MockService(port, jsonSerializerSettings: null, enableSsl: enableSsl, listeningIpAddress: listeningIpAddress);
+            return MockService(port, jsonSerializerSettings: null, enableSsl: enableSsl, host: host);
         }
 
-        public IMockProviderService MockService(int port, JsonSerializerSettings jsonSerializerSettings, bool enableSsl = false, IPAddress listeningIpAddress = IPAddress.Loopback)
+        public IMockProviderService MockService(int port, JsonSerializerSettings jsonSerializerSettings, bool enableSsl = false, IPAddress host = IPAddress.Loopback)
         {
             if (String.IsNullOrEmpty(ConsumerName))
             {
@@ -81,7 +81,7 @@ namespace PactNet
                 JsonConfig.ApiSerializerSettings = jsonSerializerSettings;
             }
 
-            _mockProviderService = _mockProviderServiceFactory(port, enableSsl, ConsumerName, ProviderName, listeningIpAddress);
+            _mockProviderService = _mockProviderServiceFactory(port, enableSsl, ConsumerName, ProviderName, host);
 
             _mockProviderService.Start();
 

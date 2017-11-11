@@ -32,7 +32,7 @@ namespace PactNet.Mocks.MockHttpService
             _adminHttpClient = adminHttpClientFactory(BaseUri);
         }
 
-        public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress = IPAddress.Loopback)
+        public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress)
             : this(
             baseUri => new RubyHttpHost(baseUri, consumerName, providerName, config, ipAddress),
             port,
