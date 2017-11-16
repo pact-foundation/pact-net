@@ -41,7 +41,6 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             Assert.Equal(HttpMethod.Post, httpMethod);
         }
 
-
         [Fact]
         public void Convert_WithPutHttpVerb_ReturnsPutHttpMethod()
         {
@@ -72,7 +71,6 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             Assert.Equal(HttpMethod.Head, httpMethod);
         }
 
-
         [Fact]
         public void Convert_WithPatchHttpVerb_ReturnsPatchHttpMethod()
         {
@@ -81,6 +79,16 @@ namespace PactNet.Tests.Mocks.MockHttpService.Mappers
             var httpMethod = mapper.Convert(HttpVerb.Patch);
 
             Assert.Equal("PATCH", httpMethod.ToString());
+        }
+
+        [Fact]
+        public void Convert_WithOptionsHttpVerb_ReturnsOptionsHttpMethod()
+        {
+            var mapper = GetSubject();
+
+            var httpMethod = mapper.Convert(HttpVerb.Options);
+
+            Assert.Equal(HttpMethod.Options, httpMethod);
         }
 
         [Fact]

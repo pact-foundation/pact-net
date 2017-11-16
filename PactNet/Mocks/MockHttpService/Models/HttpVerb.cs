@@ -8,6 +8,7 @@
         Put,
         Delete,
         Head,
-        Patch
+        Patch,
+        Options
     }
 }

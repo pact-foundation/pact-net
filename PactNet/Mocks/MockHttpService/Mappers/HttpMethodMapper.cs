@@ -14,7 +14,8 @@ namespace PactNet.Mocks.MockHttpService.Mappers
             { HttpVerb.Put, HttpMethod.Put },
             { HttpVerb.Delete, HttpMethod.Delete },
             { HttpVerb.Head, HttpMethod.Head },
-            { HttpVerb.Patch, new HttpMethod("PATCH") }
+            { HttpVerb.Patch, new HttpMethod("PATCH") },
+            { HttpVerb.Options, HttpMethod.Options }
         };
 
         public HttpMethod Convert(HttpVerb from)
