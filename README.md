@@ -10,7 +10,7 @@ PactNet also has the ability to support other mock providers should we see fit.
 PactNet is Version 2.0 compliant, and we now use the [Ruby standalone engine](https://github.com/pact-foundation/pact-ruby-standalone) as we move towards a common core approach. To enable Version 2.0 support,  make sure you supply a `PactConfig` object with `SpecificationVersion = "2.0.0"` when creating the `PactBuilder`.  
 
 In reaching Version 2.0 compliance, we have made some breaking changes. This readme details the current latest version.  
-See [Version 1.0 readme](https://github.com/SEEK-Jobs/pact-net/blob/master/README_v1.md) for the previous version.  
+See [Version 1.0 readme](https://github.com/pact-foundation/pact-net/blob/master/README_v1.md) for the previous version.  
 
 From the [Pact Specification repo](https://github.com/pact-foundation/pact-specification)
 
@@ -18,15 +18,22 @@ From the [Pact Specification repo](https://github.com/pact-foundation/pact-speci
 
 Read more about Pact and the problems it solves at https://docs.pact.io/
 
-Please feel free to contribute, we do accept pull requests.
-This solution has been built using VS2017, you will need it to open this project.
+Please feel free to contribute, we do accept pull requests. This solution has been built using VS2017, you will need it to open this project.
+
+## History
+PactNet was initially built at [SEEK](https://www.seek.com.au/) to help solve some of the challenges faced with testing across service boundaries.  
+The project now lives in the pact-foundation GH organisation, to help group and support the official Pact libraries.  
+Massive thanks to the SEEK team for all the time and hard work put into this library.
+
+[![SEEK](https://raw.githubusercontent.com/pact-foundation/pact-net/master/seek.png "SEEK")](https://www.seek.com.au/)
+
 
 ## Known Issues
-1. When debugging a test locally (either consumer or provider) if you click the stop button in your test runner, it will abort the process abruptly and the ruby runtime will not get cleaned up. If you do this, simply kill the ruby process from your task/process manager. We recommend you play the test through to the end to avoid this issue. See https://github.com/SEEK-Jobs/pact-net/issues/108 for more details.
+1. When debugging a test locally (either consumer or provider) if you click the stop button in your test runner, it will abort the process abruptly and the ruby runtime will not get cleaned up. If you do this, simply kill the ruby process from your task/process manager. We recommend you play the test through to the end to avoid this issue. See https://github.com/pact-foundation/pact-net/issues/108 for more details.
 
 ## Usage
 Below are some samples of usage.  
-For examples of Version 2 usage, please see the [Samples](https://github.com/SEEK-Jobs/pact-net/blob/master/Samples/EventApi/Consumer.Tests/EventsApiConsumerTests.cs).  
+For examples of Version 2 usage, please see the [Samples](https://github.com/pact-foundation/pact-net/blob/master/Samples/EventApi/Consumer.Tests/EventsApiConsumerTests.cs).  
 
 We have also written some `//NOTE:` comments inline in the code to help explain what certain calls do.
 
@@ -355,7 +362,7 @@ Everything should be green
 
 Again, please note: we advise using a TDD approach when using this library, however we will leave it up to you.
 
-For further examples please refer to the [Samples](https://github.com/SEEK-Jobs/pact-net/tree/master/Samples) in the solution.
+For further examples please refer to the [Samples](https://github.com/pact-foundation/pact-net/tree/master/Samples) in the solution.
 
 ### Publishing Pacts to a Broker
 The Pact broker is a useful tool that can be used to share pacts between the consumer and provider. In order to make this easy, below are a couple of options for publishing your Pacts to a Pact Broker.
