@@ -11,6 +11,7 @@ namespace PactNet.Core
         public string Arguments { get; }
         public bool WaitForExit { get; }
         public IEnumerable<IOutput> Outputters { get; }
+        public IDictionary<string, string> Environment { get; }
 
         public MockProviderHostConfig(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress host)
         {

@@ -7,14 +7,15 @@ namespace PactNet.Tests.Core
 {
     public class PactVerifierHostConfigTests
     {
-        private IPactCoreHostConfig GetSubject(Uri baseUri = null, string pactUri = "../test/pact.json", PactUriOptions pactBrokerUriOptions = null, Uri providerStateSetupUri = null, PactVerifierConfig verifierConfig = null)
+        private IPactCoreHostConfig GetSubject(Uri baseUri = null, string pactUri = "../test/pact.json", PactUriOptions pactBrokerUriOptions = null, Uri providerStateSetupUri = null, PactVerifierConfig verifierConfig = null, IDictionary<string, string> environment = null)
         {
             return new PactVerifierHostConfig(
                 baseUri ?? new Uri("http://localhost:2833"), 
                 pactUri,
                 pactBrokerUriOptions,
                 providerStateSetupUri,
-                verifierConfig);
+                verifierConfig,
+                environment);
         }
 
         [Fact]
@@ -160,11 +161,65 @@ namespace PactNet.Tests.Core
         }
 
         [Fact]
+        public void Ctor_WhenCalledWithNoEnvironment_NoAdditionalEnvironmentVariablesAreAdded()
+        {
+            var baseUri = new Uri("http://127.0.0.1");
+            var pactUri = "./tester-pact/pact-file.json";
+            var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
+
+            var verifierConfig = new PactVerifierConfig
+            {
+                ProviderVersion = "1.0.0"
+            };
+
+            var config = GetSubject(baseUri: baseUri, pactUri: pactUri, providerStateSetupUri: providerStateSetupUri, verifierConfig: verifierConfig);
+
+            AssertEnvironmentIsCorrectlySet(null, config.Environment);
+        }
+
+        [Fact]
+        public void Ctor_WhenCalledWithEnvironmentSet_AdditionalEnvironmentVariablesAreAdded()
+        {
+            var baseUri = new Uri("http://127.0.0.1");
+            var pactUri = "./tester-pact/pact-file.json";
+            var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
+
+            var verifierConfig = new PactVerifierConfig
+            {
+                ProviderVersion = "1.0.0"
+            };
+
+            var environment = new Dictionary<string, string>
+            {
+                { "PACT_DESCRIPTION", "Test1" },
+                { "PACT_PROVIDER_STATE", "Test2" }
+            };
+
+            var config = GetSubject(baseUri: baseUri, pactUri: pactUri, providerStateSetupUri: providerStateSetupUri, verifierConfig: verifierConfig, environment: environment);
+
+            AssertEnvironmentIsCorrectlySet(environment, config.Environment);
+        }
+
+        [Fact]
         public void Ctor_WhenVerifierConfigIsNull_SetsOutputtersToNull()
         {
             var config = GetSubject();
 
             Assert.Equal(null, config.Outputters);
+        }
+
+        private void AssertEnvironmentIsCorrectlySet(IDictionary<string, string> expectedEnv, IDictionary<string, string> actualEnv)
+        {
+            expectedEnv = expectedEnv ?? new Dictionary<string, string>();
+
+            Assert.Equal(expectedEnv.Count + 1, actualEnv.Count);
+
+            foreach(var envVar in expectedEnv)
+            {
+                Assert.Equal(envVar.Value, actualEnv[envVar.Key]);
+            }
+
+            Assert.NotEmpty(actualEnv["PACT_INTERACTION_RERUN_COMMAND"]);
         }
 
         private string BuildExpectedArguments(

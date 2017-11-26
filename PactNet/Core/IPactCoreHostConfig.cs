@@ -9,5 +9,6 @@ namespace PactNet.Core
         string Arguments { get; }
         bool WaitForExit { get; }
         IEnumerable<IOutput> Outputters { get; }
+        IDictionary<string, string> Environment { get; }
     }
 }

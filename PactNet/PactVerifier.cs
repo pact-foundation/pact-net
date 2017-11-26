@@ -1,6 +1,7 @@
 ﻿using System;
 using PactNet.Core;
 using static System.String;
+using System.Collections.Generic;
 
 namespace PactNet
 {
@@ -99,7 +100,7 @@ namespace PactNet
             return this;
         }
 
-        public void Verify()
+        public void Verify(string description = null, string providerState = null)
         {
             if (ServiceBaseUri == null)
             {
@@ -113,8 +114,18 @@ namespace PactNet
                     "PactFileUri has not been set, please supply a uri using the PactUri method.");
             }
 
+            IDictionary<string, string> env = null;
+            if(!IsNullOrEmpty(description) || !IsNullOrEmpty(providerState))
+            {
+                env = new Dictionary<string, string>
+                {
+                    { "PACT_DESCRIPTION", description },
+                    { "PACT_PROVIDER_STATE", providerState }
+                };
+            }
+
             var pactVerifier = _pactVerifierHostFactory(
-                new PactVerifierHostConfig(ServiceBaseUri, PactFileUri, PactUriOptions, ProviderStateSetupUri, _config));
+                new PactVerifierHostConfig(ServiceBaseUri, PactFileUri, PactUriOptions, ProviderStateSetupUri, _config, env));
             pactVerifier.Start();
         }
     }

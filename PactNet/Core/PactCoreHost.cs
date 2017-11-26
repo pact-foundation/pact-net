@@ -91,6 +91,18 @@ namespace PactNet.Core
                 }
             }
 
+            if(config.Environment != null)
+            {
+                foreach (var envVar in config.Environment)
+                {
+#if USE_NET4X
+                    startInfo.EnvironmentVariables[envVar.Key] = envVar.Value;
+#else
+                    startInfo.Environment[envVar.Key] = envVar.Value;
+#endif
+                }
+            }
+
             _process = new Process
             {
                 StartInfo = startInfo

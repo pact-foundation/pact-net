@@ -15,6 +15,7 @@ namespace PactNet.Tests.Core
             public string Arguments { get; }
             public bool WaitForExit { get; }
             public IEnumerable<IOutput> Outputters { get; }
+            public IDictionary<string, string> Environment { get; }
 
             public TestHostConfig(string script, IEnumerable<IOutput> outputters)
             {
@@ -42,7 +43,7 @@ namespace PactNet.Tests.Core
         }
 
         [Fact]
-        public void Start_WhenStdOutIsWrittendTo_LinesAreWrittenToTheOutputters()
+        public void Start_WhenStdOutIsWrittenTo_LinesAreWrittenToTheOutputters()
         {
             var pactCoreHost = GetSubject("write-to-stdout");
 
@@ -54,7 +55,7 @@ namespace PactNet.Tests.Core
         }
 
         [Fact]
-        public void Start_WhenStdErrIsWrittendTo_LinesAreWrittenToTheOutputters()
+        public void Start_WhenStdErrIsWrittenTo_LinesAreWrittenToTheOutputters()
         {
             var pactCoreHost = GetSubject("write-to-stderr");
 

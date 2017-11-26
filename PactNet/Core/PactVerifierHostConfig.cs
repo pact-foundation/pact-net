@@ -10,8 +10,9 @@ namespace PactNet.Core
         public string Arguments { get; }
         public bool WaitForExit { get; }
         public IEnumerable<IOutput> Outputters { get; }
+        public IDictionary<string, string> Environment { get; }
 
-        public PactVerifierHostConfig(Uri baseUri, string pactUri, PactUriOptions pactBrokerUriOptions, Uri providerStateSetupUri, PactVerifierConfig config)
+        public PactVerifierHostConfig(Uri baseUri, string pactUri, PactUriOptions pactBrokerUriOptions, Uri providerStateSetupUri, PactVerifierConfig config, IDictionary<string, string> environment)
         {
             var providerStateOption = providerStateSetupUri != null ? $" --provider-states-setup-url {providerStateSetupUri.OriginalString}" : string.Empty;
             var brokerCredentials = pactBrokerUriOptions != null ? $" --broker-username \"{pactBrokerUriOptions.Username}\" --broker-password \"{pactBrokerUriOptions.Password}\"" : string.Empty;
@@ -25,6 +26,18 @@ namespace PactNet.Core
             Arguments = $"\"{FixPathForRuby(pactUri)}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}{brokerCredentials}{publishResults}{customHeader}{verbose}";
             WaitForExit = true;
             Outputters = config?.Outputters;
+            Environment = new Dictionary<string, string>
+            {
+                { "PACT_INTERACTION_RERUN_COMMAND", "To re-run just this failing interaction, change the verify method to '.Verify(description: \"<PACT_DESCRIPTION>\", providerState: \"<PACT_PROVIDER_STATE>\")'" }
+            };
+
+            if(environment != null)
+            {
+                foreach (var envVar in environment)
+                {
+                    Environment.Add(envVar.Key, envVar.Value);
+                }
+            }
         }
 
         private string FixPathForRuby(string path)
