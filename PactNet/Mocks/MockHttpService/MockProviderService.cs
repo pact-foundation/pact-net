@@ -33,11 +33,16 @@ namespace PactNet.Mocks.MockHttpService
         }
 
         public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress)
+            : this(port, enableSsl, consumerName, providerName, config, ipAddress, null)
+        {
+        }
+
+        public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress, Newtonsoft.Json.JsonSerializerSettings jsonSerializerSettings)
             : this(
             baseUri => new RubyHttpHost(baseUri, consumerName, providerName, config, ipAddress),
             port,
             enableSsl,
-            baseUri => new AdminHttpClient(baseUri))
+            baseUri => new AdminHttpClient(baseUri, jsonSerializerSettings))
         {
         }
 

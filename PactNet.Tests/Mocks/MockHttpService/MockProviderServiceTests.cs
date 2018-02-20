@@ -32,7 +32,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 },
                 port,
                 enableSsl,
-                baseUri => new AdminHttpClient(baseUri, _fakeHttpMessageHandler));
+                baseUri => new AdminHttpClient(baseUri, _fakeHttpMessageHandler, null));
         }
 
         [Fact]

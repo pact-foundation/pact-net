@@ -27,7 +27,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Host
 
             return new RubyHttpHost(
                 _mockCoreHost, 
-                new AdminHttpClient(baseUri, _fakeHttpMessageHandler));
+                new AdminHttpClient(baseUri, _fakeHttpMessageHandler, null));
         }
     
         [Fact]
