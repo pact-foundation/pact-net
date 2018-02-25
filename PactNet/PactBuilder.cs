@@ -1,6 +1,5 @@
 ﻿using System;
 using Newtonsoft.Json;
-using PactNet.Configuration.Json;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
@@ -11,11 +10,11 @@ namespace PactNet
     {
         public string ConsumerName { get; private set; }
         public string ProviderName { get; private set; }
-        private readonly Func<int, bool, string, string, IPAddress, IMockProviderService> _mockProviderServiceFactory;
+        private readonly Func<int, bool, string, string, IPAddress, JsonSerializerSettings, IMockProviderService> _mockProviderServiceFactory;
 
         private IMockProviderService _mockProviderService;
 
-        internal PactBuilder(Func<int, bool, string, string, IPAddress, IMockProviderService> mockProviderServiceFactory)
+        internal PactBuilder(Func<int, bool, string, string, IPAddress, JsonSerializerSettings, IMockProviderService> mockProviderServiceFactory)
         {
             _mockProviderServiceFactory = mockProviderServiceFactory;
         }
@@ -26,7 +25,7 @@ namespace PactNet
         }
 
         public PactBuilder(PactConfig config)
-            : this((port, enableSsl, consumerName, providerName, host) => new MockProviderService(port, enableSsl, consumerName, providerName, config, host))
+            : this((port, enableSsl, consumerName, providerName, host, jsonSerializerSettings) => new MockProviderService(port, enableSsl, consumerName, providerName, config, host, jsonSerializerSettings))
         {
         }
 
@@ -76,12 +75,7 @@ namespace PactNet
                 _mockProviderService.Stop();
             }
 
-            if (jsonSerializerSettings != null)
-            {
-                JsonConfig.ApiSerializerSettings = jsonSerializerSettings;
-            }
-
-            _mockProviderService = _mockProviderServiceFactory(port, enableSsl, ConsumerName, ProviderName, host);
+            _mockProviderService = _mockProviderServiceFactory(port, enableSsl, ConsumerName, ProviderName, host, jsonSerializerSettings);
 
             _mockProviderService.Start();
 

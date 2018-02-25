@@ -16,11 +16,11 @@ namespace PactNet.Tests.IntegrationTests
         {
             var pactConfig = new PactConfig();
 
-            PactBuilder = new PactBuilder((port, enableSsl, consumerName, providerName, host) =>
+            PactBuilder = new PactBuilder((port, enableSsl, consumerName, providerName, host, jsonSerializerSettings) =>
                     new MockProviderService(
                         baseUri => new RubyHttpHost(baseUri, "MyConsumer", "MyApi", pactConfig, host),
                         port, enableSsl,
-                        baseUri => new AdminHttpClient(baseUri)))
+                        baseUri => new AdminHttpClient(baseUri, jsonSerializerSettings)))
                 .ServiceConsumer("IntegrationTests")
                 .HasPactWith("MyApi");
 

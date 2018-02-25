@@ -16,17 +16,25 @@ namespace PactNet.Mocks.MockHttpService
     {
         private readonly HttpClient _httpClient;
         private readonly IHttpMethodMapper _httpMethodMapper;
+        private readonly JsonSerializerSettings _jsonSerializerSettings;
 
         internal AdminHttpClient(
             Uri baseUri,
-            HttpMessageHandler handler)
+            HttpMessageHandler handler,
+            JsonSerializerSettings jsonSerializerSettings)
         {
             _httpClient = new HttpClient(handler) { BaseAddress = baseUri };
             _httpMethodMapper = new HttpMethodMapper();
+            _jsonSerializerSettings = jsonSerializerSettings ?? JsonConfig.ApiSerializerSettings;
         }
 
         public AdminHttpClient(Uri baseUri) : 
-            this(baseUri, new HttpClientHandler())
+            this(baseUri, new HttpClientHandler(), null)
+        {
+        }
+
+        public AdminHttpClient(Uri baseUri, JsonSerializerSettings jsonSerializerSettings) :
+            this(baseUri, new HttpClientHandler(), jsonSerializerSettings)
         {
         }
 
@@ -52,7 +60,7 @@ namespace PactNet.Mocks.MockHttpService
 
             if (requestContent != null)
             {
-                var requestContentJson = JsonConvert.SerializeObject(requestContent, JsonConfig.ApiSerializerSettings);
+                var requestContentJson = JsonConvert.SerializeObject(requestContent, _jsonSerializerSettings);
                 request.Content = new StringContent(requestContentJson, Encoding.UTF8, "application/json");
             }
 
