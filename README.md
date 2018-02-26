@@ -341,6 +341,14 @@ public class ProviderStateMiddleware
 ```
 
 ```c#
+public class ProviderState
+{
+    public string Consumer { get; set; }
+    public string State { get; set; }
+}
+```
+
+```c#
 public class XUnitOutput : IOutput
 {
     private readonly ITestOutputHelper _output;
