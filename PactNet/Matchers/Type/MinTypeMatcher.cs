@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace PactNet.Matchers.Type
 {
@@ -17,6 +18,11 @@ namespace PactNet.Matchers.Type
 
         public MinTypeMatcher(dynamic example, int min)
         {
+            if(min < 1)
+            {
+                throw new ArgumentException("Min must be greater than 0");
+            }
+
             Match = "Pact::ArrayLike";
             Example = example;
             Min = min;

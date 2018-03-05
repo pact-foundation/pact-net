@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
 using PactNet.Matchers.Type;
+using System;
 using Xunit;
 
 namespace PactNet.Tests.Matchers.Type
@@ -30,6 +31,15 @@ namespace PactNet.Tests.Matchers.Type
             var actualJson = JsonConvert.SerializeObject(matcher, JsonConfig.ApiSerializerSettings);
 
             Assert.Equal(expectedJson, actualJson);
+        }
+
+        [Fact]
+        public void Ctor_WhenCalledWithMin0_ThrowsArgumentException()
+        {
+            var example = new[] { 22, 23, 56 };
+            const int min = 0;
+
+            Assert.Throws<ArgumentException>(() => GetSubject(example, min));
         }
     }
 }
