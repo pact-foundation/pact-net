@@ -410,6 +410,10 @@ pactVerifier
 	.Verify();
 ```
 
+#### Further Documentation
+
+* [PactNet Workshop using .NET Core](https://github.com/tdshipley/pact-workshop-dotnet-core-v1)
+
 #### Related Tools
 You might also find the following tool and library helpful:
 
