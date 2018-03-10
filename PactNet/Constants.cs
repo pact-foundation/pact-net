@@ -11,7 +11,7 @@ namespace PactNet
         public const string PactPath = "/pact";
 
 #if USE_NET4X
-        public static string BuildDirectory = new Uri(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase)).LocalPath;
+        public static string BuildDirectory = new Uri(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase.Replace("file:///", ""))).LocalPath;
         public static string DefaultPactDir = Path.GetFullPath($"{BuildDirectory}{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}");
         public static string DefaultLogDir = Path.GetFullPath($"{BuildDirectory}{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}logs{Path.DirectorySeparatorChar}");
 #else
