@@ -15,6 +15,8 @@ namespace PactNet
 
         public bool Verbose { get; set; }
 
+        public string MonkeyPatchFile { get; set; }
+
         public PactVerifierConfig()
         {
             Outputters = new List<IOutput>

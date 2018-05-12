@@ -21,9 +21,10 @@ namespace PactNet.Core
                 $" --custom-provider-header \"{config.CustomHeader?.Key}:{config.CustomHeader?.Value}\"" :
                 string.Empty;
             var verbose = config?.Verbose == true ? " --verbose true" : string.Empty;
+            var monkeyPatchOption = !string.IsNullOrEmpty(config?.MonkeyPatchFile) ? $" --monkeypatch=\"${config.MonkeyPatchFile}\"" : string.Empty;
 
             Script = "pact-provider-verifier";
-            Arguments = $"\"{FixPathForRuby(pactUri)}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}{brokerCredentials}{publishResults}{customHeader}{verbose}";
+            Arguments = $"\"{FixPathForRuby(pactUri)}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}{brokerCredentials}{publishResults}{customHeader}{verbose}{monkeyPatchOption}";
             WaitForExit = true;
             Outputters = config?.Outputters;
             Environment = new Dictionary<string, string>
