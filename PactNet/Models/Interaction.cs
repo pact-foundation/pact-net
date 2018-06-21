@@ -11,10 +11,10 @@ namespace PactNet.Models
             Formatting = Formatting.None
         };
 
-        [JsonProperty(Order = -3, PropertyName = "description")]
+        [JsonProperty(Order = -3, PropertyName = "description", NullValueHandling = NullValueHandling.Ignore)]
         public string Description { get; set; }
 
-        [JsonProperty(Order = -2, PropertyName = "provider_state")] //provider_state will become providerState
+        [JsonProperty(Order = -2, PropertyName = "provider_state", NullValueHandling = NullValueHandling.Ignore)] //provider_state will become providerState
         public string ProviderState { get; set; }
 
         //[Obsolete("For backwards compatibility.")]

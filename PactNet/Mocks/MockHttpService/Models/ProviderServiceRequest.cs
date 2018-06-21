@@ -9,21 +9,21 @@ namespace PactNet.Mocks.MockHttpService.Models
         private bool _bodyWasSet;
         private dynamic _body;
 
-        [JsonProperty(PropertyName = "method")]
+        [JsonProperty(PropertyName = "method", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(CamelCaseStringEnumConverter))]
         public HttpVerb Method { get; set; }
 
-        [JsonProperty(PropertyName = "path")]
+        [JsonProperty(PropertyName = "path", NullValueHandling = NullValueHandling.Ignore)]
         public object Path { get; set; }
 
-        [JsonProperty(PropertyName = "query")]
+        [JsonProperty(PropertyName = "query", NullValueHandling = NullValueHandling.Ignore)]
         public object Query { get; set; }
 
-        [JsonProperty(PropertyName = "headers")]
+        [JsonProperty(PropertyName = "headers", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(PreserveCasingDictionaryConverter))]
         public IDictionary<string, object> Headers { get; set; }
 
-        [JsonProperty(PropertyName = "body", NullValueHandling = NullValueHandling.Include)]
+        [JsonProperty(PropertyName = "body")]
         public dynamic Body
         {
             get { return _body; }

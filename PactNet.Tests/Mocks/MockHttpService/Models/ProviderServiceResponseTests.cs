@@ -19,12 +19,13 @@ namespace PactNet.Tests.Mocks.MockHttpService.Models
                 Body = new
                 {
                     Test1 = "hi",
-                    test2 = 2
+                    test2 = 2,
+                    test3 = (string)null
                 }
             };
 
             var responseJson = JsonConvert.SerializeObject(request, JsonConfig.ApiSerializerSettings);
-            var expectedJson = "{\"status\":200,\"headers\":{\"Content-Type\":\"application/json\"},\"body\":{\"Test1\":\"hi\",\"test2\":2}}";
+            var expectedJson = "{\"status\":200,\"headers\":{\"Content-Type\":\"application/json\"},\"body\":{\"Test1\":\"hi\",\"test2\":2,\"test3\":null}}";
             Assert.Equal(expectedJson, responseJson);
         }
 

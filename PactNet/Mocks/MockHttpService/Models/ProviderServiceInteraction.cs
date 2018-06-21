@@ -5,10 +5,10 @@ namespace PactNet.Mocks.MockHttpService.Models
 {
     public class ProviderServiceInteraction : Interaction
     {
-        [JsonProperty(PropertyName = "request")]
+        [JsonProperty(PropertyName = "request", NullValueHandling = NullValueHandling.Ignore)]
         public ProviderServiceRequest Request { get; set; }
 
-        [JsonProperty(PropertyName = "response")]
+        [JsonProperty(PropertyName = "response", NullValueHandling = NullValueHandling.Ignore)]
         public ProviderServiceResponse Response { get; set; }
     }
 }

@@ -9,14 +9,14 @@ namespace PactNet.Mocks.MockHttpService.Models
         private bool _bodyWasSet;
         private dynamic _body;
 
-        [JsonProperty(PropertyName = "status")]
+        [JsonProperty(PropertyName = "status", NullValueHandling = NullValueHandling.Ignore)]
         public int Status { get; set; }
 
-        [JsonProperty(PropertyName = "headers")]
+        [JsonProperty(PropertyName = "headers", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(PreserveCasingDictionaryConverter))]
         public IDictionary<string, object> Headers { get; set; }
 
-        [JsonProperty(PropertyName = "body", NullValueHandling = NullValueHandling.Include)]
+        [JsonProperty(PropertyName = "body")]
         public dynamic Body
         {
             get { return _body; }
