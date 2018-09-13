@@ -207,7 +207,7 @@ public class SomethingApiConsumerTests : IClassFixture<ConsumerMyApiPact>
     //Assert
     Assert.Equal("tester", result.id);
 
-    _mockProviderService.VerifyInteractions(); //NOTE: Verifies that interactions registered on the mock provider are called once and only once
+    _mockProviderService.VerifyInteractions(); //NOTE: Verifies that interactions registered on the mock provider are called at least once
   }
 }
 ```
