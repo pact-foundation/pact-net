@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using PactNet.Mocks.MockHttpService.Host;
 using PactNet.Mocks.MockHttpService.Models;
+using PactNet.Mocks.Models;
 using PactNet.Models;
 using static System.String;
 
@@ -201,7 +202,7 @@ namespace PactNet.Mocks.MockHttpService
             _description = null;
         }
 
-        private bool IsContentTypeSpecifiedForBody(IHttpMessage message)
+        private bool IsContentTypeSpecifiedForBody(IMessage message)
         {
             //No content-type required if there is no body
             if (message.Body == null)
