@@ -27,22 +27,26 @@ namespace PactNet.Mocks.MockHttpService
             Func<Uri, AdminHttpClient> adminHttpClientFactory)
         {
             _hostFactory = hostFactory;
-            BaseUri = new Uri(
-                $"{(enableSsl ? "https" : "http")}://localhost:{port}");
+            BaseUri = new Uri( $"{(enableSsl ? "https" : "http")}://localhost:{port}");
             _adminHttpClient = adminHttpClientFactory(BaseUri);
         }
 
         public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress)
-            : this(port, enableSsl, consumerName, providerName, config, ipAddress, null)
+            : this(port, enableSsl, consumerName, providerName, config, ipAddress, null, Empty, Empty)
         {
         }
 
         public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress, Newtonsoft.Json.JsonSerializerSettings jsonSerializerSettings)
+            : this(port, enableSsl, consumerName, providerName, config, ipAddress, jsonSerializerSettings, Empty, Empty)
+        {
+        }
+        
+        public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress, Newtonsoft.Json.JsonSerializerSettings jsonSerializerSettings, string sslCert, string sslKey)
             : this(
-            baseUri => new RubyHttpHost(baseUri, consumerName, providerName, config, ipAddress),
-            port,
-            enableSsl,
-            baseUri => new AdminHttpClient(baseUri, jsonSerializerSettings))
+                baseUri => new RubyHttpHost(baseUri, consumerName, providerName, config, ipAddress, sslCert, sslKey),
+                port,
+                enableSsl,
+                baseUri => new AdminHttpClient(baseUri, jsonSerializerSettings))
         {
         }
 
