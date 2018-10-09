@@ -32,12 +32,12 @@ namespace PactNet.Mocks.MockHttpService
         }
 
         public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress)
-            : this(port, enableSsl, consumerName, providerName, config, ipAddress, null, Empty, Empty)
+            : this(port, enableSsl, consumerName, providerName, config, ipAddress, null, null, null)
         {
         }
 
         public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress, Newtonsoft.Json.JsonSerializerSettings jsonSerializerSettings)
-            : this(port, enableSsl, consumerName, providerName, config, ipAddress, jsonSerializerSettings, Empty, Empty)
+            : this(port, enableSsl, consumerName, providerName, config, ipAddress, jsonSerializerSettings, null, null)
         {
         }
         

@@ -22,7 +22,7 @@ namespace PactNet.Mocks.MockHttpService.Host
         public RubyHttpHost(
             Uri baseUri,
             string consumerName, string providerName, PactConfig config, IPAddress host = IPAddress.Loopback,
-            string sslCert = "", string sslKey = "") :
+            string sslCert = null, string sslKey = null) :
             this(new PactCoreHost<MockProviderHostConfig>(
                     new MockProviderHostConfig(baseUri.Port,
                         baseUri.Scheme.Equals("HTTPS", StringComparison.OrdinalIgnoreCase),

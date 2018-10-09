@@ -60,18 +60,23 @@ namespace PactNet
             return this;
         }
 
-        public IMockProviderService MockService(int port, bool enableSsl = false, IPAddress host = IPAddress.Loopback)
+        public IMockProviderService MockService(
+            int port, 
+            bool enableSsl = false, 
+            IPAddress host = IPAddress.Loopback, 
+            string sslCert = null, 
+            string sslKey = null)
         {
-            return MockService(port, jsonSerializerSettings: null, enableSsl: enableSsl, host: host);
-        }
-        
-        public IMockProviderService MockService(int port, string sslCert, string sslKey, bool enableSsl = false, IPAddress host = IPAddress.Loopback)
-        {
-            return MockService(port, jsonSerializerSettings: null, enableSsl: enableSsl, host: host, sslCert:sslCert, sslKey:sslKey);
+            return MockService(port, jsonSerializerSettings: null, enableSsl: enableSsl, host: host, sslCert: sslCert, sslKey: sslKey);
         }
 
-        public IMockProviderService MockService(int port, JsonSerializerSettings jsonSerializerSettings,
-            bool enableSsl = false, IPAddress host = IPAddress.Loopback, string sslCert = "", string sslKey = "")
+        public IMockProviderService MockService(
+            int port, 
+            JsonSerializerSettings jsonSerializerSettings, 
+            bool enableSsl = false, 
+            IPAddress host = IPAddress.Loopback, 
+            string sslCert = null, 
+            string sslKey = null)
         {
             if (String.IsNullOrEmpty(ConsumerName))
             {

@@ -8,13 +8,9 @@ namespace PactNet
     {
         IPactBuilder ServiceConsumer(string consumerName);
         IPactBuilder HasPactWith(string providerName);
-        IMockProviderService MockService(int port, bool enableSsl = false, IPAddress host = IPAddress.Loopback);
-
-        IMockProviderService MockService(int port, string sslCert, string sslKey, bool enableSsl = false,
-            IPAddress host = IPAddress.Loopback);
-
+        IMockProviderService MockService(int port, bool enableSsl = false, IPAddress host = IPAddress.Loopback, string sslCert = null, string sslKey = null);
         IMockProviderService MockService(int port, JsonSerializerSettings jsonSerializerSettings,
-            bool enableSsl = false, IPAddress host = IPAddress.Loopback, string sslCert = "", string sslKey = "");
+            bool enableSsl = false, IPAddress host = IPAddress.Loopback, string sslCert = null, string sslKey = null);
 
         void Build();
     }

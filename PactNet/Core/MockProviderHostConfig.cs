@@ -36,8 +36,7 @@ namespace PactNet.Core
                         $"--pact-dir \"{FixPathForRuby(config.PactDir)}\" " +
                         $"--pact-specification-version \"{config.SpecificationVersion}\" " +
                         $"--consumer \"{consumerName}\" " +
-                        $"--provider \"{providerName}\"{sslOption}" +
-                        $"{hostOption}{sslCertOption}{sslKeyOption}{monkeyPatchOption}";
+                        $"--provider \"{providerName}\"{sslOption}{hostOption}{sslCertOption}{sslKeyOption}{monkeyPatchOption}";
 
             WaitForExit = false;
             Outputters = config?.Outputters;

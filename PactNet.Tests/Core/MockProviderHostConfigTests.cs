@@ -9,7 +9,7 @@ namespace PactNet.Tests.Core
     {
         private IPactCoreHostConfig GetSubject(int port = 2322, bool enableSsl = false,
             string consumerName = "My Test Consumer", string providerName = "My Test Provider",
-            PactConfig pactConfig = null, IPAddress host = IPAddress.Loopback, string sslCert = "", string sslKey = "")
+            PactConfig pactConfig = null, IPAddress host = IPAddress.Loopback, string sslCert = null, string sslKey = null)
         {
             return new MockProviderHostConfig(port, enableSsl, consumerName, providerName,
                 pactConfig ?? new PactConfig(), host, sslCert, sslKey);
