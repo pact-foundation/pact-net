@@ -10,11 +10,16 @@ namespace PactNet
     {
         public string ConsumerName { get; private set; }
         public string ProviderName { get; private set; }
-        private readonly Func<int, bool, string, string, IPAddress, JsonSerializerSettings, IMockProviderService> _mockProviderServiceFactory;
+
+        private readonly
+            Func<int, bool, string, string, IPAddress, JsonSerializerSettings, string, string, IMockProviderService>
+            _mockProviderServiceFactory;
 
         private IMockProviderService _mockProviderService;
 
-        internal PactBuilder(Func<int, bool, string, string, IPAddress, JsonSerializerSettings, IMockProviderService> mockProviderServiceFactory)
+        internal PactBuilder(
+            Func<int, bool, string, string, IPAddress, JsonSerializerSettings, string, string, IMockProviderService>
+                mockProviderServiceFactory)
         {
             _mockProviderServiceFactory = mockProviderServiceFactory;
         }
@@ -25,7 +30,9 @@ namespace PactNet
         }
 
         public PactBuilder(PactConfig config)
-            : this((port, enableSsl, consumerName, providerName, host, jsonSerializerSettings) => new MockProviderService(port, enableSsl, consumerName, providerName, config, host, jsonSerializerSettings))
+            : this((port, enableSsl, consumerName, providerName, host, jsonSerializerSettings, sslCert, sslKey) =>
+                new MockProviderService(port, enableSsl, consumerName, providerName, config, host,
+                    jsonSerializerSettings, sslCert, sslKey))
         {
         }
 
@@ -53,21 +60,34 @@ namespace PactNet
             return this;
         }
 
-        public IMockProviderService MockService(int port, bool enableSsl = false, IPAddress host = IPAddress.Loopback)
+        public IMockProviderService MockService(
+            int port, 
+            bool enableSsl = false, 
+            IPAddress host = IPAddress.Loopback, 
+            string sslCert = null, 
+            string sslKey = null)
         {
-            return MockService(port, jsonSerializerSettings: null, enableSsl: enableSsl, host: host);
+            return MockService(port, jsonSerializerSettings: null, enableSsl: enableSsl, host: host, sslCert: sslCert, sslKey: sslKey);
         }
 
-        public IMockProviderService MockService(int port, JsonSerializerSettings jsonSerializerSettings, bool enableSsl = false, IPAddress host = IPAddress.Loopback)
+        public IMockProviderService MockService(
+            int port, 
+            JsonSerializerSettings jsonSerializerSettings, 
+            bool enableSsl = false, 
+            IPAddress host = IPAddress.Loopback, 
+            string sslCert = null, 
+            string sslKey = null)
         {
             if (String.IsNullOrEmpty(ConsumerName))
             {
-                throw new InvalidOperationException("ConsumerName has not been set, please supply a consumer name using the ServiceConsumer method.");
+                throw new InvalidOperationException(
+                    "ConsumerName has not been set, please supply a consumer name using the ServiceConsumer method.");
             }
 
             if (String.IsNullOrEmpty(ProviderName))
             {
-                throw new InvalidOperationException("ProviderName has not been set, please supply a provider name using the HasPactWith method.");
+                throw new InvalidOperationException(
+                    "ProviderName has not been set, please supply a provider name using the HasPactWith method.");
             }
 
             if (_mockProviderService != null)
@@ -75,7 +95,8 @@ namespace PactNet
                 _mockProviderService.Stop();
             }
 
-            _mockProviderService = _mockProviderServiceFactory(port, enableSsl, ConsumerName, ProviderName, host, jsonSerializerSettings);
+            _mockProviderService = _mockProviderServiceFactory(port, enableSsl, ConsumerName, ProviderName, host,
+                jsonSerializerSettings, sslCert, sslKey);
 
             _mockProviderService.Start();
 
@@ -86,7 +107,8 @@ namespace PactNet
         {
             if (_mockProviderService == null)
             {
-                throw new InvalidOperationException("The Pact file could not be saved because the mock provider service is not initialised. Please initialise by calling the MockService() method.");
+                throw new InvalidOperationException(
+                    "The Pact file could not be saved because the mock provider service is not initialised. Please initialise by calling the MockService() method.");
             }
 
             PersistPactFile();
