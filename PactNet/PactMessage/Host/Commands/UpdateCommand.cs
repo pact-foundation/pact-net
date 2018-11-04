@@ -30,10 +30,15 @@ namespace PactNet.PactMessage.Host.Commands
         {
 	        var messageJson = JsonConvert.SerializeObject(_messageInteraction, _jsonSerializerSettings);
 
-	        var arguments = $"update '{messageJson}' --consumer={_consumer} --provider={_provider} --specificationversion={_pactConfig.SpecificationVersion}";
+	        var arguments = $"update '{messageJson}' --consumer='{_consumer}' --provider='{_provider}' --pact-dir={FixPathForRuby(_pactConfig.PactDir)} --pact-specification-version={_pactConfig.SpecificationVersion}";
 	        var coreHostConfig = new PactMessageHostConfig(_pactConfig, arguments, true);
 
 	        _coreHostFactory(coreHostConfig).Start();
 		}
-    }
+
+	    private static string FixPathForRuby(string path)
+	    {
+		    return path.Replace("\\", "/");
+	    }
+	}
 }

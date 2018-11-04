@@ -20,7 +20,13 @@ namespace PactNet.Tests.IntegrationTests
 		[Fact]
 		public void Build_ConsumerCanHandleMessages_VerificationSucceeds()
 		{
-			_pactMessage.ExpectedToReceive("A message containing user details").Given("The user exists").With(new Message
+			_pactMessage.ExpectedToReceive("A message containing user details").Given(new[]
+			{
+				new ProviderState
+				{
+					State = "The user exists"
+				}
+			}).With(new Message
 			{
 				Contents = new
 				{

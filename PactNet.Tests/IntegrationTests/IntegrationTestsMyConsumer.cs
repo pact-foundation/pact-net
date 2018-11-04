@@ -1,4 +1,6 @@
-﻿using PactNet.PactMessage;
+﻿using System.Collections.Generic;
+using PactNet.Infrastructure.Outputters;
+using PactNet.PactMessage;
 
 namespace PactNet.Tests.IntegrationTests
 {
@@ -9,9 +11,17 @@ namespace PactNet.Tests.IntegrationTests
 
 		public IntegrationTestsMyConsumer()
 		{
-			PactBuilder = new PactMessageBuilder()
-				.HasPactWith("His provider")
-				.ServiceConsumer("My consumer");
+			var pactConfig = new PactConfig
+			{
+				SpecificationVersion = "3.0.0",
+				Outputters = new List<IOutput>
+				{
+					new ConsoleOutput()
+				}
+			};
+			PactBuilder = new PactMessageBuilder(pactConfig)
+				.HasPactWith("Integration Tests")
+				.ServiceConsumer("My Consumer");
 
 			PactMessage = PactBuilder.PactMessage();
 		}

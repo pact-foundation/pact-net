@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using PactNet.Models;
 
 namespace PactNet.PactMessage.Models
@@ -10,5 +11,11 @@ namespace PactNet.PactMessage.Models
         {
             get; set;
         }
+
+	    [JsonProperty(Order = -2, PropertyName = "providerStates")]
+	    public IEnumerable<ProviderState> ProviderStates
+	    {
+		    get; set;
+	    }
 	}
 }

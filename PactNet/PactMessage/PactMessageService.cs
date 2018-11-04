@@ -11,7 +11,7 @@ namespace PactNet.PactMessage
 {
 	public class PactMessageService : IPactMessage
 	{
-		private string _providerState;
+		private IEnumerable<ProviderState> _providerStates;
 		private string _description;
 		internal List<MessageInteraction> MessageInteractions { get; }
 
@@ -48,14 +48,9 @@ namespace PactNet.PactMessage
 			return this;
 		}
 
-		public IPactMessage Given(string providerState)
+		public IPactMessage Given(IEnumerable<ProviderState> providerStates)
 		{
-			if (string.IsNullOrEmpty(providerState))
-			{
-				throw new ArgumentException("Please supply a non null or empty providerState");
-			}
-
-			_providerState = providerState;
+			_providerStates = providerStates ?? throw new ArgumentException("Please supply a non null or empty providerStates");
 
 			return this;
 		}
@@ -70,7 +65,7 @@ namespace PactNet.PactMessage
 			MessageInteractions.Add(new MessageInteraction
 			{
 				Contents = message.Contents,
-				ProviderState = _providerState,
+				ProviderStates = _providerStates,
 				Description = _description,
 			});
 
@@ -85,6 +80,11 @@ namespace PactNet.PactMessage
 				reifyAction.Execute();
 
 				var message = _outputBuilder.Output;
+				if (message.StartsWith("ERROR"))
+				{
+					throw new PactFailureException($"Could not parse message. core error: {message}");
+				}
+
 				messageHandler(message);
 
 				_outputBuilder.Clear();
