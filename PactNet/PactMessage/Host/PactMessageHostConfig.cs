@@ -4,7 +4,7 @@ using System.Text;
 using PactNet.Core;
 using PactNet.Infrastructure.Outputters;
 
-namespace PactNet.Mocks.MockAmqpService.Host
+namespace PactNet.PactMessage.Host
 {
     internal class PactMessageHostConfig : IPactCoreHostConfig
     {

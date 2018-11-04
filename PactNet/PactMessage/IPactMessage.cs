@@ -1,13 +1,13 @@
 ﻿using System;
-using PactNet.Mocks.MockAmqpService.Models;
+using PactNet.PactMessage.Models;
 
-namespace PactNet.Mocks.MockAmqpService
+namespace PactNet.PactMessage
 {
     public interface IPactMessage 
     {
         IPactMessage ExpectedToReceive(string description);
         IPactMessage Given(string providerState);
-        IPactMessage With(MessageInteraction messageInteraction);
+        IPactMessage With(Message message);
         void VerifyConsumer(Action<string> messageHandler);
     }
 }

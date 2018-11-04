@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace PactNet.Models
 {
-    public class Interaction
+    internal class Interaction
     {
         private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
         {

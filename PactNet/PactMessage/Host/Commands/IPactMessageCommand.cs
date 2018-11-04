@@ -1,4 +1,4 @@
-﻿namespace PactNet.Mocks.MockAmqpService.Host
+﻿namespace PactNet.PactMessage.Host.Commands
 {
     internal interface IPactMessageCommand
     {

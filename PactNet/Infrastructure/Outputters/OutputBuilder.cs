@@ -1,8 +1,8 @@
 ﻿using System.Text;
 
-namespace PactNet.Mocks.MockAmqpService.Host
+namespace PactNet.Infrastructure.Outputters
 {
-    public class WaitForResultOutputter : IWaitForResultOutputter
+    public class OutputBuilder : IOutputBuilder
     {
         private readonly StringBuilder _outputBuilder = new StringBuilder();
 
@@ -11,7 +11,7 @@ namespace PactNet.Mocks.MockAmqpService.Host
             _outputBuilder.AppendLine(line);
         }
 
-        public string FullOutput => _outputBuilder.ToString();
+        public string Output => _outputBuilder.ToString();
 
         public void Clear()
         {
