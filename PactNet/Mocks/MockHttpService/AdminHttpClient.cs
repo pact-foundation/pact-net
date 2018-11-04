@@ -46,7 +46,7 @@ namespace PactNet.Mocks.MockHttpService
         public void SendAdminHttpRequest<T>(HttpVerb method, string path, T requestContent, IDictionary<string, string> headers = null) where T : class
         {
             var responseContent = Empty;
-
+                
             var request = new HttpRequestMessage(_httpMethodMapper.Convert(method), path);
             request.Headers.Add(Constants.AdministrativeRequestHeaderKey, "true");
 

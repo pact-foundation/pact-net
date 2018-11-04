@@ -6,7 +6,7 @@ using PactNet.Infrastructure.Outputters;
 
 namespace PactNet.Mocks.MockAmqpService.Host
 {
-    public class RabbitMqProviderHostConfig : IPactCoreHostConfig
+    internal class PactMessageHostConfig : IPactCoreHostConfig
     {
         public string Script { get; }
         public string Arguments { get; }
@@ -14,9 +14,14 @@ namespace PactNet.Mocks.MockAmqpService.Host
         public IEnumerable<IOutput> Outputters { get; }
         public IDictionary<string, string> Environment { get; }
 
-        private string FixPathForRuby(string path)
+        public PactMessageHostConfig(PactConfig pactConfig, string arguments, bool waitForExit)
         {
-            return path.Replace("\\", "/");
+            Outputters = pactConfig.Outputters;
+            Script = "pact-message";
+
+            Arguments = arguments;
+
+            WaitForExit = waitForExit;
         }
     }
 }

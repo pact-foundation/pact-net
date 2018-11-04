@@ -7,7 +7,7 @@ using PactNet.Models;
 namespace PactNet.Mocks.MockHttpService.Host
 {
     internal class RubyHttpHost : IHttpHost
-    {
+    {   
         private readonly IPactCoreHost _coreHost;
         private readonly AdminHttpClient _adminHttpClient;
 

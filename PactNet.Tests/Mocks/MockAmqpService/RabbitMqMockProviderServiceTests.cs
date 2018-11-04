@@ -6,11 +6,11 @@ namespace PactNet.Tests.Mocks.MockAmqpService
 {
     public class RabbitMqMockProviderServiceTests
     {
-        private RabbitMqMockProviderService _rabbitMqMockProviderService;
+        private PactMessage _pactMessage;
 
         public RabbitMqMockProviderServiceTests()
         {
-            _rabbitMqMockProviderService = new RabbitMqMockProviderService();
+            _pactMessage = new PactMessage();
         }
 
         [Fact]
@@ -20,11 +20,11 @@ namespace PactNet.Tests.Mocks.MockAmqpService
             const string providerState = "My provider state";
 
             //Act
-            _rabbitMqMockProviderService.Given(providerState)
+            _pactMessage.Given(providerState)
                 .Given(providerState);
 
             //Assert
-            _rabbitMqMockProviderService.VerifyPublishing();
+            _pactMessage.VerifyConsumer();
 //            _mockedHost.Recieved(1).PublishMessage(null);
         }
     }
