@@ -4,12 +4,12 @@ using PactNet.PactMessage;
 
 namespace PactNet.Tests.IntegrationTests
 {
-	public class IntegrationTestsMyConsumer
+	public class IntegrationTestsMyConsumerPact
 	{
 		public IPactMessageBuilder PactBuilder { get; }
 		public IPactMessage PactMessage { get; }
 
-		public IntegrationTestsMyConsumer()
+		public IntegrationTestsMyConsumerPact()
 		{
 			var pactConfig = new PactConfig
 			{

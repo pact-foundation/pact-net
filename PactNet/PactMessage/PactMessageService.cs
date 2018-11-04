@@ -85,7 +85,14 @@ namespace PactNet.PactMessage
 					throw new PactFailureException($"Could not parse message. core error: {message}");
 				}
 
-				messageHandler(message);
+				try
+				{
+					messageHandler(message);
+				}
+				catch (Exception e)
+				{
+					throw new PactFailureException($"could not handle the message {message}", e);
+				}
 
 				_outputBuilder.Clear();
 			}
