@@ -36,9 +36,9 @@ namespace PactNet
 
 		internal PactMessageBuilder(PactConfig pactConfig, JsonSerializerSettings jsonSerializerSettings, Func<string, string, PactMessageService> pactMessageFactory)
 		{
-			if (!int.TryParse(pactConfig.SpecificationVersion.Substring(0, 1), out var specificationVersion) || specificationVersion < 3)
+			if (!int.TryParse(pactConfig.SpecificationVersion.Substring(0, 1), out var specificationVersion) || specificationVersion < 2)
 			{
-				throw new ArgumentException("Pact message is only supported from version 3.0.0, please supply a newer specification version");
+				throw new ArgumentException("Pact message is only supported from version 2.0.0, please supply a newer specification version");
 			}
 
 			PactConfig = pactConfig;

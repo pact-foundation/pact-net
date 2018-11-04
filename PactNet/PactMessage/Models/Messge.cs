@@ -9,11 +9,5 @@ namespace PactNet.PactMessage.Models
 		{
 			get; set;
 		}
-
-		[JsonProperty(PropertyName = "metadata")]
-		public string Metadata
-		{
-			get; set;
-		}
 	}
 }

@@ -19,7 +19,7 @@ namespace PactNet.Tests.IntegrationTests
 					new ConsoleOutput()
 				}
 			};
-			PactBuilder = new PactMessageBuilder(pactConfig)
+			PactBuilder = new PactMessageBuilderTests(pactConfig)
 				.HasPactWith("Integration Tests")
 				.ServiceConsumer("My Consumer");
 
