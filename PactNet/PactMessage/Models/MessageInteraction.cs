@@ -4,7 +4,7 @@ using PactNet.Models;
 
 namespace PactNet.PactMessage.Models
 {
-    internal class MessageInteraction : Interaction
+    public class MessageInteraction : Interaction
     {
         [JsonProperty(PropertyName = "contents")]
         public dynamic Contents

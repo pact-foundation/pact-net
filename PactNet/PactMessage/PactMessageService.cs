@@ -13,7 +13,7 @@ namespace PactNet.PactMessage
 	{
 		private IEnumerable<ProviderState> _providerStates;
 		private string _description;
-		internal List<MessageInteraction> MessageInteractions { get; }
+		public IList<MessageInteraction> MessageInteractions { get; }
 
 		private readonly IOutputBuilder _outputBuilder;
 		private readonly Func<PactMessageHostConfig, IPactCoreHost> _coreHostFactory;

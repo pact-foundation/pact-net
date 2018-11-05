@@ -10,5 +10,6 @@ namespace PactNet.PactMessage
         IPactMessage Given(IEnumerable<ProviderState> providerStates);
         IPactMessage With(Message message);
         void VerifyConsumer(Action<string> messageHandler);
+        IList<MessageInteraction> MessageInteractions { get; }
     }
 }

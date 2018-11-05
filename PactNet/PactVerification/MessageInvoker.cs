@@ -18,7 +18,7 @@ namespace PactNet.PactVerification
 		internal string Invoke(PactMessageDescription messageDescription)
 		{
 			SetUpProviderStates(messageDescription.ProviderStates);
-			return _messagePublishers[messageDescription.Description]();
+			return GetMessageInteraction(messageDescription);
 		}
 
 		private void SetUpProviderStates(IEnumerable<ProviderState> messageDescriptionProviderStates)
@@ -34,6 +34,18 @@ namespace PactNet.PactVerification
 
 				actualAction();
 			}
+		}
+
+		private string GetMessageInteraction(PactMessageDescription messageDescription)
+		{
+			var actualPublisher = _messagePublishers[messageDescription.Description];
+
+			if (actualPublisher == null)
+			{
+				throw new ArgumentException($"The publisher action for this message description was not supplyed: {messageDescription.Description}");
+			}
+
+			return actualPublisher();
 		}
 	}
 }

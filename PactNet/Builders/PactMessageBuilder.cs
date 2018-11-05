@@ -5,6 +5,7 @@ using PactNet.Core;
 using PactNet.PactMessage;
 using PactNet.PactMessage.Host;
 using PactNet.PactMessage.Host.Commands;
+using PactNet.PactMessage.Models;
 using static System.String;
 
 namespace PactNet
@@ -14,9 +15,9 @@ namespace PactNet
 		public string ConsumerName { get; private set; }
 		public string ProviderName { get; private set; }
 		public PactConfig PactConfig { get; }
-		private static JsonSerializerSettings _jsonSerializerSettings;
-		private readonly Func<string, string, PactMessageService> _pactMessageFactory;
-		private PactMessageService _pactMessage;
+		private readonly Func<string, string, IPactMessage> _pactMessageFactory;
+		private readonly Func<string, string, PactConfig, MessageInteraction, Func<PactMessageHostConfig, IPactCoreHost>, IPactMessageCommand> _updateCommandFactory;
+		private IPactMessage _pactMessage;
 
 		public PactMessageBuilder()
 			: this(new PactConfig
@@ -25,25 +26,23 @@ namespace PactNet
 		}
 
 		public PactMessageBuilder(PactConfig config)
-			: this(config, JsonConfig.ApiSerializerSettings, (consumerName, providerName) => new PactMessageService(JsonConfig.ApiSerializerSettings))
+			: this(config, JsonConfig.ApiSerializerSettings)
 		{
 		}
 
 		public PactMessageBuilder(PactConfig config, JsonSerializerSettings jsonSerializerSettings)
-			: this(config, jsonSerializerSettings, (consumerName, providerName) => new PactMessageService(_jsonSerializerSettings))
+			: this(config, jsonSerializerSettings, (consumerName, providerName) => new PactMessageService(jsonSerializerSettings),
+				(consumer, provider, pactConfig, messageInteraction, coreHostFactory)
+					=> new UpdateCommand(consumer, provider, pactConfig, messageInteraction, coreHostFactory, jsonSerializerSettings))
 		{
 		}
 
-		internal PactMessageBuilder(PactConfig pactConfig, JsonSerializerSettings jsonSerializerSettings, Func<string, string, PactMessageService> pactMessageFactory)
+		internal PactMessageBuilder(PactConfig pactConfig, JsonSerializerSettings jsonSerializerSettings, Func<string, string, IPactMessage> pactMessageFactory,
+			Func<string, string, PactConfig, MessageInteraction, Func<PactMessageHostConfig, IPactCoreHost>, IPactMessageCommand> updateCommandFactory)
 		{
-			if (!int.TryParse(pactConfig.SpecificationVersion.Substring(0, 1), out var specificationVersion) || specificationVersion < 2)
-			{
-				throw new ArgumentException("Pact message is only supported from version 2.0.0, please supply a newer specification version");
-			}
-
 			PactConfig = pactConfig;
-			_jsonSerializerSettings = jsonSerializerSettings;
 			_pactMessageFactory = pactMessageFactory;
+			_updateCommandFactory = updateCommandFactory;
 		}
 
 		public IPactMessageBuilder ServiceConsumer(string consumerName)
@@ -74,16 +73,17 @@ namespace PactNet
 		{
 			if (_pactMessage == null)
 			{
-				throw new InvalidOperationException("The Pact file could not be saved because the pact message is not initialised. Please initialise by calling the PactMessage() method.");
+				throw new InvalidOperationException("The Pact file could not be saved because the pact message is not initialised. Please initialise by calling the CreatePactMessage() method.");
 			}
 
 			foreach (var messageInteraction in _pactMessage.MessageInteractions)
 			{
-				new UpdateCommand(ConsumerName, ProviderName, PactConfig, messageInteraction, config => new PactCoreHost<PactMessageHostConfig>(config), _jsonSerializerSettings).Execute();
+				var updateCommand =_updateCommandFactory(ConsumerName, ProviderName, PactConfig, messageInteraction, config => new PactCoreHost<PactMessageHostConfig>(config));
+				updateCommand.Execute();
 			}
 		}
 
-		public IPactMessage PactMessage(JsonSerializerSettings jsonSerializerSettings)
+		public IPactMessage InitializePactMessage()
 		{
 			if (IsNullOrEmpty(ConsumerName))
 			{

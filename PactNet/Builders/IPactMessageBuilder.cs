@@ -5,6 +5,6 @@ namespace PactNet
 {
 	public interface IPactMessageBuilder : IPactBaseBuilder<IPactMessageBuilder>
 	{
-		IPactMessage PactMessage(JsonSerializerSettings jsonSerializerSettings = null);
+		IPactMessage InitializePactMessage();
 	}
 }
