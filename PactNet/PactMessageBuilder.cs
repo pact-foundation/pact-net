@@ -20,7 +20,7 @@ namespace PactNet
 
 		public PactMessageBuilder()
 			: this(new PactConfig
-			{ SpecificationVersion = "3.0.0" })
+			{ SpecificationVersion = "2.0.0" })
 		{
 		}
 
