@@ -4,12 +4,11 @@ using System.Collections.Generic;
 namespace PactNet.PactVerification
 {
     public class ProducerController : IProducerHttpProxy
-
     {
         private readonly IMessageInvoker _messageInvoker;
 
-
-        public ProducerController(IDictionary<string, Action> providerStates, IDictionary<string, Func<string>> messagePublishers)
+        public ProducerController(IDictionary<string, Action> providerStates,
+            IDictionary<string, Func<string>> messagePublishers)
             : this(new MessageInvoker(providerStates, messagePublishers))
         {
         }
@@ -19,9 +18,9 @@ namespace PactNet.PactVerification
             _messageInvoker = messageInvoker;
         }
 
-        public string Invoke(string description)
+        public string Invoke(PactMessageDescription description)
         {
-            throw new NotImplementedException();
+            return _messageInvoker.Invoke(description);
         }
     }
 }
