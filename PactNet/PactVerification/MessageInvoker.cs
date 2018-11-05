@@ -4,18 +4,18 @@ using PactNet.PactMessage.Models;
 
 namespace PactNet.PactVerification
 {
-	public class MessageInvoker
+	internal class MessageInvoker : IMessageInvoker
 	{
-		private readonly Dictionary<string, Action> _providerStates;
-		private readonly Dictionary<string, Func<string>> _messagePublishers;
+		private readonly IDictionary<string, Action> _providerStates;
+		private readonly IDictionary<string, Func<string>> _messagePublishers;
 
-		public MessageInvoker(Dictionary<string, Action> providerStates, Dictionary<string, Func<string>> messagePublishers)
+		public MessageInvoker(IDictionary<string, Action> providerStates, IDictionary<string, Func<string>> messagePublishers)
 		{
 			_providerStates = providerStates;
 			_messagePublishers = messagePublishers;
 		}
 
-		internal string Invoke(PactMessageDescription messageDescription)
+		public string Invoke(PactMessageDescription messageDescription)
 		{
 			SetUpProviderStates(messageDescription.ProviderStates);
 			return GetMessageInteraction(messageDescription);
