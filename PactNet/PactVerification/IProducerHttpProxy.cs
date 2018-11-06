@@ -1,7 +1,9 @@
-﻿namespace PactNet.PactVerification
+﻿using System.Web.Http;
+
+namespace PactNet.PactVerification
 {
     public interface IProducerHttpProxy
     {
-        string Invoke(dynamic messageDescription);
+        IHttpActionResult Invoke(PactMessageDescription messageDescription);
     }
 }

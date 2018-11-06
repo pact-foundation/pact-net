@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
+using System.Net.Http.Formatting;
 using Microsoft.Owin.Hosting;
 using PactNet;
 using PactNet.Infrastructure.Outputters;
+using PactNet.PactVerification;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -59,14 +62,14 @@ namespace Provider.Api.Web.Tests
 
 		    using (WebApp.Start<TestStartup>(serviceUri))
 		    {
-			    //Act / Assert
-			    IPactVerifier pactVerifier = new PactVerifier(config);
-			    pactVerifier
-				    .ServiceProvider("Event API", serviceUri+"/invoke")
-				    .HonoursPactWith("Event API Message Consumer")
-				    .PactUri($"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}Consumer.Tests{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}event_api_message_consumer-event_api.json")
-				    .Verify();
-		    }
+				//Act / Assert
+				IPactVerifier pactVerifier = new PactVerifier(config);
+				pactVerifier
+					.ServiceProvider("Event API", serviceUri + "/invoke")
+					.HonoursPactWith("Event API Message Consumer")
+					.PactUri($"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}Consumer.Tests{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}event_api_message_consumer-event_api.json")
+					.Verify();
+			}
 	    }
 
 		public virtual void Dispose()

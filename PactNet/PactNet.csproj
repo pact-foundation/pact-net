@@ -23,4 +23,9 @@
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Web.Http">
+      <HintPath>..\..\..\Users\nirpe\.nuget\packages\microsoft.aspnet.webapi.core\5.1.2\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

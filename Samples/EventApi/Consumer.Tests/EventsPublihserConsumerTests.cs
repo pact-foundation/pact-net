@@ -35,7 +35,7 @@ namespace Consumer.Tests
 				{
 					Contents = new
 					{
-						EventId = Match.Type(Guid.NewGuid()),
+						EventId = new Guid("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5"),
 						EventContent = Match.Type("updated")
 					}
 				})

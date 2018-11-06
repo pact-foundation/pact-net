@@ -32,12 +32,12 @@ namespace Provider.Api.Web
             json.SerializerSettings.Formatting = Formatting.None;
             config.Formatters.Remove(config.Formatters.XmlFormatter);
 
-            var builder = new ContainerBuilder();
+            //var builder = new ContainerBuilder();
             
-            builder.RegisterApiControllers(typeof(EventsController).Assembly);
-            var container = builder.Build();
+            //builder.RegisterApiControllers(typeof(EventsController).Assembly);
+            //var container = builder.Build();
 
-            app.UseAutofacMiddleware(container);
+            //app.UseAutofacMiddleware(container);
             app.UseAutofacWebApi(config);
         }
     }

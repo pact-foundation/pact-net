@@ -12,9 +12,9 @@ namespace Provider.Api.Web.Publishers
             //Publish event
         }
 
-        public string GetEventUpdatedMessage(Event myUpdatedEvent)
+        public Event GetEventUpdatedMessage(Event myUpdatedEvent)
         {
-            return JsonConvert.SerializeObject(myUpdatedEvent);
+            return myUpdatedEvent;
         }
 
     }

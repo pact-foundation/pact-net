@@ -14,14 +14,11 @@
         }
       ],
       "contents": {
-        "EventId": "3fd95fa5-9ae4-4eb1-8ab6-8e7f10bfe2b0",
+        "EventId": "45d80d13-d5a2-48d7-8353-cbb4c0eaabf5",
         "EventContent": "updated"
       },
       "matchingRules": {
         "body": {
-          "$.EventId": {
-            "match": "type"
-          },
           "$.EventContent": {
             "match": "type"
           }
