@@ -7,8 +7,7 @@ namespace PactNet.PactVerification
     {
         private readonly IMessageInvoker _messageInvoker;
 
-        public ProducerController(IDictionary<string, Action> providerStates,
-            IDictionary<string, Func<string>> messagePublishers)
+        public ProducerController(IDictionary<string, Action> providerStates, IDictionary<string, Func<string>> messagePublishers)
             : this(new MessageInvoker(providerStates, messagePublishers))
         {
         }
@@ -18,9 +17,9 @@ namespace PactNet.PactVerification
             _messageInvoker = messageInvoker;
         }
 
-        public string Invoke(PactMessageDescription description)
+        public string Invoke(PactMessageDescription messageDescription)
         {
-            return _messageInvoker.Invoke(description);
+            return _messageInvoker.Invoke(messageDescription);
         }
     }
 }

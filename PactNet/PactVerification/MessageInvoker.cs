@@ -4,7 +4,7 @@ using PactNet.PactMessage.Models;
 
 namespace PactNet.PactVerification
 {
-	internal class MessageInvoker : IMessageInvoker
+	public class MessageInvoker : IMessageInvoker
 	{
 		private readonly IDictionary<string, Action> _providerStates;
 		private readonly IDictionary<string, Func<string>> _messagePublishers;

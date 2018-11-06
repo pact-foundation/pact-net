@@ -2,6 +2,6 @@
 {
     public interface IProducerHttpProxy
     {
-        string Invoke(PactMessageDescription description);
+        string Invoke(PactMessageDescription messageDescription);
     }
 }
