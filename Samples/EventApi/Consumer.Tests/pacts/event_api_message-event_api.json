@@ -1,0 +1,39 @@
+{
+  "consumer": {
+    "name": "Event API Message Consumer"
+  },
+  "provider": {
+    "name": "Event API"
+  },
+  "messages": [
+    {
+      "description": "Event with id 45D80D13-D5A2-48D7-8353-CBB4C0EAABF5 updated",
+      "providerStates": [
+        {
+          "name": "Event With id 45D80D13-D5A2-48D7-8353-CBB4C0EAABF5 is in the database"
+        }
+      ],
+      "contents": {
+        "EventId": "21f52c9f-6d61-40c4-9c00-fa315dce21e4",
+        "EventContent": "updated"
+      },
+      "matchingRules": {
+        "body": {
+          "$.EventId": {
+            "match": "type"
+          },
+          "$.EventContent": {
+            "match": "type"
+          }
+        }
+      },
+      "metaData": {
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  }
+}

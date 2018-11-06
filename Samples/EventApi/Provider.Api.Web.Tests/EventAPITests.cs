@@ -44,7 +44,32 @@ namespace Provider.Api.Web.Tests
             }
         }
 
-        public virtual void Dispose()
+	    [Fact]
+	    public void EnsureEventPublisherHonoursPactWithConsumer()
+	    {
+		    //Arrange
+		    const string serviceUri = "http://localhost:9222";
+		    var config = new PactVerifierConfig
+		    {
+			    Outputters = new List<IOutput>
+			    {
+				    new XUnitOutput(_output)
+			    }
+		    };
+
+		    using (WebApp.Start<TestStartup>(serviceUri))
+		    {
+			    //Act / Assert
+			    IPactVerifier pactVerifier = new PactVerifier(config);
+			    pactVerifier
+				    .ServiceProvider("Event API", serviceUri+"/invoke")
+				    .HonoursPactWith("Event API Message Consumer")
+				    .PactUri($"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}Consumer.Tests{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}event_api_message_consumer-event_api.json")
+				    .Verify();
+		    }
+	    }
+
+		public virtual void Dispose()
         {
         }
     }

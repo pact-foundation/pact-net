@@ -7,12 +7,13 @@ using Provider.Api.Web.Publishers;
 
 namespace Provider.Api.Web.Tests.VerificationController
 {
-    public class VerificationController : ApiController, IProducerHttpProxy
+	public class VerificationController : ApiController, IProducerHttpProxy
     {
         private readonly EventsPublisher _eventsPublisher = new EventsPublisher();
 
-        [Route("providerStates")]
-        public string Invoke(PactMessageDescription messageDescription)
+		[HttpGet]
+        [Route("/Invoke/")]
+        public string Invoke(dynamic messageDescription)
         {
             var messageInvoker = new MessageInvoker(new Dictionary<string, Action>
                 {
