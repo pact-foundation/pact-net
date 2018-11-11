@@ -65,7 +65,7 @@ namespace Provider.Api.Web.Tests
 				//Act / Assert
 				IPactVerifier pactVerifier = new PactVerifier(config);
 				pactVerifier
-					.ServiceProvider("Event API", serviceUri + "/invoke")
+					.ServiceProvider("Event API", serviceUri)
 					.HonoursPactWith("Event API Message Consumer")
 					.PactUri($"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}Consumer.Tests{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}event_api_message_consumer-event_api.json")
 					.Verify();

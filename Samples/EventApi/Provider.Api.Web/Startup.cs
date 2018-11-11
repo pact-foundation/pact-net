@@ -32,13 +32,13 @@ namespace Provider.Api.Web
             json.SerializerSettings.Formatting = Formatting.None;
             config.Formatters.Remove(config.Formatters.XmlFormatter);
 
-            //var builder = new ContainerBuilder();
-            
-            //builder.RegisterApiControllers(typeof(EventsController).Assembly);
-            //var container = builder.Build();
+			var builder = new ContainerBuilder();
 
-            //app.UseAutofacMiddleware(container);
-            app.UseAutofacWebApi(config);
+			builder.RegisterApiControllers(typeof(EventsController).Assembly);
+			var container = builder.Build();
+
+			app.UseAutofacMiddleware(container);
+			app.UseAutofacWebApi(config);
         }
     }
 }

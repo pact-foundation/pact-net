@@ -29,8 +29,8 @@ namespace Provider.Api.Web.Tests
 			var builder = new ContainerBuilder();
 			builder.RegisterApiControllers(typeof(VerificationController).Assembly);
 			var container = builder.Build();
-			app.UseAutofacMiddleware(container);
 
+			app.UseAutofacMiddleware(container);
 			apiStartup.Configuration(app);
         }
     }
