@@ -19,18 +19,18 @@ namespace Provider.Api.Web.Tests
                 app.CreateDataProtector(typeof(OAuthAuthorizationServerMiddleware).Namespace, "Access_Token", "v1"));
 
 			//var config = new HttpConfiguration();
-	  //      config.Formatters.JsonFormatter.SupportedMediaTypes
-		 //       .Add(new MediaTypeHeaderValue("text/html"));
+			//      config.Formatters.JsonFormatter.SupportedMediaTypes
+			//       .Add(new MediaTypeHeaderValue("text/html"));
 
-	  //      // Web API routes
-	  //      config.MapHttpAttributeRoutes();
-	  //      app.UseWebApi(config);
+			//      // Web API routes
+			//      config.MapHttpAttributeRoutes();
+			//      app.UseWebApi(config);
 
-			//var builder = new ContainerBuilder();
-			//builder.RegisterApiControllers(typeof(VerificationController).Assembly);
-			//var container = builder.Build();
+			var builder = new ContainerBuilder();
+			builder.RegisterApiControllers(typeof(VerificationController).Assembly);
+			var container = builder.Build();
 
-			//app.UseAutofacMiddleware(container);
+			app.UseAutofacMiddleware(container);
 			apiStartup.Configuration(app);
         }
     }
