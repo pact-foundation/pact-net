@@ -13,11 +13,18 @@ namespace Provider.Api.Web.Tests.Controllers
 
 		[HttpPost]
 		[Route("")]
-		public IHttpActionResult Invoke(PactMessageDescription messageDescription)
+		public IHttpActionResult Invoke(MessagePactDescription description)
 		{
 			var messageInvoker = new MessageInvoker(new Dictionary<string, Action>
 				{
-					{"Event With id 45D80D13-D5A2-48D7-8353-CBB4C0EAABF5 is in the database", InsertEventIntoDatabase}
+					{
+						"Event With id 45D80D13-D5A2-48D7-8353-CBB4C0EAABF5 is in the database",
+						InsertEventIntoDatabase
+					},
+					{
+						"there is one event with type 'DetailsView'",
+						EnsureOneDetailsViewEventExists
+					}
 				},
 				new Dictionary<string, Func<dynamic>>
 				{
@@ -28,8 +35,13 @@ namespace Provider.Api.Web.Tests.Controllers
 				}
 			);
 
-			var message = messageInvoker.Invoke(messageDescription);
+			var message = messageInvoker.Invoke(description);
 			return Ok(new { contents = message });
+		}
+
+		private void EnsureOneDetailsViewEventExists()
+		{
+			//ImplementProviderState
 		}
 
 		private void InsertEventIntoDatabase()

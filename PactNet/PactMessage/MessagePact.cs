@@ -9,7 +9,7 @@ using PactNet.PactMessage.Models;
 
 namespace PactNet.PactMessage
 {
-	public class PactMessageService : IPactMessage
+	public class MessagePact : IMessagePact
 	{
 		private IEnumerable<ProviderState> _providerStates;
 		private string _description;
@@ -19,13 +19,13 @@ namespace PactNet.PactMessage
 		private readonly Func<PactMessageHostConfig, IPactCoreHost> _coreHostFactory;
 		private readonly JsonSerializerSettings _jsonSerializerSettings;
 
-		public PactMessageService(JsonSerializerSettings jsonSerializerSettings = null) : this(new OutputBuilder(),
+		public MessagePact(JsonSerializerSettings jsonSerializerSettings = null) : this(new OutputBuilder(),
 			config => new PactCoreHost<PactMessageHostConfig>(config),
 			jsonSerializerSettings)
 		{
 		}
 
-		internal PactMessageService(IOutputBuilder outputBuilder,
+		internal MessagePact(IOutputBuilder outputBuilder,
 			Func<PactMessageHostConfig, IPactCoreHost> coreHostFactory,
 			JsonSerializerSettings jsonSerializerSettings)
 		{
@@ -36,7 +36,7 @@ namespace PactNet.PactMessage
 			_jsonSerializerSettings = jsonSerializerSettings;
 		}
 
-		public IPactMessage ExpectedToReceive(string description)
+		public IMessagePact ExpectedToReceive(string description)
 		{
 			if (string.IsNullOrEmpty(description))
 			{
@@ -48,14 +48,14 @@ namespace PactNet.PactMessage
 			return this;
 		}
 
-		public IPactMessage Given(IEnumerable<ProviderState> providerStates)
+		public IMessagePact Given(IEnumerable<ProviderState> providerStates)
 		{
 			_providerStates = providerStates ?? throw new ArgumentException("Please supply a non null or empty providerStates");
 
 			return this;
 		}
 
-		public IPactMessage With(Message message)
+		public IMessagePact With(Message message)
 		{
 			if (message == null)
 			{

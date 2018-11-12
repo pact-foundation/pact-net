@@ -2,6 +2,6 @@
 {
     public interface IMessageInvoker
     {
-        object Invoke(PactMessageDescription messageDescription);
+        object Invoke(MessagePactDescription description);
     }
 }

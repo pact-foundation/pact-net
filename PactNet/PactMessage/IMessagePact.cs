@@ -4,11 +4,11 @@ using PactNet.PactMessage.Models;
 
 namespace PactNet.PactMessage
 {
-    public interface IPactMessage 
+    public interface IMessagePact 
     {
-        IPactMessage ExpectedToReceive(string description);
-        IPactMessage Given(IEnumerable<ProviderState> providerStates);
-        IPactMessage With(Message message);
+        IMessagePact ExpectedToReceive(string description);
+        IMessagePact Given(IEnumerable<ProviderState> providerStates);
+        IMessagePact With(Message message);
         void VerifyConsumer(Action<string> messageHandler);
         IList<MessageInteraction> MessageInteractions { get; }
     }

@@ -14,9 +14,9 @@ namespace PactNet.Tests.Builders
 {
 	public class PactMessageBuilderTests
 	{
-		private static PactMessageBuilder GetSubject()
+		private static MessagePactBuilder GetSubject()
 		{
-			return new PactMessageBuilder();
+			return new MessagePactBuilder();
 		}
 
 		[Fact]
@@ -81,7 +81,7 @@ namespace PactNet.Tests.Builders
 		public void InitializePactMessage_WhenCalledWithoutConsumerNameSet_ThrowsInvalidOperationException()
 		{
 			//Arrange
-			var pactBuilder = new PactMessageBuilder();
+			var pactBuilder = new MessagePactBuilder();
 
 			//Act + Assert
 			Assert.Throws<InvalidOperationException>(() => pactBuilder.InitializePactMessage());
@@ -91,7 +91,7 @@ namespace PactNet.Tests.Builders
 		public void InitializePactMessage_WhenCalledWithoutProviderNameSet_ThrowsInvalidOperationException()
 		{
 			//Arrange
-			var pactBuilder = new PactMessageBuilder();
+			var pactBuilder = new MessagePactBuilder();
 
 			//Act + Assert
 			Assert.Throws<InvalidOperationException>(() => pactBuilder.ServiceConsumer("Test").InitializePactMessage());
@@ -101,7 +101,7 @@ namespace PactNet.Tests.Builders
 		public void Build_WhenCalledWithoutPactMessageInitialized_ThrowsInvalidOperationException()
 		{
 			//Arrange
-			var pactBuilder = new PactMessageBuilder();
+			var pactBuilder = new MessagePactBuilder();
 
 			//Act + Assert
 			Assert.Throws<InvalidOperationException>(() => pactBuilder.Build());
@@ -111,7 +111,7 @@ namespace PactNet.Tests.Builders
 		public void Build_WhenCalledAfterPactMessageIsInitialized_UpdatesAllMessageInteractions()
 		{
 			//Arrange
-			var pactMessage = Substitute.For<IPactMessage>();
+			var pactMessage = Substitute.For<IMessagePact>();
 			var updateCommand = Substitute.For<IPactMessageCommand>();
 
 			var expectedInteractions = new List<MessageInteraction>
@@ -128,7 +128,7 @@ namespace PactNet.Tests.Builders
 
 			pactMessage.MessageInteractions.Returns(expectedInteractions);
 
-			var pactBuilder = new PactMessageBuilder(new PactConfig(), new JsonSerializerSettings(), (consumer, provider) => pactMessage,
+			var pactBuilder = new MessagePactBuilder(new PactConfig(), new JsonSerializerSettings(), (consumer, provider) => pactMessage,
 				(consumer, provider, config, messageInteraction, hostFactory) => updateCommand);
 
 			pactBuilder.ServiceConsumer("Test consumer").HasPactWith("Test provider").InitializePactMessage();

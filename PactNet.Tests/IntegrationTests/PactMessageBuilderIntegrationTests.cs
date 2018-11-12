@@ -9,27 +9,27 @@ namespace PactNet.Tests.IntegrationTests
 {
 	public class PactMessageIntegrationTests : IClassFixture<IntegrationTestsMyConsumerPact>
 	{
-		private readonly IPactMessageBuilder _pactMessageBuilder;
-		private readonly IPactMessage _pactMessage;
+		private readonly IMessagePactBuilder _messagePactBuilder;
+		private readonly IMessagePact _messagePact;
 
 		public PactMessageIntegrationTests(IntegrationTestsMyConsumerPact integrationTestsMyConsumer)
 		{
-			_pactMessageBuilder = integrationTestsMyConsumer.PactBuilder;
-			_pactMessage = integrationTestsMyConsumer.PactMessage;
+			_messagePactBuilder = integrationTestsMyConsumer.MessagePactBuilder;
+			_messagePact = integrationTestsMyConsumer.MessagePact;
 		}
 
 		[Fact]
 		public void Build_NoMessages_VerificationSucceeds()
 		{
-			_pactMessage.VerifyConsumer(MessageHandler);
+			_messagePact.VerifyConsumer(MessageHandler);
 
-			_pactMessageBuilder.Build();
+			_messagePactBuilder.Build();
 		}
 
 		[Fact]
 		public void Build_SubscriberCannotHandleMessage_PactFailureExceptionIsThrown()
 		{
-			Assert.Throws<PactFailureException>(() => _pactMessage.
+			Assert.Throws<PactFailureException>(() => _messagePact.
 				ExpectedToReceive("A message that the subscriber can't handle")
 				.With(new Message
 				{

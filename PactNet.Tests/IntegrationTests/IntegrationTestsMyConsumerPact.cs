@@ -6,8 +6,8 @@ namespace PactNet.Tests.IntegrationTests
 {
 	public class IntegrationTestsMyConsumerPact
 	{
-		public IPactMessageBuilder PactBuilder { get; }
-		public IPactMessage PactMessage { get; }
+		public IMessagePactBuilder MessagePactBuilder { get; }
+		public IMessagePact MessagePact { get; }
 
 		public IntegrationTestsMyConsumerPact()
 		{
@@ -19,11 +19,11 @@ namespace PactNet.Tests.IntegrationTests
 					new ConsoleOutput()
 				}
 			};
-			PactBuilder = new PactMessageBuilder(pactConfig)
+			MessagePactBuilder = new MessagePactBuilder(pactConfig)
 				.HasPactWith("Integration Tests")
 				.ServiceConsumer("My Consumer");
 
-			PactMessage = PactBuilder.InitializePactMessage();
+			MessagePact = MessagePactBuilder.InitializePactMessage();
 		}
 	}
 }
