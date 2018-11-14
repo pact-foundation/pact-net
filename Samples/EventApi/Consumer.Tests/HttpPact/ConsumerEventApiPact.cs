@@ -18,7 +18,7 @@ namespace Consumer.Tests.HttpPact
         {
             PactBuilder = new PactBuilder(new PactConfig
             {
-                SpecificationVersion = "2.0.0",
+                SpecificationVersion = "3.0.0",
                 LogDir = $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}logs{Path.DirectorySeparatorChar}",
                 PactDir = $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}"
             })

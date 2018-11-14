@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Input;
-using Newtonsoft.Json;
 using NSubstitute;
-using NSubstitute.Core;
-using PactNet.Core;
 using PactNet.PactMessage;
 using PactNet.PactMessage.Host.Commands;
 using PactNet.PactMessage.Models;
@@ -12,7 +8,7 @@ using Xunit;
 
 namespace PactNet.Tests.Builders
 {
-	public class PactMessageBuilderTests
+	public class MessagePactBuilderTests
 	{
 		private static MessagePactBuilder GetSubject()
 		{
@@ -113,6 +109,7 @@ namespace PactNet.Tests.Builders
 			//Arrange
 			var pactMessage = Substitute.For<IMessagePact>();
 			var updateCommand = Substitute.For<IPactMessageCommand>();
+			var pactsMerger = Substitute.For<IPactMerger>();
 
 			var expectedInteractions = new List<MessageInteraction>
 				{
@@ -128,8 +125,9 @@ namespace PactNet.Tests.Builders
 
 			pactMessage.MessageInteractions.Returns(expectedInteractions);
 
-			var pactBuilder = new MessagePactBuilder(new PactConfig(), new JsonSerializerSettings(), (consumer, provider) => pactMessage,
-				(consumer, provider, config, messageInteraction, hostFactory) => updateCommand);
+			var pactBuilder = new MessagePactBuilder(new PactConfig(), (consumer, provider) => pactMessage,
+				(consumer, provider, config, messageInteraction, hostFactory) => updateCommand,
+				pactsMerger);
 
 			pactBuilder.ServiceConsumer("Test consumer").HasPactWith("Test provider").InitializePactMessage();
 
@@ -138,6 +136,44 @@ namespace PactNet.Tests.Builders
 
 			//Assert
 			updateCommand.Received(2).Execute();
+		}
+
+		[Fact]
+		public void Build_WhenCalledAfterPactMessageIsInitialized_DeletesOldInteractions()
+		{
+			//Arrange
+			var pactMessage = Substitute.For<IMessagePact>();
+			var updateCommand = Substitute.For<IPactMessageCommand>();
+			var pactsMerger = Substitute.For<IPactMerger>();
+
+			const string consumer = "Test consumer";
+			const string provider = "Test provider";
+
+			var expectedInteractions = new List<MessageInteraction>
+			{
+				new MessageInteraction
+				{
+					Description = "First message"
+				},
+				new MessageInteraction
+				{
+					Description = "Second message"
+				},
+			};
+
+			pactMessage.MessageInteractions.Returns(expectedInteractions);
+
+			var pactBuilder = new MessagePactBuilder(new PactConfig(), (testConsumer, testProvider) => pactMessage,
+				(testConsumer, testProvider, config, messageInteraction, hostFactory) => updateCommand,
+				pactsMerger);
+
+			pactBuilder.ServiceConsumer(consumer).HasPactWith(provider).InitializePactMessage();
+
+			//Act
+			pactBuilder.Build();
+
+			//Assert
+			pactsMerger.Received().DeleteUnexpectedInteractions(pactMessage.MessageInteractions, "Test consumer", "Test provider");
 		}
 	}
 }

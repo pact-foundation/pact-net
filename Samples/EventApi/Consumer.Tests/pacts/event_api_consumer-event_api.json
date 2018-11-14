@@ -1,207 +1,87 @@
 {
-  "consumer": {
-    "name": "Event API Consumer"
-  },
-  "provider": {
-    "name": "Event API"
-  },
-  "interactions": [
-    {
-      "description": "a request to retrieve all events",
-      "providerState": "there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'",
-      "request": {
-        "method": "get",
-        "path": "/events",
-        "headers": {
-          "Accept": "application/json",
-          "Authorization": "Bearer SomeValidAuthToken"
-        }
-      },
-      "response": {
-        "status": 200,
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": [
-          {
-            "eventId": "45d80d13-d5a2-48d7-8353-cbb4c0eaabf5",
-            "timestamp": "2014-06-30T01:37:41.0660548",
-            "eventType": "SearchView"
-          },
-          {
-            "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
-            "timestamp": "2014-06-30T01:37:52.2618864",
-            "eventType": "DetailsView"
-          },
-          {
-            "eventId": "3e83a96b-2a0c-49b1-9959-26df23f83aeb",
-            "timestamp": "2014-06-30T01:38:00.8518952",
-            "eventType": "SearchView"
-          }
-        ]
-      }
+    "consumer": {
+        "name": "Event API Consumer"
     },
-    {
-      "description": "a request to check the api status",
-      "request": {
-        "method": "get",
-        "path": "/stats/status",
-        "headers": {
-          "Accept": "application/json"
-        }
-      },
-      "response": {
-        "status": 200,
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": {
-          "alive": true,
-          "_links": {
-            "uptime": {
-              "href": "/stats/uptime"
+    "provider": {
+        "name": "Event API"
+    },
+    "interactions": [
+        {
+            "description": "first test request",
+            "providerState": "a test state'",
+            "request": {
+                "method": "get",
+                "path": "/events/83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
+                "headers": {
+                    "Accept": "application/json"
+                },
+                "matchingRules": {
+                    "$.path": {
+                        "match": "regex",
+                        "regex": "^\\/events\\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                    }
+                }
+            },
+            "response": {
+                "status": 200,
+                "headers": {
+                    "Content-Type": "application/json; charset=utf-8",
+                    "Server": "RubyServer"
+                },
+                "body": {
+                    "test": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9"
+                },
+                "matchingRules": {
+                    "$.headers.Server": {
+                        "match": "type"
+                    },
+                    "$.body.eventId": {
+                        "match": "regex",
+                        "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                    }
+                }
             }
-          }
-        }
-      }
-    },
-    {
-      "description": "a request to retrieve events with type 'DetailsView'",
-      "providerState": "there is one event with type 'DetailsView'",
-      "request": {
-        "method": "get",
-        "path": "/events",
-        "query": "type=DetailsView",
-        "headers": {
-          "Accept": "application/json"
         },
-        "matchingRules": {
-          "$.query": {
-            "match": "regex",
-            "regex": "^type=(DetailsView|SearchView)$"
-          }
+        {
+            "description": "second test request",
+            "providerState": "a test request'",
+            "request": {
+                "method": "get",
+                "path": "/events/83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
+                "headers": {
+                    "Accept": "application/json"
+                },
+                "matchingRules": {
+                    "$.path": {
+                        "match": "regex",
+                        "regex": "^\\/events\\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                    }
+                }
+            },
+            "response": {
+                "status": 200,
+                "headers": {
+                    "Content-Type": "application/json; charset=utf-8",
+                    "Server": "RubyServer"
+                },
+                "body": {
+                    "test": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9"
+                },
+                "matchingRules": {
+                    "$.headers.Server": {
+                        "match": "type"
+                    },
+                    "$.body.eventId": {
+                        "match": "regex",
+                        "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                    }
+                }
+            }
         }
-      },
-      "response": {
-        "status": 200,
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": [
-          {
-            "eventType": "DetailsView"
-          }
-        ]
-      }
-    },
-    {
-      "description": "a request to retrieve event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
-      "providerState": "there is an event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
-      "request": {
-        "method": "get",
-        "path": "/events/83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
-        "headers": {
-          "Accept": "application/json"
-        },
-        "matchingRules": {
-          "$.path": {
-            "match": "regex",
-            "regex": "^\\/events\\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-          }
+    ],
+    "metadata": {
+        "pactSpecification": {
+            "version": "3.0.0"
         }
-      },
-      "response": {
-        "status": 200,
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8",
-          "Server": "RubyServer"
-        },
-        "body": {
-          "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
-          "eventType": "DetailsView",
-          "timestamp": "2018-11-12T15:17:50.6860007Z"
-        },
-        "matchingRules": {
-          "$.headers.Server": {
-            "match": "type"
-          },
-          "$.body.eventId": {
-            "match": "regex",
-            "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-          },
-          "$.body.eventType": {
-            "match": "type"
-          },
-          "$.body.timestamp": {
-            "match": "regex",
-            "regex": "^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|0[1-9]|[1-2][0-9])T(2[0-3]|[0-1][0-9]):([0-5][0-9]):([0-5][0-9])(\\.[0-9]+)?(Z|[+-](?:2[0-3]|[0-1][0-9]):[0-5][0-9])?$"
-          }
-        }
-      }
-    },
-    {
-      "description": "a request to retrieve all events with no authorization",
-      "providerState": "there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'",
-      "request": {
-        "method": "get",
-        "path": "/events",
-        "headers": {
-          "Accept": "application/json"
-        }
-      },
-      "response": {
-        "status": 401,
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": {
-          "message": "Authorization has been denied for this request."
-        }
-      }
-    },
-    {
-      "description": "a request to check the api uptime",
-      "request": {
-        "method": "get",
-        "path": "/stats/uptime",
-        "headers": {
-          "Accept": "application/json"
-        }
-      },
-      "response": {
-        "status": 200,
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": {
-          "upSince": "2014-06-27T23:51:12Z"
-        }
-      }
-    },
-    {
-      "description": "a request to create a new event",
-      "request": {
-        "method": "post",
-        "path": "/events",
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": {
-          "eventId": "1f587704-2dcc-4313-a233-7b62b4b469db",
-          "timestamp": "2011-07-01T01:41:03.0000000",
-          "eventType": "DetailsView"
-        }
-      },
-      "response": {
-        "status": 201,
-        "headers": {
-        }
-      }
     }
-  ],
-  "metadata": {
-    "pactSpecification": {
-      "version": "2.0.0"
-    }
-  }
 }

@@ -1,0 +1,87 @@
+{
+    "consumer": {
+        "name": "Event API Consumer"
+    },
+    "provider": {
+        "name": "Event API"
+    },
+    "interactions": [
+        {
+            "description": "first test request",
+            "providerState": "a test state'",
+            "request": {
+                "method": "get",
+                "path": "/events/83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
+                "headers": {
+                    "Accept": "application/json"
+                },
+                "matchingRules": {
+                    "$.path": {
+                        "match": "regex",
+                        "regex": "^\\/events\\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                    }
+                }
+            },
+            "response": {
+                "status": 200,
+                "headers": {
+                    "Content-Type": "application/json; charset=utf-8",
+                    "Server": "RubyServer"
+                },
+                "body": {
+                    "test": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9"
+                },
+                "matchingRules": {
+                    "$.headers.Server": {
+                        "match": "type"
+                    },
+                    "$.body.eventId": {
+                        "match": "regex",
+                        "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                    }
+                }
+            }
+        },
+        {
+            "description": "second test request",
+            "providerState": "a test request'",
+            "request": {
+                "method": "get",
+                "path": "/events/83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
+                "headers": {
+                    "Accept": "application/json"
+                },
+                "matchingRules": {
+                    "$.path": {
+                        "match": "regex",
+                        "regex": "^\\/events\\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                    }
+                }
+            },
+            "response": {
+                "status": 200,
+                "headers": {
+                    "Content-Type": "application/json; charset=utf-8",
+                    "Server": "RubyServer"
+                },
+                "body": {
+                    "test": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9"
+                },
+                "matchingRules": {
+                    "$.headers.Server": {
+                        "match": "type"
+                    },
+                    "$.body.eventId": {
+                        "match": "regex",
+                        "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                    }
+                }
+            }
+        }
+    ],
+    "metadata": {
+        "pactSpecification": {
+            "version": "3.0.0"
+        }
+    }
+}

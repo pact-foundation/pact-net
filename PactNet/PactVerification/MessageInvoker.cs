@@ -7,9 +7,9 @@ namespace PactNet.PactVerification
 	public class MessageInvoker : IMessageInvoker
 	{
 		private readonly IDictionary<string, Action> _providerStates;
-		private readonly IDictionary<string, Func<dynamic>> _messagePublishers;
+		private readonly IDictionary<string, Func<object>> _messagePublishers;
 
-		public MessageInvoker(IDictionary<string, Action> providerStates, IDictionary<string, Func<dynamic>> messagePublishers)
+		public MessageInvoker(IDictionary<string, Action> providerStates, IDictionary<string, Func<object>> messagePublishers)
 		{
 			_providerStates = providerStates;
 			_messagePublishers = messagePublishers;

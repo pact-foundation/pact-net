@@ -6,6 +6,7 @@ using PactNet.PactMessage;
 using PactNet.PactMessage.Host;
 using PactNet.PactMessage.Host.Commands;
 using PactNet.PactMessage.Models;
+using PactNet.Wrappers;
 using static System.String;
 
 namespace PactNet
@@ -17,6 +18,7 @@ namespace PactNet
 		public PactConfig PactConfig { get; }
 		private readonly Func<string, string, IMessagePact> _pactMessageFactory;
 		private readonly Func<string, string, PactConfig, MessageInteraction, Func<PactMessageHostConfig, IPactCoreHost>, IPactMessageCommand> _updateCommandFactory;
+		private readonly IPactMerger _pactMerger;
 		private IMessagePact _messagePact;
 
 		public MessagePactBuilder()
@@ -31,18 +33,21 @@ namespace PactNet
 		}
 
 		public MessagePactBuilder(PactConfig config, JsonSerializerSettings jsonSerializerSettings)
-			: this(config, jsonSerializerSettings, (consumerName, providerName) => new MessagePact(jsonSerializerSettings),
-				(consumer, provider, pactConfig, messageInteraction, coreHostFactory)
-					=> new UpdateCommand(consumer, provider, pactConfig, messageInteraction, coreHostFactory, jsonSerializerSettings))
+			: this(config, (consumerName, providerName) => new MessagePact(jsonSerializerSettings),
+				(consumer, provider, pactConfig, messageInteraction, coreHostFactory) => new UpdateCommand(consumer, provider, pactConfig, messageInteraction, coreHostFactory, jsonSerializerSettings),
+				new PactMerger(config.PactDir, new FileWrapper()))
 		{
 		}
 
-		internal MessagePactBuilder(PactConfig pactConfig, JsonSerializerSettings jsonSerializerSettings, Func<string, string, IMessagePact> pactMessageFactory,
-			Func<string, string, PactConfig, MessageInteraction, Func<PactMessageHostConfig, IPactCoreHost>, IPactMessageCommand> updateCommandFactory)
+		internal MessagePactBuilder(PactConfig pactConfig, 
+			Func<string, string, IMessagePact> pactMessageFactory,
+			Func<string, string, PactConfig, MessageInteraction, Func<PactMessageHostConfig, IPactCoreHost>, IPactMessageCommand> updateCommandFactory, 
+			IPactMerger pactMerger)
 		{
 			PactConfig = pactConfig;
 			_pactMessageFactory = pactMessageFactory;
 			_updateCommandFactory = updateCommandFactory;
+			_pactMerger = pactMerger;
 		}
 
 		public IMessagePactBuilder ServiceConsumer(string consumerName)
@@ -81,6 +86,8 @@ namespace PactNet
 				var updateCommand =_updateCommandFactory(ConsumerName, ProviderName, PactConfig, messageInteraction, config => new PactCoreHost<PactMessageHostConfig>(config));
 				updateCommand.Execute();
 			}
+
+			_pactMerger.DeleteUnexpectedInteractions(_messagePact.MessageInteractions, ConsumerName, ProviderName);
 		}
 
 		public IMessagePact InitializePactMessage()

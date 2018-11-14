@@ -26,7 +26,7 @@ namespace Provider.Api.Web.Tests.Controllers
 						EnsureOneDetailsViewEventExists
 					}
 				},
-				new Dictionary<string, Func<dynamic>>
+				new Dictionary<string, Func<object>>
 				{
 					{"Event with id 45D80D13-D5A2-48D7-8353-CBB4C0EAABF5 updated", () => _eventsPublisher.GetEventUpdatedMessage(new Event
 					{
