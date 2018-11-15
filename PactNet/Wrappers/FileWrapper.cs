@@ -18,5 +18,10 @@ namespace PactNet.Wrappers
 		{
 			return File.ReadAllText(path);
 		}
+
+		public void WriteAllText(string path, string contents)
+		{
+			File.WriteAllText(path, contents);
+		}
 	}
 }

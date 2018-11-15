@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using PactNet.Models;
 using PactNet.Wrappers;
 
@@ -31,9 +30,9 @@ namespace PactNet
 
 		}
 
-		private string GetPactFilePath(string pactDir, string consumer, string provider)
+		private static string GetPactFilePath(string pactDir, string consumer, string provider)
 		{
-			var filePath = _pactDir + @"\" + consumer.Replace(" ", "_") + "_" + provider.Replace(" ", "_");
+			var filePath = pactDir + @"\" + consumer.Replace(" ", "_") + "_" + provider.Replace(" ", "_") + ".txt";
 			return filePath;
 		}
 	}
