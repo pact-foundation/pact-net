@@ -25,26 +25,6 @@
           "message": "Authorization has been denied for this request."
         }
       }
-    },
-	{
-      "description": "a second test request",
-      "providerState": "test state",
-      "request": {
-        "method": "get",
-        "path": "/events",
-        "headers": {
-          "Accept": "application/json"
-        }
-      },
-      "response": {
-        "status": 200,
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": {
-          "message": "Test."
-        }
-      }
     }
   ],
   "metadata": {

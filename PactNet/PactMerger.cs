@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 using PactNet.Models;
 using PactNet.Wrappers;
 
@@ -9,6 +10,8 @@ namespace PactNet
 	{
 		private readonly IFileWrapper _fileWrapper;
 		private readonly string _pactDir;
+		private const string InteractionsPropName = "interactions";
+		private const string MessagesPropName = "messages";
 
 		public PactMerger(string pactDir, IFileWrapper fileWrapper)
 		{
@@ -27,7 +30,18 @@ namespace PactNet
 				return;
 			}
 
+			var fileContent = _fileWrapper.ReadAllText(pactFilePath);
+			var jsonObject = JObject.Parse(fileContent);
 
+			if (jsonObject.Property(InteractionsPropName).HasValues)
+			{
+				var existingInteractions = jsonObject.Property(InteractionsPropName).Value.Where(x => x.P)
+			}
+
+			if (jsonObject.Property(MessagesPropName).HasValues)
+			{
+				
+			}
 		}
 
 		private static string GetPactFilePath(string pactDir, string consumer, string provider)
