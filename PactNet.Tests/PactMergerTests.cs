@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Newtonsoft.Json.Linq;
 using NSubstitute;
+using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
 using PactNet.PactMessage.Models;
 using PactNet.Wrappers;
@@ -11,7 +13,7 @@ namespace PactNet.Tests
 	public class PactMergerTests
 	{
 		private IFileWrapper _fileWrapper;
-		private const string PactDir = @"..\PactExamples";
+		private const string PactDir = @"..\..\..\PactExamples";
 
 		private PactMerger GetSubject()
 		{
@@ -70,28 +72,24 @@ namespace PactNet.Tests
 			_fileWrapper.Exists(PactDir + @"\Test_consumer_Test_provider_V1.txt").Returns(x => true);
 			_fileWrapper.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V1.txt").Returns(x => File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V1.txt"));
 
-			var expectedInterations = new List<MessageInteraction>
+			var expectedInterations = new List<ProviderServiceInteraction>
 			{
-				new MessageInteraction
+				new ProviderServiceInteraction
 				{
 					Description = "Test interaction",
 					ProviderState = "Test state",
-					Contents = new
+					Request = new ProviderServiceRequest
 					{
-						Test = "Test"
+						Body = "Test"
 					}
 				},
-				new MessageInteraction
+				new ProviderServiceInteraction
 				{
-					Description = "Test interaction",
-					ProviderStates = new[]
+					Description = "a second test request",
+					ProviderState = "Test state",
+					Request = new ProviderServiceRequest
 					{
-						new ProviderState {Name = "Test 2"},
-						new ProviderState {Name = "Test 3"}
-					},
-					Contents = new
-					{
-						Test = "Test"
+						Body = "Test"
 					}
 				},
 			};
@@ -112,28 +110,24 @@ namespace PactNet.Tests
 			_fileWrapper.Exists(PactDir + @"\Test_consumer_Test_provider_V2.txt").Returns(x => true);
 			_fileWrapper.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V2.txt").Returns(x => File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V2.txt"));
 
-			var expectedInterations = new List<MessageInteraction>
+			var expectedInterations = new List<ProviderServiceInteraction>
 			{
-				new MessageInteraction
+				new ProviderServiceInteraction
 				{
 					Description = "Test interaction",
 					ProviderState = "Test state",
-					Contents = new
+					Request = new ProviderServiceRequest
 					{
-						Test = "Test"
+						Body = "Test"
 					}
 				},
-				new MessageInteraction
+				new ProviderServiceInteraction
 				{
-					Description = "Test interaction",
-					ProviderStates = new[]
+					Description = "a second test request",
+					ProviderState = "Test state",
+					Request = new ProviderServiceRequest
 					{
-						new ProviderState {Name = "Test 2"},
-						new ProviderState {Name = "Test 3"}
-					},
-					Contents = new
-					{
-						Test = "Test"
+						Body = "Test"
 					}
 				},
 			};
@@ -151,41 +145,37 @@ namespace PactNet.Tests
 		{
 			//Arrange
 			var pactMerger = GetSubject();
-			_fileWrapper.Exists(PactDir + @"\Test_consumer_Test_provider_V3_Multiple_states.txt").Returns(x => true);
-			_fileWrapper.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V3_Multiple_states.txt").Returns(x => File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V3_Multiple_states.txt"));
+			_fileWrapper.Exists(PactDir + @"\Test_consumer_Test_provider_V3.txt").Returns(x => true);
+			_fileWrapper.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V3.txt").Returns(x => File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V3.txt"));
 
-			var expectedInterations = new List<MessageInteraction>
+			var expectedInterations = new List<ProviderServiceInteraction>
 			{
-				new MessageInteraction
+				new ProviderServiceInteraction
 				{
 					Description = "Test interaction",
 					ProviderState = "Test state",
-					Contents = new
+					Request = new ProviderServiceRequest
 					{
-						Test = "Test"
+						Body = "Test"
 					}
 				},
-				new MessageInteraction
+				new ProviderServiceInteraction
 				{
-					Description = "Test interaction",
-					ProviderStates = new[]
+					Description = "a second test request",
+					ProviderState = "Test state",
+					Request = new ProviderServiceRequest
 					{
-						new ProviderState {Name = "Test 2"},
-						new ProviderState {Name = "Test 3"}
-					},
-					Contents = new
-					{
-						Test = "Test"
+						Body = "Test"
 					}
 				},
 			};
 
 			//Act
-			pactMerger.DeleteUnexpectedInteractions(expectedInterations, "Test consumer", "Test provider V3 Multiple states");
+			pactMerger.DeleteUnexpectedInteractions(expectedInterations, "Test consumer", "Test provider V3");
 
 			//Assert
-			_fileWrapper.DidNotReceive().Delete(PactDir + @"\Test_consumer_Test_provider_V3_Multiple_states.txt");
-			_fileWrapper.DidNotReceive().WriteAllText(PactDir + @"\Test_consumer_Test_provider_V3_Multiple_states.txt", Arg.Any<string>());
+			_fileWrapper.DidNotReceive().Delete(PactDir + @"\Test_consumer_Test_provider_V3.txt");
+			_fileWrapper.DidNotReceive().WriteAllText(PactDir + @"\Test_consumer_Test_provider_V3.txt", Arg.Any<string>());
 		}
 
 		[Fact]
@@ -200,7 +190,7 @@ namespace PactNet.Tests
 			{
 				new MessageInteraction
 				{
-					Description = "Test interaction",
+					Description = "Test message",
 					ProviderState = "Test state",
 					Contents = new
 					{
@@ -209,7 +199,7 @@ namespace PactNet.Tests
 				},
 				new MessageInteraction
 				{
-					Description = "Test interaction",
+					Description = "Test message 2",
 					ProviderStates = new[]
 					{
 						new ProviderState {Name = "Test 2"},
@@ -238,28 +228,24 @@ namespace PactNet.Tests
 			_fileWrapper.Exists(PactDir + @"\Test_consumer_Test_provider_V1.txt").Returns(x => true);
 			_fileWrapper.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V1.txt").Returns(x => File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V1.txt"));
 
-			var expectedInterations = new List<MessageInteraction>
+			var expectedInterations = new List<Interaction>
 			{
-				new MessageInteraction
+				new ProviderServiceInteraction
 				{
 					Description = "Test interaction",
 					ProviderState = "Test state",
-					Contents = new
+					Request = new ProviderServiceRequest
 					{
-						Test = "Test"
+						Body = "Test"
 					}
 				},
-				new MessageInteraction
+				new ProviderServiceInteraction
 				{
-					Description = "Test interaction",
-					ProviderStates = new[]
+					Description = "Test interaction 2",
+					ProviderState = "Test state",
+					Request = new ProviderServiceRequest
 					{
-						new ProviderState {Name = "Test 2"},
-						new ProviderState {Name = "Test 3"}
-					},
-					Contents = new
-					{
-						Test = "Test"
+						Body = "Test"
 					}
 				},
 			};
@@ -269,7 +255,132 @@ namespace PactNet.Tests
 
 			//Assert
 			_fileWrapper.DidNotReceive().Delete(PactDir + @"\Test_consumer_Test_provider_V1.txt");
-			_fileWrapper.Received().WriteAllText(PactDir + @"\Test_consumer_Test_provider_V1.txt", File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V1_After_Merge.txt"));
+			var expectedContent = File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V1_After_Merge.txt");
+			var jobject = JObject.Parse(expectedContent);
+			_fileWrapper.Received().WriteAllText(PactDir + @"\Test_consumer_Test_provider_V1.txt", jobject.ToString());
+		}
+
+		[Fact]
+		public void DeleteUnexpectedInteractions_UnexpectedInteractionsInFileV2_ReomvesThemFromFile()
+		{
+			//Arrange
+			var pactMerger = GetSubject();
+			_fileWrapper.Exists(PactDir + @"\Test_consumer_Test_provider_V2.txt").Returns(x => true);
+			_fileWrapper.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V2.txt").Returns(x => File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V2.txt"));
+
+			var expectedInterations = new List<Interaction>
+			{
+				new ProviderServiceInteraction
+				{
+					Description = "Test interaction",
+					ProviderState = "Test state",
+					Request = new ProviderServiceRequest
+					{
+						Body = "Test"
+					}
+				},
+				new ProviderServiceInteraction
+				{
+					Description = "Test interaction 2",
+					ProviderState = "Test state",
+					Request = new ProviderServiceRequest
+					{
+						Body = "Test"
+					}
+				},
+			};
+
+			//Act
+			pactMerger.DeleteUnexpectedInteractions(expectedInterations, "Test consumer", "Test provider V2");
+
+			//Assert
+			_fileWrapper.DidNotReceive().Delete(PactDir + @"\Test_consumer_Test_provider_V2.txt");
+
+			var expectedContent = File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V2_After_Merge.txt");
+			var jobject = JObject.Parse(expectedContent);
+			_fileWrapper.Received().WriteAllText(PactDir + @"\Test_consumer_Test_provider_V2.txt", jobject.ToString());
+		}
+
+		[Fact]
+		public void DeleteUnexpectedInteractions_UnexpectedInteractionsInFileV3_ReomvesThemFromFile()
+		{
+			//Arrange
+			var pactMerger = GetSubject();
+			_fileWrapper.Exists(PactDir + @"\Test_consumer_Test_provider_V3.txt").Returns(x => true);
+			_fileWrapper.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V3.txt").Returns(x => File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V3.txt"));
+
+			var expectedInterations = new List<Interaction>
+			{
+				new ProviderServiceInteraction
+				{
+					Description = "Test interaction",
+					ProviderState = "Test state",
+					Request = new ProviderServiceRequest
+					{
+						Body = "Test"
+					}
+				},
+				new ProviderServiceInteraction
+				{
+					Description = "Test interaction 2",
+					ProviderState = "Test state",
+					Request = new ProviderServiceRequest
+					{
+						Body = "Test"
+					}
+				},
+			};
+
+			//Act
+			pactMerger.DeleteUnexpectedInteractions(expectedInterations, "Test consumer", "Test provider V3");
+
+			//Assert
+			_fileWrapper.DidNotReceive().Delete(PactDir + @"\Test_consumer_Test_provider_V3.txt");
+
+			var expectedContent = File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V3_After_Merge.txt");
+			var jobject = JObject.Parse(expectedContent);
+			_fileWrapper.Received().WriteAllText(PactDir + @"\Test_consumer_Test_provider_V3.txt", jobject.ToString());
+		}
+
+		[Fact]
+		public void DeleteUnexpectedInteractions_UnexpectedInteractionsInFileV3WithMessages_ReomvesThemFromFile()
+		{
+			//Arrange
+			var pactMerger = GetSubject();
+			_fileWrapper.Exists(PactDir + @"\Test_consumer_Test_provider_V3_Messages.txt").Returns(x => true);
+			_fileWrapper.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V3_Messages.txt").Returns(x => File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V3_Messages.txt"));
+
+			var expectedInterations = new List<MessageInteraction>
+			{
+				new MessageInteraction
+				{
+					Description = "Test message",
+					ProviderState = "Test state",
+					Contents = new
+					{
+						Test = "Test"
+					}
+				},
+				new MessageInteraction
+				{
+					Description = "Test interaction 2",
+					ProviderState = "Test state",
+					Contents = new
+					{
+						Test = "Test"
+					}
+				},
+			};
+
+			//Act
+			pactMerger.DeleteUnexpectedInteractions(expectedInterations, "Test consumer", "Test provider V3 Messages");
+
+			//Assert
+			_fileWrapper.DidNotReceive().Delete(PactDir + @"\Test_consumer_Test_provider_V3_Messages.txt");
+
+			var expectedContent = File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V3_Messages_After_Merge.txt");
+			var jobject = JObject.Parse(expectedContent);
+			_fileWrapper.Received().WriteAllText(PactDir + @"\Test_consumer_Test_provider_V3_Messages.txt", jobject.ToString());
 		}
 	}
 }

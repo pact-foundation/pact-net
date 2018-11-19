@@ -29,30 +29,6 @@
       },
       "metaData": {
       }
-    },
-	{
-      "description": "Test message 2",
-      "providerStates": [
-        {
-          "name": "Test event exists"
-        }
-      ],
-      "contents": {
-        "eventId": "45d80d13-d5a2-48d7-8353-cbb4c0eaabf5"
-      },
-      "matchingRules": {
-        "body": {
-          "$.eventId": {
-            "matchers": [
-              {
-                "match": "type"
-              }
-            ]
-          }
-        }
-      },
-      "metaData": {
-      }
     }
   ],
   "metadata": {

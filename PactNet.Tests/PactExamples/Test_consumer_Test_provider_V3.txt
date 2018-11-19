@@ -1,14 +1,14 @@
 {
   "consumer": {
-    "name": "Test consumer"
+    "name": "Event API Consumer"
   },
   "provider": {
-    "name": "Test provider"
+    "name": "Event API"
   },
   "interactions": [
     {
       "description": "Test interaction",
-      "providerState": "test state",
+      "providerState": "there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'",
       "request": {
         "method": "get",
         "path": "/events",
@@ -28,7 +28,7 @@
     },
 	{
       "description": "a second test request",
-      "providerState": "test state",
+      "providerState": "there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5'",
       "request": {
         "method": "get",
         "path": "/events",
@@ -49,7 +49,7 @@
   ],
   "metadata": {
     "pactSpecification": {
-      "version": "2.0.0"
+      "version": "3.0.0"
     }
   }
 }

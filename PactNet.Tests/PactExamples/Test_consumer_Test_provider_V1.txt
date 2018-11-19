@@ -7,7 +7,7 @@
   },
   "interactions": [
     {
-      "description": "a test request",
+      "description": "Test interaction",
       "providerState": "test state",
       "request": {
         "method": "get",
