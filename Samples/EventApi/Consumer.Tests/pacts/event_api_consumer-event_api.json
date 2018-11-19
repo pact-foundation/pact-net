@@ -1,87 +1,60 @@
 {
-    "consumer": {
-        "name": "Event API Consumer"
-    },
-    "provider": {
-        "name": "Event API"
-    },
-    "interactions": [
-        {
-            "description": "first test request",
-            "providerState": "a test state'",
-            "request": {
-                "method": "get",
-                "path": "/events/83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
-                "headers": {
-                    "Accept": "application/json"
-                },
-                "matchingRules": {
-                    "$.path": {
-                        "match": "regex",
-                        "regex": "^\\/events\\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                    }
-                }
-            },
-            "response": {
-                "status": 200,
-                "headers": {
-                    "Content-Type": "application/json; charset=utf-8",
-                    "Server": "RubyServer"
-                },
-                "body": {
-                    "test": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9"
-                },
-                "matchingRules": {
-                    "$.headers.Server": {
-                        "match": "type"
-                    },
-                    "$.body.eventId": {
-                        "match": "regex",
-                        "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                    }
-                }
-            }
+  "consumer": {
+    "name": "Event API Consumer"
+  },
+  "provider": {
+    "name": "Event API"
+  },
+  "interactions": [
+    {
+      "description": "a request to retrieve event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
+      "providerState": "there is an event with id '83f9262f-28f1-4703-ab1a-8cfd9e8249c9'",
+      "request": {
+        "method": "get",
+        "path": "/events/83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
+        "headers": {
+          "Accept": "application/json"
         },
-        {
-            "description": "second test request",
-            "providerState": "a test request'",
-            "request": {
-                "method": "get",
-                "path": "/events/83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
-                "headers": {
-                    "Accept": "application/json"
-                },
-                "matchingRules": {
-                    "$.path": {
-                        "match": "regex",
-                        "regex": "^\\/events\\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                    }
-                }
-            },
-            "response": {
-                "status": 200,
-                "headers": {
-                    "Content-Type": "application/json; charset=utf-8",
-                    "Server": "RubyServer"
-                },
-                "body": {
-                    "test": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9"
-                },
-                "matchingRules": {
-                    "$.headers.Server": {
-                        "match": "type"
-                    },
-                    "$.body.eventId": {
-                        "match": "regex",
-                        "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                    }
-                }
-            }
+        "matchingRules": {
+          "$.path": {
+            "match": "regex",
+            "regex": "^\\/events\\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+          }
         }
-    ],
-    "metadata": {
-        "pactSpecification": {
-            "version": "3.0.0"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8",
+          "Server": "RubyServer"
+        },
+        "body": {
+          "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
+          "eventType": "DetailsView",
+          "timestamp": "2018-11-19T14:18:52.3255447Z"
+        },
+        "matchingRules": {
+          "$.headers.Server": {
+            "match": "type"
+          },
+          "$.body.eventId": {
+            "match": "regex",
+            "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+          },
+          "$.body.eventType": {
+            "match": "type"
+          },
+          "$.body.timestamp": {
+            "match": "regex",
+            "regex": "^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|0[1-9]|[1-2][0-9])T(2[0-3]|[0-1][0-9]):([0-5][0-9]):([0-5][0-9])(\\.[0-9]+)?(Z|[+-](?:2[0-3]|[0-1][0-9]):[0-5][0-9])?$"
+          }
         }
+      }
     }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  }
 }

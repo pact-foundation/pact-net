@@ -50,7 +50,7 @@ namespace PactNet
 
 		private static string GetPactFilePath(string pactDir, string consumer, string provider)
 		{
-			var filePath = pactDir + @"\" + consumer.Replace(" ", "_") + "_" + provider.Replace(" ", "_") + ".txt";
+			var filePath = $"{pactDir}{consumer.Replace(" ", "_")}-{provider.Replace(" ", "_")}.json";
 			return filePath;
 		}
 

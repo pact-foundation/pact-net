@@ -13,7 +13,7 @@ namespace PactNet.Tests
 	public class PactMergerTests
 	{
 		private IFileWrapper _fileWrapper;
-		private const string PactDir = @"..\..\..\PactExamples";
+		private const string PactDir = @"..\..\..\PactExamples\";
 
 		private PactMerger GetSubject()
 		{
@@ -27,7 +27,7 @@ namespace PactNet.Tests
 		{
 			//Arrange
 			var pactMerger = GetSubject();
-			_fileWrapper.Exists(PactDir + @"\Test_consumer_Test_provider_V1.txt").Returns(x => false);
+			_fileWrapper.Exists(PactDir + @"Test_consumer-Test_provider_V1.json").Returns(x => false);
 
 			//Act
 			pactMerger.DeleteUnexpectedInteractions(null, "Test consumer", "Test provider V1");
@@ -41,13 +41,13 @@ namespace PactNet.Tests
 		{
 			//Arrange
 			var pactMerger = GetSubject();
-			_fileWrapper.Exists(PactDir + @"\Test_consumer_Test_provider_V1.txt").Returns(x => true);
+			_fileWrapper.Exists(PactDir + @"Test_consumer-Test_provider_V1.json").Returns(x => true);
 
 			//Act
 			pactMerger.DeleteUnexpectedInteractions(null, "Test consumer", "Test provider V1");
 
 			//Assert
-			_fileWrapper.Received().Delete(PactDir + @"\Test_consumer_Test_provider_V1.txt");
+			_fileWrapper.Received().Delete(PactDir + @"Test_consumer-Test_provider_V1.json");
 		}
 
 		[Fact]
@@ -55,13 +55,13 @@ namespace PactNet.Tests
 		{
 			//Arrange
 			var pactMerger = GetSubject();
-			_fileWrapper.Exists(PactDir + @"\Test_consumer_Test_provider_V1.txt").Returns(x => true);
+			_fileWrapper.Exists(PactDir + @"Test_consumer-Test_provider_V1.json").Returns(x => true);
 
 			//Act
 			pactMerger.DeleteUnexpectedInteractions(new Interaction[0], "Test consumer", "Test provider V1");
 
 			//Assert
-			_fileWrapper.Received().Delete(PactDir + @"\Test_consumer_Test_provider_V1.txt");
+			_fileWrapper.Received().Delete(PactDir + @"Test_consumer-Test_provider_V1.json");
 		}
 
 		[Fact]
@@ -69,8 +69,8 @@ namespace PactNet.Tests
 		{
 			//Arrange
 			var pactMerger = GetSubject();
-			_fileWrapper.Exists(PactDir + @"\Test_consumer_Test_provider_V1.txt").Returns(x => true);
-			_fileWrapper.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V1.txt").Returns(x => File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V1.txt"));
+			_fileWrapper.Exists(PactDir + @"Test_consumer-Test_provider_V1.json").Returns(x => true);
+			_fileWrapper.ReadAllText(PactDir + @"Test_consumer-Test_provider_V1.json").Returns(x => File.ReadAllText(PactDir + @"Test_consumer-Test_provider_V1.json"));
 
 			var expectedInterations = new List<ProviderServiceInteraction>
 			{
@@ -98,8 +98,8 @@ namespace PactNet.Tests
 			pactMerger.DeleteUnexpectedInteractions(expectedInterations, "Test consumer", "Test provider V1");
 
 			//Assert
-			_fileWrapper.DidNotReceive().Delete(PactDir + @"\Test_consumer_Test_provider_V1.txt");
-			_fileWrapper.DidNotReceive().WriteAllText(PactDir + @"\Test_consumer_Test_provider_V1.txt", Arg.Any<string>());
+			_fileWrapper.DidNotReceive().Delete(PactDir + @"Test_consumer-Test_provider_V1.json");
+			_fileWrapper.DidNotReceive().WriteAllText(PactDir + @"Test_consumer-Test_provider_V1.json", Arg.Any<string>());
 		}
 
 		[Fact]
@@ -107,8 +107,8 @@ namespace PactNet.Tests
 		{
 			//Arrange
 			var pactMerger = GetSubject();
-			_fileWrapper.Exists(PactDir + @"\Test_consumer_Test_provider_V2.txt").Returns(x => true);
-			_fileWrapper.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V2.txt").Returns(x => File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V2.txt"));
+			_fileWrapper.Exists(PactDir + @"Test_consumer-Test_provider_V2.json").Returns(x => true);
+			_fileWrapper.ReadAllText(PactDir + @"Test_consumer-Test_provider_V2.json").Returns(x => File.ReadAllText(PactDir + @"Test_consumer-Test_provider_V2.json"));
 
 			var expectedInterations = new List<ProviderServiceInteraction>
 			{
@@ -136,8 +136,8 @@ namespace PactNet.Tests
 			pactMerger.DeleteUnexpectedInteractions(expectedInterations, "Test consumer", "Test provider V2");
 
 			//Assert
-			_fileWrapper.DidNotReceive().Delete(PactDir + @"\Test_consumer_Test_provider_V2.txt");
-			_fileWrapper.DidNotReceive().WriteAllText(PactDir + @"\Test_consumer_Test_provider_V2.txt", Arg.Any<string>());
+			_fileWrapper.DidNotReceive().Delete(PactDir + @"Test_consumer-Test_provider_V2.json");
+			_fileWrapper.DidNotReceive().WriteAllText(PactDir + @"Test_consumer-Test_provider_V2.json", Arg.Any<string>());
 		}
 
 		[Fact]	
@@ -145,8 +145,8 @@ namespace PactNet.Tests
 		{
 			//Arrange
 			var pactMerger = GetSubject();
-			_fileWrapper.Exists(PactDir + @"\Test_consumer_Test_provider_V3.txt").Returns(x => true);
-			_fileWrapper.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V3.txt").Returns(x => File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V3.txt"));
+			_fileWrapper.Exists(PactDir + @"Test_consumer-Test_provider_V3.json").Returns(x => true);
+			_fileWrapper.ReadAllText(PactDir + @"Test_consumer-Test_provider_V3.json").Returns(x => File.ReadAllText(PactDir + @"Test_consumer-Test_provider_V3.json"));
 
 			var expectedInterations = new List<ProviderServiceInteraction>
 			{
@@ -174,8 +174,8 @@ namespace PactNet.Tests
 			pactMerger.DeleteUnexpectedInteractions(expectedInterations, "Test consumer", "Test provider V3");
 
 			//Assert
-			_fileWrapper.DidNotReceive().Delete(PactDir + @"\Test_consumer_Test_provider_V3.txt");
-			_fileWrapper.DidNotReceive().WriteAllText(PactDir + @"\Test_consumer_Test_provider_V3.txt", Arg.Any<string>());
+			_fileWrapper.DidNotReceive().Delete(PactDir + @"Test_consumer-Test_provider_V3.json");
+			_fileWrapper.DidNotReceive().WriteAllText(PactDir + @"Test_consumer-Test_provider_V3.json", Arg.Any<string>());
 		}
 
 		[Fact]
@@ -183,8 +183,8 @@ namespace PactNet.Tests
 		{
 			//Arrange
 			var pactMerger = GetSubject();
-			_fileWrapper.Exists(PactDir + @"\Test_consumer_Test_provider_V3_Messages.txt").Returns(x => true);
-			_fileWrapper.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V3_Messages.txt").Returns(x => File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V3_Messages.txt"));
+			_fileWrapper.Exists(PactDir + @"Test_consumer-Test_provider_V3_Messages.json").Returns(x => true);
+			_fileWrapper.ReadAllText(PactDir + @"Test_consumer-Test_provider_V3_Messages.json").Returns(x => File.ReadAllText(PactDir + @"Test_consumer-Test_provider_V3_Messages.json"));
 
 			var expectedInterations = new List<MessageInteraction>
 			{
@@ -216,8 +216,8 @@ namespace PactNet.Tests
 			pactMerger.DeleteUnexpectedInteractions(expectedInterations, "Test consumer", "Test provider V3 Messages");
 
 			//Assert
-			_fileWrapper.DidNotReceive().Delete(PactDir + @"\Test_consumer_Test_provider_V3_Messages.txt");
-			_fileWrapper.DidNotReceive().WriteAllText(PactDir + @"\Test_consumer_Test_provider_V3_Messages.txt", Arg.Any<string>());
+			_fileWrapper.DidNotReceive().Delete(PactDir + @"Test_consumer-Test_provider_V3_Messages.json");
+			_fileWrapper.DidNotReceive().WriteAllText(PactDir + @"Test_consumer-Test_provider_V3_Messages.json", Arg.Any<string>());
 		}
 
 		[Fact]
@@ -225,8 +225,8 @@ namespace PactNet.Tests
 		{
 			//Arrange
 			var pactMerger = GetSubject();
-			_fileWrapper.Exists(PactDir + @"\Test_consumer_Test_provider_V1.txt").Returns(x => true);
-			_fileWrapper.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V1.txt").Returns(x => File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V1.txt"));
+			_fileWrapper.Exists(PactDir + @"Test_consumer-Test_provider_V1.json").Returns(x => true);
+			_fileWrapper.ReadAllText(PactDir + @"Test_consumer-Test_provider_V1.json").Returns(x => File.ReadAllText(PactDir + @"Test_consumer-Test_provider_V1.json"));
 
 			var expectedInterations = new List<Interaction>
 			{
@@ -254,10 +254,10 @@ namespace PactNet.Tests
 			pactMerger.DeleteUnexpectedInteractions(expectedInterations, "Test consumer", "Test provider V1");
 
 			//Assert
-			_fileWrapper.DidNotReceive().Delete(PactDir + @"\Test_consumer_Test_provider_V1.txt");
-			var expectedContent = File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V1_After_Merge.txt");
+			_fileWrapper.DidNotReceive().Delete(PactDir + @"Test_consumer-Test_provider_V1.json");
+			var expectedContent = File.ReadAllText(PactDir + @"Test_consumer-Test_provider_V1_After_Merge.json");
 			var jobject = JObject.Parse(expectedContent);
-			_fileWrapper.Received().WriteAllText(PactDir + @"\Test_consumer_Test_provider_V1.txt", jobject.ToString());
+			_fileWrapper.Received().WriteAllText(PactDir + @"Test_consumer-Test_provider_V1.json", jobject.ToString());
 		}
 
 		[Fact]
@@ -265,8 +265,8 @@ namespace PactNet.Tests
 		{
 			//Arrange
 			var pactMerger = GetSubject();
-			_fileWrapper.Exists(PactDir + @"\Test_consumer_Test_provider_V2.txt").Returns(x => true);
-			_fileWrapper.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V2.txt").Returns(x => File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V2.txt"));
+			_fileWrapper.Exists(PactDir + @"Test_consumer-Test_provider_V2.json").Returns(x => true);
+			_fileWrapper.ReadAllText(PactDir + @"Test_consumer-Test_provider_V2.json").Returns(x => File.ReadAllText(PactDir + @"Test_consumer-Test_provider_V2.json"));
 
 			var expectedInterations = new List<Interaction>
 			{
@@ -294,11 +294,11 @@ namespace PactNet.Tests
 			pactMerger.DeleteUnexpectedInteractions(expectedInterations, "Test consumer", "Test provider V2");
 
 			//Assert
-			_fileWrapper.DidNotReceive().Delete(PactDir + @"\Test_consumer_Test_provider_V2.txt");
+			_fileWrapper.DidNotReceive().Delete(PactDir + @"Test_consumer-Test_provider_V2.json");
 
-			var expectedContent = File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V2_After_Merge.txt");
+			var expectedContent = File.ReadAllText(PactDir + @"Test_consumer-Test_provider_V2_After_Merge.json");
 			var jobject = JObject.Parse(expectedContent);
-			_fileWrapper.Received().WriteAllText(PactDir + @"\Test_consumer_Test_provider_V2.txt", jobject.ToString());
+			_fileWrapper.Received().WriteAllText(PactDir + @"Test_consumer-Test_provider_V2.json", jobject.ToString());
 		}
 
 		[Fact]
@@ -306,8 +306,8 @@ namespace PactNet.Tests
 		{
 			//Arrange
 			var pactMerger = GetSubject();
-			_fileWrapper.Exists(PactDir + @"\Test_consumer_Test_provider_V3.txt").Returns(x => true);
-			_fileWrapper.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V3.txt").Returns(x => File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V3.txt"));
+			_fileWrapper.Exists(PactDir + @"Test_consumer-Test_provider_V3.json").Returns(x => true);
+			_fileWrapper.ReadAllText(PactDir + @"Test_consumer-Test_provider_V3.json").Returns(x => File.ReadAllText(PactDir + @"Test_consumer-Test_provider_V3.json"));
 
 			var expectedInterations = new List<Interaction>
 			{
@@ -335,11 +335,11 @@ namespace PactNet.Tests
 			pactMerger.DeleteUnexpectedInteractions(expectedInterations, "Test consumer", "Test provider V3");
 
 			//Assert
-			_fileWrapper.DidNotReceive().Delete(PactDir + @"\Test_consumer_Test_provider_V3.txt");
+			_fileWrapper.DidNotReceive().Delete(PactDir + @"Test_consumer-Test_provider_V3.json");
 
-			var expectedContent = File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V3_After_Merge.txt");
+			var expectedContent = File.ReadAllText(PactDir + @"Test_consumer-Test_provider_V3_After_Merge.json");
 			var jobject = JObject.Parse(expectedContent);
-			_fileWrapper.Received().WriteAllText(PactDir + @"\Test_consumer_Test_provider_V3.txt", jobject.ToString());
+			_fileWrapper.Received().WriteAllText(PactDir + @"Test_consumer-Test_provider_V3.json", jobject.ToString());
 		}
 
 		[Fact]
@@ -347,8 +347,8 @@ namespace PactNet.Tests
 		{
 			//Arrange
 			var pactMerger = GetSubject();
-			_fileWrapper.Exists(PactDir + @"\Test_consumer_Test_provider_V3_Messages.txt").Returns(x => true);
-			_fileWrapper.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V3_Messages.txt").Returns(x => File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V3_Messages.txt"));
+			_fileWrapper.Exists(PactDir + @"Test_consumer-Test_provider_V3_Messages.json").Returns(x => true);
+			_fileWrapper.ReadAllText(PactDir + @"Test_consumer-Test_provider_V3_Messages.json").Returns(x => File.ReadAllText(PactDir + @"Test_consumer-Test_provider_V3_Messages.json"));
 
 			var expectedInterations = new List<MessageInteraction>
 			{
@@ -376,11 +376,11 @@ namespace PactNet.Tests
 			pactMerger.DeleteUnexpectedInteractions(expectedInterations, "Test consumer", "Test provider V3 Messages");
 
 			//Assert
-			_fileWrapper.DidNotReceive().Delete(PactDir + @"\Test_consumer_Test_provider_V3_Messages.txt");
+			_fileWrapper.DidNotReceive().Delete(PactDir + @"Test_consumer-Test_provider_V3_Messages.json");
 
-			var expectedContent = File.ReadAllText(PactDir + @"\Test_consumer_Test_provider_V3_Messages_After_Merge.txt");
+			var expectedContent = File.ReadAllText(PactDir + @"Test_consumer-Test-provider_V3_Messages_After_Merge.json");
 			var jobject = JObject.Parse(expectedContent);
-			_fileWrapper.Received().WriteAllText(PactDir + @"\Test_consumer_Test_provider_V3_Messages.txt", jobject.ToString());
+			_fileWrapper.Received().WriteAllText(PactDir + @"Test_consumer-Test_provider_V3_Messages.json", jobject.ToString());
 		}
 	}
 }
