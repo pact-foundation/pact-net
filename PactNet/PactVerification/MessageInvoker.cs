@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using PactNet.PactMessage.Models;
 
 namespace PactNet.PactVerification
@@ -17,7 +18,7 @@ namespace PactNet.PactVerification
 
 		public object Invoke(MessagePactDescription description)
 		{
-			if (description.ProviderStates != null)
+			if (description.ProviderStates.Any(x => x.Name != null))
 			{
 				SetUpProviderStates(description.ProviderStates);
 			}

@@ -7,7 +7,7 @@ namespace PactNet.Tests.Core
 	{
 		private PactMessageHostConfig GetSubject(string arguments = "help", PactConfig pactConfig = null)
 		{
-			return new PactMessageHostConfig(pactConfig ?? new PactConfig(), arguments, true);
+			return new PactMessageHostConfig(pactConfig ?? new PactConfig(), arguments);
 		}
 
 		[Fact]

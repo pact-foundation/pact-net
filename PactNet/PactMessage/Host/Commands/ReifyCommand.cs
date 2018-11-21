@@ -32,9 +32,10 @@ namespace PactNet.PactMessage.Host.Commands
 			{
 				Outputters = new List<IOutput>{_outputBuilder},
 			};
-			var coreHostConfig = new PactMessageHostConfig(pactConfig, arguments, true);
+			var coreHostConfig = new PactMessageHostConfig(pactConfig, arguments);
 
-	        _coreHostFactory(coreHostConfig).Start();
-        }   
+			var coreHost = _coreHostFactory(coreHostConfig);
+	        coreHost.Start();
+		}   
     }
 }

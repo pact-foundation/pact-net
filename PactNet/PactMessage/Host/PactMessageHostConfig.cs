@@ -14,14 +14,14 @@ namespace PactNet.PactMessage.Host
         public IEnumerable<IOutput> Outputters { get; }
         public IDictionary<string, string> Environment { get; }
 
-        public PactMessageHostConfig(PactConfig pactConfig, string arguments, bool waitForExit)
+        public PactMessageHostConfig(PactConfig pactConfig, string arguments)
         {
             Outputters = pactConfig.Outputters;
             Script = "pact-message";
 
             Arguments = arguments;
 
-            WaitForExit = waitForExit;
+            WaitForExit = true;
         }
     }
 }

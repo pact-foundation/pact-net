@@ -4,6 +4,7 @@ using NSubstitute;
 using PactNet.PactMessage;
 using PactNet.PactMessage.Host.Commands;
 using PactNet.PactMessage.Models;
+using PactNet.Wrappers;
 using Xunit;
 
 namespace PactNet.Tests.Builders
@@ -109,7 +110,7 @@ namespace PactNet.Tests.Builders
 			//Arrange
 			var pactMessage = Substitute.For<IMessagePact>();
 			var updateCommand = Substitute.For<IPactMessageCommand>();
-			var pactsMerger = Substitute.For<IPactMerger>();
+			var fileWrapper = Substitute.For<IFileWrapper>();
 
 			var expectedInteractions = new List<MessageInteraction>
 				{
@@ -126,8 +127,7 @@ namespace PactNet.Tests.Builders
 			pactMessage.MessageInteractions.Returns(expectedInteractions);
 
 			var pactBuilder = new MessagePactBuilder(new PactConfig(), (consumer, provider) => pactMessage,
-				(consumer, provider, config, messageInteraction, hostFactory) => updateCommand,
-				pactsMerger);
+				(consumer, provider, config, messageInteraction, hostFactory) => updateCommand, fileWrapper);
 
 			pactBuilder.ServiceConsumer("Test consumer").HasPactWith("Test provider").InitializePactMessage();
 
@@ -139,12 +139,12 @@ namespace PactNet.Tests.Builders
 		}
 
 		[Fact]
-		public void Build_WhenCalledAfterPactMessageIsInitialized_DeletesOldInteractions()
+		public void Build_WhenCalledAfterPactMessageIsInitialized_DeletesOldInteractionsFile()
 		{
 			//Arrange
 			var pactMessage = Substitute.For<IMessagePact>();
 			var updateCommand = Substitute.For<IPactMessageCommand>();
-			var pactsMerger = Substitute.For<IPactMerger>();
+			var fileWrapper = Substitute.For<IFileWrapper>();
 
 			const string consumer = "Test consumer";
 			const string provider = "Test provider";
@@ -163,9 +163,14 @@ namespace PactNet.Tests.Builders
 
 			pactMessage.MessageInteractions.Returns(expectedInteractions);
 
-			var pactBuilder = new MessagePactBuilder(new PactConfig(), (testConsumer, testProvider) => pactMessage,
+			var pactConfig = new PactConfig
+			{
+				PactDir = @"..\Test\"
+			};
+
+			var pactBuilder = new MessagePactBuilder(pactConfig, (testConsumer, testProvider) => pactMessage,
 				(testConsumer, testProvider, config, messageInteraction, hostFactory) => updateCommand,
-				pactsMerger);
+				fileWrapper);
 
 			pactBuilder.ServiceConsumer(consumer).HasPactWith(provider).InitializePactMessage();
 
@@ -173,7 +178,7 @@ namespace PactNet.Tests.Builders
 			pactBuilder.Build();
 
 			//Assert
-			pactsMerger.Received().DeleteUnexpectedInteractions(pactMessage.MessageInteractions, "Test consumer", "Test provider");
+			fileWrapper.Received().Delete(@"..\Test\Test_consumer-Test_provider.json");
 		}
 	}
 }

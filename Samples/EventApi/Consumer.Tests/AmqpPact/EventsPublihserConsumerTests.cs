@@ -25,9 +25,12 @@ namespace Consumer.Tests.AmqpPact
 			{
 				new ProviderState
 				{
-					Name = "there is one event with type 'DetailsView'"
+					Name = "there is one event with type 'DetailsView'",
 				},
-
+				new ProviderState
+				{
+					Name = "Event With id 45D80D13-D5A2-48D7-8353-CBB4C0EAABF5 is in the database"
+				}
 			};
 
 			_messagePact.ExpectedToReceive("Event with id 45D80D13-D5A2-48D7-8353-CBB4C0EAABF5 updated")
@@ -43,7 +46,7 @@ namespace Consumer.Tests.AmqpPact
 		}
 
 		[Fact]
-		public void EventUpdated_MultipleEventsAreSavedInTheDatabase_GetsEventId()
+		public void EventUpdated_NoProviderState_GetsEventId()
 		{
 			var eventsSubscriber = new EventsSubscriber();
 

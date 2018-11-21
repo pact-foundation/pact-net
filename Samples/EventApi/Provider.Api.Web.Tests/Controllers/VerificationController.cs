@@ -22,7 +22,7 @@ namespace Provider.Api.Web.Tests.Controllers
 						InsertEventIntoDatabase
 					},
 					{
-						"there is one event with type 'DetailsView'",
+						"there is one event with type DetailsView",
 						EnsureOneDetailsViewEventExists
 					}
 				},

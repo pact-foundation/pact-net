@@ -18,7 +18,7 @@ namespace PactNet
 		public PactConfig PactConfig { get; }
 		private readonly Func<string, string, IMessagePact> _pactMessageFactory;
 		private readonly Func<string, string, PactConfig, MessageInteraction, Func<PactMessageHostConfig, IPactCoreHost>, IPactMessageCommand> _updateCommandFactory;
-		private readonly IPactMerger _pactMerger;
+		private IFileWrapper _fileWrapper;
 		private IMessagePact _messagePact;
 
 		public MessagePactBuilder()
@@ -35,19 +35,20 @@ namespace PactNet
 		public MessagePactBuilder(PactConfig config, JsonSerializerSettings jsonSerializerSettings)
 			: this(config, (consumerName, providerName) => new MessagePact(jsonSerializerSettings),
 				(consumer, provider, pactConfig, messageInteraction, coreHostFactory) => new UpdateCommand(consumer, provider, pactConfig, messageInteraction, coreHostFactory, jsonSerializerSettings),
-				new PactMerger(config.PactDir, new FileWrapper()))
+				new FileWrapper()
+				)
 		{
 		}
 
 		internal MessagePactBuilder(PactConfig pactConfig, 
 			Func<string, string, IMessagePact> pactMessageFactory,
 			Func<string, string, PactConfig, MessageInteraction, Func<PactMessageHostConfig, IPactCoreHost>, IPactMessageCommand> updateCommandFactory, 
-			IPactMerger pactMerger)
+			IFileWrapper fileWrapper)
 		{
 			PactConfig = pactConfig;
 			_pactMessageFactory = pactMessageFactory;
 			_updateCommandFactory = updateCommandFactory;
-			_pactMerger = pactMerger;
+			_fileWrapper = fileWrapper;
 		}
 
 		public IMessagePactBuilder ServiceConsumer(string consumerName)
@@ -81,13 +82,20 @@ namespace PactNet
 				throw new InvalidOperationException("The Pact file could not be saved because the pact message is not initialised. Please initialise by calling the CreatePactMessage() method.");
 			}
 
+			//If a file with the previous interactions exists, it has to be deleted so unexpected interactions would not be in the new file
+			_fileWrapper.Delete(GetPactFilePath(PactConfig.PactDir, ConsumerName, ProviderName));
+
 			foreach (var messageInteraction in _messagePact.MessageInteractions)
 			{
 				var updateCommand =_updateCommandFactory(ConsumerName, ProviderName, PactConfig, messageInteraction, config => new PactCoreHost<PactMessageHostConfig>(config));
 				updateCommand.Execute();
 			}
 
-			_pactMerger.DeleteUnexpectedInteractions(_messagePact.MessageInteractions, ConsumerName, ProviderName);
+		}
+		private static string GetPactFilePath(string pactDir, string consumerName, string producerName)
+		{
+			var filePath = $"{pactDir}{consumerName.Replace(" ", "_")}-{producerName.Replace(" ", "_")}.json";
+			return filePath;
 		}
 
 		public IMessagePact InitializePactMessage()
