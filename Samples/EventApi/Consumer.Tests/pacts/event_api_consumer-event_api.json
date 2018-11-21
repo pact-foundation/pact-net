@@ -119,7 +119,7 @@
         "body": {
           "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
           "eventType": "DetailsView",
-          "timestamp": "2018-11-21T13:08:38.8565453Z"
+          "timestamp": "2018-11-21T13:13:37.3744810Z"
         },
         "matchingRules": {
           "$.headers.Server": {

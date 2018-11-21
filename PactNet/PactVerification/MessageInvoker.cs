@@ -18,7 +18,7 @@ namespace PactNet.PactVerification
 
 		public object Invoke(MessagePactDescription description)
 		{
-			if (description.ProviderStates.Any(x => x.Name != null))
+			if (description?.ProviderStates != null && description.ProviderStates.Any(x => x.Name != null))
 			{
 				SetUpProviderStates(description.ProviderStates);
 			}
@@ -29,11 +29,9 @@ namespace PactNet.PactVerification
 		{
 			foreach (var providerState in messageDescriptionProviderStates)
 			{
-				var actualAction = _providerStates[providerState.Name];
-
-				if (actualAction == null)
+				if (!_providerStates.TryGetValue(providerState.Name, out var actualAction))
 				{
-					throw new ArgumentException($"The provider state that was supplyed: {providerState.Name} could not be found.");
+					throw new PactFailureException($"The provider state that was supplyed: {providerState.Name} could not be found.");
 				}
 
 				actualAction();

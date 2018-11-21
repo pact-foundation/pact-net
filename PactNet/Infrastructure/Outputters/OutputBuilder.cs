@@ -11,11 +11,14 @@ namespace PactNet.Infrastructure.Outputters
             _outputBuilder.AppendLine(line);
         }
 
-        public string Output => _outputBuilder.ToString();
-
         public void Clear()
         {
             _outputBuilder.Clear();
         }
+
+	    public override string ToString()
+	    {
+			return _outputBuilder.ToString();
+		}
     }
 }

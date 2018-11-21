@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using PactNet.Core;
 using PactNet.Infrastructure.Outputters;
@@ -50,7 +51,14 @@ namespace PactNet.PactMessage
 
 		public IMessagePact Given(IEnumerable<ProviderState> providerStates)
 		{
-			_providerStates = providerStates ?? throw new ArgumentException("Please supply a non null or empty providerStates");
+			var providerStatesArray = providerStates?.ToArray();
+
+			if (providerStatesArray == null || !providerStatesArray.Any())
+			{
+				throw new ArgumentException("Please supply a non null or empty providerStates");
+			}
+
+			_providerStates = providerStatesArray;
 
 			return this;
 		}
@@ -60,6 +68,11 @@ namespace PactNet.PactMessage
 			if (message == null)
 			{
 				throw new ArgumentException("Please supply a non null message");
+			}
+
+			if (string.IsNullOrEmpty(_description))
+			{
+				throw new InvalidOperationException("description has not been set, please supply using the ExpectedToReceive method.");
 			}
 
 			MessageInteractions.Add(new MessageInteraction
@@ -79,7 +92,7 @@ namespace PactNet.PactMessage
 				var reifyAction = new ReifyCommand(messageInteraction, _outputBuilder, _coreHostFactory, _jsonSerializerSettings);
 				reifyAction.Execute();
 
-				var message = _outputBuilder.Output;
+				var message = _outputBuilder.ToString();
 				if (message.StartsWith("ERROR"))
 				{
 					throw new PactFailureException($"Could not parse message. core error: {message}");
