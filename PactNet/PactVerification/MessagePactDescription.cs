@@ -6,6 +6,6 @@ namespace PactNet.PactVerification
 	public class MessagePactDescription
 	{
 		public string Description { get; set; }
-		public List<ProviderState> ProviderStates { get; set; }
+		public IEnumerable<ProviderState> ProviderStates { get; set; }
 	}
 }

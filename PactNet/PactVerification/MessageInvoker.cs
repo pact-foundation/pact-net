@@ -38,13 +38,11 @@ namespace PactNet.PactVerification
 			}
 		}
 
-		private object GetMessageInteraction(MessagePactDescription description)
+		private object GetMessageInteraction(MessagePactDescription messageDescription)
 		{
-			var actualPublisher = _messagePublishers[description.Description];
-
-			if (actualPublisher == null)
+			if (!_messagePublishers.TryGetValue(messageDescription.Description, out var actualPublisher))
 			{
-				throw new ArgumentException($"The publisher action for this message description was not supplyed: {description.Description}");
+				throw new PactFailureException($"The publisher action for this message description was not supplyed: {messageDescription.Description}");
 			}
 
 			return actualPublisher();
