@@ -13,7 +13,7 @@ namespace Consumer.Tests.AmqpPact
 
 		public EventsPublihserConsumerTests(MessageConsumerEventPublisherPact data)
 		{
-			_messagePact = data.MessagePact;
+			_messagePact = data.MessagePactBuilder.InitializePactMessage();
 		}
 
 		[Fact]

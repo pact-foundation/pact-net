@@ -9,24 +9,6 @@
     {
       "description": "Event with id 45D80D13-D5A2-48D7-8353-CBB4C0EAABF5 updated",
       "providerStates": [
-
-      ],
-      "contents": {
-        "eventId": "45d80d13-d5a2-48d7-8353-cbb4c0eaabf5"
-      },
-      "matchingRules": {
-        "body": {
-          "$.eventId": {
-            "match": "type"
-          }
-        }
-      },
-      "metaData": {
-      }
-    },
-    {
-      "description": "Event with id 45D80D13-D5A2-48D7-8353-CBB4C0EAABF5 updated",
-      "providerStates": [
         {
           "name": "there is one event with type DetailsView",
           "params": null

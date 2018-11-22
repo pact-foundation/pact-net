@@ -10,7 +10,6 @@ namespace Consumer.Tests.AmqpPact
 		public IMessagePactBuilder MessagePactBuilder { get; }
 		public IMessagePact MessagePact { get; }
 
-
 		public MessageConsumerEventPublisherPact()
 		{
 			MessagePactBuilder = new MessagePactBuilder(new PactConfig
@@ -21,8 +20,6 @@ namespace Consumer.Tests.AmqpPact
 			})
 				.ServiceConsumer("Event API Message Consumer")
 				.HasPactWith("Event API");
-
-			MessagePact = MessagePactBuilder.InitializePactMessage();
 		}
 
 		public void Dispose()
