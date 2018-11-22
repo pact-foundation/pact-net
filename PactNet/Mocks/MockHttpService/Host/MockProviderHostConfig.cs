@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using PactNet.Core;
 using PactNet.Extensions;
 using PactNet.Infrastructure.Outputters;
 using PactNet.Models;
 
-namespace PactNet.Core
+namespace PactNet.Mocks.MockHttpService.Host
 {
     internal class MockProviderHostConfig : IPactCoreHostConfig
     {

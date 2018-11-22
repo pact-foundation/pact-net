@@ -8,223 +8,223 @@ using static System.String;
 
 namespace PactNet.Mocks.MockHttpService
 {
-    public class MockProviderService : IMockProviderService
-    {
-        private readonly Func<Uri, IHttpHost> _hostFactory;
-        private IHttpHost _host;
-        private readonly AdminHttpClient _adminHttpClient;
+	public class MockProviderService : IMockProviderService
+	{
+		private readonly Func<Uri, IHttpHost> _hostFactory;
+		private IHttpHost _host;
+		private readonly AdminHttpClient _adminHttpClient;
 
-        private string _providerState;
-        private string _description;
-        private ProviderServiceRequest _request;
-        private ProviderServiceResponse _response;
+		private string _providerState;
+		private string _description;
+		private ProviderServiceRequest _request;
+		private ProviderServiceResponse _response;
 
-        public Uri BaseUri { get; }
+		public Uri BaseUri { get; }
 
-        internal MockProviderService(
-            Func<Uri, IHttpHost> hostFactory,
-            int port,
-            bool enableSsl,
-            Func<Uri, AdminHttpClient> adminHttpClientFactory)
-        {
-            _hostFactory = hostFactory;
-            BaseUri = new Uri( $"{(enableSsl ? "https" : "http")}://localhost:{port}");
-            _adminHttpClient = adminHttpClientFactory(BaseUri);
-        }
+		internal MockProviderService(
+			Func<Uri, IHttpHost> hostFactory,
+			int port,
+			bool enableSsl,
+			Func<Uri, AdminHttpClient> adminHttpClientFactory)
+		{
+			_hostFactory = hostFactory;
+			BaseUri = new Uri($"{(enableSsl ? "https" : "http")}://localhost:{port}");
+			_adminHttpClient = adminHttpClientFactory(BaseUri);
+		}
 
-        public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress)
-            : this(port, enableSsl, consumerName, providerName, config, ipAddress, null, null, null)
-        {
-        }
+		public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress)
+			: this(port, enableSsl, consumerName, providerName, config, ipAddress, null, null, null)
+		{
+		}
 
-        public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress, Newtonsoft.Json.JsonSerializerSettings jsonSerializerSettings)
-            : this(port, enableSsl, consumerName, providerName, config, ipAddress, jsonSerializerSettings, null, null)
-        {
-        }
-        
-        public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress, Newtonsoft.Json.JsonSerializerSettings jsonSerializerSettings, string sslCert, string sslKey)
-            : this(
-                baseUri => new RubyHttpHost(baseUri, consumerName, providerName, config, ipAddress, sslCert, sslKey),
-                port,
-                enableSsl,
-                baseUri => new AdminHttpClient(baseUri, jsonSerializerSettings))
-        {
-        }
+		public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress, Newtonsoft.Json.JsonSerializerSettings jsonSerializerSettings)
+			: this(port, enableSsl, consumerName, providerName, config, ipAddress, jsonSerializerSettings, null, null)
+		{
+		}
 
-        public IMockProviderService Given(string providerState)
-        {
-            if (IsNullOrEmpty(providerState))
-            {
-                throw new ArgumentException("Please supply a non null or empty providerState");
-            }
+		public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress, Newtonsoft.Json.JsonSerializerSettings jsonSerializerSettings, string sslCert, string sslKey)
+			: this(
+				baseUri => new RubyHttpHost(baseUri, consumerName, providerName, config, ipAddress, sslCert, sslKey),
+				port,
+				enableSsl,
+				baseUri => new AdminHttpClient(baseUri, jsonSerializerSettings))
+		{
+		}
 
-            _providerState = providerState;
+		public IMockProviderService Given(string providerState)
+		{
+			if (IsNullOrEmpty(providerState))
+			{
+				throw new ArgumentException("Please supply a non null or empty providerState");
+			}
 
-            return this;
-        }
+			_providerState = providerState;
 
-        public IMockProviderService UponReceiving(string description)
-        {
-            if (IsNullOrEmpty(description))
-            {
-                throw new ArgumentException("Please supply a non null or empty description");
-            }
+			return this;
+		}
 
-            _description = description;
+		public IMockProviderService UponReceiving(string description)
+		{
+			if (IsNullOrEmpty(description))
+			{
+				throw new ArgumentException("Please supply a non null or empty description");
+			}
 
-            return this;
-        }
+			_description = description;
 
-        public IMockProviderService With(ProviderServiceRequest request)
-        {
-            if (request == null)
-            {
-                throw new ArgumentException("Please supply a non null request");
-            }
+			return this;
+		}
 
-            if (request.Method == HttpVerb.NotSet)
-            {
-                throw new ArgumentException("Please supply a request Method");
-            }
+		public IMockProviderService With(ProviderServiceRequest request)
+		{
+			if (request == null)
+			{
+				throw new ArgumentException("Please supply a non null request");
+			}
 
-            if (!IsContentTypeSpecifiedForBody(request))
-            {
-                throw new ArgumentException("Please supply a Content-Type request header");
-            }
+			if (request.Method == HttpVerb.NotSet)
+			{
+				throw new ArgumentException("Please supply a request Method");
+			}
 
-            _request = request;
+			if (!IsContentTypeSpecifiedForBody(request))
+			{
+				throw new ArgumentException("Please supply a Content-Type request header");
+			}
 
-            return this;
-        }
+			_request = request;
 
-        public void WillRespondWith(ProviderServiceResponse response)
-        {
-            if (response == null)
-            {
-                throw new ArgumentException("Please supply a non null response");
-            }
+			return this;
+		}
 
-            if (response.Status <= 0)
-            {
-                throw new ArgumentException("Please supply a response Status");
-            }
+		public void WillRespondWith(ProviderServiceResponse response)
+		{
+			if (response == null)
+			{
+				throw new ArgumentException("Please supply a non null response");
+			}
 
-            if (!IsContentTypeSpecifiedForBody(response))
-            {
-                throw new ArgumentException("Please supply a Content-Type response header");
-            }
+			if (response.Status <= 0)
+			{
+				throw new ArgumentException("Please supply a response Status");
+			}
 
-            _response = response;
+			if (!IsContentTypeSpecifiedForBody(response))
+			{
+				throw new ArgumentException("Please supply a Content-Type response header");
+			}
 
-            RegisterInteraction();
-        }
+			_response = response;
 
-        public void VerifyInteractions()
-        {
-            var testContext = BuildTestContext();
-            _adminHttpClient.SendAdminHttpRequest(HttpVerb.Get, $"{Constants.InteractionsVerificationPath}?example_description={testContext}");
-        }
+			RegisterInteraction();
+		}
 
-        public void SendAdminHttpRequest(HttpVerb method, string path)
-        {
-            _adminHttpClient.SendAdminHttpRequest(method, path);
-        }
+		public void VerifyInteractions()
+		{
+			var testContext = BuildTestContext();
+			_adminHttpClient.SendAdminHttpRequest(HttpVerb.Get, $"{Constants.InteractionsVerificationPath}?example_description={testContext}");
+		}
 
-        public void Start()
-        {
-            StopRunningHost();
+		public void SendAdminHttpRequest(HttpVerb method, string path)
+		{
+			_adminHttpClient.SendAdminHttpRequest(method, path);
+		}
 
-            _host = _hostFactory(BaseUri);
-            _host.Start();
-        }
+		public void Start()
+		{
+			StopRunningHost();
 
-        public void Stop()
-        {
-            ClearAllState();
-            StopRunningHost();
-        }
+			_host = _hostFactory(BaseUri);
+			_host.Start();
+		}
 
-        public void ClearInteractions()
-        {
-            if (_host != null)
-            {
-                var testContext = BuildTestContext();
-                _adminHttpClient.SendAdminHttpRequest(HttpVerb.Delete, $"{Constants.InteractionsPath}?example_description={testContext}");
-            }
-        }
+		public void Stop()
+		{
+			ClearAllState();
+			StopRunningHost();
+		}
 
-        private void RegisterInteraction()
-        {
-            if (IsNullOrEmpty(_description))
-            {
-                throw new InvalidOperationException("description has not been set, please supply using the UponReceiving method.");
-            }
+		public void ClearInteractions()
+		{
+			if (_host != null)
+			{
+				var testContext = BuildTestContext();
+				_adminHttpClient.SendAdminHttpRequest(HttpVerb.Delete, $"{Constants.InteractionsPath}?example_description={testContext}");
+			}
+		}
 
-            if (_request == null)
-            {
-                throw new InvalidOperationException("request has not been set, please supply using the With method.");
-            }
+		private void RegisterInteraction()
+		{
+			if (IsNullOrEmpty(_description))
+			{
+				throw new InvalidOperationException("description has not been set, please supply using the UponReceiving method.");
+			}
 
-            if (_response == null)
-            {
-                throw new InvalidOperationException("response has not been set, please supply using the WillRespondWith method.");
-            }
+			if (_request == null)
+			{
+				throw new InvalidOperationException("request has not been set, please supply using the With method.");
+			}
 
-            var interaction = new ProviderServiceInteraction
-            {
-                ProviderState = _providerState,
-                Description = _description,
-                Request = _request,
-                Response = _response
-            };
+			if (_response == null)
+			{
+				throw new InvalidOperationException("response has not been set, please supply using the WillRespondWith method.");
+			}
 
-            _adminHttpClient.SendAdminHttpRequest(HttpVerb.Post, Constants.InteractionsPath, interaction);
+			var interaction = new ProviderServiceInteraction
+			{
+				ProviderState = _providerState,
+				Description = _description,
+				Request = _request,
+				Response = _response
+			};
 
-            ClearTrasientState();
-        }
+			_adminHttpClient.SendAdminHttpRequest(HttpVerb.Post, Constants.InteractionsPath, interaction);
 
-        private void StopRunningHost()
-        {
-            if (_host != null)
-            {
-                _host.Stop();
-                _host = null;
-            }
-        }
+			ClearTrasientState();
+		}
 
-        private void ClearAllState()
-        {
-            ClearTrasientState();
-            ClearInteractions();
-        }
+		private void StopRunningHost()
+		{
+			if (_host != null)
+			{
+				_host.Stop();
+				_host = null;
+			}
+		}
 
-        private void ClearTrasientState()
-        {
-            _request = null;
-            _response = null;
-            _providerState = null;
-            _description = null;
-        }
+		private void ClearAllState()
+		{
+			ClearTrasientState();
+			ClearInteractions();
+		}
 
-        private bool IsContentTypeSpecifiedForBody(IMessage message)
-        {
-            //No content-type required if there is no body
-            if (message.Body == null)
-            {
-                return true;
-            }
+		private void ClearTrasientState()
+		{
+			_request = null;
+			_response = null;
+			_providerState = null;
+			_description = null;
+		}
 
-            IDictionary<string, object> headers = null;
-            if (message.Headers != null)
-            {
-                headers = new Dictionary<string, object>(message.Headers, StringComparer.OrdinalIgnoreCase);
-            }
+		private bool IsContentTypeSpecifiedForBody(IMessage message)
+		{
+			//No content-type required if there is no body
+			if (message.Body == null)
+			{
+				return true;
+			}
 
-            return headers != null && headers.ContainsKey("Content-Type");
-        }
+			IDictionary<string, object> headers = null;
+			if (message.Headers != null)
+			{
+				headers = new Dictionary<string, object>(message.Headers, StringComparer.OrdinalIgnoreCase);
+			}
 
-        private static string BuildTestContext()
-        {
+			return headers != null && headers.ContainsKey("Content-Type");
+		}
+
+		private static string BuildTestContext()
+		{
 #if USE_NET4X
             var stack = new System.Diagnostics.StackTrace(true);
             var stackFrames = stack.GetFrames() ?? new System.Diagnostics.StackFrame[0];
@@ -254,8 +254,8 @@ namespace PactNet.Mocks.MockHttpService
             return Join(" ", relevantStackFrameSummaries);
 
 #else
-            return String.Empty;
+			return String.Empty;
 #endif
-        }
-    }
+		}
+	}
 }
