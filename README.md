@@ -39,8 +39,6 @@ We have also written some `//NOTE:` comments inline in the code to help explain 
 
 **A few others things to note:**
 1. When using `Match.Regex` you must supply a valid Ruby regular expression, as we currently use the Ruby core engine.
-2. If you want to use SSL, you will need to ignore certification validation errors globally (currently we just generate a self signed cert). You can do this in the tests by adding `ServicePointManager.ServerCertificateValidationCallback +=
-    (sender, cert, chain, sslPolicyErrors) => true;` before any HTTP clients and the PactBuilder objects are instantiated. NOTE: DO NOT add this configuration to your production code!
 
 ### Installing
 
@@ -70,38 +68,35 @@ Which may look something like this.
 ```c#
 public class SomethingApiClient
 {
-  public string BaseUri { get; set; }
+  private readonly HttpClient _client;
 
   public SomethingApiClient(string baseUri = null)
   {
-    BaseUri = baseUri ?? "http://my-api";
+    _client = new HttpClient { BaseAddress = new Uri(baseUri ?? "http://my-api") };
   }
 
   public Something GetSomething(string id)
   {
     string reasonPhrase;
 
-    using (var client = new HttpClient { BaseAddress = new Uri(BaseUri) })
+    var request = new HttpRequestMessage(HttpMethod.Get, "/somethings/" + id);
+    request.Headers.Add("Accept", "application/json");
+
+    var response = _client.SendAsync(request);
+
+    var content = response.Result.Content.ReadAsStringAsync().Result;
+    var status = response.Result.StatusCode;
+
+    reasonPhrase = response.Result.ReasonPhrase; //NOTE: any Pact mock provider errors will be returned here and in the response body
+
+    request.Dispose();
+    response.Dispose();
+
+    if (status == HttpStatusCode.OK)
     {
-      var request = new HttpRequestMessage(HttpMethod.Get, "/somethings/" + id);
-      request.Headers.Add("Accept", "application/json");
-
-      var response = client.SendAsync(request);
-
-      var content = response.Result.Content.ReadAsStringAsync().Result;
-      var status = response.Result.StatusCode;
-
-      reasonPhrase = response.Result.ReasonPhrase; //NOTE: any Pact mock provider errors will be returned here and in the response body
-
-      request.Dispose();
-      response.Dispose();
-
-      if (status == HttpStatusCode.OK)
-      {
-        return !String.IsNullOrEmpty(content) ?
-          JsonConvert.DeserializeObject<Something>(content)
-          : null;
-      }
+      return !String.IsNullOrEmpty(content) ?
+        JsonConvert.DeserializeObject<Something>(content)
+        : null;
     }
 
     throw new Exception(reasonPhrase);
@@ -137,10 +132,12 @@ public class ConsumerMyApiPact : IDisposable
     MockProviderService = PactBuilder.MockService(MockServerPort); //Configure the http mock server
     //or
     MockProviderService = PactBuilder.MockService(MockServerPort, true); //By passing true as the second param, you can enabled SSL. A self signed SSL cert will be provisioned by default.
+	//or
+	MockProviderService = PactBuilder.MockService(MockServerPort, true, sslCert: sslCert, sslKey: sslKey); //By passing true as the second param and an sslCert and sslKey, you can enabled SSL with a custom certificate. See "Using a Custom SSL Certificate" for more details.
     //or
     MockProviderService = PactBuilder.MockService(MockServerPort, new JsonSerializerSettings()); //You can also change the default Json serialization settings using this overload    
-	//or
-	MockProviderService = PactBuilder.MockService(MockServerPort, host: IPAddress.Any); //By passing host as IPAddress.Any, the mock provider service will bind and listen on all ip addresses
+    //or
+    MockProviderService = PactBuilder.MockService(MockServerPort, host: IPAddress.Any); //By passing host as IPAddress.Any, the mock provider service will bind and listen on all ip addresses
     
   }
 
@@ -372,6 +369,37 @@ Again, please note: we advise using a TDD approach when using this library, howe
 
 For further examples please refer to the [Samples](https://github.com/pact-foundation/pact-net/tree/master/Samples) in the solution.
 
+### Using a Custom SSL Certificate
+When creating the MockProviderService you can use a custom SSL cert, which allows the use of a valid installed certificate without requiring any hacks to ignore certificate validation errors.
+
+#### 1. Generate a custom SSL certificate
+The simplest way to generate a private key and self-signed certificate for localhost is with this openssl command:
+
+``` 
+openssl req -x509 -out localhost.crt -keyout localhost.key \
+  -newkey rsa:2048 -nodes -sha256 \
+  -subj '/CN=localhost' -extensions EXT -days 365 -config <( \
+   printf "[dn]\nCN=localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:localhost\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
+```
+
+The above script will generate two files:
+
+- localhost.crt
+- localhost.key
+
+Ref. [certificates-for-localhost](https://letsencrypt.org/docs/certificates-for-localhost/).
+
+#### 2. Add Certificate to Certificate Store
+For windows, import the localhost.crt to the 'Trust Root Certification Authorities' of the Current User Certificates.
+
+### 3. Use the Certificate
+```
+public string MockProviderServiceBaseUri => $"https://localhost:{MockServerPort}";
+var sslCrt = @"{PathTo}\localhost.crt";
+var sslKey = @"{PathTo}\localhost.key";
+MockProviderService = PactBuilder.MockService(MockServerPort, true, IPAddress.Any, sslCrt, sslKey);
+```
+
 ### Publishing Pacts to a Broker
 The Pact broker is a useful tool that can be used to share pacts between the consumer and provider. In order to make this easy, below are a couple of options for publishing your Pacts to a Pact Broker.
 
@@ -413,9 +441,3 @@ pactVerifier
 #### Further Documentation
 
 * [PactNet Workshop using .NET Core](https://github.com/tdshipley/pact-workshop-dotnet-core-v1)
-
-#### Related Tools
-You might also find the following tool and library helpful:
-
-* [Pact based service simulator](https://github.com/seek-oss/seek.automation.phantom): leverage pacts to isolate your services
-* [Pact based stubbing library](https://github.com/seek-oss/seek.automation.stub): leverage pacts during automation to stub dependencies
