@@ -4,7 +4,7 @@ namespace Consumer.Subscribers
 {
     public class EventsSubscriber
     {
-        public void EventUpdatedHandler(string eventData)
+        public void EventUpdatedHandler(Event eventData)
         {
             
         }

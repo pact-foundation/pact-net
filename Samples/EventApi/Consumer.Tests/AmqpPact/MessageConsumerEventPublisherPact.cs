@@ -1,14 +1,12 @@
 ﻿using System;
 using System.IO;
 using PactNet;
-using PactNet.PactMessage;
 
 namespace Consumer.Tests.AmqpPact
 {
 	public class MessageConsumerEventPublisherPact : IDisposable
 	{
 		public IMessagePactBuilder MessagePactBuilder { get; }
-		public IMessagePact MessagePact { get; }
 
 		public MessageConsumerEventPublisherPact()
 		{

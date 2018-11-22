@@ -31,7 +31,11 @@ namespace Provider.Api.Web.Tests.Controllers
 					{"Event with id 45D80D13-D5A2-48D7-8353-CBB4C0EAABF5 updated", () => _eventsPublisher.GetEventUpdatedMessage(new Event
 					{
 						EventId = new Guid("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5")
-					}) }
+					}) },
+					{"Event with id 83F9262F-28F1-4703-AB1A-8CFD9E8249C9 updated", () => _eventsPublisher.GetEventUpdatedMessage(new Event
+					{
+						EventId = new Guid("83F9262F-28F1-4703-AB1A-8CFD9E8249C9")
+					}) },
 				}
 			);
 

@@ -9,7 +9,7 @@ namespace PactNet.PactMessage
         IMessagePact ExpectedToReceive(string description);
         IMessagePact Given(IEnumerable<ProviderState> providerStates);
         IMessagePact With(Message message);
-        void VerifyConsumer(Action<string> messageHandler);
+        void VerifyConsumer<T>(Action<T> messageHandler);
         IList<MessageInteraction> MessageInteractions { get; }
     }
 }

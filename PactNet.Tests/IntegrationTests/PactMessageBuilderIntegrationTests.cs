@@ -21,7 +21,7 @@ namespace PactNet.Tests.IntegrationTests
 		[Fact]
 		public void Build_NoMessages_VerificationSucceeds()
 		{
-			_messagePact.VerifyConsumer(MessageHandler);
+			_messagePact.VerifyConsumer<string>(MessageHandler);
 
 			_messagePactBuilder.Build();
 		}
@@ -38,7 +38,7 @@ namespace PactNet.Tests.IntegrationTests
 						name = "Test"
 					}
 				})
-				.VerifyConsumer(FailedMessageHandler));
+				.VerifyConsumer<string>(FailedMessageHandler));
 		}
 
 		private static void FailedMessageHandler(string obj)

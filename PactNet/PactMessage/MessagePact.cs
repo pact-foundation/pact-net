@@ -13,6 +13,7 @@ namespace PactNet.PactMessage
 	public class MessagePact : IMessagePact
 	{
 		private readonly IOutputBuilder _outputBuilder;
+		private readonly JsonSerializerSettings _jsonSerializerSettings;
 		private readonly Func<PactMessageHostConfig, IPactCoreHost> _coreHostFactory;
 		private IEnumerable<ProviderState> _providerStates;
 		private string _description;
@@ -24,6 +25,7 @@ namespace PactNet.PactMessage
 			(messageInteraction, builder, coreHostFactory) =>
 				new ReifyCommand(messageInteraction, builder, coreHostFactory, jsonSerializerSettings),
 				new OutputBuilder(),
+				jsonSerializerSettings,
 			    config => new PactCoreHost<PactMessageHostConfig>(config))
 		{
 		}
@@ -31,10 +33,12 @@ namespace PactNet.PactMessage
 		internal MessagePact(Func<MessageInteraction, IOutputBuilder, Func<PactMessageHostConfig, IPactCoreHost>,
 				IReifyCommand> reifyCommandFactory,
 				IOutputBuilder outputBuilder,
+				JsonSerializerSettings jsonSerializerSettings,
 				Func<PactMessageHostConfig, IPactCoreHost> coreHostFactory)
 		{
 			_reifyCommandFactory = reifyCommandFactory;
 			_outputBuilder = outputBuilder;
+			_jsonSerializerSettings = jsonSerializerSettings;
 			_coreHostFactory = coreHostFactory;
 			MessageInteractions = new List<MessageInteraction>();
 		}
@@ -87,7 +91,7 @@ namespace PactNet.PactMessage
 			return this;
 		}
 
-		public void VerifyConsumer(Action<string> messageHandler)
+		public void VerifyConsumer<T>(Action<T> messageHandler)
 		{
 			foreach (var messageInteraction in MessageInteractions)
 			{
@@ -102,7 +106,7 @@ namespace PactNet.PactMessage
 
 				try
 				{
-					messageHandler(message);
+					messageHandler(JsonConvert.DeserializeObject<T>(message, _jsonSerializerSettings));
 				}
 				catch (Exception e)
 				{

@@ -1,6 +1,8 @@
 ﻿using System;
+using Castle.DynamicProxy.Generators.Emitters;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using PactNet.Configuration.Json;
 using PactNet.Core;
 using PactNet.Infrastructure.Outputters;
 using PactNet.Matchers;
@@ -163,10 +165,10 @@ namespace PactNet.Tests.PactMessage
 			var coreHost = Substitute.For<IPactCoreHost>();
 			var reifyCommand = Substitute.For<IReifyCommand>();
 
-			var pactMessage = new MessagePact((interaction, builder, coreHostFactory) => reifyCommand, outputBuilder, config => coreHost);
+			var pactMessage = new MessagePact((interaction, builder, coreHostFactory) => reifyCommand, outputBuilder, JsonConfig.ApiSerializerSettings, config => coreHost);
 
 			//Act + Assert
-			pactMessage.VerifyConsumer(SuccessMessageHandler);
+			pactMessage.VerifyConsumer<MyMessage>(SuccessMessageHandler);
 		}
 
 		[Fact]
@@ -179,7 +181,7 @@ namespace PactNet.Tests.PactMessage
 
 			reifyCommand.When(x => x.Execute()).Do(x => outputBuilder.ToString().Returns("{\"Test\": \"Test\"}"));
 
-			var pactMessage = new MessagePact((interaction, builder, coreHostFactory) => reifyCommand, outputBuilder, config => coreHost);
+			var pactMessage = new MessagePact((interaction, builder, coreHostFactory) => reifyCommand, outputBuilder, JsonConfig.ApiSerializerSettings, config => coreHost);
 
 			//Act + Assert
 			Assert.Throws<PactFailureException>(() => pactMessage.ExpectedToReceive("Test message")
@@ -189,7 +191,7 @@ namespace PactNet.Tests.PactMessage
 					{
 						Test = Match.Type("Test")
 					}
-				}).VerifyConsumer(FailureMessageHandler));
+				}).VerifyConsumer<MyMessage>(FailureMessageHandler));
 		}
 
 		[Fact]
@@ -202,7 +204,7 @@ namespace PactNet.Tests.PactMessage
 
 			reifyCommand.When(x => x.Execute()).Do(x => outputBuilder.ToString().Returns("{\"Test\": \"Test\"}"));
 
-			var pactMessage = new MessagePact((interaction, builder, coreHostFactory) => reifyCommand, outputBuilder, config => coreHost);
+			var pactMessage = new MessagePact((interaction, builder, coreHostFactory) => reifyCommand, outputBuilder, JsonConfig.ApiSerializerSettings, config => coreHost);
 
 			//Act
 			pactMessage.ExpectedToReceive("Test message")
@@ -220,19 +222,24 @@ namespace PactNet.Tests.PactMessage
 					{
 						Test = Match.Type("Test 2")
 					}
-				}).VerifyConsumer(SuccessMessageHandler);
+				}).VerifyConsumer<MyMessage>(SuccessMessageHandler);
 
 			//Assert
 			outputBuilder.Received(2).Clear();
 		}
 
-		private static void SuccessMessageHandler(string test)
+		private static void SuccessMessageHandler(MyMessage test)
 		{
 		}
 
-		private static void FailureMessageHandler(string test)
+		private static void FailureMessageHandler(MyMessage test)
 		{
 			throw new NullReferenceException($"{test}");
+		}
+
+		private class MyMessage
+		{
+			public string Description { get; set; }
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Consumer.Models;
 using Consumer.Subscribers;
 using PactNet.Matchers;
 using PactNet.PactMessage;
@@ -19,6 +20,7 @@ namespace Consumer.Tests.AmqpPact
 		[Fact]
 		public void EventUpdated_EventIsSavedInTheDatabase_GetsEventId()
 		{
+			//Arrange
 			var eventsSubscriber = new EventsSubscriber();
 
 			var providerStates = new[]
@@ -32,7 +34,8 @@ namespace Consumer.Tests.AmqpPact
 					Name = "Event With id 45D80D13-D5A2-48D7-8353-CBB4C0EAABF5 is in the database"
 				}
 			};
-
+			
+			//Act + Assert
 			_messagePact.ExpectedToReceive("Event with id 45D80D13-D5A2-48D7-8353-CBB4C0EAABF5 updated")
 				.Given(providerStates)
 				.With(new Message
@@ -42,23 +45,25 @@ namespace Consumer.Tests.AmqpPact
 						eventId = Match.Type(new Guid("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5"))
 					}
 				})
-				.VerifyConsumer(messageContent => eventsSubscriber.EventUpdatedHandler(messageContent));
+				.VerifyConsumer<Event>(messageContent => eventsSubscriber.EventUpdatedHandler(messageContent));
 		}
 
 		[Fact]
 		public void EventUpdated_NoProviderState_GetsEventId()
 		{
+			//Arrange
 			var eventsSubscriber = new EventsSubscriber();
 
-			_messagePact.ExpectedToReceive("Event with id 45D80D13-D5A2-48D7-8353-CBB4C0EAABF5 updated")
+			//Act + Assert
+			_messagePact.ExpectedToReceive("Event with id 83F9262F-28F1-4703-AB1A-8CFD9E8249C9 updated")
 				.With(new Message
 				{
 					Contents = new
 					{
-						eventId = Match.Type(new Guid("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5"))
+						eventId = new Guid("83F9262F-28F1-4703-AB1A-8CFD9E8249C9")
 					}
 				})
-				.VerifyConsumer(messageContent => eventsSubscriber.EventUpdatedHandler(messageContent));
+				.VerifyConsumer<Event>(messageContent => eventsSubscriber.EventUpdatedHandler(messageContent));
 		}
 	}
 }
