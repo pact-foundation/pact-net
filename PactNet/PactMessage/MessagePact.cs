@@ -12,29 +12,31 @@ namespace PactNet.PactMessage
 {
 	public class MessagePact : IMessagePact
 	{
+		private readonly IOutputBuilder _outputBuilder;
+		private readonly Func<PactMessageHostConfig, IPactCoreHost> _coreHostFactory;
 		private IEnumerable<ProviderState> _providerStates;
 		private string _description;
 		public IList<MessageInteraction> MessageInteractions { get; }
 
-		private readonly IOutputBuilder _outputBuilder;
-		private readonly Func<PactMessageHostConfig, IPactCoreHost> _coreHostFactory;
-		private readonly JsonSerializerSettings _jsonSerializerSettings;
+		private readonly Func<MessageInteraction, IOutputBuilder, Func<PactMessageHostConfig, IPactCoreHost>, IReifyCommand> _reifyCommandFactory;
 
-		public MessagePact(JsonSerializerSettings jsonSerializerSettings = null) : this(new OutputBuilder(),
-			config => new PactCoreHost<PactMessageHostConfig>(config),
-			jsonSerializerSettings)
+		public MessagePact(JsonSerializerSettings jsonSerializerSettings = null) : this(
+			(messageInteraction, builder, coreHostFactory) =>
+				new ReifyCommand(messageInteraction, builder, coreHostFactory, jsonSerializerSettings),
+				new OutputBuilder(),
+			    config => new PactCoreHost<PactMessageHostConfig>(config))
 		{
 		}
 
-		internal MessagePact(IOutputBuilder outputBuilder,
-			Func<PactMessageHostConfig, IPactCoreHost> coreHostFactory,
-			JsonSerializerSettings jsonSerializerSettings)
+		internal MessagePact(Func<MessageInteraction, IOutputBuilder, Func<PactMessageHostConfig, IPactCoreHost>,
+				IReifyCommand> reifyCommandFactory,
+				IOutputBuilder outputBuilder,
+				Func<PactMessageHostConfig, IPactCoreHost> coreHostFactory)
 		{
-			MessageInteractions = new List<MessageInteraction>();
-
+			_reifyCommandFactory = reifyCommandFactory;
 			_outputBuilder = outputBuilder;
 			_coreHostFactory = coreHostFactory;
-			_jsonSerializerSettings = jsonSerializerSettings;
+			MessageInteractions = new List<MessageInteraction>();
 		}
 
 		public IMessagePact ExpectedToReceive(string description)
@@ -89,7 +91,7 @@ namespace PactNet.PactMessage
 		{
 			foreach (var messageInteraction in MessageInteractions)
 			{
-				var reifyAction = new ReifyCommand(messageInteraction, _outputBuilder, _coreHostFactory, _jsonSerializerSettings);
+				var reifyAction = _reifyCommandFactory(messageInteraction, _outputBuilder, _coreHostFactory);
 				reifyAction.Execute();
 
 				var message = _outputBuilder.ToString();

@@ -109,7 +109,7 @@ namespace PactNet.Tests.Builders
 		{
 			//Arrange
 			var pactMessage = Substitute.For<IMessagePact>();
-			var updateCommand = Substitute.For<IPactMessageCommand>();
+			var updateCommand = Substitute.For<IUpdateCommand>();
 			var fileWrapper = Substitute.For<IFileWrapper>();
 
 			var expectedInteractions = new List<MessageInteraction>
@@ -143,7 +143,7 @@ namespace PactNet.Tests.Builders
 		{
 			//Arrange
 			var pactMessage = Substitute.For<IMessagePact>();
-			var updateCommand = Substitute.For<IPactMessageCommand>();
+			var updateCommand = Substitute.For<IUpdateCommand>();
 			var fileWrapper = Substitute.For<IFileWrapper>();
 
 			const string consumer = "Test consumer";

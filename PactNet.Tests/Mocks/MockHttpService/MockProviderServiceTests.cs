@@ -368,7 +368,8 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void VerifyInteractions_WhenHostIsNotNull_PerformsAdminInteractionsVerificationGetRequest()
+        public void 
+	        Interactions_WhenHostIsNotNull_PerformsAdminInteractionsVerificationGetRequest()
         {
             var mockService = GetSubject();
 

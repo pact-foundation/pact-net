@@ -7,7 +7,7 @@ using PactNet.PactMessage.Models;
 
 namespace PactNet.PactMessage.Host.Commands
 {
-    internal class UpdateCommand : IPactMessageCommand
+    internal class UpdateCommand : IUpdateCommand
     {
         private readonly string _consumer;
         private readonly string _provider;

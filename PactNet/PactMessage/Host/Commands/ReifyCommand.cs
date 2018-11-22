@@ -8,7 +8,7 @@ using PactNet.Configuration.Json;
 
 namespace PactNet.PactMessage.Host.Commands
 {
-    internal class ReifyCommand : IPactMessageCommand
+    internal class ReifyCommand : IReifyCommand
     {
         private readonly MessageInteraction _messageInteraction;
         private readonly IOutputBuilder _outputBuilder;

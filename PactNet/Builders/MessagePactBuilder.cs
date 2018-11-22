@@ -17,7 +17,7 @@ namespace PactNet
 		public string ProviderName { get; private set; }
 		public PactConfig PactConfig { get; }
 		private readonly Func<string, string, IMessagePact> _pactMessageFactory;
-		private readonly Func<string, string, PactConfig, MessageInteraction, Func<PactMessageHostConfig, IPactCoreHost>, IPactMessageCommand> _updateCommandFactory;
+		private readonly Func<string, string, PactConfig, MessageInteraction, Func<PactMessageHostConfig, IPactCoreHost>, IUpdateCommand> _updateCommandFactory;
 		private IFileWrapper _fileWrapper;
 		private IMessagePact _messagePact;
 
@@ -42,7 +42,7 @@ namespace PactNet
 
 		internal MessagePactBuilder(PactConfig pactConfig, 
 			Func<string, string, IMessagePact> pactMessageFactory,
-			Func<string, string, PactConfig, MessageInteraction, Func<PactMessageHostConfig, IPactCoreHost>, IPactMessageCommand> updateCommandFactory, 
+			Func<string, string, PactConfig, MessageInteraction, Func<PactMessageHostConfig, IPactCoreHost>, IUpdateCommand> updateCommandFactory, 
 			IFileWrapper fileWrapper)
 		{
 			PactConfig = pactConfig;
