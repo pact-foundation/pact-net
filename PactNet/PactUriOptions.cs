@@ -7,10 +7,10 @@ namespace PactNet
     {
         private const string AuthScheme = "Basic";
 
-        internal string Username { get; }
-        internal string Password { get; }
-        internal string AuthorizationScheme => AuthScheme;
-        internal string AuthorizationValue => Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Username}:{Password}"));
+        public string Username { get; }
+        public string Password { get; }
+        public string AuthorizationScheme => AuthScheme;
+        public string AuthorizationValue => Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Username}:{Password}"));
 
         public PactUriOptions(string username, string password)
         {
