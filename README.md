@@ -362,123 +362,12 @@ public class XUnitOutput : IOutput
 }
 ```
 
-#### 4. Run the test
+#### 3. Run the test
 Everything should be green
 
 Again, please note: we advise using a TDD approach when using this library, however we will leave it up to you.
 
 For further examples please refer to the [Samples](https://github.com/pact-foundation/pact-net/tree/master/Samples) in the solution.
-
-### Message queues support - Message consumer:
-
-#### 1. Build your message handler
-
-Which may look something like this.
-
-```c#
-public class SomethingMessagesHandler
-{
-  //This method should be called for each message from the subscriber
-  public void HandleSomethingHappend(Something something)
-  {
-    string reasonPhrase;
-
-    if(something.Description == "Important")
-    {
-		SendEmail(something);        
-    }
-  }
-}
-```
-
-#### 2. Describe and configure the pact as a service consumer with a message pact
-
-Create a new test case within your service consumer test project, using whatever test framework you like (in this case we used xUnit).  
-This should only be instantiated once for the consumer you are testing.
-
-```c#
-public class ConsumerMessagePublisherPact : IDisposable
-{
-  public IMessagePactBuilder MessagePactBuilder { get; }
-
-  public ConsumerMessagePublisherPact()
-  {
-    MessagePactBuilder = new MessagePactBuilder(); //Defaults to specification version 2.0.0, uses default directories. PactDir: ..\..\pacts and LogDir: ..\..\logs
-    //or
-    MessagePactBuilder = new MessagePactBuilder(new PactConfig { SpecificationVersion = "3.0.0" }); //Configures the Specification Version
-    //or
-    MessagePactBuilder = new MessagePactBuilder(new PactConfig { PactDir = @"..\pacts", LogDir = @"c:\temp\logs" }); //Configures the PactDir and/or LogDir.
-
-    MessagePactBuilder
-      .ServiceConsumer("Something Consumer")
-      .HasPactWith("Something Service");   
-  }
-
-  public void Dispose()
-  {
-    MessagePactBuilder.Build(); //NOTE: Will save the pact file once finished
-  }
-}
-
-```
-
-#### 3. Write your test
-
-Create a new test case and implement it.
-
-```c#
-public class SomethingServiceConsumerTests : IClassFixture<ConsumerMessagePublisherPact>
-{
-  private IMessagePact _messagePact;
-
-  public SomethingServiceConsumerTests(ConsumerMessagePublisherPact data)
-  {
-    _messagePact = data.MessagePact;
-  }
-
-  [Fact]
-  public void GetSomething_WhenTheTesterSomethingExists_ReturnsTheSomething()
-  {
-	//Arrange
-	var eventsSubscriber = new EventsSubscriber();
-
-	var providerStates = new[]
-	{
-		new ProviderState
-		{
-			Name = "there is one event with type 'DetailsView'",
-		},
-		new ProviderState
-		{
-			Name = "Event With id 45D80D13-D5A2-48D7-8353-CBB4C0EAABF5 is in the database"
-		}
-	};
-			
-	//Act + Assert
-	_messagePact.ExpectedToReceive("Something with description 'Important' updated")
-		.Given(providerStates)
-		.With(new Message
-		{
-			Contents = new Something
-			{
-				Description = Match.Type("Important")
-			}
-		})
-		.VerifyConsumer<Something>(something => eventsSubscriber.EventUpdatedHandler(messageContent));
-  }
-}
-```
-
-#### 4. Run the test
-
-Everything should be green
-
-Note: we advise using a TDD approach when using this library, however we will leave it up to you.  
-Likely you will be creating a skeleton client, describing the pact, write the failing test, implement the skeleton client, run the test to make sure it passes, then rinse and repeat.
-
-### Using a Custom SSL Certificate
-
-When creating the MockProviderService you can use a custom SSL cert, which allows the use of a valid installed certificate without requiring any hacks to ignore certificate validation errors.
 
 #### 1. Generate a custom SSL certificate
 The simplest way to generate a private key and self-signed certificate for localhost is with this openssl command:
@@ -508,7 +397,13 @@ var sslKey = @"{PathTo}\localhost.key";
 MockProviderService = PactBuilder.MockService(MockServerPort, true, IPAddress.Any, sslCrt, sslKey);
 ```
 
+### Message queues support:
+
+configuring a pact between a publisher and a subscriber is now possible:
+For further examples please refer to the [Samples](https://github.com/pact-foundation/pact-net/tree/master/Samples) in the solution.
+
 ### Publishing Pacts to a Broker
+
 The Pact broker is a useful tool that can be used to share pacts between the consumer and provider. In order to make this easy, below are a couple of options for publishing your Pacts to a Pact Broker.
 
 #### Using PowerShell on your build server
