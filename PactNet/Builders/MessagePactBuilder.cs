@@ -83,7 +83,10 @@ namespace PactNet
 			}
 
 			//If a file with the previous interactions exists, it has to be deleted so unexpected interactions would not be in the new file
-			_fileWrapper.Delete(GetPactFilePath(PactConfig.PactDir, ConsumerName, ProviderName));
+			if (_fileWrapper.Exists(GetPactFilePath(PactConfig.PactDir, ConsumerName, ProviderName)))
+			{
+				_fileWrapper.Delete(GetPactFilePath(PactConfig.PactDir, ConsumerName, ProviderName));
+			}
 
 			foreach (var messageInteraction in _messagePact.MessageInteractions)
 			{

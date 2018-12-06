@@ -139,7 +139,7 @@ namespace PactNet.Tests.Builders
 		}
 
 		[Fact]
-		public void Build_WhenCalledAfterPactMessageIsInitialized_DeletesOldInteractionsFile()
+		public void Build_WhenCalledAfterPactMessageIsInitializedAndOldInteractionsFileExists_DeletesOldInteractionsFile()
 		{
 			//Arrange
 			var pactMessage = Substitute.For<IMessagePact>();
@@ -162,6 +162,7 @@ namespace PactNet.Tests.Builders
 			};
 
 			pactMessage.MessageInteractions.Returns(expectedInteractions);
+			fileWrapper.Exists(@"..\Test\Test_consumer-Test_provider.json").Returns(true);
 
 			var pactConfig = new PactConfig
 			{
@@ -179,6 +180,50 @@ namespace PactNet.Tests.Builders
 
 			//Assert
 			fileWrapper.Received().Delete(@"..\Test\Test_consumer-Test_provider.json");
+		}
+
+		[Fact]
+		public void Build_WhenCalledAfterPactMessageIsInitializedAndOldInteractionsDoesNotExist_DoesNotTryToDeleteInteractionsFile()
+		{
+			//Arrange
+			var pactMessage = Substitute.For<IMessagePact>();
+			var updateCommand = Substitute.For<IUpdateCommand>();
+			var fileWrapper = Substitute.For<IFileWrapper>();
+
+			const string consumer = "Test consumer";
+			const string provider = "Test provider";
+
+			var expectedInteractions = new List<MessageInteraction>
+			{
+				new MessageInteraction
+				{
+					Description = "First message"
+				},
+				new MessageInteraction
+				{
+					Description = "Second message"
+				},
+			};
+
+			pactMessage.MessageInteractions.Returns(expectedInteractions);
+			fileWrapper.Exists(@"..\Test\Test_consumer-Test_provider.json").Returns(false);
+
+			var pactConfig = new PactConfig
+			{
+				PactDir = @"..\Test\"
+			};
+
+			var pactBuilder = new MessagePactBuilder(pactConfig, (testConsumer, testProvider) => pactMessage,
+				(testConsumer, testProvider, config, messageInteraction, hostFactory) => updateCommand,
+				fileWrapper);
+
+			pactBuilder.ServiceConsumer(consumer).HasPactWith(provider).InitializePactMessage();
+
+			//Act
+			pactBuilder.Build();
+
+			//Assert
+			fileWrapper.DidNotReceive().Delete(@"..\Test\Test_consumer-Test_provider.json");
 		}
 	}
 }
