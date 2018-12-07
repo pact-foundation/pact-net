@@ -42,7 +42,7 @@ namespace Consumer.Tests.HttpPact
                     {
                         { "Content-Type", "application/json; charset=utf-8" }
                     },
-                    Body = new 
+                    Body = new
                     {
                         message = "Authorization has been denied for this request."
                     }
@@ -52,7 +52,7 @@ namespace Consumer.Tests.HttpPact
 
             //Act //Assert
             Assert.ThrowsAny<Exception>(() => consumer.GetAllEvents());
-            
+
             _mockProviderService.VerifyInteractions();
         }
 
@@ -328,7 +328,7 @@ namespace Consumer.Tests.HttpPact
                     {
                         { "Content-Type", "application/json; charset=utf-8" }
                     },
-                    Body = new []
+                    Body = new[]
                     {
                         new
                         {

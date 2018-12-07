@@ -12,10 +12,10 @@ namespace PactNet.PactMessage.Models
             get; set;
         }
 
-	    [JsonProperty(Order = -2, PropertyName = "providerStates")]
-	    public IEnumerable<ProviderState> ProviderStates
-	    {
-		    get; set;
-	    }
-	}
+        [JsonProperty(Order = -2, PropertyName = "providerStates")]
+        public IEnumerable<ProviderState> ProviderStates
+        {
+            get; set;
+        }
+    }
 }

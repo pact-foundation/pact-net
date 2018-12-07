@@ -9,8 +9,8 @@ namespace PactNet
         {
         }
 
-	    public PactFailureException(string message, Exception innerException) : base(message, innerException)
-	    {
-	    }
+        public PactFailureException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
     }
 }

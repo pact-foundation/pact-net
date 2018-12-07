@@ -22,8 +22,8 @@ namespace PactNet.Mocks.MockHttpService.Host
             var sslCertOption = !string.IsNullOrEmpty(sslCert)
                 ? $" --sslcert=\"{FixPathForRuby(sslCert)}\""
                 : string.Empty;
-            var sslKeyOption = !string.IsNullOrEmpty(sslKey) 
-                ? $" --sslkey=\"{FixPathForRuby(sslKey)}\"" 
+            var sslKeyOption = !string.IsNullOrEmpty(sslKey)
+                ? $" --sslkey=\"{FixPathForRuby(sslKey)}\""
                 : string.Empty;
             var hostOption = host == IPAddress.Any ? " --host=0.0.0.0" : string.Empty;
             var monkeyPatchOption = !string.IsNullOrEmpty(config?.MonkeyPatchFile)

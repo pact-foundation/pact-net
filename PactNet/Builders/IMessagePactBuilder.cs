@@ -2,8 +2,8 @@
 
 namespace PactNet
 {
-	public interface IMessagePactBuilder : IPactBaseBuilder<IMessagePactBuilder>
-	{
-		IMessagePact InitializePactMessage();
-	}
+    public interface IMessagePactBuilder : IPactBaseBuilder<IMessagePactBuilder>
+    {
+        IMessagePact InitializePactMessage();
+    }
 }

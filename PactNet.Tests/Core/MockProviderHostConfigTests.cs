@@ -20,7 +20,7 @@ namespace PactNet.Tests.Core
         public void Ctor_WhenCalled_SetsTheCorrectScript()
         {
             var config = GetSubject();
-            
+
             Assert.Equal("pact-mock-service", config.Script);
         }
 
@@ -60,7 +60,7 @@ namespace PactNet.Tests.Core
 
             Assert.Equal(expectedArguments, config.Arguments);
         }
-        
+
         [Fact]
         public void Ctor_WhenCalledWithCustomSsl_SetsTheCorrectArgs()
         {
@@ -109,7 +109,7 @@ namespace PactNet.Tests.Core
         {
             var port = 9332;
             var logDir = "./test";
-            var pactConfig = new PactConfig {LogDir = logDir};
+            var pactConfig = new PactConfig { LogDir = logDir };
             var consumerName = "Cons";
             var providerName = "The best one";
             var enableSsl = true;
@@ -129,7 +129,7 @@ namespace PactNet.Tests.Core
         {
             var port = 9332;
             var pactDir = "./test";
-            var pactConfig = new PactConfig {PactDir = pactDir};
+            var pactConfig = new PactConfig { PactDir = pactDir };
             var consumerName = "Cons";
             var providerName = "The best one";
             var enableSsl = true;
@@ -161,7 +161,7 @@ namespace PactNet.Tests.Core
         {
             return pactDir.Replace("\\", "/");
         }
-        
+
         private string BuildExpectedSslOption(string fullName)
         {
             return $"{fullName}".Replace("\\", "/");

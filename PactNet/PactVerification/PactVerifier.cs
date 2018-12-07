@@ -28,9 +28,9 @@ namespace PactNet
             }
         }
 
-        public PactVerifier(PactVerifierConfig config) : 
+        public PactVerifier(PactVerifierConfig config) :
             this(
-            hostConfig => new PactCoreHost<PactVerifierHostConfig>(hostConfig), 
+            hostConfig => new PactCoreHost<PactVerifierHostConfig>(hostConfig),
             config ?? new PactVerifierConfig())
         {
         }
@@ -66,7 +66,7 @@ namespace PactNet
 
             ProviderName = providerName;
             ServiceBaseUri = new Uri(baseUri);
-                
+
             return this;
         }
 
@@ -115,7 +115,7 @@ namespace PactNet
             }
 
             IDictionary<string, string> env = null;
-            if(!IsNullOrEmpty(description) || !IsNullOrEmpty(providerState))
+            if (!IsNullOrEmpty(description) || !IsNullOrEmpty(providerState))
             {
                 env = new Dictionary<string, string>
                 {
@@ -127,7 +127,7 @@ namespace PactNet
             var pactVerifier = _pactVerifierHostFactory(
                 new PactVerifierHostConfig(ServiceBaseUri, PactFileUri, PactUriOptions, ProviderStateSetupUri, _config, env));
             pactVerifier.Start();
-			pactVerifier.Stop();
+            pactVerifier.Stop();
         }
     }
 }

@@ -16,9 +16,9 @@ namespace PactNet.Infrastructure.Outputters
             _outputBuilder.Clear();
         }
 
-	    public override string ToString()
-	    {
-			return _outputBuilder.ToString();
-		}
+        public override string ToString()
+        {
+            return _outputBuilder.ToString();
+        }
     }
 }

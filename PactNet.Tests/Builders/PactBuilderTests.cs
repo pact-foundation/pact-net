@@ -1,13 +1,11 @@
 ﻿using System;
 using Newtonsoft.Json;
 using NSubstitute;
-using PactNet.Configuration.Json;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
-using PactNet.Models;
 using Xunit;
 
-namespace PactNet.Tests
+namespace PactNet.Tests.Builders
 {
     public class PactBuilderTests
     {
@@ -24,7 +22,7 @@ namespace PactNet.Tests
 
             pactBuilder.ServiceConsumer(consumerName);
 
-            Assert.Equal(consumerName, ((PactBuilder) pactBuilder).ConsumerName);
+            Assert.Equal(consumerName, ((PactBuilder)pactBuilder).ConsumerName);
         }
 
         [Fact]
@@ -51,7 +49,7 @@ namespace PactNet.Tests
 
             pact.HasPactWith(providerName);
 
-            Assert.Equal(providerName, ((PactBuilder) pact).ProviderName);
+            Assert.Equal(providerName, ((PactBuilder)pact).ProviderName);
         }
 
         [Fact]

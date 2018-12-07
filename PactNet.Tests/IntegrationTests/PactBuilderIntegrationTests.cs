@@ -24,31 +24,31 @@ namespace PactNet.Tests.IntegrationTests
             _mockProviderService.VerifyInteractions();
         }
 
-	    [Fact]
-	    public void Build_SubscriberCanotHandleMessage_ThenPactFailureExceptionIsThrown()
-	    {
-		    _mockProviderService
-			    .UponReceiving("A POST request to create a new thing")
-			    .With(new ProviderServiceRequest
-			    {
-				    Method = HttpVerb.Post,
-				    Path = "/things",
-				    Headers = new Dictionary<string, object>
-				    {
-					    { "Content-Type", "application/json; charset=utf-8" }
-				    },
-				    Body = new
-				    {
-					    thingId = 1234,
-					    type = "Awesome"
-				    }
-			    })
-			    .WillRespondWith(new ProviderServiceResponse
-			    {
-				    Status = 201
-			    });
+        [Fact]
+        public void Build_SubscriberCanotHandleMessage_ThenPactFailureExceptionIsThrown()
+        {
+            _mockProviderService
+                .UponReceiving("A POST request to create a new thing")
+                .With(new ProviderServiceRequest
+                {
+                    Method = HttpVerb.Post,
+                    Path = "/things",
+                    Headers = new Dictionary<string, object>
+                    {
+                        { "Content-Type", "application/json; charset=utf-8" }
+                    },
+                    Body = new
+                    {
+                        thingId = 1234,
+                        type = "Awesome"
+                    }
+                })
+                .WillRespondWith(new ProviderServiceResponse
+                {
+                    Status = 201
+                });
 
-		    Assert.Throws<PactFailureException>(() => _mockProviderService.VerifyInteractions());
-	    }
-	}
+            Assert.Throws<PactFailureException>(() => _mockProviderService.VerifyInteractions());
+        }
+    }
 }

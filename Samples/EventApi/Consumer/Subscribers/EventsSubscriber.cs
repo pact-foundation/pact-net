@@ -6,7 +6,7 @@ namespace Consumer.Subscribers
     {
         public void EventUpdatedHandler(Event eventData)
         {
-            
+
         }
     }
 }
