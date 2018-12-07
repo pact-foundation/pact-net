@@ -369,6 +369,9 @@ Again, please note: we advise using a TDD approach when using this library, howe
 
 For further examples please refer to the [Samples](https://github.com/pact-foundation/pact-net/tree/master/Samples) in the solution.
 
+### Using a Custom SSL Certificate
+When creating the MockProviderService you can use a custom SSL cert, which allows the use of a valid installed certificate without requiring any hacks to ignore certificate validation errors.
+
 #### 1. Generate a custom SSL certificate
 The simplest way to generate a private key and self-signed certificate for localhost is with this openssl command:
 
