@@ -138,21 +138,27 @@ namespace PactNet.Tests.PactMessage
             {
                 Test = "Test"
             };
+	        var expectedMetdata = new
+	        {
+		        ContentType = "application/json;"
+	        };
 
-            //Act
-            messagePact
+			//Act
+			messagePact
                 .Given(providerStates)
                 .ExpectedToReceive(testDescription)
                 .With(new Message
                 {
-                    Contents = expectedContent
+                    Contents = expectedContent,
+					Metadata = expectedMetdata
                 });
 
             //Assert
             Assert.True(messagePact.MessageInteractions.Count == 1);
-            Assert.Equal(messagePact.MessageInteractions[0].Description, testDescription);
-            Assert.Equal(messagePact.MessageInteractions[0].Contents, expectedContent);
-            Assert.Equal(messagePact.MessageInteractions[0].ProviderStates, providerStates);
+            Assert.Equal(testDescription, messagePact.MessageInteractions[0].Description);
+            Assert.Equal(expectedContent, messagePact.MessageInteractions[0].Contents);
+            Assert.Equal(expectedMetdata, messagePact.MessageInteractions[0].Metadata);
+            Assert.Equal(providerStates, messagePact.MessageInteractions[0].ProviderStates);
         }
 
         [Fact]

@@ -86,6 +86,7 @@ namespace PactNet.PactMessage
 				Contents = message.Contents,
 				ProviderStates = _providerStates,
 				Description = _description,
+				Metadata = message.Metadata
 			});
 
 			return this;

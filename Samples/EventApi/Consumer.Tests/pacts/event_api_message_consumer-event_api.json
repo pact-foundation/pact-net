@@ -44,6 +44,7 @@
         }
       },
       "metaData": {
+        "ContentType": "application/json;"
       }
     }
   ],

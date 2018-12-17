@@ -9,5 +9,8 @@ namespace PactNet.PactMessage.Models
         {
             get; set;
         }
+
+		[JsonProperty(PropertyName = "metadata")]
+	    public dynamic Metadata { get; set; }
     }
 }
