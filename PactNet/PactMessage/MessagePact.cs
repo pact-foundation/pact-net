@@ -26,7 +26,7 @@ namespace PactNet.PactMessage
 				new ReifyCommand(messageInteraction, builder, coreHostFactory, jsonSerializerSettings),
 				new OutputBuilder(),
 				jsonSerializerSettings,
-			    config => new PactCoreHost<PactMessageHostConfig>(config))
+				config => new PactCoreHost<PactMessageHostConfig>(config))
 		{
 		}
 
