@@ -1,7 +1,7 @@
 ﻿namespace PactNet.PactVerification
 {
-	public interface IMessageInvoker
-	{
-		dynamic Invoke(MessagePactDescription description);
-	}
+    public interface IMessageInvoker
+    {
+        dynamic Invoke(MessagePactDescription description);
+    }
 }
