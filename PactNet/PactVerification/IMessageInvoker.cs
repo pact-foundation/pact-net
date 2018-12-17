@@ -2,6 +2,6 @@
 {
     public interface IMessageInvoker
     {
-        object Invoke(MessagePactDescription description);
+	    dynamic Invoke(MessagePactDescription description);
     }
 }
