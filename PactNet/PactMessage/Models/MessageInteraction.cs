@@ -6,14 +6,20 @@ namespace PactNet.PactMessage.Models
 {
     public class MessageInteraction : Interaction
     {
-        [JsonProperty(PropertyName = "contents")]
+        [JsonProperty(Order = 0, PropertyName = "providerStates")]
+        public IEnumerable<ProviderState> ProviderStates
+        {
+            get; set;
+        }
+
+        [JsonProperty(Order = 1, PropertyName = "contents")]
         public dynamic Contents
         {
             get; set;
         }
 
-        [JsonProperty(Order = -2, PropertyName = "providerStates")]
-        public IEnumerable<ProviderState> ProviderStates
+        [JsonProperty(Order = 2, PropertyName = "metadata")]
+        public dynamic Metadata
         {
             get; set;
         }

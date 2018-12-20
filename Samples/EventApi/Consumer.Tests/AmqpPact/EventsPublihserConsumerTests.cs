@@ -43,6 +43,10 @@ namespace Consumer.Tests.AmqpPact
                     Contents = new
                     {
                         eventId = Match.Type(new Guid("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5"))
+                    },
+                    Metadata = new
+                    {
+                        ContentType = "application/json;"
                     }
                 })
                 .VerifyConsumer<Event>(messageContent => eventsSubscriber.EventUpdatedHandler(messageContent));

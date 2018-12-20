@@ -8,7 +8,7 @@ namespace PactNet.PactVerification
     public class MessageInvoker : IMessageInvoker
     {
         private readonly IDictionary<string, Action> _providerStates;
-        private readonly IDictionary<string, Func<object>> _messagePublishers;
+        private readonly IDictionary<string, Func<dynamic>> _messagePublishers;
 
         public MessageInvoker(IDictionary<string, Action> providerStates, IDictionary<string, Func<object>> messagePublishers)
         {
@@ -16,7 +16,7 @@ namespace PactNet.PactVerification
             _messagePublishers = messagePublishers;
         }
 
-        public object Invoke(MessagePactDescription description)
+        public dynamic Invoke(MessagePactDescription description)
         {
             if (description?.ProviderStates != null && description.ProviderStates.Any(x => x.Name != null))
             {
@@ -38,7 +38,7 @@ namespace PactNet.PactVerification
             }
         }
 
-        private object GetMessageInteraction(MessagePactDescription messageDescription)
+        private dynamic GetMessageInteraction(MessagePactDescription messageDescription)
         {
             if (!_messagePublishers.TryGetValue(messageDescription.Description, out var actualPublisher))
             {
