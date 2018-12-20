@@ -13,7 +13,6 @@ namespace PactNet.Tests.PactMessage
 {
     public class MessagePactTests
     {
-
         [Fact]
         public void Given_WithProviderState_SetsProviderState()
         {
