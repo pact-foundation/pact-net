@@ -22,11 +22,11 @@ namespace PactNet.PactMessage
         private readonly Func<MessageInteraction, IOutputBuilder, Func<PactMessageHostConfig, IPactCoreHost>, IReifyCommand> _reifyCommandFactory;
 
         public MessagePact(JsonSerializerSettings jsonSerializerSettings = null) : this(
-            (messageInteraction, builder, coreHostFactory) =>
-                new ReifyCommand(messageInteraction, builder, coreHostFactory, jsonSerializerSettings),
-                new OutputBuilder(),
-                jsonSerializerSettings,
-                config => new PactCoreHost<PactMessageHostConfig>(config))
+             (messageInteraction, builder, coreHostFactory) =>
+                 new ReifyCommand(messageInteraction, builder, coreHostFactory, jsonSerializerSettings),
+                 new OutputBuilder(),
+                 jsonSerializerSettings,
+                 config => new PactCoreHost<PactMessageHostConfig>(config))
         {
         }
 
