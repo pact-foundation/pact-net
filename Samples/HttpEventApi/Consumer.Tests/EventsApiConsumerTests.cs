@@ -6,7 +6,7 @@ using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using Xunit;
 
-namespace Consumer.Tests.HttpPact
+namespace Consumer.Tests
 {
     public class EventsApiConsumerTests : IClassFixture<ConsumerEventApiPact>
     {

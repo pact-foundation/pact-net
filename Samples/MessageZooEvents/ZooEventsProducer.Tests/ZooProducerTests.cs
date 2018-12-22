@@ -1,25 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.Owin.Hosting;
 using PactNet;
 using PactNet.Infrastructure.Outputters;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Provider.Api.Web.Tests
+namespace ZooEventsProducer.Tests
 {
-    public class EventApiTests : IDisposable
+    public class ZooProducerTests
     {
         private readonly ITestOutputHelper _output;
 
-        public EventApiTests(ITestOutputHelper output)
+        public ZooProducerTests(ITestOutputHelper output)
         {
             _output = output;
         }
 
         [Fact]
-        public void EnsureEventApiHonoursPactWithConsumer()
+        public void EnsureEventProducerHonoursPactWithEventConsumer()
         {
             //Arrange
             const string serviceUri = "http://localhost:9222";
@@ -31,21 +30,16 @@ namespace Provider.Api.Web.Tests
                 }
             };
 
-            using (WebApp.Start<TestStartup>(serviceUri))
-            {
+            //using (WebApp.Start<TestStartup>(serviceUri))
+            //{
                 //Act / Assert
                 IPactVerifier pactVerifier = new PactVerifier(config);
                 pactVerifier
-                    .ProviderState($"{serviceUri}/provider-states")
                     .ServiceProvider("Event API", serviceUri)
-                    .HonoursPactWith("Event API Consumer")
-                    .PactUri($"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}Consumer.Tests{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}event_api_consumer-event_api.json")
+                    .HonoursPactWith("Event API Message Consumer")
+                    .PactUri($"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}Consumer.Tests{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}event_api_message_consumer-event_api.json")
                     .Verify();
-            }
-        }
-
-        public virtual void Dispose()
-        {
+            //}
         }
     }
 }

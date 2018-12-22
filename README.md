@@ -413,7 +413,7 @@ The Pact broker is a useful tool that can be used to share pacts between the con
 [Checkout this gist](https://gist.github.com/neilcampbell/bc1fb7d409425894ece0) to see an example of how you can do this.
 
 #### Using the C# client
-If you use build tools like Fake and Cake, you may want create a broker publish task and using the PactPublisher.
+If you use build tools like Fake and Cake, you may want create a broker publish task using the PactPublisher.
 
 ```c#
 var pactPublisher = new PactPublisher("http://test.pact.dius.com.au", new PactUriOptions("username", "password"));

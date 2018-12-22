@@ -4,7 +4,7 @@ using PactNet;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Models;
 
-namespace Consumer.Tests.HttpPact
+namespace Consumer.Tests
 {
     public class ConsumerEventApiPact : IDisposable
     {
@@ -22,8 +22,8 @@ namespace Consumer.Tests.HttpPact
                 LogDir = $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}logs{Path.DirectorySeparatorChar}",
                 PactDir = $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}"
             })
-                .ServiceConsumer("Event API Consumer")
-                .HasPactWith("Event API");
+            .ServiceConsumer("Event API Consumer")
+            .HasPactWith("Event API");
 
             MockProviderService = PactBuilder.MockService(MockServerPort, false, IPAddress.Any);
         }
