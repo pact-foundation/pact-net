@@ -26,7 +26,7 @@ namespace Provider.Api.Web.Tests.Controllers
                         EnsureOneDetailsViewEventExists
                     }
                 },
-                new Dictionary<string, Func<object>>
+                new Dictionary<string, Func<dynamic>>
                 {
                     {"Event with id 45D80D13-D5A2-48D7-8353-CBB4C0EAABF5 updated", () => _eventsPublisher.GetEventUpdatedMessage(new Event
                     {
@@ -40,7 +40,7 @@ namespace Provider.Api.Web.Tests.Controllers
             );
 
             var message = messageInvoker.Invoke(description);
-            return Ok(new { contents = message });
+            return Ok(new { contents = message.Contents, metadata = message.Metadata });
         }
 
         private void EnsureOneDetailsViewEventExists()

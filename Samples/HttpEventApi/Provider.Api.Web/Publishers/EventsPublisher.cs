@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
 using Provider.Api.Web.Models;
 
 namespace Provider.Api.Web.Publishers
@@ -12,9 +12,16 @@ namespace Provider.Api.Web.Publishers
             //Publish event
         }
 
-        public Event GetEventUpdatedMessage(Event myUpdatedEvent)
+        public Message<Event> GetEventUpdatedMessage(Event myUpdatedEvent)
         {
-            return myUpdatedEvent;
+            return new Message<Event>
+            {
+                Contents = myUpdatedEvent,
+                Metadata = new Dictionary<string, string>
+                {
+                    {"ContentType", "application:json;"}
+                }
+            };
         }
 
     }
