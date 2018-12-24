@@ -3,6 +3,7 @@ using Xunit;
 using ZooEventsConsumer.Models;
 using PactNet.PactMessage.Models;
 using PactNet.Matchers;
+using Xunit.Abstractions;
 
 namespace ZooEventsConsumer.Tests
 {
@@ -10,9 +11,9 @@ namespace ZooEventsConsumer.Tests
     {
         private readonly IMessagePact _messagePact;
 
-        public SavePetsTests(ConsumerEventPact data)
+        public SavePetsTests(ConsumerEventPact data, ITestOutputHelper output)
         {
-            _messagePact = data.MessagePact;
+            _messagePact = data.Initialise(output);
         }
 
         [Fact]
@@ -33,14 +34,14 @@ namespace ZooEventsConsumer.Tests
 
             //Act + Assert
             _messagePact.Given(providerStates)
-                .ExpectedToReceive("an animal created event")
+                .ExpectedToReceive("a pet animal created event")
                 .With(new Message
                 {
                     Contents = new
                     {
-                        eventId = Match.Type(1),
+                        id = Match.Type(1),
                         name = Match.Type("Rover"),
-                        type = Match.Type(PetType.Dog.ToString())
+                        type = Match.Regex(PetType.Dog.ToString(), "^(Dog|Cat|Fish)$")
                     }
                 })
                 .VerifyConsumer<AnimalCreated>(e => consumer.Handle(e)); //This also checks that no exceptions are thrown
@@ -70,7 +71,7 @@ namespace ZooEventsConsumer.Tests
                 {
                     Contents = new
                     {
-                        eventId = Match.Type(2),
+                        id = Match.Type(2),
                         name = Match.Type("Terence"),
                         type = Match.Type("Giraffe")
                     }

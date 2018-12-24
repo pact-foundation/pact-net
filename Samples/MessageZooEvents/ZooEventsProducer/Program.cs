@@ -1,12 +1,13 @@
-﻿using System;
-
-namespace ZooEventsProducer
+﻿namespace ZooEventsProducer
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            //TODO: Is it worth showing a Rabbit/AMQP example?
+
+            //You're messaging/event technology binding/wiring would go here
+            //which would to register events that are published a corresponding handler
         }
     }
 }

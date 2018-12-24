@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
 using PactNet;
 using PactNet.Infrastructure.Outputters;
 using Xunit;
@@ -30,16 +32,23 @@ namespace ZooEventsProducer.Tests
                 }
             };
 
-            //using (WebApp.Start<TestStartup>(serviceUri))
-            //{
+            var builder = WebHost.CreateDefaultBuilder()
+                .UseUrls(serviceUri)
+                .PreferHostingUrls(true)
+                .UseStartup<TestStartup>();
+
+            using (var host = builder.Build())
+            {
+                host.Start();
+            
                 //Act / Assert
                 IPactVerifier pactVerifier = new PactVerifier(config);
-                pactVerifier
-                    .ServiceProvider("Event API", serviceUri)
-                    .HonoursPactWith("Event API Message Consumer")
-                    .PactUri($"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}Consumer.Tests{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}event_api_message_consumer-event_api.json")
-                    .Verify();
-            //}
+                    pactVerifier
+                        .ServiceProvider("Event API", serviceUri)
+                        .HonoursPactWith("Event API Message Consumer")
+                        .PactUri($"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}ZooEventsConsumer.Tests{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}zoo_event_consumer-zoo_event_producer.json")
+                        .Verify();
+            }
         }
     }
 }
