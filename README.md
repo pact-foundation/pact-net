@@ -166,8 +166,7 @@ public class SomethingApiConsumerTests : IClassFixture<ConsumerMyApiPact>
   }
 
   [Fact]
-  public void GetSometh
-  ing_WhenTheTesterSomethingExists_ReturnsTheSomething()
+  public void GetSomething_WhenTheTesterSomethingExists_ReturnsTheSomething()
   {
     //Arrange
     _mockProviderService
