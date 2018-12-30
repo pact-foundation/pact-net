@@ -31,7 +31,6 @@ namespace PactNet.Mocks.MockHttpService.Host
                 : string.Empty;
 
             Script = "pact-mock-service";
-            Arguments = $"-p {port} -l \"{FixPathForRuby(logFile)}\" --pact-dir \"{FixPathForRuby(config.PactDir)}\" --pact-specification-version \"{config.SpecificationVersion}\" --consumer \"{consumerName}\" --provider \"{providerName}\"{sslOption}{hostOption}{monkeyPatchOption}";
             Arguments = $"-p {port} -l \"{FixPathForRuby(logFile)}\" " +
                         $"--pact-dir \"{FixPathForRuby(config.PactDir)}\" " +
                         $"--pact-specification-version \"{config.SpecificationVersion}\" " +
