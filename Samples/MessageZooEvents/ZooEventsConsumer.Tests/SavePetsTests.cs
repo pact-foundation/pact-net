@@ -12,9 +12,9 @@ namespace ZooEventsConsumer.Tests
     {
         private readonly IMessagePact _messagePact;
 
-        public SavePetsTests(ConsumerEventPact data, ITestOutputHelper output)
+        public SavePetsTests(ConsumerEventPact data)
         {
-            _messagePact = data.Initialise(output);
+            _messagePact = data.MessagePact;
         }
 
         [Fact]
@@ -29,7 +29,7 @@ namespace ZooEventsConsumer.Tests
             {
                 new ProviderState
                 {
-                    Name = "there is a Pet animal",
+                    Name = "there is a Pet animal"
                 }
             };
 
@@ -60,7 +60,7 @@ namespace ZooEventsConsumer.Tests
             {
                 new ProviderState
                 {
-                    Name = "there is a non Pet animal",
+                    Name = "there is a non Pet animal"
                 }
             };
 

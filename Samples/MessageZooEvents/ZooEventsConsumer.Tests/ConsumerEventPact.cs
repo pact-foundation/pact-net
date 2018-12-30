@@ -10,9 +10,10 @@ namespace ZooEventsConsumer.Tests
 {
     public class ConsumerEventPact : IDisposable
     {
-        private IMessagePactBuilder _messagePactBuilder;
+        private readonly IMessagePactBuilder _messagePactBuilder;
+        public IMessagePact MessagePact;
 
-        public IMessagePact Initialise(ITestOutputHelper output)
+        public ConsumerEventPact(IMessageSink sink)
         {
             _messagePactBuilder = new MessagePactBuilder(new PactConfig
                 {
@@ -21,13 +22,13 @@ namespace ZooEventsConsumer.Tests
                     PactDir = $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}",
                     Outputters = new List<IOutput>
                     {
-                        new XUnitOutput(output)
+                        new XUnitOutput(sink)
                     }
                 })
                 .ServiceConsumer("Zoo Event Consumer")
                 .HasPactWith("Zoo Event Producer");
 
-            return _messagePactBuilder.InitializePactMessage();
+            MessagePact = _messagePactBuilder.InitializePactMessage();
         }
 
         public void Dispose()

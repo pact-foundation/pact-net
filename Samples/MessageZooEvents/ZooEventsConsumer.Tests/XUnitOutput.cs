@@ -1,20 +1,21 @@
 using PactNet.Infrastructure.Outputters;
 using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace ZooEventsConsumer.Tests
 {
     public class XUnitOutput : IOutput
     {
-        private readonly ITestOutputHelper _output;
+        private readonly IMessageSink _sink;
 
-        public XUnitOutput(ITestOutputHelper output)
+        public XUnitOutput(IMessageSink sink)
         {
-            _output = output;
+            _sink = sink;
         }
 
         public void WriteLine(string line)
         {
-            _output.WriteLine(line);
+            _sink.OnMessage(new DiagnosticMessage(line));
         }
     }
 }

@@ -35,6 +35,35 @@
       },
       "metaData": {
       }
+    },
+    {
+      "description": "a non pet animal created event",
+      "providerStates": [
+        {
+          "name": "there is a non Pet animal",
+          "params": null
+        }
+      ],
+      "contents": {
+        "id": 2,
+        "name": "Terence",
+        "type": "Giraffe"
+      },
+      "matchingRules": {
+        "body": {
+          "$.id": {
+            "match": "type"
+          },
+          "$.name": {
+            "match": "type"
+          },
+          "$.type": {
+            "match": "type"
+          }
+        }
+      },
+      "metaData": {
+      }
     }
   ],
   "metadata": {
