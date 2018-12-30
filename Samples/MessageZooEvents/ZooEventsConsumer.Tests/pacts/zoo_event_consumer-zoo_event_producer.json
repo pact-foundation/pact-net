@@ -1,0 +1,45 @@
+{
+  "consumer": {
+    "name": "Zoo Event Consumer"
+  },
+  "provider": {
+    "name": "Zoo Event Producer"
+  },
+  "messages": [
+    {
+      "description": "a pet animal created event",
+      "providerStates": [
+        {
+          "name": "there is a Pet animal",
+          "params": null
+        }
+      ],
+      "contents": {
+        "id": 1,
+        "name": "Rover",
+        "type": "Dog"
+      },
+      "matchingRules": {
+        "body": {
+          "$.id": {
+            "match": "type"
+          },
+          "$.name": {
+            "match": "type"
+          },
+          "$.type": {
+            "match": "regex",
+            "regex": "^(Dog|Cat|Fish)$"
+          }
+        }
+      },
+      "metaData": {
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  }
+}

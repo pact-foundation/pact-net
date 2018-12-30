@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.15
+VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PactNet", "PactNet\PactNet.csproj", "{9583473A-21B2-4BBB-8492-C0FA8A07D1CB}"
 EndProject
@@ -8,15 +8,25 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PactNet.Tests", "PactNet.Te
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{547DB478-460A-428F-9371-1D653CE85DB5}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EventApi", "EventApi", "{6663C12E-9912-40D0-9310-D119D1F6B023}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HttpEventApi", "HttpEventApi", "{6663C12E-9912-40D0-9310-D119D1F6B023}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Consumer", "Samples\EventApi\Consumer\Consumer.csproj", "{1B9BAF2F-906B-4358-A1EF-AC79F7966B75}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Consumer", "Samples\HttpEventApi\Consumer\Consumer.csproj", "{1B9BAF2F-906B-4358-A1EF-AC79F7966B75}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Consumer.Tests", "Samples\EventApi\Consumer.Tests\Consumer.Tests.csproj", "{0A442FF6-4B8D-4E7E-8FE7-F7F37EB034B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Consumer.Tests", "Samples\HttpEventApi\Consumer.Tests\Consumer.Tests.csproj", "{0A442FF6-4B8D-4E7E-8FE7-F7F37EB034B0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Provider.Api.Web", "Samples\EventApi\Provider.Api.Web\Provider.Api.Web.csproj", "{0FBC851B-C32C-4554-8433-5D18061507DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Provider.Api.Web", "Samples\HttpEventApi\Provider.Api.Web\Provider.Api.Web.csproj", "{0FBC851B-C32C-4554-8433-5D18061507DB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Provider.Api.Web.Tests", "Samples\EventApi\Provider.Api.Web.Tests\Provider.Api.Web.Tests.csproj", "{6029BB36-4F61-450F-B7F3-3B99D457FD23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Provider.Api.Web.Tests", "Samples\HttpEventApi\Provider.Api.Web.Tests\Provider.Api.Web.Tests.csproj", "{6029BB36-4F61-450F-B7F3-3B99D457FD23}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MessageZooEvents", "MessageZooEvents", "{548725F2-9AEF-4B00-ACDC-168FAE655EDA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZooEventsConsumer.Tests", "Samples\MessageZooEvents\ZooEventsConsumer.Tests\ZooEventsConsumer.Tests.csproj", "{1163D519-7B8D-4ED5-B9A5-24A3DF2DEC26}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZooEventsConsumer", "Samples\MessageZooEvents\ZooEventsConsumer\ZooEventsConsumer.csproj", "{2B768E29-AB33-40A3-A908-4E9BE53D73C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZooEventsProducer", "Samples\MessageZooEvents\ZooEventsProducer\ZooEventsProducer.csproj", "{EC573541-671B-43BE-A434-8CBD69D58125}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZooEventsProducer.Tests", "Samples\MessageZooEvents\ZooEventsProducer.Tests\ZooEventsProducer.Tests.csproj", "{1570D4FC-4033-4411-BB1E-00ABFF450502}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -100,6 +110,54 @@ Global
 		{6029BB36-4F61-450F-B7F3-3B99D457FD23}.Release|x64.Build.0 = Release|Any CPU
 		{6029BB36-4F61-450F-B7F3-3B99D457FD23}.Release|x86.ActiveCfg = Release|Any CPU
 		{6029BB36-4F61-450F-B7F3-3B99D457FD23}.Release|x86.Build.0 = Release|Any CPU
+		{1163D519-7B8D-4ED5-B9A5-24A3DF2DEC26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1163D519-7B8D-4ED5-B9A5-24A3DF2DEC26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1163D519-7B8D-4ED5-B9A5-24A3DF2DEC26}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1163D519-7B8D-4ED5-B9A5-24A3DF2DEC26}.Debug|x64.Build.0 = Debug|Any CPU
+		{1163D519-7B8D-4ED5-B9A5-24A3DF2DEC26}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1163D519-7B8D-4ED5-B9A5-24A3DF2DEC26}.Debug|x86.Build.0 = Debug|Any CPU
+		{1163D519-7B8D-4ED5-B9A5-24A3DF2DEC26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1163D519-7B8D-4ED5-B9A5-24A3DF2DEC26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1163D519-7B8D-4ED5-B9A5-24A3DF2DEC26}.Release|x64.ActiveCfg = Release|Any CPU
+		{1163D519-7B8D-4ED5-B9A5-24A3DF2DEC26}.Release|x64.Build.0 = Release|Any CPU
+		{1163D519-7B8D-4ED5-B9A5-24A3DF2DEC26}.Release|x86.ActiveCfg = Release|Any CPU
+		{1163D519-7B8D-4ED5-B9A5-24A3DF2DEC26}.Release|x86.Build.0 = Release|Any CPU
+		{2B768E29-AB33-40A3-A908-4E9BE53D73C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B768E29-AB33-40A3-A908-4E9BE53D73C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B768E29-AB33-40A3-A908-4E9BE53D73C8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2B768E29-AB33-40A3-A908-4E9BE53D73C8}.Debug|x64.Build.0 = Debug|Any CPU
+		{2B768E29-AB33-40A3-A908-4E9BE53D73C8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2B768E29-AB33-40A3-A908-4E9BE53D73C8}.Debug|x86.Build.0 = Debug|Any CPU
+		{2B768E29-AB33-40A3-A908-4E9BE53D73C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B768E29-AB33-40A3-A908-4E9BE53D73C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B768E29-AB33-40A3-A908-4E9BE53D73C8}.Release|x64.ActiveCfg = Release|Any CPU
+		{2B768E29-AB33-40A3-A908-4E9BE53D73C8}.Release|x64.Build.0 = Release|Any CPU
+		{2B768E29-AB33-40A3-A908-4E9BE53D73C8}.Release|x86.ActiveCfg = Release|Any CPU
+		{2B768E29-AB33-40A3-A908-4E9BE53D73C8}.Release|x86.Build.0 = Release|Any CPU
+		{EC573541-671B-43BE-A434-8CBD69D58125}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC573541-671B-43BE-A434-8CBD69D58125}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC573541-671B-43BE-A434-8CBD69D58125}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EC573541-671B-43BE-A434-8CBD69D58125}.Debug|x64.Build.0 = Debug|Any CPU
+		{EC573541-671B-43BE-A434-8CBD69D58125}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EC573541-671B-43BE-A434-8CBD69D58125}.Debug|x86.Build.0 = Debug|Any CPU
+		{EC573541-671B-43BE-A434-8CBD69D58125}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC573541-671B-43BE-A434-8CBD69D58125}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC573541-671B-43BE-A434-8CBD69D58125}.Release|x64.ActiveCfg = Release|Any CPU
+		{EC573541-671B-43BE-A434-8CBD69D58125}.Release|x64.Build.0 = Release|Any CPU
+		{EC573541-671B-43BE-A434-8CBD69D58125}.Release|x86.ActiveCfg = Release|Any CPU
+		{EC573541-671B-43BE-A434-8CBD69D58125}.Release|x86.Build.0 = Release|Any CPU
+		{1570D4FC-4033-4411-BB1E-00ABFF450502}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1570D4FC-4033-4411-BB1E-00ABFF450502}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1570D4FC-4033-4411-BB1E-00ABFF450502}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1570D4FC-4033-4411-BB1E-00ABFF450502}.Debug|x64.Build.0 = Debug|Any CPU
+		{1570D4FC-4033-4411-BB1E-00ABFF450502}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1570D4FC-4033-4411-BB1E-00ABFF450502}.Debug|x86.Build.0 = Debug|Any CPU
+		{1570D4FC-4033-4411-BB1E-00ABFF450502}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1570D4FC-4033-4411-BB1E-00ABFF450502}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1570D4FC-4033-4411-BB1E-00ABFF450502}.Release|x64.ActiveCfg = Release|Any CPU
+		{1570D4FC-4033-4411-BB1E-00ABFF450502}.Release|x64.Build.0 = Release|Any CPU
+		{1570D4FC-4033-4411-BB1E-00ABFF450502}.Release|x86.ActiveCfg = Release|Any CPU
+		{1570D4FC-4033-4411-BB1E-00ABFF450502}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -110,5 +168,10 @@ Global
 		{0A442FF6-4B8D-4E7E-8FE7-F7F37EB034B0} = {6663C12E-9912-40D0-9310-D119D1F6B023}
 		{0FBC851B-C32C-4554-8433-5D18061507DB} = {6663C12E-9912-40D0-9310-D119D1F6B023}
 		{6029BB36-4F61-450F-B7F3-3B99D457FD23} = {6663C12E-9912-40D0-9310-D119D1F6B023}
+		{548725F2-9AEF-4B00-ACDC-168FAE655EDA} = {547DB478-460A-428F-9371-1D653CE85DB5}
+		{1163D519-7B8D-4ED5-B9A5-24A3DF2DEC26} = {548725F2-9AEF-4B00-ACDC-168FAE655EDA}
+		{2B768E29-AB33-40A3-A908-4E9BE53D73C8} = {548725F2-9AEF-4B00-ACDC-168FAE655EDA}
+		{EC573541-671B-43BE-A434-8CBD69D58125} = {548725F2-9AEF-4B00-ACDC-168FAE655EDA}
+		{1570D4FC-4033-4411-BB1E-00ABFF450502} = {548725F2-9AEF-4B00-ACDC-168FAE655EDA}
 	EndGlobalSection
 EndGlobal

@@ -6,5 +6,8 @@ namespace PactNet.PactMessage.Models
     {
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
+
+        [JsonProperty(PropertyName = "params")]
+        public string Params { get; set; }
     }
 }

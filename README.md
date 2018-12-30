@@ -30,7 +30,8 @@ Massive thanks to the SEEK team for all the time and hard work put into this lib
 
 ## Known Issues
 1. When debugging a test locally (either consumer or provider) if you click the stop button in your test runner, it will abort the process abruptly and the ruby runtime will not get cleaned up. If you do this, simply kill the ruby process from your task/process manager. We recommend you play the test through to the end to avoid this issue. See https://github.com/pact-foundation/pact-net/issues/108 for more details.
-2. The "metadata" section is not verified for message queue pacts. See [pact-foundation/pact-message-ruby#6](https://github.com/pact-foundation/pact-message-ruby/issues/6)  for more details.
+2. The "metadata" section is not verified for message queue pacts. See [pact-foundation/pact-message-ruby#6](https://github.com/pact-foundation/pact-message-ruby/issues/6) for more details.
+3. The "params" section of the provider states is currently not supported. See [pact-foundation/pact-message-ruby#4](https://github.com/pact-foundation/pact-message-ruby/issues/4) for more details.
 
 ## Usage
 Below are some samples of usage.  
@@ -414,7 +415,7 @@ The Pact broker is a useful tool that can be used to share pacts between the con
 [Checkout this gist](https://gist.github.com/neilcampbell/bc1fb7d409425894ece0) to see an example of how you can do this.
 
 #### Using the C# client
-If you use build tools like Fake and Cake, you may want create a broker publish task and using the PactPublisher.
+If you use build tools like Fake and Cake, you may want create a broker publish task using the PactPublisher.
 
 ```c#
 var pactPublisher = new PactPublisher("http://test.pact.dius.com.au", new PactUriOptions("username", "password"));
