@@ -166,7 +166,8 @@ public class SomethingApiConsumerTests : IClassFixture<ConsumerMyApiPact>
   }
 
   [Fact]
-  public void GetSomething_WhenTheTesterSomethingExists_ReturnsTheSomething()
+  public void GetSometh
+  ing_WhenTheTesterSomethingExists_ReturnsTheSomething()
   {
     //Arrange
     _mockProviderService
@@ -209,8 +210,10 @@ public class SomethingApiConsumerTests : IClassFixture<ConsumerMyApiPact>
 }
 ```
 
-#### 4. Run the test
-Everything should be green
+#### 4. Run the test 
+If you now navigate to [RepositoryRoot]/pacts you will see the pact file your test generated. Take a moment to have a look at what it contains which is a JSON representation of the mocked requests your test made.
+
+Everything should be green. We only need to verify that the provider was called, the expectation could be omitted anyway.
 
 Note: we advise using a TDD approach when using this library, however we will leave it up to you.  
 Likely you will be creating a skeleton client, describing the pact, write the failing test, implement the skeleton client, run the test to make sure it passes, then rinse and repeat.
@@ -223,7 +226,7 @@ You can create the API using whatever framework you like, however this example w
 Note: We have removed to support for Microsoft.Owin.Testing, as we have moved to using a shared Pact core. You will now be required to start the API and listen on the correct port, as part of the test.
 
 #### 2. Tell the provider it needs to honour the pact
-Create a new test case within your service provider test project, using whatever test framework you like (in this case we used xUnit).
+Create a new test case within your service provider test project, using whatever test framework you like (in this case we used xUnit). PactUri method should refer to the pact json file, created when previous Consumer Test was run.
 
 ```c#
 public class SomethingApiTests
