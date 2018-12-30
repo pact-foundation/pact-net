@@ -23,9 +23,8 @@ namespace ZooEventsConsumer.Tests
             //Arrange
             var stubRepo = Substitute.For<IPetRepo>();
             var consumer = new SavePets(stubRepo);
-            var pet = new Pet {Id = 1, Name = "Rover", Type = PetType.Dog};
+            var pet = new Pet { Id = 1, Name = "Rover", Type = PetType.Dog };
 
-            //TODO: Why is this an object?
             var providerStates = new[]
             {
                 new ProviderState
@@ -57,7 +56,6 @@ namespace ZooEventsConsumer.Tests
             var stubRepo = Substitute.For<IPetRepo>();
             var consumer = new SavePets(stubRepo);
 
-            //TODO: Why is this an object?
             var providerStates = new[]
             {
                 new ProviderState
