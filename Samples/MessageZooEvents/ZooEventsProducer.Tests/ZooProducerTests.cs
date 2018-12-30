@@ -44,8 +44,8 @@ namespace ZooEventsProducer.Tests
                 //Act / Assert
                 IPactVerifier pactVerifier = new PactVerifier(config);
                     pactVerifier
-                        .ServiceProvider("Event API", serviceUri)
-                        .HonoursPactWith("Event API Message Consumer")
+                        .ServiceProvider("Zoo Event Producer", serviceUri)
+                        .HonoursPactWith("Zoo Event Consumer")
                         .PactUri($"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}ZooEventsConsumer.Tests{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}zoo_event_consumer-zoo_event_producer.json")
                         .Verify();
             }

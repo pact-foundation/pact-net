@@ -1,4 +1,5 @@
-﻿using PactNet.PactMessage;
+﻿using NSubstitute;
+using PactNet.PactMessage;
 using Xunit;
 using ZooEventsConsumer.Models;
 using PactNet.PactMessage.Models;
@@ -20,8 +21,9 @@ namespace ZooEventsConsumer.Tests
         public void Handle_WhenAPetIsCreated_SavesThePet()
         {
             //Arrange
-            var stubRepo = new StubPetRepo();
+            var stubRepo = Substitute.For<IPetRepo>();
             var consumer = new SavePets(stubRepo);
+            var pet = new Pet {Id = 1, Name = "Rover", Type = PetType.Dog};
 
             //TODO: Why is this an object?
             var providerStates = new[]
@@ -39,20 +41,20 @@ namespace ZooEventsConsumer.Tests
                 {
                     Contents = new
                     {
-                        id = Match.Type(1),
-                        name = Match.Type("Rover"),
-                        type = Match.Regex(PetType.Dog.ToString(), "^(Dog|Cat|Fish)$")
+                        id = Match.Type(pet.Id),
+                        name = Match.Type(pet.Name),
+                        type = Match.Regex(pet.Type.ToString(), "^(Dog|Cat|Fish)$")
                     }
                 })
                 .VerifyConsumer<AnimalCreated>(e => consumer.Handle(e)); //This also checks that no exceptions are thrown
-            Assert.True(stubRepo.SavePetWasCalled, "Pet was saved");
+            stubRepo.Received(1).SavePet(pet);
         }
 
         [Fact]
         public void Handle_WhenANonPetAnimalIsCreated_DoesNotSaveIt()
         {
             //Arrange
-            var stubRepo = new StubPetRepo();
+            var stubRepo = Substitute.For<IPetRepo>();
             var consumer = new SavePets(stubRepo);
 
             //TODO: Why is this an object?
@@ -77,18 +79,7 @@ namespace ZooEventsConsumer.Tests
                     }
                 })
                 .VerifyConsumer<AnimalCreated>(e => consumer.Handle(e)); //This also checks that no exceptions are thrown
-            Assert.False(stubRepo.SavePetWasCalled, "Animal was not saved");
-        }
-    }
-
-    public class StubPetRepo : IPetRepo
-    {
-        public bool SavePetWasCalled { get; private set; }
-
-
-        public void SavePet(Pet pet)
-        {
-            SavePetWasCalled = true;
+            stubRepo.DidNotReceive().SavePet(Arg.Any<Pet>());
         }
     }
 }

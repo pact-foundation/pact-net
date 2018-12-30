@@ -6,10 +6,10 @@ namespace ZooEventsConsumer
     {
         public static void Main(string[] args)
         {
-            //TODO: Is it worth showing a Rabbit/AMQP example?
+            //TODO: It would be nice to show a Rabbit/AMQP example?
 
             //You're messaging/event technology binding/wiring would go here
-            //which would to register events that are published a corresponding handler
+            //which would to register a handler for events that are published
         }
     }
 }

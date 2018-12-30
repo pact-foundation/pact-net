@@ -9,7 +9,7 @@ using Xunit.Abstractions;
 
 namespace Provider.Api.Web.Tests
 {
-    public class EventApiTests : IDisposable
+    public class EventApiTests
     {
         private readonly ITestOutputHelper _output;
 
@@ -42,10 +42,6 @@ namespace Provider.Api.Web.Tests
                     .PactUri($"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}Consumer.Tests{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}event_api_consumer-event_api.json")
                     .Verify();
             }
-        }
-
-        public virtual void Dispose()
-        {
         }
     }
 }
