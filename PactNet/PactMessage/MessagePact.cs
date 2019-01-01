@@ -17,6 +17,7 @@ namespace PactNet.PactMessage
         private readonly Func<PactMessageHostConfig, IPactCoreHost> _coreHostFactory;
         private IEnumerable<ProviderState> _providerStates;
         private string _description;
+        private Message _message;
         public IList<MessageInteraction> MessageInteractions { get; }
 
         private readonly Func<MessageInteraction, IOutputBuilder, Func<PactMessageHostConfig, IPactCoreHost>, IReifyCommand> _reifyCommandFactory;
@@ -81,41 +82,47 @@ namespace PactNet.PactMessage
                 throw new InvalidOperationException("description has not been set, please supply using the ExpectedToReceive method.");
             }
 
-            MessageInteractions.Add(new MessageInteraction
-            {
-                Contents = message.Contents,
-                ProviderStates = _providerStates,
-                Description = _description,
-                Metadata = message.Metadata
-            });
+            _message = message;
 
             return this;
         }
 
         public void VerifyConsumer<T>(Action<T> messageHandler)
         {
-            foreach (var messageInteraction in MessageInteractions)
+            if (_message == null)
             {
-                var reifyAction = _reifyCommandFactory(messageInteraction, _outputBuilder, _coreHostFactory);
-                reifyAction.Execute();
-
-                var message = _outputBuilder.ToString();
-                if (message.StartsWith("ERROR"))
-                {
-                    throw new PactFailureException($"Could not parse message. core error: {message}");
-                }
-
-                try
-                {
-                    messageHandler(JsonConvert.DeserializeObject<T>(message, _jsonSerializerSettings));
-                }
-                catch (Exception e)
-                {
-                    throw new PactFailureException($"could not handle the message {message}", e);
-                }
-
-                _outputBuilder.Clear();
+                throw new InvalidOperationException("message has not been set, please supply using the With method.");
             }
+
+            var messageInteraction = new MessageInteraction
+            {
+                Contents = _message.Contents,
+                ProviderStates = _providerStates,
+                Description = _description,
+                Metadata = _message.Metadata
+            };
+
+            var reifyAction = _reifyCommandFactory(messageInteraction, _outputBuilder, _coreHostFactory);
+            reifyAction.Execute();
+
+            var message = _outputBuilder.ToString();
+            if (message.StartsWith("ERROR"))
+            {
+                throw new PactFailureException($"Could not parse message. core error: {message}");
+            }
+
+            try
+            {
+                messageHandler(JsonConvert.DeserializeObject<T>(message, _jsonSerializerSettings));
+            }
+            catch (Exception e)
+            {
+                throw new PactFailureException($"could not handle the message {message}", e);
+            }
+
+            _outputBuilder.Clear();
+
+            MessageInteractions.Add(messageInteraction);
         }
     }
 }
