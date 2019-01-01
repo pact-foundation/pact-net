@@ -30,7 +30,8 @@ namespace PactNet.Tests.PactMessage
             messagePact
                 .Given(providerStates)
                 .ExpectedToReceive("My description")
-                .With(new Message { Contents = new { Test = "Test" } });
+                .With(new Message { Contents = new { Test = "Test" } })
+                .VerifyConsumer<MyMessage>(SuccessMessageHandler);
 
             //Assert
             Assert.Equal(providerStates, messagePact.MessageInteractions[0].ProviderStates);
@@ -67,7 +68,8 @@ namespace PactNet.Tests.PactMessage
             //Act
             messagePact
                 .ExpectedToReceive(description)
-                .With(new Message { Contents = new { Test = "Test" } });
+                .With(new Message { Contents = new { Test = "Test" } })
+                .VerifyConsumer<MyMessage>(SuccessMessageHandler);
 
             //Assert
             Assert.Equal(description, messagePact.MessageInteractions[0].Description);
@@ -121,7 +123,7 @@ namespace PactNet.Tests.PactMessage
         }
 
         [Fact]
-        public void With_WithMessage_CreatesNewInteraction()
+        public void With_WithMessage_SetsMessage()
         {
             //Arrange 
             var messagePact = new MessagePact();
@@ -150,8 +152,9 @@ namespace PactNet.Tests.PactMessage
                 {
                     Contents = expectedContent,
                     Metadata = expectedMetdata
-                });
-
+                })
+                .VerifyConsumer<MyMessage>(SuccessMessageHandler);
+                
             //Assert
             Assert.True(messagePact.MessageInteractions.Count == 1);
             Assert.Equal(testDescription, messagePact.MessageInteractions[0].Description);
@@ -161,7 +164,7 @@ namespace PactNet.Tests.PactMessage
         }
 
         [Fact]
-        public void VerifyConsumer_NoInteractions_NothingHappens()
+        public void VerifyConsumer_WithoutMessageSet_ThrowsInvalidOperationException()
         {
             //Arrange
             var outputBuilder = Substitute.For<IOutputBuilder>();
@@ -171,7 +174,7 @@ namespace PactNet.Tests.PactMessage
             var pactMessage = new MessagePact((interaction, builder, coreHostFactory) => reifyCommand, outputBuilder, JsonConfig.ApiSerializerSettings, config => coreHost);
 
             //Act + Assert
-            pactMessage.VerifyConsumer<MyMessage>(SuccessMessageHandler);
+            Assert.Throws<InvalidOperationException>(() => pactMessage.VerifyConsumer<MyMessage>(SuccessMessageHandler));
         }
 
         [Fact]
@@ -222,21 +225,6 @@ namespace PactNet.Tests.PactMessage
 
             //Assert
             outputBuilder.Received(1).Clear();
-        }
-
-        [Fact]
-        public void VerifyConsumer_NoInteractions_ExceptionIsNotThrown()
-        {
-            //Arrange
-            var outputBuilder = Substitute.For<IOutputBuilder>();
-            var coreHost = Substitute.For<IPactCoreHost>();
-            var reifyCommand = Substitute.For<IReifyCommand>();
-
-            var pactMessage = new MessagePact((interaction, builder, coreHostFactory) => reifyCommand, outputBuilder, JsonConfig.ApiSerializerSettings, config => coreHost);
-
-            //Act + Assert
-            pactMessage.ExpectedToReceive("Second Test message")
-                .VerifyConsumer<MyMessage>(SuccessMessageHandler);
         }
 
         [Fact]
