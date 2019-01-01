@@ -175,7 +175,7 @@ namespace PactNet.Tests.PactMessage
         }
 
         [Fact]
-        public void VerifyConsumer_SubscriberCannotHandleMessages_PactFailureExceptionIsThrown()
+        public void VerifyConsumer_SubscriberCannotHandleMessage_PactFailureExceptionIsThrown()
         {
             //Arrange
             var outputBuilder = Substitute.For<IOutputBuilder>();
@@ -198,7 +198,7 @@ namespace PactNet.Tests.PactMessage
         }
 
         [Fact]
-        public void VerifyConsumer_SubscriberCanHandleMessages_ClearsOutputAfterEachInteraction()
+        public void VerifyConsumer_SubscriberCanHandleMessage_ClearsOutputAfterInteraction()
         {
             //Arrange
             var outputBuilder = Substitute.For<IOutputBuilder>();
@@ -218,17 +218,68 @@ namespace PactNet.Tests.PactMessage
                         Test = Match.Type("Test")
                     }
                 })
-                .ExpectedToReceive("second Test")
-                .With(new Message
+                .VerifyConsumer<MyMessage>(SuccessMessageHandler);
+
+            //Assert
+            outputBuilder.Received(1).Clear();
+        }
+
+        [Fact]
+        public void VerifyConsumer_NoInteractions_ExceptionIsNotThrown()
+        {
+            //Arrange
+            var outputBuilder = Substitute.For<IOutputBuilder>();
+            var coreHost = Substitute.For<IPactCoreHost>();
+            var reifyCommand = Substitute.For<IReifyCommand>();
+
+            var pactMessage = new MessagePact((interaction, builder, coreHostFactory) => reifyCommand, outputBuilder, JsonConfig.ApiSerializerSettings, config => coreHost);
+
+            //Act + Assert
+            pactMessage.ExpectedToReceive("Second Test message")
+                .VerifyConsumer<MyMessage>(SuccessMessageHandler);
+        }
+
+        [Fact]
+        public void VerifyConsumer_MultipleInteractions_VerifiesOnlyTheLastInteractionEachTime()
+        {
+            //Arrange
+            var outputBuilder = Substitute.For<IOutputBuilder>();
+            var coreHost = Substitute.For<IPactCoreHost>();
+            var reifyCommand = Substitute.For<IReifyCommand>();
+
+            var pactMessage = new MessagePact((interaction, builder, coreHostFactory) => reifyCommand, outputBuilder, JsonConfig.ApiSerializerSettings, config => coreHost);
+
+            reifyCommand.When(x => x.Execute()).Do(x => outputBuilder.ToString().Returns("{\"Test\": \"Test 1\"}"));
+
+            var firstMessage = new Message
+            {
+                Contents = new
                 {
-                    Contents = new
-                    {
-                        Test = Match.Type("Test 2")
-                    }
-                }).VerifyConsumer<MyMessage>(SuccessMessageHandler);
+                    Test = Match.Type("Test 1")
+                }
+            };
+
+            pactMessage.ExpectedToReceive("First Test message")
+                .With(firstMessage)
+                .VerifyConsumer<MyMessage>(SuccessMessageHandler);
+
+            reifyCommand.When(x => x.Execute()).Do(x => outputBuilder.ToString().Returns("{\"Test\": \"Test 2\"}"));
+            var secondMessage = new Message
+            {
+                Contents = new
+                {
+                    Test = Match.Type("Test 2")
+                }
+            };
+
+            //Act 
+            pactMessage.ExpectedToReceive("Second Test message")
+                .With(secondMessage)
+                .VerifyConsumer<MyMessage>(SuccessMessageHandler);
 
             //Assert
             outputBuilder.Received(2).Clear();
+            reifyCommand.Received(2).Execute();
         }
 
         private static void SuccessMessageHandler(MyMessage test)

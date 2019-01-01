@@ -94,28 +94,29 @@ namespace PactNet.PactMessage
 
         public void VerifyConsumer<T>(Action<T> messageHandler)
         {
-            foreach (var messageInteraction in MessageInteractions)
+            var messageInteraction = MessageInteractions?.LastOrDefault();
+            if (messageInteraction == null) return;;
+            
+            var reifyAction = _reifyCommandFactory(messageInteraction, _outputBuilder, _coreHostFactory);
+            reifyAction.Execute();
+
+            var message = _outputBuilder.ToString();
+            if (message.StartsWith("ERROR"))
             {
-                var reifyAction = _reifyCommandFactory(messageInteraction, _outputBuilder, _coreHostFactory);
-                reifyAction.Execute();
-
-                var message = _outputBuilder.ToString();
-                if (message.StartsWith("ERROR"))
-                {
-                    throw new PactFailureException($"Could not parse message. core error: {message}");
-                }
-
-                try
-                {
-                    messageHandler(JsonConvert.DeserializeObject<T>(message, _jsonSerializerSettings));
-                }
-                catch (Exception e)
-                {
-                    throw new PactFailureException($"could not handle the message {message}", e);
-                }
-
-                _outputBuilder.Clear();
+                throw new PactFailureException($"Could not parse message. core error: {message}");
             }
+
+            try
+            {
+                messageHandler(JsonConvert.DeserializeObject<T>(message, _jsonSerializerSettings));
+            }
+            catch (Exception e)
+            {
+                throw new PactFailureException($"could not handle the message {message}", e);
+            }
+
+            _outputBuilder.Clear();
+
         }
     }
 }
