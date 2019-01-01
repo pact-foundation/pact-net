@@ -154,7 +154,7 @@ namespace PactNet.Tests.PactMessage
                     Metadata = expectedMetdata
                 })
                 .VerifyConsumer<MyMessage>(SuccessMessageHandler);
-                
+
             //Assert
             Assert.True(messagePact.MessageInteractions.Count == 1);
             Assert.Equal(testDescription, messagePact.MessageInteractions[0].Description);
