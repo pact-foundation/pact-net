@@ -1,6 +1,5 @@
 ﻿using System;
 using PactNet.Matchers;
-using PactNet.Matchers.Type;
 using PactNet.PactMessage;
 using PactNet.PactMessage.Models;
 using Xunit;
@@ -19,10 +18,8 @@ namespace PactNet.Tests.IntegrationTests
         }
 
         [Fact]
-        public void Build_NoMessages_VerificationSucceeds()
+        public void Build_NoMessagesOrHandlers_VerificationSucceeds()
         {
-            _messagePact.VerifyConsumer<string>(MessageHandler);
-
             _messagePactBuilder.Build();
         }
 
