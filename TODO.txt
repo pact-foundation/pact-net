@@ -1,0 +1,7 @@
+- Split readme into two seperate files, one for http pact and one for message pact. Keep original readme with common stuff and link to both new readme's from there
+- Adjust wording and DSL to be similar to the pact js implementation. The more consistent they are, the better.
+- See if any code needs to be shuffled around (both http and message pact). Need to think about any potential breaking changes (namespaces etc)
+- Run through a bunch of different failures scenarios to make sure the user can diagnose the problem.
+- We need to decide if the DSL should handle any currently unsupported (by pact ruby) message pact feature or hide for now. I'm now leaning towards hiding for now, but again we will need to think about backwards compatibility in that case.
+- Update the message pact example to include a simple RabbitMQ/AMQP app. Often having a more concrete examples makes it easier for people to grok.
+- Action any TODOs
