@@ -5,12 +5,14 @@ namespace ZooEventsConsumer
 {
     public class SavePets
     {
-        private IPetRepo _repo;
+        private readonly IPetRepo _repo;
 
         public SavePets(IPetRepo repo)
         {
             _repo = repo;
         }
+
+        //This is the message handler, which processes the message and performs the actual domain logic.
 
         public void Handle(AnimalCreated @event)
         {

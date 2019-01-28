@@ -1,4 +1,5 @@
 ﻿using System;
+using ZooEventsConsumer.Models;
 
 namespace ZooEventsConsumer
 {
@@ -6,10 +7,20 @@ namespace ZooEventsConsumer
     {
         public static void Main(string[] args)
         {
-            //TODO: It would be nice to show a Rabbit/AMQP example?
+            var handler = new SavePets(new PetRepo());
 
-            //You're messaging/event technology binding/wiring would go here
-            //which would to register a handler for events that are published
+            //This is the message listener, who's sole purpose is to receive the message from the queue/stream/infrastructure and forward onto the correct message handler.
+            //You're messaging/event technology binding/wiring would go here.
+
+            //Received from the Queue. It would be nice to show a Rabbit/AMQP example?
+            var message = new AnimalCreated
+            {
+                Id = 1234,
+                Name = "Fred",
+                Type = PetType.Fish.ToString()
+            };
+
+            handler.Handle(message);
         }
     }
 }

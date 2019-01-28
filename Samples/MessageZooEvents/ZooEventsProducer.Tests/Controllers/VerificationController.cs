@@ -6,7 +6,6 @@ using ZooEventsProducer.Models;
 
 namespace ZooEventsProducer.Tests.Controllers
 {
-    //[Route("[controller]")]
     [Route("")]
     public class VerificationController : Controller
     {
