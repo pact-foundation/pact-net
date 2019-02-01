@@ -52,8 +52,8 @@ https://www.nuget.org/packages/PactNet.Linux.x86
 ## Usage
 Pact-Net supports contract testing using HTTP (what pact has always done) and message semantics. 
 
-For the [HTTP Pact docs see /docs/http-pact.md](docs/http-pact.md)
-For the [Message Pact docs see /docs/message-pact.md](docs/message-pact.md)
+For the [HTTP Pact docs see /docs/pact-http.md](docs/pact-http.md)  
+For the [Message Pact docs see /docs/pact-message.md](docs/pact-message.md)
 
 ## Publishing Pacts to a Broker
 

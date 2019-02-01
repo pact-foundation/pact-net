@@ -1,9 +1,9 @@
 # Pact HTTP
-These docs describe how you would use Pact-Net to test HTTP consumer and providers.
+These docs describe how you would use Pact-Net to test HTTP consumers and providers.
 
 ## Usage
 Below are some samples of usage.  
-For a full sample project, please see the [Samples](Samples/HttpEventApi).  
+For a full sample project, please see the [Samples](../Samples/HttpEventApi).  
 
 We have also written some `//NOTE:` comments inline in the code to help explain what certain calls do.
 

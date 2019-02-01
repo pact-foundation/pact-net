@@ -1,17 +1,18 @@
 # Pact Message
-These docs describe how you would use Pact-Net to test a message provider (aka producers or publisher) and message consumers.
-Asynchronous messaging is a common paradigm used in distributed architecures, using tools such as RabbitMQ, SQS, Kafka and Kinesis (to name a few).
+These docs describe how you would use Pact-Net to test message providers (aka producers or publisher) and message consumers.  
 
-Supporting all these different tools and libraries would be a big task, so Pact ignores the underlying protocol and focusses on message passing and the messages themselves.
+Asynchronous messaging is a common paradigm used in distributed architecures, using tools such as RabbitMQ, SQS, Kafka and Kinesis (to name a few).  
+Supporting all these different tools and libraries would be a big task, so Pact ignores the underlying protocol and focusses on message passing and the messages themselves.  
 For more information about this [see this article](https://dius.com.au/2017/09/22/contract-testing-serverless-and-asynchronous-applications/).
 
 ## Usage
 
 Below are some samples of usage.  
+For a full sample project, please see the [Samples](../Samples/MessageZooEvents).
 
 ### Message Consumer
-A message consumer is the code that handles a message.  
-Pact will invoke your handler with the expected message, so you can validate your handler works correctly.
+A message consumer is code that handles a message.  
+Pact will invoke your handler with the expected message, so you can validate your handler functions as desired.
 
 #### 1. Build your message consumer
 In order to make a message consumer testable with Pact, we need to isolate the message queue/protocol/infrastructure bindings (message listener) from the message handling code (message handler).  
@@ -128,7 +129,7 @@ public class SavePetsTests : IClassFixture<ConsumerEventPact>
 ```
 
 #### 4. Run the test
-If you now navigate to [RepositoryRoot]/pacts you will see the pact file your test generated. Take a moment to have a look at what it contains which is a JSON representation of the messages your test handled.
+If you now navigate to `[RepositoryRoot]/pacts` you will see the pact file your test generated. Take a moment to have a look at what it contains which is a JSON representation of the messages your test handled.
 
 Everything should be green.
 
@@ -213,7 +214,7 @@ You may be thinking why does the serviceUri exist? I thought we were testing mes
 The ruby Pact core calls the `/` endpoint on the supplied serviceUri, from there a mapping to the correct message generator can be provided.
 Unfortunately, this needs to be implemented by you, as there is no catch all defacto standard HTTP server in .NET.
 
-You can see the samples for a full implementation, however below is an example of the mapping.
+See the samples for a full implementation, however below is an example of the mapping.
 
 ```c#
 [Route("")]
