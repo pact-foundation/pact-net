@@ -6,6 +6,8 @@ namespace ZooEventsProducer
     {
         private int _currentId = 1;
 
+        //This is the message generator, which contains any message generation domain logic.
+
         public AnimalCreated CreateAPet(string name, PetType type)
         {
             return new AnimalCreated
@@ -15,6 +17,8 @@ namespace ZooEventsProducer
                 Type = type.ToString()
             };
         }
+
+        //Another message generator
 
         public AnimalCreated CreateANonPet(string name, string type)
         {

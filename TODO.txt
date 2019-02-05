@@ -1,4 +1,4 @@
-- Split readme into two seperate files, one for http pact and one for message pact. Keep original readme with common stuff and link to both new readme's from there
+[Done]- Split readme into two seperate files, one for http pact and one for message pact. Keep original readme with common stuff and link to both new readme's from there
 - Adjust wording and DSL to be similar to the pact js implementation. The more consistent they are, the better.
 - See if any code needs to be shuffled around (both http and message pact). Need to think about any potential breaking changes (namespaces etc)
 - Run through a bunch of different failures scenarios to make sure the user can diagnose the problem.
