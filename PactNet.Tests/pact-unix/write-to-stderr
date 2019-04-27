@@ -1,0 +1,2 @@
+#!/bin/bash
+echo Oh no 1>&2

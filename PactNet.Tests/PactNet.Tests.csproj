@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp1.1</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' " >
+    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">
       net46
     </TargetFrameworks>
   </PropertyGroup>
@@ -22,12 +22,30 @@
     <PackageReference Include="xunit" Version="2.2.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
   </ItemGroup>
+  
+  <ItemGroup Condition=" '$(OS)' == 'Windows_NT' ">
+    <PackageReference Include="PactNet.Windows" Version="2.4.4" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' &#xD;&#xA;             and '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)'=='X86'">
+    <PackageReference Include="PactNet.Linux.x86" Version="2.4.4" />
+    <None Include="pact-unix/**" Link="pact-linux-x86\bin\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest"  />
+  </ItemGroup>
+  <ItemGroup Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' &#xD;&#xA;             and '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)'=='X64' ">
+    <PackageReference Include="PactNet.Linux.x64" Version="2.4.4" />
+    <None Include="pact-unix/**" Link="pact-linux-x86_64\bin\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest"  />
+  </ItemGroup>
+  <ItemGroup Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' ">
+    <PackageReference Include="PactNet.OSX" Version="2.4.4" />
+    <None Include="pact-unix/**" Link="pact-osx\bin\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest"  />
+  </ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="PactNet.Windows" Version="2.4.4" Condition=" '$(OS)' == 'Windows_NT' " />
-    <PackageReference Include="PactNet.Linux.x64" Version="2.4.4" 
-                      Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' " />
-    <PackageReference Include="PactNet.Linux.x64" Version="2.4.4"  
-                      Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' " />
+    <None Update="pact-win32\lib\app\write-to-stderr.rb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="pact-win32\lib\app\write-to-stdout.rb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp1.1'">
     <PackageReference Include="System.Net.Http" Version="4.3.2" />
@@ -37,13 +55,5 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="pact-win32\lib\app\write-to-stderr.rb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="pact-win32\lib\app\write-to-stdout.rb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 </Project>
