@@ -1,6 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp1.1;net46</TargetFrameworks>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework Condition=" '$(OS)' == 'Windows_NT' " >
+      net45
+    </TargetFramework>
   </PropertyGroup>
   <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
     <DefineConstants>$(DefineConstants);USE_NET4X</DefineConstants>
@@ -16,9 +19,15 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
     <PackageReference Include="NSubstitute" Version="2.0.3" />
-    <PackageReference Include="PactNet.Windows" Version="2.4.4" />
     <PackageReference Include="xunit" Version="2.2.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="PactNet.Windows" Version="2.4.4" Condition=" '$(OS)' == 'Windows_NT' " />
+    <PackageReference Include="PactNet.Linux.x64" Version="2.4.4" 
+                      Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' " />
+    <PackageReference Include="PactNet.Linux.x64" Version="2.4.4"  
+                      Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' " />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp1.1'">
     <PackageReference Include="System.Net.Http" Version="4.3.2" />

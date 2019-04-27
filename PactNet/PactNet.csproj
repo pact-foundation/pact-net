@@ -1,6 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.5;net45</TargetFrameworks>
+    <TargetFramework>netstandard1.5</TargetFramework>
+    <TargetFramework Condition=" '$(OS)' == 'Windows_NT' " >
+      net45
+    </TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
