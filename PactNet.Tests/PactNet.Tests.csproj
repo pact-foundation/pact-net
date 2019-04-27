@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
     <TargetFramework Condition=" '$(OS)' == 'Windows_NT' " >
-      net45
+      net46
     </TargetFramework>
   </PropertyGroup>
   <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">

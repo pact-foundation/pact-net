@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.5</TargetFramework>
     <TargetFramework Condition=" '$(OS)' == 'Windows_NT' " >
-      net45
+      net46
     </TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
