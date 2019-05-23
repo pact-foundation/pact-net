@@ -15,7 +15,11 @@ namespace PactNet.Core
         public PactVerifierHostConfig(Uri baseUri, string pactUri, PactUriOptions pactBrokerUriOptions, Uri providerStateSetupUri, PactVerifierConfig config, IDictionary<string, string> environment)
         {
             var providerStateOption = providerStateSetupUri != null ? $" --provider-states-setup-url {providerStateSetupUri.OriginalString}" : string.Empty;
-            var brokerCredentials = pactBrokerUriOptions != null ? $" --broker-username \"{pactBrokerUriOptions.Username}\" --broker-password \"{pactBrokerUriOptions.Password}\"" : string.Empty;
+            var brokerCredentials = pactBrokerUriOptions != null ?
+                !String.IsNullOrEmpty(pactBrokerUriOptions.Username) && !String.IsNullOrEmpty(pactBrokerUriOptions.Password) ? 
+                    $" --broker-username \"{pactBrokerUriOptions.Username}\" --broker-password \"{pactBrokerUriOptions.Password}\"" : 
+                    $" --broker-token \"{pactBrokerUriOptions.Token}\""
+                 : string.Empty;
             var publishResults = config?.PublishVerificationResults == true ? $" --publish-verification-results=true --provider-app-version=\"{config.ProviderVersion}\"" : string.Empty;
             var customHeader = config?.CustomHeader != null && !string.IsNullOrEmpty(config.CustomHeader?.Key) && !string.IsNullOrEmpty(config.CustomHeader?.Value) ? 
                 $" --custom-provider-header \"{config.CustomHeader?.Key}:{config.CustomHeader?.Value}\"" :
