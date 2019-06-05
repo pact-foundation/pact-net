@@ -55,11 +55,26 @@ namespace PactNet.Tests.Core
         }
 
         [Fact]
-        public void Ctor_WhenCalledWithAAuthenticatedHttpsPactUri_SetsTheCorrectArgs()
+        public void Ctor_WhenCalledWithABasicAuthenticatedHttpsPactUri_SetsTheCorrectArgs()
         {
             var baseUri = new Uri("http://127.0.0.1");
             var pactUri = "https://broker:9292/test";
             var pactUriOptions = new PactUriOptions("username", "password");
+            var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
+
+            var config = GetSubject(baseUri, pactUri, pactUriOptions, providerStateSetupUri);
+
+            var expectedArguments = BuildExpectedArguments(baseUri, pactUri, providerStateSetupUri, pactUriOptions);
+
+            Assert.Equal(expectedArguments, config.Arguments);
+        }
+
+        [Fact]
+        public void Ctor_WhenCalledWithATokenAuthenticatedHttpsPactUri_SetsTheCorrectArgs()
+        {
+            var baseUri = new Uri("http://127.0.0.1");
+            var pactUri = "https://broker:9292/test";
+            var pactUriOptions = new PactUriOptions("token");
             var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
 
             var config = GetSubject(baseUri, pactUri, pactUriOptions, providerStateSetupUri);
@@ -233,7 +248,11 @@ namespace PactNet.Tests.Core
             bool verbose = false)
         {
             var providerStateOption = providerStateSetupUri != null ? $" --provider-states-setup-url {providerStateSetupUri.OriginalString}" : "";
-            var brokerCredentials = pactUriOptions != null ? $" --broker-username \"{pactUriOptions.Username}\" --broker-password \"{pactUriOptions.Password}\"" : "";
+            var brokerCredentials = pactUriOptions != null ?
+                !String.IsNullOrEmpty(pactUriOptions.Username) && !String.IsNullOrEmpty(pactUriOptions.Password) ?
+                    $" --broker-username \"{pactUriOptions.Username}\" --broker-password \"{pactUriOptions.Password}\"" :
+                    $" --broker-token \"{pactUriOptions.Token}\""
+                : string.Empty;
             var publishResults = publishVerificationResults ? $" --publish-verification-results=true --provider-app-version=\"{providerVersion}\"" : string.Empty;
             var customProviderHeader = customHeader != null ?
                 $" --custom-provider-header \"{customHeader.Value.Key}:{customHeader.Value.Value}\"" :

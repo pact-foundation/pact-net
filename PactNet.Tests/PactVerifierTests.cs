@@ -248,7 +248,7 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void Verify_WhenTheVerifierIsCorrectlySetUpWithAHttpsPactFileWithCredentials_PactVerifyCoreHostIsStarted()
+        public void Verify_WhenTheVerifierIsCorrectlySetUpWithAHttpsPactFileWithBasicAuthCredentials_PactVerifyCoreHostIsStarted()
         {
             var serviceProvider = "Event API";
             var serviceConsumer = "My client";
@@ -260,6 +260,25 @@ namespace PactNet.Tests
                .ServiceProvider(serviceProvider, "http://localhost")
                .HonoursPactWith(serviceConsumer)
                .PactUri(pactUri, pactUriOptions);
+
+            pactVerifier.Verify();
+
+            _mockVerifierCoreHost.Received(1).Start();
+        }
+
+        [Fact]
+        public void Verify_WhenTheVerifierIsCorrectlySetUpWithAHttpsPactFileWitTokenAuthCredentials_PactVerifyCoreHostIsStarted()
+        {
+            var serviceProvider = "Event API";
+            var serviceConsumer = "My client";
+            var pactUri = "https://broker/consumer/test/provider/hello/latest";
+            var pactUriOptions = new PactUriOptions("mytoken");
+
+            var pactVerifier = GetSubject();
+            pactVerifier
+                .ServiceProvider(serviceProvider, "http://localhost")
+                .HonoursPactWith(serviceConsumer)
+                .PactUri(pactUri, pactUriOptions);
 
             pactVerifier.Verify();
 

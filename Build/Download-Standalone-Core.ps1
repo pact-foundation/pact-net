@@ -26,7 +26,7 @@ New-Item -ItemType directory -Path $OutputPath | Out-Null
 
 Import-Module -Name $7ZipSnapIn
 
-$StandaloneCoreVersion = '1.61.2'
+$StandaloneCoreVersion = '1.66.0'
 $StandaloneCoreDownloadBaseUri = "https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v$StandaloneCoreVersion"
 
 # Download and extract the Windows core
