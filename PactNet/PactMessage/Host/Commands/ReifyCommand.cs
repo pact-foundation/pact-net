@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
+using PactNet.Extensions;
 
 namespace PactNet.PactMessage.Host.Commands
 {
@@ -25,9 +26,9 @@ namespace PactNet.PactMessage.Host.Commands
 
         public void Execute()
         {
-            var messageJson = JsonConvert.SerializeObject(_messageInteraction.Contents, _jsonSerializerSettings);
+            string messageJson = JsonConvert.SerializeObject(_messageInteraction.Contents, _jsonSerializerSettings);
 
-            var arguments = $"reify '{messageJson}'";
+            var arguments = $"reify \"{messageJson.EscapeDoubleQuotes()}\"";
             var pactConfig = new PactConfig
             {
                 Outputters = new List<IOutput> { _outputBuilder },

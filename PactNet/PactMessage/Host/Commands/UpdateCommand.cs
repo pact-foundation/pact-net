@@ -1,8 +1,8 @@
-﻿
-using System;
+﻿using System;
 using Newtonsoft.Json;
 using PactNet.Configuration.Json;
 using PactNet.Core;
+using PactNet.Extensions;
 using PactNet.PactMessage.Models;
 
 namespace PactNet.PactMessage.Host.Commands
@@ -30,7 +30,7 @@ namespace PactNet.PactMessage.Host.Commands
         {
             var messageJson = JsonConvert.SerializeObject(_messageInteraction, _jsonSerializerSettings);
 
-            var arguments = $"update '{messageJson}' --consumer='{_consumer}' --provider='{_provider}' --pact-dir={FixPathForRuby(_pactConfig.PactDir)} --pact-specification-version={_pactConfig.SpecificationVersion}";
+            var arguments = $"update \"{messageJson.EscapeDoubleQuotes()}\" --consumer=\"{_consumer}\" --provider=\"{_provider}\" --pact-dir={FixPathForRuby(_pactConfig.PactDir)} --pact-specification-version={_pactConfig.SpecificationVersion}";
             var coreHostConfig = new PactMessageHostConfig(_pactConfig, arguments);
 
             var coreHost = _coreHostFactory(coreHostConfig);

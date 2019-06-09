@@ -6,9 +6,16 @@ namespace PactNet.Extensions
     {
         public static string ToLowerSnakeCase(this string input)
         {
-            return !String.IsNullOrEmpty(input) ?
+            return !string.IsNullOrEmpty(input) ?
                 input.Replace(' ', '_').ToLower() :
-                String.Empty;
+                string.Empty;
+        }
+
+        public static string EscapeDoubleQuotes(this string input)
+        {
+            return !string.IsNullOrEmpty(input) ?
+                input.Replace("\"", "\\\"") :
+                string.Empty;
         }
     }
 }
