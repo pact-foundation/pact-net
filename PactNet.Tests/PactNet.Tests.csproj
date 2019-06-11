@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' " >
+    <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">
       netcoreapp1.1
     </TargetFrameworks>
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">
@@ -30,15 +30,15 @@
   </ItemGroup>
   <ItemGroup Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' &#xD;&#xA;             and '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)'=='X86'">
     <PackageReference Include="PactNet.Linux.x86" Version="2.4.6" />
-    <None Include="pact-unix/**" Link="pact-linux-x86\bin\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest"  />
+    <None Include="pact-unix/**" Link="pact-linux-x86\bin\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' &#xD;&#xA;             and '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)'=='X64' ">
     <PackageReference Include="PactNet.Linux.x64" Version="2.4.6" />
-    <None Include="pact-unix/**" Link="pact-linux-x86_64\bin\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest"  />
+    <None Include="pact-unix/**" Link="pact-linux-x86_64\bin\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' ">
     <PackageReference Include="PactNet.OSX" Version="2.4.6" />
-    <None Include="pact-unix/**" Link="pact-osx\bin\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest"  />
+    <None Include="pact-unix/**" Link="pact-osx\bin\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
