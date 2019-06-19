@@ -162,7 +162,7 @@ namespace PactNet.Tests.Builders
             };
 
             pactMessage.MessageInteractions.Returns(expectedInteractions);
-            fileWrapper.Exists(@"..\Test\Test_consumer-Test_provider.json").Returns(true);
+            fileWrapper.Exists(@"..\Test\test_consumer-test_provider.json").Returns(true);
 
             var pactConfig = new PactConfig
             {
@@ -179,7 +179,7 @@ namespace PactNet.Tests.Builders
             pactBuilder.Build();
 
             //Assert
-            fileWrapper.Received().Delete(@"..\Test\Test_consumer-Test_provider.json");
+            fileWrapper.Received().Delete(@"..\Test\test_consumer-test_provider.json");
         }
 
         [Fact]
@@ -206,7 +206,7 @@ namespace PactNet.Tests.Builders
             };
 
             pactMessage.MessageInteractions.Returns(expectedInteractions);
-            fileWrapper.Exists(@"..\Test\Test_consumer-Test_provider.json").Returns(false);
+            fileWrapper.Exists(@"..\Test\test_consumer-test_provider.json").Returns(false);
 
             var pactConfig = new PactConfig
             {
@@ -223,7 +223,7 @@ namespace PactNet.Tests.Builders
             pactBuilder.Build();
 
             //Assert
-            fileWrapper.DidNotReceive().Delete(@"..\Test\Test_consumer-Test_provider.json");
+            fileWrapper.DidNotReceive().Delete(@"..\Test\test_consumer-test_provider.json");
         }
     }
 }

@@ -97,7 +97,7 @@ namespace PactNet
         }
         private static string GetPactFilePath(string pactDir, string consumerName, string producerName)
         {
-            var filePath = $"{pactDir}{consumerName.Replace(" ", "_")}-{producerName.Replace(" ", "_")}.json";
+            var filePath = $"{pactDir}{consumerName.Replace(" ", "_").ToLower()}-{producerName.Replace(" ", "_").ToLower()}.json";
             return filePath;
         }
 
