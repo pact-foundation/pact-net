@@ -189,7 +189,7 @@ public class SomethingApiTests
         {
             new XUnitOutput(_output)
         },
-		CustomHeader = new KeyValuePair<string, string>("Authorization", "Basic VGVzdA=="), //This allows the user to set a request header that will be sent with every request the verifier sends to the provider
+		CustomHeaders = new Dictionary<string, string>{{"Authorization", "Basic VGVzdA=="}}, //This allows the user to set request headers that will be sent with every request the verifier sends to the provider
 		Verbose = true //Output verbose verification logs to the test output
     };
 

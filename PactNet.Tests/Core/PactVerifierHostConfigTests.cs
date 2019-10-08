@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using PactNet.Core;
 using Xunit;
 
@@ -141,6 +142,8 @@ namespace PactNet.Tests.Core
             var pactUri = "./tester-pact/pact-file.json";
             var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
             var customHeader = new KeyValuePair<string, string>("Authorization", "Basic VGVzdA==");
+            var customHeaders = new Dictionary<string, string>();
+            customHeaders.Add(customHeader.Key, customHeader.Value);
 
             var verifierConfig = new PactVerifierConfig
             {
@@ -150,7 +153,32 @@ namespace PactNet.Tests.Core
 
             var config = GetSubject(baseUri: baseUri, pactUri: pactUri, providerStateSetupUri: providerStateSetupUri, verifierConfig: verifierConfig);
 
-            var expectedArguments = BuildExpectedArguments(baseUri, pactUri, providerStateSetupUri, providerVersion: "1.0.0", customHeader: customHeader);
+            var expectedArguments = BuildExpectedArguments(baseUri, pactUri, providerStateSetupUri, providerVersion: "1.0.0", customHeaders: customHeaders);
+
+            Assert.Equal(expectedArguments, config.Arguments);
+        }
+
+        [Fact]
+        public void Ctor_WhenCalledWithCustomHeaders_SetsTheCorrectArgs()
+        {
+            var baseUri = new Uri("http://127.0.0.1");
+            var pactUri = "./tester-pact/pact-file.json";
+            var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
+            var customHeaders = new Dictionary<string, string>
+            {
+                { "Authorization", "Basic VGVzdA==" },
+                { "X-Something", "MYthing" }
+            };
+
+            var verifierConfig = new PactVerifierConfig
+            {
+                CustomHeaders = customHeaders,
+                ProviderVersion = "1.0.0"
+            };
+
+            var config = GetSubject(baseUri: baseUri, pactUri: pactUri, providerStateSetupUri: providerStateSetupUri, verifierConfig: verifierConfig);
+
+            var expectedArguments = BuildExpectedArguments(baseUri, pactUri, providerStateSetupUri, providerVersion: "1.0.0", customHeaders: customHeaders);
 
             Assert.Equal(expectedArguments, config.Arguments);
         }
@@ -244,7 +272,7 @@ namespace PactNet.Tests.Core
             PactUriOptions pactUriOptions = null,
             bool publishVerificationResults = false,
             string providerVersion = "",
-            KeyValuePair<string, string>? customHeader = null,
+            Dictionary<string, string> customHeaders = null,
             bool verbose = false)
         {
             var providerStateOption = providerStateSetupUri != null ? $" --provider-states-setup-url {providerStateSetupUri.OriginalString}" : "";
@@ -254,12 +282,14 @@ namespace PactNet.Tests.Core
                     $" --broker-token \"{pactUriOptions.Token}\""
                 : string.Empty;
             var publishResults = publishVerificationResults ? $" --publish-verification-results=true --provider-app-version=\"{providerVersion}\"" : string.Empty;
-            var customProviderHeader = customHeader != null ?
-                $" --custom-provider-header \"{customHeader.Value.Key}:{customHeader.Value.Value}\"" :
+
+            var customProviderHeaders = customHeaders != null ?
+                String.Join("", customHeaders.Select(c => $" --custom-provider-header \"{c.Key}:{c.Value}\"")) :
                 string.Empty;
+
             var verboseOutput = verbose ? " --verbose true" : string.Empty;
 
-            return $"\"{pactUri}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}{brokerCredentials}{publishResults}{customProviderHeader}{verboseOutput}";
+            return $"\"{pactUri}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}{brokerCredentials}{publishResults}{customProviderHeaders}{verboseOutput}";
         }
     }
 }

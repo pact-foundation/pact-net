@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using PactNet.Infrastructure.Outputters;
 
 namespace PactNet.Core
@@ -21,14 +23,12 @@ namespace PactNet.Core
                     $" --broker-token \"{pactBrokerUriOptions.Token}\""
                  : string.Empty;
             var publishResults = config?.PublishVerificationResults == true ? $" --publish-verification-results=true --provider-app-version=\"{config.ProviderVersion}\"" : string.Empty;
-            var customHeader = config?.CustomHeader != null && !string.IsNullOrEmpty(config.CustomHeader?.Key) && !string.IsNullOrEmpty(config.CustomHeader?.Value) ?
-                $" --custom-provider-header \"{config.CustomHeader?.Key}:{config.CustomHeader?.Value}\"" :
-                string.Empty;
+            var customHeaders = this.BuildCustomHeaders(config);
             var verbose = config?.Verbose == true ? " --verbose true" : string.Empty;
             var monkeyPatchOption = !string.IsNullOrEmpty(config?.MonkeyPatchFile) ? $" --monkeypatch=\"${config.MonkeyPatchFile}\"" : string.Empty;
 
             Script = "pact-provider-verifier";
-            Arguments = $"\"{FixPathForRuby(pactUri)}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}{brokerCredentials}{publishResults}{customHeader}{verbose}{monkeyPatchOption}";
+            Arguments = $"\"{FixPathForRuby(pactUri)}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}{brokerCredentials}{publishResults}{customHeaders}{verbose}{monkeyPatchOption}";
             WaitForExit = true;
             Outputters = config?.Outputters;
             Environment = new Dictionary<string, string>
@@ -43,6 +43,22 @@ namespace PactNet.Core
                     Environment.Add(envVar.Key, envVar.Value);
                 }
             }
+        }
+
+        private string BuildCustomHeaders(PactVerifierConfig config)
+        {
+            if (config?.CustomHeaders == null)
+            {
+                return string.Empty;
+            }
+
+            var builder = new StringBuilder();
+            foreach (var header in config.CustomHeaders.Where(kv => !string.IsNullOrEmpty(kv.Key) && !string.IsNullOrEmpty(kv.Value)))
+            {
+                builder.Append($" --custom-provider-header \"{header.Key}:{header.Value}\"");
+            }
+
+            return builder.ToString();
         }
 
         private string FixPathForRuby(string path)
