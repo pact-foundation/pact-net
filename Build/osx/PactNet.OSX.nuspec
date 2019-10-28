@@ -14,7 +14,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="..\tools\pact-osx\**" target="tools\pact-osx\" />
+    <file src="..\tools\pact-osx\**" target="tools\pact-osx\" exclude="**\*.css" />
     <file src="config.json" target="tools\pact-osx\config.json" />
     <file src="PactNet.OSX.targets" target="build\PactNet.OSX.targets" />
   </files>
