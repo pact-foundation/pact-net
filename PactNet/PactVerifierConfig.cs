@@ -35,6 +35,10 @@ namespace PactNet
 
         public string MonkeyPatchFile { get; set; }
 
+        public IEnumerable<string> ConsumerTags { get; set; }
+
+        public IEnumerable<string> ProviderTags { get; set; }
+
         public PactVerifierConfig()
         {
             Outputters = new List<IOutput>
