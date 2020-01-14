@@ -8,11 +8,18 @@ namespace PactNet.Tests.Core
 {
     public class PactVerifierHostConfigTests
     {
-        private IPactCoreHostConfig GetSubject(Uri baseUri = null, string pactUri = "../test/pact.json", PactUriOptions pactBrokerUriOptions = null, Uri providerStateSetupUri = null, PactVerifierConfig verifierConfig = null, IDictionary<string, string> environment = null)
+        private IPactCoreHostConfig GetSubject(Uri baseUri = null, 
+            string pactUri = null, 
+            PactBrokerConfig brokerConfig = null, 
+            PactUriOptions pactBrokerUriOptions = null, 
+            Uri providerStateSetupUri = null, 
+            PactVerifierConfig verifierConfig = null, 
+            IDictionary<string, string> environment = null)
         {
             return new PactVerifierHostConfig(
                 baseUri ?? new Uri("http://localhost:2833"), 
                 pactUri,
+                brokerConfig,
                 pactBrokerUriOptions,
                 providerStateSetupUri,
                 verifierConfig,
@@ -22,7 +29,7 @@ namespace PactNet.Tests.Core
         [Fact]
         public void Ctor_WhenCalled_SetsTheCorrectScript()
         {
-            var config = GetSubject();
+            var config = GetSubject(pactUri: "../test/pact.json");
 
             Assert.Equal("pact-provider-verifier", config.Script);
         }
@@ -30,71 +37,107 @@ namespace PactNet.Tests.Core
         [Fact]
         public void Ctor_WhenCalled_SetsTheCorrectArgs()
         {
-            var baseUri = new Uri("http://127.0.0.1");
-            var pactUri = "./tester-pact/pact-file.json";
-            var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
+            var config = GetSubject(baseUri: new Uri("http://127.0.0.1"), 
+                pactUri: "./tester-pact/pact-file.json", 
+                providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
 
-            var config = GetSubject(baseUri, pactUri, null, providerStateSetupUri);
-
-            var expectedArguments = BuildExpectedArguments(baseUri, pactUri, providerStateSetupUri);
-
+            var expectedArguments = "'./tester-pact/pact-file.json' --provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/'";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
         [Fact]
         public void Ctor_WhenCalledWithAHttpPactUri_SetsTheCorrectArgs()
         {
-            var baseUri = new Uri("http://127.0.0.1");
-            var pactUri = "http://broker:9292/test";
-            var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
+            var config = GetSubject(baseUri: new Uri("http://127.0.0.1"), 
+                pactUri: "http://broker:9292/test", 
+                providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
 
-            var config = GetSubject(baseUri, pactUri, null, providerStateSetupUri);
-
-            var expectedArguments = BuildExpectedArguments(baseUri, pactUri, providerStateSetupUri);
-
+            var expectedArguments = "'http://broker:9292/test' --provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/'";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
         [Fact]
         public void Ctor_WhenCalledWithABasicAuthenticatedHttpsPactUri_SetsTheCorrectArgs()
         {
-            var baseUri = new Uri("http://127.0.0.1");
-            var pactUri = "https://broker:9292/test";
-            var pactUriOptions = new PactUriOptions("username", "password");
-            var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
+            var config = GetSubject(baseUri: new Uri("http://127.0.0.1"), 
+                pactUri: "https://broker:9292/test", 
+                pactBrokerUriOptions: new PactUriOptions("username", "password"), 
+                providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
 
-            var config = GetSubject(baseUri, pactUri, pactUriOptions, providerStateSetupUri);
-
-            var expectedArguments = BuildExpectedArguments(baseUri, pactUri, providerStateSetupUri, pactUriOptions);
-
+            var expectedArguments = "'https://broker:9292/test' --provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/' --broker-username 'username' --broker-password 'password'";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
         [Fact]
         public void Ctor_WhenCalledWithATokenAuthenticatedHttpsPactUri_SetsTheCorrectArgs()
         {
-            var baseUri = new Uri("http://127.0.0.1");
-            var pactUri = "https://broker:9292/test";
-            var pactUriOptions = new PactUriOptions("token");
-            var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
+            var config = GetSubject(baseUri: new Uri("http://127.0.0.1"),
+                pactUri: "https://broker:9292/test", 
+                pactBrokerUriOptions: new PactUriOptions("token"), 
+                providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
 
-            var config = GetSubject(baseUri, pactUri, pactUriOptions, providerStateSetupUri);
+            var expectedArguments = "'https://broker:9292/test' --provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/' --broker-token 'token'";
+            Assert.Equal(expectedArguments, config.Arguments);
+        }
 
-            var expectedArguments = BuildExpectedArguments(baseUri, pactUri, providerStateSetupUri, pactUriOptions);
+        [Fact]
+        public void Ctor_WhenCalledWithABasicAuthenticatedBrokerConfig_SetsTheCorrectArgs()
+        {
+            var config = GetSubject(baseUri: new Uri("http://127.0.0.1"), 
+                brokerConfig: new PactBrokerConfig("Provider Name", "https://broker:9292/test", false, null, null, null), 
+                pactBrokerUriOptions: new PactUriOptions("username", "password"), 
+                providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
 
+            var expectedArguments = "--provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/' --pact-broker-base-url 'https://broker:9292/test' --provider 'Provider Name' --broker-username 'username' --broker-password 'password'";
+            Assert.Equal(expectedArguments, config.Arguments);
+        }
+
+        [Fact]
+        public void Ctor_WhenCalledWithATokenAuthenticatedBrokerConfig_SetsTheCorrectArgs()
+        {
+            var config = GetSubject(baseUri: new Uri("http://127.0.0.1"), 
+                brokerConfig: new PactBrokerConfig("Provider Name", "https://broker:9292/test", false, null, null, null), 
+                pactBrokerUriOptions: new PactUriOptions("token"), 
+                providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
+
+            var expectedArguments = "--provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/' --pact-broker-base-url 'https://broker:9292/test' --provider 'Provider Name' --broker-token 'token'";
+            Assert.Equal(expectedArguments, config.Arguments);
+        }
+
+        [Fact]
+        public void Ctor_WhenCalledWithTagsInTheBrokerConfig_SetsTheCorrectArgs()
+        {
+            var config = GetSubject(baseUri: new Uri("http://127.0.0.1"), 
+                brokerConfig: new PactBrokerConfig("Provider Name", "https://broker:9292/test", false, new List<string> { "ctag1", "ctag2" }, new List<string> { "ptag1", "ptag2" }, null), 
+                pactBrokerUriOptions: new PactUriOptions("token"), 
+                providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
+
+            var expectedArguments = "--provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/' --pact-broker-base-url 'https://broker:9292/test' --provider 'Provider Name' --consumer-version-tag 'ctag1' --consumer-version-tag 'ctag2' --provider-version-tag 'ptag1' --provider-version-tag 'ptag2' --broker-token 'token'";
+            Assert.Equal(expectedArguments, config.Arguments);
+        }
+
+        [Fact]
+        public void Ctor_WhenCalledWithEnablePendingAndConsumerTagSelectorsInTheBrokerConfig_SetsTheCorrectArgs()
+        {
+            var config = GetSubject(baseUri: new Uri("http://127.0.0.1"), 
+                brokerConfig: new PactBrokerConfig("Provider Name", "https://broker:9292/test", true, null, null, new List<VersionTagSelector>
+                {
+                    new VersionTagSelector("ctag1", all: true),
+                    new VersionTagSelector("ctag2", latest: true)
+                }), 
+                pactBrokerUriOptions: new PactUriOptions("token"), 
+                providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
+
+            var expectedArguments = "--provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/' --pact-broker-base-url 'https://broker:9292/test' --provider 'Provider Name' --consumer-version-selector '{\"tag\":\"ctag1\",\"all\":true}' --consumer-version-selector '{\"tag\":\"ctag2\",\"latest\":true}' --enable-pending --broker-token 'token'";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
         [Fact]
         public void Ctor_WhenCalledWithNoProviderStateSetupUri_SetsTheCorrectArgs()
         {
-            var baseUri = new Uri("http://127.0.0.1");
-            var pactUri = "./tester-pact/pact-file.json";
+            var config = GetSubject(new Uri("http://127.0.0.1"), "./tester-pact/pact-file.json");
 
-            var config = GetSubject(baseUri, pactUri);
-
-            var expectedArguments = BuildExpectedArguments(baseUri, pactUri, null);
-
+            var expectedArguments = "'./tester-pact/pact-file.json' --provider-base-url 'http://127.0.0.1'";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
@@ -102,7 +145,6 @@ namespace PactNet.Tests.Core
         public void Ctor_WhenCalled_SetsWaitForExitToTrue()
         {
             var config = GetSubject();
-
             Assert.Equal(true, config.WaitForExit);
         }
 
@@ -111,95 +153,74 @@ namespace PactNet.Tests.Core
         {
             var verifierConfig = new PactVerifierConfig();
             var config = GetSubject(verifierConfig: verifierConfig);
-
             Assert.Equal(verifierConfig.Outputters, config.Outputters);
         }
 
         [Fact]
         public void Ctor_WhenCalledWithPublishVerificationResults_SetsTheCorrectArgs()
         {
-            var baseUri = new Uri("http://127.0.0.1");
-            var pactUri = "./tester-pact/pact-file.json";
-            var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
+            var config = GetSubject(baseUri: new Uri("http://127.0.0.1"), 
+                pactUri: "./tester-pact/pact-file.json", 
+                providerStateSetupUri: new Uri("http://127.0.0.1/states/"), 
+                verifierConfig: new PactVerifierConfig
+                {
+                    PublishVerificationResults = true,
+                    ProviderVersion = "1.0.0"
+                });
 
-            var verifierConfig = new PactVerifierConfig
-            {
-                PublishVerificationResults = true,
-                ProviderVersion = "1.0.0"
-            };
-
-            var config = GetSubject(baseUri: baseUri, pactUri: pactUri, providerStateSetupUri: providerStateSetupUri, verifierConfig: verifierConfig);
-
-            var expectedArguments = BuildExpectedArguments(baseUri, pactUri, providerStateSetupUri, publishVerificationResults: true, providerVersion: "1.0.0");
-
+            var expectedArguments = "'./tester-pact/pact-file.json' --provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/' --publish-verification-results=true --provider-app-version='1.0.0'";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
         [Fact]
         public void Ctor_WhenCalledWithCustomHeader_SetsTheCorrectArgs()
         {
-            var baseUri = new Uri("http://127.0.0.1");
-            var pactUri = "./tester-pact/pact-file.json";
-            var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
-            var customHeader = new KeyValuePair<string, string>("Authorization", "Basic VGVzdA==");
-            var customHeaders = new Dictionary<string, string>();
-            customHeaders.Add(customHeader.Key, customHeader.Value);
+            var config = GetSubject(baseUri: new Uri("http://127.0.0.1"), 
+                pactUri: "./tester-pact/pact-file.json", 
+                providerStateSetupUri: new Uri("http://127.0.0.1/states/"), 
+                verifierConfig: new PactVerifierConfig
+                {
+                    CustomHeader = new KeyValuePair<string, string>("Authorization", "Basic VGVzdA=="),
+                    ProviderVersion = "1.0.0"
+                });
 
-            var verifierConfig = new PactVerifierConfig
-            {
-                CustomHeader = customHeader,
-                ProviderVersion = "1.0.0"
-            };
-
-            var config = GetSubject(baseUri: baseUri, pactUri: pactUri, providerStateSetupUri: providerStateSetupUri, verifierConfig: verifierConfig);
-
-            var expectedArguments = BuildExpectedArguments(baseUri, pactUri, providerStateSetupUri, providerVersion: "1.0.0", customHeaders: customHeaders);
-
+            var expectedArguments = "'./tester-pact/pact-file.json' --provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/' --custom-provider-header 'Authorization:Basic VGVzdA=='";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
         [Fact]
         public void Ctor_WhenCalledWithCustomHeaders_SetsTheCorrectArgs()
         {
-            var baseUri = new Uri("http://127.0.0.1");
-            var pactUri = "./tester-pact/pact-file.json";
-            var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
-            var customHeaders = new Dictionary<string, string>
-            {
-                { "Authorization", "Basic VGVzdA==" },
-                { "X-Something", "MYthing" }
-            };
+            var config = GetSubject(baseUri: new Uri("http://127.0.0.1"), 
+                pactUri: "./tester-pact/pact-file.json", 
+                providerStateSetupUri: new Uri("http://127.0.0.1/states/"), 
+                verifierConfig: new PactVerifierConfig
+                {
+                    CustomHeaders = new Dictionary<string, string>
+                    {
+                        { "Authorization", "Basic VGVzdA==" },
+                        { "X-Something", "MYthing" }
+                    },
+                    ProviderVersion = "1.0.0"
+                });
 
-            var verifierConfig = new PactVerifierConfig
-            {
-                CustomHeaders = customHeaders,
-                ProviderVersion = "1.0.0"
-            };
-
-            var config = GetSubject(baseUri: baseUri, pactUri: pactUri, providerStateSetupUri: providerStateSetupUri, verifierConfig: verifierConfig);
-
-            var expectedArguments = BuildExpectedArguments(baseUri, pactUri, providerStateSetupUri, providerVersion: "1.0.0", customHeaders: customHeaders);
-
+            var expectedArguments = "'./tester-pact/pact-file.json' --provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/' --custom-provider-header 'Authorization:Basic VGVzdA==' --custom-provider-header 'X-Something:MYthing'";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
         [Fact]
         public void Ctor_WhenCalledWithVerboseTrue_SetsTheCorrectArgs()
         {
-            var baseUri = new Uri("http://127.0.0.1");
-            var pactUri = "./tester-pact/pact-file.json";
-            var providerStateSetupUri = new Uri("http://127.0.0.1/states/");
+            var config = GetSubject(baseUri: new Uri("http://127.0.0.1"), 
+                pactUri: "./tester-pact/pact-file.json", 
+                providerStateSetupUri: new Uri("http://127.0.0.1/states/"), 
+                verifierConfig: new PactVerifierConfig
+                {
+                    Verbose = true,
+                    ProviderVersion = "1.0.0"
+                });
 
-            var verifierConfig = new PactVerifierConfig
-            {
-                Verbose = true,
-                ProviderVersion = "1.0.0"
-            };
-
-            var config = GetSubject(baseUri: baseUri, pactUri: pactUri, providerStateSetupUri: providerStateSetupUri, verifierConfig: verifierConfig);
-
-            var expectedArguments = BuildExpectedArguments(baseUri, pactUri, providerStateSetupUri, providerVersion: "1.0.0", verbose: true);
-
+            var expectedArguments = "'./tester-pact/pact-file.json' --provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/' --verbose true";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
@@ -268,6 +289,7 @@ namespace PactNet.Tests.Core
         private string BuildExpectedArguments(
             Uri baseUri, 
             string pactUri, 
+            PactBrokerConfig brokerConfig,
             Uri providerStateSetupUri,
             PactUriOptions pactUriOptions = null,
             bool publishVerificationResults = false,
@@ -275,21 +297,21 @@ namespace PactNet.Tests.Core
             Dictionary<string, string> customHeaders = null,
             bool verbose = false)
         {
-            var providerStateOption = providerStateSetupUri != null ? $" --provider-states-setup-url {providerStateSetupUri.OriginalString}" : "";
+            var providerStateOption = providerStateSetupUri != null ? $" --provider-states-setup-url '{providerStateSetupUri.OriginalString}'" : "";
             var brokerCredentials = pactUriOptions != null ?
                 !String.IsNullOrEmpty(pactUriOptions.Username) && !String.IsNullOrEmpty(pactUriOptions.Password) ?
-                    $" --broker-username \"{pactUriOptions.Username}\" --broker-password \"{pactUriOptions.Password}\"" :
-                    $" --broker-token \"{pactUriOptions.Token}\""
+                    $" --broker-username '{pactUriOptions.Username}' --broker-password '{pactUriOptions.Password}'" :
+                    $" --broker-token '{pactUriOptions.Token}'"
                 : string.Empty;
-            var publishResults = publishVerificationResults ? $" --publish-verification-results=true --provider-app-version=\"{providerVersion}\"" : string.Empty;
+            var publishResults = publishVerificationResults ? $" --publish-verification-results=true --provider-app-version='{providerVersion}'" : string.Empty;
 
             var customProviderHeaders = customHeaders != null ?
-                String.Join("", customHeaders.Select(c => $" --custom-provider-header \"{c.Key}:{c.Value}\"")) :
+                String.Join("", customHeaders.Select(c => $" --custom-provider-header '{c.Key}:{c.Value}'")) :
                 string.Empty;
 
             var verboseOutput = verbose ? " --verbose true" : string.Empty;
 
-            return $"\"{pactUri}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}{brokerCredentials}{publishResults}{customProviderHeaders}{verboseOutput}";
+            return $"'{pactUri}' --provider-base-url '{baseUri.OriginalString}'{providerStateOption}{brokerCredentials}{publishResults}{customProviderHeaders}{verboseOutput}";
         }
     }
 }

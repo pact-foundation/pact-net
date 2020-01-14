@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using NSubstitute;
 using PactNet.Core;
@@ -192,21 +193,34 @@ namespace PactNet.Tests
 
             Assert.Equal(pactFileUri, ((PactVerifier)pactVerifier).PactFileUri);
         }
-        
+
         [Fact]
         public void Verify_WhenServiceBaseUriIsNull_ThrowsInvalidOperationException()
         {
             var pactVerifier = GetSubject();
-            pactVerifier.PactUri($"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}Consumer.Tests{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}my_client-event_api.json");
+            pactVerifier
+                .PactUri($"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}Consumer.Tests{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}my_client-event_api.json");
 
             Assert.Throws<InvalidOperationException>(() => pactVerifier.Verify());
         }
 
         [Fact]
-        public void Verify_WhenPactFileUriIsNull_ThrowsInvalidOperationException()
+        public void Verify_WhenPactFileUriAndBrokerBaseUriIsNull_ThrowsInvalidOperationException()
         {
             var pactVerifier = GetSubject();
             pactVerifier.ServiceProvider("Event API", "http://localhost:2839");
+
+            Assert.Throws<InvalidOperationException>(() => pactVerifier.Verify());
+        }
+
+        [Fact]
+        public void Verify_WhenBothPactFileUriAndBrokerBaseUriIsSet_ThrowsInvalidOperationException()
+        {
+            var pactVerifier = GetSubject();
+            pactVerifier
+                .ServiceProvider("Event API", "http://localhost:2839")
+                .PactUri("../test.json")
+                .PactBroker("http://test.com");
 
             Assert.Throws<InvalidOperationException>(() => pactVerifier.Verify());
         }
@@ -279,6 +293,25 @@ namespace PactNet.Tests
                 .ServiceProvider(serviceProvider, "http://localhost")
                 .HonoursPactWith(serviceConsumer)
                 .PactUri(pactUri, pactUriOptions);
+
+            pactVerifier.Verify();
+
+            _mockVerifierCoreHost.Received(1).Start();
+        }
+
+        [Fact]
+        public void Verify_WhenTheVerifierIsCorrectlySetUpWithABrokerConfiguration_PactVerifyCoreHostIsStarted()
+        {
+            var serviceProvider = "Event API";
+            var serviceConsumer = "My client";
+            var pactUri = "https://broker/consumer/test/provider/hello/latest";
+            var pactUriOptions = new PactUriOptions("mytoken");
+
+            var pactVerifier = GetSubject();
+            pactVerifier
+                .ServiceProvider(serviceProvider, "http://localhost")
+                .HonoursPactWith(serviceConsumer)
+                .PactBroker(pactUri, pactUriOptions, true, new List<string>{"t1"}, new List<string>{"t2"}, new List<VersionTagSelector> { new VersionTagSelector("t3", latest: true) });
 
             pactVerifier.Verify();
 

@@ -132,8 +132,8 @@ public class ConsumerMyApiPact : IDisposable
     MockProviderService = PactBuilder.MockService(MockServerPort); //Configure the http mock server
     //or
     MockProviderService = PactBuilder.MockService(MockServerPort, true); //By passing true as the second param, you can enabled SSL. A self signed SSL cert will be provisioned by default.
-	//or
-	MockProviderService = PactBuilder.MockService(MockServerPort, true, sslCert: sslCert, sslKey: sslKey); //By passing true as the second param and an sslCert and sslKey, you can enabled SSL with a custom certificate. See "Using a Custom SSL Certificate" for more details.
+    //or
+    MockProviderService = PactBuilder.MockService(MockServerPort, true, sslCert: sslCert, sslKey: sslKey); //By passing true as the second param and an sslCert and sslKey, you can enabled SSL with a custom certificate. See "Using a Custom SSL Certificate" for more details.
     //or
     MockProviderService = PactBuilder.MockService(MockServerPort, new JsonSerializerSettings()); //You can also change the default Json serialization settings using this overload    
     //or
@@ -241,8 +241,8 @@ public class SomethingApiTests
         {
             new XUnitOutput(_output)
         },
-		CustomHeaders = new Dictionary<string, string>{{"Authorization", "Basic VGVzdA=="}}, //This allows the user to set request headers that will be sent with every request the verifier sends to the provider
-		Verbose = true //Output verbose verification logs to the test output
+        CustomHeaders = new Dictionary<string, string>{{"Authorization", "Basic VGVzdA=="}}, //This allows the user to set request headers that will be sent with every request the verifier sends to the provider
+        Verbose = true //Output verbose verification logs to the test output
     };
 
     using (WebApp.Start<TestStartup>(serviceUri))
@@ -258,7 +258,11 @@ public class SomethingApiTests
             .PactUri("http://pact-broker/pacts/provider/Something%20Api/consumer/Consumer/latest") //You can specify a http or https uri
             //or
             .PactUri("http://pact-broker/pacts/provider/Something%20Api/consumer/Consumer/latest", new PactUriOptions("someuser", "somepassword")) //You can also specify http/https basic auth details
-            .Verify();
+            //or
+            .PactUri("http://pact-broker/pacts/provider/Something%20Api/consumer/Consumer/latest", new PactUriOptions("sometoken")) //Or a bearer token
+            //or (if you're using the Pact Broker, you can use the various different features, including pending pacts)
+           .PactBroker("http://pact-broker", uriOptions: new PactUriOptions("sometoken"), consumerVersionTags: new List<string> { "master" }, providerVersionTags: new List<string> { "master" }, consumerVersionSelectors: new List<VersionTagSelector> { new VersionTagSelector("master", false, true) }, enablePending: true)
+           .Verify();
     }
   }
 }
@@ -429,15 +433,15 @@ var buildNumber = Environment.GetEnvironmentVariable("BUILD_NUMBER");
 //Assuming build number is only set in the CI environment
 var config = new PactVerifierConfig
 {
-	ProviderVersion = !string.IsNullOrEmpty(buildNumber) ? buildNumber : null, //NOTE: This is required for this feature to work
-	PublishVerificationResults = !string.IsNullOrEmpty(buildNumber)
+    ProviderVersion = !string.IsNullOrEmpty(buildNumber) ? buildNumber : null, //NOTE: This is required for this feature to work
+    PublishVerificationResults = !string.IsNullOrEmpty(buildNumber)
 };
 IPactVerifier pactVerifier = new PactVerifier(config);
 pactVerifier
-	.ServiceProvider("Something Api", serviceUri)
-	.HonoursPactWith("Consumer")
-	.PactUri("http://pact-broker/pacts/provider/Something%20Api/consumer/Consumer/latest") //NOTE: This must be a pact broker url for this feature to work
-	.Verify();
+    .ServiceProvider("Something Api", serviceUri)
+    .HonoursPactWith("Consumer")
+    .PactUri("http://pact-broker/pacts/provider/Something%20Api/consumer/Consumer/latest") //NOTE: This must be a pact broker url for this feature to work
+    .Verify();
 ```
 
 #### Further Documentation
