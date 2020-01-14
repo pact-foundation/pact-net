@@ -261,7 +261,7 @@ public class SomethingApiTests
             //or
             .PactUri("http://pact-broker/pacts/provider/Something%20Api/consumer/Consumer/latest", new PactUriOptions("sometoken")) //Or a bearer token
             //or (if you're using the Pact Broker, you can use the various different features, including pending pacts)
-           .PactBroker("http://pact-broker", uriOptions: new PactUriOptions("sometoken"), consumerVersionTags: new List<string> { "master" }, providerVersionTags: new List<string> { "master" }, consumerVersionSelectors: new List<VersionTagSelector> { new VersionTagSelector("master", false, true) }, enablePending: true)
+           .PactBroker("http://pact-broker", uriOptions: new PactUriOptions("sometoken"), enablePending: true, consumerVersionTags: new List<string> { "master" }, providerVersionTags: new List<string> { "master" }, consumerVersionSelectors: new List<VersionTagSelector> { new VersionTagSelector("master", false, true) })
            .Verify();
     }
   }
