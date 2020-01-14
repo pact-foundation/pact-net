@@ -72,7 +72,7 @@ pactPublisher.PublishToBroker(
     "1.0.2", new [] { "master" });
 ```
 
-## Publishing Provider Verification Results to a Broker
+### Publishing Provider Verification Results to a Broker
 This feature allows the result of the Provider verification to be pushed to the broker and displayed on the index page.
 In order for this to work you must set the ProviderVersion, PublishVerificationResults and use a pact broker uri. If you do not use a broker uri no verification results will be published. See the code snippet code below.
 For more info and compatibility details [refer to this](https://github.com/pact-foundation/pact_broker/wiki/Provider-verification-results).
@@ -83,14 +83,14 @@ var buildNumber = Environment.GetEnvironmentVariable("BUILD_NUMBER");
 //Assuming build number is only set in the CI environment
 var config = new PactVerifierConfig
 {
-	ProviderVersion = !string.IsNullOrEmpty(buildNumber) ? buildNumber : null, //NOTE: This is required for this feature to work
-	PublishVerificationResults = !string.IsNullOrEmpty(buildNumber)
+    ProviderVersion = !string.IsNullOrEmpty(buildNumber) ? buildNumber : null, //NOTE: This is required for this feature to work
+    PublishVerificationResults = !string.IsNullOrEmpty(buildNumber)
 };
 IPactVerifier pactVerifier = new PactVerifier(config);
 pactVerifier
-	.ServiceProvider("Something Api", serviceUri)
-	.HonoursPactWith("Consumer")
-	.PactUri("http://pact-broker/pacts/provider/Something%20Api/consumer/Consumer/latest") //NOTE: This must be a pact broker url for this feature to work
-	.Verify();
+    .ServiceProvider("Something Api", serviceUri)
+    .HonoursPactWith("Consumer")
+    .PactUri("http://pact-broker/pacts/provider/Something%20Api/consumer/Consumer/latest") //NOTE: This must be a pact broker url for this feature to work
+    .Verify();
 ```
 

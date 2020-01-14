@@ -152,6 +152,24 @@ namespace PactNet.Tests.Core
             Assert.Equal(false, config.WaitForExit);
         }
 
+        [Fact]
+        public void Ctor_WhenCalledWithEnabledCors_SetsTheCorrectArgs()
+        {
+            var port = 9332;
+            var pactConfig = new PactConfig { EnableCors = true };
+            var consumerName = "Cons";
+            var providerName = "The best one";
+
+            var config = GetSubject(port, false, consumerName, providerName, pactConfig);
+
+            var expectedLogFilePath = BuildExpectedLogFilePath(pactConfig.LogDir, providerName);
+            var expectedPactDir = BuildExpectedPactDir(pactConfig.PactDir);
+            var expectedArguments = BuildExpectedArguments(port, expectedLogFilePath, expectedPactDir,
+                pactConfig.SpecificationVersion, consumerName, providerName, false, enableCors: true);
+
+            Assert.Equal(expectedArguments, config.Arguments);
+        }
+
         private string BuildExpectedLogFilePath(string logDir, string providerName)
         {
             return ($"{logDir}{providerName.ToLowerSnakeCase()}_mock_service.log").Replace("\\", "/");
@@ -177,20 +195,21 @@ namespace PactNet.Tests.Core
             bool enableSsl = false,
             IPAddress host = IPAddress.Loopback,
             string sslCert = "",
-            string sslKey = ""
+            string sslKey = "",
+            bool enableCors = false
         )
         {
             var sslOption = enableSsl ? " --ssl" : "";
             var hostOption = host == IPAddress.Any ? " --host=0.0.0.0" : "";
             var sslCertOption = !string.IsNullOrEmpty(sslCert) ? $" --sslcert=\"{sslCert}\"" : string.Empty;
             var sslKeyOption = !string.IsNullOrEmpty(sslKey) ? $" --sslkey=\"{sslKey}\"" : string.Empty;
-
+            var corsOption = enableCors ? " --cors" : string.Empty;
             return
                 $"-p {port} -l \"{logFilePath}\" " +
                 $"--pact-dir \"{pactFileDir}\" " +
                 $"--pact-specification-version \"{pactSpecificationVersion}\" " +
                 $"--consumer \"{consumerName}\" " +
-                $"--provider \"{providerName}\"{sslOption}{hostOption}{sslCertOption}{sslKeyOption}";
+                $"--provider \"{providerName}\"{sslOption}{hostOption}{sslCertOption}{sslKeyOption}{corsOption}";
         }
     }
 }

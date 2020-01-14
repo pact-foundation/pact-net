@@ -27,6 +27,7 @@ namespace PactNet
         internal string LoggerName;
 
         public string MonkeyPatchFile { get; set; }
+        public bool EnableCors { get; set; }
 
         public PactConfig()
         {

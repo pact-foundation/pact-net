@@ -14,21 +14,23 @@ namespace PactNet.Core
         public IEnumerable<IOutput> Outputters { get; }
         public IDictionary<string, string> Environment { get; }
 
-        public PactVerifierHostConfig(Uri baseUri, string pactUri, PactUriOptions pactBrokerUriOptions, Uri providerStateSetupUri, PactVerifierConfig config, IDictionary<string, string> environment)
+        public PactVerifierHostConfig(Uri baseUri, string pactUri, PactBrokerConfig brokerConfig, PactUriOptions pactBrokerUriOptions, Uri providerStateSetupUri, PactVerifierConfig config, IDictionary<string, string> environment)
         {
-            var providerStateOption = providerStateSetupUri != null ? $" --provider-states-setup-url {providerStateSetupUri.OriginalString}" : string.Empty;
+            var pactUriOption = pactUri != null ? $"'{FixPathForRuby(pactUri)}' " : "";
+            var providerStateOption = providerStateSetupUri != null ? $" --provider-states-setup-url '{providerStateSetupUri.OriginalString}'" : string.Empty;
+            var pactBrokerOptions = BuildPactBrokerOptions(brokerConfig);
             var brokerCredentials = pactBrokerUriOptions != null ?
                 !String.IsNullOrEmpty(pactBrokerUriOptions.Username) && !String.IsNullOrEmpty(pactBrokerUriOptions.Password) ? 
-                    $" --broker-username \"{pactBrokerUriOptions.Username}\" --broker-password \"{pactBrokerUriOptions.Password}\"" : 
-                    $" --broker-token \"{pactBrokerUriOptions.Token}\""
+                    $" --broker-username '{pactBrokerUriOptions.Username}' --broker-password '{pactBrokerUriOptions.Password}'" : 
+                    $" --broker-token '{pactBrokerUriOptions.Token}'"
                  : string.Empty;
-            var publishResults = config?.PublishVerificationResults == true ? $" --publish-verification-results=true --provider-app-version=\"{config.ProviderVersion}\"" : string.Empty;
+            var publishResults = config?.PublishVerificationResults == true ? $" --publish-verification-results=true --provider-app-version='{config.ProviderVersion}'" : string.Empty;
             var customHeaders = this.BuildCustomHeaders(config);
             var verbose = config?.Verbose == true ? " --verbose true" : string.Empty;
-            var monkeyPatchOption = !string.IsNullOrEmpty(config?.MonkeyPatchFile) ? $" --monkeypatch=\"${config.MonkeyPatchFile}\"" : string.Empty;
+            var monkeyPatchOption = !string.IsNullOrEmpty(config?.MonkeyPatchFile) ? $" --monkeypatch='${config.MonkeyPatchFile}'" : string.Empty;
 
             Script = "pact-provider-verifier";
-            Arguments = $"\"{FixPathForRuby(pactUri)}\" --provider-base-url {baseUri.OriginalString}{providerStateOption}{brokerCredentials}{publishResults}{customHeaders}{verbose}{monkeyPatchOption}";
+            Arguments = $"{pactUriOption}--provider-base-url '{baseUri.OriginalString}'{providerStateOption}{pactBrokerOptions}{brokerCredentials}{publishResults}{customHeaders}{verbose}{monkeyPatchOption}";
             WaitForExit = true;
             Outputters = config?.Outputters;
             Environment = new Dictionary<string, string>
@@ -55,7 +57,42 @@ namespace PactNet.Core
             var builder = new StringBuilder();
             foreach (var header in config.CustomHeaders.Where(kv => !string.IsNullOrEmpty(kv.Key) && !string.IsNullOrEmpty(kv.Value)))
             {
-                builder.Append($" --custom-provider-header \"{header.Key}:{header.Value}\"");
+                builder.Append($" --custom-provider-header '{header.Key}:{header.Value}'");
+            }
+
+            return builder.ToString();
+        }
+
+        private string BuildPactBrokerOptions(PactBrokerConfig config)
+        {
+            if (config == null)
+            {
+                return string.Empty;
+            }
+
+            var consumerVersionTags = BuildTags("consumer-version-tag", config.ConsumerVersionTags);
+            var providerVersionTags = BuildTags("provider-version-tag", config.ProviderVersionTags);
+            var consumerVersionSelectors = BuildTags("consumer-version-selector", config.ConsumerVersionSelectors);
+            var enablePending = config.EnablePending ? " --enable-pending" : "";
+
+            return $" --pact-broker-base-url '{config.BrokerBaseUri}' --provider '{config.ProviderName}'{consumerVersionTags}{providerVersionTags}{consumerVersionSelectors}{enablePending}";
+        }
+
+        private string BuildTags<T>(string tagOption, IEnumerable<T> tags)
+        {
+            if (string.IsNullOrEmpty(tagOption) || tags == null || !tags.Any())
+            {
+                return string.Empty;
+            }
+
+            var builder = new StringBuilder();
+            foreach (var tag in tags)
+            {
+                var tagVal = tag?.ToString();
+                if (!string.IsNullOrEmpty(tagVal))
+                {
+                    builder.Append($" --{tagOption} '{tagVal}'");
+                }
             }
 
             return builder.ToString();

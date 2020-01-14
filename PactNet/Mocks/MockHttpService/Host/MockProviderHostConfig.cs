@@ -30,12 +30,14 @@ namespace PactNet.Mocks.MockHttpService.Host
                 ? $" --monkeypatch=\"${config.MonkeyPatchFile}\""
                 : string.Empty;
 
+            var corsOption = config.EnableCors ? " --cors" : string.Empty;
+
             Script = "pact-mock-service";
             Arguments = $"-p {port} -l \"{FixPathForRuby(logFile)}\" " +
                         $"--pact-dir \"{FixPathForRuby(config.PactDir)}\" " +
                         $"--pact-specification-version \"{config.SpecificationVersion}\" " +
                         $"--consumer \"{consumerName}\" " +
-                        $"--provider \"{providerName}\"{sslOption}{hostOption}{sslCertOption}{sslKeyOption}{monkeyPatchOption}";
+                        $"--provider \"{providerName}\"{sslOption}{hostOption}{sslCertOption}{sslKeyOption}{monkeyPatchOption}{corsOption}";
 
             WaitForExit = false;
             Outputters = config?.Outputters;
