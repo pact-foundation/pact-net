@@ -285,33 +285,5 @@ namespace PactNet.Tests.Core
 
             Assert.NotEmpty(actualEnv["PACT_INTERACTION_RERUN_COMMAND"]);
         }
-
-        private string BuildExpectedArguments(
-            Uri baseUri, 
-            string pactUri, 
-            PactBrokerConfig brokerConfig,
-            Uri providerStateSetupUri,
-            PactUriOptions pactUriOptions = null,
-            bool publishVerificationResults = false,
-            string providerVersion = "",
-            Dictionary<string, string> customHeaders = null,
-            bool verbose = false)
-        {
-            var providerStateOption = providerStateSetupUri != null ? $" --provider-states-setup-url '{providerStateSetupUri.OriginalString}'" : "";
-            var brokerCredentials = pactUriOptions != null ?
-                !String.IsNullOrEmpty(pactUriOptions.Username) && !String.IsNullOrEmpty(pactUriOptions.Password) ?
-                    $" --broker-username '{pactUriOptions.Username}' --broker-password '{pactUriOptions.Password}'" :
-                    $" --broker-token '{pactUriOptions.Token}'"
-                : string.Empty;
-            var publishResults = publishVerificationResults ? $" --publish-verification-results=true --provider-app-version='{providerVersion}'" : string.Empty;
-
-            var customProviderHeaders = customHeaders != null ?
-                String.Join("", customHeaders.Select(c => $" --custom-provider-header '{c.Key}:{c.Value}'")) :
-                string.Empty;
-
-            var verboseOutput = verbose ? " --verbose true" : string.Empty;
-
-            return $"'{pactUri}' --provider-base-url '{baseUri.OriginalString}'{providerStateOption}{brokerCredentials}{publishResults}{customProviderHeaders}{verboseOutput}";
-        }
     }
 }
