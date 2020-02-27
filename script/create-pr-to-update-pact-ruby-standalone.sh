@@ -5,17 +5,18 @@
 STANDALONE_VERSION=$1
 DASHERISED_VERSION=$(echo "${STANDALONE_VERSION}" | sed 's/\./\-/g')
 BRANCH_NAME="chore/upgrade-to-pact-ruby-standalone-${DASHERISED_VERSION}"
+VERSION_FILE="Build/Download-Standalone-Core.ps1"
 
 git checkout master
-git checkout standalone/install.ts
+git checkout ${VERSION_FILE}
 git pull origin master
 
 git checkout -b ${BRANCH_NAME}
 
-cat Build/Download-Standalone-Core.ps1 | sed "s/\$StandaloneCoreVersion = .*/\$StandaloneCoreVersion = '${STANDALONE_VERSION}';/" > tmp-Download-Standalone-Core.ps1
-mv tmp-Download-Standalone-Core.ps1 Build/Download-Standalone-Core.ps1
+cat ${VERSION_FILE} | sed "s/\$StandaloneCoreVersion = .*/\$StandaloneCoreVersion = '${STANDALONE_VERSION}';/" > tmp-version-file
+mv tmp-version-file ${VERSION_FILE}
 
-git add Build/Download-Standalone-Core.ps1
+git add ${VERSION_FILE}
 git commit -m "feat(upgrade): update standalone to ${STANDALONE_VERSION}"
 git push --set-upstream origin ${BRANCH_NAME}
 
