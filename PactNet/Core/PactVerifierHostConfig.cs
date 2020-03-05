@@ -91,7 +91,7 @@ namespace PactNet.Core
                 var tagVal = tag?.ToString();
                 if (!string.IsNullOrEmpty(tagVal))
                 {
-                    builder.Append($" --{tagOption} '{tagVal}'");
+                    builder.Append($" --{tagOption} \"{tagVal}\"");
                 }
             }
 
