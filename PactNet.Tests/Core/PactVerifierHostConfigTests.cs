@@ -112,7 +112,7 @@ namespace PactNet.Tests.Core
                 pactBrokerUriOptions: new PactUriOptions("token"), 
                 providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
 
-            var expectedArguments = "--provider-base-url \"http://127.0.0.1\" --provider-states-setup-url \"http://127.0.0.1/states/\" --pact-broker-base-url \"https://broker:9292/test\" --provider \"Provider Name\" --consumer-version-tag 'ctag1' --consumer-version-tag 'ctag2' --provider-version-tag 'ptag1' --provider-version-tag 'ptag2' --broker-token \"token\"";
+            var expectedArguments = "--provider-base-url \"http://127.0.0.1\" --provider-states-setup-url \"http://127.0.0.1/states/\" --pact-broker-base-url \"https://broker:9292/test\" --provider \"Provider Name\" --consumer-version-tag \"ctag1\" --consumer-version-tag \"ctag2\" --provider-version-tag \"ptag1\" --provider-version-tag \"ptag2\" --broker-token \"token\"";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
@@ -128,7 +128,7 @@ namespace PactNet.Tests.Core
                 pactBrokerUriOptions: new PactUriOptions("token"), 
                 providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
 
-            var expectedArguments = "--provider-base-url \"http://127.0.0.1\" --provider-states-setup-url \"http://127.0.0.1/states/\" --pact-broker-base-url \"https://broker:9292/test\" --provider \"Provider Name\" --consumer-version-selector '{\"tag\":\"ctag1\",\"all\":true}' --consumer-version-selector '{\"tag\":\"ctag2\",\"latest\":true}' --enable-pending --broker-token \"token\"";
+            var expectedArguments = "--provider-base-url \"http://127.0.0.1\" --provider-states-setup-url \"http://127.0.0.1/states/\" --pact-broker-base-url \"https://broker:9292/test\" --provider \"Provider Name\" --consumer-version-selector \"{\\\"tag\\\":\\\"ctag1\\\",\\\"all\\\":true}\" --consumer-version-selector \"{\\\"tag\\\":\\\"ctag2\\\",\\\"latest\\\":true}\" --enable-pending --broker-token \"token\"";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
