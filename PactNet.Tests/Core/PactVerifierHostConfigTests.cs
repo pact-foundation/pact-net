@@ -41,7 +41,7 @@ namespace PactNet.Tests.Core
                 pactUri: "./tester-pact/pact-file.json", 
                 providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
 
-            var expectedArguments = "'./tester-pact/pact-file.json' --provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/'";
+            var expectedArguments = "\"./tester-pact/pact-file.json\" --provider-base-url \"http://127.0.0.1\" --provider-states-setup-url \"http://127.0.0.1/states/\"";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
@@ -52,7 +52,7 @@ namespace PactNet.Tests.Core
                 pactUri: "http://broker:9292/test", 
                 providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
 
-            var expectedArguments = "'http://broker:9292/test' --provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/'";
+            var expectedArguments = "\"http://broker:9292/test\" --provider-base-url \"http://127.0.0.1\" --provider-states-setup-url \"http://127.0.0.1/states/\"";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
@@ -64,7 +64,7 @@ namespace PactNet.Tests.Core
                 pactBrokerUriOptions: new PactUriOptions("username", "password"), 
                 providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
 
-            var expectedArguments = "'https://broker:9292/test' --provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/' --broker-username 'username' --broker-password 'password'";
+            var expectedArguments = "\"https://broker:9292/test\" --provider-base-url \"http://127.0.0.1\" --provider-states-setup-url \"http://127.0.0.1/states/\" --broker-username \"username\" --broker-password \"password\"";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
@@ -76,7 +76,7 @@ namespace PactNet.Tests.Core
                 pactBrokerUriOptions: new PactUriOptions("token"), 
                 providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
 
-            var expectedArguments = "'https://broker:9292/test' --provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/' --broker-token 'token'";
+            var expectedArguments = "\"https://broker:9292/test\" --provider-base-url \"http://127.0.0.1\" --provider-states-setup-url \"http://127.0.0.1/states/\" --broker-token \"token\"";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
@@ -88,7 +88,7 @@ namespace PactNet.Tests.Core
                 pactBrokerUriOptions: new PactUriOptions("username", "password"), 
                 providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
 
-            var expectedArguments = "--provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/' --pact-broker-base-url 'https://broker:9292/test' --provider 'Provider Name' --broker-username 'username' --broker-password 'password'";
+            var expectedArguments = "--provider-base-url \"http://127.0.0.1\" --provider-states-setup-url \"http://127.0.0.1/states/\" --pact-broker-base-url \"https://broker:9292/test\" --provider \"Provider Name\" --broker-username \"username\" --broker-password \"password\"";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
@@ -100,7 +100,7 @@ namespace PactNet.Tests.Core
                 pactBrokerUriOptions: new PactUriOptions("token"), 
                 providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
 
-            var expectedArguments = "--provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/' --pact-broker-base-url 'https://broker:9292/test' --provider 'Provider Name' --broker-token 'token'";
+            var expectedArguments = "--provider-base-url \"http://127.0.0.1\" --provider-states-setup-url \"http://127.0.0.1/states/\" --pact-broker-base-url \"https://broker:9292/test\" --provider \"Provider Name\" --broker-token \"token\"";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
@@ -112,7 +112,7 @@ namespace PactNet.Tests.Core
                 pactBrokerUriOptions: new PactUriOptions("token"), 
                 providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
 
-            var expectedArguments = "--provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/' --pact-broker-base-url 'https://broker:9292/test' --provider 'Provider Name' --consumer-version-tag 'ctag1' --consumer-version-tag 'ctag2' --provider-version-tag 'ptag1' --provider-version-tag 'ptag2' --broker-token 'token'";
+            var expectedArguments = "--provider-base-url \"http://127.0.0.1\" --provider-states-setup-url \"http://127.0.0.1/states/\" --pact-broker-base-url \"https://broker:9292/test\" --provider \"Provider Name\" --consumer-version-tag \"ctag1\" --consumer-version-tag \"ctag2\" --provider-version-tag \"ptag1\" --provider-version-tag \"ptag2\" --broker-token \"token\"";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
@@ -128,7 +128,7 @@ namespace PactNet.Tests.Core
                 pactBrokerUriOptions: new PactUriOptions("token"), 
                 providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
 
-            var expectedArguments = "--provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/' --pact-broker-base-url 'https://broker:9292/test' --provider 'Provider Name' --consumer-version-selector '{\"tag\":\"ctag1\",\"all\":true}' --consumer-version-selector '{\"tag\":\"ctag2\",\"latest\":true}' --enable-pending --broker-token 'token'";
+            var expectedArguments = "--provider-base-url \"http://127.0.0.1\" --provider-states-setup-url \"http://127.0.0.1/states/\" --pact-broker-base-url \"https://broker:9292/test\" --provider \"Provider Name\" --consumer-version-selector \"{\\\"tag\\\":\\\"ctag1\\\",\\\"all\\\":true}\" --consumer-version-selector \"{\\\"tag\\\":\\\"ctag2\\\",\\\"latest\\\":true}\" --enable-pending --broker-token \"token\"";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
@@ -137,7 +137,7 @@ namespace PactNet.Tests.Core
         {
             var config = GetSubject(new Uri("http://127.0.0.1"), "./tester-pact/pact-file.json");
 
-            var expectedArguments = "'./tester-pact/pact-file.json' --provider-base-url 'http://127.0.0.1'";
+            var expectedArguments = "\"./tester-pact/pact-file.json\" --provider-base-url \"http://127.0.0.1\"";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
@@ -168,7 +168,7 @@ namespace PactNet.Tests.Core
                     ProviderVersion = "1.0.0"
                 });
 
-            var expectedArguments = "'./tester-pact/pact-file.json' --provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/' --publish-verification-results=true --provider-app-version='1.0.0'";
+            var expectedArguments = "\"./tester-pact/pact-file.json\" --provider-base-url \"http://127.0.0.1\" --provider-states-setup-url \"http://127.0.0.1/states/\" --publish-verification-results=true --provider-app-version=\"1.0.0\"";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
@@ -184,7 +184,7 @@ namespace PactNet.Tests.Core
                     ProviderVersion = "1.0.0"
                 });
 
-            var expectedArguments = "'./tester-pact/pact-file.json' --provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/' --custom-provider-header 'Authorization:Basic VGVzdA=='";
+            var expectedArguments = "\"./tester-pact/pact-file.json\" --provider-base-url \"http://127.0.0.1\" --provider-states-setup-url \"http://127.0.0.1/states/\" --custom-provider-header \"Authorization:Basic VGVzdA==\"";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
@@ -204,7 +204,7 @@ namespace PactNet.Tests.Core
                     ProviderVersion = "1.0.0"
                 });
 
-            var expectedArguments = "'./tester-pact/pact-file.json' --provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/' --custom-provider-header 'Authorization:Basic VGVzdA==' --custom-provider-header 'X-Something:MYthing'";
+            var expectedArguments = "\"./tester-pact/pact-file.json\" --provider-base-url \"http://127.0.0.1\" --provider-states-setup-url \"http://127.0.0.1/states/\" --custom-provider-header \"Authorization:Basic VGVzdA==\" --custom-provider-header \"X-Something:MYthing\"";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
@@ -220,7 +220,7 @@ namespace PactNet.Tests.Core
                     ProviderVersion = "1.0.0"
                 });
 
-            var expectedArguments = "'./tester-pact/pact-file.json' --provider-base-url 'http://127.0.0.1' --provider-states-setup-url 'http://127.0.0.1/states/' --verbose true";
+            var expectedArguments = "\"./tester-pact/pact-file.json\" --provider-base-url \"http://127.0.0.1\" --provider-states-setup-url \"http://127.0.0.1/states/\" --verbose true";
             Assert.Equal(expectedArguments, config.Arguments);
         }
 

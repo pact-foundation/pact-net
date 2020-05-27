@@ -25,7 +25,7 @@ namespace PactNet
 
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this, _jsonSettings);
+            return JsonConvert.SerializeObject(this, _jsonSettings).Replace("\"", "\\\"");
         }
     }
 }

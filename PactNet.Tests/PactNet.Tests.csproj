@@ -26,18 +26,18 @@
   </ItemGroup>
   
   <ItemGroup Condition=" '$(OS)' == 'Windows_NT' ">
-    <PackageReference Include="PactNet.Windows" Version="2.5.0" />
+    <PackageReference Include="PactNet.Windows" Version="2.5.1" />
   </ItemGroup>
   <ItemGroup Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' &#xD;&#xA;             and '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)'=='X86'">
-    <PackageReference Include="PactNet.Linux.x86" Version="2.5.0" />
+    <PackageReference Include="PactNet.Linux.x86" Version="2.5.1" />
     <None Include="pact-unix/**" Link="pact-linux-x86\bin\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest"  />
   </ItemGroup>
   <ItemGroup Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' &#xD;&#xA;             and '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)'=='X64' ">
-    <PackageReference Include="PactNet.Linux.x64" Version="2.5.0" />
+    <PackageReference Include="PactNet.Linux.x64" Version="2.5.1" />
     <None Include="pact-unix/**" Link="pact-linux-x86_64\bin\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest"  />
   </ItemGroup>
   <ItemGroup Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' ">
-    <PackageReference Include="PactNet.OSX" Version="2.5.0" />
+    <PackageReference Include="PactNet.OSX" Version="2.5.1" />
     <None Include="pact-unix/**" Link="pact-osx\bin\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest"  />
   </ItemGroup>
 
