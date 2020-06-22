@@ -132,7 +132,6 @@ namespace PactNet.Tests.Core
             Assert.Equal(expectedArguments, config.Arguments);
         }
 
-        // wip
         [Fact]
         public void Ctor_WhenCalledWithIncludeWipPactsSinceInTheBrokerConfig_SetsTheCorrectArgs()
         {
