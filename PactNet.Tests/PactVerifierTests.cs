@@ -195,6 +195,18 @@ namespace PactNet.Tests
         }
 
         [Fact]
+        public void PactUri_WhenCalledWithProviderVerisionTags_SetsPactProviderVersionTags()
+        {
+            var pactFileUri = $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}Consumer.Tests{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}my_client-event_api.json";
+            var pactVerifier = GetSubject();
+            var tags = new List<string> { "tag1", "tag2" };
+
+            pactVerifier.PactUri(pactFileUri, providerVersionTags: tags);
+
+            Assert.Equal(pactFileUri, ((PactVerifier)pactVerifier).PactFileUri);
+        }
+
+        [Fact]
         public void Verify_WhenServiceBaseUriIsNull_ThrowsInvalidOperationException()
         {
             var pactVerifier = GetSubject();
