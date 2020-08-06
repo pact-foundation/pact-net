@@ -74,7 +74,7 @@ namespace PactNet.Tests.IntegrationTests
 
             if (response1.StatusCode != HttpStatusCode.OK || response2.StatusCode != HttpStatusCode.OK)
             {
-                throw new Exception(String.Format("Wrong status code '{0} and {1}' was returned", response1.StatusCode, response2.StatusCode));
+                throw new Exception(string.Format("Wrong status code '{0} and {1}' was returned", response1.StatusCode, response2.StatusCode));
             }
 
             _mockProviderService.VerifyInteractions();
@@ -108,7 +108,7 @@ namespace PactNet.Tests.IntegrationTests
 
             if (response.StatusCode != HttpStatusCode.InternalServerError)
             {
-                throw new Exception(String.Format("Wrong status code '{0}' was returned", response.StatusCode));
+                throw new Exception(string.Format("Wrong status code '{0}' was returned", response.StatusCode));
             }
 
             Assert.Throws<PactFailureException>(() => _mockProviderService.VerifyInteractions());

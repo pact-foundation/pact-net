@@ -58,7 +58,7 @@ namespace PactNet.Tests
 
             Assert.Throws<ArgumentException>(() =>
                 pactVerifier
-                .ProviderState(String.Empty));
+                .ProviderState(string.Empty));
         }
 
         [Fact]
@@ -74,7 +74,7 @@ namespace PactNet.Tests
         {
             var pactVerifier = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider(String.Empty, "http://localhost:3442"));
+            Assert.Throws<ArgumentException>(() => pactVerifier.ServiceProvider(string.Empty, "http://localhost:3442"));
         }
 
         [Fact]
@@ -131,7 +131,7 @@ namespace PactNet.Tests
         {
             var pactVerifier = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => pactVerifier.HonoursPactWith(String.Empty));
+            Assert.Throws<ArgumentException>(() => pactVerifier.HonoursPactWith(string.Empty));
         }
 
         [Fact]
@@ -169,7 +169,7 @@ namespace PactNet.Tests
         {
             var pactVerifier = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => pactVerifier.PactUri(String.Empty));
+            Assert.Throws<ArgumentException>(() => pactVerifier.PactUri(string.Empty));
         }
 
         [Fact]

@@ -40,7 +40,7 @@ namespace PactNet.Tests
         {
             var pactBuilder = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => pactBuilder.ServiceConsumer(String.Empty));
+            Assert.Throws<ArgumentException>(() => pactBuilder.ServiceConsumer(string.Empty));
         }
 
         [Fact]
@@ -67,7 +67,7 @@ namespace PactNet.Tests
         {
             var pactBuilder = GetSubject();
 
-            Assert.Throws<ArgumentException>(() => pactBuilder.HasPactWith(String.Empty));
+            Assert.Throws<ArgumentException>(() => pactBuilder.HasPactWith(string.Empty));
         }
 
         [Fact]

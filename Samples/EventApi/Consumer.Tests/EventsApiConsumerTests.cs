@@ -265,8 +265,8 @@ namespace Consumer.Tests
             var eventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9");
             var eventType = "DetailsView";
             var eventTimestamp = DateTime.UtcNow;
-            _mockProviderService.Given(String.Format("there is an event with id '{0}'", eventId))
-                .UponReceiving(String.Format("a request to retrieve event with id '{0}'", eventId))
+            _mockProviderService.Given(string.Format("there is an event with id '{0}'", eventId))
+                .UponReceiving(string.Format("a request to retrieve event with id '{0}'", eventId))
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,
@@ -310,8 +310,8 @@ namespace Consumer.Tests
         {
             //Arrange
             const string eventType = "DetailsView";
-            _mockProviderService.Given(String.Format("there is one event with type '{0}'", eventType))
-                .UponReceiving(String.Format("a request to retrieve events with type '{0}'", eventType))
+            _mockProviderService.Given(string.Format("there is one event with type '{0}'", eventType))
+                .UponReceiving(string.Format("a request to retrieve events with type '{0}'", eventType))
                 .With(new ProviderServiceRequest
                 {
                     Method = HttpVerb.Get,

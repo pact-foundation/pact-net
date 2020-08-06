@@ -80,7 +80,7 @@ namespace Consumer
                 {
                     var uptimeLink = statusResponseBody.Links.Single(x => x.Key.Equals("uptime")).Value.Href;
 
-                    if (!String.IsNullOrEmpty(uptimeLink))
+                    if (!string.IsNullOrEmpty(uptimeLink))
                     {
                         var uptimeRequest = new HttpRequestMessage(HttpMethod.Get, uptimeLink);
                         uptimeRequest.Headers.Add("Accept", "application/json");
@@ -123,7 +123,7 @@ namespace Consumer
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     var content = await response.Content.ReadAsStringAsync();
-                    return !String.IsNullOrEmpty(content)
+                    return !string.IsNullOrEmpty(content)
                                 ? JsonConvert.DeserializeObject<IEnumerable<Event>>(content, _jsonSettings)
                                 : new List<Event>();
                 }
@@ -140,7 +140,7 @@ namespace Consumer
 
         public async Task<Event> GetEventById(Guid id)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, String.Format("/events/{0}", id));
+            var request = new HttpRequestMessage(HttpMethod.Get, string.Format("/events/{0}", id));
             request.Headers.Add("Accept", "application/json");
 
             var response = await _httpClient.SendAsync(request);
@@ -164,7 +164,7 @@ namespace Consumer
 
         public async Task<IEnumerable<Event>> GetEventsByType(string eventType)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, String.Format("/events?type={0}", eventType));
+            var request = new HttpRequestMessage(HttpMethod.Get, string.Format("/events?type={0}", eventType));
             request.Headers.Add("Accept", "application/json");
 
             var response = await _httpClient.SendAsync(request);
@@ -220,7 +220,7 @@ namespace Consumer
         private static async Task RaiseResponseError(HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)
         {
             throw new HttpRequestException(
-                String.Format("The Events API request for {0} {1} failed. Response Status: {2}, Response Body: {3}",
+                string.Format("The Events API request for {0} {1} failed. Response Status: {2}, Response Body: {3}",
                 failedRequest.Method.ToString().ToUpperInvariant(),
                 failedRequest.RequestUri,
                 (int)failedResponse.StatusCode, 

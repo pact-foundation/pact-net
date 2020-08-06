@@ -41,7 +41,7 @@ namespace PactNet.Tests
         {
             var pactPublisher = GetSubject(BrokerBaseUriHttp);
 
-            await Assert.ThrowsAsync<ArgumentNullException>(() => pactPublisher.PublishToBroker(String.Empty, "1.0.0"));
+            await Assert.ThrowsAsync<ArgumentNullException>(() => pactPublisher.PublishToBroker(string.Empty, "1.0.0"));
         }
 
         [Fact]
@@ -57,7 +57,7 @@ namespace PactNet.Tests
         {
             var pactPublisher = GetSubject(BrokerBaseUriHttp);
 
-            await Assert.ThrowsAsync<ArgumentNullException>(() => pactPublisher.PublishToBroker(PactFilePath, String.Empty));
+            await Assert.ThrowsAsync<ArgumentNullException>(() => pactPublisher.PublishToBroker(PactFilePath, string.Empty));
         }
 
         [Fact]
