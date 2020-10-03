@@ -11,7 +11,18 @@ namespace PactNet
         public string AuthorizationScheme { get; }
         public string AuthorizationValue { get; }
 
+        public PactUriOptions() { }
         public PactUriOptions(string username, string password)
+
+        public PactUriOptions SetSslCaFilePath(string pathToSslCaFile)
+        {
+            if (String.IsNullOrEmpty(pathToSslCaFile))
+            {
+                throw new ArgumentException($"{nameof(pathToSslCaFile)} is null or empty");
+            }
+            SslCaFilePath = pathToSslCaFile;
+            return this;
+        }
         {
             if (String.IsNullOrEmpty(username))
             {
