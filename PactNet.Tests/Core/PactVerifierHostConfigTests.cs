@@ -57,6 +57,18 @@ namespace PactNet.Tests.Core
         }
 
         [Fact]
+        public void Ctor_WhenCalledWithAnEmptyPactUriOptions_SetsTheCorrectArgs()
+        {
+            var config = GetSubject(baseUri: new Uri("http://127.0.0.1"),
+                pactUri: "http://broker:9292/test",
+                pactBrokerUriOptions: new PactUriOptions(),
+                providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
+
+            var expectedArguments = "\"http://broker:9292/test\" --provider-base-url \"http://127.0.0.1\" --provider-states-setup-url \"http://127.0.0.1/states/\"";
+            Assert.Equal(expectedArguments, config.Arguments);
+        }
+
+        [Fact]
         public void Ctor_WhenCalledWithABasicAuthenticatedHttpsPactUri_SetsTheCorrectArgs()
         {
             var config = GetSubject(baseUri: new Uri("http://127.0.0.1"), 

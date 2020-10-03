@@ -19,11 +19,16 @@ namespace PactNet.Core
             var pactUriOption = pactUri != null ? $"\"{FixPathForRuby(pactUri)}\" " : "";
             var providerStateOption = providerStateSetupUri != null ? $" --provider-states-setup-url \"{providerStateSetupUri.OriginalString}\"" : string.Empty;
             var pactBrokerOptions = BuildPactBrokerOptions(brokerConfig);
-            var brokerCredentials = pactBrokerUriOptions != null ?
-                !String.IsNullOrEmpty(pactBrokerUriOptions.Username) && !String.IsNullOrEmpty(pactBrokerUriOptions.Password) ? 
-                    $" --broker-username \"{pactBrokerUriOptions.Username}\" --broker-password \"{pactBrokerUriOptions.Password}\"" : 
-                    $" --broker-token \"{pactBrokerUriOptions.Token}\""
-                 : string.Empty;
+            var brokerCredentials = string.Empty;
+            if (!String.IsNullOrEmpty(pactBrokerUriOptions?.Username) && !String.IsNullOrEmpty(pactBrokerUriOptions?.Password))
+            {
+                brokerCredentials = $" --broker-username \"{pactBrokerUriOptions.Username}\" --broker-password \"{pactBrokerUriOptions.Password}\"";
+            }
+            else if (!String.IsNullOrEmpty(pactBrokerUriOptions?.Token))
+            {
+                brokerCredentials = $" --broker-token \"{pactBrokerUriOptions.Token}\"";
+            }
+
             var publishResults = config?.PublishVerificationResults == true ? $" --publish-verification-results=true --provider-app-version=\"{config.ProviderVersion}\"" : string.Empty;
             var customHeaders = this.BuildCustomHeaders(config);
             var verbose = config?.Verbose == true ? " --verbose true" : string.Empty;
