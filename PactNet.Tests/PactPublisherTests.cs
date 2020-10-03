@@ -16,7 +16,7 @@ namespace PactNet.Tests
         private const string BrokerBaseUriHttp = "http://test.pact.dius.com.au";
         private const string BrokerBaseUriHttps = "https://test.pact.dius.com.au";
 
-        private static readonly PactUriOptions AuthOptions = new PactUriOptions("username", "password");
+        private static readonly PactUriOptions AuthOptions = new PactUriOptions().SetBasicAuthentication("username", "password");
 
         private FakeHttpMessageHandler _fakeHttpMessageHandler;
 
