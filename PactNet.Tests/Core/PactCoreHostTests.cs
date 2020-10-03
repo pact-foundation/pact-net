@@ -17,19 +17,21 @@ namespace PactNet.Tests.Core
             public IEnumerable<IOutput> Outputters { get; }
             public IDictionary<string, string> Environment { get; }
 
-            public TestHostConfig(string script, IEnumerable<IOutput> outputters)
-            {
-                Script = script;
-                Arguments = "";
-                WaitForExit = true;
-                Outputters = outputters;
-            }
-
             public TestHostConfig(string script)
             {
                 Script = script;
                 Arguments = "";
                 WaitForExit = true;
+            }
+
+            public TestHostConfig(string script, IEnumerable<IOutput> outputters): this(script)
+            {
+                Outputters = outputters;
+            }
+
+            public TestHostConfig(string script, string envKey, string envValue): this(script)
+            {
+                Environment = new Dictionary<string, string> { { envKey, envValue } };
             }
         }
 
@@ -86,6 +88,18 @@ namespace PactNet.Tests.Core
 #endif
 
         }
+
+        [Fact]
+        public void Ctor_WhenCalledWithSslCertFileEnvironmentVariable_DefaultValueShouldbeOverriden()
+        {
+            var pactCoreHost = new PactCoreHostSpy<TestHostConfig>(new TestHostConfig("ssl-cert-file", "SSL_CERT_FILE", "path-to-custom-ca-file"));
+#if USE_NET4X
+            Assert.True(pactCoreHost.SpyRubyProcess.StartInfo.EnvironmentVariables.ContainsKey("SSL_CERT_FILE"));
+            Assert.Equal("path-to-custom-ca-file", pactCoreHost.SpyRubyProcess.StartInfo.EnvironmentVariables["SSL_CERT_FILE"]);
+#else
+            Assert.True(pactCoreHost.SpyRubyProcess.StartInfo.Environment.ContainsKey("SSL_CERT_FILE"));
+            Assert.Equal("path-to-custom-ca-file", pactCoreHost.SpyRubyProcess.StartInfo.Environment["SSL_CERT_FILE"]);
+#endif
         }
     }
 }
