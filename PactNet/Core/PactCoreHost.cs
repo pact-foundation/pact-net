@@ -10,7 +10,7 @@ namespace PactNet.Core
 {
     internal class PactCoreHost<T> : IPactCoreHost where T : IPactCoreHostConfig
     {
-        private readonly Process _process;
+        protected readonly Process _process;
         private readonly IPactCoreHostConfig _config;
 
         public PactCoreHost(T config)

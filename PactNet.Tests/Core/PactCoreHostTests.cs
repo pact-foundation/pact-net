@@ -24,6 +24,13 @@ namespace PactNet.Tests.Core
                 WaitForExit = true;
                 Outputters = outputters;
             }
+
+            public TestHostConfig(string script)
+            {
+                Script = script;
+                Arguments = "";
+                WaitForExit = true;
+            }
         }
 
         private IEnumerable<IOutput> _mockOutputters;
@@ -64,6 +71,21 @@ namespace PactNet.Tests.Core
             _mockOutputters.ElementAt(0).Received(1).WriteLine("Oh no");
             _mockOutputters.ElementAt(1).Received(1).WriteLine("Oh no");
             _mockOutputters.ElementAt(2).Received(1).WriteLine("Oh no");
+        }
+
+        [Fact]
+        public void Ctor_SslCertFileEnvironmentVariableFromPlatformConfigIsGivenToRubyProcess()
+        {
+            var pactCoreHost = new PactCoreHostSpy<TestHostConfig>(new TestHostConfig("ssl-cert-file"));
+#if USE_NET4X
+            Assert.True(pactCoreHost.SpyRubyProcess.StartInfo.EnvironmentVariables.ContainsKey("SSL_CERT_FILE"));
+            Assert.EndsWith("ca-bundle.crt", pactCoreHost.SpyRubyProcess.StartInfo.EnvironmentVariables["SSL_CERT_FILE"]);
+#else
+            Assert.True(pactCoreHost.SpyRubyProcess.StartInfo.Environment.ContainsKey("SSL_CERT_FILE"));
+            Assert.EndsWith("ca-bundle.crt", pactCoreHost.SpyRubyProcess.StartInfo.Environment["SSL_CERT_FILE"]);
+#endif
+
+        }
         }
     }
 }
