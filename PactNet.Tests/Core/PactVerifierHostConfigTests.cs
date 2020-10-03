@@ -93,6 +93,22 @@ namespace PactNet.Tests.Core
         }
 
         [Fact]
+        public void Ctor_WhenCalledWithSslCaFilePathHttpsPactUri_AddSslCertFileEnvironmentVariable()
+        {
+            var config = GetSubject(baseUri: new Uri("http://127.0.0.1"),
+                pactUri: "https://broker:9292/test",
+                pactBrokerUriOptions: new PactUriOptions().SetSslCaFilePath("C:/path/to/some/ca-file.crt"),
+                providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
+
+            var environment = new Dictionary<string, string>
+            {
+                { "SSL_CERT_FILE", "C:/path/to/some/ca-file.crt" }
+            };
+            
+            AssertEnvironmentIsCorrectlySet(environment, config.Environment);
+        }
+
+        [Fact]
         public void Ctor_WhenCalledWithABasicAuthenticatedBrokerConfig_SetsTheCorrectArgs()
         {
             var config = GetSubject(baseUri: new Uri("http://127.0.0.1"), 
