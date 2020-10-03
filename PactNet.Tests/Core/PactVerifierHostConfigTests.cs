@@ -109,6 +109,40 @@ namespace PactNet.Tests.Core
         }
 
         [Fact]
+        public void Ctor_WhenCalledWithHttpProxyHttpsPactUri_AddHttpProxyEnvironmentVariable()
+        {
+            var config = GetSubject(baseUri: new Uri("http://127.0.0.1"),
+                pactUri: "https://broker:9292/test",
+                pactBrokerUriOptions: new PactUriOptions().SetHttpProxy("http://my-http-proxy"),
+                providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
+
+            var environment = new Dictionary<string, string>
+            {
+                { "HTTP_PROXY", "http://my-http-proxy" },
+                { "HTTPS_PROXY", "http://my-http-proxy" },
+            };
+
+            AssertEnvironmentIsCorrectlySet(environment, config.Environment);
+        }
+
+        [Fact]
+        public void Ctor_WhenCalledWithHttpAndHttpsProxyHttpsPactUri_AddHttpProxyEnvironmentVariable()
+        {
+            var config = GetSubject(baseUri: new Uri("http://127.0.0.1"),
+                pactUri: "https://broker:9292/test",
+                pactBrokerUriOptions: new PactUriOptions().SetHttpProxy("http://my-http-proxy", "http://my-https-proxy"),
+                providerStateSetupUri: new Uri("http://127.0.0.1/states/"));
+
+            var environment = new Dictionary<string, string>
+            {
+                { "HTTP_PROXY", "http://my-http-proxy" },
+                { "HTTPS_PROXY", "http://my-https-proxy" },
+            };
+
+            AssertEnvironmentIsCorrectlySet(environment, config.Environment);
+        }
+
+        [Fact]
         public void Ctor_WhenCalledWithABasicAuthenticatedBrokerConfig_SetsTheCorrectArgs()
         {
             var config = GetSubject(baseUri: new Uri("http://127.0.0.1"), 

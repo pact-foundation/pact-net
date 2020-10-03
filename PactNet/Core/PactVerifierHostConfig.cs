@@ -48,6 +48,12 @@ namespace PactNet.Core
                 Environment.Add("SSL_CERT_FILE", pactBrokerUriOptions.SslCaFilePath);
             }
 
+            if (!String.IsNullOrEmpty(pactBrokerUriOptions?.HttpProxy))
+            {
+                Environment.Add("HTTP_PROXY", pactBrokerUriOptions.HttpProxy);
+                Environment.Add("HTTPS_PROXY", pactBrokerUriOptions.HttpsProxy);
+            }
+
             if (environment != null)
             {
                 foreach (var envVar in environment)

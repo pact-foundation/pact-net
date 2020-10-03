@@ -11,6 +11,8 @@ namespace PactNet
         public string AuthorizationScheme { get; private set; }
         public string AuthorizationValue { get; private set; }
         public string SslCaFilePath { get; private set; }
+        public string HttpProxy { get; private set; }
+        public string HttpsProxy { get; private set; }
 
         public PactUriOptions() { }
 
@@ -55,6 +57,29 @@ namespace PactNet
             SslCaFilePath = pathToSslCaFile;
             return this;
         }
+
+        public PactUriOptions SetHttpProxy(string httpProxy)
+        {
+            if (String.IsNullOrEmpty(httpProxy))
+            {
+                throw new ArgumentException($"{nameof(httpProxy)} is null or empty");
+            }
+            HttpProxy = httpProxy;
+            HttpsProxy = httpProxy;
+            return this;
+        }
+
+        public PactUriOptions SetHttpProxy(string httpProxy, string httpsProxy)
+        {
+            SetHttpProxy(httpProxy);
+            if (String.IsNullOrEmpty(httpsProxy))
+            {
+                throw new ArgumentException($"{nameof(httpsProxy)} is null or empty");
+            }
+            HttpsProxy = httpsProxy;
+            return this;
+        }
+
         private void SetBasicAuthenticationInternal(string username, string password)
         {
             if (String.IsNullOrEmpty(username))
