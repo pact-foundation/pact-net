@@ -94,6 +94,15 @@ namespace PactNet
             return this;
         }
 
+        public IPactVerifier PactUri(string fileUri, PactUriOptions options)
+        {
+            var pactHttpOptions = !String.IsNullOrEmpty(options?.Username)
+                ? new PactHttpOptions().SetBasicAuthentication(options.Username, options.Password)
+                : new PactHttpOptions().SetBearerAuthentication(options.Token);
+
+            return PactUri(fileUri, pactHttpOptions);
+        }
+
         public IPactVerifier PactUri(string fileUri, PactHttpOptions httpOptions = null)
         {
             if (IsNullOrEmpty(fileUri))
@@ -105,6 +114,16 @@ namespace PactNet
             PactHttpOptions = httpOptions;
 
             return this;
+        }
+
+        public IPactVerifier PactBroker(string brokerBaseUri, PactUriOptions uriOptions, bool enablePending = false,
+            IEnumerable<string> consumerVersionTags = null, IEnumerable<string> providerVersionTags = null, IEnumerable<VersionTagSelector> consumerVersionSelectors = null, string includeWipPactsSince = null)
+        {
+            var pactHttpOptions = !String.IsNullOrEmpty(uriOptions?.Username)
+                ? new PactHttpOptions().SetBasicAuthentication(uriOptions.Username, uriOptions.Password)
+                : new PactHttpOptions().SetBearerAuthentication(uriOptions.Token);
+
+            return PactBroker(brokerBaseUri, pactHttpOptions, enablePending, consumerVersionTags, providerVersionTags, consumerVersionSelectors, includeWipPactsSince);
         }
 
         public IPactVerifier PactBroker(string brokerBaseUri, PactHttpOptions httpOptions = null, bool enablePending = false,
