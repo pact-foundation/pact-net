@@ -16,11 +16,11 @@ namespace PactNet.Tests
         private const string BrokerBaseUriHttp = "http://test.pact.dius.com.au";
         private const string BrokerBaseUriHttps = "https://test.pact.dius.com.au";
 
-        private static readonly PactUriOptions AuthOptions = new PactUriOptions().SetBasicAuthentication("username", "password");
+        private static readonly PactHttpOptions AuthOptions = new PactHttpOptions().SetBasicAuthentication("username", "password");
 
         private FakeHttpMessageHandler _fakeHttpMessageHandler;
 
-        private PactPublisher GetSubject(string brokerBaseUri, PactUriOptions brokerUriOptions = null)
+        private PactPublisher GetSubject(string brokerBaseUri, PactHttpOptions brokerUriOptions = null)
         {
             _fakeHttpMessageHandler = new FakeHttpMessageHandler();
 
@@ -125,7 +125,7 @@ namespace PactNet.Tests
             PactDetails expectedPactDetails,
             string expectedPactFile,
             string expectedConsumerVersion,
-            PactUriOptions expectedPactUriOptions = null)
+            PactHttpOptions expectedPactUriOptions = null)
         {
             if (expectedPactUriOptions != null)
             {
@@ -149,7 +149,7 @@ namespace PactNet.Tests
             PactDetails expectedPactDetails,
             string expectedConsumerVersion,
             string expectedTag,
-            PactUriOptions expectedPactUriOptions = null)
+            PactHttpOptions expectedPactUriOptions = null)
         {
             if (expectedPactUriOptions != null)
             {

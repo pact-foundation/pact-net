@@ -267,7 +267,7 @@ namespace PactNet.Tests
             var serviceProvider = "Event API";
             var serviceConsumer = "My client";
             var pactUri = "https://broker/consumer/test/provider/hello/latest";
-            var pactUriOptions = new PactUriOptions().SetBasicAuthentication("username", "password");
+            var pactUriOptions = new PactHttpOptions().SetBasicAuthentication("username", "password");
 
             var pactVerifier = GetSubject();
             pactVerifier
@@ -286,7 +286,7 @@ namespace PactNet.Tests
             var serviceProvider = "Event API";
             var serviceConsumer = "My client";
             var pactUri = "https://broker/consumer/test/provider/hello/latest";
-            var pactUriOptions = new PactUriOptions().SetBearerAuthentication("mytoken");
+            var pactUriOptions = new PactHttpOptions().SetBearerAuthentication("mytoken");
 
             var pactVerifier = GetSubject();
             pactVerifier
@@ -305,7 +305,7 @@ namespace PactNet.Tests
             var serviceProvider = "Event API";
             var serviceConsumer = "My client";
             var pactUri = "https://broker/consumer/test/provider/hello/latest";
-            var pactUriOptions = new PactUriOptions().SetBearerAuthentication("mytoken");
+            var pactUriOptions = new PactHttpOptions().SetBearerAuthentication("mytoken");
 
             var pactVerifier = GetSubject();
             pactVerifier
