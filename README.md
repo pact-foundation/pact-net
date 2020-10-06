@@ -258,7 +258,7 @@ public class SomethingApiTests
             //and / or
             .SetSslCaFilePath("path/to/your/ca.crt") //if you fetch your pact in https and the server certificate authorities are not in the default ca-bundle.crt
             //and / or
-            .SetHttpProxy("http://my-http-proxy:8080") //if you need to go through a proxy to reach the server hosting the pact  
+            .SetHttpProxy("http://my-http-proxy:8080"); //if you need to go through a proxy to reach the server hosting the pact  
 
         pactVerifier
             .ProviderState($"{serviceUri}/provider-states")
@@ -270,7 +270,7 @@ public class SomethingApiTests
             //or
             .PactUri("http://pact-broker/pacts/provider/Something%20Api/consumer/Consumer/latest", pactHttpOptions) //With options decribed above
             //or (if you're using the Pact Broker, you can use the various different features, including pending pacts)
-            .PactBroker("http://pact-broker", uriOptions: pactHttpOptions, enablePending: true, consumerVersionTags: new List<string> { "master" }, providerVersionTags: new List<string> { "master" }, consumerVersionSelectors: new List<VersionTagSelector> { new VersionTagSelector("master", false, true) })
+            .PactBroker("http://pact-broker", httpOptions: pactHttpOptions, enablePending: true, consumerVersionTags: new List<string> { "master" }, providerVersionTags: new List<string> { "master" }, consumerVersionSelectors: new List<VersionTagSelector> { new VersionTagSelector("master") })
             .Verify();
     }
   }
