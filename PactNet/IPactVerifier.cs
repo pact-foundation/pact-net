@@ -14,7 +14,7 @@ namespace PactNet
         IPactVerifier PactBroker(string brokerBaseUri, PactHttpOptions httpOptions = null, bool enablePending = false,
             IEnumerable<string> consumerVersionTags = null, IEnumerable<string> providerVersionTags = null, IEnumerable<VersionTagSelector> consumerVersionSelectors = null, string includeWipPactsSince = null);
         [Obsolete("Please use overload with PactHttpOptions instead")]
-        IPactVerifier PactBroker(string brokerBaseUri, PactUriOptions uriOptions = null, bool enablePending = false,
+        IPactVerifier PactBroker(string brokerBaseUri, PactUriOptions uriOptions, bool enablePending = false,
             IEnumerable<string> consumerVersionTags = null, IEnumerable<string> providerVersionTags = null, IEnumerable<VersionTagSelector> consumerVersionSelectors = null, string includeWipPactsSince = null);
         void Verify(string description = null, string providerState = null);
     }
