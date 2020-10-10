@@ -29,45 +29,45 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public async Task PublishToBroker_WithNullPactFileUri_ThrowArgumentNullException()
+        public async Task PublishToBrokerAsync_WithNullPactFileUri_ThrowArgumentNullException()
         {
             var pactPublisher = GetSubject(BrokerBaseUriHttp);
 
-            await Assert.ThrowsAsync<ArgumentNullException>(() => pactPublisher.PublishToBroker(null, "1.0.0"));
+            await Assert.ThrowsAsync<ArgumentNullException>(() => pactPublisher.PublishToBrokerAsync(null, "1.0.0"));
         }
 
         [Fact]
-        public async Task PublishToBroker_WithEmptyPactFileUri_ThrowArgumentNullException()
+        public async Task PublishToBrokerAsync_WithEmptyPactFileUri_ThrowArgumentNullException()
         {
             var pactPublisher = GetSubject(BrokerBaseUriHttp);
 
-            await Assert.ThrowsAsync<ArgumentNullException>(() => pactPublisher.PublishToBroker(string.Empty, "1.0.0"));
+            await Assert.ThrowsAsync<ArgumentNullException>(() => pactPublisher.PublishToBrokerAsync(string.Empty, "1.0.0"));
         }
 
         [Fact]
-        public async Task PublishToBroker_WithNullConsumerVersion_ThrowArgumentNullException()
+        public async Task PublishToBrokerAsync_WithNullConsumerVersion_ThrowArgumentNullException()
         {
             var pactPublisher = GetSubject(BrokerBaseUriHttp);
 
-            await Assert.ThrowsAsync<ArgumentNullException>(() => pactPublisher.PublishToBroker(PactFilePath, null));
+            await Assert.ThrowsAsync<ArgumentNullException>(() => pactPublisher.PublishToBrokerAsync(PactFilePath, null));
         }
 
         [Fact]
-        public async Task PublishToBroker_WithEmptyConsumerVersion_ThrowArgumentNullException()
+        public async Task PublishToBrokerAsync_WithEmptyConsumerVersion_ThrowArgumentNullException()
         {
             var pactPublisher = GetSubject(BrokerBaseUriHttp);
 
-            await Assert.ThrowsAsync<ArgumentNullException>(() => pactPublisher.PublishToBroker(PactFilePath, string.Empty));
+            await Assert.ThrowsAsync<ArgumentNullException>(() => pactPublisher.PublishToBrokerAsync(PactFilePath, string.Empty));
         }
 
         [Fact]
-        public async Task PublishToBroker_WithNoAuthentication_PublishesPact()
+        public async Task PublishToBrokerAsync_WithNoAuthentication_PublishesPact()
         {
             var pactPublisher = GetSubject(BrokerBaseUriHttp);
             var pactFileText = File.ReadAllText(PactFilePath);
             var pactDetails = JsonConvert.DeserializeObject<PactDetails>(pactFileText);
 
-            await pactPublisher.PublishToBroker(PactFilePath, ConsumerVersion);
+            await pactPublisher.PublishToBrokerAsync(PactFilePath, ConsumerVersion);
 
             var requestsReceived = _fakeHttpMessageHandler.RequestsReceived;
             Assert.Equal(1, requestsReceived.Count());
@@ -75,13 +75,13 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public async Task PublishToBroker_WithAuthentication_PublishesPact()
+        public async Task PublishToBrokerAsync_WithAuthentication_PublishesPact()
         {
             var pactPublisher = GetSubject(BrokerBaseUriHttps, AuthOptions);
             var pactFileText = File.ReadAllText(PactFilePath);
             var pactDetails = JsonConvert.DeserializeObject<PactDetails>(pactFileText);
 
-            await pactPublisher.PublishToBroker(PactFilePath, ConsumerVersion);
+            await pactPublisher.PublishToBrokerAsync(PactFilePath, ConsumerVersion);
 
             var requestsReceived = _fakeHttpMessageHandler.RequestsReceived;
             Assert.Equal(1, requestsReceived.Count());
@@ -89,13 +89,13 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public async Task PublishToBroker_WhenCalledWithoutTags_PublishesPactWithoutTags()
+        public async Task PublishToBrokerAsync_WhenCalledWithoutTags_PublishesPactWithoutTags()
         {
             var pactPublisher = GetSubject(BrokerBaseUriHttps);
             var pactFileText = File.ReadAllText(PactFilePath);
             var pactDetails = JsonConvert.DeserializeObject<PactDetails>(pactFileText);
 
-            await pactPublisher.PublishToBroker(PactFilePath, ConsumerVersion);
+            await pactPublisher.PublishToBrokerAsync(PactFilePath, ConsumerVersion);
 
             var requestsReceived = _fakeHttpMessageHandler.RequestsReceived;
             Assert.Equal(1, requestsReceived.Count());
@@ -103,20 +103,34 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public async Task PublishToBroker_WhenCalledWithTags_PublishesPactWithTags()
+        public async Task PublishToBrokerAsync_WhenCalledWithTags_PublishesPactWithTags()
         {
             var pactPublisher = GetSubject(BrokerBaseUriHttps, AuthOptions);
             var pactFileText = File.ReadAllText(PactFilePath);
             var tags = new[] { "master", "something-else" };
             var pactDetails = JsonConvert.DeserializeObject<PactDetails>(pactFileText);
 
-            await pactPublisher.PublishToBroker(PactFilePath, ConsumerVersion, tags);
+            await pactPublisher.PublishToBrokerAsync(PactFilePath, ConsumerVersion, tags);
 
             var requestsReceived = _fakeHttpMessageHandler.RequestsReceived;
             Assert.Equal(3, requestsReceived.Count());
             this.AssertPactTagRequest(requestsReceived.ElementAt(0), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(0), BrokerBaseUriHttps, pactDetails, ConsumerVersion, tags.ElementAt(0), AuthOptions);
             this.AssertPactTagRequest(requestsReceived.ElementAt(1), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(1), BrokerBaseUriHttps, pactDetails, ConsumerVersion, tags.ElementAt(1), AuthOptions);
             this.AssertPactPublishRequest(requestsReceived.ElementAt(2), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(2), BrokerBaseUriHttps, pactDetails, pactFileText, ConsumerVersion, AuthOptions);
+        }
+
+        [Fact]
+        public void PublishToBroker_WithNoAuthentication_PublishesPact()
+        {
+            var pactPublisher = GetSubject(BrokerBaseUriHttp);
+            var pactFileText = File.ReadAllText(PactFilePath);
+            var pactDetails = JsonConvert.DeserializeObject<PactDetails>(pactFileText);
+
+            pactPublisher.PublishToBroker(PactFilePath, ConsumerVersion);
+
+            var requestsReceived = _fakeHttpMessageHandler.RequestsReceived;
+            Assert.Equal(1, requestsReceived.Count());
+            this.AssertPactPublishRequest(requestsReceived.ElementAt(0), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(0), BrokerBaseUriHttp, pactDetails, pactFileText, ConsumerVersion);
         }
 
         private void AssertPactPublishRequest(

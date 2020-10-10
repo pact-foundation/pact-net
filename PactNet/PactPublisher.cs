@@ -31,7 +31,12 @@ namespace PactNet
         {
         }
 
-        public async Task PublishToBroker(string pactFileUri, string consumerVersion, IEnumerable<string> tags = null)
+        public void PublishToBroker(string pactFileUri, string consumerVersion, IEnumerable<string> tags = null)
+        {
+            PublishToBrokerAsync(pactFileUri, consumerVersion, tags).ConfigureAwait(false).GetAwaiter().GetResult();
+        }
+
+        public async Task PublishToBrokerAsync(string pactFileUri, string consumerVersion, IEnumerable<string> tags = null)
         {
             if (string.IsNullOrEmpty(pactFileUri))
             {
