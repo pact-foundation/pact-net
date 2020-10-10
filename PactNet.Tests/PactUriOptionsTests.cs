@@ -3,7 +3,7 @@ using Xunit;
 
 namespace PactNet.Tests
 {
-    public class PactHttpOptionsTests
+    public class PactUriOptionsTests
     {
         [Fact]
         public void Ctor_WithEmptyUsername_ThrowsArgumentException()
