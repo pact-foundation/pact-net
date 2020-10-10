@@ -14,20 +14,20 @@ namespace PactNet.Core
         public IEnumerable<IOutput> Outputters { get; }
         public IDictionary<string, string> Environment { get; }
 
-        public PactVerifierHostConfig(Uri baseUri, string pactUri, PactBrokerConfig brokerConfig, PactHttpOptions pactBrokerHttpOptions, Uri providerStateSetupUri, PactVerifierConfig config, IDictionary<string, string> environment)
+        public PactVerifierHostConfig(Uri baseUri, string pactUri, PactBrokerConfig brokerConfig, PactUriOptions pactBrokerUriOptions, Uri providerStateSetupUri, PactVerifierConfig config, IDictionary<string, string> environment)
         {
             var pactUriOption = pactUri != null ? $"\"{FixPathForRuby(pactUri)}\" " : "";
             var providerStateOption = providerStateSetupUri != null ? $" --provider-states-setup-url \"{providerStateSetupUri.OriginalString}\"" : string.Empty;
             var pactBrokerOptions = BuildPactBrokerOptions(brokerConfig);
             var brokerCredentials = string.Empty;
             
-            if (!string.IsNullOrEmpty(pactBrokerHttpOptions?.Username) && !string.IsNullOrEmpty(pactBrokerHttpOptions?.Password))
+            if (!string.IsNullOrEmpty(pactBrokerUriOptions?.Username) && !string.IsNullOrEmpty(pactBrokerUriOptions?.Password))
             {
-                brokerCredentials = $" --broker-username \"{pactBrokerHttpOptions.Username}\" --broker-password \"{pactBrokerHttpOptions.Password}\"";
+                brokerCredentials = $" --broker-username \"{pactBrokerUriOptions.Username}\" --broker-password \"{pactBrokerUriOptions.Password}\"";
             }
-            else if (!string.IsNullOrEmpty(pactBrokerHttpOptions?.Token))
+            else if (!string.IsNullOrEmpty(pactBrokerUriOptions?.Token))
             {
-                brokerCredentials = $" --broker-token \"{pactBrokerHttpOptions.Token}\"";
+                brokerCredentials = $" --broker-token \"{pactBrokerUriOptions.Token}\"";
             }
 
             var publishResults = config?.PublishVerificationResults == true ? $" --publish-verification-results=true --provider-app-version=\"{config.ProviderVersion}\"" : string.Empty;
@@ -44,19 +44,19 @@ namespace PactNet.Core
                 { "PACT_INTERACTION_RERUN_COMMAND", "To re-run just this failing interaction, change the verify method to '.Verify(description: \"<PACT_DESCRIPTION>\", providerState: \"<PACT_PROVIDER_STATE>\")'. Please do not check in this change!" }
             };
 
-            if (!String.IsNullOrEmpty(pactBrokerHttpOptions?.SslCaFilePath))
+            if (!String.IsNullOrEmpty(pactBrokerUriOptions?.SslCaFilePath))
             {
-                Environment.Add("SSL_CERT_FILE", pactBrokerHttpOptions.SslCaFilePath);
+                Environment.Add("SSL_CERT_FILE", pactBrokerUriOptions.SslCaFilePath);
             }
 
-            if (!String.IsNullOrEmpty(pactBrokerHttpOptions?.HttpProxy))
+            if (!String.IsNullOrEmpty(pactBrokerUriOptions?.HttpProxy))
             {
-                Environment.Add("HTTP_PROXY", pactBrokerHttpOptions.HttpProxy);
+                Environment.Add("HTTP_PROXY", pactBrokerUriOptions.HttpProxy);
             }
 
-            if (!String.IsNullOrEmpty(pactBrokerHttpOptions?.HttpsProxy))
+            if (!String.IsNullOrEmpty(pactBrokerUriOptions?.HttpsProxy))
             {
-                Environment.Add("HTTPS_PROXY", pactBrokerHttpOptions.HttpsProxy);
+                Environment.Add("HTTPS_PROXY", pactBrokerUriOptions.HttpsProxy);
             }
 
             if (environment != null)

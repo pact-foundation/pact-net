@@ -15,18 +15,18 @@ namespace PactNet
     public class PactPublisher
     {
         private readonly HttpClient _httpClient;
-        private readonly PactHttpOptions _brokerUriOptions;
+        private readonly PactUriOptions _brokerUriOptions;
 
         internal PactPublisher(
             string brokerBaseUri,
-            PactHttpOptions brokerUriOptions,
+            PactUriOptions brokerUriOptions,
             HttpMessageHandler handler)
         {
             _httpClient = new HttpClient(handler) { BaseAddress = new Uri(brokerBaseUri) };
             _brokerUriOptions = brokerUriOptions;
         }
 
-        public PactPublisher(string brokerBaseUri, PactHttpOptions brokerUriOptions = null) : 
+        public PactPublisher(string brokerBaseUri, PactUriOptions brokerUriOptions = null) : 
             this(brokerBaseUri, brokerUriOptions, new HttpClientHandler())
         {
         }

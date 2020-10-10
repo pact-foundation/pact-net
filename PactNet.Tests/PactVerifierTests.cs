@@ -279,26 +279,7 @@ namespace PactNet.Tests
             var serviceProvider = "Event API";
             var serviceConsumer = "My client";
             var pactUri = "https://broker/consumer/test/provider/hello/latest";
-            var pactUriOptions = new PactHttpOptions().SetBasicAuthentication("username", "password");
-
-            var pactVerifier = GetSubject();
-            pactVerifier
-               .ServiceProvider(serviceProvider, "http://localhost")
-               .HonoursPactWith(serviceConsumer)
-               .PactUri(pactUri, pactUriOptions);
-
-            pactVerifier.Verify();
-
-            _mockVerifierCoreHost.Received(1).Start();
-        }
-
-        [Fact]
-        public void Verify_WhenTheVerifierIsCorrectlySetUpWithObsoletePactUriOptionsBasicAuthCredentials_PactVerifyCoreHostIsStarted()
-        {
-            var serviceProvider = "Event API";
-            var serviceConsumer = "My client";
-            var pactUri = "https://broker/consumer/test/provider/hello/latest";
-            var pactUriOptions = new PactUriOptions("username", "password");
+            var pactUriOptions = new PactUriOptions().SetBasicAuthentication("username", "password");
 
             var pactVerifier = GetSubject();
             pactVerifier
@@ -317,26 +298,7 @@ namespace PactNet.Tests
             var serviceProvider = "Event API";
             var serviceConsumer = "My client";
             var pactUri = "https://broker/consumer/test/provider/hello/latest";
-            var pactUriOptions = new PactHttpOptions().SetBearerAuthentication("mytoken");
-
-            var pactVerifier = GetSubject();
-            pactVerifier
-                .ServiceProvider(serviceProvider, "http://localhost")
-                .HonoursPactWith(serviceConsumer)
-                .PactUri(pactUri, pactUriOptions);
-
-            pactVerifier.Verify();
-
-            _mockVerifierCoreHost.Received(1).Start();
-        }
-
-        [Fact]
-        public void Verify_WhenTheVerifierIsCorrectlySetUpWithObsoletePactUriOptionsWithTokenAuth_PactVerifyCoreHostIsStarted()
-        {
-            var serviceProvider = "Event API";
-            var serviceConsumer = "My client";
-            var pactUri = "https://broker/consumer/test/provider/hello/latest";
-            var pactUriOptions = new PactUriOptions("mytoken");
+            var pactUriOptions = new PactUriOptions().SetBearerAuthentication("mytoken");
 
             var pactVerifier = GetSubject();
             pactVerifier
@@ -355,32 +317,13 @@ namespace PactNet.Tests
             var serviceProvider = "Event API";
             var serviceConsumer = "My client";
             var pactUri = "https://broker/consumer/test/provider/hello/latest";
-            var pactUriOptions = new PactHttpOptions().SetBearerAuthentication("mytoken");
+            var pactUriOptions = new PactUriOptions().SetBearerAuthentication("mytoken");
 
             var pactVerifier = GetSubject();
             pactVerifier
                 .ServiceProvider(serviceProvider, "http://localhost")
                 .HonoursPactWith(serviceConsumer)
                 .PactBroker(pactUri, pactUriOptions, true, new List<string>{"t1"}, new List<string>{"t2"}, new List<VersionTagSelector> { new VersionTagSelector("t3", latest: true) });
-
-            pactVerifier.Verify();
-
-            _mockVerifierCoreHost.Received(1).Start();
-        }
-
-        [Fact]
-        public void Verify_WhenTheVerifierIsCorrectlySetUpWithABrokerConfigurationAndObsoletePactUriOptions_PactVerifyCoreHostIsStarted()
-        {
-            var serviceProvider = "Event API";
-            var serviceConsumer = "My client";
-            var pactUri = "https://broker/consumer/test/provider/hello/latest";
-            var pactUriOptions = new PactUriOptions("mytoken");
-
-            var pactVerifier = GetSubject();
-            pactVerifier
-                .ServiceProvider(serviceProvider, "http://localhost")
-                .HonoursPactWith(serviceConsumer)
-                .PactBroker(pactUri, pactUriOptions, true, new List<string> { "t1" }, new List<string> { "t2" }, new List<VersionTagSelector> { new VersionTagSelector("t3", latest: true) });
 
             pactVerifier.Verify();
 
