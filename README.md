@@ -251,7 +251,7 @@ public class SomethingApiTests
         //Act / Assert
         IPactVerifier pactVerifier = new PactVerifier(config);
 
-        var pactHttpOptions = new PactHttpOptions()
+        var pactUriOptions = new PactUriOptions()
             .SetBasicAuthentication("someuser", "somepassword") // you can specify basic auth details
             //or
             .SetBearerAuthentication("sometoken") // Or a bearer token
@@ -268,9 +268,9 @@ public class SomethingApiTests
             //or
             .PactUri("http://pact-broker/pacts/provider/Something%20Api/consumer/Consumer/latest") //You can specify a http or https uri
             //or
-            .PactUri("http://pact-broker/pacts/provider/Something%20Api/consumer/Consumer/latest", pactHttpOptions) //With options decribed above
+            .PactUri("http://pact-broker/pacts/provider/Something%20Api/consumer/Consumer/latest", pactUriOptions) //With options decribed above
             //or (if you're using the Pact Broker, you can use the various different features, including pending pacts)
-            .PactBroker("http://pact-broker", httpOptions: pactHttpOptions, enablePending: true, consumerVersionTags: new List<string> { "master" }, providerVersionTags: new List<string> { "master" }, consumerVersionSelectors: new List<VersionTagSelector> { new VersionTagSelector("master") })
+            .PactBroker("http://pact-broker", uriOptions: pactUriOptions, enablePending: true, consumerVersionTags: new   List<string> { "master" }, providerVersionTags: new List<string> { "master" }, consumerVersionSelectors: new List<VersionTagSelector> { new VersionTagSelector("master") })
             .Verify();
     }
   }
