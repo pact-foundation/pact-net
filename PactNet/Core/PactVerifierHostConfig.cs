@@ -20,11 +20,12 @@ namespace PactNet.Core
             var providerStateOption = providerStateSetupUri != null ? $" --provider-states-setup-url \"{providerStateSetupUri.OriginalString}\"" : string.Empty;
             var pactBrokerOptions = BuildPactBrokerOptions(brokerConfig);
             var brokerCredentials = string.Empty;
-            if (!String.IsNullOrEmpty(pactBrokerHttpOptions?.Username) && !String.IsNullOrEmpty(pactBrokerHttpOptions?.Password))
+            
+            if (!string.IsNullOrEmpty(pactBrokerHttpOptions?.Username) && !string.IsNullOrEmpty(pactBrokerHttpOptions?.Password))
             {
                 brokerCredentials = $" --broker-username \"{pactBrokerHttpOptions.Username}\" --broker-password \"{pactBrokerHttpOptions.Password}\"";
             }
-            else if (!String.IsNullOrEmpty(pactBrokerHttpOptions?.Token))
+            else if (!string.IsNullOrEmpty(pactBrokerHttpOptions?.Token))
             {
                 brokerCredentials = $" --broker-token \"{pactBrokerHttpOptions.Token}\"";
             }
@@ -94,7 +95,7 @@ namespace PactNet.Core
             var providerVersionTags = BuildTags("provider-version-tag", config.ProviderVersionTags);
             var consumerVersionSelectors = BuildTags("consumer-version-selector", config.ConsumerVersionSelectors);
             var enablePending = config.EnablePending ? " --enable-pending" : "";
-            var includeWipPactsSince = !String.IsNullOrEmpty(config.IncludeWipPactsSince) ? $" --include-wip-pacts-since \"{config.IncludeWipPactsSince}\"" : string.Empty;
+            var includeWipPactsSince = !string.IsNullOrEmpty(config.IncludeWipPactsSince) ? $" --include-wip-pacts-since \"{config.IncludeWipPactsSince}\"" : string.Empty;
 
             return $" --pact-broker-base-url \"{config.BrokerBaseUri}\" --provider \"{config.ProviderName}\"{consumerVersionTags}{providerVersionTags}{consumerVersionSelectors}{enablePending}{includeWipPactsSince}";
         }

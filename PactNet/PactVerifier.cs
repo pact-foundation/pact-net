@@ -94,16 +94,16 @@ namespace PactNet
             return this;
         }
 
-        public IPactVerifier PactUri(string fileUri, PactUriOptions options)
+        public IPactVerifier PactUri(string fileUri, PactUriOptions options, IEnumerable<string> providerVersionTags = null)
         {
             var pactHttpOptions = !String.IsNullOrEmpty(options?.Username)
                 ? new PactHttpOptions().SetBasicAuthentication(options.Username, options.Password)
                 : new PactHttpOptions().SetBearerAuthentication(options.Token);
 
-            return PactUri(fileUri, pactHttpOptions);
+            return PactUri(fileUri, pactHttpOptions, providerVersionTags);
         }
 
-        public IPactVerifier PactUri(string fileUri, PactHttpOptions httpOptions = null)
+        public IPactVerifier PactUri(string fileUri, PactHttpOptions httpOptions = null, IEnumerable<string> providerVersionTags = null)
         {
             if (IsNullOrEmpty(fileUri))
             {
@@ -112,6 +112,7 @@ namespace PactNet
 
             PactFileUri = fileUri;
             PactHttpOptions = httpOptions;
+            ProviderVersionTags = providerVersionTags;
 
             return this;
         }
