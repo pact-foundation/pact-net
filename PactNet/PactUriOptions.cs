@@ -13,7 +13,7 @@ namespace PactNet
 
         public PactUriOptions(string username, string password)
         {
-            if (String.IsNullOrEmpty(username))
+            if (string.IsNullOrEmpty(username))
             {
                 throw new ArgumentException("username is null or empty.");
             }
@@ -23,7 +23,7 @@ namespace PactNet
                 throw new ArgumentException("username contains a ':' character, which is not allowed.");
             }
 
-            if (String.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(password))
             {
                 throw new ArgumentException("password is null or empty.");
             }
@@ -36,7 +36,7 @@ namespace PactNet
 
         public PactUriOptions(string token)
         {
-            if (String.IsNullOrEmpty(token))
+            if (string.IsNullOrEmpty(token))
             {
                 throw new ArgumentException("token is null or empty.");
             }

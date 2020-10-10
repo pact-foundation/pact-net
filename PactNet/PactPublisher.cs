@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
 using PactNet.Models;
+using System.Threading.Tasks;
 
 namespace PactNet
 {
@@ -30,14 +31,14 @@ namespace PactNet
         {
         }
 
-        public void PublishToBroker(string pactFileUri, string consumerVersion, IEnumerable<string> tags = null)
+        public async Task PublishToBroker(string pactFileUri, string consumerVersion, IEnumerable<string> tags = null)
         {
-            if (String.IsNullOrEmpty(pactFileUri))
+            if (string.IsNullOrEmpty(pactFileUri))
             {
                 throw new ArgumentNullException("pactFileUri is null or empty");
             }
 
-            if (String.IsNullOrEmpty(consumerVersion))
+            if (string.IsNullOrEmpty(consumerVersion))
             {
                 throw new ArgumentNullException("consumerVersion is null or empty");
             }
@@ -57,13 +58,13 @@ namespace PactNet
                         tagRequest.Headers.Add("Authorization", $"{_brokerUriOptions.AuthorizationScheme} {_brokerUriOptions.AuthorizationValue}");
                     }
 
-                    var tagResponse = _httpClient.SendAsync(tagRequest, CancellationToken.None).Result;
+                    var tagResponse = await _httpClient.SendAsync(tagRequest, CancellationToken.None);
                     var tagResponseStatusCode = tagResponse.StatusCode;
-                    var tagResponseContent = String.Empty;
+                    var tagResponseContent = string.Empty;
 
                     if (tagResponse.Content != null)
                     {
-                        tagResponseContent = tagResponse.Content.ReadAsStringAsync().Result;
+                        tagResponseContent = await tagResponse.Content.ReadAsStringAsync();
                     }
 
                     Dispose(tagRequest);
@@ -85,13 +86,13 @@ namespace PactNet
 
             request.Content = new StringContent(pactFileText, Encoding.UTF8, "application/json");
 
-            var response = _httpClient.SendAsync(request, CancellationToken.None).Result;
+            var response = await _httpClient.SendAsync(request, CancellationToken.None);
             var responseStatusCode = response.StatusCode;
-            var responseContent = String.Empty;
+            var responseContent = string.Empty;
 
             if (response.Content != null)
             {
-                responseContent = response.Content.ReadAsStringAsync().Result;
+                responseContent = await response.Content.ReadAsStringAsync();
             }
 
             Dispose(request);

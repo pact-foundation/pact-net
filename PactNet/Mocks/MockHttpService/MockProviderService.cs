@@ -253,7 +253,7 @@ namespace PactNet.Mocks.MockHttpService
             return Join(" ", relevantStackFrameSummaries);
 
 #else
-            return String.Empty;
+            return string.Empty;
 #endif
         }
     }
