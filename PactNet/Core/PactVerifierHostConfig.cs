@@ -51,6 +51,10 @@ namespace PactNet.Core
             if (!String.IsNullOrEmpty(pactBrokerHttpOptions?.HttpProxy))
             {
                 Environment.Add("HTTP_PROXY", pactBrokerHttpOptions.HttpProxy);
+            }
+
+            if (!String.IsNullOrEmpty(pactBrokerHttpOptions?.HttpsProxy))
+            {
                 Environment.Add("HTTPS_PROXY", pactBrokerHttpOptions.HttpsProxy);
             }
 
