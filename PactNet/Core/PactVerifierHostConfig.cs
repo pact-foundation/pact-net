@@ -44,17 +44,17 @@ namespace PactNet.Core
                 { "PACT_INTERACTION_RERUN_COMMAND", "To re-run just this failing interaction, change the verify method to '.Verify(description: \"<PACT_DESCRIPTION>\", providerState: \"<PACT_PROVIDER_STATE>\")'. Please do not check in this change!" }
             };
 
-            if (!String.IsNullOrEmpty(pactBrokerUriOptions?.SslCaFilePath))
+            if (!string.IsNullOrEmpty(pactBrokerUriOptions?.SslCaFilePath))
             {
                 Environment.Add("SSL_CERT_FILE", pactBrokerUriOptions.SslCaFilePath);
             }
 
-            if (!String.IsNullOrEmpty(pactBrokerUriOptions?.HttpProxy))
+            if (!string.IsNullOrEmpty(pactBrokerUriOptions?.HttpProxy))
             {
                 Environment.Add("HTTP_PROXY", pactBrokerUriOptions.HttpProxy);
             }
 
-            if (!String.IsNullOrEmpty(pactBrokerUriOptions?.HttpsProxy))
+            if (!string.IsNullOrEmpty(pactBrokerUriOptions?.HttpsProxy))
             {
                 Environment.Add("HTTPS_PROXY", pactBrokerUriOptions.HttpsProxy);
             }
