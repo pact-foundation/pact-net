@@ -9,6 +9,7 @@ using System.Threading;
 using Newtonsoft.Json;
 using PactNet.Models;
 using System.Threading.Tasks;
+using PactNet.Core;
 
 namespace PactNet
 {
@@ -33,7 +34,7 @@ namespace PactNet
 
         public void PublishToBroker(string pactFileUri, string consumerVersion, IEnumerable<string> tags = null)
         {
-            PublishToBrokerAsync(pactFileUri, consumerVersion, tags).ConfigureAwait(false).GetAwaiter().GetResult();
+            Async.RunSync(() => PublishToBrokerAsync(pactFileUri, consumerVersion, tags));
         }
 
         public async Task PublishToBrokerAsync(string pactFileUri, string consumerVersion, IEnumerable<string> tags = null)

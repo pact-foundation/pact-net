@@ -4,6 +4,7 @@ using PactNet.Mocks.MockHttpService.Host;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
 using static System.String;
+using PactNet.Core;
 
 namespace PactNet.Mocks.MockHttpService
 {
@@ -121,12 +122,12 @@ namespace PactNet.Mocks.MockHttpService
         public void VerifyInteractions()
         {
             var testContext = BuildTestContext();
-            _adminHttpClient.SendAdminHttpRequest(HttpVerb.Get, $"{Constants.InteractionsVerificationPath}?example_description={testContext}");
+            Async.RunSync(() => _adminHttpClient.SendAdminHttpRequest(HttpVerb.Get, $"{Constants.InteractionsVerificationPath}?example_description={testContext}"));
         }
 
         public void SendAdminHttpRequest(HttpVerb method, string path)
         {
-            _adminHttpClient.SendAdminHttpRequest(method, path);
+            Async.RunSync(() => _adminHttpClient.SendAdminHttpRequest(method, path));
         }
 
         public void Start()
@@ -148,7 +149,7 @@ namespace PactNet.Mocks.MockHttpService
             if (_host != null)
             {
                 var testContext = BuildTestContext();
-                _adminHttpClient.SendAdminHttpRequest(HttpVerb.Delete, $"{Constants.InteractionsPath}?example_description={testContext}");
+                Async.RunSync(() => _adminHttpClient.SendAdminHttpRequest(HttpVerb.Delete, $"{Constants.InteractionsPath}?example_description={testContext}"));
             }
         }
 
@@ -177,7 +178,7 @@ namespace PactNet.Mocks.MockHttpService
                 Response = _response
             };
 
-            _adminHttpClient.SendAdminHttpRequest(HttpVerb.Post, Constants.InteractionsPath, interaction);
+            Async.RunSync(() => _adminHttpClient.SendAdminHttpRequest(HttpVerb.Post, Constants.InteractionsPath, interaction));
 
             ClearTrasientState();
         }
