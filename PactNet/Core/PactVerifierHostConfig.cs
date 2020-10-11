@@ -19,11 +19,17 @@ namespace PactNet.Core
             var pactUriOption = pactUri != null ? $"\"{FixPathForRuby(pactUri)}\" " : "";
             var providerStateOption = providerStateSetupUri != null ? $" --provider-states-setup-url \"{providerStateSetupUri.OriginalString}\"" : string.Empty;
             var pactBrokerOptions = BuildPactBrokerOptions(brokerConfig);
-            var brokerCredentials = pactBrokerUriOptions != null ?
-                !string.IsNullOrEmpty(pactBrokerUriOptions.Username) && !string.IsNullOrEmpty(pactBrokerUriOptions.Password) ? 
-                    $" --broker-username \"{pactBrokerUriOptions.Username}\" --broker-password \"{pactBrokerUriOptions.Password}\"" : 
-                    $" --broker-token \"{pactBrokerUriOptions.Token}\""
-                 : string.Empty;
+            var brokerCredentials = string.Empty;
+            
+            if (!string.IsNullOrEmpty(pactBrokerUriOptions?.Username) && !string.IsNullOrEmpty(pactBrokerUriOptions?.Password))
+            {
+                brokerCredentials = $" --broker-username \"{pactBrokerUriOptions.Username}\" --broker-password \"{pactBrokerUriOptions.Password}\"";
+            }
+            else if (!string.IsNullOrEmpty(pactBrokerUriOptions?.Token))
+            {
+                brokerCredentials = $" --broker-token \"{pactBrokerUriOptions.Token}\"";
+            }
+
             var publishResults = config?.PublishVerificationResults == true ? $" --publish-verification-results=true --provider-app-version=\"{config.ProviderVersion}\"" : string.Empty;
             var customHeaders = this.BuildCustomHeaders(config);
             var verbose = config?.Verbose == true ? " --verbose true" : string.Empty;
@@ -38,7 +44,22 @@ namespace PactNet.Core
                 { "PACT_INTERACTION_RERUN_COMMAND", "To re-run just this failing interaction, change the verify method to '.Verify(description: \"<PACT_DESCRIPTION>\", providerState: \"<PACT_PROVIDER_STATE>\")'. Please do not check in this change!" }
             };
 
-            if(environment != null)
+            if (!String.IsNullOrEmpty(pactBrokerUriOptions?.SslCaFilePath))
+            {
+                Environment.Add("SSL_CERT_FILE", pactBrokerUriOptions.SslCaFilePath);
+            }
+
+            if (!String.IsNullOrEmpty(pactBrokerUriOptions?.HttpProxy))
+            {
+                Environment.Add("HTTP_PROXY", pactBrokerUriOptions.HttpProxy);
+            }
+
+            if (!String.IsNullOrEmpty(pactBrokerUriOptions?.HttpsProxy))
+            {
+                Environment.Add("HTTPS_PROXY", pactBrokerUriOptions.HttpsProxy);
+            }
+
+            if (environment != null)
             {
                 foreach (var envVar in environment)
                 {
