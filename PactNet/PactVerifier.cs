@@ -94,7 +94,7 @@ namespace PactNet
             return this;
         }
 
-        public IPactVerifier PactUri(string fileUri, PactUriOptions options = null)
+        public IPactVerifier PactUri(string fileUri, PactUriOptions uriOptions = null, IEnumerable<string> providerVersionTags = null)
         {
             if (IsNullOrEmpty(fileUri))
             {
@@ -102,7 +102,8 @@ namespace PactNet
             }
 
             PactFileUri = fileUri;
-            PactUriOptions = options;
+            PactUriOptions = uriOptions;
+            ProviderVersionTags = providerVersionTags;
 
             return this;
         }
