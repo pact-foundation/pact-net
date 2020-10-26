@@ -441,7 +441,6 @@ See the [Best practices](https://docs.pact.io/getting_started/versioning_in_the_
 var gitSha = Environment.GetEnvironmentVariable("GIT_SHA");
 var isCI = "true".Equals(Environment.GetEnvironmentVariable("CI"));
 
-//Assuming build number is only set in the CI environment
 var config = new PactVerifierConfig
 {
     ProviderVersion = gitSha, //NOTE: Setting a provider version is required for publishing verification results
