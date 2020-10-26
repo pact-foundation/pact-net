@@ -434,16 +434,18 @@ pactPublisher.PublishToBroker(
 ### Publishing Provider Verification Results to a Broker
 This feature allows the result of the Provider verification to be pushed to the broker and displayed on the index page.
 In order for this to work you must set the ProviderVersion, PublishVerificationResults and use a pact broker uri. If you do not use a broker uri no verification results will be published. See the code snippet code below.
-For more info and compatibility details [refer to this](https://github.com/pact-foundation/pact_broker/wiki/Provider-verification-results).
+For more info and compatibility details [refer to this](https://docs.pact.io/pact_broker/advanced_topics/provider_verification_results).
+See the [Best practices](https://docs.pact.io/getting_started/versioning_in_the_pact_broker#rules) section of the "Versioning in the Pact Broker" for recommendations on what to use for the version number.
 
 ```c#
-var buildNumber = Environment.GetEnvironmentVariable("BUILD_NUMBER");
+var gitSha = Environment.GetEnvironmentVariable("GIT_SHA");
+var isCI = "true".Equals(Environment.GetEnvironmentVariable("CI"));
 
 //Assuming build number is only set in the CI environment
 var config = new PactVerifierConfig
 {
-    ProviderVersion = !string.IsNullOrEmpty(buildNumber) ? buildNumber : null, //NOTE: This is required for this feature to work
-    PublishVerificationResults = !string.IsNullOrEmpty(buildNumber)
+    ProviderVersion = gitSha, //NOTE: Setting a provider version is required for publishing verification results
+    PublishVerificationResults = isCI;
 };
 IPactVerifier pactVerifier = new PactVerifier(config);
 pactVerifier
