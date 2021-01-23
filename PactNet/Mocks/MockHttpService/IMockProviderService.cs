@@ -12,6 +12,6 @@ namespace PactNet.Mocks.MockHttpService
         void Stop();
         void ClearInteractions();
         void VerifyInteractions();
-        void SendAdminHttpRequest(HttpVerb method, string path);
+        void SendAdminHttpRequest(HttpVerb method, string path, Dictionary<string, string> headers = null);
     }
 }

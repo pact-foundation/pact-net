@@ -127,7 +127,7 @@ namespace PactNet.Mocks.MockHttpService
             Async.RunSync(() => _adminHttpClient.SendAdminHttpRequest(HttpVerb.Get, $"{Constants.InteractionsVerificationPath}?example_description={testContext}"));
         }
 
-        public void SendAdminHttpRequest(HttpVerb method, string path)
+        public void SendAdminHttpRequest(HttpVerb method, string path, Dictionary<string, string> headers = null)
         {
             Async.RunSync(() => _adminHttpClient.SendAdminHttpRequest(method, path));
         }
