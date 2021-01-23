@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,9 +41,9 @@ namespace PactNet.Mocks.MockHttpService
         {
         }
 
-        public async Task SendAdminHttpRequest(HttpVerb method, string path)
+        public async Task SendAdminHttpRequest(HttpVerb method, string path, IDictionary<string, string> headers = null)
         {
-            await SendAdminHttpRequest<object>(method, path, null);
+            await SendAdminHttpRequest<object>(method, path, null, headers:headers);
         }
 
         public async Task SendAdminHttpRequest<T>(HttpVerb method, string path, T requestContent, IDictionary<string, string> headers = null) where T : class
@@ -75,6 +77,7 @@ namespace PactNet.Mocks.MockHttpService
 
             Dispose(request);
             Dispose(response);
+
 
             if (responseStatusCode != HttpStatusCode.OK)
             {
