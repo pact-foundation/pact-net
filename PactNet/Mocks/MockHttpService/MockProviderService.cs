@@ -21,6 +21,8 @@ namespace PactNet.Mocks.MockHttpService
 
         public Uri BaseUri { get; }
 
+        public bool UseRemoteMockService { get; set; } = false;
+
         internal MockProviderService(
             Func<Uri, IHttpHost> hostFactory,
             int port,
@@ -28,7 +30,7 @@ namespace PactNet.Mocks.MockHttpService
             Func<Uri, AdminHttpClient> adminHttpClientFactory)
         {
             _hostFactory = hostFactory;
-            BaseUri = new Uri( $"{(enableSsl ? "https" : "http")}://localhost:{port}");
+            BaseUri = new Uri($"{(enableSsl ? "https" : "http")}://localhost:{port}");
             _adminHttpClient = adminHttpClientFactory(BaseUri);
         }
 
@@ -41,7 +43,7 @@ namespace PactNet.Mocks.MockHttpService
             : this(port, enableSsl, consumerName, providerName, config, ipAddress, jsonSerializerSettings, null, null)
         {
         }
-        
+
         public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress, Newtonsoft.Json.JsonSerializerSettings jsonSerializerSettings, string sslCert, string sslKey)
             : this(
                 baseUri => new RubyHttpHost(baseUri, consumerName, providerName, config, ipAddress, sslCert, sslKey),
@@ -97,8 +99,6 @@ namespace PactNet.Mocks.MockHttpService
             return this;
         }
 
-        public bool UseRemoteMockService { get; set; }
-
         public void WillRespondWith(ProviderServiceResponse response)
         {
             if (response == null)
@@ -134,25 +134,41 @@ namespace PactNet.Mocks.MockHttpService
 
         public void Start()
         {
-            StopRunningHost();
+            if (UseRemoteMockService == false)
+            {
+                StopRunningHost();
+                _host = _hostFactory(BaseUri);
+                _host.Start();
+            }
 
-            _host = _hostFactory(BaseUri);
-            _host.Start();
         }
 
         public void Stop()
         {
             ClearAllState();
-            StopRunningHost();
+            if (UseRemoteMockService == false)
+            {
+                StopRunningHost();
+            }
         }
 
         public void ClearInteractions()
         {
-            if (_host != null)
+            if (_host != null && UseRemoteMockService == false)
             {
                 var testContext = BuildTestContext();
                 Async.RunSync(() => _adminHttpClient.SendAdminHttpRequest(HttpVerb.Delete, $"{Constants.InteractionsPath}?example_description={testContext}"));
             }
+            else
+            {
+                ClearAllInteractions();
+            }
+
+        }
+
+        public void ClearAllInteractions()
+        {
+            Async.RunSync(() => _adminHttpClient.SendAdminHttpRequest(HttpVerb.Delete, $"{Constants.InteractionsPath}?"));
         }
 
         private void RegisterInteraction()
