@@ -282,7 +282,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void WillRespondWith_WhenHostIsNull_ThrowsInvalidOperationException()
+        public void WillRespondWith_WhenHostIsNull_DoNotThrowsInvalidOperationException()
         {
             var providerState = "My provider state";
             var description = "My description";
@@ -298,8 +298,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
 
             mockService.Stop();
 
-            Assert.Throws<InvalidOperationException>(() => mockService.WillRespondWith(response));
-            Assert.Equal(0, _fakeHttpMessageHandler.RequestsReceived.Count());
+            Assert.Equal(1, _fakeHttpMessageHandler.RequestsReceived.Count());
         }
 
         [Fact]
@@ -398,14 +397,14 @@ namespace PactNet.Tests.Mocks.MockHttpService
         }
 
         [Fact]
-        public void ClearInteractions_WhenHostIsNull_DoesNotPerformAdminInteractionsDeleteRequest()
+        public void ClearInteractions_WhenHostIsNull_CanPerformAdminInteractionsDeleteRequest()
         {
             var mockService = GetSubject();
             mockService.Stop();
 
             mockService.ClearInteractions();
 
-            Assert.Equal(0, _fakeHttpMessageHandler.RequestsReceived.Count());
+            Assert.Equal(2, _fakeHttpMessageHandler.RequestsReceived.Count());
         }
 
         [Fact]
