@@ -78,6 +78,10 @@ namespace PactNet.Mocks.MockHttpService
             Dispose(request);
             Dispose(response);
 
+            if (path == "/pact" && headers != null && headers.ContainsKey("fileNameAndPath"))
+            {
+                File.WriteAllText(headers["fileNameAndPath"], responseContent);
+            }
 
             if (responseStatusCode != HttpStatusCode.OK)
             {
