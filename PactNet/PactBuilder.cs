@@ -132,7 +132,7 @@ namespace PactNet
                 fileNameAndPathToSavePactTo.Add("fileNameAndPath", $"{_pactDir}\\{ConsumerName.ToLower()}{ProviderName.ToLower()}.json");
             }
 
-            _mockProviderService.SendAdminHttpRequest(HttpVerb.Post, Constants.PactPath, fileNameAndPathToSavePactTo);
+            _mockProviderService.SendAdminHttpRequest(HttpVerb.Post, Constants.PactPath, fileNameAndPathToSavePactTo.Count == 0? null : fileNameAndPathToSavePactTo);
         }
     }
 }
