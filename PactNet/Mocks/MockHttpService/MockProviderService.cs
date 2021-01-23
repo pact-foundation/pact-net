@@ -97,6 +97,8 @@ namespace PactNet.Mocks.MockHttpService
             return this;
         }
 
+        public bool UseRemoteMockService { get; set; }
+
         public void WillRespondWith(ProviderServiceResponse response)
         {
             if (response == null)
