@@ -129,7 +129,7 @@ namespace PactNet.Mocks.MockHttpService
 
         public void SendAdminHttpRequest(HttpVerb method, string path, Dictionary<string, string> headers = null)
         {
-            Async.RunSync(() => _adminHttpClient.SendAdminHttpRequest(method, path));
+            Async.RunSync(() => _adminHttpClient.SendAdminHttpRequest(method, path, headers:headers));
         }
 
         public void Start()
