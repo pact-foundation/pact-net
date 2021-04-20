@@ -444,7 +444,7 @@ var isCI = "true".Equals(Environment.GetEnvironmentVariable("CI"));
 var config = new PactVerifierConfig
 {
     ProviderVersion = gitSha, //NOTE: Setting a provider version is required for publishing verification results
-    PublishVerificationResults = isCI;
+    PublishVerificationResults = isCI
 };
 IPactVerifier pactVerifier = new PactVerifier(config);
 pactVerifier
