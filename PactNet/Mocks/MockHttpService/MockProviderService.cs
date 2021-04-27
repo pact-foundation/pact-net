@@ -166,7 +166,7 @@ namespace PactNet.Mocks.MockHttpService
 
         }
 
-        public void ClearAllInteractions()
+        private void ClearAllInteractions()
         {
             Async.RunSync(() => _adminHttpClient.SendAdminHttpRequest(HttpVerb.Delete, $"{Constants.InteractionsPath}?"));
         }
