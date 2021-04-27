@@ -154,7 +154,7 @@ namespace PactNet.Mocks.MockHttpService
 
         public void ClearInteractions()
         {
-            if (_host != null && UseRemoteMockService == false)
+            if (_host != null && !UseRemoteMockService)
             {
                 var testContext = BuildTestContext();
                 Async.RunSync(() => _adminHttpClient.SendAdminHttpRequest(HttpVerb.Delete, $"{Constants.InteractionsPath}?example_description={testContext}"));
