@@ -1,16 +1,15 @@
+using Newtonsoft.Json;
+using PactNet.Configuration.Json;
+using PactNet.Mocks.MockHttpService.Mappers;
+using PactNet.Mocks.MockHttpService.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using PactNet.Configuration.Json;
-using PactNet.Mocks.MockHttpService.Mappers;
-using PactNet.Mocks.MockHttpService.Models;
 using static System.String;
 
 namespace PactNet.Mocks.MockHttpService
@@ -41,12 +40,12 @@ namespace PactNet.Mocks.MockHttpService
         {
         }
 
-        public async Task SendAdminHttpRequest(HttpVerb method, string path, IDictionary<string, string> headers = null)
+        public async Task<string> SendAdminHttpRequest(HttpVerb method, string path, IDictionary<string, string> headers = null)
         {
-            await SendAdminHttpRequest<object>(method, path, null, headers:headers);
+            return await SendAdminHttpRequest<object>(method, path, null, headers:headers);
         }
 
-        public async Task SendAdminHttpRequest<T>(HttpVerb method, string path, T requestContent, IDictionary<string, string> headers = null) where T : class
+        public async Task<string> SendAdminHttpRequest<T>(HttpVerb method, string path, T requestContent, IDictionary<string, string> headers = null) where T : class
         {
             var responseContent = Empty;
 
@@ -78,14 +77,18 @@ namespace PactNet.Mocks.MockHttpService
             Dispose(request);
             Dispose(response);
 
-            if (path == "/pact" && headers != null && headers.ContainsKey("fileNameAndPath"))
-            {
-                File.WriteAllText(headers["fileNameAndPath"], responseContent);
-            }
-
             if (responseStatusCode != HttpStatusCode.OK)
             {
                 throw new PactFailureException(responseContent);
+            }
+
+            if (!string.IsNullOrEmpty(responseContent))
+            {
+                return responseContent;
+            }
+            else
+            {
+                return string.Empty;
             }
         }
 

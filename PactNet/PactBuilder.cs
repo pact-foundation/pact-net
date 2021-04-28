@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
+using System;
+using System.IO;
 
 namespace PactNet
 {
@@ -125,14 +125,12 @@ namespace PactNet
 
         private void PersistPactFile()
         {
-            var fileNameAndPathToSavePactTo = new Dictionary<string, string>();
+            var responsePact = _mockProviderService.SendAdminHttpRequest(HttpVerb.Post, Constants.PactPath);
 
             if (_mockProviderService.UseRemoteMockService)
             {
-                fileNameAndPathToSavePactTo.Add("fileNameAndPath", $"{_pactDir}\\{ConsumerName.ToLower()}{ProviderName.ToLower()}.json");
+                File.WriteAllText($"{_pactDir}\\{ConsumerName.ToLower()}{ProviderName.ToLower()}.json", responsePact);
             }
-
-            _mockProviderService.SendAdminHttpRequest(HttpVerb.Post, Constants.PactPath, fileNameAndPathToSavePactTo.Count == 0? null : fileNameAndPathToSavePactTo);
         }
     }
 }
