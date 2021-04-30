@@ -4,7 +4,6 @@ using PactNet.Mocks.MockHttpService.Mappers;
 using PactNet.Mocks.MockHttpService.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -30,7 +29,7 @@ namespace PactNet.Mocks.MockHttpService
             _jsonSerializerSettings = jsonSerializerSettings ?? JsonConfig.ApiSerializerSettings;
         }
 
-        public AdminHttpClient(Uri baseUri) : 
+        public AdminHttpClient(Uri baseUri) :
             this(baseUri, new HttpClientHandler(), null)
         {
         }
@@ -42,13 +41,11 @@ namespace PactNet.Mocks.MockHttpService
 
         public async Task<string> SendAdminHttpRequest(HttpVerb method, string path, IDictionary<string, string> headers = null)
         {
-            return await SendAdminHttpRequest<object>(method, path, null, headers:headers);
+            return await SendAdminHttpRequest<object>(method, path, null, headers: headers);
         }
 
         public async Task<string> SendAdminHttpRequest<T>(HttpVerb method, string path, T requestContent, IDictionary<string, string> headers = null) where T : class
         {
-            var responseContent = Empty;
-
             var request = new HttpRequestMessage(_httpMethodMapper.Convert(method), path);
             request.Headers.Add(Constants.AdministrativeRequestHeaderKey, "true");
 
@@ -68,6 +65,7 @@ namespace PactNet.Mocks.MockHttpService
 
             var response = await _httpClient.SendAsync(request, CancellationToken.None);
             var responseStatusCode = response.StatusCode;
+            var responseContent = Empty;
 
             if (response.Content != null)
             {
@@ -82,22 +80,12 @@ namespace PactNet.Mocks.MockHttpService
                 throw new PactFailureException(responseContent);
             }
 
-            if (!string.IsNullOrEmpty(responseContent))
-            {
-                return responseContent;
-            }
-            else
-            {
-                return string.Empty;
-            }
+            return !string.IsNullOrEmpty(responseContent) ? responseContent : Empty;
         }
 
         private void Dispose(IDisposable disposable)
         {
-            if (disposable != null)
-            {
-                disposable.Dispose();
-            }
+            disposable?.Dispose();
         }
     }
 }
