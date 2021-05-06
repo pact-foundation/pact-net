@@ -72,7 +72,7 @@ namespace PactNet
             string sslKey = null,
             bool useRemoteMockService = false)
         {
-            return MockService(port, jsonSerializerSettings: null, enableSsl: enableSsl, host: host, sslCert: sslCert, sslKey: sslKey, useRemoteMockService);
+            return MockService(port, null, enableSsl: enableSsl, host: host, sslCert: sslCert, sslKey: sslKey, useRemoteMockService: useRemoteMockService);
         }
 
         public IMockProviderService MockService(
