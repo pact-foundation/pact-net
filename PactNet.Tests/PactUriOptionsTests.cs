@@ -15,6 +15,83 @@ namespace PactNet.Tests
         }
 
         [Fact]
+        public void Ctor_With_ValidUserNamePassword()
+        {
+            const string username = "Aladdin";
+            const string password = "open sesame";
+            const string expectedAuthScheme = "Basic";
+            const string expectedAuthValue = "QWxhZGRpbjpvcGVuIHNlc2FtZQ==";
+
+            var options = new PactUriOptions(username, password);
+
+            Assert.Equal(expectedAuthScheme, options.AuthorizationScheme);
+            Assert.Equal(expectedAuthValue, options.AuthorizationValue);
+
+        }
+
+        [Fact]
+        public void Ctor_SetUserNameWhenTokenIsSet_ThrowsInvalidOperationException()
+        {
+            const string username = "Aladdin";
+            const string password = "open sesame";
+            const string token = "sometokenvalue";
+
+            var options = new PactUriOptions(token);
+
+            Assert.Throws<InvalidOperationException>( () => options.SetBasicAuthentication(username, password) );
+
+        }
+
+        [Fact]
+        public void Ctor_SetBearerTokenWhenUserNamePasswordEmptyAreSet_ThrowsArgumentException()
+        {
+            const string username = "Aladdin";
+            const string password = "";
+
+            Assert.Throws< ArgumentException>( () => new PactUriOptions(username, password) );
+        }
+
+        [Fact]
+        public void Ctor_SetBearerTokenWhenUserNamePasswordNullAreSet_ThrowsArgumentException()
+        {
+            const string username = "Aladdin";
+            const string password = null;
+
+            Assert.Throws<ArgumentException>( () => new PactUriOptions(username, password));
+        }
+
+        [Fact]
+        public void Ctor_SetBearerTokenWhenUserNameEmptyPasswordAreSet_ThrowsArgumentException()
+        {
+            const string username = "";
+            const string password = "password";
+
+            Assert.Throws<ArgumentException>( () => new PactUriOptions(username, password));
+        }
+
+        [Fact]
+        public void Ctor_SetBearerTokenWhenUserNameNullPasswordAreSet_ThrowsArgumentException()
+        {
+            const string username = null;
+            const string password = "password";
+
+            Assert.Throws<ArgumentException>(() => new PactUriOptions(username, password));
+        }
+
+
+        [Fact]
+        public void Ctor_SetBearerTokenWhenUserNamePasswordAreSet_ThrowsInvalidOperationException()
+        {
+            const string username = "Aladdin";
+            const string password = "open sesame";
+            const string token = "sometokenvalue";
+
+            var options = new PactUriOptions(username, password);
+
+            Assert.Throws<InvalidOperationException>(() => options.SetBearerAuthentication(token));
+        }
+
+        [Fact]
         public void Ctor_WithInvalidUsername_ThrowsArgumentException()
         {
             const string username = "some:user";
@@ -30,6 +107,28 @@ namespace PactNet.Tests
             const string password = "";
 
             Assert.Throws<ArgumentException>(() => new PactUriOptions().SetBasicAuthentication(username, password));
+        }
+
+        [Fact]
+        public void Ctor_UserNameWithAtSymbol()
+        {
+            const string username = "some@user";
+            const string password = "password";
+
+            var options = new PactUriOptions(username, password);
+
+            Assert.Equal(options.Username, username);
+        }
+
+        [Fact]
+        public void Ctor_PasswordWithAtSymbol()
+        {
+            const string username = "someuser";
+            const string password = "pass@word";
+
+            var options = new PactUriOptions(username, password);
+
+            Assert.Equal(options.Password, password);
         }
 
         [Fact]
@@ -87,6 +186,54 @@ namespace PactNet.Tests
             var options = new PactUriOptions().SetBearerAuthentication(token);
 
             Assert.Equal(token, options.Token);
+        }
+
+        [Fact]
+        public void Ctor_SetSslCaPathEmpty_ThrowsArgumentException()
+        {
+            const string sslpath = "";
+
+            Assert.Throws<ArgumentException>(() => new PactUriOptions().SetSslCaFilePath(sslpath));
+        }
+
+        [Fact]
+        public void Ctor_SetSslCaPathNull_ThrowsArgumentException()
+        {
+            const string sslpath = null;
+
+            Assert.Throws<ArgumentException>(() => new PactUriOptions().SetSslCaFilePath(sslpath));
+        }
+
+        [Fact]
+        public void CTor_SetHttpProxyEmpty_ThrowsArgumentException()
+        {
+            const string proxy = "";
+            Assert.Throws<ArgumentException>(() => new PactUriOptions().SetHttpProxy(proxy));
+        }
+
+        [Fact]
+        public void CTor_SetHttpProxyNull_ThrowsArgumentException()
+        {
+            const string proxy = null;
+            Assert.Throws<ArgumentException>(() => new PactUriOptions().SetHttpProxy(proxy));
+        }
+
+
+
+        [Fact]
+        public void CTor_SetHttpsProxiesEmpty_ThrowsArgumentException()
+        {
+            const string httpProxy = "somevalue";
+            const string httpsProxy = "";
+            Assert.Throws<ArgumentException>( () => new PactUriOptions().SetHttpProxy( httpProxy, httpsProxy ) );
+        }
+
+        [Fact]
+        public void CTor_SetHttpsProxiesNull_ThrowsArgumentException()
+        {
+            const string httpProxy = "somevalue";
+            const string httpsProxy = null;
+            Assert.Throws<ArgumentException>(() => new PactUriOptions().SetHttpProxy( httpProxy, httpsProxy ) );
         }
     }
 }
