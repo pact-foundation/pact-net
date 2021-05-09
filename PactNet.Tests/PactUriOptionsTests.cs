@@ -5,6 +5,23 @@ namespace PactNet.Tests
 {
     public class PactUriOptionsTests
     {
+
+        // This is an experimental test set. Use of Data Driving improves readabilit and 
+        // shows all the permutations run by one test
+        [Theory]
+        [InlineData( ""        , ""         ) ] 
+        [InlineData( null      , ""         ) ]
+        [InlineData( ""        , null       ) ]
+        [InlineData( null      , null       ) ]
+        [InlineData( "bad:name", ""         ) ] // RFC 2617 compliance
+        [InlineData( "bad:name", null       ) ] // RFC 2617 compliance
+        [InlineData( "goodname", null       ) ] // RFC 2617 compliance
+        [InlineData( "goodname", ""         ) ] // RFC 2617 compliance
+        public void Ctor_takesUserNameandPasswordParamsThatThrowArgException(string username, string password)
+        {
+            Assert.Throws <ArgumentException> (() => new PactUriOptions(username, password));
+        }
+
         [Fact]
         public void Ctor_WithEmptyUsername_ThrowsArgumentException()
         {
