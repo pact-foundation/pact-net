@@ -6,7 +6,8 @@ namespace PactNet.Tests
     public class PactUriOptionsTests
     {
 
-        // This is an experimental test set. Use of Data Driving improves readabilit and 
+        // This is an experimental test set.
+        // Use of Data Driving improves readability and 
         // shows all the permutations run by one test
         [Theory]
         [InlineData( ""        , ""         ) ] 
