@@ -1,6 +1,4 @@
-﻿using PactNet.Infrastructure.Outputters;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Xunit;
 
 namespace PactNet.Tests
