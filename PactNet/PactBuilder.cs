@@ -1,8 +1,9 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
+using System;
+using System.IO;
 
 namespace PactNet
 {
@@ -10,6 +11,8 @@ namespace PactNet
     {
         public string ConsumerName { get; private set; }
         public string ProviderName { get; private set; }
+
+        private readonly string _pactDir;
 
         private readonly
             Func<int, bool, string, string, IPAddress, JsonSerializerSettings, string, string, IMockProviderService>
@@ -34,6 +37,7 @@ namespace PactNet
                 new MockProviderService(port, enableSsl, consumerName, providerName, config, host,
                     jsonSerializerSettings, sslCert, sslKey))
         {
+            _pactDir = config.PactDir;
         }
 
         public IPactBuilder ServiceConsumer(string consumerName)
@@ -65,9 +69,10 @@ namespace PactNet
             bool enableSsl = false, 
             IPAddress host = IPAddress.Loopback, 
             string sslCert = null, 
-            string sslKey = null)
+            string sslKey = null,
+            bool useRemoteMockService = false)
         {
-            return MockService(port, jsonSerializerSettings: null, enableSsl: enableSsl, host: host, sslCert: sslCert, sslKey: sslKey);
+            return MockService(port, null, enableSsl: enableSsl, host: host, sslCert: sslCert, sslKey: sslKey, useRemoteMockService: useRemoteMockService);
         }
 
         public IMockProviderService MockService(
@@ -76,7 +81,8 @@ namespace PactNet
             bool enableSsl = false, 
             IPAddress host = IPAddress.Loopback, 
             string sslCert = null, 
-            string sslKey = null)
+            string sslKey = null,
+            bool useRemoteMockService = false)
         {
             if (string.IsNullOrEmpty(ConsumerName))
             {
@@ -90,13 +96,15 @@ namespace PactNet
                     "ProviderName has not been set, please supply a provider name using the HasPactWith method.");
             }
 
-            if (_mockProviderService != null)
+            if (_mockProviderService != null && useRemoteMockService == false )
             {
                 _mockProviderService.Stop();
             }
 
             _mockProviderService = _mockProviderServiceFactory(port, enableSsl, ConsumerName, ProviderName, host,
                 jsonSerializerSettings, sslCert, sslKey);
+
+            _mockProviderService.UseRemoteMockService = useRemoteMockService;
 
             _mockProviderService.Start();
 
@@ -108,7 +116,7 @@ namespace PactNet
             if (_mockProviderService == null)
             {
                 throw new InvalidOperationException(
-                    "The Pact file could not be saved because the mock provider service is not initialised. Please initialise by calling the MockService() method.");
+                    "The Pact file could not be saved because the mock provider service is not initialized. Please initialise by calling the MockService() method.");
             }
 
             PersistPactFile();
@@ -117,7 +125,12 @@ namespace PactNet
 
         private void PersistPactFile()
         {
-            _mockProviderService.SendAdminHttpRequest(HttpVerb.Post, Constants.PactPath);
+            var responsePact = _mockProviderService.SendAdminHttpRequest(HttpVerb.Post, Constants.PactPath);
+
+            if (_mockProviderService.UseRemoteMockService)
+            {
+                File.WriteAllText($"{_pactDir}\\{ConsumerName.ToLower()}{ProviderName.ToLower()}.json", responsePact);
+            }
         }
     }
 }

@@ -415,6 +415,39 @@ var sslKey = @"{PathTo}\localhost.key";
 MockProviderService = PactBuilder.MockService(MockServerPort, true, IPAddress.Any, sslCrt, sslKey);
 ```
 
+### Using a Remote Mock Server Service to execute Consumer tests
+
+It is possible to execute your consumer test against any remote Mock Server (including a docker container). 
+
+In that case you don't need any other package than PactNet. (Ruby packages are not required i.e.: PactNet.Windows/PactNet.OSX, PactNet.Linux.*)
+
+This also fix the building issues of path too long in windows with ruby packages.
+
+To run your consumer tests against a remote server, in PactBuilder class, set the "useRemoteMockService" parameter to true:
+
+```c#
+ PactBuilder.MockService(MockServerPort, useRemoteMockService = true);
+```
+
+Then simply use the remote host url and port to send the call to your remote server.
+
+The pacts file generated this way will be saved to the path that you define in the PactDir property of PactConfig object.
+
+You can run a remote mock server service with the [pact-cli docker container](https://hub.docker.com/r/pactfoundation/pact-cli) as follow:
+
+```
+docker run -dit \
+  --rm \
+  --name pact-mock-service \
+  -p 1234:1234 \
+  -v ${HOST_PACT_DIRECTORY}:/tmp/pacts \
+  pactfoundation/pact-cli:latest \
+  mock-service \
+  -p 1234 \
+  --host 0.0.0.0 \
+  --pact-dir /tmp/pacts
+```
+
 ### Publishing Pacts to a Broker
 The Pact broker is a useful tool that can be used to share pacts between the consumer and provider. In order to make this easy, below are a couple of options for publishing your Pacts to a Pact Broker.
 
