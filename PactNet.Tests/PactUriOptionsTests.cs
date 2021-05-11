@@ -10,30 +10,35 @@ namespace PactNet.Tests
         // Use of Data Driving improves readability and 
         // shows all the permutations run by one test
         [Theory]
-        [InlineData( ""        , ""         ) ] 
-        [InlineData( null      , ""         ) ]
-        [InlineData( ""        , null       ) ]
-        [InlineData( null      , null       ) ]
-        [InlineData( "bad:name", ""         ) ] // RFC 2617 compliance
-        [InlineData( "bad:name", null       ) ] // RFC 2617 compliance
-        [InlineData( "goodname", null       ) ] // RFC 2617 compliance
-        [InlineData( "goodname", ""         ) ] // RFC 2617 compliance
-        public void Ctor_takesUserNameandPasswordParamsThatThrowArgException(string username, string password)
+        [InlineData( ""        , ""            , "username is null or empty." ) ] 
+        [InlineData( ""        , "somepassword", "username is null or empty." ) ] 
+        [InlineData( "goodname", ""            , "password is null or empty." ) ] 
+        [InlineData( null      , ""            , "username is null or empty." ) ]
+        [InlineData( ""        , null          , "username is null or empty." ) ]
+        [InlineData( null      , null          , "username is null or empty." ) ]
+        [InlineData( "bad:name", ""            , "username contains a ':' character, which is not allowed." ) ] // RFC 2617 compliance
+        [InlineData( "bad:name", "goodpass"    , "username contains a ':' character, which is not allowed." ) ] // RFC 2617 compliance
+        [InlineData( "bad:name", null          , "username contains a ':' character, which is not allowed." ) ] // RFC 2617 compliance
+        [InlineData( "goodname", null          , "password is null or empty." ) ] // RFC 2617 compliance
+        [InlineData( "goodname", ""            , "password is null or empty." ) ] // RFC 2617 compliance
+        public void Ctor_takesInvalidUserNameandPasswordParamsThatThrowArgException(string username, string password, string expectedMessage)
         {
-            Assert.Throws <ArgumentException> (() => new PactUriOptions(username, password));
+            Exception e = Assert.Throws <ArgumentException> (() => new PactUriOptions(username, password));
+            Assert.Equal(expectedMessage , e.Message);
+        }
+
+        [Theory]
+        [InlineData("some@user","password")]
+        [InlineData("someuser","password")]
+        [InlineData("someuser","pass word")]
+        public void Ctor_AllowUserNamesAndPasswords(string username, string password )
+        {
+            var options = new PactUriOptions(username, password);
+            Assert.Equal(options.Username, username);
         }
 
         [Fact]
-        public void Ctor_WithEmptyUsername_ThrowsArgumentException()
-        {
-            const string username = "";
-            const string password = "somepassword";
-            
-            Assert.Throws<ArgumentException>(() => new PactUriOptions().SetBasicAuthentication(username, password));
-        }
-
-        [Fact]
-        public void Ctor_With_ValidUserNamePassword()
+        public void Ctor_With_ValidUserNamePassword_ValidateAuthorisationSchemaAndvalue()
         {
             const string username = "Aladdin";
             const string password = "open sesame";
@@ -48,105 +53,45 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void Ctor_SetUserNameWhenTokenIsSet_ThrowsInvalidOperationException()
+        public void Ctor_GivenTokenIsSet_WhenUserNameIsSet_ThenThrowsInvalidOperationException()
         {
             const string username = "Aladdin";
             const string password = "open sesame";
             const string token = "sometokenvalue";
+            string expectedMessage = "You can't set both bearer and basic authentication at the same time";
 
             var options = new PactUriOptions(token);
 
-            Assert.Throws<InvalidOperationException>( () => options.SetBasicAuthentication(username, password) );
-
+            Exception e = Assert.Throws<InvalidOperationException>( () => options.SetBasicAuthentication(username, password) );
+            Assert.Equal(expectedMessage, e.Message);
         }
 
         [Fact]
-        public void Ctor_SetBearerTokenWhenUserNamePasswordEmptyAreSet_ThrowsArgumentException()
+        public void Ctor_GivenUserNamePasswordIsSet_WhenBearerTokenIsSet_ThenThrowsInvalidOperationException()
         {
             const string username = "Aladdin";
-            const string password = "";
-
-            Assert.Throws< ArgumentException>( () => new PactUriOptions(username, password) );
-        }
-
-        [Fact]
-        public void Ctor_SetBearerTokenWhenUserNamePasswordNullAreSet_ThrowsArgumentException()
-        {
-            const string username = "Aladdin";
-            const string password = null;
-
-            Assert.Throws<ArgumentException>( () => new PactUriOptions(username, password));
-        }
-
-        [Fact]
-        public void Ctor_SetBearerTokenWhenUserNameEmptyPasswordAreSet_ThrowsArgumentException()
-        {
-            const string username = "";
             const string password = "password";
+            const string token = "token";
+            const string expectedMessage = "You can't set both bearer and basic authentication at the same time";
 
-            Assert.Throws<ArgumentException>( () => new PactUriOptions(username, password));
+            var options = new PactUriOptions(username, password);
+
+            Exception e = Assert.Throws< InvalidOperationException>( () => options.SetBearerAuthentication(token) );
+            Assert.Equal(expectedMessage, e.Message);
         }
 
         [Fact]
-        public void Ctor_SetBearerTokenWhenUserNameNullPasswordAreSet_ThrowsArgumentException()
-        {
-            const string username = null;
-            const string password = "password";
-
-            Assert.Throws<ArgumentException>(() => new PactUriOptions(username, password));
-        }
-
-
-        [Fact]
-        public void Ctor_SetBearerTokenWhenUserNamePasswordAreSet_ThrowsInvalidOperationException()
+        public void Ctor_GivenUserNamePasswordAreSet_WhenBearerTokenIsSet_ThenThrowsInvalidOperationException()
         {
             const string username = "Aladdin";
             const string password = "open sesame";
             const string token = "sometokenvalue";
+            const string expectedMessage = "You can't set both bearer and basic authentication at the same time";
 
             var options = new PactUriOptions(username, password);
 
-            Assert.Throws<InvalidOperationException>(() => options.SetBearerAuthentication(token));
-        }
-
-        [Fact]
-        public void Ctor_WithInvalidUsername_ThrowsArgumentException()
-        {
-            const string username = "some:user";
-            const string password = "somepassword";
-
-            Assert.Throws<ArgumentException>(() => new PactUriOptions().SetBasicAuthentication(username, password));
-        }
-
-        [Fact]
-        public void Ctor_WithEmptyPassword_ThrowsArgumentException()
-        {
-            const string username = "someuser";
-            const string password = "";
-
-            Assert.Throws<ArgumentException>(() => new PactUriOptions().SetBasicAuthentication(username, password));
-        }
-
-        [Fact]
-        public void Ctor_UserNameWithAtSymbol()
-        {
-            const string username = "some@user";
-            const string password = "password";
-
-            var options = new PactUriOptions(username, password);
-
-            Assert.Equal(options.Username, username);
-        }
-
-        [Fact]
-        public void Ctor_PasswordWithAtSymbol()
-        {
-            const string username = "someuser";
-            const string password = "pass@word";
-
-            var options = new PactUriOptions(username, password);
-
-            Assert.Equal(options.Password, password);
+            Exception e = Assert.Throws<InvalidOperationException>(() => options.SetBearerAuthentication(token));
+            Assert.Equal(expectedMessage, e.Message);
         }
 
         [Fact]

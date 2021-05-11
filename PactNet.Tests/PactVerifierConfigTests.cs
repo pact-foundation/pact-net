@@ -5,103 +5,86 @@ namespace PactNet.Tests
 {
     public class PactVerifierConfigTests
     {
+        readonly PactVerifierConfig _verifierConfig = null;
+        public PactVerifierConfigTests()
+        {
+             _verifierConfig = new PactVerifierConfig();
+        }
+
         [Fact]
+        [System.Obsolete]
         public void PactVertifier_Init_State_CustomHeaderIsNull()
         {
-            var config = new PactVerifierConfig();
 
-#pragma warning disable CS0618 // Type or member is obsolete
-            Assert.Null(config.CustomHeader);
-#pragma warning restore CS0618 // Type or member is obsolete
+            Assert.Null(_verifierConfig.CustomHeader);
 
         }
 
         [Fact]
         public void PactVertifier_Init_State_OutputersIsNotNull()
         {
-            var config = new PactVerifierConfig();
-
-            Assert.NotNull( config.Outputters );
-
+            Assert.NotNull( _verifierConfig.Outputters );
         }
 
         [Fact]
         public void PactVertifier_Init_State_CustomHeadersCountIsZero()
         {
-            var config = new PactVerifierConfig();
-
-            Assert.Equal(0, config.CustomHeaders.Count);
-
+            Assert.Equal(0, _verifierConfig.CustomHeaders.Count);
         }
 
         [Fact]
+        [System.Obsolete]
         public void CustomHeader_backwardCompatibility_ConfirmKeyPairinCustomHeaders()
         {
-            var config = new PactVerifierConfig();
-
             string dummy_key = "dummyKey";
             string dummy_value = "dummyValue";
 
-#pragma warning disable CS0618 // Type or member is obsolete
-            // set the CustomHeader value
-            config.CustomHeader = new KeyValuePair<string, string>(dummy_key, dummy_value);
+            _verifierConfig.CustomHeader = new KeyValuePair<string, string>(dummy_key, dummy_value);
 
-            // Confirm CustomHeaders contains the supplied Key
-            Assert.True(config.CustomHeaders.ContainsKey(config.CustomHeader.Value.Key));
-#pragma warning restore CS0618 // Type or member is obsolete
+            Assert.True(_verifierConfig.CustomHeaders.ContainsKey(_verifierConfig.CustomHeader.Value.Key));
 
         }
 
         [Fact]
+        [System.Obsolete]
         public void CustomHeader_backwardCompatibility_SetCustomHeaderToNull_ConfirmCustomHeadersCountIsZero()
         {
-
-            var config = new PactVerifierConfig();
-
-#pragma warning disable CS0618 // Type or member is obsolete
-            // set the CustomHeader value
-            config.CustomHeader = null;
-#pragma warning restore CS0618 // Type or member is obsolete
-
-            // Confirm CustomHeaders contains the supplied Key
-            Assert.Equal(0 ,config.CustomHeaders.Count);
-        }
-
-        [Fact]
-        public void CustomHeader_backwardCompatibility_AddCustomHeaderAndConfirmCustomHeadersSizeIsOne()
-        {
-            var config = new PactVerifierConfig();
-
             string dummy_key = "dummyKey";
             string dummy_value = "dummyValue";
 
-#pragma warning disable CS0618 // Type or member is obsolete
-            // set the CustomHeader value
-            config.CustomHeader = new KeyValuePair<string, string>(dummy_key, dummy_value);
-#pragma warning restore CS0618 // Type or member is obsolete
+            _verifierConfig.CustomHeader = new KeyValuePair<string, string>(dummy_key, dummy_value);
 
-            // check the action has added one CustomHeader
-            Assert.Equal(1, config.CustomHeaders.Count);
+            _verifierConfig.CustomHeader = null;
+
+            Assert.Equal(0 , _verifierConfig.CustomHeaders.Count);
+        }
+
+        [Fact]
+        [System.Obsolete]
+        public void CustomHeader_backwardCompatibility_AddCustomHeaderAndConfirmCustomHeadersSizeIsOne()
+        {
+            string dummy_key = "dummyKey";
+            string dummy_value = "dummyValue";
+
+            _verifierConfig.CustomHeader = new KeyValuePair<string, string>(dummy_key, dummy_value);
+
+            Assert.Equal(1, _verifierConfig.CustomHeaders.Count);
 
         }
 
         [Fact]
+        [System.Obsolete]
         public void CustomHeader_backwardCompatibility_ChangeCustomHeader_ConfirmCustomHeadersSizeIsOne()
         {
-            var config = new PactVerifierConfig();
-
             string dummy_key = "dummyKey";
             string dummy_value = "dummyValue";
             string prefix = "new";
 
-#pragma warning disable CS0618 // Type or member is obsolete
-            // set the CustomHeader value
-            config.CustomHeader = new KeyValuePair<string, string>(dummy_key, dummy_value);
-            config.CustomHeader = new KeyValuePair<string, string>(prefix + dummy_key, prefix + dummy_value);
-#pragma warning restore CS0618 // Type or member is obsolete
+            _verifierConfig.CustomHeader = new KeyValuePair<string, string>(dummy_key, dummy_value);
+            _verifierConfig.CustomHeader = new KeyValuePair<string, string>(prefix + dummy_key, prefix + dummy_value);
 
             // check the action has added one CustomHeader
-            Assert.Equal(1, config.CustomHeaders.Count);
+            Assert.Equal(1, _verifierConfig.CustomHeaders.Count);
 
         }
     }
