@@ -15,9 +15,7 @@ namespace PactNet.Tests
         [System.Obsolete]
         public void PactVertifier_Init_State_CustomHeaderIsNull()
         {
-
             Assert.Null(_verifierConfig.CustomHeader);
-
         }
 
         [Fact]
@@ -42,7 +40,6 @@ namespace PactNet.Tests
             _verifierConfig.CustomHeader = new KeyValuePair<string, string>(dummy_key, dummy_value);
 
             Assert.True(_verifierConfig.CustomHeaders.ContainsKey(_verifierConfig.CustomHeader.Value.Key));
-
         }
 
         [Fact]
@@ -69,7 +66,6 @@ namespace PactNet.Tests
             _verifierConfig.CustomHeader = new KeyValuePair<string, string>(dummy_key, dummy_value);
 
             Assert.Equal(1, _verifierConfig.CustomHeaders.Count);
-
         }
 
         [Fact]
@@ -85,7 +81,6 @@ namespace PactNet.Tests
 
             // check the action has added one CustomHeader
             Assert.Equal(1, _verifierConfig.CustomHeaders.Count);
-
         }
     }
 }
