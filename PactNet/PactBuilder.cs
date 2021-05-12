@@ -129,7 +129,8 @@ namespace PactNet
 
             if (_mockProviderService.UseRemoteMockService)
             {
-                File.WriteAllText($"{_pactDir}\\{ConsumerName.ToLower()}{ProviderName.ToLower()}.json", responsePact);
+                string fileName = ConsumerName.ToLower() + ProviderName.ToLower() + ".json";
+                File.WriteAllText(Path.Combine(_pactDir, fileName), responsePact);
             }
         }
     }
