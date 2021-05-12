@@ -163,7 +163,6 @@ namespace PactNet.Mocks.MockHttpService
             {
                 ClearAllInteractions();
             }
-
         }
 
         private void ClearAllInteractions()
@@ -198,7 +197,7 @@ namespace PactNet.Mocks.MockHttpService
 
             Async.RunSync(() => _adminHttpClient.SendAdminHttpRequest(HttpVerb.Post, Constants.InteractionsPath, interaction));
 
-            ClearTrasientState();
+            ClearTransientState();
         }
 
         private void StopRunningHost()
@@ -212,11 +211,11 @@ namespace PactNet.Mocks.MockHttpService
 
         private void ClearAllState()
         {
-            ClearTrasientState();
+            ClearTransientState();
             ClearInteractions();
         }
 
-        private void ClearTrasientState()
+        private void ClearTransientState()
         {
             _request = null;
             _response = null;
