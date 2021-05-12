@@ -116,7 +116,7 @@ namespace PactNet
             if (_mockProviderService == null)
             {
                 throw new InvalidOperationException(
-                    "The Pact file could not be saved because the mock provider service is not initialized. Please initialise by calling the MockService() method.");
+                    $"The Pact file could not be saved because the mock provider service is not initialized. Please initialize by calling the {nameof(MockService)}() method.");
             }
 
             PersistPactFile();
