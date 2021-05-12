@@ -148,7 +148,7 @@ namespace PactNet.Tests.Core
         {
             var config = GetSubject();
 
-            Assert.Equal(false, config.WaitForExit);
+            Assert.False(config.WaitForExit);
         }
 
         [Fact]
