@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' " >
-      netstandard1.5
+      netstandard1.5; netstandard2.0
     </TargetFrameworks>
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' " >
-      net45; netstandard1.5
+      net45; netstandard1.5; netstandard2.0
     </TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
