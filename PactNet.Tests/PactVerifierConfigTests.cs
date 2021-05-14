@@ -1,21 +1,28 @@
 ﻿using System.Collections.Generic;
+using System;
 using Xunit;
 
 namespace PactNet.Tests
 {
     public class PactVerifierConfigTests
     {
-        readonly PactVerifierConfig _verifierConfig = null;
+        private readonly PactVerifierConfig _verifierConfig;
+
         public PactVerifierConfigTests()
         {
              _verifierConfig = new PactVerifierConfig();
         }
 
+        private KeyValuePair<string,string> GetDummyHeader()
+        {
+            return new KeyValuePair<string, string>("dummy_key", "dummy_value");
+        }
+
         [Fact]
-        [System.Obsolete]
+        [Obsolete]
         public void PactVertifier_Init_State_CustomHeaderIsNull()
         {
-            Assert.Null(_verifierConfig.CustomHeader);
+            Assert.Null( _verifierConfig.CustomHeader );
         }
 
         [Fact]
@@ -31,56 +38,43 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        [System.Obsolete]
-        public void CustomHeader_backwardCompatibility_ConfirmKeyPairinCustomHeaders()
+        [Obsolete]
+        public void WhenCustomHeaderIsNotNull_ShouldBeAvailableThroughCustomHeadersCollection()
         {
-            string dummy_key = "dummyKey";
-            string dummy_value = "dummyValue";
-
-            _verifierConfig.CustomHeader = new KeyValuePair<string, string>(dummy_key, dummy_value);
+            _verifierConfig.CustomHeader = GetDummyHeader();
 
             Assert.True(_verifierConfig.CustomHeaders.ContainsKey(_verifierConfig.CustomHeader.Value.Key));
         }
 
         [Fact]
-        [System.Obsolete]
-        public void CustomHeader_backwardCompatibility_SetCustomHeaderToNull_ConfirmCustomHeadersCountIsZero()
+        [Obsolete]
+        public void WhenCustomHeaderHasPreviousValue_AndCustomHeaderChangedToNull_ShouldPreviousValueIsNotAvailableInCustomHeaders()
         {
-            string dummy_key = "dummyKey";
-            string dummy_value = "dummyValue";
-
-            _verifierConfig.CustomHeader = new KeyValuePair<string, string>(dummy_key, dummy_value);
+            _verifierConfig.CustomHeader = GetDummyHeader();
 
             _verifierConfig.CustomHeader = null;
 
-            Assert.Equal(0 , _verifierConfig.CustomHeaders.Count);
+            Assert.False( _verifierConfig.CustomHeaders.ContainsKey( GetDummyHeader().Key) );
         }
 
         [Fact]
-        [System.Obsolete]
-        public void CustomHeader_backwardCompatibility_AddCustomHeaderAndConfirmCustomHeadersSizeIsOne()
+        [Obsolete]
+        public void WhenCustomHeaderIsNotNull_CustomHeadersShouldContainKey()
         {
-            string dummy_key = "dummyKey";
-            string dummy_value = "dummyValue";
+            _verifierConfig.CustomHeader = GetDummyHeader();
 
-            _verifierConfig.CustomHeader = new KeyValuePair<string, string>(dummy_key, dummy_value);
-
-            Assert.Equal(1, _verifierConfig.CustomHeaders.Count);
+            Assert.False(_verifierConfig.CustomHeaders.ContainsKey(GetDummyHeader().Key));
         }
 
         [Fact]
-        [System.Obsolete]
-        public void CustomHeader_backwardCompatibility_ChangeCustomHeader_ConfirmCustomHeadersSizeIsOne()
+        [Obsolete]
+        public void WhenCustomHeaderHasPreviousValue_AndChangingCustomHeader_ShouldPreviousValueNotBeAvailableThroughCustomHeadersCollectionAnymore()
         {
-            string dummy_key = "dummyKey";
-            string dummy_value = "dummyValue";
-            string prefix = "new";
+            _verifierConfig.CustomHeader = GetDummyHeader();
 
-            _verifierConfig.CustomHeader = new KeyValuePair<string, string>(dummy_key, dummy_value);
-            _verifierConfig.CustomHeader = new KeyValuePair<string, string>(prefix + dummy_key, prefix + dummy_value);
+            _verifierConfig.CustomHeader = new KeyValuePair<string, string>("new_dummy_key", "new_dummy_value");
 
-            // check the action has added one CustomHeader
-            Assert.Equal(1, _verifierConfig.CustomHeaders.Count);
+            Assert.False( _verifierConfig.CustomHeaders.ContainsKey(GetDummyHeader().Key) );
         }
     }
 }
