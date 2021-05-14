@@ -18,5 +18,12 @@ namespace PactNet.Core
                 .Unwrap()
                 .GetAwaiter()
                 .GetResult();
+
+        public static TResult RunSync<TResult>(Func<Task<TResult>> task)
+           => _taskFactory
+                .StartNew(task)
+                .Unwrap()
+                .GetAwaiter()
+                .GetResult();
     }
 }

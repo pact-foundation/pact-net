@@ -38,7 +38,7 @@ namespace PactNet.Tests.Mocks.MockHttpService.Host
             host.Start();
 
             _mockCoreHost.Received(1).Start();
-            Assert.Equal(1, _fakeHttpMessageHandler.RequestsReceived.Count());
+            Assert.Single(_fakeHttpMessageHandler.RequestsReceived);
             var receivedRequest = _fakeHttpMessageHandler.RequestsReceived.ElementAt(0);
             Assert.Equal(HttpMethod.Get, receivedRequest.Method);
             Assert.Equal("/", receivedRequest.RequestUri.PathAndQuery);

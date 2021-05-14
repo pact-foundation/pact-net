@@ -116,7 +116,7 @@ namespace PactNet
             if (_mockProviderService == null)
             {
                 throw new InvalidOperationException(
-                    "The Pact file could not be saved because the mock provider service is not initialized. Please initialise by calling the MockService() method.");
+                    $"The Pact file could not be saved because the mock provider service is not initialized. Please initialize by calling the {nameof(MockService)}() method.");
             }
 
             PersistPactFile();
@@ -129,7 +129,8 @@ namespace PactNet
 
             if (_mockProviderService.UseRemoteMockService)
             {
-                File.WriteAllText($"{_pactDir}\\{ConsumerName.ToLower()}{ProviderName.ToLower()}.json", responsePact);
+                string fileName = ConsumerName.ToLower() + ProviderName.ToLower() + ".json";
+                File.WriteAllText(Path.Combine(_pactDir, fileName), responsePact);
             }
         }
     }

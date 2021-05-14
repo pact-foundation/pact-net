@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using PactNet.Core;
 using Xunit;
 
@@ -221,7 +220,7 @@ namespace PactNet.Tests.Core
         public void Ctor_WhenCalled_SetsWaitForExitToTrue()
         {
             var config = GetSubject();
-            Assert.Equal(true, config.WaitForExit);
+            Assert.True(config.WaitForExit);
         }
 
         [Fact]
@@ -256,7 +255,9 @@ namespace PactNet.Tests.Core
                 providerStateSetupUri: new Uri("http://127.0.0.1/states/"), 
                 verifierConfig: new PactVerifierConfig
                 {
+#pragma warning disable CS0618 // Type or member is obsolete
                     CustomHeader = new KeyValuePair<string, string>("Authorization", "Basic VGVzdA=="),
+#pragma warning restore CS0618 // Type or member is obsolete
                     ProviderVersion = "1.0.0"
                 });
 
@@ -345,7 +346,7 @@ namespace PactNet.Tests.Core
         {
             var config = GetSubject();
 
-            Assert.Equal(null, config.Outputters);
+            Assert.Null(config.Outputters);
         }
 
         private void AssertEnvironmentIsCorrectlySet(IDictionary<string, string> expectedEnv, IDictionary<string, string> actualEnv)

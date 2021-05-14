@@ -2,10 +2,10 @@
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using PactNet.Models;
 using PactNet.Tests.Fakes;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace PactNet.Tests
@@ -70,7 +70,7 @@ namespace PactNet.Tests
             await pactPublisher.PublishToBrokerAsync(PactFilePath, ConsumerVersion);
 
             var requestsReceived = _fakeHttpMessageHandler.RequestsReceived;
-            Assert.Equal(1, requestsReceived.Count());
+            Assert.Single(requestsReceived);
             this.AssertPactPublishRequest(requestsReceived.ElementAt(0), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(0), BrokerBaseUriHttp, pactDetails, pactFileText, ConsumerVersion);
         }
 
@@ -84,7 +84,7 @@ namespace PactNet.Tests
             await pactPublisher.PublishToBrokerAsync(PactFilePath, ConsumerVersion);
 
             var requestsReceived = _fakeHttpMessageHandler.RequestsReceived;
-            Assert.Equal(1, requestsReceived.Count());
+            Assert.Single(requestsReceived);
             this.AssertPactPublishRequest(requestsReceived.ElementAt(0), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(0), BrokerBaseUriHttps, pactDetails, pactFileText, ConsumerVersion, AuthOptions);
         }
 
@@ -98,7 +98,7 @@ namespace PactNet.Tests
             await pactPublisher.PublishToBrokerAsync(PactFilePath, ConsumerVersion);
 
             var requestsReceived = _fakeHttpMessageHandler.RequestsReceived;
-            Assert.Equal(1, requestsReceived.Count());
+            Assert.Single(requestsReceived);
             this.AssertPactPublishRequest(requestsReceived.ElementAt(0), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(0), BrokerBaseUriHttps, pactDetails, pactFileText, ConsumerVersion);
         }
 
@@ -129,7 +129,7 @@ namespace PactNet.Tests
             pactPublisher.PublishToBroker(PactFilePath, ConsumerVersion);
 
             var requestsReceived = _fakeHttpMessageHandler.RequestsReceived;
-            Assert.Equal(1, requestsReceived.Count());
+            Assert.Single(requestsReceived);
             this.AssertPactPublishRequest(requestsReceived.ElementAt(0), _fakeHttpMessageHandler.RequestContentReceived.ElementAt(0), BrokerBaseUriHttp, pactDetails, pactFileText, ConsumerVersion);
         }
 

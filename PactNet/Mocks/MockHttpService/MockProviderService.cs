@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using PactNet.Core;
 using PactNet.Mocks.MockHttpService.Host;
 using PactNet.Mocks.MockHttpService.Models;
 using PactNet.Models;
 using static System.String;
-using PactNet.Core;
 
 namespace PactNet.Mocks.MockHttpService
 {
@@ -129,7 +129,7 @@ namespace PactNet.Mocks.MockHttpService
 
         public string SendAdminHttpRequest(HttpVerb method, string path, Dictionary<string, string> headers = null)
         {
-            return _adminHttpClient.SendAdminHttpRequest(method, path, headers:headers).Result;
+            return Async.RunSync(() => _adminHttpClient.SendAdminHttpRequest(method, path, headers: headers));
         }
 
         public void Start()
@@ -163,7 +163,6 @@ namespace PactNet.Mocks.MockHttpService
             {
                 ClearAllInteractions();
             }
-
         }
 
         private void ClearAllInteractions()
@@ -198,7 +197,7 @@ namespace PactNet.Mocks.MockHttpService
 
             Async.RunSync(() => _adminHttpClient.SendAdminHttpRequest(HttpVerb.Post, Constants.InteractionsPath, interaction));
 
-            ClearTrasientState();
+            ClearTransientState();
         }
 
         private void StopRunningHost()
@@ -212,11 +211,11 @@ namespace PactNet.Mocks.MockHttpService
 
         private void ClearAllState()
         {
-            ClearTrasientState();
+            ClearTransientState();
             ClearInteractions();
         }
 
-        private void ClearTrasientState()
+        private void ClearTransientState()
         {
             _request = null;
             _response = null;
