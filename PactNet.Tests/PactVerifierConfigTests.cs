@@ -63,7 +63,7 @@ namespace PactNet.Tests
         {
             _verifierConfig.CustomHeader = GetDummyHeader();
 
-            Assert.False(_verifierConfig.CustomHeaders.ContainsKey(GetDummyHeader().Key));
+            Assert.True(_verifierConfig.CustomHeaders.ContainsKey(GetDummyHeader().Key));
         }
 
         [Fact]

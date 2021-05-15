@@ -11,7 +11,7 @@ namespace PactNet.Tests
         const string UsernameContainsColunMessage = "username contains a ':' character, which is not allowed.";
 
         [Theory]
-        [InlineData( "bad:name", UsernameContainsColunMessage  ) ] 
+        [InlineData( "bad:name", UsernameContainsColunMessage  ) ] // RFC 2617 compliance
         [InlineData( ""        , UsernameIsEmptyOrNullMessage  ) ] 
         [InlineData( null      , UsernameIsEmptyOrNullMessage  ) ]
         public void Ctor_WhenUserNameIsNotAccpetable(string username, string expectedMessage)
@@ -23,9 +23,9 @@ namespace PactNet.Tests
         [Theory]
         [InlineData( null          , PasswordIsNullOrEmptyMessage ) ] // RFC 2617 compliance
         [InlineData( ""            , PasswordIsNullOrEmptyMessage ) ] // RFC 2617 compliance
-        public void Ctor_WhenPasswordIsNotAccpetable(string username, string expectedMessage)
+        public void Ctor_WhenPasswordIsNotAccpetable(string password, string expectedMessage)
         {
-            Exception e = Assert.Throws <ArgumentException> (() => new PactUriOptions(username, "dummyval"));
+            Exception e = Assert.Throws <ArgumentException> (() => new PactUriOptions("dummyval", password));
             Assert.Equal(expectedMessage , e.Message);
         }
 
