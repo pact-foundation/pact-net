@@ -21,8 +21,8 @@ namespace PactNet.Tests
         }
 
         [Theory]
-        [InlineData( null          , PasswordIsNullOrEmptyMessage ) ] // RFC 2617 compliance
-        [InlineData( ""            , PasswordIsNullOrEmptyMessage ) ] // RFC 2617 compliance
+        [InlineData( null, PasswordIsNullOrEmptyMessage ) ] // RFC 2617 compliance
+        [InlineData( ""  , PasswordIsNullOrEmptyMessage ) ] // RFC 2617 compliance
         public void Ctor_WhenPasswordIsNotAccpetable(string password, string expectedMessage)
         {
             Exception e = Assert.Throws <ArgumentException> (() => new PactUriOptions("dummyval", password));

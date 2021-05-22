@@ -59,15 +59,6 @@ namespace PactNet.Tests
 
         [Fact]
         [Obsolete]
-        public void WhenCustomHeaderIsNotNull_CustomHeadersShouldContainKey()
-        {
-            _verifierConfig.CustomHeader = GetDummyHeader();
-
-            Assert.True(_verifierConfig.CustomHeaders.ContainsKey(GetDummyHeader().Key));
-        }
-
-        [Fact]
-        [Obsolete]
         public void WhenCustomHeaderHasPreviousValue_AndChangingCustomHeader_ShouldPreviousValueNotBeAvailableThroughCustomHeadersCollectionAnymore()
         {
             _verifierConfig.CustomHeader = GetDummyHeader();
