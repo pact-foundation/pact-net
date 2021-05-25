@@ -1,66 +1,68 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using PactNet.Matchers;
-using PactNet.Mocks.MockHttpService;
-using PactNet.Mocks.MockHttpService.Models;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
+using Consumer.Models;
+using FluentAssertions;
+using FluentAssertions.Extensions;
+using PactNet;
+using PactNet.Infrastructure.Outputters;
+using PactNet.Matchers;
+using Provider.Api.Web.Tests;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Consumer.Tests
 {
     public class EventsApiConsumerTests : IClassFixture<ConsumerEventApiPact>
     {
-        private readonly IMockProviderService _mockProviderService;
-        private readonly string _mockProviderServiceBaseUri;
+        private const string Token = "abcdef1234567890";
 
-        public EventsApiConsumerTests(ConsumerEventApiPact data)
+        private readonly ITestOutputHelper output;
+        private readonly IInteractionBuilder interactions;
+        private readonly EventsApiClient unauthorisedClient;
+        private readonly EventsApiClient authorisedClient;
+
+        public EventsApiConsumerTests(ConsumerEventApiPact data, ITestOutputHelper output)
         {
-            _mockProviderService = data.MockProviderService;
-            _mockProviderServiceBaseUri = data.MockProviderServiceBaseUri;
-            _mockProviderService.ClearInteractions();
+            data.Config.Outputters = new List<IOutput>
+            {
+                new ConsoleOutput(),
+                new XUnitOutput(output)
+            };
+
+            this.output = output;
+            this.interactions = data.Interactions;
+
+            this.unauthorisedClient = new EventsApiClient(data.Interactions.MockProviderUri.AbsoluteUri);
+            this.authorisedClient = new EventsApiClient(data.Interactions.MockProviderUri.AbsoluteUri, Token);
         }
 
         [Fact]
         public async Task GetAllEvents_WithNoAuthorizationToken_ShouldFail()
         {
-            //Arrange
-            _mockProviderService.Given("there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
+            this.interactions
                 .UponReceiving("a request to retrieve all events with no authorization")
-                .With(new ProviderServiceRequest
-                {
-                    Method = HttpVerb.Get,
-                    Path = "/events",
-                    Headers = new Dictionary<string, object>
-                    {
-                        { "Accept", "application/json" },
-                    }
-                })
-                .WillRespondWith(new ProviderServiceResponse
-                {
-                    Status = 401,
-                    Headers = new Dictionary<string, object>
-                    {
-                        { "Content-Type", "application/json; charset=utf-8" }
-                    },
-                    Body = new 
+                    .Given("there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
+                    .WithRequest(HttpMethod.Get, "/events")
+                    .WithHeader("Accept", "application/json")
+                .WillRespond()
+                    .WithStatus(HttpStatusCode.Unauthorized)
+                    .WithHeader("Content-Type", "application/json; charset=utf-8")
+                    .WithJsonBody(new
                     {
                         message = "Authorization has been denied for this request."
-                    }
-                });
+                    });
 
-            var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
-            
-            //Act //Assert
-            await Assert.ThrowsAnyAsync<Exception>(() => consumer.GetAllEvents());
-            
-            _mockProviderService.VerifyInteractions();
+            await this.unauthorisedClient.Invoking(c => c.GetAllEvents()).Should().ThrowAsync<Exception>();
+            this.interactions.Verify();
         }
 
         [Fact]
         public async Task GetAllEvents_WhenCalled_ReturnsAllEvents()
         {
-            var test = new[]
+            var expected = new[]
             {
                 new
                 {
@@ -82,44 +84,23 @@ namespace Consumer.Tests
                 }
             };
 
-            var res = new ProviderServiceResponse
-            {
-                Status = 200,
-                Headers = new Dictionary<string, object>
-                {
-                    {"Content-Type", "application/json; charset=utf-8"}
-                },
-                Body = test
-            };
-
-            //Arrange
-            var testAuthToken = "SomeValidAuthToken";
-
-            _mockProviderService.Given("there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
+            this.interactions
                 .UponReceiving("a request to retrieve all events")
-                .With(new ProviderServiceRequest
-                {
-                    Method = HttpVerb.Get,
-                    Path = "/events",
-                    Headers = new Dictionary<string, object>
-                    {
-                        { "Accept", "application/json" },
-                        { "Authorization", $"Bearer {testAuthToken}" }
-                    }
-                })
-                .WillRespondWith(res);
-
-            var consumer = new EventsApiClient(_mockProviderServiceBaseUri, testAuthToken);
+                    .Given("there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
+                    .WithRequest(HttpMethod.Get, "/events")
+                    .WithHeader("Accept", "application/json")
+                    .WithHeader("Authorization", $"Bearer {Token}")
+                .WillRespond()
+                    .WithStatus(HttpStatusCode.OK)
+                    .WithHeader("Content-Type", "application/json; charset=utf-8")
+                    .WithJsonBody(expected);
 
             //Act
-            var events = await consumer.GetAllEvents();
+            IEnumerable<Event> events = await this.authorisedClient.GetAllEvents();
 
             //Assert
-            Assert.NotEmpty(events);
-            Assert.Equal(3, events.Count());
-
-
-            _mockProviderService.VerifyInteractions();
+            events.Should().BeEquivalentTo(expected);
+            this.interactions.Verify();
         }
 
         [Fact]
@@ -127,54 +108,40 @@ namespace Consumer.Tests
         {
             //Arrange
             var eventId = Guid.Parse("1F587704-2DCC-4313-A233-7B62B4B469DB");
-            var dateTime = new DateTime(2011, 07, 01, 01, 41, 03);
+            var dateTime = 1.July(2011).At(1, 41, 3);
             DateTimeFactory.Now = () => dateTime;
 
-            _mockProviderService.UponReceiving("a request to create a new event")
-                .With(new ProviderServiceRequest
-                {
-                    Method = HttpVerb.Post,
-                    Path = "/events",
-                    Headers = new Dictionary<string, object>
-                    {
-                        { "Content-Type", "application/json; charset=utf-8" }
-                    },
-                    Body = new
+            this.interactions
+                .UponReceiving("a request to create a new event")
+                    .WithRequest(HttpMethod.Post, "/events")
+                    .WithHeader("Content-Type", "application/json; charset=utf-8")
+                    .WithHeader("Authorization", $"Bearer {Token}")
+                    .WithJsonBody(new
                     {
                         eventId,
                         timestamp = dateTime.ToString("O"),
                         eventType = "DetailsView"
-                    }
-                })
-                .WillRespondWith(new ProviderServiceResponse
-                {
-                    Status = 201
-                });
-
-            var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
+                    })
+                .WillRespond()
+                    .WithStatus(HttpStatusCode.Created);
 
             //Act / Assert
-            await consumer.CreateEvent(eventId);
-
-            _mockProviderService.VerifyInteractions();
+            await this.authorisedClient.CreateEvent(eventId);
+            this.interactions.Verify();
         }
 
         [Fact]
         public async Task IsAlive_WhenApiIsAlive_ReturnsTrue()
         {
             //Arrange
-            _mockProviderService.UponReceiving("a request to check the api status")
-                .With(new ProviderServiceRequest
-                {
-                    Method = HttpVerb.Get,
-                    Headers = new Dictionary<string, object> { { "Accept", "application/json" } },
-                    Path = "/stats/status"
-                })
-                .WillRespondWith(new ProviderServiceResponse
-                {
-                    Status = 200,
-                    Headers = new Dictionary<string, object> { { "Content-Type", "application/json; charset=utf-8" } },
-                    Body = new
+            this.interactions
+                .UponReceiving("a request to check the api status")
+                    .WithRequest(HttpMethod.Get, "/stats/status")
+                    .WithHeader("Accept", "application/json")
+                .WillRespond()
+                    .WithStatus(200)
+                    .WithHeader("Content-Type", "application/json; charset=utf-8")
+                    .WithJsonBody(new
                     {
                         alive = true,
                         _links = new
@@ -184,38 +151,30 @@ namespace Consumer.Tests
                                 href = "/stats/uptime"
                             }
                         }
-                    }
-                });
-
-            var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
+                    });
 
             //Act
-            var result = await consumer.IsAlive();
+            var result = await this.unauthorisedClient.IsAlive();
 
             //Assert
-            Assert.Equal(true, result);
-
-            _mockProviderService.VerifyInteractions();
+            result.Should().BeTrue();
+            this.interactions.Verify();
         }
 
         [Fact]
         public async Task UpSince_WhenApiIsAliveAndWeRetrieveUptime_ReturnsUpSinceDate()
         {
             //Arrange
-            var upSinceDate = new DateTime(2014, 6, 27, 23, 51, 12, DateTimeKind.Utc);
+            var upSinceDate = 27.June(2014).At(23, 51, 12).AsUtc();
 
-            _mockProviderService.UponReceiving("a request to check the api status")
-                .With(new ProviderServiceRequest
-                {
-                    Method = HttpVerb.Get,
-                    Headers = new Dictionary<string, object> { { "Accept", "application/json" } },
-                    Path = "/stats/status"
-                })
-                .WillRespondWith(new ProviderServiceResponse
-                {
-                    Status = 200,
-                    Headers = new Dictionary<string, object> { { "Content-Type", "application/json; charset=utf-8" } },
-                    Body = new
+            this.interactions
+                .UponReceiving("a request to check the api status")
+                    .WithRequest(HttpMethod.Get, "/stats/status")
+                    .WithHeader("Accept", "application/json")
+                .WillRespond()
+                    .WithStatus(200)
+                    .WithHeader("Content-Type", "application/json; charset=utf-8")
+                    .WithJsonBody(new
                     {
                         alive = true,
                         _links = new
@@ -225,84 +184,62 @@ namespace Consumer.Tests
                                 href = "/stats/uptime"
                             }
                         }
-                    }
-                });
+                    });
 
-            _mockProviderService
+            this.interactions
                 .UponReceiving("a request to check the api uptime")
-                .With(new ProviderServiceRequest
-                {
-                    Method = HttpVerb.Get,
-                    Headers = new Dictionary<string, object> { { "Accept", "application/json" } },
-                    Path = "/stats/uptime"
-                })
-                .WillRespondWith(new ProviderServiceResponse
-                {
-                    Status = 200,
-                    Headers = new Dictionary<string, object> { { "Content-Type", "application/json; charset=utf-8" } },
-                    Body = new
+                    .WithRequest(HttpMethod.Get, "/stats/uptime")
+                    .WithHeader("Accept", "application/json")
+                .WillRespond()
+                .WithStatus(200)
+                    .WithHeader("Content-Type", "application/json; charset=utf-8")
+                    .WithJsonBody(new
                     {
                         upSince = upSinceDate
-                    }
-                });
-
-            var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
+                    });
 
             //Act
-            var result = await consumer.UpSince();
+            var result = await this.unauthorisedClient.UpSince();
 
             //Assert
-            Assert.Equal(upSinceDate.ToString("O"), result.Value.ToString("O"));
-
-            _mockProviderService.VerifyInteractions();
+            result.Should().Be(upSinceDate);
+            this.interactions.Verify();
         }
 
         [Fact]
         public async Task GetEventById_WhenTheEventExists_ReturnsEvent()
         {
             //Arrange
-            var guidRegex = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
-            var eventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9");
-            var eventType = "DetailsView";
-            var eventTimestamp = DateTime.UtcNow;
-            _mockProviderService.Given(string.Format("there is an event with id '{0}'", eventId))
-                .UponReceiving(string.Format("a request to retrieve event with id '{0}'", eventId))
-                .With(new ProviderServiceRequest
+            var expected = new Event
+            {
+                EventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9"),
+                EventType = "DetailsView",
+                Timestamp = DateTime.UtcNow
+            };
+
+            this.interactions
+                .UponReceiving($"a request to retrieve event with id '{expected.EventId}'")
+                    .Given($"there is an event with id '{expected.EventId}'")
+                    .WithRequest(HttpMethod.Get, $"/events/{expected.EventId}")
+                    .WithHeader("Accept", "application/json")
+                    .WithHeader("Authorization", $"Bearer {Token}")
+                .WillRespond()
+                    .WithStatus(200)
+                    .WithHeader("Content-Type", "application/json; charset=utf-8")
+                    .WithHeader("Server", "RubyServer")
+                .WithJsonBody(new
                 {
-                    Method = HttpVerb.Get,
-                    Path = Match.Regex($"/events/{eventId}", $"^\\/events\\/{guidRegex}$"),
-                    Headers = new Dictionary<string, object>
-                    {
-                        { "Accept", "application/json" }
-                    }
-                })
-                .WillRespondWith(new ProviderServiceResponse
-                {
-                    Status = 200,
-                    Headers = new Dictionary<string, object>
-                    {
-                        { "Content-Type", "application/json; charset=utf-8" },
-                        { "Server", Match.Type("RubyServer") }
-                    },
-                    Body = new
-                    {
-                        eventId = Match.Regex(eventId.ToString(), $"^{guidRegex}$"),
-                        eventType = Match.Type(eventType),
-                        timestamp = Match.Regex(eventTimestamp.ToString("o"), "^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|0[1-9]|[1-2][0-9])T(2[0-3]|[0-1][0-9]):([0-5][0-9]):([0-5][0-9])(\\.[0-9]+)?(Z|[+-](?:2[0-3]|[0-1][0-9]):[0-5][0-9])?$")
-                    }
+                    eventId = Match.Regex(expected.EventId.ToString(), "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"),
+                    eventType = Match.Type(expected.EventType),
+                    timestamp = Match.Regex(expected.Timestamp.ToString("o"), "^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|0[1-9]|[1-2][0-9])T(2[0-3]|[0-1][0-9]):([0-5][0-9]):([0-5][0-9])(\\.[0-9]+)?(Z|[+-](?:2[0-3]|[0-1][0-9]):[0-5][0-9])?$")
                 });
 
-            var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
-
             //Act
-            var result = await consumer.GetEventById(eventId);
+            var result = await this.authorisedClient.GetEventById(expected.EventId);
 
             //Assert
-            Assert.Equal(eventId, result.EventId);
-            Assert.Equal(eventType, result.EventType);
-            Assert.Equal(eventTimestamp, result.Timestamp);
-
-            _mockProviderService.VerifyInteractions();
+            result.Should().BeEquivalentTo(expected);
+            this.interactions.Verify();
         }
 
         [Fact]
@@ -310,43 +247,31 @@ namespace Consumer.Tests
         {
             //Arrange
             const string eventType = "DetailsView";
-            _mockProviderService.Given(string.Format("there is one event with type '{0}'", eventType))
-                .UponReceiving(string.Format("a request to retrieve events with type '{0}'", eventType))
-                .With(new ProviderServiceRequest
-                {
-                    Method = HttpVerb.Get,
-                    Path = "/events",
-                    Query = Match.Regex($"type={eventType}", "^type=(DetailsView|SearchView)$"),
-                    Headers = new Dictionary<string, object>
-                    {
-                        { "Accept", "application/json" }
-                    }
-                })
-                .WillRespondWith(new ProviderServiceResponse
-                {
-                    Status = 200,
-                    Headers = new Dictionary<string, object>
-                    {
-                        { "Content-Type", "application/json; charset=utf-8" }
-                    },
-                    Body = new []
+
+            this.interactions
+                .UponReceiving($"a request to retrieve events with type '{eventType}'")
+                    .Given($"there is one event with type '{eventType}'")
+                    .WithRequest(HttpMethod.Get, "/events")
+                    .WithQuery("type", eventType)
+                    .WithHeader("Accept", "application/json")
+                    .WithHeader("Authorization", $"Bearer {Token}")
+                .WillRespond()
+                    .WithStatus(200)
+                    .WithHeader("Content-Type", "application/json; charset=utf-8")
+                    .WithJsonBody(new[]
                     {
                         new
                         {
-                            eventType = eventType
+                            eventType
                         }
-                    }
-                });
-
-            var consumer = new EventsApiClient(_mockProviderServiceBaseUri);
+                    });
 
             //Act
-            var result = await consumer.GetEventsByType(eventType);
+            var result = await this.authorisedClient.GetEventsByType(eventType);
 
             //Assert
-            Assert.Equal(eventType, result.First().EventType);
-
-            _mockProviderService.VerifyInteractions();
+            result.Should().OnlyContain(e => e.EventType == eventType);
+            this.interactions.Verify();
         }
     }
 }

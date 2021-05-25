@@ -30,16 +30,24 @@ namespace Provider.Api.Web.Tests
                     new XUnitOutput(_output)
                 }
             };
-            
+
             using (WebApp.Start<TestStartup>(serviceUri))
             {
+                string pactPath = Path.Combine("..",
+                                               "..",
+                                               "..",
+                                               "..",
+                                               "Consumer.Tests",
+                                               "pacts",
+                                               "event_api_consumer-event_api.json");
+
                 //Act / Assert
                 IPactVerifier pactVerifier = new PactVerifier(config);
                 pactVerifier
                     .ProviderState($"{serviceUri}/provider-states")
-                    .ServiceProvider("Event API", serviceUri)
+                    .ServiceProvider("Event API", new Uri(serviceUri))
                     .HonoursPactWith("Event API Consumer")
-                    .PactUri($"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}Consumer.Tests{Path.DirectorySeparatorChar}pacts{Path.DirectorySeparatorChar}event_api_consumer-event_api.json")
+                    .PactFile(new FileInfo(pactPath))
                     .Verify();
             }
         }

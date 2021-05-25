@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 
 namespace PactNet
 {
@@ -8,14 +7,9 @@ namespace PactNet
         public string Username { get; private set; }
         public string Password { get; private set; }
         public string Token { get; private set;  }
-        public string AuthorizationScheme { get; private set; }
-        public string AuthorizationValue { get; private set; }
-        public string SslCaFilePath { get; private set; }
-        public string HttpProxy { get; private set; }
-        public string HttpsProxy { get; private set; }
 
         public PactUriOptions() { }
-        
+
         public PactUriOptions(string username, string password)
         {
             SetBasicAuthenticationInternal(username, password);
@@ -46,39 +40,6 @@ namespace PactNet
             return this;
         }
 
-
-        public PactUriOptions SetSslCaFilePath(string pathToSslCaFile)
-        {
-            if (string.IsNullOrEmpty(pathToSslCaFile))
-            {
-                throw new ArgumentException($"{nameof(pathToSslCaFile)} is null or empty");
-            }
-            SslCaFilePath = pathToSslCaFile;
-            return this;
-        }
-
-        public PactUriOptions SetHttpProxy(string httpProxy)
-        {
-            if (string.IsNullOrEmpty(httpProxy))
-            {
-                throw new ArgumentException($"{nameof(httpProxy)} is null or empty");
-            }
-            HttpProxy = httpProxy;
-            HttpsProxy = httpProxy;
-            return this;
-        }
-
-        public PactUriOptions SetHttpProxy(string httpProxy, string httpsProxy)
-        {
-            SetHttpProxy(httpProxy);
-            if (string.IsNullOrEmpty(httpsProxy))
-            {
-                throw new ArgumentException($"{nameof(httpsProxy)} is null or empty");
-            }
-            HttpsProxy = httpsProxy;
-            return this;
-        }
-
         private void SetBasicAuthenticationInternal(string username, string password)
         {
             if (string.IsNullOrEmpty(username))
@@ -98,8 +59,6 @@ namespace PactNet
 
             Username = username;
             Password = password;
-            AuthorizationScheme = "Basic";
-            AuthorizationValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Username}:{Password}"));
         }
 
         private void SetBearerAuthenticationInternal(string token)
@@ -110,8 +69,6 @@ namespace PactNet
             }
 
             Token = token;
-            AuthorizationScheme = "Bearer";
-            AuthorizationValue = token;
         }
     }
 }

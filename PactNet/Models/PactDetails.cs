@@ -1,6 +1,4 @@
-﻿using System;
-using Newtonsoft.Json;
-using PactNet.Extensions;
+﻿using Newtonsoft.Json;
 
 namespace PactNet.Models
 {

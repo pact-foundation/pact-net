@@ -1,12 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' " >
+    <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">
       netstandard1.5; netstandard2.0
     </TargetFrameworks>
-    <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' " >
-      net45; netstandard1.5; netstandard2.0
+    <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">
+      netstandard1.5; netstandard2.0; net45
     </TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
     <NoWarn>CS1591</NoWarn>
@@ -27,5 +28,8 @@
     <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PactNet.Native\PactNet.Native.csproj" />
   </ItemGroup>
 </Project>

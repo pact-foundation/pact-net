@@ -1,176 +1,205 @@
 ﻿using System;
-using PactNet.Core;
-using static System.String;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using PactNet.Backend.Native;
 
 namespace PactNet
 {
+    /// <summary>
+    /// Pact verifier
+    /// </summary>
     public class PactVerifier : IPactVerifier
     {
-        private readonly PactVerifierConfig _config;
-        private readonly Func<PactVerifierHostConfig, IPactCoreHost> _pactVerifierHostFactory;
+        private readonly PactVerifierConfig config;
 
-        public Uri ProviderStateSetupUri { get; private set; }
-        public Uri ServiceBaseUri { get; private set; }
-        public string ConsumerName { get; private set; }
-        public string ProviderName { get; private set; }
-        public string PactFileUri { get; private set; }
-        //Broker specific configuration
-        public string BrokerBaseUri { get; private set; }
-        public IEnumerable<string> ConsumerVersionTags { get; private set; }
-        public IEnumerable<string> ProviderVersionTags { get; private set; }
-        public IEnumerable<VersionTagSelector> ConsumerVersionSelectors { get; private set; }
-        public bool EnablePending { get; private set; }
-        public string IncludeWipPactsSince { get; private set; }
-        public PactUriOptions PactUriOptions { get; private set; }
+        private IList<string> verifierArgs = new List<string>();
 
-        internal PactVerifier(Func<PactVerifierHostConfig, IPactCoreHost> pactVerifierHostFactory, PactVerifierConfig config)
-        {
-            _pactVerifierHostFactory = pactVerifierHostFactory;
-            _config = config;
-
-            if (config.PublishVerificationResults && IsNullOrEmpty(config.ProviderVersion))
-            {
-                throw new ArgumentException($"config.{nameof(config.ProviderVersion)} is required when config.{nameof(config.PublishVerificationResults)} is true.");
-            }
-        }
-
-        public PactVerifier(PactVerifierConfig config) : 
-            this(
-            hostConfig => new PactCoreHost<PactVerifierHostConfig>(hostConfig), 
-            config ?? new PactVerifierConfig())
+        /// <summary>
+        /// Initialises a new instance of the <see cref="PactVerifier"/> class.
+        /// </summary>
+        public PactVerifier() : this(new PactVerifierConfig())
         {
         }
 
+        /// <summary>
+        /// Initialises a new instance of the <see cref="PactVerifier"/> class.
+        /// </summary>
+        /// <param name="config">Verifier configuration</param>
+        public PactVerifier(PactVerifierConfig config)
+        {
+            this.config = config;
+        }
+
+        /// <summary>
+        /// Set up the provider state setup URL so the service can configure states
+        /// </summary>
+        /// <param name="providerStateSetupUri">Provider state setup URI</param>
+        /// <returns>Fluent builder</returns>
         public IPactVerifier ProviderState(string providerStateSetupUri)
         {
-            if (IsNullOrEmpty(providerStateSetupUri))
-            {
-                throw new ArgumentException("Please supply a non null or empty providerStateSetupUri");
-            }
-
-            ProviderStateSetupUri = new Uri(providerStateSetupUri);
-
+            this.verifierArgs.Add($"--state-change-url {providerStateSetupUri}");
             return this;
         }
 
-        public IPactVerifier ServiceProvider(string providerName, string baseUri)
+        /// <summary>
+        /// Set the provider details
+        /// </summary>
+        /// <param name="providerName">Name of the provider</param>
+        /// <param name="pactUri">URI of the running service</param>
+        /// <returns>Fluent builder</returns>
+        public IPactVerifier ServiceProvider(string providerName, Uri pactUri)
         {
-            if (IsNullOrEmpty(providerName))
+            this.verifierArgs.Add($"--provider-name {providerName}");
+            this.verifierArgs.Add($"--hostname {pactUri.Host}");
+            this.verifierArgs.Add($"--port {pactUri.Port}");
+
+            if (pactUri.AbsolutePath != "/")
             {
-                throw new ArgumentException("Please supply a non null or empty providerName");
+                this.verifierArgs.Add($"--base-path {pactUri.AbsolutePath}");
             }
 
-            if (!IsNullOrEmpty(ProviderName))
-            {
-                throw new ArgumentException("ProviderName has already been supplied, please instantiate a new PactVerifier if you want to perform verification for a different provider");
-            }
-
-            if (IsNullOrEmpty(baseUri))
-            {
-                throw new ArgumentException("Please supply a non null or empty baseUri");
-            }
-
-            ProviderName = providerName;
-            ServiceBaseUri = new Uri(baseUri);
-                
             return this;
         }
 
+        /// <summary>
+        /// Set the consumer name
+        /// </summary>
+        /// <param name="consumerName">Consumer name</param>
+        /// <returns>Fluent builder</returns>
         public IPactVerifier HonoursPactWith(string consumerName)
         {
-            if (IsNullOrEmpty(consumerName))
-            {
-                throw new ArgumentException("Please supply a non null or empty consumerName");
-            }
-
-            if (!IsNullOrEmpty(ConsumerName))
-            {
-                throw new ArgumentException("ConsumerName has already been supplied, please instantiate a new PactVerifier if you want to perform verification for a different consumer");
-            }
-
-            ConsumerName = consumerName;
-
+            this.verifierArgs.Add($"--filter-consumer {consumerName}");
             return this;
         }
 
-        public IPactVerifier PactUri(string fileUri, PactUriOptions uriOptions = null, IEnumerable<string> providerVersionTags = null)
+        /// <summary>
+        /// Verify a pact file directly
+        /// </summary>
+        /// <param name="pactFile">Pact file path</param>
+        /// <returns>Fluent builder</returns>
+        public IPactVerifier PactFile(FileInfo pactFile)
         {
-            if (IsNullOrEmpty(fileUri))
-            {
-                throw new ArgumentException("Please supply a non null or empty fileUri");
-            }
-
-            PactFileUri = fileUri;
-            PactUriOptions = uriOptions;
-            ProviderVersionTags = providerVersionTags;
-
+            this.verifierArgs.Add($"--file {pactFile.FullName}");
             return this;
         }
 
-        public IPactVerifier PactBroker(string brokerBaseUri, PactUriOptions uriOptions = null, bool enablePending = false,
-            IEnumerable<string> consumerVersionTags = null, IEnumerable<string> providerVersionTags = null, IEnumerable<VersionTagSelector> consumerVersionSelectors = null, string includeWipPactsSince = null)
+        /// <summary>
+        /// Verify a pact from a URI
+        /// </summary>
+        /// <param name="pactUri">Pact file URI</param>
+        /// <param name="options">Pact URI options</param>
+        /// <param name="providerVersionTags">Provider version tags</param>
+        /// <returns>Fluent builder</returns>
+        public IPactVerifier PactUri(Uri pactUri, PactUriOptions options = null, IEnumerable<string> providerVersionTags = null)
         {
-            if (IsNullOrEmpty(brokerBaseUri))
+            this.verifierArgs.Add($"--url {pactUri}");
+            return this;
+        }
+
+        /// <summary>
+        /// Use the pact broker to retrieve pact files
+        /// </summary>
+        /// <param name="brokerBaseUri">Base URI for the broker</param>
+        /// <param name="uriOptions">Options for calling the pact broker</param>
+        /// <param name="enablePending">Enable pending pacts?</param>
+        /// <param name="consumerVersionTags">Consumer tag versions to retrieve</param>
+        /// <param name="includeWipPactsSince">Include WIP pacts since the given filter</param>
+        /// <returns>Fluent builder</returns>
+        public IPactVerifier PactBroker(string brokerBaseUri,
+                                        PactUriOptions uriOptions = null,
+                                        bool enablePending = false,
+                                        IEnumerable<string> consumerVersionTags = null,
+                                        string includeWipPactsSince = null)
+        {
+            this.verifierArgs.Add($"--broker-url {brokerBaseUri}");
+
+            if (uriOptions != null)
             {
-                throw new ArgumentException("Please supply a non null or empty brokerBaseUri");
+                if (!string.IsNullOrWhiteSpace(uriOptions.Username))
+                {
+                    this.verifierArgs.Add($"--user {uriOptions.Username}");
+                }
+
+                if (!string.IsNullOrWhiteSpace(uriOptions.Password))
+                {
+                    this.verifierArgs.Add($"--password {uriOptions.Password}");
+                }
+
+                if (!string.IsNullOrWhiteSpace(uriOptions.Token))
+                {
+                    this.verifierArgs.Add($"--token {uriOptions.Token}");
+                }
             }
 
-            BrokerBaseUri = brokerBaseUri;
-            PactUriOptions = uriOptions;
-            EnablePending = enablePending;
-            ConsumerVersionTags = consumerVersionTags;
-            ProviderVersionTags = providerVersionTags;
-            ConsumerVersionSelectors = consumerVersionSelectors;
-            IncludeWipPactsSince = includeWipPactsSince;
+            if (enablePending)
+            {
+                this.verifierArgs.Add("--enable-pending");
+            }
+
+            if (consumerVersionTags != null && consumerVersionTags.Any())
+            {
+                string versions = string.Join(",", consumerVersionTags);
+                this.verifierArgs.Add($"--consumer-version-tags {versions}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(includeWipPactsSince))
+            {
+                this.verifierArgs.Add($"--include-wip-pacts-since {includeWipPactsSince}");
+            }
 
             return this;
         }
 
+        /// <summary>
+        /// Verify provider interactions
+        /// </summary>
+        /// <param name="description">Interaction description. All interactions are verified if this is null</param>
+        /// <param name="providerState">Provider state description. All provider states are verified if this is null</param>
         public void Verify(string description = null, string providerState = null)
         {
-            if (ProviderName == null)
+            // TODO: Allow env vars to specify description and provider state filters like the old version did
+            if (!string.IsNullOrWhiteSpace(description))
             {
-                throw new InvalidOperationException(
-                    "providerName has not been set, please supply a service providerName using the ServiceProvider method.");
+                this.verifierArgs.Add($"--filter-description {description}");
             }
 
-            if (ServiceBaseUri == null)
+            if (!string.IsNullOrWhiteSpace(providerState))
             {
-                throw new InvalidOperationException(
-                    "baseUri has not been set, please supply a service baseUri using the ServiceProvider method.");
+                this.verifierArgs.Add($"--filter-state {providerState}");
             }
 
-            if (IsNullOrEmpty(PactFileUri) && IsNullOrEmpty(BrokerBaseUri))
+            if (this.config.PublishVerificationResults)
             {
-                throw new InvalidOperationException(
-                    "PactFileUri or BrokerBaseUri has not been set, please supply a uri using the PactUri or PactBroker method.");
-            }
-
-            if (!IsNullOrEmpty(PactFileUri) && !IsNullOrEmpty(BrokerBaseUri))
-            {
-                throw new InvalidOperationException(
-                    "PactFileUri and BrokerBaseUri have both been set, please use either the PactUri or PactBroker method, not both.");
-            }
-
-            IDictionary<string, string> env = null;
-            if(!IsNullOrEmpty(description) || !IsNullOrEmpty(providerState))
-            {
-                env = new Dictionary<string, string>
+                if (string.IsNullOrWhiteSpace(this.config.ProviderVersion))
                 {
-                    { "PACT_DESCRIPTION", description },
-                    { "PACT_PROVIDER_STATE", providerState }
-                };
+                    throw new InvalidOperationException("Can't publish verification results without the provider version being set");
+                }
+
+                this.verifierArgs.Add("--publish");
+                this.verifierArgs.Add($"--provider-version {this.config.ProviderVersion}");
+
+                if (this.config.ProviderTags.Any())
+                {
+                    string tags = string.Join(",", this.config.ProviderTags);
+                    this.verifierArgs.Add($"--provider-tags {tags}");
+                }
             }
 
-            var brokerConfig = !IsNullOrEmpty(BrokerBaseUri) ? 
-                new PactBrokerConfig(ProviderName, BrokerBaseUri, EnablePending,
-                    ConsumerVersionTags, ProviderVersionTags, ConsumerVersionSelectors, IncludeWipPactsSince) : 
-                null;
+            // TODO: make verifier log level configurable
+            this.verifierArgs.Add("--loglevel info");
 
-            var pactVerifier = _pactVerifierHostFactory(
-                new PactVerifierHostConfig(ServiceBaseUri, PactFileUri, brokerConfig, PactUriOptions, ProviderStateSetupUri, _config, env));
-            pactVerifier.Start();
+            string args = string.Join(Environment.NewLine, this.verifierArgs);
+            int result = PactVerifierInterop.Verify(args);
+
+            switch (result)
+            {
+                case 0: break;
+                case 1: throw new PactFailureException("The verification process failed, see output for errors");
+                case 2: throw new PactFailureException("A null pointer was received");
+                case 3: throw new PactFailureException("The method panicked");
+                default: throw new PactFailureException($"An unknown error occurred with error code {result}");
+            }
         }
     }
 }

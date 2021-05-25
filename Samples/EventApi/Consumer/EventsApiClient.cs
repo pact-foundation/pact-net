@@ -4,10 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using Consumer.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Consumer
 {
@@ -223,7 +223,7 @@ namespace Consumer
                 string.Format("The Events API request for {0} {1} failed. Response Status: {2}, Response Body: {3}",
                 failedRequest.Method.ToString().ToUpperInvariant(),
                 failedRequest.RequestUri,
-                (int)failedResponse.StatusCode, 
+                (int)failedResponse.StatusCode,
                 await failedResponse.Content.ReadAsStringAsync()));
         }
 

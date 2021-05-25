@@ -1,45 +1,42 @@
-﻿using Newtonsoft.Json;
-using PactNet.Mocks.MockHttpService;
-using PactNet.Mocks.MockHttpService.Models;
+﻿using System;
+using PactNet.Backend.Native;
+using PactNet.Backend.Remote;
 using PactNet.Models;
-using System;
-using System.IO;
 
 namespace PactNet
 {
+    /// <summary>
+    /// Pact builder
+    /// </summary>
     public class PactBuilder : IPactBuilder
     {
-        public string ConsumerName { get; private set; }
-        public string ProviderName { get; private set; }
+        private readonly PactConfig config;
 
-        private readonly string _pactDir;
+        private string consumer;
+        private string provider;
+        private IMockServer service;
 
-        private readonly
-            Func<int, bool, string, string, IPAddress, JsonSerializerSettings, string, string, IMockProviderService>
-            _mockProviderServiceFactory;
-
-        private IMockProviderService _mockProviderService;
-
-        internal PactBuilder(
-            Func<int, bool, string, string, IPAddress, JsonSerializerSettings, string, string, IMockProviderService>
-                mockProviderServiceFactory)
-        {
-            _mockProviderServiceFactory = mockProviderServiceFactory;
-        }
-
-        public PactBuilder()
-            : this(new PactConfig())
+        /// <summary>
+        /// Initialises a new instance of the <see cref="PactBuilder"/> class.
+        /// </summary>
+        public PactBuilder() : this(new PactConfig())
         {
         }
 
+        /// <summary>
+        /// Initialises a new instance of the <see cref="PactBuilder"/> class.
+        /// </summary>
+        /// <param name="config">Pact config</param>
         public PactBuilder(PactConfig config)
-            : this((port, enableSsl, consumerName, providerName, host, jsonSerializerSettings, sslCert, sslKey) =>
-                new MockProviderService(port, enableSsl, consumerName, providerName, config, host,
-                    jsonSerializerSettings, sslCert, sslKey))
         {
-            _pactDir = config.PactDir;
+            this.config = config;
         }
 
+        /// <summary>
+        /// Establish the consumer name
+        /// </summary>
+        /// <param name="consumerName">Name of the consumer</param>
+        /// <returns>Same pact builder</returns>
         public IPactBuilder ServiceConsumer(string consumerName)
         {
             if (string.IsNullOrEmpty(consumerName))
@@ -47,11 +44,16 @@ namespace PactNet
                 throw new ArgumentException("Please supply a non null or empty consumerName");
             }
 
-            ConsumerName = consumerName;
+            this.consumer = consumerName;
 
             return this;
         }
 
+        /// <summary>
+        /// Establish the provider name
+        /// </summary>
+        /// <param name="providerName">Name of the provider</param>
+        /// <returns>Same pact builder</returns>
         public IPactBuilder HasPactWith(string providerName)
         {
             if (string.IsNullOrEmpty(providerName))
@@ -59,78 +61,69 @@ namespace PactNet
                 throw new ArgumentException("Please supply a non null or empty providerName");
             }
 
-            ProviderName = providerName;
+            this.provider = providerName;
 
             return this;
         }
 
-        public IMockProviderService MockService(
-            int port, 
-            bool enableSsl = false, 
-            IPAddress host = IPAddress.Loopback, 
-            string sslCert = null, 
-            string sslKey = null,
-            bool useRemoteMockService = false)
+        /// <summary>
+        /// Start a mock server running locally in-process to build up the pact
+        /// </summary>
+        /// <param name="port">Port for the mock server. If null, one will be assigned automatically</param>
+        /// <param name="host">Host for the mock server</param>
+        /// <returns>Interaction builder</returns>
+        public IInteractionBuilder UsingNativeBackend(int? port = null, IPAddress host = IPAddress.Loopback)
         {
-            return MockService(port, null, enableSsl: enableSsl, host: host, sslCert: sslCert, sslKey: sslKey, useRemoteMockService: useRemoteMockService);
+            if (string.IsNullOrWhiteSpace(this.consumer) || string.IsNullOrWhiteSpace(this.provider))
+            {
+                throw new InvalidOperationException("Make sure you have set both consumer and provider name before starting the service");
+            }
+
+            var rustService = new NativeMockServer(this.consumer,
+                                                 this.provider,
+                                                 this.config,
+                                                 port,
+                                                 host);
+            this.service = rustService;
+
+            IInteractionBuilder interactionBuilder = rustService.CreatePact();
+            return interactionBuilder;
         }
 
-        public IMockProviderService MockService(
-            int port, 
-            JsonSerializerSettings jsonSerializerSettings, 
-            bool enableSsl = false, 
-            IPAddress host = IPAddress.Loopback, 
-            string sslCert = null, 
-            string sslKey = null,
-            bool useRemoteMockService = false)
+        /// <summary>
+        /// Use an existing remote server running at the given URI
+        /// </summary>
+        /// <param name="uri">Remote server URI</param>
+        /// <returns>Interaction builder</returns>
+        public IInteractionBuilder UsingRemoteBackend(Uri uri)
         {
-            if (string.IsNullOrEmpty(ConsumerName))
+            if (string.IsNullOrWhiteSpace(this.consumer) || string.IsNullOrWhiteSpace(this.provider))
             {
-                throw new InvalidOperationException(
-                    "ConsumerName has not been set, please supply a consumer name using the ServiceConsumer method.");
+                throw new InvalidOperationException("Make sure you have set both consumer and provider name before starting the service");
             }
 
-            if (string.IsNullOrEmpty(ProviderName))
-            {
-                throw new InvalidOperationException(
-                    "ProviderName has not been set, please supply a provider name using the HasPactWith method.");
-            }
+            var remoteService = new RemoteMockServer(this.consumer, this.provider, this.config);
+            this.service = remoteService;
 
-            if (_mockProviderService != null && useRemoteMockService == false )
-            {
-                _mockProviderService.Stop();
-            }
-
-            _mockProviderService = _mockProviderServiceFactory(port, enableSsl, ConsumerName, ProviderName, host,
-                jsonSerializerSettings, sslCert, sslKey);
-
-            _mockProviderService.UseRemoteMockService = useRemoteMockService;
-
-            _mockProviderService.Start();
-
-            return _mockProviderService;
+            IInteractionBuilder interactionBuilder = remoteService.CreatePact();
+            return interactionBuilder;
         }
 
+        /// <summary>
+        /// After all interactions are complete, write the pact file
+        /// </summary>
         public void Build()
         {
-            if (_mockProviderService == null)
+            if (this.service == null)
             {
-                throw new InvalidOperationException(
-                    $"The Pact file could not be saved because the mock provider service is not initialized. Please initialize by calling the {nameof(MockService)}() method.");
+                throw new InvalidOperationException("Unable to save the pact because the server has not been started");
             }
 
-            PersistPactFile();
-            _mockProviderService.Stop();
-        }
+            this.service.WritePactFile();
 
-        private void PersistPactFile()
-        {
-            var responsePact = _mockProviderService.SendAdminHttpRequest(HttpVerb.Post, Constants.PactPath);
-
-            if (_mockProviderService.UseRemoteMockService)
+            if (this.service is IDisposable disposable)
             {
-                string fileName = ConsumerName.ToLower() + ProviderName.ToLower() + ".json";
-                File.WriteAllText(Path.Combine(_pactDir, fileName), responsePact);
+                disposable.Dispose();
             }
         }
     }

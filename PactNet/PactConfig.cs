@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using Newtonsoft.Json;
 using PactNet.Infrastructure.Outputters;
 
 namespace PactNet
@@ -20,26 +21,30 @@ namespace PactNet
             set { _logDir = ConvertToDirectory(value); }
         }
 
-        public string SpecificationVersion { get; set; }
+        public string SpecificationVersion { get; set; } = "1.1.0";
 
-        public IEnumerable<IOutput> Outputters { get; set; }
+        public IEnumerable<IOutput> Outputters { get; set; } = new List<IOutput>
+        {
+            new ConsoleOutput()
+        };
 
         internal string LoggerName;
 
-        public string MonkeyPatchFile { get; set; }
-        public bool EnableCors { get; set; }
+        /// <summary>
+        /// Whether to overwrite pact files completely (default) or merge new interactions into an existing
+        /// file if one is found
+        /// </summary>
+        public bool Overwrite { get; set; } = true;
+
+        /// <summary>
+        /// Default JSON serializer settings
+        /// </summary>
+        public JsonSerializerSettings DefaultJsonSettings { get; set; } = new JsonSerializerSettings();
 
         public PactConfig()
         {
             PactDir = Constants.DefaultPactDir;
             LogDir = Constants.DefaultLogDir;
-            SpecificationVersion = "1.1.0";
-
-            //The output can be directed elsewhere, however there isn't really anything interesting being written here.
-            Outputters = new List<IOutput>
-            {
-                new ConsoleOutput()
-            };
         }
 
         private static string ConvertToDirectory(string path)
@@ -50,6 +55,18 @@ namespace PactNet
             }
 
             return path;
+        }
+
+        /// <summary>
+        /// Write a line to all configured outputters
+        /// </summary>
+        /// <param name="line">Line to write</param>
+        internal void WriteLine(string line)
+        {
+            foreach (IOutput output in this.Outputters)
+            {
+                output.WriteLine(line);
+            }
         }
     }
 }
