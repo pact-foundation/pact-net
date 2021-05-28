@@ -39,7 +39,7 @@ namespace PactNet.Native
 
             if (string.IsNullOrWhiteSpace(errors) || errors == "[]" )
             {
-                int result = MockServerInterop.WritePactFile(this.MockServerUri.Port, this.config.PactDir, this.config.Overwrite);
+                int result = MockServerInterop.WritePactFile(this.MockServerUri.Port, this.config.PactDir, false);
 
                 switch (result)
                 {

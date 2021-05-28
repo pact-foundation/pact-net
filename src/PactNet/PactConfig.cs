@@ -27,12 +27,6 @@ namespace PactNet
         };
 
         /// <summary>
-        /// Whether to overwrite pact files completely (default) or merge new interactions into an existing
-        /// file if one is found
-        /// </summary>
-        public bool Overwrite { get; set; } = true;
-
-        /// <summary>
         /// Default JSON serializer settings
         /// </summary>
         public JsonSerializerSettings DefaultJsonSettings { get; set; } = new JsonSerializerSettings();
