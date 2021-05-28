@@ -19,8 +19,8 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\PactNet.Native\PactNet.Native.csproj" />
-    <ProjectReference Include="..\..\..\PactNet\PactNet.csproj" />
+    <ProjectReference Include="..\..\..\src\PactNet.Native\PactNet.Native.csproj" />
+    <ProjectReference Include="..\..\..\src\PactNet\PactNet.csproj" />
     <ProjectReference Include="..\Provider.Api.Web\Provider.Api.Web.csproj" />
   </ItemGroup>
   <ItemGroup>
