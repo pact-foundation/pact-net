@@ -29,7 +29,4 @@
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\PactNet.Native\PactNet.Native.csproj" />
-  </ItemGroup>
 </Project>

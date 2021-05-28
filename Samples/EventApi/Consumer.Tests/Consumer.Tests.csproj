@@ -15,6 +15,7 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\PactNet.Native\PactNet.Native.csproj" />
     <ProjectReference Include="..\..\..\PactNet\PactNet.csproj" />
     <ProjectReference Include="..\Consumer\Consumer.csproj" />
     <ProjectReference Include="..\Provider.Api.Web.Tests\Provider.Api.Web.Tests.csproj" />

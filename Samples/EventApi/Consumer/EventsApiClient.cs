@@ -15,11 +15,11 @@ namespace Consumer
     {
         private readonly HttpClient _httpClient;
 
-        public EventsApiClient(string baseUri = null, string authToken = null)
+        public EventsApiClient(Uri baseUri, string authToken = null)
         {
-            _httpClient = new HttpClient { BaseAddress = new Uri(baseUri ?? "http://my.api/v2/capture") };
+            _httpClient = new HttpClient { BaseAddress = baseUri };
 
-            if (authToken != null)
+            if (!string.IsNullOrWhiteSpace(authToken))
             {
                 _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {authToken}");
             }

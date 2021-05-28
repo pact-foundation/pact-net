@@ -21,14 +21,10 @@ namespace PactNet
             set { _logDir = ConvertToDirectory(value); }
         }
 
-        public string SpecificationVersion { get; set; } = "1.1.0";
-
         public IEnumerable<IOutput> Outputters { get; set; } = new List<IOutput>
         {
             new ConsoleOutput()
         };
-
-        internal string LoggerName;
 
         /// <summary>
         /// Whether to overwrite pact files completely (default) or merge new interactions into an existing
@@ -61,7 +57,7 @@ namespace PactNet
         /// Write a line to all configured outputters
         /// </summary>
         /// <param name="line">Line to write</param>
-        internal void WriteLine(string line)
+        public void WriteLine(string line)
         {
             foreach (IOutput output in this.Outputters)
             {

@@ -6,43 +6,47 @@ using System.Threading.Tasks;
 using Consumer.Models;
 using FluentAssertions;
 using FluentAssertions.Extensions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using PactNet;
-using PactNet.Infrastructure.Outputters;
 using PactNet.Matchers;
+using PactNet.Native;
 using Provider.Api.Web.Tests;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Consumer.Tests
 {
-    public class EventsApiConsumerTests : IClassFixture<ConsumerEventApiPact>
+    public class EventsApiConsumerTests
     {
         private const string Token = "abcdef1234567890";
 
-        private readonly ITestOutputHelper output;
-        private readonly IInteractionBuilder interactions;
-        private readonly EventsApiClient unauthorisedClient;
-        private readonly EventsApiClient authorisedClient;
+        private readonly IPactBuilder pact;
 
-        public EventsApiConsumerTests(ConsumerEventApiPact data, ITestOutputHelper output)
+        public EventsApiConsumerTests(ITestOutputHelper output)
         {
-            data.Config.Outputters = new List<IOutput>
+            var config = new PactConfig
             {
-                new ConsoleOutput(),
-                new XUnitOutput(output)
+                LogDir = "../../../logs/",
+                PactDir = "../../../pacts/",
+                Outputters = new []
+                {
+                    new XUnitOutput(output)
+                },
+                DefaultJsonSettings = new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                }
             };
 
-            this.output = output;
-            this.interactions = data.Interactions;
-
-            this.unauthorisedClient = new EventsApiClient(data.Interactions.MockProviderUri.AbsoluteUri);
-            this.authorisedClient = new EventsApiClient(data.Interactions.MockProviderUri.AbsoluteUri, Token);
+            IPact pact = new Pact("Event API Consumer", "Event API", "2.0.0", config);
+            this.pact = pact.UsingNativeBackend();
         }
 
         [Fact]
         public async Task GetAllEvents_WithNoAuthorizationToken_ShouldFail()
         {
-            this.interactions
+            this.pact
                 .UponReceiving("a request to retrieve all events with no authorization")
                     .Given("there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
                     .WithRequest(HttpMethod.Get, "/events")
@@ -55,8 +59,11 @@ namespace Consumer.Tests
                         message = "Authorization has been denied for this request."
                     });
 
-            await this.unauthorisedClient.Invoking(c => c.GetAllEvents()).Should().ThrowAsync<Exception>();
-            this.interactions.Verify();
+            using (IPactContext context = this.pact.Build())
+            {
+                var client = new EventsApiClient(context.MockServerUri);
+                await client.Invoking(c => c.GetAllEvents()).Should().ThrowAsync<Exception>();
+            }
         }
 
         [Fact]
@@ -64,27 +71,27 @@ namespace Consumer.Tests
         {
             var expected = new[]
             {
-                new
+                new Event
                 {
-                    eventId = Guid.Parse("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5"),
-                    timestamp = "2014-06-30T01:37:41.0660548",
-                    eventType = "SearchView"
+                    EventId = Guid.Parse("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5"),
+                    Timestamp = DateTime.Parse("2014-06-30T01:37:41.0660548"),
+                    EventType = "SearchView"
                 },
-                new
+                new Event
                 {
-                    eventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9"),
-                    timestamp = "2014-06-30T01:37:52.2618864",
-                    eventType = "DetailsView"
+                    EventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9"),
+                    Timestamp = DateTime.Parse("2014-06-30T01:37:52.2618864"),
+                    EventType = "DetailsView"
                 },
-                new
+                new Event
                 {
-                    eventId = Guid.Parse("3E83A96B-2A0C-49B1-9959-26DF23F83AEB"),
-                    timestamp = "2014-06-30T01:38:00.8518952",
-                    eventType = "SearchView"
+                    EventId = Guid.Parse("3E83A96B-2A0C-49B1-9959-26DF23F83AEB"),
+                    Timestamp = DateTime.Parse("2014-06-30T01:38:00.8518952"),
+                    EventType = "SearchView"
                 }
             };
 
-            this.interactions
+            this.pact
                 .UponReceiving("a request to retrieve all events")
                     .Given("there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
                     .WithRequest(HttpMethod.Get, "/events")
@@ -95,23 +102,24 @@ namespace Consumer.Tests
                     .WithHeader("Content-Type", "application/json; charset=utf-8")
                     .WithJsonBody(expected);
 
-            //Act
-            IEnumerable<Event> events = await this.authorisedClient.GetAllEvents();
+            using (IPactContext context = this.pact.Build())
+            {
+                var client = new EventsApiClient(context.MockServerUri, Token);
 
-            //Assert
-            events.Should().BeEquivalentTo(expected);
-            this.interactions.Verify();
+                IEnumerable<Event> events = await client.GetAllEvents();
+
+                events.Should().BeEquivalentTo(expected);
+            }
         }
 
         [Fact]
         public async Task CreateEvent_WhenCalledWithEvent_Succeeds()
         {
-            //Arrange
             var eventId = Guid.Parse("1F587704-2DCC-4313-A233-7B62B4B469DB");
             var dateTime = 1.July(2011).At(1, 41, 3);
             DateTimeFactory.Now = () => dateTime;
 
-            this.interactions
+            this.pact
                 .UponReceiving("a request to create a new event")
                     .WithRequest(HttpMethod.Post, "/events")
                     .WithHeader("Content-Type", "application/json; charset=utf-8")
@@ -125,16 +133,18 @@ namespace Consumer.Tests
                 .WillRespond()
                     .WithStatus(HttpStatusCode.Created);
 
-            //Act / Assert
-            await this.authorisedClient.CreateEvent(eventId);
-            this.interactions.Verify();
+            using (IPactContext context = this.pact.Build())
+            {
+                var client = new EventsApiClient(context.MockServerUri, Token);
+
+                await client.CreateEvent(eventId);
+            }
         }
 
         [Fact]
         public async Task IsAlive_WhenApiIsAlive_ReturnsTrue()
         {
-            //Arrange
-            this.interactions
+            this.pact
                 .UponReceiving("a request to check the api status")
                     .WithRequest(HttpMethod.Get, "/stats/status")
                     .WithHeader("Accept", "application/json")
@@ -153,21 +163,22 @@ namespace Consumer.Tests
                         }
                     });
 
-            //Act
-            var result = await this.unauthorisedClient.IsAlive();
+            using (IPactContext context = this.pact.Build())
+            {
+                var client = new EventsApiClient(context.MockServerUri);
 
-            //Assert
-            result.Should().BeTrue();
-            this.interactions.Verify();
+                var result = await client.IsAlive();
+
+                result.Should().BeTrue();
+            }
         }
 
         [Fact]
         public async Task UpSince_WhenApiIsAliveAndWeRetrieveUptime_ReturnsUpSinceDate()
         {
-            //Arrange
             var upSinceDate = 27.June(2014).At(23, 51, 12).AsUtc();
 
-            this.interactions
+            this.pact
                 .UponReceiving("a request to check the api status")
                     .WithRequest(HttpMethod.Get, "/stats/status")
                     .WithHeader("Accept", "application/json")
@@ -186,7 +197,7 @@ namespace Consumer.Tests
                         }
                     });
 
-            this.interactions
+            this.pact
                 .UponReceiving("a request to check the api uptime")
                     .WithRequest(HttpMethod.Get, "/stats/uptime")
                     .WithHeader("Accept", "application/json")
@@ -198,18 +209,19 @@ namespace Consumer.Tests
                         upSince = upSinceDate
                     });
 
-            //Act
-            var result = await this.unauthorisedClient.UpSince();
+            using (IPactContext context = this.pact.Build())
+            {
+                var client = new EventsApiClient(context.MockServerUri, Token);
 
-            //Assert
-            result.Should().Be(upSinceDate);
-            this.interactions.Verify();
+                var result = await client.UpSince();
+
+                result.Should().Be(upSinceDate);
+            }
         }
 
         [Fact]
         public async Task GetEventById_WhenTheEventExists_ReturnsEvent()
         {
-            //Arrange
             var expected = new Event
             {
                 EventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9"),
@@ -217,16 +229,15 @@ namespace Consumer.Tests
                 Timestamp = DateTime.UtcNow
             };
 
-            this.interactions
+            this.pact
                 .UponReceiving($"a request to retrieve event with id '{expected.EventId}'")
                     .Given($"there is an event with id '{expected.EventId}'")
                     .WithRequest(HttpMethod.Get, $"/events/{expected.EventId}")
-                    .WithHeader("Accept", "application/json")
-                    .WithHeader("Authorization", $"Bearer {Token}")
+                    .WithHeader("accept", "application/json")
+                    .WithHeader("authorization", $"Bearer {Token}")
                 .WillRespond()
                     .WithStatus(200)
-                    .WithHeader("Content-Type", "application/json; charset=utf-8")
-                    .WithHeader("Server", "RubyServer")
+                    .WithHeader("content-type", "application/json; charset=utf-8")
                 .WithJsonBody(new
                 {
                     eventId = Match.Regex(expected.EventId.ToString(), "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"),
@@ -234,12 +245,14 @@ namespace Consumer.Tests
                     timestamp = Match.Regex(expected.Timestamp.ToString("o"), "^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|0[1-9]|[1-2][0-9])T(2[0-3]|[0-1][0-9]):([0-5][0-9]):([0-5][0-9])(\\.[0-9]+)?(Z|[+-](?:2[0-3]|[0-1][0-9]):[0-5][0-9])?$")
                 });
 
-            //Act
-            var result = await this.authorisedClient.GetEventById(expected.EventId);
+            using (IPactContext context = this.pact.Build())
+            {
+                var client = new EventsApiClient(context.MockServerUri, Token);
 
-            //Assert
-            result.Should().BeEquivalentTo(expected);
-            this.interactions.Verify();
+                var result = await client.GetEventById(expected.EventId);
+
+                result.Should().BeEquivalentTo(expected);
+            }
         }
 
         [Fact]
@@ -248,7 +261,7 @@ namespace Consumer.Tests
             //Arrange
             const string eventType = "DetailsView";
 
-            this.interactions
+            this.pact
                 .UponReceiving($"a request to retrieve events with type '{eventType}'")
                     .Given($"there is one event with type '{eventType}'")
                     .WithRequest(HttpMethod.Get, "/events")
@@ -266,12 +279,14 @@ namespace Consumer.Tests
                         }
                     });
 
-            //Act
-            var result = await this.authorisedClient.GetEventsByType(eventType);
+            using (IPactContext context = this.pact.Build())
+            {
+                var client = new EventsApiClient(context.MockServerUri, Token);
 
-            //Assert
-            result.Should().OnlyContain(e => e.EventType == eventType);
-            this.interactions.Verify();
+                var result = await client.GetEventsByType(eventType);
+
+                result.Should().OnlyContain(e => e.EventType == eventType);
+            }
         }
     }
 }

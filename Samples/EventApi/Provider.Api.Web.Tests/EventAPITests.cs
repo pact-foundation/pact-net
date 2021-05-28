@@ -4,6 +4,7 @@ using System.IO;
 using Microsoft.Owin.Hosting;
 using PactNet;
 using PactNet.Infrastructure.Outputters;
+using PactNet.Native;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -11,11 +12,11 @@ namespace Provider.Api.Web.Tests
 {
     public class EventApiTests : IDisposable
     {
-        private readonly ITestOutputHelper _output;
+        private readonly ITestOutputHelper output;
 
         public EventApiTests(ITestOutputHelper output)
         {
-            _output = output;
+            this.output = output;
         }
 
         [Fact]
@@ -27,7 +28,7 @@ namespace Provider.Api.Web.Tests
             {
                 Outputters = new List<IOutput>
                 {
-                    new XUnitOutput(_output)
+                    new XUnitOutput(this.output)
                 }
             };
 
@@ -39,7 +40,7 @@ namespace Provider.Api.Web.Tests
                                                "..",
                                                "Consumer.Tests",
                                                "pacts",
-                                               "event_api_consumer-event_api.json");
+                                               "Event API Consumer-Event API.json");
 
                 //Act / Assert
                 IPactVerifier pactVerifier = new PactVerifier(config);
