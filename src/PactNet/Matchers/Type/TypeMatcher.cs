@@ -4,18 +4,13 @@ namespace PactNet.Matchers.Type
 {
     public class TypeMatcher : IMatcher
     {
-        //Generate JSON using the Ruby spec for now
+        public string Type => "type";
 
-        [JsonProperty(PropertyName = "json_class")]
-        public string Match { get; set; }
-
-        [JsonProperty(PropertyName = "contents")]
-        public dynamic Example { get; set; }
+        public dynamic Value { get; }
 
         public TypeMatcher(dynamic example)
         {
-            Match = "Pact::SomethingLike";
-            Example = example;
+            this.Value = example;
         }
     }
 }

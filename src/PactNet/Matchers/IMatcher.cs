@@ -1,8 +1,13 @@
-﻿namespace PactNet.Matchers
+﻿using Newtonsoft.Json;
+
+namespace PactNet.Matchers
 {
     public interface IMatcher
     {
-        string Match { get; }
-        dynamic Example { get; }
+        [JsonProperty("pact:matcher:type")]
+        string Type { get; }
+
+        [JsonProperty("value")]
+        dynamic Value { get; }
     }
 }

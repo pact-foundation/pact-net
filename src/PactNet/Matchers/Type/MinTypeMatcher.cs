@@ -5,27 +5,22 @@ namespace PactNet.Matchers.Type
 {
     public class MinTypeMatcher : IMatcher
     {
-        //Generate JSON using the Ruby spec for now
+        public string Type => "type";
 
-        [JsonProperty(PropertyName = "json_class")]
-        public string Match { get; set; }
-
-        [JsonProperty(PropertyName = "contents")]
-        public dynamic Example { get; set; }
+        public dynamic Value { get; }
 
         [JsonProperty(PropertyName = "min")]
         public int Min { get; set; }
 
         public MinTypeMatcher(dynamic example, int min)
         {
-            if(min < 1)
+            if (min < 1)
             {
                 throw new ArgumentException("Min must be greater than 0");
             }
 
-            Match = "Pact::ArrayLike";
-            Example = example;
-            Min = min;
+            this.Value = example;
+            this.Min = min;
         }
     }
 }

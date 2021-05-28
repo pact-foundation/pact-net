@@ -4,27 +4,17 @@ namespace PactNet.Matchers.Regex
 {
     public class RegexMatcher : IMatcher
     {
-        //Generate JSON using the Ruby spec for now
+        public string Type => "regex";
 
-        [JsonProperty(PropertyName = "json_class")]
-        public string Match { get; set; }
+        public dynamic Value { get; }
 
-        [JsonProperty(PropertyName = "data")]
-        public dynamic Example { get; set; }
+        [JsonProperty("regex")]
+        public string Regex { get; }
 
         internal RegexMatcher(string example, string regex)
         {
-            Match = "Pact::Term";
-            Example = new
-            {
-                generate = example,
-                matcher = new
-                {
-                    json_class = "Regexp",
-                    o = 0,
-                    s = regex
-                }
-            };
+            this.Regex = regex;
+            this.Value = example;
         }
     }
 }
