@@ -56,7 +56,7 @@ namespace PactNet
         /// <param name="consumerVersionTags">Consumer tag versions to retrieve</param>
         /// <param name="includeWipPactsSince">Include WIP pacts since the given filter</param>
         /// <returns>Fluent builder</returns>
-        IPactVerifier PactBroker(string brokerBaseUri,
+        IPactVerifier PactBroker(Uri brokerBaseUri,
                                  PactUriOptions uriOptions = null,
                                  bool enablePending = false,
                                  IEnumerable<string> consumerVersionTags = null,

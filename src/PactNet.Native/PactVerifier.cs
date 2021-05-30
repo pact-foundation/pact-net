@@ -36,7 +36,8 @@ namespace PactNet.Native
         /// <returns>Fluent builder</returns>
         public IPactVerifier ProviderState(string providerStateSetupUri)
         {
-            this.verifierArgs.Add($"--state-change-url {providerStateSetupUri}");
+            this.verifierArgs.Add("--state-change-url");
+            this.verifierArgs.Add(providerStateSetupUri);
             return this;
         }
 
@@ -48,13 +49,17 @@ namespace PactNet.Native
         /// <returns>Fluent builder</returns>
         public IPactVerifier ServiceProvider(string providerName, Uri pactUri)
         {
-            this.verifierArgs.Add($"--provider-name {providerName}");
-            this.verifierArgs.Add($"--hostname {pactUri.Host}");
-            this.verifierArgs.Add($"--port {pactUri.Port}");
+            this.verifierArgs.Add("--provider-name");
+            this.verifierArgs.Add(providerName);
+            this.verifierArgs.Add("--hostname");
+            this.verifierArgs.Add(pactUri.Host);
+            this.verifierArgs.Add("--port");
+            this.verifierArgs.Add(pactUri.Port.ToString());
 
             if (pactUri.AbsolutePath != "/")
             {
-                this.verifierArgs.Add($"--base-path {pactUri.AbsolutePath}");
+                this.verifierArgs.Add("--base-path");
+                this.verifierArgs.Add(pactUri.AbsolutePath);
             }
 
             return this;
@@ -67,7 +72,8 @@ namespace PactNet.Native
         /// <returns>Fluent builder</returns>
         public IPactVerifier HonoursPactWith(string consumerName)
         {
-            this.verifierArgs.Add($"--filter-consumer {consumerName}");
+            this.verifierArgs.Add("--filter-consumer");
+            this.verifierArgs.Add(consumerName);
             return this;
         }
 
@@ -78,7 +84,8 @@ namespace PactNet.Native
         /// <returns>Fluent builder</returns>
         public IPactVerifier PactFile(FileInfo pactFile)
         {
-            this.verifierArgs.Add($"--file {pactFile.FullName}");
+            this.verifierArgs.Add("--file");
+            this.verifierArgs.Add(pactFile.FullName);
             return this;
         }
 
@@ -91,7 +98,8 @@ namespace PactNet.Native
         /// <returns>Fluent builder</returns>
         public IPactVerifier PactUri(Uri pactUri, PactUriOptions options = null, IEnumerable<string> providerVersionTags = null)
         {
-            this.verifierArgs.Add($"--url {pactUri}");
+            this.verifierArgs.Add("--url");
+            this.verifierArgs.Add(pactUri.ToString());
             return this;
         }
 
@@ -104,29 +112,33 @@ namespace PactNet.Native
         /// <param name="consumerVersionTags">Consumer tag versions to retrieve</param>
         /// <param name="includeWipPactsSince">Include WIP pacts since the given filter</param>
         /// <returns>Fluent builder</returns>
-        public IPactVerifier PactBroker(string brokerBaseUri,
+        public IPactVerifier PactBroker(Uri brokerBaseUri,
                                         PactUriOptions uriOptions = null,
                                         bool enablePending = false,
                                         IEnumerable<string> consumerVersionTags = null,
                                         string includeWipPactsSince = null)
         {
-            this.verifierArgs.Add($"--broker-url {brokerBaseUri}");
+            this.verifierArgs.Add("--broker-url");
+            this.verifierArgs.Add(brokerBaseUri.ToString());
 
             if (uriOptions != null)
             {
                 if (!string.IsNullOrWhiteSpace(uriOptions.Username))
                 {
-                    this.verifierArgs.Add($"--user {uriOptions.Username}");
+                    this.verifierArgs.Add($"--user");
+                    this.verifierArgs.Add(uriOptions.Username);
                 }
 
                 if (!string.IsNullOrWhiteSpace(uriOptions.Password))
                 {
-                    this.verifierArgs.Add($"--password {uriOptions.Password}");
+                    this.verifierArgs.Add("--password");
+                    this.verifierArgs.Add(uriOptions.Password);
                 }
 
                 if (!string.IsNullOrWhiteSpace(uriOptions.Token))
                 {
-                    this.verifierArgs.Add($"--token {uriOptions.Token}");
+                    this.verifierArgs.Add("--token");
+                    this.verifierArgs.Add(uriOptions.Token);
                 }
             }
 
@@ -138,12 +150,14 @@ namespace PactNet.Native
             if (consumerVersionTags != null && consumerVersionTags.Any())
             {
                 string versions = string.Join(",", consumerVersionTags);
-                this.verifierArgs.Add($"--consumer-version-tags {versions}");
+                this.verifierArgs.Add("--consumer-version-tags");
+                this.verifierArgs.Add(versions);
             }
 
             if (!string.IsNullOrWhiteSpace(includeWipPactsSince))
             {
-                this.verifierArgs.Add($"--include-wip-pacts-since {includeWipPactsSince}");
+                this.verifierArgs.Add("--include-wip-pacts-since");
+                this.verifierArgs.Add(includeWipPactsSince);
             }
 
             return this;
@@ -159,12 +173,14 @@ namespace PactNet.Native
             // TODO: Allow env vars to specify description and provider state filters like the old version did
             if (!string.IsNullOrWhiteSpace(description))
             {
-                this.verifierArgs.Add($"--filter-description {description}");
+                this.verifierArgs.Add("--filter-description");
+                this.verifierArgs.Add(description);
             }
 
             if (!string.IsNullOrWhiteSpace(providerState))
             {
-                this.verifierArgs.Add($"--filter-state {providerState}");
+                this.verifierArgs.Add("--filter-state");
+                this.verifierArgs.Add(providerState);
             }
 
             if (this.config.PublishVerificationResults)
@@ -175,17 +191,20 @@ namespace PactNet.Native
                 }
 
                 this.verifierArgs.Add("--publish");
-                this.verifierArgs.Add($"--provider-version {this.config.ProviderVersion}");
+                this.verifierArgs.Add("--provider-version");
+                this.verifierArgs.Add(this.config.ProviderVersion);
 
                 if (this.config.ProviderTags.Any())
                 {
                     string tags = string.Join(",", this.config.ProviderTags);
-                    this.verifierArgs.Add($"--provider-tags {tags}");
+                    this.verifierArgs.Add("--provider-tags");
+                    this.verifierArgs.Add(tags);
                 }
             }
 
             // TODO: make verifier log level configurable
-            this.verifierArgs.Add("--loglevel info");
+            this.verifierArgs.Add("--loglevel");
+            this.verifierArgs.Add("info");
 
             string args = string.Join(Environment.NewLine, this.verifierArgs);
             int result = PactVerifierInterop.Verify(args);
@@ -196,6 +215,7 @@ namespace PactNet.Native
                 case 1: throw new PactFailureException("The verification process failed, see output for errors");
                 case 2: throw new PactFailureException("A null pointer was received");
                 case 3: throw new PactFailureException("The method panicked");
+                case 4: throw new PactFailureException("Invalid arguments were provided to the verification process");
                 default: throw new PactFailureException($"An unknown error occurred with error code {result}");
             }
         }
