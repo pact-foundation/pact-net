@@ -12,8 +12,8 @@ namespace PactNet.Tests
 
         [Theory]
         [InlineData( "bad:name", UsernameContainsColunMessage  ) ] // RFC 2617 compliance
-        [InlineData( ""        , UsernameIsEmptyOrNullMessage  ) ] 
-        [InlineData( null      , UsernameIsEmptyOrNullMessage  ) ]
+        [InlineData( "", UsernameIsEmptyOrNullMessage  ) ] 
+        [InlineData( null, UsernameIsEmptyOrNullMessage  ) ]
         public void Ctor_WhenUserNameIsNotAccpetable(string username, string expectedMessage)
         {
             Exception e = Assert.Throws <ArgumentException> (() => new PactUriOptions(username, "dummyval"));
@@ -22,7 +22,7 @@ namespace PactNet.Tests
 
         [Theory]
         [InlineData( null, PasswordIsNullOrEmptyMessage ) ] // RFC 2617 compliance
-        [InlineData( ""  , PasswordIsNullOrEmptyMessage ) ] // RFC 2617 compliance
+        [InlineData( "", PasswordIsNullOrEmptyMessage ) ] // RFC 2617 compliance
         public void Ctor_WhenPasswordIsNotAccpetable(string password, string expectedMessage)
         {
             Exception e = Assert.Throws <ArgumentException> (() => new PactUriOptions("dummyval", password));
@@ -30,9 +30,9 @@ namespace PactNet.Tests
         }
 
         [Theory]
-        [InlineData("some@user","password")] // RFC 2716
-        [InlineData("someuser" ,"password")]
-        [InlineData("someuser" ,"pass word")] // RFC 2716
+        [InlineData("some@user", "password")] // RFC 2716
+        [InlineData("someuser" , "password")]
+        [InlineData("someuser" , "pass word")] // RFC 2716
         public void Ctor_AllowUserNamesAndPasswords(string username, string password )
         {
             var options = new PactUriOptions(username, password);
