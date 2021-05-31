@@ -50,5 +50,4 @@ PactNet/Files/pact/
 .vs/
 tools/
 build/tools/
-Samples/EventApi/Consumer.Tests/pacts
 

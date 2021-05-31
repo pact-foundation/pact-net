@@ -19,7 +19,7 @@ namespace Consumer.Tests
 {
     public class EventsApiConsumerTests
     {
-        private const string Token = "abcdef1234567890";
+        private const string Token = "SomeValidAuthToken";
 
         private readonly IPactBuilder pact;
 
