@@ -57,7 +57,7 @@ namespace Provider.Api.Web.Tests
         {
             IOwinContext context = new OwinContext(environment);
 
-            if (context.Request.Path.Value == "/provider-states")
+            if (context.Request.Path.Value.StartsWith("/provider-states"))
             {
                 context.Response.StatusCode = (int)HttpStatusCode.OK;
 

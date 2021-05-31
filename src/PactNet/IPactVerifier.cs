@@ -10,11 +10,11 @@ namespace PactNet
     public interface IPactVerifier
     {
         /// <summary>
-        /// Set up the provider state setup URL so the service can configure states
+        /// Set up the provider state setup path so the service can configure states
         /// </summary>
-        /// <param name="providerStateSetupUri">Provider state setup URI</param>
+        /// <param name="providerStatePath">Provider state setup path</param>
         /// <returns>Fluent builder</returns>
-        IPactVerifier ProviderState(string providerStateSetupUri);
+        IPactVerifier ProviderState(string providerStatePath);
 
         /// <summary>
         /// Set the provider details

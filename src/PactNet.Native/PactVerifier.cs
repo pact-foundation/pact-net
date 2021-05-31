@@ -30,14 +30,14 @@ namespace PactNet.Native
         }
 
         /// <summary>
-        /// Set up the provider state setup URL so the service can configure states
+        /// Set up the provider state setup path so the service can configure states
         /// </summary>
-        /// <param name="providerStateSetupUri">Provider state setup URI</param>
+        /// <param name="providerStatePath">Provider state setup path</param>
         /// <returns>Fluent builder</returns>
-        public IPactVerifier ProviderState(string providerStateSetupUri)
+        public IPactVerifier ProviderState(string providerStatePath)
         {
             this.verifierArgs.Add("--state-change-url");
-            this.verifierArgs.Add(providerStateSetupUri);
+            this.verifierArgs.Add(providerStatePath);
             return this;
         }
 
@@ -204,9 +204,13 @@ namespace PactNet.Native
 
             // TODO: make verifier log level configurable
             this.verifierArgs.Add("--loglevel");
-            this.verifierArgs.Add("info");
+            this.verifierArgs.Add("trace");
 
             string args = string.Join(Environment.NewLine, this.verifierArgs);
+
+            this.config.WriteLine("Invoking the pact verifier with args:");
+            this.config.WriteLine(args);
+
             int result = PactVerifierInterop.Verify(args);
 
             switch (result)

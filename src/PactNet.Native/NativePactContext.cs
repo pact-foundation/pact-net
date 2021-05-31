@@ -29,6 +29,16 @@ namespace PactNet.Native
         /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
         public void Dispose()
         {
+            IntPtr logsPtr = MockServerInterop.MockServerLogs(this.MockServerUri.Port);
+
+            if (logsPtr != IntPtr.Zero)
+            {
+                string logs = Marshal.PtrToStringAnsi(logsPtr);
+                this.config.WriteLine("Mock server logs:");
+                this.config.WriteLine(string.Empty);
+                this.config.WriteLine(logs);
+            }
+
             IntPtr errorPtr = MockServerInterop.MockServerMismatches(this.MockServerUri.Port);
             string errors = string.Empty;
 

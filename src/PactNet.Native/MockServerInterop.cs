@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace PactNet.Native
@@ -35,6 +36,9 @@ namespace PactNet.Native
         [DllImport(dllName, EntryPoint = "mock_server_mismatches")]
         public static extern IntPtr MockServerMismatches(int mockServerPort);
 
+        [DllImport(dllName, EntryPoint = "mock_server_logs")]
+        public static extern IntPtr MockServerLogs(int mockServerPort);
+
         [DllImport(dllName, EntryPoint = "cleanup_mock_server")]
         public static extern bool CleanupMockServer(int mockServerPort);
 
@@ -48,31 +52,31 @@ namespace PactNet.Native
         public static extern InteractionHandle NewInteraction(PactHandle pact, string description);
 
         [DllImport(dllName, EntryPoint = "upon_receiving")]
-        public static extern void UponReceiving(InteractionHandle interaction, string description);
+        public static extern bool UponReceiving(InteractionHandle interaction, string description);
 
         [DllImport(dllName, EntryPoint = "given")]
-        public static extern void Given(InteractionHandle interaction, string description);
+        public static extern bool Given(InteractionHandle interaction, string description);
 
         [DllImport(dllName, EntryPoint = "given_with_param")]
-        public static extern void GivenWithParam(InteractionHandle interaction, string description, string name, string value);
+        public static extern bool GivenWithParam(InteractionHandle interaction, string description, string name, string value);
 
         [DllImport(dllName, EntryPoint = "with_request")]
-        public static extern void WithRequest(InteractionHandle interaction, string method, string path);
+        public static extern bool WithRequest(InteractionHandle interaction, string method, string path);
 
         [DllImport(dllName, EntryPoint = "with_query_parameter")]
-        public static extern void WithQueryParameter(InteractionHandle interaction, string name, UIntPtr index, string value);
+        public static extern bool WithQueryParameter(InteractionHandle interaction, string name, UIntPtr index, string value);
 
         [DllImport(dllName, EntryPoint = "with_specification")]
-        public static extern void WithSpecification(PactHandle pact, PactSpecification version);
+        public static extern bool WithSpecification(PactHandle pact, PactSpecification version);
 
         [DllImport(dllName, EntryPoint = "with_header")]
-        public static extern void WithHeader(InteractionHandle interaction, InteractionPart part, string name, UIntPtr index, string value);
+        public static extern bool WithHeader(InteractionHandle interaction, InteractionPart part, string name, UIntPtr index, string value);
 
         [DllImport(dllName, EntryPoint = "response_status")]
-        public static extern void ResponseStatus(InteractionHandle interaction, ushort status);
+        public static extern bool ResponseStatus(InteractionHandle interaction, ushort status);
 
         [DllImport(dllName, EntryPoint = "with_body")]
-        public static extern void WithBody(InteractionHandle interaction, InteractionPart part, string contentType, string body);
+        public static extern bool WithBody(InteractionHandle interaction, InteractionPart part, string contentType, string body);
 
         [DllImport(dllName, EntryPoint = "free_string")]
         public static extern void FreeString(IntPtr s);
@@ -105,21 +109,5 @@ namespace PactNet.Native
         V2 = 3,
         V3 = 4,
         V4 = 5
-    }
-
-    internal enum LevelFilter
-    {
-        /// A level lower than all log levels.
-        Off = 0,
-        /// Corresponds to the `Error` log level.
-        Error = 1,
-        /// Corresponds to the `Warn` log level.
-        Warn = 2,
-        /// Corresponds to the `Info` log level.
-        Info = 3,
-        /// Corresponds to the `Debug` log level.
-        Debug = 4,
-        /// Corresponds to the `Trace` log level.
-        Trace = 5,
     }
 }

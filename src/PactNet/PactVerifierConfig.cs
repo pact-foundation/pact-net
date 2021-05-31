@@ -31,5 +31,13 @@ namespace PactNet
         /// Provider tags applied when publishing verification results
         /// </summary>
         public ICollection<string> ProviderTags { get; set; } = new List<string>();
+
+        public void WriteLine(string line)
+        {
+            foreach (IOutput output in this.Outputters)
+            {
+                output.WriteLine(line);
+            }
+        }
     }
 }
