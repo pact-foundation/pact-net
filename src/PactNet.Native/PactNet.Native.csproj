@@ -10,11 +10,27 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Include="..\..\..\pact-reference\rust\target\release\pact_mock_server_ffi.dll" Link="pact_mock_server_ffi.dll">
+  <ItemGroup Condition=" '$(OS)' == 'Windows_NT' ">
+    <None Include="..\..\..\pact-reference\rust\target\release\pact_mock_server_ffi.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\..\pact-reference\rust\target\release\pact_verifier_ffi.dll" Link="pact_verifier_ffi.dll">
+    <None Include="..\..\..\pact-reference\rust\target\release\pact_verifier_ffi.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' ">
+    <None Include="..\..\..\pact-reference\rust\target\release\libpact_mock_server_ffi.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\..\pact-reference\rust\target\release\libpact_verifier_ffi.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' ">
+    <None Include="..\..\..\pact-reference\rust\target\release\pact_mock_server_ffi.dylib">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\..\pact-reference\rust\target\release\pact_verifier_ffi.dylib">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

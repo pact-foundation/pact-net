@@ -50,7 +50,6 @@ namespace PactNet.Native.Tests
 
             HttpResponseMessage result = await client.PostAsync("/path?param=value", new StringContent(@"{""foo"":42}", Encoding.UTF8, "application/json"));
             result.StatusCode.Should().Be(HttpStatusCode.Created);
-            //result.Headers.Should().Contain(new KeyValuePair<string, IEnumerable<string>>("x-response-header", new[] { "value1", "value2" }));
             result.Headers.GetValues("X-Response-Header").Should().BeEquivalentTo("value1", "value2");
 
             string content = await result.Content.ReadAsStringAsync();
