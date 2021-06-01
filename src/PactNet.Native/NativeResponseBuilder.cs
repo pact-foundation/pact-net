@@ -10,6 +10,7 @@ namespace PactNet.Native
     /// </summary>
     public class NativeResponseBuilder : IResponseBuilder
     {
+        private readonly IMockServer server;
         private readonly InteractionHandle interaction;
         private readonly JsonSerializerSettings defaultSettings;
         private readonly Dictionary<string, uint> headerCounts;
@@ -17,10 +18,12 @@ namespace PactNet.Native
         /// <summary>
         /// Initialises a new instance of the <see cref="NativeResponseBuilder"/> class.
         /// </summary>
+        /// <param name="server">Mock server</param>
         /// <param name="interaction">Interaction handle</param>
         /// <param name="defaultSettings">Default JSON serializer settings</param>
-        internal NativeResponseBuilder(InteractionHandle interaction, JsonSerializerSettings defaultSettings)
+        internal NativeResponseBuilder(IMockServer server, InteractionHandle interaction, JsonSerializerSettings defaultSettings)
         {
+            this.server = server;
             this.interaction = interaction;
             this.defaultSettings = defaultSettings;
             this.headerCounts = new Dictionary<string, uint>(StringComparer.OrdinalIgnoreCase);
@@ -35,7 +38,7 @@ namespace PactNet.Native
         {
             ushort converted = (ushort)status;
 
-            MockServerInterop.ResponseStatus(this.interaction, converted);
+            this.server.ResponseStatus(this.interaction, converted);
             return this;
         }
 
@@ -46,7 +49,7 @@ namespace PactNet.Native
         /// <returns>Fluent builder</returns>
         public IResponseBuilder WithStatus(ushort status)
         {
-            MockServerInterop.ResponseStatus(this.interaction, status);
+            this.server.ResponseStatus(this.interaction, status);
             return this;
         }
 
@@ -61,7 +64,7 @@ namespace PactNet.Native
             uint index = this.headerCounts.ContainsKey(key) ? this.headerCounts[key] + 1 : 0;
             this.headerCounts[key] = index;
 
-            MockServerInterop.WithHeader(this.interaction, InteractionPart.Response, key, new UIntPtr(index), value);
+            this.server.WithResponseHeader(this.interaction, key, value, index);
             return this;
         }
 
@@ -82,7 +85,7 @@ namespace PactNet.Native
         {
             string serialised = JsonConvert.SerializeObject(body, settings);
 
-            MockServerInterop.WithBody(this.interaction, InteractionPart.Response, "application/json", serialised);
+            this.server.WithResponseBody(this.interaction, "application/json", serialised);
             return this;
         }
     }

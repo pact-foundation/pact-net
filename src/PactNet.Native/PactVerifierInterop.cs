@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Runtime.InteropServices;
 
 namespace PactNet.Native
@@ -12,7 +11,7 @@ namespace PactNet.Native
         private const string dllName = "pact_verifier_ffi";
 
         /// <summary>
-        /// Static constructor for <see cref="MockServerInterop"/>
+        /// Static constructor for <see cref="PactVerifierInterop"/>
         /// </summary>
         static PactVerifierInterop()
         {

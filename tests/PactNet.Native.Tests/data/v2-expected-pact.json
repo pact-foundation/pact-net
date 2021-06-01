@@ -1,0 +1,44 @@
+﻿{
+  "consumer": {
+    "name": "consumer"
+  },
+  "interactions": [
+    {
+      "description": "a sample interaction",
+      "providerState": "provider state",
+      "request": {
+        "body": {
+          "foo": 42
+        },
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Request-Header": "request1, request2"
+        },
+        "method": "POST",
+        "path": "/path",
+        "query": "param=value"
+      },
+      "response": {
+        "body": {
+          "foo": 42
+        },
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Response-Header": "value1, value2"
+        },
+        "status": 201
+      }
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "version": "0.9.3"
+    },
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  },
+  "provider": {
+    "name": "provider"
+  }
+}

@@ -21,7 +21,8 @@ namespace PactNet.Native
         /// </remarks>
         public static IPactBuilder UsingNativeBackend(this IPact pact, int? port = null, IPAddress host = IPAddress.Loopback)
         {
-            var handle = MockServerInterop.NewPact(pact.Consumer, pact.Provider);
+            var server = new NativeMockServer();
+            PactHandle handle = server.NewPact(pact.Consumer, pact.Provider);
 
             PactSpecification specification = pact.SpecificationVersion switch
             {
@@ -33,9 +34,9 @@ namespace PactNet.Native
                 _ => PactSpecification.Unknown
             };
 
-            MockServerInterop.WithSpecification(handle, specification);
+            server.WithSpecification(handle, specification);
 
-            var builder = new NativePactBuilder(handle, pact.Config, port, host);
+            var builder = new NativePactBuilder(server, handle, pact.Config, port, host);
             return builder;
         }
     }

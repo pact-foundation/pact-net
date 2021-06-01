@@ -10,6 +10,7 @@ namespace PactNet.Native
     /// </summary>
     public class NativeRequestBuilder : IRequestBuilder
     {
+        private readonly IMockServer server;
         private readonly InteractionHandle interaction;
         private readonly JsonSerializerSettings defaultSettings;
         private readonly Dictionary<string, uint> queryCounts;
@@ -20,10 +21,12 @@ namespace PactNet.Native
         /// <summary>
         /// Initialises a new instance of the <see cref="NativeRequestBuilder"/> class.
         /// </summary>
+        /// <param name="server">Mock server</param>
         /// <param name="interaction"></param>
         /// <param name="defaultSettings">Default JSON serializer settings</param>
-        internal NativeRequestBuilder(InteractionHandle interaction, JsonSerializerSettings defaultSettings)
+        internal NativeRequestBuilder(IMockServer server, InteractionHandle interaction, JsonSerializerSettings defaultSettings)
         {
+            this.server = server;
             this.interaction = interaction;
             this.defaultSettings = defaultSettings;
             this.queryCounts = new Dictionary<string, uint>(StringComparer.OrdinalIgnoreCase);
@@ -37,7 +40,7 @@ namespace PactNet.Native
         /// <returns>Fluent builder</returns>
         public IRequestBuilder Given(string providerState)
         {
-            MockServerInterop.Given(this.interaction, providerState);
+            this.server.Given(this.interaction, providerState);
             return this;
         }
 
@@ -47,7 +50,8 @@ namespace PactNet.Native
         /// <param name="method">Request method</param>
         /// <param name="path">Request path</param>
         /// <returns>Fluent builder</returns>
-        public IRequestBuilder WithRequest(HttpMethod method, string path) => this.WithRequest(method.Method, path);
+        public IRequestBuilder WithRequest(HttpMethod method, string path)
+            => this.WithRequest(method.Method, path);
 
         /// <summary>
         /// Set the request
@@ -59,7 +63,7 @@ namespace PactNet.Native
         {
             this.requestConfigured = true;
 
-            MockServerInterop.WithRequest(this.interaction, method, path);
+            this.server.WithRequest(this.interaction, method, path);
             return this;
         }
 
@@ -75,7 +79,7 @@ namespace PactNet.Native
             uint index = this.queryCounts.ContainsKey(key) ? this.queryCounts[key] + 1 : 0;
             this.queryCounts[key] = index;
 
-            MockServerInterop.WithQueryParameter(this.interaction, key, new UIntPtr(index), value);
+            this.server.WithQueryParameter(this.interaction, key, value, index);
             return this;
         }
 
@@ -90,7 +94,7 @@ namespace PactNet.Native
             uint index = this.headerCounts.ContainsKey(key) ? this.headerCounts[key] + 1 : 0;
             this.headerCounts[key] = index;
 
-            MockServerInterop.WithHeader(this.interaction, InteractionPart.Request, key, new UIntPtr(index), value);
+            this.server.WithRequestHeader(this.interaction, key, value, index);
             return this;
         }
 
@@ -111,7 +115,7 @@ namespace PactNet.Native
         {
             string serialised = JsonConvert.SerializeObject(body, settings);
 
-            MockServerInterop.WithBody(this.interaction, InteractionPart.Request, "application/json", serialised);
+            this.server.WithRequestBody(this.interaction, "application/json", serialised);
             return this;
         }
 
@@ -126,7 +130,7 @@ namespace PactNet.Native
                 throw new InvalidOperationException("You must configure the request before defining the response");
             }
 
-            var builder = new NativeResponseBuilder(this.interaction, this.defaultSettings);
+            var builder = new NativeResponseBuilder(this.server, this.interaction, this.defaultSettings);
             return builder;
         }
     }

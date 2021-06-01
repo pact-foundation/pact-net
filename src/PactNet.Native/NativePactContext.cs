@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 
 namespace PactNet.Native
 {
@@ -8,6 +7,7 @@ namespace PactNet.Native
     /// </summary>
     public class NativePactContext : IPactContext
     {
+        private readonly IMockServer server;
         private readonly PactConfig config;
 
         /// <summary>
@@ -18,10 +18,12 @@ namespace PactNet.Native
         /// <summary>
         /// Initialises a new instance of the <see cref="NativePactContext"/> class.
         /// </summary>
+        /// <param name="server">Mock server</param>
         /// <param name="mockServerUri">Mock server URI</param>
         /// <param name="config">Pact config</param>
-        internal NativePactContext(Uri mockServerUri, PactConfig config)
+        internal NativePactContext(IMockServer server, Uri mockServerUri, PactConfig config)
         {
+            this.server = server;
             this.config = config;
             this.MockServerUri = mockServerUri;
         }
@@ -29,36 +31,21 @@ namespace PactNet.Native
         /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
         public void Dispose()
         {
-            IntPtr logsPtr = MockServerInterop.MockServerLogs(this.MockServerUri.Port);
+            string logs = this.server.MockServerLogs(this.MockServerUri.Port);
 
-            if (logsPtr != IntPtr.Zero)
+            if (!string.IsNullOrWhiteSpace(logs))
             {
-                string logs = Marshal.PtrToStringAnsi(logsPtr);
                 this.config.WriteLine("Mock server logs:");
                 this.config.WriteLine(string.Empty);
                 this.config.WriteLine(logs);
             }
 
-            IntPtr errorPtr = MockServerInterop.MockServerMismatches(this.MockServerUri.Port);
-            string errors = string.Empty;
-
-            if (errorPtr != IntPtr.Zero)
-            {
-                errors = Marshal.PtrToStringAnsi(errorPtr);
-            }
+            string errors = this.server.MockServerMismatches(this.MockServerUri.Port);
 
             if (string.IsNullOrWhiteSpace(errors) || errors == "[]" )
             {
-                int result = MockServerInterop.WritePactFile(this.MockServerUri.Port, this.config.PactDir, false);
-
-                switch (result)
-                {
-                    case 0: return;
-                    case 1: throw new InvalidOperationException("The pact reference library panicked");
-                    case 2: throw new InvalidOperationException("The pact file was not able to be written");
-                    case 3: throw new InvalidOperationException("A mock server with the provided port was not found");
-                    default: throw new InvalidOperationException($"Unknown error from backend: {result}");
-                }
+                this.server.WritePactFile(this.MockServerUri.Port, this.config.PactDir, false);
+                return;
             }
 
             this.config.WriteLine("Verification mismatches:");
