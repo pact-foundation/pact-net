@@ -1,0 +1,59 @@
+{
+  "consumer": {
+    "name": "PactExtensionsTests-Consumer"
+  },
+  "interactions": [
+    {
+      "description": "a sample request",
+      "providerState": "a provider state",
+      "request": {
+        "body": {
+          "bool": true,
+          "int": 42,
+          "string": "foo"
+        },
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Request": "request1, request2"
+        },
+        "matchingRules": {
+          "$.body.bool": {
+            "match": "type"
+          },
+          "$.body.int": {
+            "match": "type"
+          },
+          "$.body.string": {
+            "match": "type"
+          }
+        },
+        "method": "POST",
+        "path": "/things",
+        "query": "param=value1&param=value2"
+      },
+      "response": {
+        "body": {
+          "bool": true,
+          "int": 42,
+          "string": "foo"
+        },
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Response": "response1, response2"
+        },
+        "status": 201
+      }
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "version": "0.9.3"
+    },
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  },
+  "provider": {
+    "name": "PactExtensionsTests-Provider"
+  }
+}
