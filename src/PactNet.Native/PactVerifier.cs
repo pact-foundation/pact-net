@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,6 +10,7 @@ namespace PactNet.Native
     /// </summary>
     public class PactVerifier : IPactVerifier
     {
+        private readonly IVerifierProvider verifier;
         private readonly PactVerifierConfig config;
         private readonly IList<string> verifierArgs = new List<string>();
 
@@ -24,21 +25,19 @@ namespace PactNet.Native
         /// Initialises a new instance of the <see cref="PactVerifier"/> class.
         /// </summary>
         /// <param name="config">Verifier configuration</param>
-        public PactVerifier(PactVerifierConfig config)
+        public PactVerifier(PactVerifierConfig config) : this(new NativePactVerifier(), config)
         {
-            this.config = config;
         }
 
         /// <summary>
-        /// Set up the provider state setup path so the service can configure states
+        /// Initialises a new instance of the <see cref="PactVerifier"/> class.
         /// </summary>
-        /// <param name="providerStatePath">Provider state setup path</param>
-        /// <returns>Fluent builder</returns>
-        public IPactVerifier ProviderState(string providerStatePath)
+        /// <param name="verifier">Verifier provider</param>
+        /// <param name="config">Config</param>
+        internal PactVerifier(IVerifierProvider verifier, PactVerifierConfig config)
         {
-            this.verifierArgs.Add("--state-change-url");
-            this.verifierArgs.Add(providerStatePath);
-            return this;
+            this.verifier = verifier;
+            this.config = config;
         }
 
         /// <summary>
@@ -82,7 +81,7 @@ namespace PactNet.Native
         /// </summary>
         /// <param name="pactFile">Pact file path</param>
         /// <returns>Fluent builder</returns>
-        public IPactVerifier PactFile(FileInfo pactFile)
+        public IPactVerifier FromPactFile(FileInfo pactFile)
         {
             this.verifierArgs.Add("--file");
             this.verifierArgs.Add(pactFile.FullName);
@@ -93,10 +92,8 @@ namespace PactNet.Native
         /// Verify a pact from a URI
         /// </summary>
         /// <param name="pactUri">Pact file URI</param>
-        /// <param name="options">Pact URI options</param>
-        /// <param name="providerVersionTags">Provider version tags</param>
         /// <returns>Fluent builder</returns>
-        public IPactVerifier PactUri(Uri pactUri, PactUriOptions options = null, IEnumerable<string> providerVersionTags = null)
+        public IPactVerifier FromPactUri(Uri pactUri)
         {
             this.verifierArgs.Add("--url");
             this.verifierArgs.Add(pactUri.ToString());
@@ -112,7 +109,7 @@ namespace PactNet.Native
         /// <param name="consumerVersionTags">Consumer tag versions to retrieve</param>
         /// <param name="includeWipPactsSince">Include WIP pacts since the given filter</param>
         /// <returns>Fluent builder</returns>
-        public IPactVerifier PactBroker(Uri brokerBaseUri,
+        public IPactVerifier FromPactBroker(Uri brokerBaseUri,
                                         PactUriOptions uriOptions = null,
                                         bool enablePending = false,
                                         IEnumerable<string> consumerVersionTags = null,
@@ -164,11 +161,24 @@ namespace PactNet.Native
         }
 
         /// <summary>
-        /// Verify provider interactions
+        /// Set up the provider state setup URI so the service can configure states
+        /// </summary>
+        /// <param name="providerStateUri">Provider state URI</param>
+        /// <returns>Fluent builder</returns>
+        public IPactVerifier WithProviderStateUrl(Uri providerStateUri)
+        {
+            this.verifierArgs.Add("--state-change-url");
+            this.verifierArgs.Add(providerStateUri.ToString());
+            return this;
+        }
+
+        /// <summary>
+        /// Filter the interactions to only those matching the given description and/or provider state
         /// </summary>
         /// <param name="description">Interaction description. All interactions are verified if this is null</param>
         /// <param name="providerState">Provider state description. All provider states are verified if this is null</param>
-        public void Verify(string description = null, string providerState = null)
+        /// <returns>Fluent builder</returns>
+        public IPactVerifier WithFilter(string description = null, string providerState = null)
         {
             // TODO: Allow env vars to specify description and provider state filters like the old version did
             if (!string.IsNullOrWhiteSpace(description))
@@ -183,45 +193,51 @@ namespace PactNet.Native
                 this.verifierArgs.Add(providerState);
             }
 
-            if (this.config.PublishVerificationResults)
+            return this;
+        }
+
+        /// <summary>
+        /// Publish results to the pact broker
+        /// </summary>
+        /// <param name="providerVersion">Provider version</param>
+        /// <param name="providerTags">Optional tags to add to the verification</param>
+        /// <returns>Fluent builder</returns>
+        public IPactVerifier WithPublishedResults(string providerVersion, IEnumerable<string> providerTags = null)
+        {
+            if (string.IsNullOrWhiteSpace(providerVersion))
             {
-                if (string.IsNullOrWhiteSpace(this.config.ProviderVersion))
-                {
-                    throw new InvalidOperationException("Can't publish verification results without the provider version being set");
-                }
-
-                this.verifierArgs.Add("--publish");
-                this.verifierArgs.Add("--provider-version");
-                this.verifierArgs.Add(this.config.ProviderVersion);
-
-                if (this.config.ProviderTags.Any())
-                {
-                    string tags = string.Join(",", this.config.ProviderTags);
-                    this.verifierArgs.Add("--provider-tags");
-                    this.verifierArgs.Add(tags);
-                }
+                throw new ArgumentException("Can't publish verification results without the provider version being set");
             }
 
+            this.verifierArgs.Add("--publish");
+            this.verifierArgs.Add("--provider-version");
+            this.verifierArgs.Add(providerVersion);
+
+            if (providerTags != null && providerTags.Any())
+            {
+                string tags = string.Join(",", providerTags);
+                this.verifierArgs.Add("--provider-tags");
+                this.verifierArgs.Add(tags);
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Verify provider interactions
+        /// </summary>
+        public void Verify()
+        {
             // TODO: make verifier log level configurable
             this.verifierArgs.Add("--loglevel");
             this.verifierArgs.Add("trace");
 
-            string args = string.Join(Environment.NewLine, this.verifierArgs);
+            string formatted = string.Join(Environment.NewLine, this.verifierArgs);
 
             this.config.WriteLine("Invoking the pact verifier with args:");
-            this.config.WriteLine(args);
+            this.config.WriteLine(formatted);
 
-            int result = PactVerifierInterop.Verify(args);
-
-            switch (result)
-            {
-                case 0: break;
-                case 1: throw new PactFailureException("The verification process failed, see output for errors");
-                case 2: throw new PactFailureException("A null pointer was received");
-                case 3: throw new PactFailureException("The method panicked");
-                case 4: throw new PactFailureException("Invalid arguments were provided to the verification process");
-                default: throw new PactFailureException($"An unknown error occurred with error code {result}");
-            }
+            this.verifier.Verify(formatted);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Owin.Hosting;
@@ -10,7 +10,7 @@ using Xunit.Abstractions;
 
 namespace Provider.Api.Web.Tests
 {
-    public class EventApiTests : IDisposable
+    public class EventApiTests
     {
         private readonly ITestOutputHelper output;
 
@@ -45,16 +45,12 @@ namespace Provider.Api.Web.Tests
                 //Act / Assert
                 IPactVerifier pactVerifier = new PactVerifier(config);
                 pactVerifier
-                    .ProviderState($"{serviceUri}/provider-states")
                     .ServiceProvider("Event API", new Uri(serviceUri))
                     .HonoursPactWith("Event API Consumer")
-                    .PactFile(new FileInfo(pactPath))
+                    .FromPactFile(new FileInfo(pactPath))
+                    .WithProviderStateUrl(new Uri($"{serviceUri}/provider-states"))
                     .Verify();
             }
-        }
-
-        public virtual void Dispose()
-        {
         }
     }
 }

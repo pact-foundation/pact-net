@@ -16,22 +16,6 @@ namespace PactNet
             new ConsoleOutput()
         };
 
-        /// <summary>
-        /// Publish verification results?
-        /// </summary>
-        public bool PublishVerificationResults { get; set; }
-
-        /// <summary>
-        /// Provider version
-        /// </summary>
-        /// <remarks>Required if publishing verification results</remarks>
-        public string ProviderVersion { get; set; }
-
-        /// <summary>
-        /// Provider tags applied when publishing verification results
-        /// </summary>
-        public ICollection<string> ProviderTags { get; set; } = new List<string>();
-
         public void WriteLine(string line)
         {
             foreach (IOutput output in this.Outputters)
