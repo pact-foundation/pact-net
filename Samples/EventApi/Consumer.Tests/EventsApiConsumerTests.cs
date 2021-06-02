@@ -11,7 +11,6 @@ using Newtonsoft.Json.Serialization;
 using PactNet;
 using PactNet.Matchers;
 using PactNet.Native;
-using Provider.Api.Web.Tests;
 using Xunit;
 using Xunit.Abstractions;
 
