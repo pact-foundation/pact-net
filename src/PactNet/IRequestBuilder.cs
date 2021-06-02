@@ -1,19 +1,86 @@
-﻿using System.Net.Http;
+using System.Net.Http;
 using Newtonsoft.Json;
 
 namespace PactNet
 {
     /// <summary>
-    /// Build up a mock request
+    /// Build up a mock request for a v2 pact
     /// </summary>
-    public interface IRequestBuilder
+    public interface IRequestBuilderV2
     {
         /// <summary>
         /// Add a provider state
         /// </summary>
         /// <param name="providerState">Provider state description</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilder Given(string providerState);
+        IRequestBuilderV2 Given(string providerState);
+
+        /// <summary>
+        /// Set the request
+        /// </summary>
+        /// <param name="method">Request method</param>
+        /// <param name="path">Request path</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV2 WithRequest(HttpMethod method, string path);
+
+        /// <summary>
+        /// Set the request
+        /// </summary>
+        /// <param name="method">Request method</param>
+        /// <param name="path">Request path</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV2 WithRequest(string method, string path);
+
+        /// <summary>
+        /// Add a query string parameter
+        /// </summary>
+        /// <param name="key">Query parameter key</param>
+        /// <param name="value">Query parameter value</param>
+        /// <returns>Fluent builder</returns>
+        /// <remarks>You can add a query parameter with the same key multiple times</remarks>
+        IRequestBuilderV2 WithQuery(string key, string value);
+
+        /// <summary>
+        /// Add a request header
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="value">Header value</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV2 WithHeader(string key, string value);
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV2 WithJsonBody(dynamic body);
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <param name="settings">Custom JSON serializer settings</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV2 WithJsonBody(dynamic body, JsonSerializerSettings settings);
+
+        /// <summary>
+        /// Define the response to this request
+        /// </summary>
+        /// <returns>Response builder</returns>
+        IResponseBuilderV2 WillRespond();
+    }
+
+    /// <summary>
+    /// Build up a mock request for a v3 pact
+    /// </summary>
+    public interface IRequestBuilderV3
+    {
+        /// <summary>
+        /// Add a provider state
+        /// </summary>
+        /// <param name="providerState">Provider state description</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 Given(string providerState);
 
         // TODO: Support multiple provider states and provider state params
 
@@ -23,7 +90,7 @@ namespace PactNet
         /// <param name="method">Request method</param>
         /// <param name="path">Request path</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilder WithRequest(HttpMethod method, string path);
+        IRequestBuilderV3 WithRequest(HttpMethod method, string path);
 
         /// <summary>
         /// Set the request
@@ -31,7 +98,7 @@ namespace PactNet
         /// <param name="method">Request method</param>
         /// <param name="path">Request path</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilder WithRequest(string method, string path);
+        IRequestBuilderV3 WithRequest(string method, string path);
 
         /// <summary>
         /// Add a query string parameter
@@ -40,7 +107,7 @@ namespace PactNet
         /// <param name="value">Query parameter value</param>
         /// <returns>Fluent builder</returns>
         /// <remarks>You can add a query parameter with the same key multiple times</remarks>
-        IRequestBuilder WithQuery(string key, string value);
+        IRequestBuilderV3 WithQuery(string key, string value);
 
         /// <summary>
         /// Add a request header
@@ -48,14 +115,14 @@ namespace PactNet
         /// <param name="key">Header key</param>
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilder WithHeader(string key, string value);
+        IRequestBuilderV3 WithHeader(string key, string value);
 
         /// <summary>
         /// Set a body which is serialised as JSON
         /// </summary>
         /// <param name="body">Request body</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilder WithJsonBody(dynamic body);
+        IRequestBuilderV3 WithJsonBody(dynamic body);
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -63,7 +130,7 @@ namespace PactNet
         /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilder WithJsonBody(dynamic body, JsonSerializerSettings settings);
+        IRequestBuilderV3 WithJsonBody(dynamic body, JsonSerializerSettings settings);
 
         // TODO: Support binary and multi-part body
 
@@ -71,6 +138,6 @@ namespace PactNet
         /// Define the response to this request
         /// </summary>
         /// <returns>Response builder</returns>
-        IResponseBuilder WillRespond();
+        IResponseBuilderV3 WillRespond();
     }
 }

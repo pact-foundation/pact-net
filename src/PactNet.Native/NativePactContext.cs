@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace PactNet.Native
 {
@@ -31,28 +31,50 @@ namespace PactNet.Native
         /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
         public void Dispose()
         {
-            string logs = this.server.MockServerLogs(this.MockServerUri.Port);
-
-            if (!string.IsNullOrWhiteSpace(logs))
+            try
             {
-                this.config.WriteLine("Mock server logs:");
+                string logs = this.server.MockServerLogs(this.MockServerUri.Port);
+
+                if (!string.IsNullOrWhiteSpace(logs))
+                {
+                    this.config.WriteLine("Mock server logs:");
+                    this.config.WriteLine(string.Empty);
+                    this.config.WriteLine(logs);
+                }
+
+                string errors = this.server.MockServerMismatches(this.MockServerUri.Port);
+
+                if (string.IsNullOrWhiteSpace(errors) || errors == "[]")
+                {
+                    this.server.WritePactFile(this.MockServerUri.Port, this.config.PactDir, false);
+                    return;
+                }
+
+                this.config.WriteLine("Verification mismatches:");
                 this.config.WriteLine(string.Empty);
-                this.config.WriteLine(logs);
+                this.config.WriteLine(errors);
+
+                throw new PactFailureException("Pact verification failed. See output for details");
             }
-
-            string errors = this.server.MockServerMismatches(this.MockServerUri.Port);
-
-            if (string.IsNullOrWhiteSpace(errors) || errors == "[]" )
+            finally
             {
-                this.server.WritePactFile(this.MockServerUri.Port, this.config.PactDir, false);
-                return;
+                this.ReleaseUnmanagedResources();
+                GC.SuppressFinalize(this);
             }
+        }
 
-            this.config.WriteLine("Verification mismatches:");
-            this.config.WriteLine(string.Empty);
-            this.config.WriteLine(errors);
+        /// <summary>
+        /// Clean up the mock server resources
+        /// </summary>
+        private void ReleaseUnmanagedResources()
+        {
+            this.server.CleanupMockServer(this.MockServerUri.Port);
+        }
 
-            throw new PactFailureException("Pact verification failed. See output for details");
+        /// <summary>Allows an object to try to free resources and perform other cleanup operations before it is reclaimed by garbage collection.</summary>
+        ~NativePactContext()
+        {
+            this.ReleaseUnmanagedResources();
         }
     }
 }

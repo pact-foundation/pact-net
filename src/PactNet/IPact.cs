@@ -1,4 +1,4 @@
-﻿namespace PactNet
+namespace PactNet
 {
     /// <summary>
     /// A pact between a consumer and a provider
@@ -16,14 +16,22 @@
         string Provider { get; }
 
         /// <summary>
-        /// Specification version
-        /// </summary>
-        // TODO: make this a proper enum
-        string SpecificationVersion { get; }
-
-        /// <summary>
         /// Pact config
         /// </summary>
         PactConfig Config { get; }
+    }
+
+    /// <summary>
+    /// Marker interface for a v2 Pact
+    /// </summary>
+    public interface IPactV2 : IPact
+    {
+    }
+
+    /// <summary>
+    /// Marker interface for a v3 Pact
+    /// </summary>
+    public interface IPactV3 : IPact
+    {
     }
 }

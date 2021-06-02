@@ -1,4 +1,4 @@
-﻿namespace PactNet
+namespace PactNet
 {
     /// <summary>
     /// Pact Builder
@@ -6,16 +6,37 @@
     public interface IPactBuilder
     {
         /// <summary>
-        /// Add a new interaction to the pact
-        /// </summary>
-        /// <param name="description">Interaction description</param>
-        /// <returns>Fluent builder</returns>
-        IRequestBuilder UponReceiving(string description);
-
-        /// <summary>
         /// Finalise the pact
         /// </summary>
         /// <returns>Pact context in which to run interactions</returns>
         IPactContext Build();
+    }
+
+    /// <summary>
+    /// Pact v2 Builder
+    /// </summary>
+    public interface IPactBuilderV2 : IPactBuilder
+    {
+        /// <summary>
+        /// Add a new interaction to the pact
+        /// </summary>
+        /// <param name="description">Interaction description</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV2 UponReceiving(string description);
+    }
+
+    /// <summary>
+    /// Pact v3 Builder
+    /// </summary>
+    public interface IPactBuilderV3 : IPactBuilder
+    {
+        /// <summary>
+        /// Add a new interaction to the pact
+        /// </summary>
+        /// <param name="description">Interaction description</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 UponReceiving(string description);
+
+        // TODO: Add message pacts call here
     }
 }

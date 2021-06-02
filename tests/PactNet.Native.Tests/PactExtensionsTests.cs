@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -7,9 +8,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using PactNet;
 using PactNet.Matchers;
-using PactNet.Native;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -17,74 +16,119 @@ namespace PactNet.Native.Tests
 {
     public class PactExtensionsTests
     {
-        private readonly ITestOutputHelper output;
+        private readonly TestData example = new()
+        {
+            Bool = true,
+            Int = 42,
+            String = "foo",
+            Children = new[]
+            {
+                new TestData
+                {
+                    Bool = false,
+                    Int = 7,
+                    String = "bar"
+                }
+            }
+        };
+
+        private readonly dynamic matcher = new
+        {
+            Bool = Match.Type(true),
+            Int = Match.Type(42),
+            String = Match.Type("foo"),
+            Children = Match.MinType(new
+            {
+                Bool = Match.Type(false),
+                Int = Match.Type(7),
+                String = Match.Type("bar")
+            }, 1)
+        };
+
+        private readonly PactConfig config;
 
         public PactExtensionsTests(ITestOutputHelper output)
-        {
-            this.output = output;
-        }
-
-        [Fact]
-        public async Task ConsumerIntegrationTest()
         {
             var jsonSettings = new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
             };
 
-            IPact pact = new Pact("PactExtensionsTests-Consumer", "PactExtensionsTests-Provider", "2.0.0", new PactConfig
+            this.config = new PactConfig
             {
+                PactDir = Environment.CurrentDirectory,
                 DefaultJsonSettings = jsonSettings,
                 Outputters = new[]
                 {
-                    new XUnitOutput(this.output)
-                },
-                PactDir = Environment.CurrentDirectory
-            });
+                    new XUnitOutput(output)
+                }
+            };
+        }
 
-            IPactBuilder builder = pact.UsingNativeBackend();
+        [Fact]
+        public async Task UsingNativeBackend_V2RequestResponse_CreatesExpectedPactFile()
+        {
+            IPactV2 pact = Pact.V2("PactExtensionsTests-Consumer-V2", "PactExtensionsTests-Provider", this.config);
+            IPactBuilderV2 builder = pact.UsingNativeBackend();
 
             builder.UponReceiving("a sample request")
-                   .Given("a provider state")
-                   .WithRequest(HttpMethod.Post, "/things")
-                   .WithHeader("X-Request", "request1")
-                   .WithHeader("X-Request", "request2")
-                   .WithQuery("param", "value1")
-                   .WithQuery("param", "value2")
-                   .WithJsonBody(new
-                   {
-                       Bool = Match.Type(true),
-                       Int = Match.Type(42),
-                       String = Match.Type("foo")
-                   })
+                       .Given("a provider state")
+                       .WithRequest(HttpMethod.Post, "/things")
+                       .WithHeader("X-Request", "request1")
+                       .WithHeader("X-Request", "request2")
+                       .WithQuery("param", "value1")
+                       .WithQuery("param", "value2")
+                       .WithJsonBody(this.matcher)
                    .WillRespond()
-                   .WithStatus(HttpStatusCode.Created)
-                   .WithHeader("X-Response", "response1")
-                   .WithHeader("X-Response", "response2")
-                   .WithJsonBody(new TestData
-                   {
-                       Bool = true,
-                       Int = 42,
-                       String = "foo"
-                   });
+                       .WithStatus(HttpStatusCode.Created)
+                       .WithHeader("X-Response", "response1")
+                       .WithHeader("X-Response", "response2")
+                       .WithJsonBody(this.example);
 
             using (IPactContext context = builder.Build())
             {
-                await PerformRequest(context, new TestData
-                {
-                    Bool = true,
-                    Int = 42,
-                    String = "foo"
-                }, jsonSettings);
+                await PerformRequestAsync(context, this.example, this.config.DefaultJsonSettings);
             }
 
-            string actualPact = File.ReadAllText("PactExtensionsTests-Consumer-PactExtensionsTests-Provider.json").TrimEnd();
+            string actualPact = File.ReadAllText("PactExtensionsTests-Consumer-V2-PactExtensionsTests-Provider.json").TrimEnd();
             string expectedPact = File.ReadAllText("data/v2-consumer-integration.json").TrimEnd();
 
             actualPact.Should().Be(expectedPact);
         }
 
-        private async Task PerformRequest(IPactContext context, TestData body, JsonSerializerSettings jsonSettings)
+        [Fact]
+        public async Task UsingNativeBackend_V3RequestResponse_CreatesExpectedPactFile()
+        {
+            IPactV3 pact = Pact.V3("PactExtensionsTests-Consumer-V3", "PactExtensionsTests-Provider", this.config);
+            IPactBuilderV3 builder = pact.UsingNativeBackend();
+
+            builder.UponReceiving("a sample request")
+                       .Given("a provider state")
+                       .Given("another provider state")
+                       .WithRequest(HttpMethod.Post, "/things")
+                       .WithHeader("X-Request", "request1")
+                       .WithHeader("X-Request", "request2")
+                       .WithQuery("param", "value1")
+                       .WithQuery("param", "value2")
+                       .WithJsonBody(this.matcher)
+                   .WillRespond()
+                       .WithStatus(HttpStatusCode.Created)
+                       .WithHeader("X-Response", "response1")
+                       .WithHeader("X-Response", "response2")
+                       .WithJsonBody(this.example);
+
+            using (IPactContext context = builder.Build())
+            {
+                await PerformRequestAsync(context, this.example, this.config.DefaultJsonSettings);
+            }
+
+            string actualPact = File.ReadAllText("PactExtensionsTests-Consumer-V3-PactExtensionsTests-Provider.json").TrimEnd();
+            string expectedPact = File.ReadAllText("data/v3-consumer-integration.json").TrimEnd();
+
+            actualPact.Should().Be(expectedPact);
+        }
+
+        private static async Task PerformRequestAsync(IPactContext context, TestData body, JsonSerializerSettings jsonSettings)
         {
             var client = new HttpClient
             {
@@ -110,6 +154,8 @@ namespace PactNet.Native.Tests
             public bool Bool { get; set; }
             public int Int { get; set; }
             public string String { get; set; }
+            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+            public ICollection<TestData> Children { get; set; }
         }
     }
 }

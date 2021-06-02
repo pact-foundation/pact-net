@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">
@@ -8,6 +8,7 @@
       net50;net46
     </TargetFrameworks>
     <IsPackable>false</IsPackable>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

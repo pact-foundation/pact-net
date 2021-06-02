@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AutoFixture;
 using FluentAssertions;
 using Moq;
@@ -56,27 +56,6 @@ namespace PactNet.Native.Tests
             Action action = () => this.builder.Build();
 
             action.Should().Throw<InvalidOperationException>("because the mock server failed to start");
-        }
-
-        [Fact]
-        public void Dispose_WhenStarted_ShutsDownMockServer()
-        {
-            this.mockServer
-                .Setup(s => s.CreateMockServerForPact(It.IsAny<PactHandle>(), It.IsAny<string>(), It.IsAny<bool>()))
-                .Returns(1234);
-            this.builder.Build();
-
-            this.builder.Dispose();
-
-            this.mockServer.Verify(s => s.CleanupMockServer(1234));
-        }
-
-        [Fact]
-        public void Dispose_NotStarted_DoesNothing()
-        {
-            this.builder.Dispose();
-
-            this.mockServer.Verify(s => s.CleanupMockServer(It.IsAny<int>()), Times.Never);
         }
     }
 }

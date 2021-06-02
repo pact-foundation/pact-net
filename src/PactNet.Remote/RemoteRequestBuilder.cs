@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Http;
 using Newtonsoft.Json;
 
@@ -7,14 +7,14 @@ namespace PactNet.Remote
     /// <summary>
     /// Remote mock request builder
     /// </summary>
-    public class RemoteRequestBuilder : IRequestBuilder
+    public class RemoteRequestBuilder : IRequestBuilderV2, IRequestBuilderV3
     {
         /// <summary>
         /// Add a provider state
         /// </summary>
         /// <param name="providerState">Provider state description</param>
         /// <returns>Fluent builder</returns>
-        public IRequestBuilder Given(string providerState)
+        IRequestBuilderV2 IRequestBuilderV2.Given(string providerState)
         {
             throw new NotImplementedException();
         }
@@ -25,7 +25,7 @@ namespace PactNet.Remote
         /// <param name="method">Request method</param>
         /// <param name="path">Request path</param>
         /// <returns>Fluent builder</returns>
-        public IRequestBuilder WithRequest(HttpMethod method, string path)
+        IRequestBuilderV2 IRequestBuilderV2.WithRequest(HttpMethod method, string path)
         {
             throw new NotImplementedException();
         }
@@ -36,7 +36,7 @@ namespace PactNet.Remote
         /// <param name="method">Request method</param>
         /// <param name="path">Request path</param>
         /// <returns>Fluent builder</returns>
-        public IRequestBuilder WithRequest(string method, string path)
+        IRequestBuilderV2 IRequestBuilderV2.WithRequest(string method, string path)
         {
             throw new NotImplementedException();
         }
@@ -48,7 +48,7 @@ namespace PactNet.Remote
         /// <param name="value">Query parameter value</param>
         /// <returns>Fluent builder</returns>
         /// <remarks>You can add a query parameter with the same key multiple times</remarks>
-        public IRequestBuilder WithQuery(string key, string value)
+        IRequestBuilderV2 IRequestBuilderV2.WithQuery(string key, string value)
         {
             throw new NotImplementedException();
         }
@@ -59,7 +59,7 @@ namespace PactNet.Remote
         /// <param name="key">Header key</param>
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
-        public IRequestBuilder WithHeader(string key, string value)
+        IRequestBuilderV2 IRequestBuilderV2.WithHeader(string key, string value)
         {
             throw new NotImplementedException();
         }
@@ -69,7 +69,7 @@ namespace PactNet.Remote
         /// </summary>
         /// <param name="body">Request body</param>
         /// <returns>Fluent builder</returns>
-        public IRequestBuilder WithJsonBody(dynamic body)
+        IRequestBuilderV2 IRequestBuilderV2.WithJsonBody(dynamic body)
         {
             throw new NotImplementedException();
         }
@@ -80,7 +80,7 @@ namespace PactNet.Remote
         /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        public IRequestBuilder WithJsonBody(dynamic body, JsonSerializerSettings settings)
+        IRequestBuilderV2 IRequestBuilderV2.WithJsonBody(dynamic body, JsonSerializerSettings settings)
         {
             throw new NotImplementedException();
         }
@@ -89,7 +89,92 @@ namespace PactNet.Remote
         /// Define the response to this request
         /// </summary>
         /// <returns>Response builder</returns>
-        public IResponseBuilder WillRespond()
+        IResponseBuilderV2 IRequestBuilderV2.WillRespond()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Add a provider state
+        /// </summary>
+        /// <param name="providerState">Provider state description</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 IRequestBuilderV3.Given(string providerState)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Set the request
+        /// </summary>
+        /// <param name="method">Request method</param>
+        /// <param name="path">Request path</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 IRequestBuilderV3.WithRequest(HttpMethod method, string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Set the request
+        /// </summary>
+        /// <param name="method">Request method</param>
+        /// <param name="path">Request path</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 IRequestBuilderV3.WithRequest(string method, string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Add a query string parameter
+        /// </summary>
+        /// <param name="key">Query parameter key</param>
+        /// <param name="value">Query parameter value</param>
+        /// <returns>Fluent builder</returns>
+        /// <remarks>You can add a query parameter with the same key multiple times</remarks>
+        IRequestBuilderV3 IRequestBuilderV3.WithQuery(string key, string value)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Add a request header
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="value">Header value</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 IRequestBuilderV3.WithHeader(string key, string value)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 IRequestBuilderV3.WithJsonBody(dynamic body)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <param name="settings">Custom JSON serializer settings</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 IRequestBuilderV3.WithJsonBody(dynamic body, JsonSerializerSettings settings)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Define the response to this request
+        /// </summary>
+        /// <returns>Response builder</returns>
+        IResponseBuilderV3 IRequestBuilderV3.WillRespond()
         {
             throw new NotImplementedException();
         }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AutoFixture;
 using FluentAssertions;
 using Moq;
@@ -34,6 +34,7 @@ namespace PactNet.Native.Tests
             this.mockServer.Setup(s => s.MockServerLogs(this.serverUri.Port)).Returns(string.Empty);
             this.mockServer.Setup(s => s.MockServerMismatches(this.serverUri.Port)).Returns(string.Empty);
             this.mockServer.Setup(s => s.WritePactFile(this.serverUri.Port, this.config.PactDir, false));
+            this.mockServer.Setup(s => s.CleanupMockServer(this.serverUri.Port)).Returns(true);
 
             this.context = new NativePactContext(this.mockServer.Object, this.serverUri, this.config);
         }
@@ -117,6 +118,31 @@ namespace PactNet.Native.Tests
             Action action = () => this.context.Dispose();
 
             action.Should().Throw<PactFailureException>();
+        }
+
+        [Fact]
+        public void Dispose_Success_ShutsDownMockServer()
+        {
+            this.context.Dispose();
+
+            this.mockServer.Verify(s => s.CleanupMockServer(this.serverUri.Port));
+        }
+
+        [Fact]
+        public void Dispose_Failure_ShutsDownMockServer()
+        {
+            this.mockServer.Setup(s => s.MockServerMismatches(this.serverUri.Port)).Returns("some mismatches");
+
+            try
+            {
+                this.context.Dispose();
+            }
+            // ReSharper disable once EmptyGeneralCatchClause
+            catch
+            {
+            }
+
+            this.mockServer.Verify(s => s.CleanupMockServer(this.serverUri.Port));
         }
     }
 }

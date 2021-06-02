@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
 using System;
+using Newtonsoft.Json;
 
 namespace PactNet.Matchers.Type
 {
@@ -19,7 +19,7 @@ namespace PactNet.Matchers.Type
                 throw new ArgumentException("Min must be greater than 0");
             }
 
-            this.Value = example;
+            this.Value = new[] { example };
             this.Min = min;
         }
     }

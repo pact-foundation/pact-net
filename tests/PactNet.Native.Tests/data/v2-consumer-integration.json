@@ -1,6 +1,6 @@
 {
   "consumer": {
-    "name": "PactExtensionsTests-Consumer"
+    "name": "PactExtensionsTests-Consumer-V2"
   },
   "interactions": [
     {
@@ -9,6 +9,13 @@
       "request": {
         "body": {
           "bool": true,
+          "children": [
+            {
+              "bool": false,
+              "int": 7,
+              "string": "bar"
+            }
+          ],
           "int": 42,
           "string": "foo"
         },
@@ -18,6 +25,19 @@
         },
         "matchingRules": {
           "$.body.bool": {
+            "match": "type"
+          },
+          "$.body.children": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.children[*].bool": {
+            "match": "type"
+          },
+          "$.body.children[*].int": {
+            "match": "type"
+          },
+          "$.body.children[*].string": {
             "match": "type"
           },
           "$.body.int": {
@@ -34,6 +54,13 @@
       "response": {
         "body": {
           "bool": true,
+          "children": [
+            {
+              "bool": false,
+              "int": 7,
+              "string": "bar"
+            }
+          ],
           "int": 42,
           "string": "foo"
         },

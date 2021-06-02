@@ -1,26 +1,26 @@
-﻿using System.Net;
+using System.Net;
 using Newtonsoft.Json;
 
 namespace PactNet
 {
     /// <summary>
-    /// Mock response builder
+    /// Mock response builder for a v2 pact
     /// </summary>
-    public interface IResponseBuilder
+    public interface IResponseBuilderV2
     {
         /// <summary>
         /// Set response status code
         /// </summary>
         /// <param name="status">Response status code</param>
         /// <returns>Fluent builder</returns>
-        IResponseBuilder WithStatus(HttpStatusCode status);
+        IResponseBuilderV2 WithStatus(HttpStatusCode status);
 
         /// <summary>
         /// Set response status code
         /// </summary>
         /// <param name="status">Response status code</param>
         /// <returns>Fluent builder</returns>
-        IResponseBuilder WithStatus(ushort status);
+        IResponseBuilderV2 WithStatus(ushort status);
 
         /// <summary>
         /// Add a response header
@@ -28,14 +28,14 @@ namespace PactNet
         /// <param name="key">Header key</param>
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
-        IResponseBuilder WithHeader(string key, string value);
+        IResponseBuilderV2 WithHeader(string key, string value);
 
         /// <summary>
         /// Set a response body which is serialised as JSON
         /// </summary>
         /// <param name="body">Response body</param>
         /// <returns>Fluent builder</returns>
-        IResponseBuilder WithJsonBody(dynamic body);
+        IResponseBuilderV2 WithJsonBody(dynamic body);
 
         /// <summary>
         /// Set a response body which is serialised as JSON
@@ -43,8 +43,49 @@ namespace PactNet
         /// <param name="body">Response body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        IResponseBuilder WithJsonBody(dynamic body, JsonSerializerSettings settings);
+        IResponseBuilderV2 WithJsonBody(dynamic body, JsonSerializerSettings settings);
+    }
 
-        // TODO: Support binary and multi-part body
+    /// <summary>
+    /// Mock response builder for a v3 pact
+    /// </summary>
+    public interface IResponseBuilderV3
+    {
+        /// <summary>
+        /// Set response status code
+        /// </summary>
+        /// <param name="status">Response status code</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV3 WithStatus(HttpStatusCode status);
+
+        /// <summary>
+        /// Set response status code
+        /// </summary>
+        /// <param name="status">Response status code</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV3 WithStatus(ushort status);
+
+        /// <summary>
+        /// Add a response header
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="value">Header value</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV3 WithHeader(string key, string value);
+
+        /// <summary>
+        /// Set a response body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Response body</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV3 WithJsonBody(dynamic body);
+
+        /// <summary>
+        /// Set a response body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Response body</param>
+        /// <param name="settings">Custom JSON serializer settings</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV3 WithJsonBody(dynamic body, JsonSerializerSettings settings);
     }
 }

@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 
 namespace PactNet
 {
     /// <summary>
     /// Pact
     /// </summary>
-    public class Pact : IPact
+    public class Pact : IPactV2, IPactV3
     {
         /// <summary>
         /// Consumer name
@@ -18,11 +18,6 @@ namespace PactNet
         public string Provider { get; }
 
         /// <summary>
-        /// Specification version
-        /// </summary>
-        public string SpecificationVersion { get; }
-
-        /// <summary>
         /// Pact config
         /// </summary>
         public PactConfig Config { get; }
@@ -32,12 +27,10 @@ namespace PactNet
         /// </summary>
         /// <param name="consumer">Name of the consumer</param>
         /// <param name="provider">Name of the provider</param>
-        /// <param name="specificationVersion">Specification version</param>
-        public Pact(string consumer, string provider, string specificationVersion)
+        private Pact(string consumer, string provider)
             : this(
                 consumer,
                 provider,
-                specificationVersion,
                 new PactConfig())
         {
         }
@@ -47,9 +40,8 @@ namespace PactNet
         /// </summary>
         /// <param name="consumer">Name of the consumer</param>
         /// <param name="provider">Name of the provider</param>
-        /// <param name="specificationVersion">Specification version</param>
         /// <param name="config">Pact config</param>
-        public Pact(string consumer, string provider, string specificationVersion, PactConfig config)
+        private Pact(string consumer, string provider, PactConfig config)
         {
             if (string.IsNullOrWhiteSpace(consumer))
             {
@@ -61,15 +53,55 @@ namespace PactNet
                 throw new ArgumentException("Please provide a valid provider name", nameof(provider));
             }
 
-            if (string.IsNullOrWhiteSpace(specificationVersion))
-            {
-                throw new ArgumentException("Please provide a valid specification version", nameof(specificationVersion));
-            }
-
             this.Consumer = consumer;
             this.Provider = provider;
-            this.SpecificationVersion = specificationVersion;
             this.Config = config;
+        }
+
+        /// <summary>
+        /// Create a new v2 pact
+        /// </summary>
+        /// <param name="consumer">Name of the consumer</param>
+        /// <param name="provider">Name of the provider</param>
+        /// <returns>v2 Pact</returns>
+        public static IPactV2 V2(string consumer, string provider)
+        {
+            return new Pact(consumer, provider);
+        }
+
+        /// <summary>
+        /// Create a new v2 pact
+        /// </summary>
+        /// <param name="consumer">Name of the consumer</param>
+        /// <param name="provider">Name of the provider</param>
+        /// <param name="config">Pact config</param>
+        /// <returns>v2 Pact</returns>
+        public static IPactV2 V2(string consumer, string provider, PactConfig config)
+        {
+            return new Pact(consumer, provider, config);
+        }
+
+        /// <summary>
+        /// Create a new v3 pact
+        /// </summary>
+        /// <param name="consumer">Name of the consumer</param>
+        /// <param name="provider">Name of the provider</param>
+        /// <returns>v2 Pact</returns>
+        public static IPactV3 V3(string consumer, string provider)
+        {
+            return new Pact(consumer, provider);
+        }
+
+        /// <summary>
+        /// Create a new v3 pact
+        /// </summary>
+        /// <param name="consumer">Name of the consumer</param>
+        /// <param name="provider">Name of the provider</param>
+        /// <param name="config">Pact config</param>
+        /// <returns>v3 Pact</returns>
+        public static IPactV3 V3(string consumer, string provider, PactConfig config)
+        {
+            return new Pact(consumer, provider, config);
         }
     }
 }

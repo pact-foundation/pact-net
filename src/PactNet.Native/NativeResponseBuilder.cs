@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using Newtonsoft.Json;
@@ -8,7 +8,7 @@ namespace PactNet.Native
     /// <summary>
     /// Mock response builder
     /// </summary>
-    public class NativeResponseBuilder : IResponseBuilder
+    public class NativeResponseBuilder : IResponseBuilderV2, IResponseBuilderV3
     {
         private readonly IMockServer server;
         private readonly InteractionHandle interaction;
@@ -29,12 +29,104 @@ namespace PactNet.Native
             this.headerCounts = new Dictionary<string, uint>(StringComparer.OrdinalIgnoreCase);
         }
 
+        #region IResponseBuilderV2 explicit implementation
+
         /// <summary>
         /// Set response status code
         /// </summary>
         /// <param name="status">Response status code</param>
         /// <returns>Fluent builder</returns>
-        public IResponseBuilder WithStatus(HttpStatusCode status)
+        IResponseBuilderV2 IResponseBuilderV2.WithStatus(HttpStatusCode status)
+            => this.WithStatus(status);
+
+        /// <summary>
+        /// Set response status code
+        /// </summary>
+        /// <param name="status">Response status code</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV2 IResponseBuilderV2.WithStatus(ushort status)
+            => this.WithStatus(status);
+
+        /// <summary>
+        /// Add a response header
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="value">Header value</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV2 IResponseBuilderV2.WithHeader(string key, string value)
+            => this.WithHeader(key, value);
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV2 IResponseBuilderV2.WithJsonBody(dynamic body)
+            => this.WithJsonBody(body);
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <param name="settings">Custom JSON serializer settings</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV2 IResponseBuilderV2.WithJsonBody(dynamic body, JsonSerializerSettings settings)
+            => this.WithJsonBody(body, settings);
+
+        #endregion
+
+        #region IResponseBuilderV3 explicit implementation
+
+        /// <summary>
+        /// Set response status code
+        /// </summary>
+        /// <param name="status">Response status code</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV3 IResponseBuilderV3.WithStatus(HttpStatusCode status)
+            => this.WithStatus(status);
+
+        /// <summary>
+        /// Set response status code
+        /// </summary>
+        /// <param name="status">Response status code</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV3 IResponseBuilderV3.WithStatus(ushort status)
+            => this.WithStatus(status);
+
+        /// <summary>
+        /// Add a response header
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="value">Header value</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV3 IResponseBuilderV3.WithHeader(string key, string value)
+            => this.WithHeader(key, value);
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV3 IResponseBuilderV3.WithJsonBody(dynamic body)
+            => this.WithJsonBody(body);
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <param name="settings">Custom JSON serializer settings</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV3 IResponseBuilderV3.WithJsonBody(dynamic body, JsonSerializerSettings settings)
+            => this.WithJsonBody(body, settings);
+
+        #endregion
+
+        /// <summary>
+        /// Set response status code
+        /// </summary>
+        /// <param name="status">Response status code</param>
+        /// <returns>Fluent builder</returns>
+        internal NativeResponseBuilder WithStatus(HttpStatusCode status)
         {
             ushort converted = (ushort)status;
 
@@ -47,7 +139,7 @@ namespace PactNet.Native
         /// </summary>
         /// <param name="status">Response status code</param>
         /// <returns>Fluent builder</returns>
-        public IResponseBuilder WithStatus(ushort status)
+        internal NativeResponseBuilder WithStatus(ushort status)
         {
             this.server.ResponseStatus(this.interaction, status);
             return this;
@@ -59,7 +151,7 @@ namespace PactNet.Native
         /// <param name="key">Header key</param>
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
-        public IResponseBuilder WithHeader(string key, string value)
+        internal NativeResponseBuilder WithHeader(string key, string value)
         {
             uint index = this.headerCounts.ContainsKey(key) ? this.headerCounts[key] + 1 : 0;
             this.headerCounts[key] = index;
@@ -73,7 +165,8 @@ namespace PactNet.Native
         /// </summary>
         /// <param name="body">Request body</param>
         /// <returns>Fluent builder</returns>
-        public IResponseBuilder WithJsonBody(dynamic body) => WithJsonBody(body, this.defaultSettings);
+        internal NativeResponseBuilder WithJsonBody(dynamic body)
+            => this.WithJsonBody(body, this.defaultSettings);
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -81,7 +174,7 @@ namespace PactNet.Native
         /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        public IResponseBuilder WithJsonBody(dynamic body, JsonSerializerSettings settings)
+        internal NativeResponseBuilder WithJsonBody(dynamic body, JsonSerializerSettings settings)
         {
             string serialised = JsonConvert.SerializeObject(body, settings);
 

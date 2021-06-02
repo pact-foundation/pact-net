@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using PactNet.Models;
 
 namespace PactNet.Native
@@ -6,7 +6,7 @@ namespace PactNet.Native
     /// <summary>
     /// Pact builder for the native backend
     /// </summary>
-    public class NativePactBuilder : IPactBuilder
+    public class NativePactBuilder : IPactBuilderV2, IPactBuilderV3
     {
         private readonly IMockServer server;
         private readonly PactHandle pact;
@@ -38,7 +38,23 @@ namespace PactNet.Native
         /// </summary>
         /// <param name="description">Interaction description</param>
         /// <returns>Fluent builder</returns>
-        public IRequestBuilder UponReceiving(string description)
+        IRequestBuilderV2 IPactBuilderV2.UponReceiving(string description)
+            => this.UponReceiving(description);
+
+        /// <summary>
+        /// Add a new interaction to the pact
+        /// </summary>
+        /// <param name="description">Interaction description</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 IPactBuilderV3.UponReceiving(string description)
+            => this.UponReceiving(description);
+
+        /// <summary>
+        /// Create a new request/response interaction
+        /// </summary>
+        /// <param name="description">Interaction description</param>
+        /// <returns>Request builder</returns>
+        internal NativeRequestBuilder UponReceiving(string description)
         {
             InteractionHandle interaction = this.server.NewInteraction(this.pact, description);
 
@@ -66,30 +82,6 @@ namespace PactNet.Native
 
             Uri uri = new Uri($"http://{this.host}:{this.serverPort}");
             return new NativePactContext(this.server, uri, this.config);
-        }
-
-        /// <summary>
-        /// Clean up the mock server resources
-        /// </summary>
-        private void ReleaseUnmanagedResources()
-        {
-            if (this.serverPort > 0)
-            {
-                this.server.CleanupMockServer(this.serverPort);
-            }
-        }
-
-        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
-        public void Dispose()
-        {
-            this.ReleaseUnmanagedResources();
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>Allows an object to try to free resources and perform other cleanup operations before it is reclaimed by garbage collection.</summary>
-        ~NativePactBuilder()
-        {
-            this.ReleaseUnmanagedResources();
         }
     }
 }

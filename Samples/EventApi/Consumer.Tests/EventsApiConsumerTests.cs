@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -21,7 +21,7 @@ namespace Consumer.Tests
     {
         private const string Token = "SomeValidAuthToken";
 
-        private readonly IPactBuilder pact;
+        private readonly IPactBuilderV2 pact;
 
         public EventsApiConsumerTests(ITestOutputHelper output)
         {
@@ -39,7 +39,7 @@ namespace Consumer.Tests
                 }
             };
 
-            IPact pact = new Pact("Event API Consumer", "Event API", "2.0.0", config);
+            IPactV2 pact = Pact.V2("Event API Consumer", "Event API", config);
             this.pact = pact.UsingNativeBackend();
         }
 

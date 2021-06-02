@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 
 namespace PactNet.Remote
 {
     /// <summary>
     /// Pact builder for an existing remote server
     /// </summary>
-    public class RemotePactBuilder : IPactBuilder
+    public class RemotePactBuilder : IPactBuilderV2, IPactBuilderV3
     {
         private readonly string consumer;
         private readonly string provider;
@@ -32,7 +32,17 @@ namespace PactNet.Remote
         /// </summary>
         /// <param name="description">Interaction description</param>
         /// <returns>Fluent builder</returns>
-        public IRequestBuilder UponReceiving(string description)
+        IRequestBuilderV2 IPactBuilderV2.UponReceiving(string description)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Add a new interaction to the pact
+        /// </summary>
+        /// <param name="description">Interaction description</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 IPactBuilderV3.UponReceiving(string description)
         {
             throw new NotImplementedException();
         }
