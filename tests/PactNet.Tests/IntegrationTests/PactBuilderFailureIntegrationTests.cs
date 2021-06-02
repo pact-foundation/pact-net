@@ -1,4 +1,4 @@
-﻿using System;
+/*using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -114,4 +114,4 @@ namespace PactNet.Tests.IntegrationTests
             Assert.Throws<PactFailureException>(() => _mockProviderService.VerifyInteractions());
         }
     }
-}
+}*/

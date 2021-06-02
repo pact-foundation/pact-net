@@ -1,4 +1,4 @@
-﻿using PactNet.Mocks.MockHttpService;
+using FluentAssertions;
 using Xunit;
 
 namespace PactNet.Tests
@@ -10,7 +10,7 @@ namespace PactNet.Tests
         {
             var options = new PactConfig();
 
-            Assert.Equal(Constants.DefaultPactDir, options.PactDir);
+            options.PactDir.Should().Be(Constants.DefaultPactDir);
         }
 
         [Fact]
@@ -18,7 +18,7 @@ namespace PactNet.Tests
         {
             var options = new PactConfig();
 
-            Assert.Equal(Constants.DefaultLogDir, options.LogDir);
+            options.LogDir.Should().Be(Constants.DefaultLogDir);
         }
     }
 }

@@ -1,55 +1,37 @@
-﻿using System;
+using System;
 
 namespace PactNet
 {
+    /// <summary>
+    /// Pact URI options
+    /// </summary>
     public class PactUriOptions
     {
-        public string Username { get; private set; }
-        public string Password { get; private set; }
-        public string Token { get; private set;  }
+        /// <summary>
+        /// Authentication username
+        /// </summary>
+        public string Username { get; }
 
-        public PactUriOptions() { }
+        /// <summary>
+        /// Authentication password
+        /// </summary>
+        public string Password { get; }
 
+        /// <summary>
+        /// Authentication token
+        /// </summary>
+        public string Token { get; }
+
+        /// <summary>
+        /// Initialises a new instance of the <see cref="PactUriOptions"/> class using basic authentication.
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <param name="password">Password</param>
         public PactUriOptions(string username, string password)
-        {
-            SetBasicAuthenticationInternal(username, password);
-        }
-
-        public PactUriOptions(string token)
-        {
-            SetBearerAuthentication(token);
-        }
-
-        public PactUriOptions SetBasicAuthentication(string username, string password)
-        {
-            if (!string.IsNullOrEmpty(Token))
-            {
-                throw new InvalidOperationException("You can't set both bearer and basic authentication at the same time");
-            }
-            SetBasicAuthenticationInternal(username, password);
-            return this;
-        }
-
-        public PactUriOptions SetBearerAuthentication(string token)
-        {
-            if (!string.IsNullOrEmpty(Username) || !string.IsNullOrEmpty(Password))
-            {
-                throw new InvalidOperationException("You can't set both bearer and basic authentication at the same time");
-            }
-            SetBearerAuthenticationInternal(token);
-            return this;
-        }
-
-        private void SetBasicAuthenticationInternal(string username, string password)
         {
             if (string.IsNullOrEmpty(username))
             {
                 throw new ArgumentException($"{nameof(username)} is null or empty.");
-            }
-
-            if (username.Contains(":"))
-            {
-                throw new ArgumentException($"{nameof(username)} contains a ':' character, which is not allowed.");
             }
 
             if (string.IsNullOrEmpty(password))
@@ -57,18 +39,27 @@ namespace PactNet
                 throw new ArgumentException($"{nameof(password)} is null or empty.");
             }
 
-            Username = username;
-            Password = password;
+            if (username.Contains(":"))
+            {
+                throw new ArgumentException($"{nameof(username)} contains a ':' character, which is not allowed.");
+            }
+
+            this.Username = username;
+            this.Password = password;
         }
 
-        private void SetBearerAuthenticationInternal(string token)
+        /// <summary>
+        /// Initialises a new instance of the <see cref="PactUriOptions"/> class using bearer token authentication.
+        /// </summary>
+        /// <param name="token">Bearer token</param>
+        public PactUriOptions(string token)
         {
             if (string.IsNullOrEmpty(token))
             {
                 throw new ArgumentException($"{nameof(token)} is null or empty.");
             }
 
-            Token = token;
+            this.Token = token;
         }
     }
 }

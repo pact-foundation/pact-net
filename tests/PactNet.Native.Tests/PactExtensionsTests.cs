@@ -37,11 +37,14 @@ namespace PactNet.Native.Tests
             Bool = Match.Type(true),
             Int = Match.Type(42),
             String = Match.Type("foo"),
-            Children = Match.MinType(new
+            Children = Match.MinType(new[]
             {
-                Bool = Match.Type(false),
-                Int = Match.Type(7),
-                String = Match.Type("bar")
+                new
+                {
+                    Bool = Match.Type(false),
+                    Int = Match.Type(7),
+                    String = Match.Type("bar")
+                }
             }, 1)
         };
 

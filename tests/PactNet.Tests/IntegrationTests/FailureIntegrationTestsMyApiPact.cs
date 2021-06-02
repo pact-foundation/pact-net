@@ -1,4 +1,4 @@
-﻿using System;
+/*using System;
 using PactNet.Mocks.MockHttpService;
 using PactNet.Mocks.MockHttpService.Host;
 
@@ -33,4 +33,4 @@ namespace PactNet.Tests.IntegrationTests
             PactBuilder.Build();
         }
     }
-}
+}*/

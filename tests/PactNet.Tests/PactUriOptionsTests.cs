@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using FluentAssertions;
 using Xunit;
 
 namespace PactNet.Tests
@@ -10,8 +11,10 @@ namespace PactNet.Tests
         {
             const string username = "";
             const string password = "somepassword";
-            
-            Assert.Throws<ArgumentException>(() => new PactUriOptions().SetBasicAuthentication(username, password));
+
+            Action action = () => new PactUriOptions(username, password);
+
+            action.Should().Throw<ArgumentException>();
         }
 
         [Fact]
@@ -20,7 +23,9 @@ namespace PactNet.Tests
             const string username = "some:user";
             const string password = "somepassword";
 
-            Assert.Throws<ArgumentException>(() => new PactUriOptions().SetBasicAuthentication(username, password));
+            Action action = () => new PactUriOptions(username, password);
+
+            action.Should().Throw<ArgumentException>();
         }
 
         [Fact]
@@ -29,21 +34,9 @@ namespace PactNet.Tests
             const string username = "someuser";
             const string password = "";
 
-            Assert.Throws<ArgumentException>(() => new PactUriOptions().SetBasicAuthentication(username, password));
-        }
+            Action action = () => new PactUriOptions(username, password);
 
-        [Fact]
-        public void Ctor_WithValidUsernameAndPassword_ReturnsCorrectAuthorizationSchemeAndValue()
-        {
-            const string username = "Aladdin";
-            const string password = "open sesame";
-            const string expectedAuthScheme = "Basic";
-            const string expectedAuthValue = "QWxhZGRpbjpvcGVuIHNlc2FtZQ==";
-
-            var options = new PactUriOptions().SetBasicAuthentication(username, password);
-
-            Assert.Equal(expectedAuthScheme, options.AuthorizationScheme);
-            Assert.Equal(expectedAuthValue, options.AuthorizationValue);
+            action.Should().Throw<ArgumentException>();
         }
 
         [Fact]
@@ -52,10 +45,10 @@ namespace PactNet.Tests
             const string username = "Aladdin";
             const string password = "open sesame";
 
-            var options = new PactUriOptions().SetBasicAuthentication(username, password);
+            var options = new PactUriOptions(username, password);
 
-            Assert.Equal(username, options.Username);
-            Assert.Equal(password, options.Password);
+            options.Username.Should().Be(username);
+            options.Password.Should().Be(password);
         }
 
         [Fact]
@@ -63,20 +56,9 @@ namespace PactNet.Tests
         {
             const string token = "";
 
-            Assert.Throws<ArgumentException>(() => new PactUriOptions().SetBearerAuthentication(token));
-        }
+            Action action = () => new PactUriOptions(token);
 
-        [Fact]
-        public void Ctor_WithValidToken_ReturnsCorrectAuthorizationSchemeAndValue()
-        {
-            const string token = "MyToken";
-            const string expectedAuthScheme = "Bearer";
-            const string expectedAuthValue = token;
-
-            var options = new PactUriOptions().SetBearerAuthentication(token);
-
-            Assert.Equal(expectedAuthScheme, options.AuthorizationScheme);
-            Assert.Equal(expectedAuthValue, options.AuthorizationValue);
+            action.Should().Throw<ArgumentException>();
         }
 
         [Fact]
@@ -84,9 +66,9 @@ namespace PactNet.Tests
         {
             const string token = "MyToken";
 
-            var options = new PactUriOptions().SetBearerAuthentication(token);
+            var options = new PactUriOptions(token);
 
-            Assert.Equal(token, options.Token);
+            options.Token.Should().Be(token);
         }
     }
 }
