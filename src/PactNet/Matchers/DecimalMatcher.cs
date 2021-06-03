@@ -1,4 +1,4 @@
-namespace PactNet.Matchers.Numeric
+namespace PactNet.Matchers
 {
     /// <summary>
     /// Matcher for decimal values (i.e. numbers with a fractional component)

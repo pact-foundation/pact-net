@@ -1,7 +1,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace PactNet.Matchers.Type
+namespace PactNet.Matchers
 {
     /// <summary>
     /// Match every element of a collection with a min and/or max size against an example matcher

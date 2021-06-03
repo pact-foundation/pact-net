@@ -1,7 +1,3 @@
-using PactNet.Matchers.Numeric;
-using PactNet.Matchers.Regex;
-using PactNet.Matchers.Type;
-
 namespace PactNet.Matchers
 {
     public static class Match

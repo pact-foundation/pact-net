@@ -1,4 +1,4 @@
-namespace PactNet.Matchers.Numeric
+namespace PactNet.Matchers
 {
     /// <summary>
     /// Matcher for any number

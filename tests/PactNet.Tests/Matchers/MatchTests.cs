@@ -1,8 +1,5 @@
 using FluentAssertions;
 using PactNet.Matchers;
-using PactNet.Matchers.Numeric;
-using PactNet.Matchers.Regex;
-using PactNet.Matchers.Type;
 using Xunit;
 
 namespace PactNet.Tests.Matchers

@@ -1,7 +1,6 @@
 using System;
 using FluentAssertions;
 using Newtonsoft.Json;
-using PactNet.Matchers.Type;
 using Xunit;
 
 namespace PactNet.Tests.Matchers.Type

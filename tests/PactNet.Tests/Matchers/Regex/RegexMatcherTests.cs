@@ -1,6 +1,5 @@
 using FluentAssertions;
 using Newtonsoft.Json;
-using PactNet.Matchers.Regex;
 using Xunit;
 
 namespace PactNet.Tests.Matchers.Regex

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace PactNet.Matchers.Regex
+namespace PactNet.Matchers
 {
     public class RegexMatcher : IMatcher
     {

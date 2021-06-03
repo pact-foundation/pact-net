@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace PactNet.Matchers.Type
+namespace PactNet.Matchers
 {
     public class TypeMatcher : IMatcher
     {
