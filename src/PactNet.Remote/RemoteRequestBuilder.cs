@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using Newtonsoft.Json;
 
@@ -100,6 +101,17 @@ namespace PactNet.Remote
         /// <param name="providerState">Provider state description</param>
         /// <returns>Fluent builder</returns>
         IRequestBuilderV3 IRequestBuilderV3.Given(string providerState)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Add a provider state with one or more parameters
+        /// </summary>
+        /// <param name="providerState">Provider state description</param>
+        /// <param name="parameters">Provider state parameters</param>
+        /// <returns>Flient builder</returns>
+        IRequestBuilderV3 IRequestBuilderV3.Given(string providerState, IDictionary<string, string> parameters)
         {
             throw new NotImplementedException();
         }

@@ -66,6 +66,9 @@ namespace PactNet.Native.Tests
                     new XUnitOutput(output)
                 }
             };
+
+            File.Delete("PactExtensionsTests-Consumer-V2-PactExtensionsTests-Provider.json");
+            File.Delete("PactExtensionsTests-Consumer-V3-PactExtensionsTests-Provider.json");
         }
 
         [Fact]
@@ -108,6 +111,11 @@ namespace PactNet.Native.Tests
             builder.UponReceiving("a sample request")
                        .Given("a provider state")
                        .Given("another provider state")
+                       .Given("a provider state with params", new Dictionary<string, string>
+                       {
+                           ["foo"] = "bar",
+                           ["baz"] = "bash"
+                       })
                        .WithRequest(HttpMethod.Post, "/things")
                        .WithHeader("X-Request", "request1")
                        .WithHeader("X-Request", "request2")

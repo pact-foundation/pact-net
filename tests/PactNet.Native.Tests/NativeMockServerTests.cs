@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -19,12 +19,13 @@ namespace PactNet.Native.Tests
         {
             var server = new NativeMockServer();
 
-            PactHandle pact = server.NewPact("consumer", "provider");
+            PactHandle pact = server.NewPact("NativeMockServerTests-Consumer-V3", "NativeMockServerTests-Provider");
 
-            server.WithSpecification(pact, PactSpecification.V2).Should().BeTrue();
+            server.WithSpecification(pact, PactSpecification.V3).Should().BeTrue();
 
             InteractionHandle interaction = server.NewInteraction(pact, "a sample interaction");
             bool request = server.Given(interaction, "provider state")
+                        && server.GivenWithParam(interaction, "state with param", "foo", "bar")
                         && server.WithRequest(interaction, "POST", "/path")
                         && server.WithRequestHeader(interaction, "X-Request-Header", "request1", 0)
                         && server.WithRequestHeader(interaction, "X-Request-Header", "request2", 1)
@@ -60,11 +61,11 @@ namespace PactNet.Native.Tests
 
             server.WritePactFile(port, Environment.CurrentDirectory, true);
 
-            var file = new FileInfo("consumer-provider.json");
+            var file = new FileInfo("NativeMockServerTests-Consumer-V3-NativeMockServerTests-Provider.json");
             file.Exists.Should().BeTrue();
 
-            string pactContents = File.ReadAllText(file.FullName);
-            string expectedPactContent = File.ReadAllText("data/v2-expected-pact.json");
+            string pactContents = File.ReadAllText(file.FullName).TrimEnd();
+            string expectedPactContent = File.ReadAllText("data/v3-server-integration.json").TrimEnd();
             pactContents.Should().Be(expectedPactContent);
 
             server.CleanupMockServer(port).Should().BeTrue();

@@ -11,6 +11,13 @@
         },
         {
           "name": "another provider state"
+        },
+        {
+          "name": "a provider state with params",
+          "params": {
+            "baz": "bash",
+            "foo": "bar"
+          }
         }
       ],
       "request": {

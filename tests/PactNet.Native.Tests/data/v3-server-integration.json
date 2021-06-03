@@ -1,11 +1,21 @@
-﻿{
+{
   "consumer": {
-    "name": "consumer"
+    "name": "NativeMockServerTests-Consumer-V3"
   },
   "interactions": [
     {
       "description": "a sample interaction",
-      "providerState": "provider state",
+      "providerStates": [
+        {
+          "name": "provider state"
+        },
+        {
+          "name": "state with param",
+          "params": {
+            "foo": "bar"
+          }
+        }
+      ],
       "request": {
         "body": {
           "foo": 42
@@ -16,7 +26,11 @@
         },
         "method": "POST",
         "path": "/path",
-        "query": "param=value"
+        "query": {
+          "param": [
+            "value"
+          ]
+        }
       },
       "response": {
         "body": {
@@ -35,10 +49,10 @@
       "version": "0.9.3"
     },
     "pactSpecification": {
-      "version": "2.0.0"
+      "version": "3.0.0"
     }
   },
   "provider": {
-    "name": "provider"
+    "name": "NativeMockServerTests-Provider"
   }
 }

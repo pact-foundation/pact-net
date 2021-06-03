@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using AutoFixture;
 using FluentAssertions;
@@ -39,6 +40,20 @@ namespace PactNet.Native.Tests
             this.builder.Given("provider state");
 
             this.mockServer.Verify(s => s.Given(this.handle, "provider state"));
+        }
+
+        [Fact]
+        public void Given_WithParams_AddsProviderState()
+        {
+            this.builder.Given("provider state",
+                               new Dictionary<string, string>
+                               {
+                                   ["foo"] = "bar",
+                                   ["baz"] = "bash",
+                               });
+
+            this.mockServer.Verify(s => s.GivenWithParam(this.handle, "provider state", "foo", "bar"));
+            this.mockServer.Verify(s => s.GivenWithParam(this.handle, "provider state", "baz", "bash"));
         }
 
         [Fact]

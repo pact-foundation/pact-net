@@ -117,6 +117,15 @@ namespace PactNet.Native
             => this.Given(providerState);
 
         /// <summary>
+        /// Add a provider state with one or more parameters
+        /// </summary>
+        /// <param name="providerState">Provider state description</param>
+        /// <param name="parameters">Provider state parameters</param>
+        /// <returns>Flient builder</returns>
+        IRequestBuilderV3 IRequestBuilderV3.Given(string providerState, IDictionary<string, string> parameters)
+            => this.Given(providerState, parameters);
+
+        /// <summary>
         /// Set the request
         /// </summary>
         /// <param name="method">Request method</param>
@@ -187,6 +196,22 @@ namespace PactNet.Native
         internal NativeRequestBuilder Given(string providerState)
         {
             this.server.Given(this.interaction, providerState);
+            return this;
+        }
+
+        /// <summary>
+        /// Add a provider state with one or more parameters
+        /// </summary>
+        /// <param name="providerState">Provider state description</param>
+        /// <param name="parameters">Provider state parameters</param>
+        /// <returns>Flient builder</returns>
+        internal NativeRequestBuilder Given(string providerState, IDictionary<string, string> parameters)
+        {
+            foreach (var param in parameters)
+            {
+                this.server.GivenWithParam(this.interaction, providerState, param.Key, param.Value);
+            }
+
             return this;
         }
 
