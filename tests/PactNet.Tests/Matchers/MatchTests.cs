@@ -138,6 +138,34 @@ namespace PactNet.Tests.Matchers
         }
 
         [Fact]
+        public void Null_WhenCalled_ReturnsMatcher()
+        {
+            var matcher = Match.Null();
+
+            matcher.Should().BeEquivalentTo(new NullMatcher());
+        }
+
+        [Fact]
+        public void Equality_WhenCalled_ReturnsMatcher()
+        {
+            const string example = "test";
+
+            var matcher = Match.Equality(example);
+
+            matcher.Should().BeEquivalentTo(new EqualityMatcher(example));
+        }
+
+        [Fact]
+        public void Include_WhenCalled_ReturnsMatcher()
+        {
+            const string example = "test";
+
+            var matcher = Match.Include(example);
+
+            matcher.Should().BeEquivalentTo(new IncludeMatcher(example));
+        }
+
+        [Fact]
         public void ComposingTwoTypeMatchers_WhenCalled_ReturnsAllMatchers()
         {
             const int example = 22;

@@ -136,5 +136,34 @@ namespace PactNet.Matchers
         {
             return new NumericMatcher(example);
         }
+
+        /// <summary>
+        /// Matcher which matches an exact value
+        /// </summary>
+        /// <param name="example">Example value</param>
+        /// <returns>Matcher</returns>
+        public static IMatcher Equality(dynamic example)
+        {
+            return new EqualityMatcher(example);
+        }
+
+        /// <summary>
+        /// Matcher which matches an explicit null value
+        /// </summary>
+        /// <returns>Matcher</returns>
+        public static IMatcher Null()
+        {
+            return new NullMatcher();
+        }
+
+        /// <summary>
+        /// Matcher which checks that a string property includes an example string
+        /// </summary>
+        /// <param name="example">Example value</param>
+        /// <returns>Matcher</returns>
+        public static IMatcher Include(string example)
+        {
+            return new IncludeMatcher(example);
+        }
     }
 }

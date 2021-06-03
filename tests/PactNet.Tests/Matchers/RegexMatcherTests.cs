@@ -1,8 +1,9 @@
 using FluentAssertions;
 using Newtonsoft.Json;
+using PactNet.Matchers;
 using Xunit;
 
-namespace PactNet.Tests.Matchers.Regex
+namespace PactNet.Tests.Matchers
 {
     public class RegexMatcherTests
     {
