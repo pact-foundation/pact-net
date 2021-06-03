@@ -12,3 +12,6 @@ insert_final_newline = true
 
 [*.{csproj,json}]
 indent_size = 2
+
+[*.sh]
+end_of_line = lf

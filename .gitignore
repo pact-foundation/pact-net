@@ -50,4 +50,6 @@ PactNet/Files/pact/
 .vs/
 tools/
 build/tools/
-
+build/linux/
+build/osx/
+build/windows/
