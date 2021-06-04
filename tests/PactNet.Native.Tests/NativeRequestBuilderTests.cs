@@ -1,0 +1,150 @@
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using AutoFixture;
+using FluentAssertions;
+using Moq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using Xunit;
+
+namespace PactNet.Native.Tests
+{
+    public class NativeRequestBuilderTests
+    {
+        private readonly NativeRequestBuilder builder;
+
+        private readonly Mock<IMockServer> mockServer;
+
+        private readonly IFixture fixture;
+        private readonly InteractionHandle handle;
+        private readonly JsonSerializerSettings settings;
+
+        public NativeRequestBuilderTests()
+        {
+            this.mockServer = new Mock<IMockServer>();
+
+            this.fixture = new Fixture();
+            var customization = new SupportMutableValueTypesCustomization();
+            customization.Customize(this.fixture);
+
+            this.handle = this.fixture.Create<InteractionHandle>();
+            this.settings = new JsonSerializerSettings();
+
+            this.builder = new NativeRequestBuilder(this.mockServer.Object, this.handle, this.settings);
+        }
+
+        [Fact]
+        public void Given_WhenCalled_AddsProviderState()
+        {
+            this.builder.Given("provider state");
+
+            this.mockServer.Verify(s => s.Given(this.handle, "provider state"));
+        }
+
+        [Fact]
+        public void Given_WithParams_AddsProviderState()
+        {
+            this.builder.Given("provider state",
+                               new Dictionary<string, string>
+                               {
+                                   ["foo"] = "bar",
+                                   ["baz"] = "bash",
+                               });
+
+            this.mockServer.Verify(s => s.GivenWithParam(this.handle, "provider state", "foo", "bar"));
+            this.mockServer.Verify(s => s.GivenWithParam(this.handle, "provider state", "baz", "bash"));
+        }
+
+        [Fact]
+        public void WithRequest_HttpMethod_AddsRequest()
+        {
+            this.builder.WithRequest(HttpMethod.Post, "/some/path");
+
+            this.mockServer.Verify(s => s.WithRequest(this.handle, "POST", "/some/path"));
+        }
+
+        [Fact]
+        public void WithRequest_String_AddsRequest()
+        {
+            this.builder.WithRequest("POST", "/some/path");
+
+            this.mockServer.Verify(s => s.WithRequest(this.handle, "POST", "/some/path"));
+        }
+
+        [Fact]
+        public void WithQuery_WhenCalled_AddsQueryParam()
+        {
+            this.builder.WithQuery("name", "value");
+
+            this.mockServer.Verify(s => s.WithQueryParameter(this.handle, "name", "value", 0));
+        }
+
+        [Fact]
+        public void WithQuery_RepeatedQuery_SetsIndex()
+        {
+            this.builder.WithQuery("name", "value1");
+            this.builder.WithQuery("name", "value2");
+            this.builder.WithQuery("other", "value");
+
+            this.mockServer.Verify(s => s.WithQueryParameter(this.handle, "name", "value1", 0));
+            this.mockServer.Verify(s => s.WithQueryParameter(this.handle, "name", "value2", 1));
+            this.mockServer.Verify(s => s.WithQueryParameter(this.handle, "other", "value", 0));
+        }
+
+        [Fact]
+        public void WithHeader_WhenCalled_AddsHeaderParam()
+        {
+            this.builder.WithHeader("name", "value");
+
+            this.mockServer.Verify(s => s.WithRequestHeader(this.handle, "name", "value", 0));
+        }
+
+        [Fact]
+        public void WithHeader_RepeatedHeader_SetsIndex()
+        {
+            this.builder.WithHeader("name", "value1");
+            this.builder.WithHeader("name", "value2");
+            this.builder.WithHeader("other", "value");
+
+            this.mockServer.Verify(s => s.WithRequestHeader(this.handle, "name", "value1", 0));
+            this.mockServer.Verify(s => s.WithRequestHeader(this.handle, "name", "value2", 1));
+            this.mockServer.Verify(s => s.WithRequestHeader(this.handle, "other", "value", 0));
+        }
+
+        [Fact]
+        public void WithJsonBody_WithoutCustomSettings_AddsRequestBodyWithDefaultSettings()
+        {
+            this.builder.WithJsonBody(new { Foo = 42 });
+
+            this.mockServer.Verify(s => s.WithRequestBody(this.handle, "application/json", @"{""Foo"":42}"));
+        }
+
+        [Fact]
+        public void WithJsonBody_WithCustomSettings_AddsRequestBodyWithOverriddenSettings()
+        {
+            this.builder.WithJsonBody(new { Foo = 42 },
+                                      new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+
+            this.mockServer.Verify(s => s.WithRequestBody(this.handle, "application/json", @"{""foo"":42}"));
+        }
+
+        [Fact]
+        public void WillRespond_RequestConfigured_ReturnsResponseBuilder()
+        {
+            this.builder.WithRequest(HttpMethod.Delete, "/foo");
+
+            var responseBuilder = this.builder.WillRespond();
+
+            responseBuilder.Should().BeOfType<NativeResponseBuilder>();
+        }
+
+        [Fact]
+        public void WillRespond_RequestNotConfigured_ThrowsInvalidOperationException()
+        {
+            Action action = () => this.builder.WillRespond();
+
+            action.Should().Throw<InvalidOperationException>("because the request has not been configured");
+        }
+    }
+}

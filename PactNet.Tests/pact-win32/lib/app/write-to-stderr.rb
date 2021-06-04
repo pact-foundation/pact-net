@@ -1,1 +1,0 @@
-STDERR.puts 'Oh no'

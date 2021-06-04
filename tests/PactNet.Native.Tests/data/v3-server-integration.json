@@ -1,0 +1,58 @@
+{
+  "consumer": {
+    "name": "NativeMockServerTests-Consumer-V3"
+  },
+  "interactions": [
+    {
+      "description": "a sample interaction",
+      "providerStates": [
+        {
+          "name": "provider state"
+        },
+        {
+          "name": "state with param",
+          "params": {
+            "foo": "bar"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "foo": 42
+        },
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Request-Header": "request1, request2"
+        },
+        "method": "POST",
+        "path": "/path",
+        "query": {
+          "param": [
+            "value"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "foo": 42
+        },
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Response-Header": "value1, value2"
+        },
+        "status": 201
+      }
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "version": "0.9.3"
+    },
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  },
+  "provider": {
+    "name": "NativeMockServerTests-Provider"
+  }
+}
