@@ -1,0 +1,32 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  build-dotnet:
+    name: "Build and Test (dotnet)"
+    strategy:
+      matrix:
+        os:
+          - windows-latest
+          - ubuntu-latest
+          - macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "5.0.x" # runners already have .Net Framework installed as well
+      - uses: actions/cache@v2
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget
+      - name: Pull interop dependencies
+        run: bash -c "build/download-native-libs.sh"
+      - name: Restore
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore
+      - name: Test
+        run: dotnet test --no-build --verbosity normal -- RunConfiguration.TargetPlatform=x64
