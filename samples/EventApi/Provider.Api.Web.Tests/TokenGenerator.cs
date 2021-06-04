@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Security.Claims;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.DataHandler;
-using System.Security.Claims;
 using Microsoft.Owin.Security.DataProtection;
 
 namespace Provider.Api.Web.Tests

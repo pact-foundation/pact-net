@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using PactNet.Models;
 
 namespace PactNet.Remote.Models
 {

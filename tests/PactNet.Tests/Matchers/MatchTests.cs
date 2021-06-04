@@ -30,7 +30,7 @@ namespace PactNet.Tests.Matchers
         [Fact]
         public void MinType_WhenCalled_ReturnseMatcher()
         {
-            var example = new [] { 22, 23, 56 };
+            var example = new[] { 22, 23, 56 };
 
             var matcher = Match.MinType(example, 2);
 

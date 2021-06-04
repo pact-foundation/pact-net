@@ -112,7 +112,7 @@ namespace PactNet.Native.Tests
         [Fact]
         public void FromPactBroker_ConsumerVersionTags_AddsPactBrokerConsumerVersionArgs()
         {
-            this.verifier.FromPactBroker(new Uri("http://broker.example.org/"), consumerVersionTags: new [] { "v1", "v2" });
+            this.verifier.FromPactBroker(new Uri("http://broker.example.org/"), consumerVersionTags: new[] { "v1", "v2" });
 
             this.CheckArgs("--broker-url", "http://broker.example.org/",
                            "--consumer-version-tags", "v1,v2");

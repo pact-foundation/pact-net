@@ -28,7 +28,7 @@ namespace Consumer.Tests
             {
                 LogDir = "../../../logs/",
                 PactDir = "../../../pacts/",
-                Outputters = new []
+                Outputters = new[]
                 {
                     new XUnitOutput(output)
                 },

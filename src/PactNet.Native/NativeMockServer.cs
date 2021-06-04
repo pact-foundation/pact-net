@@ -78,7 +78,7 @@ namespace PactNet.Native
         }
 
         public PactHandle NewPact(string consumerName, string providerName)
-            =>  Interop.NewPact(consumerName, providerName);
+            => Interop.NewPact(consumerName, providerName);
 
         public InteractionHandle NewInteraction(PactHandle pact, string description)
             => Interop.NewInteraction(pact, description);

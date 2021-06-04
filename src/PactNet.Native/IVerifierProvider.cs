@@ -3,7 +3,7 @@ namespace PactNet.Native
     /// <summary>
     /// Provider of the backend verification process
     /// </summary>
-    public interface IVerifierProvider
+    internal interface IVerifierProvider
     {
         /// <summary>
         /// Verify the pact from the given args
