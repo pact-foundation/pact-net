@@ -33,6 +33,8 @@ namespace PactNet.Native
         {
             try
             {
+                /* TODO: Uncomment this once the new FFI release is available which supports it
+
                 string logs = this.server.MockServerLogs(this.MockServerUri.Port);
 
                 if (!string.IsNullOrWhiteSpace(logs))
@@ -40,7 +42,7 @@ namespace PactNet.Native
                     this.config.WriteLine("Mock server logs:");
                     this.config.WriteLine(string.Empty);
                     this.config.WriteLine(logs);
-                }
+                }*/
 
                 string errors = this.server.MockServerMismatches(this.MockServerUri.Port);
 

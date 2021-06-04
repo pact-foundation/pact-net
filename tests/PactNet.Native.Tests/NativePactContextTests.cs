@@ -39,7 +39,7 @@ namespace PactNet.Native.Tests
             this.context = new NativePactContext(this.mockServer.Object, this.serverUri, this.config);
         }
 
-        [Fact]
+        [Fact(Skip = "Enable this when the released FFI library supports getting mock server logs")]
         public void Dispose_NoLogs_DoesNotWriteLogs()
         {
             this.context.Dispose();
@@ -47,7 +47,7 @@ namespace PactNet.Native.Tests
             this.mockOutput.Verify(o => o.WriteLine(It.IsAny<string>()), Times.Never);
         }
 
-        [Fact]
+        [Fact(Skip = "Enable this when the released FFI library supports getting mock server logs")]
         public void Dispose_Logs_WritesLogsToOutput()
         {
             this.mockServer.Setup(s => s.MockServerLogs(this.serverUri.Port)).Returns("some logs");

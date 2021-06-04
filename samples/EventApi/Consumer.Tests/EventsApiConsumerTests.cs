@@ -51,12 +51,7 @@ namespace Consumer.Tests
                     .WithRequest(HttpMethod.Get, "/events")
                     .WithHeader("Accept", "application/json")
                 .WillRespond()
-                    .WithStatus(HttpStatusCode.Unauthorized)
-                    .WithHeader("Content-Type", "application/json; charset=utf-8")
-                    .WithJsonBody(new
-                    {
-                        message = "Authorization has been denied for this request."
-                    });
+                    .WithStatus(HttpStatusCode.Unauthorized);
 
             using (IPactContext context = this.pact.Build())
             {
@@ -108,6 +103,40 @@ namespace Consumer.Tests
                 IEnumerable<Event> events = await client.GetAllEvents();
 
                 events.Should().BeEquivalentTo(expected);
+            }
+        }
+
+        [Fact]
+        public async Task GetEventsByType_WhenOneEventWithTheTypeExists_ReturnsEvent()
+        {
+            //Arrange
+            const string eventType = "DetailsView";
+
+            this.pact
+                .UponReceiving($"a request to retrieve events with type '{eventType}'")
+                    .Given($"there is one event with type '{eventType}'")
+                    .WithRequest(HttpMethod.Get, "/events")
+                    .WithQuery("type", eventType)
+                    .WithHeader("Accept", "application/json")
+                    .WithHeader("Authorization", $"Bearer {Token}")
+                .WillRespond()
+                    .WithStatus(200)
+                    .WithHeader("Content-Type", "application/json; charset=utf-8")
+                    .WithJsonBody(new[]
+                    {
+                        new
+                        {
+                            eventType
+                        }
+                    });
+
+            using (IPactContext context = this.pact.Build())
+            {
+                var client = new EventsApiClient(context.MockServerUri, Token);
+
+                var result = await client.GetEventsByType(eventType);
+
+                result.Should().OnlyContain(e => e.EventType == eventType);
             }
         }
 
@@ -251,40 +280,6 @@ namespace Consumer.Tests
                 var result = await client.GetEventById(expected.EventId);
 
                 result.Should().BeEquivalentTo(expected);
-            }
-        }
-
-        [Fact]
-        public async Task GetEventsByType_WhenOneEventWithTheTypeExists_ReturnsEvent()
-        {
-            //Arrange
-            const string eventType = "DetailsView";
-
-            this.pact
-                .UponReceiving($"a request to retrieve events with type '{eventType}'")
-                    .Given($"there is one event with type '{eventType}'")
-                    .WithRequest(HttpMethod.Get, "/events")
-                    .WithQuery("type", eventType)
-                    .WithHeader("Accept", "application/json")
-                    .WithHeader("Authorization", $"Bearer {Token}")
-                .WillRespond()
-                    .WithStatus(200)
-                    .WithHeader("Content-Type", "application/json; charset=utf-8")
-                    .WithJsonBody(new[]
-                    {
-                        new
-                        {
-                            eventType
-                        }
-                    });
-
-            using (IPactContext context = this.pact.Build())
-            {
-                var client = new EventsApiClient(context.MockServerUri, Token);
-
-                var result = await client.GetEventsByType(eventType);
-
-                result.Should().OnlyContain(e => e.EventType == eventType);
             }
         }
     }
