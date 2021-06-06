@@ -1,0 +1,35 @@
+name: Build Alpha NuGet
+on:
+  push:
+    branches:
+      - feature/4.0.0 # TODO: change this to master once 4.0.0 is released
+jobs:
+  publish:
+    name: Build Alpha NuGets
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "5.0.x" # runners already have .Net Framework installed as well
+      - uses: actions/cache@v2
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget
+      - name: Pull interop dependencies
+        run: bash -c "build/download-native-libs.sh"
+      - name: Restore
+        run: dotnet restore
+      - name: Pack
+        run: dotnet pack -c Release --no-restore --version-suffix alpha.${{ github.run_number }}
+      - name: Upload PactNet NuGet
+        uses: actions/upload-artifact@v2
+        with:
+          path: src/PactNet/bin/Release/PactNet.*.nupkg
+      - name: Upload PactNet.Native NuGet
+        uses: actions/upload-artifact@v2
+        with:
+          path: src/PactNet.Native/bin/Release/PactNet.Native.*.nupkg
