@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 
 namespace PactNet.Native
@@ -60,22 +60,25 @@ namespace PactNet.Native
             => Interop.CleanupMockServer(mockServerPort);
 
         public void WritePactFile(int mockServerPort, string directory, bool overwrite)
+            => VerifyResult(() => Interop.WritePactFile(mockServerPort, directory, overwrite));
+
+        private void VerifyResult(Func<int> func)
         {
-            int result = Interop.WritePactFile(mockServerPort, directory, overwrite);
+            var result = func.Invoke();
 
-            if (result == 0)
+            if (result != 0)
             {
-                return;
+                throw result switch
+                {
+                    1 => new InvalidOperationException("The pact reference library panicked"),
+                    2 => new InvalidOperationException("The pact file could not be written"),
+                    3 => new InvalidOperationException("A mock server with the provided port was not found"),
+                    _ => new InvalidOperationException($"Unknown error from backend: {result}")
+                };
             }
-
-            throw result switch
-            {
-                1 => new InvalidOperationException("The pact reference library panicked"),
-                2 => new InvalidOperationException("The pact file could not be written"),
-                3 => new InvalidOperationException("A mock server with the provided port was not found"),
-                _ => new InvalidOperationException($"Unknown error from backend: {result}")
-            };
         }
+
+        #region Http Interaction Model Support
 
         public PactHandle NewPact(string consumerName, string providerName)
             => Interop.NewPact(consumerName, providerName);
@@ -113,6 +116,42 @@ namespace PactNet.Native
         public bool WithResponseBody(InteractionHandle interaction, string contentType, string body)
             => Interop.WithBody(interaction, InteractionPart.Response, contentType, body);
 
+        #endregion Http Interaction Model Support
+
+        #region Message Interaction Model Support
+
+        public void WriteMessagePactFile(MessagePactHandle pact, string directory, bool overwrite)
+            => VerifyResult(() => Interop.WriteMessagePactFile(pact, directory, overwrite));
+
+        public bool WithMessagePactMetadata(MessagePactHandle pact, string @namespace, string name, string value)
+            => Interop.WithMessagePactMetadata(pact, @namespace, name, value);
+
+        public MessagePactHandle NewMessagePact(string consumerName, string providerName)
+            => Interop.NewMessagePact(consumerName, providerName);
+
+        public MessageHandle NewMessage(MessagePactHandle pact, string description)
+            => Interop.NewMessage(pact, description);
+
+        public bool MessageExpectsToReceive(MessageHandle message, string description)
+            => Interop.MessageExpectsToReceive(message, description);
+        public bool MessageGiven(MessageHandle message, string description)
+            => Interop.MessageGiven(message, description);
+
+        public bool MessageGivenWithParam(MessageHandle message, string description, string name, string value)
+            => Interop.MessageGivenWithParam(message, description, name, value);
+
+        public bool MessageWithMetadata(MessageHandle message, string key, string value)
+            => Interop.MessageWithMetadata(message, key, value);
+
+        public bool MessageWithContents(MessageHandle message, string contentType, string body, uint size)
+            => Interop.MessageWithContents(message, contentType, body, new UIntPtr(size));
+
+        public uint MessageReify(MessageHandle message)
+            => (uint)Interop.MessageReify(message);
+        
+
+        #endregion Message Interaction Model Support
+
         /// <summary>
         /// Interop definitions for Rust reference implementation library
         /// </summary>
@@ -138,6 +177,12 @@ namespace PactNet.Native
             [DllImport(dllName, EntryPoint = "write_pact_file")]
             public static extern int WritePactFile(int mockServerPort, string directory, bool overwrite);
 
+            [DllImport(dllName, EntryPoint = "write_message_pact_file")]
+            public static extern int WriteMessagePactFile(MessagePactHandle pact, string directory, bool overwrite);
+
+            [DllImport(dllName, EntryPoint = "with_message_pact_metadata")]
+            public static extern bool WithMessagePactMetadata(MessagePactHandle pact, string @namespace, string name, string value);
+
             [DllImport(dllName, EntryPoint = "new_pact")]
             public static extern PactHandle NewPact(string consumerName, string providerName);
 
@@ -147,11 +192,26 @@ namespace PactNet.Native
             [DllImport(dllName, EntryPoint = "new_interaction")]
             public static extern InteractionHandle NewInteraction(PactHandle pact, string description);
 
+            [DllImport(dllName, EntryPoint = "new_message_pact")]
+            public static extern MessagePactHandle NewMessagePact(string consumerName, string providerName);
+
+            [DllImport(dllName, EntryPoint = "new_message")]
+            public static extern MessageHandle NewMessage(MessagePactHandle pact, string description);
+
             [DllImport(dllName, EntryPoint = "given")]
             public static extern bool Given(InteractionHandle interaction, string description);
 
+            [DllImport(dllName, EntryPoint = "message_expects_to_receive")]
+            public static extern bool MessageExpectsToReceive(MessageHandle message, string description);
+
+            [DllImport(dllName, EntryPoint = "message_given")]
+            public static extern bool MessageGiven(MessageHandle message, string description);
+
             [DllImport(dllName, EntryPoint = "given_with_param")]
             public static extern bool GivenWithParam(InteractionHandle interaction, string description, string name, string value);
+
+            [DllImport(dllName, EntryPoint = "message_given_with_param")]
+            public static extern bool MessageGivenWithParam(MessageHandle message, string description, string name, string value);
 
             [DllImport(dllName, EntryPoint = "with_request")]
             public static extern bool WithRequest(InteractionHandle interaction, string method, string path);
@@ -168,19 +228,41 @@ namespace PactNet.Native
             [DllImport(dllName, EntryPoint = "with_body")]
             public static extern bool WithBody(InteractionHandle interaction, InteractionPart part, string contentType, string body);
 
+            [DllImport(dllName, EntryPoint = "message_with_metadata")]
+            public static extern bool MessageWithMetadata(MessageHandle message, string key, string value);
+
+            [DllImport(dllName, EntryPoint = "message_with_contents")]
+            public static extern bool MessageWithContents(MessageHandle message, string contentType, string body, UIntPtr size);
+
+            [DllImport(dllName, EntryPoint = "message_reify")]
+            public static extern IntPtr MessageReify(MessageHandle message);
+
             [DllImport(dllName, EntryPoint = "free_string")]
             public static extern void FreeString(IntPtr s);
         }
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal readonly struct PactHandle
+    internal struct PactHandle
     {
-        public readonly UIntPtr Pact;
+        public UIntPtr Pact;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct MessagePactHandle
+    {
+        public UIntPtr Pact;
     }
 
     [StructLayout(LayoutKind.Sequential)]
     internal readonly struct InteractionHandle
+    {
+        public readonly UIntPtr Pact;
+        public readonly UIntPtr Interaction;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal readonly struct MessageHandle
     {
         public readonly UIntPtr Pact;
         public readonly UIntPtr Interaction;

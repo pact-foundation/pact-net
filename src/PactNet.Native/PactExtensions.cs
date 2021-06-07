@@ -50,6 +50,27 @@ namespace PactNet.Native
         }
 
         /// <summary>
+        /// Establish a new pact using the native backend
+        /// </summary>
+        /// <param name="pact">Pact details</param>
+        /// <param name="port">Port for the mock server. If null, one will be assigned automatically</param>
+        /// <param name="host">Host for the mock server</param>
+        /// <returns>Pact builder</returns>
+        /// <remarks>
+        /// If multiple mock servers are started at the same time, you must make sure you don't supply the same port twice.
+        /// It is advised that the port is not specified whenever possible to allow PactNet to allocate a port dynamically
+        /// and ensure there are no port clashes
+        /// </remarks>
+        public static IPactMessageBuilderV3 NewMessage(this IPactV3 pact)
+        {
+            NativeMockServer server = new NativeMockServer();
+            MessagePactHandle handle = server.NewMessagePact(pact.Consumer, pact.Provider);
+
+            var builder = new NativePactMessageBuilder(server, handle, pact.Config);
+            return builder;
+        }
+
+        /// <summary>
         /// Initialise a new pact on the server with the correct version
         /// </summary>
         /// <param name="pact">Pact details</param>
