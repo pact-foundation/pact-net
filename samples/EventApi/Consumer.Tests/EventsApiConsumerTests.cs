@@ -51,18 +51,14 @@ namespace Consumer.Tests
                     .WithRequest(HttpMethod.Get, "/events")
                     .WithHeader("Accept", "application/json")
                 .WillRespond()
-                    .WithStatus(HttpStatusCode.Unauthorized)
-                    .WithHeader("Content-Type", "application/json; charset=utf-8")
-                    .WithJsonBody(new
-                    {
-                        message = "Authorization has been denied for this request."
-                    });
+                    .WithStatus(HttpStatusCode.Unauthorized);
 
-            using (IPactContext context = this.pact.Build())
+            await this.pact.VerifyAsync(async ctx =>
             {
-                var client = new EventsApiClient(context.MockServerUri);
+                var client = new EventsApiClient(ctx.MockServerUri);
+
                 await client.Invoking(c => c.GetAllEvents()).Should().ThrowAsync<Exception>();
-            }
+            });
         }
 
         [Fact]
@@ -101,14 +97,48 @@ namespace Consumer.Tests
                     .WithHeader("Content-Type", "application/json; charset=utf-8")
                     .WithJsonBody(expected);
 
-            using (IPactContext context = this.pact.Build())
+            await this.pact.VerifyAsync(async ctx =>
             {
-                var client = new EventsApiClient(context.MockServerUri, Token);
+                var client = new EventsApiClient(ctx.MockServerUri, Token);
 
                 IEnumerable<Event> events = await client.GetAllEvents();
 
                 events.Should().BeEquivalentTo(expected);
-            }
+            });
+        }
+
+        [Fact]
+        public async Task GetEventsByType_WhenOneEventWithTheTypeExists_ReturnsEvent()
+        {
+            //Arrange
+            const string eventType = "DetailsView";
+
+            this.pact
+                .UponReceiving($"a request to retrieve events with type '{eventType}'")
+                    .Given($"there is one event with type '{eventType}'")
+                    .WithRequest(HttpMethod.Get, "/events")
+                    .WithQuery("type", eventType)
+                    .WithHeader("Accept", "application/json")
+                    .WithHeader("Authorization", $"Bearer {Token}")
+                .WillRespond()
+                    .WithStatus(200)
+                    .WithHeader("Content-Type", "application/json; charset=utf-8")
+                    .WithJsonBody(new[]
+                    {
+                        new
+                        {
+                            eventType
+                        }
+                    });
+
+            await this.pact.VerifyAsync(async ctx =>
+            {
+                var client = new EventsApiClient(ctx.MockServerUri, Token);
+
+                IEnumerable<Event> result = await client.GetEventsByType(eventType);
+
+                result.Should().OnlyContain(e => e.EventType == eventType);
+            });
         }
 
         [Fact]
@@ -132,12 +162,12 @@ namespace Consumer.Tests
                 .WillRespond()
                     .WithStatus(HttpStatusCode.Created);
 
-            using (IPactContext context = this.pact.Build())
+            await this.pact.VerifyAsync(async ctx =>
             {
-                var client = new EventsApiClient(context.MockServerUri, Token);
+                var client = new EventsApiClient(ctx.MockServerUri, Token);
 
                 await client.CreateEvent(eventId);
-            }
+            });
         }
 
         [Fact]
@@ -162,14 +192,14 @@ namespace Consumer.Tests
                         }
                     });
 
-            using (IPactContext context = this.pact.Build())
+            await this.pact.VerifyAsync(async ctx =>
             {
-                var client = new EventsApiClient(context.MockServerUri);
+                var client = new EventsApiClient(ctx.MockServerUri);
 
-                var result = await client.IsAlive();
+                bool result = await client.IsAlive();
 
                 result.Should().BeTrue();
-            }
+            });
         }
 
         [Fact]
@@ -208,14 +238,14 @@ namespace Consumer.Tests
                         upSince = upSinceDate
                     });
 
-            using (IPactContext context = this.pact.Build())
+            await this.pact.VerifyAsync(async ctx =>
             {
-                var client = new EventsApiClient(context.MockServerUri, Token);
+                var client = new EventsApiClient(ctx.MockServerUri, Token);
 
-                var result = await client.UpSince();
+                DateTime? result = await client.UpSince();
 
                 result.Should().Be(upSinceDate);
-            }
+            });
         }
 
         [Fact]
@@ -237,55 +267,21 @@ namespace Consumer.Tests
                 .WillRespond()
                     .WithStatus(200)
                     .WithHeader("content-type", "application/json; charset=utf-8")
-                .WithJsonBody(new
-                {
-                    eventId = Match.Regex(expected.EventId.ToString(), "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"),
-                    eventType = Match.Type(expected.EventType),
-                    timestamp = Match.Regex(expected.Timestamp.ToString("o"), "^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|0[1-9]|[1-2][0-9])T(2[0-3]|[0-1][0-9]):([0-5][0-9]):([0-5][0-9])(\\.[0-9]+)?(Z|[+-](?:2[0-3]|[0-1][0-9]):[0-5][0-9])?$")
-                });
-
-            using (IPactContext context = this.pact.Build())
-            {
-                var client = new EventsApiClient(context.MockServerUri, Token);
-
-                var result = await client.GetEventById(expected.EventId);
-
-                result.Should().BeEquivalentTo(expected);
-            }
-        }
-
-        [Fact]
-        public async Task GetEventsByType_WhenOneEventWithTheTypeExists_ReturnsEvent()
-        {
-            //Arrange
-            const string eventType = "DetailsView";
-
-            this.pact
-                .UponReceiving($"a request to retrieve events with type '{eventType}'")
-                    .Given($"there is one event with type '{eventType}'")
-                    .WithRequest(HttpMethod.Get, "/events")
-                    .WithQuery("type", eventType)
-                    .WithHeader("Accept", "application/json")
-                    .WithHeader("Authorization", $"Bearer {Token}")
-                .WillRespond()
-                    .WithStatus(200)
-                    .WithHeader("Content-Type", "application/json; charset=utf-8")
-                    .WithJsonBody(new[]
+                    .WithJsonBody(new
                     {
-                        new
-                        {
-                            eventType
-                        }
+                        eventId = Match.Regex(expected.EventId.ToString(), "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"),
+                        eventType = Match.Type(expected.EventType),
+                        timestamp = Match.Regex(expected.Timestamp.ToString("o"), "^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|0[1-9]|[1-2][0-9])T(2[0-3]|[0-1][0-9]):([0-5][0-9]):([0-5][0-9])(\\.[0-9]+)?(Z|[+-](?:2[0-3]|[0-1][0-9]):[0-5][0-9])?$")
                     });
 
-            using (IPactContext context = this.pact.Build())
+            await this.pact.VerifyAsync(async ctx =>
             {
-                var client = new EventsApiClient(context.MockServerUri, Token);
+                var client = new EventsApiClient(ctx.MockServerUri, Token);
 
-                var result = await client.GetEventsByType(eventType);
+                Event result = await client.GetEventById(expected.EventId);
 
-                result.Should().OnlyContain(e => e.EventType == eventType);
-            }
+                result.Should().BeEquivalentTo(expected);
+            });
         }
     }
 }

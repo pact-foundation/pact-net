@@ -27,13 +27,29 @@ download_native() {
     echo "    Platform: $os/$platform"
     echo "    File: $file.$extension"
     echo "    URL: $url"
+
+    echo -n "    Downloading... "
     curl --silent -L "$url" -o "$path/$file.$extension.gz"
     curl --silent -L "$sha" -o "$path/$file.$extension.gz.sha256"
+    echo "OK"
 
-    # todo: verify the sha256. awkward because the sha256 file contains the wrong file name so needs some processing
-    # sha256sum --check --verify ...
+    echo -n "    Verifying... "
 
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # OSX requires an empty arg passed to -i, but this doesn't work on Lin/Win
+        sed -Ei '' "s|../target/artifacts/.+$|$path/$file.$extension.gz|" "$path/$file.$extension.gz.sha256"
+        shasum -a 256 --check --quiet "$path/$file.$extension.gz.sha256"
+    else
+        sed -Ei "s|../target/artifacts/.+$|$path/$file.$extension.gz|" "$path/$file.$extension.gz.sha256"
+        sha256sum --check --quiet "$path/$file.$extension.gz.sha256"
+    fi
+
+    rm "$path/$file.$extension.gz.sha256"
+    echo "OK"
+
+    echo -n "    Extracting... "
     gunzip -f "$path/$file.$extension.gz"
+    echo "OK"
 }
 
 download_native "$MOCK_SERVER_BASE_URL" "pact_mock_server_ffi" "pact_mock_server_ffi" "windows" "x86_64" "dll"
