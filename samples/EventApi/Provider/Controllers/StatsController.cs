@@ -1,13 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Web.Http;
+using Microsoft.AspNetCore.Mvc;
 using Provider.Api.Web.Models;
 
-namespace Provider.Api.Web.Controllers
+namespace Provider.Controllers
 {
-    public class StatsController : ApiController
+    [ApiController]
+    [Route("[controller]")]
+    public class StatsController : ControllerBase
     {
-        [Route("stats/status")]
+        [HttpGet("status")]
         public dynamic GetStatus()
         {
             return new
@@ -22,7 +24,7 @@ namespace Provider.Api.Web.Controllers
             };
         }
 
-        [Route("stats/uptime")]
+        [Route("uptime")]
         public dynamic GetUptime()
         {
             return new

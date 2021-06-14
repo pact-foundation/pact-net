@@ -1,43 +1,44 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Web.Http;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Provider.Api.Web.Models;
 
-namespace Provider.Api.Web.Controllers
+namespace Provider.Controllers
 {
-    public class EventsController : ApiController
+    [ApiController]
+    [Route("[controller]")]
+    public class EventsController : ControllerBase
     {
         [Authorize]
-        [Route("events")]
-        public IEnumerable<Event> Get()
+        [HttpGet]
+        public IActionResult Get([FromQuery] string type)
         {
-            return GetAllEventsFromRepo();
-        }
+            IEnumerable<Event> events = this.GetAllEventsFromRepo();
 
-        [Route("events/{id}")]
-        public Event GetById(Guid id)
-        {
-            return GetAllEventsFromRepo().First(x => x.EventId == id);
-        }
-
-        [Route("events")]
-        public IEnumerable<Event> GetByType(string type)
-        {
-            return GetAllEventsFromRepo().Where(x => x.EventType.Equals(type, StringComparison.InvariantCultureIgnoreCase));
-        }
-
-        [Route("events")]
-        public HttpResponseMessage Post(Event @event)
-        {
-            if (@event == null)
+            if (!string.IsNullOrEmpty(type))
             {
-                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+                events = events.Where(e => e.EventType.Equals(type, StringComparison.InvariantCultureIgnoreCase));
             }
 
-            return new HttpResponseMessage(HttpStatusCode.Created);
+            return this.Ok(events);
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetById(Guid id)
+        {
+            Event e = this.GetAllEventsFromRepo().First(x => x.EventId == id);
+            return this.Ok(e);
+        }
+
+        [HttpPost]
+        public IActionResult Post(Event @event)
+        {
+            return @event == null
+                       ? this.BadRequest()
+                       : this.StatusCode((int)HttpStatusCode.Created);
         }
 
         private IEnumerable<Event> GetAllEventsFromRepo()
