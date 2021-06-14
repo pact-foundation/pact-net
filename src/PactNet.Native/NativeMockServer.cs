@@ -146,9 +146,12 @@ namespace PactNet.Native
         public bool MessageWithContents(MessageHandle message, string contentType, string body, uint size)
             => Interop.MessageWithContents(message, contentType, body, new UIntPtr(size));
 
-        public uint MessageReify(MessageHandle message)
-            => (uint)Interop.MessageReify(message);
-        
+        public string MessageReify(MessageHandle message)
+        {
+            var allocatedString = Marshal.PtrToStringAnsi(Interop.MessageReify(message));
+            return allocatedString;
+        }
+
 
         #endregion Message Interaction Model Support
 

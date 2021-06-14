@@ -1,5 +1,4 @@
 using System;
-using Newtonsoft.Json.Bson;
 
 namespace PactNet
 {
@@ -44,7 +43,7 @@ namespace PactNet
         /// <summary>
         /// Verify a message is exe
         /// </summary>
-        /// <param name="action"></param>
-        void Verify(Action action);
+        /// <param name="handler">The method using the message</param>
+        void Verify<T>(Action<T> handler);
     }
 }

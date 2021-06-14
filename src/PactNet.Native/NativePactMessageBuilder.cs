@@ -1,5 +1,8 @@
 using System;
+
 using Newtonsoft.Json;
+
+using PactNet.Native.Models;
 
 namespace PactNet.Native
 {
@@ -102,11 +105,21 @@ namespace PactNet.Native
             server.WriteMessagePactFile(pact, _config.PactDir, true);
         }
 
-        public void Verify(Action messageHandler)
+        /// <summary>
+        /// Verify a message is exe
+        /// </summary>
+        /// <param name="handler">The method using the message</param>
+        public void Verify<T>(Action<T> handler)
         {
             try
             {
-                messageHandler();
+                var raw = server.MessageReify(message);
+
+                var content = JsonConvert.DeserializeObject<NativeMessage>(raw);
+
+                var messageReified = JsonConvert.DeserializeObject<T>(content.Contents.ToString(), defaultSettings);
+
+                handler(messageReified);
             }
             catch (Exception e)
             {

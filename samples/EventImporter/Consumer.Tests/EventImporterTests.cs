@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
+
 using Consumer.Models;
-using FluentAssertions;
-using FluentAssertions.Extensions;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+
 using PactNet;
 using PactNet.Matchers;
 using PactNet.Native;
+
 using Xunit;
 using Xunit.Abstractions;
 
@@ -23,7 +22,7 @@ namespace Consumer.Tests
         private readonly IPactBuilderV3 pact;
         private readonly IPactMessageBuilderV3 pactMessage;
 
-        private PactConfig config = new PactConfig
+        private readonly PactConfig config = new PactConfig
         {
             LogDir = "../../../logs/",
             PactDir = "../../../pacts/",
@@ -43,11 +42,11 @@ namespace Consumer.Tests
             this.pact = pact.UsingNativeBackend();
 
             IPactV3 pactMessageV3 = Pact.V3("Event API Consumer V3 Message", "Event API V3 Message", config);
-            pactMessage = pactMessageV3.NewMessage();
+            pactMessage = pactMessageV3.UsingNativeBackendForMessage();
         }
 
         [Fact]
-        public async Task GetAllEvents_FromQueue_Should_CreatePact_WithMessages()
+        public void GetAllEvents_FromQueue_Should_CreatePact_WithMessages()
         {
             var expected = new List<Event> 
             {
@@ -65,7 +64,7 @@ namespace Consumer.Tests
                 .Given("A list of events is pushed to the queue")
                 .WithMetadata("key", "valueKey")
                 .WithContent(Match.Type(expected))
-                .Verify(() => worker.ProcessMessages(expected));
+                .Verify<List<Event>>(events => worker.ProcessMessages(events));
 
             pactMessage.Build();
 

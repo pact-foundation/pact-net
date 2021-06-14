@@ -240,6 +240,6 @@ namespace PactNet.Native
         /// </summary>
         /// <param name="message">message</param>
         /// <returns>Success</returns>
-        public uint MessageReify(MessageHandle message);
+        public string MessageReify(MessageHandle message);
     }
 }
