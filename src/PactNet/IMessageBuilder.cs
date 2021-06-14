@@ -41,7 +41,7 @@ namespace PactNet
         void Build();
 
         /// <summary>
-        /// Verify a message is exe
+        /// Verify a message is read and handled correctly
         /// </summary>
         /// <param name="handler">The method using the message</param>
         void Verify<T>(Action<T> handler);

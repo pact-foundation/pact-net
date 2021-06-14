@@ -2,6 +2,7 @@ using System;
 
 using Newtonsoft.Json;
 
+using PactNet.Native.Exceptions;
 using PactNet.Native.Models;
 
 namespace PactNet.Native
@@ -106,16 +107,14 @@ namespace PactNet.Native
         }
 
         /// <summary>
-        /// Verify a message is exe
+        /// Verify a message is read and handled correctly
         /// </summary>
         /// <param name="handler">The method using the message</param>
         public void Verify<T>(Action<T> handler)
         {
             try
             {
-                var raw = server.MessageReify(message);
-
-                var content = JsonConvert.DeserializeObject<NativeMessage>(raw);
+                var content = JsonConvert.DeserializeObject<NativeMessage>(server.MessageReify(message));
 
                 var messageReified = JsonConvert.DeserializeObject<T>(content.Contents.ToString(), defaultSettings);
 
@@ -123,7 +122,7 @@ namespace PactNet.Native
             }
             catch (Exception e)
             {
-                throw new Exception($"could not handle the message {message}", e);
+                throw new PactMessageConsumerVerificationException($"The message {message} could not be verified by the consumer handler", e);
             }
         }
     }
