@@ -11,7 +11,7 @@ namespace PactNet.Native.Tests
     {
         private readonly NativePactContext context;
 
-        private readonly Mock<IMockServer> mockServer;
+        private readonly Mock<IHttpMockServer> mockServer;
         private readonly Mock<IOutput> mockOutput;
 
         private readonly IFixture fixture;
@@ -20,7 +20,7 @@ namespace PactNet.Native.Tests
 
         public NativePactContextTests()
         {
-            this.mockServer = new Mock<IMockServer>(MockBehavior.Strict);
+            this.mockServer = new Mock<IHttpMockServer>(MockBehavior.Strict);
             this.mockOutput = new Mock<IOutput>();
 
             this.fixture = new Fixture();

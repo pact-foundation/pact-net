@@ -5,7 +5,7 @@ namespace PactNet.Native
     /// <summary>
     /// Mock server
     /// </summary>
-    internal interface IMockServer
+    internal interface IHttpMockServer
     {
         /// <summary>
         /// Create the mock server for the given pact handle

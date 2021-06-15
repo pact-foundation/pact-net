@@ -15,11 +15,11 @@ namespace PactNet.Native.Tests
 {
     public class NativePactMessageBuilderTests
     {
-        private readonly Mock<IMockServer> _mockedServer;
+        private readonly Mock<IMessageMockServer> _mockedServer;
 
         public NativePactMessageBuilderTests()
         {
-            _mockedServer = new Mock<IMockServer>();
+            _mockedServer = new Mock<IMessageMockServer>();
         }
 
         private void SetServerReifyMessage(string message)
@@ -32,64 +32,80 @@ namespace PactNet.Native.Tests
         [Fact]
         public void Verify_Should_Fail_If_Type_Is_Not_The_Same_As_The_Message()
         {
+            //Arrange
             SetServerReifyMessage("{ \"param1\": \"value1\" }");
 
-            Action<MessageModel> expectedDelegate = (MessageModel e) => { return; };
+            void ExpectedDelegate(MessageModel e)
+            {
+            }
+
             var builder = new NativePactMessageBuilder(_mockedServer.Object, new MessagePactHandle(), null);
 
-            Action actualResult = () => builder.Verify<MessageModel>(expectedDelegate);
+            //Act
+            Action actualResult = () => builder.Verify<MessageModel>(ExpectedDelegate);
 
+            //Assert
             actualResult.Should().Throw<PactMessageConsumerVerificationException>();
         }
 
         [Fact]
         public void Verify_Should_Fail_If_Verification_By_The_Consumer_Handler_Throws_Exception()
         {
-            var testMessage = new NativeMessage
-            {
-                Contents = new MessageModel
-                {
-                    Id = 1,
-                    Description = "this message is a test"
-                }
-            };
+            //Arrange
+            var testMessage = new MessageModel(1, string.Empty).ToNativeMessage();
 
             SetServerReifyMessage(JsonConvert.SerializeObject(testMessage));
 
-            Action<MessageModel> expectedDelegate = (MessageModel e) => throw new Exception("exception test");
+            void ExpectedDelegate(MessageModel e) => throw new Exception("exception test");
+            
             var builder = new NativePactMessageBuilder(_mockedServer.Object, new MessagePactHandle(), null);
 
-            Action actualResult = () => builder.Verify<MessageModel>(expectedDelegate);
+            //Act
+            Action actualResult = () => builder.Verify<MessageModel>(ExpectedDelegate);
 
+            //Assert
             actualResult.Should().Throw<PactMessageConsumerVerificationException>();
         }
 
         [Fact]
         public void Verify_Checks_Consumer_Handler_Completes_Successfully_With_Message()
         {
-            var testMessage = new NativeMessage
-            {
-                Contents = new MessageModel
-                {
-                    Id = 1,
-                    Description = "this message is a test"
-                }
-            };
+            //Arrange
+            var testMessage = new MessageModel(1, "this message is a test").ToNativeMessage();
 
             SetServerReifyMessage(JsonConvert.SerializeObject(testMessage));
 
-            Action<MessageModel> expectedDelegate = (MessageModel e) => { return; };
+            void ExpectedDelegate(MessageModel e)
+            {
+            }
+
             var builder = new NativePactMessageBuilder(_mockedServer.Object, new MessagePactHandle(), null);
 
-            Action actualResult = () => builder.Verify<MessageModel>(expectedDelegate);
+            //Act
+            Action actualResult = () => builder.Verify<MessageModel>(ExpectedDelegate);
 
+            //Assert
             actualResult.Should().Throw<PactMessageConsumerVerificationException>();
         }
 
-        internal class MessageModel
+        private class MessageModel
         {
-            public int Id { get; set; }
-            public string Description { get; set; }
+            private readonly int _id;
+            private readonly string _description;
+
+            internal MessageModel(int id, string description)
+            {
+                _id = id;
+                _description = description;
+            }
+
+            internal NativeMessage ToNativeMessage()
+            {
+                return new NativeMessage
+                {
+                    Contents = this
+                };
+            }
         }
     }
 }

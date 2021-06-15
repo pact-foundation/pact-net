@@ -6,7 +6,7 @@ namespace PactNet.Native
     /// <summary>
     /// Native mock server
     /// </summary>
-    internal class NativeMockServer : IMockServer
+    internal class NativeMockServer : IHttpMockServer, IMessageMockServer
     {
         /// <summary>
         /// Static constructor for <see cref="NativeMockServer"/>

@@ -7,7 +7,7 @@ namespace PactNet.Native
     /// </summary>
     public class NativePactContext : IPactContext
     {
-        private readonly IMockServer server;
+        private readonly IHttpMockServer server;
         private readonly PactConfig config;
 
         /// <summary>
@@ -21,7 +21,7 @@ namespace PactNet.Native
         /// <param name="server">Mock server</param>
         /// <param name="mockServerUri">Mock server URI</param>
         /// <param name="config">Pact config</param>
-        internal NativePactContext(IMockServer server, Uri mockServerUri, PactConfig config)
+        internal NativePactContext(IHttpMockServer server, Uri mockServerUri, PactConfig config)
         {
             this.server = server;
             this.config = config;

@@ -14,7 +14,7 @@ namespace PactNet.Native.Tests
     {
         private readonly NativeRequestBuilder builder;
 
-        private readonly Mock<IMockServer> mockServer;
+        private readonly Mock<IHttpMockServer> mockServer;
 
         private readonly IFixture fixture;
         private readonly InteractionHandle handle;
@@ -22,7 +22,7 @@ namespace PactNet.Native.Tests
 
         public NativeRequestBuilderTests()
         {
-            this.mockServer = new Mock<IMockServer>();
+            this.mockServer = new Mock<IHttpMockServer>();
 
             this.fixture = new Fixture();
             var customization = new SupportMutableValueTypesCustomization();

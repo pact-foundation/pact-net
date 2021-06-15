@@ -19,10 +19,9 @@ namespace Consumer.Tests
     {
         private const string Token = "SomeValidAuthToken";
 
-        private readonly IPactBuilderV3 pact;
-        private readonly IPactMessageBuilderV3 pactMessage;
+        private readonly IPactMessageBuilderV3 _pactMessage;
 
-        private readonly PactConfig config = new PactConfig
+        private readonly PactConfig _config = new PactConfig
         {
             LogDir = "../../../logs/",
             PactDir = "../../../pacts/",
@@ -34,15 +33,13 @@ namespace Consumer.Tests
 
         public EventImporterTests(ITestOutputHelper output)
         {
-            config.Outputters = new[]
+            _config.Outputters = new[]
             {
                 new XUnitOutput(output)
             };
-            IPactV3 pact = Pact.V3("Event API Consumer V3", "Event API V3", config);
-            this.pact = pact.UsingNativeBackend();
 
-            IPactV3 pactMessageV3 = Pact.V3("Event API Consumer V3 Message", "Event API V3 Message", config);
-            pactMessage = pactMessageV3.UsingNativeBackendForMessage();
+            IPactV3 pactMessageV3 = Pact.V3("Event API Consumer V3 Message", "Event API V3 Message", _config);
+            _pactMessage = pactMessageV3.UsingNativeBackendForMessage();
         }
 
         [Fact]
@@ -59,14 +56,14 @@ namespace Consumer.Tests
 
             var worker = new EventsWorker(new FakeEventProcessor());
 
-            pactMessage
+            _pactMessage
                 .ExpectsToReceive("receiving events from the queue")
                 .Given("A list of events is pushed to the queue")
                 .WithMetadata("key", "valueKey")
                 .WithContent(Match.Type(expected))
                 .Verify<List<Event>>(events => worker.ProcessMessages(events));
 
-            pactMessage.Build();
+            _pactMessage.Build();
 
             //var client = new EventsApiClient(context.MockServerUri, Token);
 
