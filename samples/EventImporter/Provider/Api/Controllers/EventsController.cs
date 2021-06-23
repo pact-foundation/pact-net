@@ -17,7 +17,7 @@ namespace Provider.Api.Controllers
         }
 
         /// <summary>
-        /// ImportEvents to queue
+        /// ImportAllEvents to queue
         /// </summary>
         /// <returns>no content</returns>
         [Authorize]
@@ -26,7 +26,7 @@ namespace Provider.Api.Controllers
         {
             var events = _eventRepository.GetAllEvents();
 
-            _eventHandler.ImportEvents(events);
+            _eventHandler.ImportAllEvents(events);
 
             return NoContent();
         }

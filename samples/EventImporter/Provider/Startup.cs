@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+
+using PactNet.Native.Messaging;
 
 namespace Provider
 {
@@ -75,6 +78,9 @@ namespace Provider
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            //Test the message with the PACT VERIFIER CLI
+            app.UseMiddleware<MessageMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

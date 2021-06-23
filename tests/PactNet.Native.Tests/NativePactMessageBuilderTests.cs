@@ -22,13 +22,6 @@ namespace PactNet.Native.Tests
             _mockedServer = new Mock<IMessageMockServer>();
         }
 
-        private void SetServerReifyMessage(string message)
-        {
-            _mockedServer
-                .Setup(x => x.MessageReify(It.IsAny<MessageHandle>()))
-                .Returns(message);
-        }
-
         [Fact]
         public void Verify_Should_Fail_If_Type_Is_Not_The_Same_As_The_Message()
         {
@@ -57,7 +50,7 @@ namespace PactNet.Native.Tests
             SetServerReifyMessage(JsonConvert.SerializeObject(testMessage));
 
             void ExpectedDelegate(MessageModel e) => throw new Exception("exception test");
-            
+
             var builder = new NativePactMessageBuilder(_mockedServer.Object, new MessagePactHandle(), null);
 
             //Act
@@ -86,6 +79,12 @@ namespace PactNet.Native.Tests
 
             //Assert
             actualResult.Should().Throw<PactMessageConsumerVerificationException>();
+        }
+        private void SetServerReifyMessage(string message)
+        {
+            _mockedServer
+                .Setup(x => x.MessageReify(It.IsAny<MessageHandle>()))
+                .Returns(message);
         }
 
         private class MessageModel

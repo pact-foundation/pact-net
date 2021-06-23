@@ -1,6 +1,6 @@
 using System;
 
-namespace Provider.Domain.Models
+namespace PactNet.Native.Messaging
 {
     public class Event
     {
@@ -10,7 +10,7 @@ namespace Provider.Domain.Models
 
         public Event()
         {
-            
+
         }
 
         public Event(string id)

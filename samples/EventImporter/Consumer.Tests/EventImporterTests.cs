@@ -17,8 +17,6 @@ namespace Consumer.Tests
 {
     public class EventImporterTests
     {
-        private const string Token = "SomeValidAuthToken";
-
         private readonly IPactMessageBuilderV3 _pactMessage;
 
         private readonly PactConfig _config = new PactConfig
@@ -38,14 +36,14 @@ namespace Consumer.Tests
                 new XUnitOutput(output)
             };
 
-            IPactV3 pactMessageV3 = Pact.V3("Event API Consumer V3 Message", "Event API V3 Message", _config);
-            _pactMessage = pactMessageV3.UsingNativeBackendForMessage();
+            IPactV3 pactV3 = Pact.V3("Event API Consumer V3 Message", "Event API V3 Message", _config);
+            _pactMessage = pactV3.UsingNativeBackendForMessage();
         }
 
         [Fact]
         public void GetAllEvents_FromQueue_Should_CreatePact_WithMessages()
         {
-            var expected = new List<Event> 
+            var expected = new List<Event>
             {
                 new Event(){
                     EventId = Guid.Parse("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5"),
@@ -64,12 +62,6 @@ namespace Consumer.Tests
                 .Verify<List<Event>>(events => worker.ProcessMessages(events));
 
             _pactMessage.Build();
-
-            //var client = new EventsApiClient(context.MockServerUri, Token);
-
-            //IEnumerable<Event> events = await client.GetAllEvents();
-
-            //events.Should().BeEquivalentTo(expected);
         }
     }
 }

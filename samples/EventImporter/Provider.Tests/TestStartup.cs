@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
+using PactNet.Native.Messaging;
+
 namespace Provider.Tests
 {
     public class TestStartup
@@ -11,20 +13,22 @@ namespace Provider.Tests
 
         public TestStartup(IConfiguration configuration)
         {
-            this.inner = new Startup(configuration);
+            inner = new Startup(configuration);
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            this.inner.ConfigureServices(services);
+            inner.ConfigureServices(services);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseMiddleware<ProviderStateMiddleware>()
-               .UseMiddleware<AuthorizationTokenReplacementMiddleware>();
+            app
+               .UseMiddleware<ProviderStateMiddleware>()
+               .UseMiddleware<AuthorizationTokenReplacementMiddleware>()
+               .UseMiddleware<MessageMiddleware>();
 
-            this.inner.Configure(app, env);
+            inner.Configure(app, env);
         }
     }
 }

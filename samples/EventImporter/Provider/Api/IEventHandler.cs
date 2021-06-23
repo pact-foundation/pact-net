@@ -6,6 +6,6 @@ namespace Provider.Api
 {
     public interface IEventHandler
     {
-        void ImportEvents(IReadOnlyCollection<Event> events);
+        void ImportAllEvents(IReadOnlyCollection<Event> events);
     }
 }

@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+
 using Consumer.Models;
+
 using FluentAssertions;
-using FluentAssertions.Extensions;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+
 using PactNet;
 using PactNet.Matchers;
 using PactNet.Native;
+
 using Xunit;
 using Xunit.Abstractions;
 
@@ -22,7 +26,7 @@ namespace Consumer.Tests
 
         private readonly IPactBuilderV3 pact;
 
-        private PactConfig config = new PactConfig
+        private readonly PactConfig config = new PactConfig
         {
             LogDir = "../../../logs/",
             PactDir = "../../../pacts/",
@@ -40,133 +44,6 @@ namespace Consumer.Tests
             };
             IPactV3 pact = Pact.V3("Event API Consumer V3", "Event API V3", config);
             this.pact = pact.UsingNativeBackend();
-        }
-
-        [Fact]
-        public async Task GetAllEvents_WithNoAuthorizationToken_ShouldFail()
-        {
-            pact
-                .UponReceiving("a request to retrieve all events with no authorization")
-                    .Given("there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
-                    .WithRequest(HttpMethod.Get, "/events")
-                    .WithHeader("Accept", "application/json")
-                .WillRespond()
-                    .WithStatus(HttpStatusCode.Unauthorized)
-                    .WithHeader("Content-Type", "application/json; charset=utf-8")
-                    .WithJsonBody(new
-                    {
-                        message = "Authorization has been denied for this request."
-                    });
-
-            using IPactContext context = pact.Build();
-
-            var client = new EventsApiClient(context.MockServerUri);
-
-            await client.Invoking(c => c.GetAllEvents()).Should().ThrowAsync<Exception>();
-        }
-
-        [Fact]
-        public async Task CreateEvent_WhenCalledWithEvent_Succeeds()
-        {
-            var eventId = Guid.Parse("1F587704-2DCC-4313-A233-7B62B4B469DB");
-            var dateTime = 1.July(2011).At(1, 41, 3);
-            DateTimeFactory.Now = () => dateTime;
-
-            pact
-                .UponReceiving("a request to create a new event")
-                    .WithRequest(HttpMethod.Post, "/events")
-                    .WithHeader("Content-Type", "application/json; charset=utf-8")
-                    .WithHeader("Authorization", $"Bearer {Token}")
-                    .WithJsonBody(new
-                    {
-                        eventId,
-                        timestamp = dateTime.ToString("O"),
-                        eventType = "DetailsView"
-                    })
-                .WillRespond()
-                    .WithStatus(HttpStatusCode.Created);
-
-            using IPactContext context = pact.Build();
-
-            var client = new EventsApiClient(context.MockServerUri, Token);
-
-            await client.CreateEvent(eventId);
-        }
-
-        [Fact]
-        public async Task IsAlive_WhenApiIsAlive_ReturnsTrue()
-        {
-            pact
-                .UponReceiving("a request to check the api status")
-                    .WithRequest(HttpMethod.Get, "/stats/status")
-                    .WithHeader("Accept", "application/json")
-                .WillRespond()
-                    .WithStatus(200)
-                    .WithHeader("Content-Type", "application/json; charset=utf-8")
-                    .WithJsonBody(new
-                    {
-                        alive = true,
-                        _links = new
-                        {
-                            uptime = new
-                            {
-                                href = "/stats/uptime"
-                            }
-                        }
-                    });
-
-            using IPactContext context = pact.Build();
-
-            var client = new EventsApiClient(context.MockServerUri);
-
-            var result = await client.IsAlive();
-
-            result.Should().BeTrue();
-        }
-
-        [Fact]
-        public async Task UpSince_WhenApiIsAliveAndWeRetrieveUptime_ReturnsUpSinceDate()
-        {
-            var upSinceDate = 27.June(2014).At(23, 51, 12).AsUtc();
-
-            pact
-                .UponReceiving("a request to check the api status")
-                    .WithRequest(HttpMethod.Get, "/stats/status")
-                    .WithHeader("Accept", "application/json")
-                .WillRespond()
-                    .WithStatus(200)
-                    .WithHeader("Content-Type", "application/json; charset=utf-8")
-                    .WithJsonBody(new
-                    {
-                        alive = true,
-                        _links = new
-                        {
-                            uptime = new
-                            {
-                                href = "/stats/uptime"
-                            }
-                        }
-                    });
-
-            pact
-                .UponReceiving("a request to check the api uptime")
-                    .WithRequest(HttpMethod.Get, "/stats/uptime")
-                    .WithHeader("Accept", "application/json")
-                .WillRespond()
-                .WithStatus(200)
-                    .WithHeader("Content-Type", "application/json; charset=utf-8")
-                    .WithJsonBody(new
-                    {
-                        upSince = upSinceDate
-                    });
-
-            using IPactContext context = pact.Build();
-
-            var client = new EventsApiClient(context.MockServerUri, Token);
-
-            var result = await client.UpSince();
-
-            result.Should().Be(upSinceDate);
         }
 
         [Fact]

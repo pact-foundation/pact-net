@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+
 using Provider.Domain;
 using Provider.Domain.Models;
 
@@ -8,6 +9,8 @@ namespace Provider.Infrastructure
     {
         public void SendAsync(IReadOnlyCollection<Event> events)
         {
+            //ConvertToDto eventually...
+
             //send to queue here...
         }
     }
