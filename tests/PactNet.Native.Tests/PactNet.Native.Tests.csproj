@@ -39,6 +39,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="xunit.runner.json"> 
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\PactNet.Native\PactNet.Native.csproj" />
   </ItemGroup>
 

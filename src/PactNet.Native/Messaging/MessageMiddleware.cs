@@ -60,17 +60,6 @@ namespace PactNet.Native.Messaging
         }
 
         /// <summary>
-        /// Write to response
-        /// </summary>
-        /// <param name="context">The http context</param>
-        /// <param name="response">The object response</param>
-        /// <returns>A task</returns>
-        protected internal virtual async Task WriteToResponseAsync(HttpContext context, dynamic response)
-        {
-            await context.Response.WriteAsync((string)JsonConvert.SerializeObject(response));
-        }
-
-        /// <summary>
         /// Read the request body as a string
         /// </summary>
         /// <param name="context">The http context</param>
@@ -80,6 +69,17 @@ namespace PactNet.Native.Messaging
             using var reader = new StreamReader(context.Request.Body, Encoding.UTF8);
 
             return await reader.ReadToEndAsync();
+        }
+
+        /// <summary>
+        /// Write to response
+        /// </summary>
+        /// <param name="context">The http context</param>
+        /// <param name="response">The object response</param>
+        /// <returns>A task</returns>
+        protected internal virtual async Task WriteToResponseAsync(HttpContext context, dynamic response)
+        {
+            await context.Response.WriteAsync((string)JsonConvert.SerializeObject(response));
         }
 
         private class MessageInteraction
