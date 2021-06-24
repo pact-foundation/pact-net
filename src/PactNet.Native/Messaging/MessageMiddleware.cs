@@ -44,7 +44,7 @@ namespace PactNet.Native.Messaging
 
             context.Response.StatusCode = (int)HttpStatusCode.OK;
 
-            string jsonRequestBody = await GetRequestBodyAsynbc(context);
+            string jsonRequestBody = await GetRequestBodyAsync(context);
 
             var interactionDescription = JsonConvert.DeserializeObject<MessageInteraction>(jsonRequestBody)?.Description;
 
@@ -64,7 +64,7 @@ namespace PactNet.Native.Messaging
         /// </summary>
         /// <param name="context">The http context</param>
         /// <returns>The request body</returns>
-        protected internal virtual async Task<string> GetRequestBodyAsynbc(HttpContext context)
+        protected internal virtual async Task<string> GetRequestBodyAsync(HttpContext context)
         {
             using var reader = new StreamReader(context.Request.Body, Encoding.UTF8);
 
