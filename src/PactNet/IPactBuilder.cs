@@ -1,3 +1,6 @@
+using System;
+using System.Threading.Tasks;
+
 namespace PactNet
 {
     /// <summary>
@@ -6,10 +9,18 @@ namespace PactNet
     public interface IPactBuilder
     {
         /// <summary>
-        /// Finalise the pact
+        /// Verify the configured interactions
         /// </summary>
-        /// <returns>Pact context in which to run interactions</returns>
-        IPactContext Build();
+        /// <param name="interact">Action to perform the real interactions against the mock server</param>
+        /// <exception cref="PactFailureException">Failed to verify the interactions</exception>
+        void Verify(Action<IConsumerContext> interact);
+
+        /// <summary>
+        /// Verify the configured interactions
+        /// </summary>
+        /// <param name="interact">Action to perform the real interactions against the mock server</param>
+        /// <exception cref="PactFailureException">Failed to verify the interactions</exception>
+        Task VerifyAsync(Func<IConsumerContext, Task> interact);
     }
 
     /// <summary>

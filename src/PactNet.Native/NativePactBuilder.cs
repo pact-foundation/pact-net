@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using PactNet.Models;
 
 namespace PactNet.Native
@@ -13,8 +14,6 @@ namespace PactNet.Native
         private readonly PactConfig config;
         private readonly int? port;
         private readonly IPAddress host;
-
-        private int serverPort;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="NativePactBuilder"/> class.
@@ -63,10 +62,68 @@ namespace PactNet.Native
         }
 
         /// <summary>
-        /// Finalise the pact
+        /// Verify the configured interactions
         /// </summary>
-        /// <returns>Pact context in which to run interactions</returns>
-        public IPactContext Build()
+        /// <param name="interact">Action to perform the real interactions against the mock server</param>
+        /// <exception cref="PactFailureException">Failed to verify the interactions</exception>
+        public void Verify(Action<IConsumerContext> interact)
+        {
+            if (interact == null)
+            {
+                throw new ArgumentNullException(nameof(interact));
+            }
+
+            Uri uri = this.StartMockServer();
+
+            try
+            {
+                interact(new NativeConsumerContext
+                {
+                    MockServerUri = uri
+                });
+
+                this.VerifyInternal(uri);
+            }
+            finally
+            {
+                this.server.CleanupMockServer(uri.Port);
+            }
+        }
+
+        /// <summary>
+        /// Verify the configured interactions
+        /// </summary>
+        /// <param name="interact">Action to perform the real interactions against the mock server</param>
+        /// <exception cref="PactFailureException">Failed to verify the interactions</exception>
+        public async Task VerifyAsync(Func<IConsumerContext, Task> interact)
+        {
+            if (interact == null)
+            {
+                throw new ArgumentNullException(nameof(interact));
+            }
+
+            Uri uri = this.StartMockServer();
+
+            try
+            {
+                await interact(new NativeConsumerContext
+                {
+                    MockServerUri = uri
+                });
+
+                this.VerifyInternal(uri);
+            }
+            finally
+            {
+                this.server.CleanupMockServer(uri.Port);
+            }
+        }
+
+        /// <summary>
+        /// Start the mock server
+        /// </summary>
+        /// <returns>Mock server URI</returns>
+        private Uri StartMockServer()
         {
             string hostIp = this.host switch
             {
@@ -78,10 +135,30 @@ namespace PactNet.Native
             string address = $"{hostIp}:{this.port.GetValueOrDefault(0)}";
 
             // TODO: add TLS support
-            this.serverPort = this.server.CreateMockServerForPact(this.pact, address, false);
+            int serverPort = this.server.CreateMockServerForPact(this.pact, address, false);
 
-            Uri uri = new Uri($"http://{this.host}:{this.serverPort}");
-            return new NativePactContext(this.server, uri, this.config);
+            var uri = new Uri($"http://{this.host}:{serverPort}");
+            return uri;
+        }
+
+        /// <summary>
+        /// Verify the interactions after the consumer client has been invoked
+        /// </summary>
+        private void VerifyInternal(Uri uri)
+        {
+            string errors = this.server.MockServerMismatches(uri.Port);
+
+            if (string.IsNullOrWhiteSpace(errors) || errors == "[]")
+            {
+                this.server.WritePactFile(uri.Port, this.config.PactDir, false);
+                return;
+            }
+
+            this.config.WriteLine("Verification mismatches:");
+            this.config.WriteLine(string.Empty);
+            this.config.WriteLine(errors);
+
+            throw new PactFailureException("Pact verification failed. See output for details");
         }
     }
 }
