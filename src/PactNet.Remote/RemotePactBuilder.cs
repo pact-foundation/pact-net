@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 namespace PactNet.Remote
 {
@@ -48,10 +49,21 @@ namespace PactNet.Remote
         }
 
         /// <summary>
-        /// Finalise the pact
+        /// Verify the configured interactions
         /// </summary>
-        /// <returns>Pact context in which to run interactions</returns>
-        public IPactContext Build()
+        /// <param name="interact">Action to perform the real interactions against the mock server</param>
+        /// <exception cref="PactFailureException">Failed to verify the interactions</exception>
+        public void Verify(Action<IConsumerContext> interact)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Verify the configured interactions
+        /// </summary>
+        /// <param name="interact">Action to perform the real interactions against the mock server</param>
+        /// <exception cref="PactFailureException">Failed to verify the interactions</exception>
+        public Task VerifyAsync(Func<IConsumerContext, Task> interact)
         {
             throw new NotImplementedException();
         }
