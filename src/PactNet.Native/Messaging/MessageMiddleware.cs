@@ -54,7 +54,7 @@ namespace PactNet.Native.Messaging
                 await context.Response.WriteAsync(string.Empty);
             }
 
-            var response = MessageScenarioBuilder.Instance.InvokeScenario(interactionDescription);
+            var response = MessageScenarioBuilder.Scenario.InvokeScenario(interactionDescription);
 
             await WriteToResponseAsync(context, response);
         }

@@ -66,7 +66,7 @@ namespace Provider.Tests
 
         private static void SetupScenarios()
         {
-            IMessageScenarioBuilder scenariosBuilder = MessageScenarioBuilder.Instance;
+            IMessageScenarioBuilder scenariosBuilder = MessageScenarioBuilder.Scenario;
             scenariosBuilder
                 .WhenReceiving("receiving events from the queue")
                 .WillPublishMessage(() =>

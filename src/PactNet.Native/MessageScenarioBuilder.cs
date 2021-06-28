@@ -8,22 +8,15 @@ namespace PactNet.Native
     /// </summary>
     public class MessageScenarioBuilder : IMessageScenarioBuilder
     {
-        private static IMessageScenarioBuilder _instance;
-
         /// <summary>
-        /// The message scenario builder singleton instance
+        /// Handles to create a new scenario with scenario builder
         /// </summary>
-        public static IMessageScenarioBuilder Instance => _instance ??= new MessageScenarioBuilder();
+        public static IMessageScenarioBuilder Scenario => new MessageScenarioBuilder();
 
         /// <summary>
         /// The available scenarios
         /// </summary>
-        public readonly Dictionary<string, Func<dynamic>> Scenarios;
-
-        /// <summary>
-        /// Default value when scenario not set
-        /// </summary>
-        private static string ValueNotSet => string.Empty;
+        public static Dictionary<string, Func<dynamic>> Scenarios;
 
         /// <summary>
         /// temporary description
@@ -37,11 +30,54 @@ namespace PactNet.Native
 
         private MessageScenarioBuilder()
         {
-            Scenarios = new Dictionary<string, Func<dynamic>>();
+            Scenarios ??= new Dictionary<string, Func<dynamic>>();
         }
 
         /// <inheritdoc />
         public IMessageScenarioBuilder WhenReceiving(string description)
+        {
+            try
+            {
+                ValidateDescription(description);
+
+                _settingScenario = true;
+                _descriptionAdded = description;
+
+                return this;
+            }
+            catch (Exception)
+            {
+                ClearScenario();
+                throw;
+            }
+        }
+
+        /// <inheritdoc />
+        public void WillPublishMessage(Func<dynamic> action)
+        {
+            try
+            {
+                ValidateAction(action);
+
+                Scenarios[_descriptionAdded] = action;
+            }
+            finally
+            {
+                ClearScenario();
+            }
+        }
+
+        /// <inheritdoc />
+        public dynamic InvokeScenario(string description)
+        {
+            return Scenarios.TryGetValue(description, out _) ? Scenarios[description].Invoke() : null;
+        }
+
+        /// <summary>
+        /// Validates we can add a scenario description
+        /// </summary>
+        /// <param name="description">The description to add</param>
+        private void ValidateDescription(string description)
         {
             if (string.IsNullOrWhiteSpace(description))
             {
@@ -55,42 +91,34 @@ namespace PactNet.Native
 
             if (_settingScenario)
             {
-                FinishSettingScenario();
-                throw new InvalidOperationException($"You need to set the scenario action before adding another scenario");
+                throw new InvalidOperationException("You need to set the scenario action before adding another scenario");
             }
-
-            _settingScenario = true;
-            _descriptionAdded = description;
-
-            return this;
         }
 
-        /// <inheritdoc />
-        public void WillPublishMessage(Func<dynamic> action)
+        /// <summary>
+        /// Validates we can add a scenario action
+        /// </summary>
+        /// <param name="action">The action to add</param>
+        private void ValidateAction(Func<dynamic> action)
         {
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
             if (!_settingScenario)
             {
-                throw new InvalidOperationException($"You need to set the scenario description before the action");
+                throw new InvalidOperationException("You need to set the scenario description before the action");
             }
-
-            Scenarios[_descriptionAdded] = action ?? throw new ArgumentNullException(nameof(action));
-
-            FinishSettingScenario();
-        }
-
-        /// <inheritdoc />
-        public dynamic InvokeScenario(string description)
-        {
-            return Scenarios.TryGetValue(description, out _) ? Scenarios[description].Invoke() : null;
         }
 
         /// <summary>
         /// Clearing state after setting scenario
         /// </summary>
-        private void FinishSettingScenario()
+        private void ClearScenario()
         {
             _settingScenario = false;
-            _descriptionAdded = ValueNotSet;
+            _descriptionAdded = string.Empty;
         }
     }
 }

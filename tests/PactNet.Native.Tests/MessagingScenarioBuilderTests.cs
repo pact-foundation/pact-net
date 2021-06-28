@@ -1,6 +1,10 @@
 using System;
 
+using FluentAssertions;
+
 using Xunit;
+
+using static PactNet.Native.MessageScenarioBuilder;
 
 namespace PactNet.Native.Tests
 {
@@ -9,12 +13,11 @@ namespace PactNet.Native.Tests
     /// </summary>
     public class MessagingScenarioBuilderTests
     {
-        private readonly IMessageScenarioBuilder _messageScenarioBuilder = MessageScenarioBuilder.Instance;
+        private readonly IMessageScenarioBuilder _messageScenarioBuilder;
 
-        [Fact]
-        public void Instance_Property_Returns_Always_Same_Instance()
+        public MessagingScenarioBuilderTests()
         {
-            Assert.Equal(MessageScenarioBuilder.Instance, _messageScenarioBuilder);
+            _messageScenarioBuilder = Scenario;
         }
 
         [Theory]
@@ -23,7 +26,9 @@ namespace PactNet.Native.Tests
         [InlineData("   ")]
         public void WhenReceiving_Adding_Invalid_Scenario_Throws_Exception(string namedInteraction)
         {
-            Assert.Throws<ArgumentNullException>(() => _messageScenarioBuilder.WhenReceiving(namedInteraction));
+            _messageScenarioBuilder
+                .Invoking(x => x.WhenReceiving(namedInteraction))
+                .Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -33,11 +38,13 @@ namespace PactNet.Native.Tests
 
             _messageScenarioBuilder.WhenReceiving(namedInteraction);
 
-            Assert.Null(_messageScenarioBuilder.InvokeScenario(namedInteraction));
+            object actualMessage = _messageScenarioBuilder.InvokeScenario(namedInteraction);
+
+            actualMessage.Should().BeNull();
         }
 
         [Fact]
-        public void WhenReceiving_Adding_Scenario_And_Action_Sets_Scenario()
+        public void InvokeScenario_After_Setting_Scenario_Description_And_Action()
         {
             var namedInteraction = "a named interaction";
 
@@ -45,9 +52,9 @@ namespace PactNet.Native.Tests
 
             _messageScenarioBuilder.WhenReceiving(namedInteraction).WillPublishMessage(() => expectedMessage);
 
-            var actualMessage = _messageScenarioBuilder.InvokeScenario(namedInteraction);
+            object actualMessage = _messageScenarioBuilder.InvokeScenario(namedInteraction);
 
-            Assert.Equal(expectedMessage, actualMessage);
+            actualMessage.Should().BeEquivalentTo(expectedMessage);
         }
 
         [Fact]
@@ -59,16 +66,17 @@ namespace PactNet.Native.Tests
 
             _messageScenarioBuilder.WhenReceiving(namedInteraction).WillPublishMessage(() => expectedMessage);
 
-            Assert.Throws<InvalidOperationException>(() => _messageScenarioBuilder.WhenReceiving(namedInteraction));
+            _messageScenarioBuilder
+                .Invoking(x => x.WhenReceiving(namedInteraction))
+                .Should().Throw<InvalidOperationException>($"Scenario called \"{namedInteraction}\" has already been added");
         }
 
         [Fact]
         public void WhenReceiving_Twice_Throws_Exception()
         {
-            Assert.Throws<InvalidOperationException>(() =>
-                _messageScenarioBuilder
-                    .WhenReceiving("receiving first time")
-                    .WhenReceiving("receiving second time"));
+            _messageScenarioBuilder
+                .Invoking(x => x.WhenReceiving("receiving first time").WhenReceiving("receiving second time"))
+                .Should().Throw<InvalidOperationException>("You need to set the scenario action before adding another scenario");
         }
 
         [Fact]
@@ -76,7 +84,23 @@ namespace PactNet.Native.Tests
         {
             var expectedMessage = new { id = 1, description = "a description" };
 
-            Assert.Throws<InvalidOperationException>(() => _messageScenarioBuilder.WillPublishMessage(() => expectedMessage));
+            _messageScenarioBuilder
+                .Invoking(x => x.WillPublishMessage(() => expectedMessage))
+                .Should().Throw<InvalidOperationException>("You need to set the scenario description before the action");
+        }
+
+        [Fact]
+        public void InvokeScenario_With_Wrong_Description_Returns_Null()
+        {
+            var namedInteraction = "a new interaction";
+
+            var expectedMessage = new { id = 1, description = "a description" };
+
+            _messageScenarioBuilder.WhenReceiving(namedInteraction).WillPublishMessage(() => expectedMessage);
+
+            object actualMessage = _messageScenarioBuilder.InvokeScenario("another interaction");
+
+            actualMessage.Should().BeNull();
         }
     }
 }
