@@ -19,7 +19,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
         private FakeHttpMessageHandler _fakeHttpMessageHandler;
         private int _mockHttpHostFactoryCallCount;
 
-        private IMockProviderService GetSubject(int port = 1234, bool enableSsl = false)
+        private IMockProviderService GetSubject(int port = 1234, bool enableSsl = false, bool enableIpv6 = false)
         {
             _mockHttpHost = Substitute.For<IHttpHost>();
             _fakeHttpMessageHandler = new FakeHttpMessageHandler();
@@ -32,6 +32,7 @@ namespace PactNet.Tests.Mocks.MockHttpService
                 },
                 port,
                 enableSsl,
+                enableIpv6,
                 baseUri => new AdminHttpClient(baseUri, _fakeHttpMessageHandler, null));
         }
 
