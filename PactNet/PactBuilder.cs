@@ -67,7 +67,7 @@ namespace PactNet
         public IMockProviderService MockService(
             int port, 
             bool enableSsl = false, 
-            bool enableIpv6 = false, 
+            bool enableIpv6 = true, 
             IPAddress host = IPAddress.Loopback, 
             string sslCert = null, 
             string sslKey = null,
@@ -80,7 +80,7 @@ namespace PactNet
             int port, 
             JsonSerializerSettings jsonSerializerSettings, 
             bool enableSsl = false, 
-            bool enableIpv6 = false, 
+            bool enableIpv6 = true, 
             IPAddress host = IPAddress.Loopback, 
             string sslCert = null, 
             string sslKey = null,
