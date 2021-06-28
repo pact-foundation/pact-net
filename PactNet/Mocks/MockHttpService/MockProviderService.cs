@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using PactNet.Core;
 using PactNet.Mocks.MockHttpService.Host;
@@ -27,28 +27,30 @@ namespace PactNet.Mocks.MockHttpService
             Func<Uri, IHttpHost> hostFactory,
             int port,
             bool enableSsl,
+            bool enableIpv6,
             Func<Uri, AdminHttpClient> adminHttpClientFactory)
         {
             _hostFactory = hostFactory;
-            BaseUri = new Uri($"{(enableSsl ? "https" : "http")}://localhost:{port}");
+            BaseUri = new Uri($"{(enableSsl ? "https" : "http")}://{(enableIpv6 ? "localhost" : "127.0.0.1")}:{port}");
             _adminHttpClient = adminHttpClientFactory(BaseUri);
         }
 
-        public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress)
-            : this(port, enableSsl, consumerName, providerName, config, ipAddress, null, null, null)
+        public MockProviderService(int port, bool enableSsl, bool enableIpv6, string consumerName, string providerName, PactConfig config, IPAddress ipAddress)
+            : this(port, enableSsl, enableIpv6, consumerName, providerName, config, ipAddress, null, null, null)
         {
         }
 
-        public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress, Newtonsoft.Json.JsonSerializerSettings jsonSerializerSettings)
-            : this(port, enableSsl, consumerName, providerName, config, ipAddress, jsonSerializerSettings, null, null)
+        public MockProviderService(int port, bool enableSsl, bool enableIpv6, string consumerName, string providerName, PactConfig config, IPAddress ipAddress, Newtonsoft.Json.JsonSerializerSettings jsonSerializerSettings)
+            : this(port, enableSsl, enableIpv6, consumerName, providerName, config, ipAddress, jsonSerializerSettings, null, null)
         {
         }
 
-        public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress, Newtonsoft.Json.JsonSerializerSettings jsonSerializerSettings, string sslCert, string sslKey)
+        public MockProviderService(int port, bool enableSsl, bool enableIpv6, string consumerName, string providerName, PactConfig config, IPAddress ipAddress, Newtonsoft.Json.JsonSerializerSettings jsonSerializerSettings, string sslCert, string sslKey)
             : this(
                 baseUri => new RubyHttpHost(baseUri, consumerName, providerName, config, ipAddress, sslCert, sslKey),
                 port,
                 enableSsl,
+                enableIpv6,
                 baseUri => new AdminHttpClient(baseUri, jsonSerializerSettings))
         {
         }
