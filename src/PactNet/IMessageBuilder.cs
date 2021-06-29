@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace PactNet
 {
@@ -22,9 +23,18 @@ namespace PactNet
         IPactMessageBuilderV3 Given(string providerState);
 
         /// <summary>
+        /// Add a provider state with one or more parameters
+        /// </summary>
+        /// <param name="providerState">Provider state description</param>
+        /// <param name="parameters">Provider state parameters</param>
+        /// <returns>Fluent builder</returns>
+        IPactMessageBuilderV3 Given(string providerState, IDictionary<string, string> parameters);
+
+        /// <summary>
         /// Set the metadata
         /// </summary>
-        /// <param name="metadata">Dynamic metadata</param>
+        /// <param name="key">the metadata key</param>
+        /// <param name="value">the metadata value</param>
         /// <returns>Fluent builder</returns>
         IPactMessageBuilderV3 WithMetadata(string key, string value);
 

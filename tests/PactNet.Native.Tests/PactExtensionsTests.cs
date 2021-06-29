@@ -5,10 +5,14 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+
 using FluentAssertions;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+
 using PactNet.Matchers;
+
 using Xunit;
 using Xunit.Abstractions;
 
@@ -57,7 +61,7 @@ namespace PactNet.Native.Tests
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
             };
 
-            this.config = new PactConfig
+            config = new PactConfig
             {
                 PactDir = Environment.CurrentDirectory,
                 DefaultJsonSettings = jsonSettings,
@@ -74,7 +78,7 @@ namespace PactNet.Native.Tests
         [Fact]
         public async Task UsingNativeBackend_V2RequestResponse_CreatesExpectedPactFile()
         {
-            IPactV2 pact = Pact.V2("PactExtensionsTests-Consumer-V2", "PactExtensionsTests-Provider", this.config);
+            IPactV2 pact = Pact.V2("PactExtensionsTests-Consumer-V2", "PactExtensionsTests-Provider", config);
             IPactBuilderV2 builder = pact.UsingNativeBackend();
 
             builder.UponReceiving("a sample request")
@@ -84,16 +88,16 @@ namespace PactNet.Native.Tests
                        .WithHeader("X-Request", "request2")
                        .WithQuery("param", "value1")
                        .WithQuery("param", "value2")
-                       .WithJsonBody(this.matcher)
+                       .WithJsonBody(matcher)
                    .WillRespond()
                        .WithStatus(HttpStatusCode.Created)
                        .WithHeader("X-Response", "response1")
                        .WithHeader("X-Response", "response2")
-                       .WithJsonBody(this.example);
+                       .WithJsonBody(example);
 
             using (IPactContext context = builder.Build())
             {
-                await PerformRequestAsync(context, this.example, this.config.DefaultJsonSettings);
+                await PerformRequestAsync(context, example, config.DefaultJsonSettings);
             }
 
             string actualPact = File.ReadAllText("PactExtensionsTests-Consumer-V2-PactExtensionsTests-Provider.json").TrimEnd();
@@ -105,7 +109,7 @@ namespace PactNet.Native.Tests
         [Fact]
         public async Task UsingNativeBackend_V3RequestResponse_CreatesExpectedPactFile()
         {
-            IPactV3 pact = Pact.V3("PactExtensionsTests-Consumer-V3", "PactExtensionsTests-Provider", this.config);
+            IPactV3 pact = Pact.V3("PactExtensionsTests-Consumer-V3", "PactExtensionsTests-Provider", config);
             IPactBuilderV3 builder = pact.UsingNativeBackend();
 
             builder.UponReceiving("a sample request")
@@ -121,20 +125,46 @@ namespace PactNet.Native.Tests
                        .WithHeader("X-Request", "request2")
                        .WithQuery("param", "value1")
                        .WithQuery("param", "value2")
-                       .WithJsonBody(this.matcher)
+                       .WithJsonBody(matcher)
                    .WillRespond()
                        .WithStatus(HttpStatusCode.Created)
                        .WithHeader("X-Response", "response1")
                        .WithHeader("X-Response", "response2")
-                       .WithJsonBody(this.example);
+                       .WithJsonBody(example);
 
             using (IPactContext context = builder.Build())
             {
-                await PerformRequestAsync(context, this.example, this.config.DefaultJsonSettings);
+                await PerformRequestAsync(context, example, config.DefaultJsonSettings);
             }
 
             string actualPact = File.ReadAllText("PactExtensionsTests-Consumer-V3-PactExtensionsTests-Provider.json").TrimEnd();
             string expectedPact = File.ReadAllText("data/v3-consumer-integration.json").TrimEnd();
+
+            actualPact.Should().Be(expectedPact);
+        }
+
+        [Fact]
+        public void UsingNativeBackendForMessage_V3RequestResponse_CreatesExpectedPactFile()
+        {
+            IPactV3 pact = Pact.V3("PactExtensionsTests-MessageConsumer-V3", "PactExtensionsTests-MessageProvider", config);
+            IPactMessageBuilderV3 builder = pact.UsingNativeBackendForMessage();
+
+            builder.ExpectsToReceive("a sample request")
+                .Given("a provider state")
+                .Given("another provider state")
+                .Given("a provider state with params", new Dictionary<string, string>
+                {
+                    ["foo"] = "bar",
+                    ["baz"] = "bash"
+                })
+                .WithMetadata("queueId", "1234")
+                .WithContent(new TestData { Int = 1, String = "a description" })
+                .Verify<TestData>(p => { });
+
+            builder.Build();
+
+            string actualPact = File.ReadAllText("PactExtensionsTests-MessageConsumer-V3-PactExtensionsTests-MessageProvider.json").TrimEnd();
+            string expectedPact = File.ReadAllText("data/v3-message-consumer-integration.json").TrimEnd();
 
             actualPact.Should().Be(expectedPact);
         }

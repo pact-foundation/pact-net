@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 using Newtonsoft.Json;
 
@@ -51,6 +52,22 @@ namespace PactNet.Native
         IPactMessageBuilderV3 IPactMessageBuilderV3.Given(string providerState)
         {
             server.MessageGiven(message, providerState);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Add a provider state with one or more parameters
+        /// </summary>
+        /// <param name="providerState">Provider state description</param>
+        /// <param name="parameters">Provider state parameters</param>
+        /// <returns>Fluent builder</returns>
+        IPactMessageBuilderV3 IPactMessageBuilderV3.Given(string providerState, IDictionary<string, string> parameters)
+        {
+            foreach (var param in parameters)
+            {
+                server.MessageGivenWithParam(message, providerState, param.Key, param.Value);
+            }
 
             return this;
         }
