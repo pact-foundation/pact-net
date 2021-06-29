@@ -483,7 +483,7 @@ IPactVerifier pactVerifier = new PactVerifier(config);
 pactVerifier
     .ServiceProvider("Something Api", serviceUri)
     .HonoursPactWith("Consumer")
-    .PactUri("http://pact-broker/pacts/provider/Something%20Api/consumer/Consumer/latest") //NOTE: This must be a pact broker url for this feature to work
+    .PactUri("http://pact-broker/") //NOTE: This must be a pact broker url for this feature to work
     .Verify();
 ```
 
