@@ -29,15 +29,52 @@ namespace PactNet.Native
         internal NativePactMessageBuilder(IMessageMockServer server, MessagePactHandle pact, PactConfig config, JsonSerializerSettings defaultSettings = null)
         {
             this.pact = pact;
-            this.config = config;
-            this.server = server;
+            this.config = config ?? throw new ArgumentNullException(nameof(config));
+            this.server = server ?? throw new ArgumentNullException(nameof(server));
             message = server.NewMessage(pact, "default message");
             this.defaultSettings = defaultSettings;
         }
 
         #region IPactMessageBuilderV3 explicit implementation
 
+        /// <inheritdoc cref="IPactMessageBuilderV3"/>
         IPactMessageBuilderV3 IPactMessageBuilderV3.ExpectsToReceive(string description)
+            => ExpectsToReceive(description);
+
+        /// <inheritdoc cref="IPactMessageBuilderV3"/>
+        IPactMessageBuilderV3 IPactMessageBuilderV3.Given(string providerState)
+            => Given(providerState);
+
+        /// <inheritdoc cref="IPactMessageBuilderV3"/>
+        IPactMessageBuilderV3 IPactMessageBuilderV3.Given(string providerState, IDictionary<string, string> parameters)
+            => Given(providerState, parameters);
+
+        /// <inheritdoc cref="IPactMessageBuilderV3"/>
+        IPactMessageBuilderV3 IPactMessageBuilderV3.WithMetadata(string key, string value)
+            => WithMetadata(key, value);
+
+        /// <inheritdoc cref="IPactMessageBuilderV3"/>
+        IPactMessageBuilderV3 IPactMessageBuilderV3.WithContent(dynamic content)
+            => WithContent(content);
+
+        /// <inheritdoc cref="IPactMessageBuilderV3"/>
+        void IPactMessageBuilderV3.Build()
+            => Build();
+
+        /// <inheritdoc cref="IPactMessageBuilderV3"/>
+        void IPactMessageBuilderV3.Verify<T>(Action<T> handler)
+            => Verify(handler);
+
+        #endregion
+
+        #region Internal Methods
+
+        /// <summary>
+        /// Add a new message to the pact
+        /// </summary>
+        /// <param name="description">Message description</param>
+        /// <returns>Fluent builder</returns>
+        internal IPactMessageBuilderV3 ExpectsToReceive(string description)
         {
             server.MessageExpectsToReceive(message, description);
 
@@ -49,7 +86,7 @@ namespace PactNet.Native
         /// </summary>
         /// <param name="providerState">Provider state description</param>
         /// <returns>Fluent builder</returns>
-        IPactMessageBuilderV3 IPactMessageBuilderV3.Given(string providerState)
+        internal IPactMessageBuilderV3 Given(string providerState)
         {
             server.MessageGiven(message, providerState);
 
@@ -62,7 +99,7 @@ namespace PactNet.Native
         /// <param name="providerState">Provider state description</param>
         /// <param name="parameters">Provider state parameters</param>
         /// <returns>Fluent builder</returns>
-        IPactMessageBuilderV3 IPactMessageBuilderV3.Given(string providerState, IDictionary<string, string> parameters)
+        internal IPactMessageBuilderV3 Given(string providerState, IDictionary<string, string> parameters)
         {
             foreach (var param in parameters)
             {
@@ -78,7 +115,7 @@ namespace PactNet.Native
         /// <param name="key">key of the metadata</param>
         /// <param name="value">value of the metadata</param>
         /// <returns>Fluent builder</returns>
-        IPactMessageBuilderV3 IPactMessageBuilderV3.WithMetadata(string key, string value)
+        internal IPactMessageBuilderV3 WithMetadata(string key, string value)
         {
             server.MessageWithMetadata(message, key, value);
 
@@ -90,19 +127,17 @@ namespace PactNet.Native
         /// </summary>
         /// <param name="content">Dynamic content</param>
         /// <returns>Fluent builder</returns>
-        IPactMessageBuilderV3 IPactMessageBuilderV3.WithContent(dynamic content)
+        internal IPactMessageBuilderV3 WithContent(dynamic content)
         {
             server.MessageWithContents(message, "application/json", JsonConvert.SerializeObject(content), 100);
 
             return this;
         }
 
-        #endregion
-
         /// <summary>
         /// Build the pact file
         /// </summary>
-        public void Build()
+        internal void Build()
         {
             server.WriteMessagePactFile(pact, config.PactDir, true);
         }
@@ -111,7 +146,7 @@ namespace PactNet.Native
         /// Verify a message is read and handled correctly
         /// </summary>
         /// <param name="handler">The method using the message</param>
-        public void Verify<T>(Action<T> handler)
+        internal void Verify<T>(Action<T> handler)
         {
             try
             {
@@ -123,8 +158,11 @@ namespace PactNet.Native
             }
             catch (Exception e)
             {
-                throw new PactMessageConsumerVerificationException($"The message {message} could not be verified by the consumer handler", e);
+                throw new PactMessageConsumerVerificationException(
+                    $"The message {message} could not be verified by the consumer handler", e);
             }
         }
+
+        #endregion Internal Methods
     }
 }
