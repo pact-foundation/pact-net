@@ -57,18 +57,15 @@ namespace PactNet.Tests.IntegrationTests
                 .WillRespondWith(response);
 
             // Act
-            using (var httpClient = CreateHttpClient())
+            using (var httpContent = new StringContent(@"{""left"":1,""right"":1}", Encoding.UTF8, "application/json"))
             {
-                using (var httpContent = new StringContent(@"{""left"":1,""right"":1}", Encoding.UTF8, "application/json"))
+                using (var httpResponse = await Pact.HttpClient.PostAsync("/calculator/add", httpContent))
                 {
-                    using (var httpResponse = await httpClient.PostAsync("/calculator/add", httpContent))
-                    {
-                        Assert.Equal(HttpStatusCode.OK, httpResponse.StatusCode);
+                    Assert.Equal(HttpStatusCode.OK, httpResponse.StatusCode);
 
-                        string json = await httpResponse.Content.ReadAsStringAsync();
+                    string json = await httpResponse.Content.ReadAsStringAsync();
 
-                        Assert.Equal(@"{""result"":2}", json);
-                    }
+                    Assert.Equal(@"{""result"":2}", json);
                 }
             }
 
@@ -115,18 +112,15 @@ namespace PactNet.Tests.IntegrationTests
                 .WillRespondWith(response);
 
             // Act
-            using (var httpClient = CreateHttpClient())
+            using (var httpContent = new StringContent(@"{""left"":2,""right"":3}", Encoding.UTF8, "application/json"))
             {
-                using (var httpContent = new StringContent(@"{""left"":2,""right"":3}", Encoding.UTF8, "application/json"))
+                using (var httpResponse = await Pact.HttpClient.PostAsync("/calculator/subtract", httpContent))
                 {
-                    using (var httpResponse = await httpClient.PostAsync("/calculator/subtract", httpContent))
-                    {
-                        Assert.Equal(HttpStatusCode.OK, httpResponse.StatusCode);
+                    Assert.Equal(HttpStatusCode.OK, httpResponse.StatusCode);
 
-                        string json = await httpResponse.Content.ReadAsStringAsync();
+                    string json = await httpResponse.Content.ReadAsStringAsync();
 
-                        Assert.Equal(@"{""result"":-1}", json);
-                    }
+                    Assert.Equal(@"{""result"":-1}", json);
                 }
             }
 
@@ -144,14 +138,6 @@ namespace PactNet.Tests.IntegrationTests
         }
 
         protected T Pact { get; }
-
-        public HttpClient CreateHttpClient()
-        {
-            return new HttpClient()
-            {
-                BaseAddress = Pact.PactBrokerUri,
-            };
-        }
     }
 
     public sealed class CalculatorApiPact : ApiPact
@@ -184,9 +170,14 @@ namespace PactNet.Tests.IntegrationTests
             PactBrokerUri = new UriBuilder()
             {
                 Host = "localhost",
-                Port = 4322,
+                Port = 4323,
                 Scheme = "http",
             }.Uri;
+
+            HttpClient = new HttpClient()
+            {
+                BaseAddress = PactBrokerUri,
+            };
         }
 
         ~ApiPact()
@@ -195,6 +186,7 @@ namespace PactNet.Tests.IntegrationTests
         }
 
         public Uri PactBrokerUri { get; }
+        public HttpClient HttpClient { get; }
 
         public IMockProviderService PactProvider
         {

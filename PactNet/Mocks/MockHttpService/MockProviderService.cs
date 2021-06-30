@@ -27,10 +27,11 @@ namespace PactNet.Mocks.MockHttpService
             Func<Uri, IHttpHost> hostFactory,
             int port,
             bool enableSsl,
-            Func<Uri, AdminHttpClient> adminHttpClientFactory)
+            Func<Uri, AdminHttpClient> adminHttpClientFactory,
+            IPAddress ipAddress = IPAddress.Loopback)
         {
             _hostFactory = hostFactory;
-            BaseUri = new Uri($"{(enableSsl ? "https" : "http")}://localhost:{port}");
+            BaseUri = new Uri($"{(enableSsl ? "https" : "http")}://{(ipAddress == IPAddress.LoopbackIpv4Only ? "127.0.0.1" : "localhost")}:{port}");
             _adminHttpClient = adminHttpClientFactory(BaseUri);
         }
 
@@ -49,7 +50,8 @@ namespace PactNet.Mocks.MockHttpService
                 baseUri => new RubyHttpHost(baseUri, consumerName, providerName, config, ipAddress, sslCert, sslKey),
                 port,
                 enableSsl,
-                baseUri => new AdminHttpClient(baseUri, jsonSerializerSettings))
+                baseUri => new AdminHttpClient(baseUri, jsonSerializerSettings),
+                ipAddress)
         {
         }
 

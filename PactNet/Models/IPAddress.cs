@@ -3,6 +3,7 @@
     public enum IPAddress
     {
         Any,
-        Loopback
+        Loopback,
+        LoopbackIpv4Only
     }
 }
