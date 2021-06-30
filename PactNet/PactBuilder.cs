@@ -18,6 +18,10 @@ namespace PactNet
             Func<int, bool, string, string, IPAddress, JsonSerializerSettings, string, string, IMockProviderService>
             _mockProviderServiceFactory;
 
+        private readonly
+            Func<int, bool, string, string, IPAddress, JsonSerializerSettings, string, string, bool, IMockProviderService>
+            _mockProviderServiceFactory2;
+
         private IMockProviderService _mockProviderService;
 
         internal PactBuilder(
@@ -25,6 +29,14 @@ namespace PactNet
                 mockProviderServiceFactory)
         {
             _mockProviderServiceFactory = mockProviderServiceFactory;
+        }
+
+        internal PactBuilder(
+            Func<int, bool, string, string, IPAddress, JsonSerializerSettings, string, string, bool, IMockProviderService>
+                mockProviderServiceFactory2)
+        {
+            _mockProviderServiceFactory2 = mockProviderServiceFactory2;
+            _mockProviderServiceFactory = (port, enableSsl, consumerName, providerName, host, jsonSerializerSettings, sslCert, sslKey) => _mockProviderServiceFactory2(port, enableSsl, consumerName, providerName, host, jsonSerializerSettings, sslCert, sslKey, false);
         }
 
         public PactBuilder()
@@ -72,7 +84,47 @@ namespace PactNet
             string sslKey = null,
             bool useRemoteMockService = false)
         {
+            if (_mockProviderServiceFactory2 != null)
+            {
+                return MockService(port, null, enableSsl: enableSsl, host: host, sslCert: sslCert, sslKey: sslKey, useRemoteMockService: useRemoteMockService, useIpv4LoopbackOnly: false);
+            }
             return MockService(port, null, enableSsl: enableSsl, host: host, sslCert: sslCert, sslKey: sslKey, useRemoteMockService: useRemoteMockService);
+        }
+
+        public IMockProviderService MockService(
+            int port,
+            JsonSerializerSettings jsonSerializerSettings,
+            bool enableSsl = false,
+            IPAddress host = IPAddress.Loopback,
+            string sslCert = null,
+            string sslKey = null,
+            bool useRemoteMockService = false)
+        {
+            if (string.IsNullOrEmpty(ConsumerName))
+            {
+                throw new InvalidOperationException(
+                    "ConsumerName has not been set, please supply a consumer name using the ServiceConsumer method.");
+            }
+
+            if (string.IsNullOrEmpty(ProviderName))
+            {
+                throw new InvalidOperationException(
+                    "ProviderName has not been set, please supply a provider name using the HasPactWith method.");
+            }
+
+            if (_mockProviderService != null && useRemoteMockService == false)
+            {
+                _mockProviderService.Stop();
+            }
+
+            _mockProviderService = _mockProviderServiceFactory(port, enableSsl, ConsumerName, ProviderName, host,
+                jsonSerializerSettings, sslCert, sslKey);
+
+            _mockProviderService.UseRemoteMockService = useRemoteMockService;
+
+            _mockProviderService.Start();
+
+            return _mockProviderService;
         }
 
         public IMockProviderService MockService(
@@ -82,7 +134,8 @@ namespace PactNet
             IPAddress host = IPAddress.Loopback, 
             string sslCert = null, 
             string sslKey = null,
-            bool useRemoteMockService = false)
+            bool useRemoteMockService = false,
+            bool useIpv4LoopbackOnly = false)
         {
             if (string.IsNullOrEmpty(ConsumerName))
             {
@@ -101,8 +154,8 @@ namespace PactNet
                 _mockProviderService.Stop();
             }
 
-            _mockProviderService = _mockProviderServiceFactory(port, enableSsl, ConsumerName, ProviderName, host,
-                jsonSerializerSettings, sslCert, sslKey);
+            _mockProviderService = _mockProviderServiceFactory2(port, enableSsl, ConsumerName, ProviderName, host,
+                jsonSerializerSettings, sslCert, sslKey, useIpv4LoopbackOnly);
 
             _mockProviderService.UseRemoteMockService = useRemoteMockService;
 

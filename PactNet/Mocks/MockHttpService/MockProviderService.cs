@@ -27,10 +27,11 @@ namespace PactNet.Mocks.MockHttpService
             Func<Uri, IHttpHost> hostFactory,
             int port,
             bool enableSsl,
-            Func<Uri, AdminHttpClient> adminHttpClientFactory)
+            Func<Uri, AdminHttpClient> adminHttpClientFactory,
+            bool useIpv4LoopbackOnly = false)
         {
             _hostFactory = hostFactory;
-            BaseUri = new Uri($"{(enableSsl ? "https" : "http")}://localhost:{port}");
+            BaseUri = new Uri($"{(enableSsl ? "https" : "http")}://{(useIpv4LoopbackOnly ? "127.0.0.1" : "localhost")}:{port}");
             _adminHttpClient = adminHttpClientFactory(BaseUri);
         }
 
@@ -44,12 +45,13 @@ namespace PactNet.Mocks.MockHttpService
         {
         }
 
-        public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress, Newtonsoft.Json.JsonSerializerSettings jsonSerializerSettings, string sslCert, string sslKey)
+        public MockProviderService(int port, bool enableSsl, string consumerName, string providerName, PactConfig config, IPAddress ipAddress, Newtonsoft.Json.JsonSerializerSettings jsonSerializerSettings, string sslCert, string sslKey, bool useIpv4LoopbackOnly = false)
             : this(
                 baseUri => new RubyHttpHost(baseUri, consumerName, providerName, config, ipAddress, sslCert, sslKey),
                 port,
                 enableSsl,
-                baseUri => new AdminHttpClient(baseUri, jsonSerializerSettings))
+                baseUri => new AdminHttpClient(baseUri, jsonSerializerSettings),
+                useIpv4LoopbackOnly: useIpv4LoopbackOnly)
         {
         }
 
