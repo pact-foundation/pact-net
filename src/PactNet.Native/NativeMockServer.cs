@@ -18,66 +18,6 @@ namespace PactNet.Native
             Interop.Init("LOG_LEVEL");
         }
 
-        public int CreateMockServerForPact(PactHandle pact, string addrStr, bool tls)
-        {
-            int result = Interop.CreateMockServerForPact(pact, addrStr, tls);
-
-            if (result > 0)
-            {
-                return result;
-            }
-
-            throw result switch
-            {
-                -1 => new InvalidOperationException("Invalid handle when starting mock server"),
-                -3 => new InvalidOperationException("Unable to start mock server"),
-                -4 => new InvalidOperationException("The pact reference library panicked"),
-                -5 => new InvalidOperationException("The IPAddress is invalid"),
-                -6 => new InvalidOperationException("Could not create the TLS configuration with the self-signed certificate"),
-                _ => new InvalidOperationException($"Unknown mock server error: {result}")
-            };
-        }
-
-        public string MockServerMismatches(int mockServerPort)
-        {
-            IntPtr matchesPtr = Interop.MockServerMismatches(mockServerPort);
-
-            return matchesPtr == IntPtr.Zero
-                       ? string.Empty
-                       : Marshal.PtrToStringAnsi(matchesPtr);
-        }
-
-        public string MockServerLogs(int mockServerPort)
-        {
-            IntPtr logsPtr = Interop.MockServerLogs(mockServerPort);
-
-            return logsPtr == IntPtr.Zero
-                       ? string.Empty
-                       : Marshal.PtrToStringAnsi(logsPtr);
-        }
-
-        public bool CleanupMockServer(int mockServerPort)
-            => Interop.CleanupMockServer(mockServerPort);
-
-        public void WritePactFile(int mockServerPort, string directory, bool overwrite)
-            => VerifyResult(() => Interop.WritePactFile(mockServerPort, directory, overwrite));
-
-        private void VerifyResult(Func<int> func)
-        {
-            var result = func.Invoke();
-
-            if (result != 0)
-            {
-                throw result switch
-                {
-                    1 => new InvalidOperationException("The pact reference library panicked"),
-                    2 => new InvalidOperationException("The pact file could not be written"),
-                    3 => new InvalidOperationException("A mock server with the provided port was not found"),
-                    _ => new InvalidOperationException($"Unknown error from backend: {result}")
-                };
-            }
-        }
-
         #region Http Interaction Model Support
 
         public PactHandle NewPact(string consumerName, string providerName)
@@ -115,6 +55,66 @@ namespace PactNet.Native
 
         public bool WithResponseBody(InteractionHandle interaction, string contentType, string body)
             => Interop.WithBody(interaction, InteractionPart.Response, contentType, body);
+
+        public int CreateMockServerForPact(PactHandle pact, string addrStr, bool tls)
+        {
+            int result = Interop.CreateMockServerForPact(pact, addrStr, tls);
+
+            if (result > 0)
+            {
+                return result;
+            }
+
+            throw result switch
+            {
+                -1 => new InvalidOperationException("Invalid handle when starting mock server"),
+                -3 => new InvalidOperationException("Unable to start mock server"),
+                -4 => new InvalidOperationException("The pact reference library panicked"),
+                -5 => new InvalidOperationException("The IPAddress is invalid"),
+                -6 => new InvalidOperationException("Could not create the TLS configuration with the self-signed certificate"),
+                _ => new InvalidOperationException($"Unknown mock server error: {result}")
+            };
+        }
+
+        public string MockServerMismatches(int mockServerPort)
+        {
+            IntPtr matchesPtr = Interop.MockServerMismatches(mockServerPort);
+
+            return matchesPtr == IntPtr.Zero
+                ? string.Empty
+                : Marshal.PtrToStringAnsi(matchesPtr);
+        }
+
+        public string MockServerLogs(int mockServerPort)
+        {
+            IntPtr logsPtr = Interop.MockServerLogs(mockServerPort);
+
+            return logsPtr == IntPtr.Zero
+                ? string.Empty
+                : Marshal.PtrToStringAnsi(logsPtr);
+        }
+
+        public bool CleanupMockServer(int mockServerPort)
+            => Interop.CleanupMockServer(mockServerPort);
+
+        public void WritePactFile(int mockServerPort, string directory, bool overwrite)
+            => VerifyResult(() => Interop.WritePactFile(mockServerPort, directory, overwrite));
+
+        private void VerifyResult(Func<int> func)
+        {
+            var result = func.Invoke();
+
+            if (result != 0)
+            {
+                throw result switch
+                {
+                    1 => new InvalidOperationException("The pact reference library panicked"),
+                    2 => new InvalidOperationException("The pact file could not be written"),
+                    3 => new InvalidOperationException("A mock server with the provided port was not found"),
+                    _ => new InvalidOperationException($"Unknown error from backend: {result}")
+                };
+            }
+        }
 
         #endregion Http Interaction Model Support
 
@@ -154,6 +154,8 @@ namespace PactNet.Native
 
 
         #endregion Message Interaction Model Support
+
+        #region Interop Integration
 
         /// <summary>
         /// Interop definitions for Rust reference implementation library
@@ -286,4 +288,6 @@ namespace PactNet.Native
         V3 = 4,
         V4 = 5
     }
+
+    #endregion Interop Integration
 }

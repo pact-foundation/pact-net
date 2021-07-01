@@ -94,7 +94,7 @@ namespace PactNet.Native
             PactHandle handle = server.NewPact(pact.Consumer, pact.Provider);
             server.WithSpecification(handle, version);
 
-            return server.NewMessagePact(pact.Consumer, pact.Provider);;
+            return server.NewMessagePact(pact.Consumer, pact.Provider);
         }
     }
 }

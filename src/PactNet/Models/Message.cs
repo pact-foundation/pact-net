@@ -19,11 +19,5 @@ namespace PactNet.Models
         /// </summary>
         [JsonProperty(Order = 0, PropertyName = "contents")]
         public dynamic Contents { get; set; }
-
-        ///// <summary>
-        ///// The matching rules
-        ///// </summary>
-        //[JsonProperty(Order = 1, PropertyName = "matchingRules")]
-        //public dynamic MatchingRules { get; set; }
     }
 }

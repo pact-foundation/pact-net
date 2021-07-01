@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 
-using Provider.Api;
 using Provider.Domain.Models;
 
 namespace Provider.Domain.Handlers

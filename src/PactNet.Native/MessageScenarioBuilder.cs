@@ -11,12 +11,7 @@ namespace PactNet.Native
         /// <summary>
         /// Handles to create a new scenario with scenario builder
         /// </summary>
-        public static IMessageScenarioBuilder Scenario => new MessageScenarioBuilder();
-
-        /// <summary>
-        /// The available scenarios
-        /// </summary>
-        public static Dictionary<string, Func<dynamic>> Scenarios;
+        public static IMessageScenarioBuilder NewScenario => new MessageScenarioBuilder();
 
         /// <summary>
         /// temporary description
@@ -30,7 +25,7 @@ namespace PactNet.Native
 
         private MessageScenarioBuilder()
         {
-            Scenarios ??= new Dictionary<string, Func<dynamic>>();
+            Scenarios.All ??= new Dictionary<string, Func<dynamic>>();
         }
 
         /// <inheritdoc />
@@ -59,18 +54,12 @@ namespace PactNet.Native
             {
                 ValidateAction(action);
 
-                Scenarios[_descriptionAdded] = action;
+                Scenarios.All[_descriptionAdded] = action;
             }
             finally
             {
                 ClearScenario();
             }
-        }
-
-        /// <inheritdoc />
-        public dynamic InvokeScenario(string description)
-        {
-            return Scenarios.TryGetValue(description, out _) ? Scenarios[description].Invoke() : null;
         }
 
         /// <summary>
@@ -84,9 +73,9 @@ namespace PactNet.Native
                 throw new ArgumentNullException(nameof(description));
             }
 
-            if (Scenarios.TryGetValue(description, out _))
+            if (Scenarios.All.TryGetValue(description, out _))
             {
-                throw new InvalidOperationException($"Scenario called \"{description}\" has already been added");
+                throw new InvalidOperationException($"NewScenario called \"{description}\" has already been added");
             }
 
             if (_settingScenario)

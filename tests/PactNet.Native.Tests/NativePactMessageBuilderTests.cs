@@ -121,13 +121,9 @@ namespace PactNet.Native.Tests
             //Arrange
             SetServerReifyMessage("{ \"param1\": \"value1\" }");
 
-            void ExpectedDelegate(MessageModel e)
-            {
-            }
-
             //Act
             _builder
-                .Invoking(x => x.Verify<MessageModel>(ExpectedDelegate))
+                .Invoking(x => x.Verify<MessageModel>(_ => { }))
                 .Should().Throw<PactMessageConsumerVerificationException>();
         }
 
@@ -139,11 +135,9 @@ namespace PactNet.Native.Tests
 
             SetServerReifyMessage(JsonConvert.SerializeObject(testMessage));
 
-            void ExpectedDelegate(MessageModel e) => throw new Exception("exception test");
-
             //Act
             _builder
-                .Invoking(x => x.Verify<MessageModel>(ExpectedDelegate))
+                .Invoking(x => x.Verify<MessageModel>(_ => throw new Exception("exception test")))
                 .Should().Throw<PactMessageConsumerVerificationException>();
         }
 
@@ -155,15 +149,12 @@ namespace PactNet.Native.Tests
 
             SetServerReifyMessage(JsonConvert.SerializeObject(testMessage));
 
-            void ExpectedDelegate(MessageModel e)
-            {
-            }
-
             //Act
             _builder
-                .Invoking(x => x.Verify<MessageModel>(ExpectedDelegate))
+                .Invoking(x => x.Verify<MessageModel>(_ => { }))
                 .Should().Throw<PactMessageConsumerVerificationException>();
         }
+
         private void SetServerReifyMessage(string message)
         {
             _mockedServer

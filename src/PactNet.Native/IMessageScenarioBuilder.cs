@@ -19,12 +19,5 @@ namespace PactNet.Native
         /// </summary>
         /// <param name="action">the function invoked</param>
         void WillPublishMessage(Func<dynamic> action);
-
-        /// <summary>
-        /// Invoke the scenario by scenario name
-        /// </summary>
-        /// <param name="description">the name of the scenario</param>
-        /// <returns>a dynamic message</returns>
-        dynamic InvokeScenario(string description);
     }
 }

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+using Provider.Domain.Handlers;
+
 namespace Provider.Api.Controllers
 {
     [ApiController]

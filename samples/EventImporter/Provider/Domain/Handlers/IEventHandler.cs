@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 using Provider.Domain.Models;
 
-namespace Provider.Api
+namespace Provider.Domain.Handlers
 {
     public interface IEventHandler
     {

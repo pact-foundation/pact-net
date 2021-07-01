@@ -159,7 +159,7 @@ namespace PactNet.Native.Tests
                 })
                 .WithMetadata("queueId", "1234")
                 .WithContent(new TestData { Int = 1, String = "a description" })
-                .Verify<TestData>(p => { });
+                .Verify<TestData>(_ => { });
 
             builder.Build();
 
