@@ -26,7 +26,7 @@ namespace Provider.Tests
             app
                .UseMiddleware<ProviderStateMiddleware>()
                .UseMiddleware<AuthorizationTokenReplacementMiddleware>()
-               .UseMiddleware<MessageMiddleware>();
+               .UseMessaging();
 
             inner.Configure(app, env);
         }
