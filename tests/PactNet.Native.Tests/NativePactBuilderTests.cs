@@ -16,7 +16,7 @@ namespace PactNet.Native.Tests
     {
         private readonly NativePactBuilder builder;
 
-        private readonly Mock<IMockServer> mockServer;
+        private readonly Mock<IHttpMockServer> mockServer;
         private readonly Mock<IOutput> mockOutput;
 
         private readonly IFixture fixture;
