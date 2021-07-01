@@ -95,10 +95,10 @@ namespace PactNet.Native.Tests
                        .WithHeader("X-Response", "response2")
                        .WithJsonBody(example);
 
-            using (IPactContext context = builder.Build())
+            await builder.VerifyAsync(async ctx =>
             {
-                await PerformRequestAsync(context, example, config.DefaultJsonSettings);
-            }
+                await PerformRequestAsync(ctx, this.example, this.config.DefaultJsonSettings);
+            });
 
             string actualPact = File.ReadAllText("PactExtensionsTests-Consumer-V2-PactExtensionsTests-Provider.json").TrimEnd();
             string expectedPact = File.ReadAllText("data/v2-consumer-integration.json").TrimEnd();
@@ -132,10 +132,10 @@ namespace PactNet.Native.Tests
                        .WithHeader("X-Response", "response2")
                        .WithJsonBody(example);
 
-            using (IPactContext context = builder.Build())
+            await builder.VerifyAsync(async ctx =>
             {
-                await PerformRequestAsync(context, example, config.DefaultJsonSettings);
-            }
+                await PerformRequestAsync(ctx, this.example, this.config.DefaultJsonSettings);
+            });
 
             string actualPact = File.ReadAllText("PactExtensionsTests-Consumer-V3-PactExtensionsTests-Provider.json").TrimEnd();
             string expectedPact = File.ReadAllText("data/v3-consumer-integration.json").TrimEnd();
@@ -169,7 +169,7 @@ namespace PactNet.Native.Tests
             actualPact.Should().Be(expectedPact);
         }
 
-        private static async Task PerformRequestAsync(IPactContext context, TestData body, JsonSerializerSettings jsonSettings)
+        private static async Task PerformRequestAsync(IConsumerContext context, TestData body, JsonSerializerSettings jsonSettings)
         {
             var client = new HttpClient
             {
