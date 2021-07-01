@@ -72,13 +72,14 @@ namespace Consumer.Tests
                     timestamp = Match.Regex(expected.Timestamp.ToString("o"), "^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|0[1-9]|[1-2][0-9])T(2[0-3]|[0-1][0-9]):([0-5][0-9]):([0-5][0-9])(\\.[0-9]+)?(Z|[+-](?:2[0-3]|[0-1][0-9]):[0-5][0-9])?$")
                 });
 
-            using IPactContext context = pact.Build();
+            await pact.VerifyAsync(async ctx =>
+            {
+                var client = new EventsApiClient(ctx.MockServerUri, Token);
 
-            var client = new EventsApiClient(context.MockServerUri, Token);
+                var result = await client.GetEventById(expected.EventId);
 
-            var result = await client.GetEventById(expected.EventId);
-
-            result.Should().BeEquivalentTo(expected);
+                result.Should().BeEquivalentTo(expected);
+            });
         }
 
         [Fact]
@@ -105,13 +106,14 @@ namespace Consumer.Tests
                         }
                     });
 
-            using IPactContext context = pact.Build();
+            await pact.VerifyAsync(async ctx =>
+            {
+                var client = new EventsApiClient(ctx.MockServerUri, Token);
 
-            var client = new EventsApiClient(context.MockServerUri, Token);
+                var result = await client.GetEventsByType(eventType);
 
-            var result = await client.GetEventsByType(eventType);
-
-            result.Should().OnlyContain(e => e.EventType == eventType);
+                result.Should().OnlyContain(e => e.EventType == eventType);
+            });
         }
 
         #region V3 support
@@ -154,13 +156,14 @@ namespace Consumer.Tests
                 .WithHeader("Content-Type", "application/json; charset=utf-8")
                 .WithJsonBody(expected);
 
-            using IPactContext context = pact.Build();
+            await pact.VerifyAsync(async ctx =>
+            {
+                var client = new EventsApiClient(ctx.MockServerUri, Token);
 
-            var client = new EventsApiClient(context.MockServerUri, Token);
+                IEnumerable<Event> events = await client.GetAllEvents();
 
-            IEnumerable<Event> events = await client.GetAllEvents();
-
-            events.Should().BeEquivalentTo(expected);
+                events.Should().BeEquivalentTo(expected);
+            });
         }
 
         [Fact]
@@ -206,13 +209,14 @@ namespace Consumer.Tests
                 .WithHeader("Content-Type", "application/json; charset=utf-8")
                 .WithJsonBody(expected);
 
-            using IPactContext context = pact.Build();
+            await pact.VerifyAsync(async ctx =>
+            {
+                var client = new EventsApiClient(ctx.MockServerUri, Token);
 
-            var client = new EventsApiClient(context.MockServerUri, Token);
+                IEnumerable<Event> events = await client.GetAllEvents();
 
-            IEnumerable<Event> events = await client.GetAllEvents();
-
-            events.Should().BeEquivalentTo(expected);
+                events.Should().BeEquivalentTo(expected);
+            });
         }
 
         #endregion
