@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using PactNet.Native.Interop;
 
 namespace PactNet.Native
 {

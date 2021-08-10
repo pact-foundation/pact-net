@@ -1,4 +1,5 @@
 using PactNet.Models;
+using PactNet.Native.Interop;
 
 namespace PactNet.Native
 {
