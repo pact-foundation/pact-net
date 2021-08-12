@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">
@@ -42,49 +42,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\windows\x86_64\pact_mock_server_ffi.dll">
-      <Link>pact_mock_server_ffi.dll</Link>
+    <Content Include="$(MSBuildProjectDirectory)\..\..\build\windows\x86_64\pact_ffi.dll">
+      <Link>pact_ffi.dll</Link>
       <PackagePath>runtimes/win-x64/native</PackagePath>
       <Pack>true</Pack>
       <CopyToOutputDirectory Condition="'$(IsWindows)'">PreserveNewest</CopyToOutputDirectory>
       <Visible>false</Visible>
     </Content>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\windows\x86_64\pact_verifier_ffi.dll">
-      <Link>pact_verifier_ffi.dll</Link>
-      <PackagePath>runtimes/win-x64/native</PackagePath>
-      <Pack>true</Pack>
-      <CopyToOutputDirectory Condition="'$(IsWindows)'">PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\linux\x86_64\libpact_mock_server_ffi.so">
-      <Link>libpact_mock_server_ffi.so</Link>
+    <Content Include="$(MSBuildProjectDirectory)\..\..\build\linux\x86_64\libpact_ffi.so">
+      <Link>libpact_ffi.so</Link>
       <PackagePath>runtimes/linux-x64/native</PackagePath>
       <Pack>true</Pack>
       <CopyToOutputDirectory Condition="'$(IsLinux)'">PreserveNewest</CopyToOutputDirectory>
       <Visible>false</Visible>
     </Content>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\linux\x86_64\libpact_verifier_ffi.so">
-      <Link>libpact_verifier_ffi.so</Link>
-      <PackagePath>runtimes/linux-x64/native</PackagePath>
-      <Pack>true</Pack>
-      <CopyToOutputDirectory Condition="'$(IsLinux)'">PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\osx\x86_64\pact_mock_server_ffi.dylib">
-      <Link>pact_mock_server_ffi.dylib</Link>
-      <PackagePath>runtimes/osx-x64/native</PackagePath>
-      <Pack>true</Pack>
-      <CopyToOutputDirectory Condition="'$(IsOSX)'">PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
-    </Content>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\osx\x86_64\pact_verifier_ffi.dylib">
-      <Link>pact_verifier_ffi.dylib</Link>
+    <Content Include="$(MSBuildProjectDirectory)\..\..\build\osx\x86_64\libpact_ffi.dylib">
+      <Link>libpact_ffi.dylib</Link>
       <PackagePath>runtimes/osx-x64/native</PackagePath>
       <Pack>true</Pack>
       <CopyToOutputDirectory Condition="'$(IsOSX)'">PreserveNewest</CopyToOutputDirectory>

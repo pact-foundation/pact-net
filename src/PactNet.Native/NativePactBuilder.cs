@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using PactNet.Models;
+using PactNet.Native.Interop;
 
 namespace PactNet.Native
 {

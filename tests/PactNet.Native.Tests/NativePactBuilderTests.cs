@@ -4,6 +4,7 @@ using AutoFixture;
 using FluentAssertions;
 using Moq;
 using PactNet.Infrastructure.Outputters;
+using PactNet.Native.Interop;
 using Xunit;
 
 namespace PactNet.Native.Tests

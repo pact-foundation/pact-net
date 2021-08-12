@@ -1,8 +1,9 @@
-﻿using System.Net;
+using System.Net;
 using AutoFixture;
 using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using PactNet.Native.Interop;
 using Xunit;
 
 namespace PactNet.Native.Tests
