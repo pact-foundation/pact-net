@@ -43,7 +43,7 @@ namespace PactNet.Native
             IntPtr logsPtr = NativeInterop.MockServerLogs(mockServerPort);
 
             return logsPtr == IntPtr.Zero
-                       ? string.Empty
+                       ? "ERROR: Unable to retrieve mock server logs"
                        : Marshal.PtrToStringAnsi(logsPtr);
         }
 

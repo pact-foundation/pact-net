@@ -4,6 +4,11 @@ set -euo pipefail
 FFI_VERSION="0.0.0"
 FFI_BASE_URL="https://github.com/pact-foundation/pact-reference/releases/download/libpact_ffi-v$FFI_VERSION"
 
+GREEN="\e[32m"
+YELLOW="\e[33m"
+BLUE="\e[34m"
+CLEAR="\e[0m"
+
 base_path=$(dirname "$0")
 
 download_native() {
@@ -24,14 +29,14 @@ download_native() {
     dest_file="$file.$extension.gz"
     mkdir -p "$path"
 
-    echo "Downloading FFI library for $os/$platform"
-    echo "    Destination: $path/$dest_file"
-    echo "    URL: $url"
+    echo -e "Downloading FFI library for ${YELLOW}$os/$platform${CLEAR}"
+    echo -e "    Destination: ${BLUE}$path/$dest_file${CLEAR}"
+    echo -e "    URL: ${BLUE}$url${CLEAR}"
 
     echo -n "    Downloading... "
     curl --silent -L "$url" -o "$path/$dest_file"
     curl --silent -L "$sha" -o "$path/$dest_file.sha256"
-    echo "OK"
+    echo -e "${GREEN}OK${CLEAR}"
 
     echo -n "    Verifying... "
 
@@ -45,11 +50,12 @@ download_native() {
     fi
 
     rm "$path/$dest_file.sha256"
-    echo "OK"
+    echo -e "${GREEN}OK${CLEAR}"
 
     echo -n "    Extracting... "
     gunzip -f "$path/$dest_file"
-    echo "OK"
+    echo -e "${GREEN}OK${CLEAR}"
+    echo ""
 }
 
 download_native "pact_ffi" "windows" "x86_64" "dll"
