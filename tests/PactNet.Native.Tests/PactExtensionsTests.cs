@@ -97,7 +97,7 @@ namespace PactNet.Native.Tests
 
             await builder.VerifyAsync(async ctx =>
             {
-                await PerformRequestAsync(ctx, this.example, this.config.DefaultJsonSettings);
+                await PerformRequestAsync(ctx, example, config.DefaultJsonSettings);
             });
 
             string actualPact = File.ReadAllText("PactExtensionsTests-Consumer-V2-PactExtensionsTests-Provider.json").TrimEnd();
@@ -134,7 +134,7 @@ namespace PactNet.Native.Tests
 
             await builder.VerifyAsync(async ctx =>
             {
-                await PerformRequestAsync(ctx, this.example, this.config.DefaultJsonSettings);
+                await PerformRequestAsync(ctx, example, config.DefaultJsonSettings);
             });
 
             string actualPact = File.ReadAllText("PactExtensionsTests-Consumer-V3-PactExtensionsTests-Provider.json").TrimEnd();
@@ -160,8 +160,6 @@ namespace PactNet.Native.Tests
                 .WithMetadata("queueId", "1234")
                 .WithContent(new TestData { Int = 1, String = "a description" })
                 .Verify<TestData>(_ => { });
-
-            builder.Build();
 
             string actualPact = File.ReadAllText("PactExtensionsTests-MessageConsumer-V3-PactExtensionsTests-MessageProvider.json").TrimEnd();
             string expectedPact = File.ReadAllText("data/v3-message-consumer-integration.json").TrimEnd();

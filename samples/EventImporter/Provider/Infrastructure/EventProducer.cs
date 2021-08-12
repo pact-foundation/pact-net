@@ -7,7 +7,7 @@ namespace Provider.Infrastructure
 {
     public class EventProducer : IEventProducer
     {
-        public void SendAsync(IReadOnlyCollection<Event> events)
+        public void Send(IReadOnlyCollection<Event> events)
         {
             //ConvertToDto eventually...
 

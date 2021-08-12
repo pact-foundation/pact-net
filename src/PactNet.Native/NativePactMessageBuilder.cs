@@ -58,10 +58,6 @@ namespace PactNet.Native
             => WithContent(content);
 
         /// <inheritdoc cref="IPactMessageBuilderV3"/>
-        void IPactMessageBuilderV3.Build()
-            => Build();
-
-        /// <inheritdoc cref="IPactMessageBuilderV3"/>
         void IPactMessageBuilderV3.Verify<T>(Action<T> handler)
             => Verify(handler);
 
@@ -135,15 +131,7 @@ namespace PactNet.Native
         }
 
         /// <summary>
-        /// Build the pact file
-        /// </summary>
-        internal void Build()
-        {
-            server.WriteMessagePactFile(pact, config.PactDir, true);
-        }
-
-        /// <summary>
-        /// Verify a message is read and handled correctly
+        /// Verify a message is read and handled correctly and write the pact
         /// </summary>
         /// <param name="handler">The method using the message</param>
         internal void Verify<T>(Action<T> handler)
@@ -155,6 +143,8 @@ namespace PactNet.Native
                 var messageReified = JsonConvert.DeserializeObject<T>(content.Contents.ToString(), defaultSettings);
 
                 handler(messageReified);
+
+                server.WriteMessagePactFile(pact, config.PactDir, true);
             }
             catch (Exception e)
             {

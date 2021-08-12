@@ -14,7 +14,24 @@
       "description": "receiving events from the queue",
       "matchingRules": {
         "body": {
-          "$": {
+          "$[0].EventId": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "regex",
+                "regex": "(^([0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12})$)"
+              }
+            ]
+          },
+          "$[0].EventType": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          },
+          "$[0].Timestamp": {
             "combine": "AND",
             "matchers": [
               {

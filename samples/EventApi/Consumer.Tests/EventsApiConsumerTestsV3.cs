@@ -119,7 +119,7 @@ namespace Consumer.Tests
         #region V3 support
 
         [Fact]
-        public async Task GetAllEvents_Given_Multiple_ProviderStates_WhenCalled_ReturnsAllEvents()
+        public async Task GetAllEvents_With_Multiple_ProviderStates_WhenCalled_ReturnsAllEvents()
         {
             var expected = new[]
             {
@@ -128,26 +128,13 @@ namespace Consumer.Tests
                     EventId = Guid.Parse("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5"),
                     Timestamp = DateTime.Parse("2014-06-30T01:37:41.0660548"),
                     EventType = "SearchView"
-                },
-                new Event
-                {
-                    EventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9"),
-                    Timestamp = DateTime.Parse("2014-06-30T01:37:52.2618864"),
-                    EventType = "DetailsView"
-                },
-                new Event
-                {
-                    EventId = Guid.Parse("3E83A96B-2A0C-49B1-9959-26DF23F83AEB"),
-                    Timestamp = DateTime.Parse("2014-06-30T01:38:00.8518952"),
-                    EventType = "SearchView"
                 }
             };
 
             pact
                 .UponReceiving("a request to retrieve all events with multiple provider states")
-                .Given("there are events with id '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5'")
-                .Given("there are events with id '83F9262F-28F1-4703-AB1A-8CFD9E8249C9'")
-                .Given("there are events with id '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
+                .Given("several events have already been created")      //Can create events on the provider end
+                .Given("all events have been processed")                //Can set other event information such as execution date and status on the provider end
                 .WithRequest(HttpMethod.Get, "/events")
                 .WithHeader("Accept", "application/json")
                 .WithHeader("Authorization", $"Bearer {Token}")
@@ -167,7 +154,7 @@ namespace Consumer.Tests
         }
 
         [Fact]
-        public async Task GetAllEvents_Given_Multiple_ProviderStates_WithParams_WhenCalled_ReturnsAllEvents()
+        public async Task GetAllEvents_Given_Parameterized_ProviderState_WhenCalled_ReturnsAllEvents()
         {
             var expected = new[]
             {

@@ -15,7 +15,7 @@ namespace Provider.Domain.Handlers
 
         public void ImportAllEvents(IReadOnlyCollection<Event> events)
         {
-            _eventProducer.SendAsync(events);
+            _eventProducer.Send(events);
         }
     }
 }

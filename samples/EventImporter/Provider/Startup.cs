@@ -12,8 +12,6 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
-using PactNet.Native.Messaging;
-
 namespace Provider
 {
     public class Startup
@@ -78,9 +76,6 @@ namespace Provider
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-            //Test the message with the PACT VERIFIER CLI
-            app.UseMiddleware<MessageMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

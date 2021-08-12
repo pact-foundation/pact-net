@@ -6,6 +6,6 @@ namespace Provider.Domain
 {
     public interface IEventProducer
     {
-        void SendAsync(IReadOnlyCollection<Event> events);
+        void Send(IReadOnlyCollection<Event> events);
     }
 }

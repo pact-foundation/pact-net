@@ -7,6 +7,70 @@
       "description": "a request to retrieve all events with multiple provider states",
       "providerStates": [
         {
+          "name": "several events have already been created"
+        },
+        {
+          "name": "all events have been processed"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Accept": "application/json",
+          "Authorization": "Bearer SomeValidAuthToken"
+        },
+        "method": "GET",
+        "path": "/events"
+      },
+      "response": {
+        "body": [
+          {
+            "eventId": "45d80d13-d5a2-48d7-8353-cbb4c0eaabf5",
+            "eventType": "SearchView",
+            "timestamp": "2014-06-30T01:37:41.0660548"
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "a request to retrieve all events with multiple provider states",
+      "providerStates": [
+        {
+          "name": "there are events with id '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5'"
+        },
+        {
+          "name": "another provider state"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Accept": "application/json",
+          "Authorization": "Bearer SomeValidAuthToken"
+        },
+        "method": "GET",
+        "path": "/events"
+      },
+      "response": {
+        "body": [
+          {
+            "eventId": "45d80d13-d5a2-48d7-8353-cbb4c0eaabf5",
+            "eventType": "SearchView",
+            "timestamp": "2014-06-30T01:37:41.0660548"
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "a request to retrieve all events with multiple provider states",
+      "providerStates": [
+        {
           "name": "there are events with id '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5'"
         },
         {

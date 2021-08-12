@@ -10,7 +10,6 @@ using Moq;
 using Newtonsoft.Json;
 
 using PactNet.Native.Exceptions;
-using PactNet.Native.Models;
 
 using Xunit;
 
@@ -108,9 +107,16 @@ namespace PactNet.Native.Tests
         }
 
         [Fact]
-        public void Build_WhenCalled_WritesPactFile()
+        public void Verify_Should_Write_Pact_File()
         {
-            _builder.Build();
+            //Arrange
+            var content = new MessageModel { Id = 1, Description = "description" };
+            _builder.WithContent(content);
+
+            SetServerReifyMessage(JsonConvert.SerializeObject(content.ToNativeMessage()));
+
+            //Act
+            _builder.Verify<MessageModel>(_ => { });
 
             _mockedServer.Verify(s => s.WriteMessagePactFile(_pactHandle, _pactDir, true));
         }
@@ -160,26 +166,6 @@ namespace PactNet.Native.Tests
             _mockedServer
                 .Setup(x => x.MessageReify(It.IsAny<MessageHandle>()))
                 .Returns(message);
-        }
-
-        private class MessageModel
-        {
-            private readonly int _id;
-            private readonly string _description;
-
-            internal MessageModel(int id, string description)
-            {
-                _id = id;
-                _description = description;
-            }
-
-            internal NativeMessage ToNativeMessage()
-            {
-                return new NativeMessage
-                {
-                    Contents = this
-                };
-            }
         }
     }
 }

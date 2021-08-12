@@ -74,7 +74,7 @@ namespace Provider.Tests
                     var mockEventProducer = new Mock<IEventProducer>();
                     List<Event> eventsPushed = null;
                     mockEventProducer
-                        .Setup(x => x.SendAsync(It.IsAny<IReadOnlyCollection<Event>>()))
+                        .Setup(x => x.Send(It.IsAny<IReadOnlyCollection<Event>>()))
                         .Callback((IReadOnlyCollection<Event> events) => { eventsPushed = events.ToList(); });
 
                     var controller = new EventsController(new FakeEventRepository(), new EventHandler(mockEventProducer.Object));

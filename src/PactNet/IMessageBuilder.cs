@@ -46,11 +46,6 @@ namespace PactNet
         IPactMessageBuilderV3 WithContent(dynamic content);
 
         /// <summary>
-        /// Build the pact file
-        /// </summary>
-        void Build();
-
-        /// <summary>
         /// Verify a message is read and handled correctly
         /// </summary>
         /// <param name="handler">The method using the message</param>
