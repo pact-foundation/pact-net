@@ -87,6 +87,7 @@ namespace PactNet.Native
             }
             finally
             {
+                this.PrintLogs(uri);
                 this.server.CleanupMockServer(uri.Port);
             }
         }
@@ -116,6 +117,7 @@ namespace PactNet.Native
             }
             finally
             {
+                this.PrintLogs(uri);
                 this.server.CleanupMockServer(uri.Port);
             }
         }
@@ -155,11 +157,25 @@ namespace PactNet.Native
                 return;
             }
 
+            this.config.WriteLine(string.Empty);
             this.config.WriteLine("Verification mismatches:");
             this.config.WriteLine(string.Empty);
             this.config.WriteLine(errors);
 
             throw new PactFailureException("Pact verification failed. See output for details");
+        }
+
+        /// <summary>
+        /// Print logs to the configured outputs
+        /// </summary>
+        /// <param name="uri">Mock server URI</param>
+        private void PrintLogs(Uri uri)
+        {
+            string logs = this.server.MockServerLogs(uri.Port);
+
+            this.config.WriteLine("Mock server logs:");
+            this.config.WriteLine(string.Empty);
+            this.config.WriteLine(logs);
         }
     }
 }
