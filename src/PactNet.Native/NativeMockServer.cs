@@ -6,7 +6,7 @@ namespace PactNet.Native
     /// <summary>
     /// Native mock server
     /// </summary>
-    internal class NativeMockServer : IHttpMockServer, IMessageMockServer
+    internal class NativeMockServer : IMockServer, IMessageMockServer
     {
         /// <summary>
         /// Static constructor for <see cref="NativeMockServer"/>
@@ -132,21 +132,21 @@ namespace PactNet.Native
         public MessageHandle NewMessage(MessagePactHandle pact, string description)
             => Interop.NewMessage(pact, description);
 
-        public bool MessageExpectsToReceive(MessageHandle message, string description)
+        public bool ExpectsToReceive(MessageHandle message, string description)
             => Interop.MessageExpectsToReceive(message, description);
-        public bool MessageGiven(MessageHandle message, string description)
+        public bool Given(MessageHandle message, string description)
             => Interop.MessageGiven(message, description);
 
-        public bool MessageGivenWithParam(MessageHandle message, string description, string name, string value)
+        public bool GivenWithParam(MessageHandle message, string description, string name, string value)
             => Interop.MessageGivenWithParam(message, description, name, value);
 
-        public bool MessageWithMetadata(MessageHandle message, string key, string value)
+        public bool WithMetadata(MessageHandle message, string key, string value)
             => Interop.MessageWithMetadata(message, key, value);
 
-        public bool MessageWithContents(MessageHandle message, string contentType, string body, uint size)
+        public bool WithContents(MessageHandle message, string contentType, string body, uint size)
             => Interop.MessageWithContents(message, contentType, body, new UIntPtr(size));
 
-        public string MessageReify(MessageHandle message)
+        public string Reify(MessageHandle message)
         {
             var allocatedString = Marshal.PtrToStringAnsi(Interop.MessageReify(message));
             return allocatedString;

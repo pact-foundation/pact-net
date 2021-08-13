@@ -1,5 +1,3 @@
-#if NETSTANDARD2_0_OR_GREATER
-
 using System.IO;
 using System.Net;
 using System.Text;
@@ -9,7 +7,9 @@ using Microsoft.AspNetCore.Http;
 
 using Newtonsoft.Json;
 
-namespace PactNet.Native.Messaging
+using PactNet.Native;
+
+namespace PactNet.AspNetCore.Messaging
 {
     /// <summary>
     /// Defines the message middleware
@@ -66,9 +66,10 @@ namespace PactNet.Native.Messaging
         /// <returns>The request body</returns>
         protected internal virtual async Task<string> GetRequestBodyAsync(HttpContext context)
         {
-            using var reader = new StreamReader(context.Request.Body, Encoding.UTF8);
-
-            return await reader.ReadToEndAsync();
+            using (var reader = new StreamReader(context.Request.Body, Encoding.UTF8))
+            {
+                return await reader.ReadToEndAsync();
+            }
         }
 
         /// <summary>
@@ -88,4 +89,3 @@ namespace PactNet.Native.Messaging
         }
     }
 }
-#endif

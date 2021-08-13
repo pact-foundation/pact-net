@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
 
+using PactNet.Exceptions;
+
 namespace PactNet
 {
     /// <summary>

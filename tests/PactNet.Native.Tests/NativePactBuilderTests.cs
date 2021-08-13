@@ -1,8 +1,14 @@
 using System;
+
 using AutoFixture;
+
 using FluentAssertions;
+
 using Moq;
+
+using PactNet.Exceptions;
 using PactNet.Infrastructure.Outputters;
+
 using Xunit;
 
 namespace PactNet.Native.Tests
@@ -16,12 +22,12 @@ namespace PactNet.Native.Tests
         private readonly PactHandle handle;
         private readonly Mock<IOutput> mockOutput;
 
-        private readonly Mock<IHttpMockServer> mockServer;
+        private readonly Mock<IMockServer> mockServer;
         private readonly Uri serverUri;
 
         public NativePactBuilderTests()
         {
-            mockServer = new Mock<IHttpMockServer>(MockBehavior.Strict);
+            mockServer = new Mock<IMockServer>(MockBehavior.Strict);
             mockOutput = new Mock<IOutput>();
 
             fixture = new Fixture();

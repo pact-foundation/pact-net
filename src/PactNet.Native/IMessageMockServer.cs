@@ -20,17 +20,17 @@ namespace PactNet.Native
         /// <param name="directory">the output folder</param>
         /// <param name="overwrite">overwrite</param>
         /// <returns></returns>
-        public void WriteMessagePactFile(MessagePactHandle pact, string directory, bool overwrite);
+        void WriteMessagePactFile(MessagePactHandle pact, string directory, bool overwrite);
 
         /// <summary>
-        /// ??
+        /// Add metadata to the message pact
         /// </summary>
-        /// <param name="pact"></param>
-        /// <param name="namespace"></param>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public bool WithMessagePactMetadata(MessagePactHandle pact, string @namespace, string name, string value);
+        /// <param name="pact">the pact message handle</param>
+        /// <param name="namespace">the namespace</param>
+        /// <param name="name">the name of the parameter</param>
+        /// <param name="value">the value of the parameter</param>
+        /// <returns>Success</returns>
+        bool WithMessagePactMetadata(MessagePactHandle pact, string @namespace, string name, string value);
 
         /// <summary>
         /// Create a new message pact
@@ -38,7 +38,7 @@ namespace PactNet.Native
         /// <param name="consumerName">Consumer name</param>
         /// <param name="providerName">Provider name</param>
         /// <returns>Pact handle</returns>
-        public MessagePactHandle NewMessagePact(string consumerName, string providerName);
+        MessagePactHandle NewMessagePact(string consumerName, string providerName);
 
         /// <summary>
         /// Create a new message on the given pact
@@ -54,7 +54,7 @@ namespace PactNet.Native
         /// <param name="message">message</param>
         /// <param name="description">message description</param>
         /// <returns>Success</returns>
-        public bool MessageExpectsToReceive(MessageHandle message, string description);
+        bool ExpectsToReceive(MessageHandle message, string description);
 
         /// <summary>
         /// Add a provider state to the message
@@ -62,7 +62,7 @@ namespace PactNet.Native
         /// <param name="message">message</param>
         /// <param name="description">Provider state description</param>
         /// <returns>Success</returns>
-        public bool MessageGiven(MessageHandle message, string description);
+        bool Given(MessageHandle message, string description);
 
         /// <summary>
         /// Add a provider state with a parameter to the interaction
@@ -72,7 +72,7 @@ namespace PactNet.Native
         /// <param name="name">Parameter name</param>
         /// <param name="value">Parameter value</param>
         /// <returns>Success</returns>
-        public bool MessageGivenWithParam(MessageHandle message, string description, string name, string value);
+        bool GivenWithParam(MessageHandle message, string description, string name, string value);
 
         /// <summary>
         /// Set the metadata of the message
@@ -81,7 +81,7 @@ namespace PactNet.Native
         /// <param name="key">the key</param>
         /// <param name="value">the value</param>
         /// <returns>Success</returns>
-        public bool MessageWithMetadata(MessageHandle message, string key, string value);
+        bool WithMetadata(MessageHandle message, string key, string value);
 
         /// <summary>
         /// Set the contents of the message
@@ -91,13 +91,13 @@ namespace PactNet.Native
         /// <param name="body">the body of the message</param>
         /// <param name="size">the size of the message</param>
         /// <returns>Success</returns>
-        public bool MessageWithContents(MessageHandle message, string contentType, string body, uint size);
+        bool WithContents(MessageHandle message, string contentType, string body, uint size);
 
         /// <summary>
         /// returns the message without the matchers
         /// </summary>
         /// <param name="message">message</param>
         /// <returns>Success</returns>
-        public string MessageReify(MessageHandle message);
+        string Reify(MessageHandle message);
     }
 }

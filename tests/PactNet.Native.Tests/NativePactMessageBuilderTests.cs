@@ -9,7 +9,7 @@ using Moq;
 
 using Newtonsoft.Json;
 
-using PactNet.Native.Exceptions;
+using PactNet.Exceptions;
 
 using Xunit;
 
@@ -17,7 +17,8 @@ namespace PactNet.Native.Tests
 {
     public class NativePactMessageBuilderTests
     {
-        private readonly IPactMessageBuilderV3 _builder;
+        private readonly IMessageBuilderV3 _builder;
+        private readonly IPactMessageBuilderV3 _pactMessage;
         private readonly Mock<IMessageMockServer> _mockedServer;
         private readonly MessageHandle _handle;
         private readonly string _pactDir;
@@ -39,7 +40,8 @@ namespace PactNet.Native.Tests
                 .Returns(_handle);
 
             var config = new PactConfig { PactDir = _pactDir };
-            _builder = new NativePactMessageBuilder(_mockedServer.Object, _pactHandle, config);
+            _pactMessage = new NativePactMessageBuilder(_mockedServer.Object, _pactHandle, config);
+            _builder = _pactMessage.ExpectsToReceive("a messaging interaction");
         }
 
         [Fact]
@@ -59,9 +61,9 @@ namespace PactNet.Native.Tests
         [Fact]
         public void ExpectsTeReceive_WhenCalled_AddsDescription()
         {
-            _builder.ExpectsToReceive("provider state");
+            _pactMessage.ExpectsToReceive("provider state");
 
-            _mockedServer.Verify(s => s.MessageExpectsToReceive(_handle, "provider state"));
+            _mockedServer.Verify(s => s.ExpectsToReceive(_handle, "provider state"));
         }
 
         [Fact]
@@ -69,7 +71,7 @@ namespace PactNet.Native.Tests
         {
             _builder.Given("provider state");
 
-            _mockedServer.Verify(s => s.MessageGiven(_handle, "provider state"));
+            _mockedServer.Verify(s => s.Given(_handle, "provider state"));
         }
 
         [Fact]
@@ -82,8 +84,8 @@ namespace PactNet.Native.Tests
                     ["baz"] = "bash",
                 });
 
-            _mockedServer.Verify(s => s.MessageGivenWithParam(_handle, "provider state", "foo", "bar"));
-            _mockedServer.Verify(s => s.MessageGivenWithParam(_handle, "provider state", "baz", "bash"));
+            _mockedServer.Verify(s => s.GivenWithParam(_handle, "provider state", "foo", "bar"));
+            _mockedServer.Verify(s => s.GivenWithParam(_handle, "provider state", "baz", "bash"));
         }
 
         [Fact]
@@ -94,7 +96,7 @@ namespace PactNet.Native.Tests
 
             _builder.WithMetadata(expectedKey, expectedValue);
 
-            _mockedServer.Verify(s => s.MessageWithMetadata(_handle, expectedKey, expectedValue));
+            _mockedServer.Verify(s => s.WithMetadata(_handle, expectedKey, expectedValue));
         }
 
         [Fact]
@@ -103,7 +105,7 @@ namespace PactNet.Native.Tests
             var content = new { id = 1, desc = "description" };
             _builder.WithContent(content);
 
-            _mockedServer.Verify(s => s.MessageWithContents(_handle, "application/json", JsonConvert.SerializeObject(content), 100));
+            _mockedServer.Verify(s => s.WithContents(_handle, "application/json", JsonConvert.SerializeObject(content), 100));
         }
 
         [Fact]
@@ -116,7 +118,7 @@ namespace PactNet.Native.Tests
             SetServerReifyMessage(JsonConvert.SerializeObject(content.ToNativeMessage()));
 
             //Act
-            _builder.Verify<MessageModel>(_ => { });
+            _pactMessage.Verify<MessageModel>(_ => { });
 
             _mockedServer.Verify(s => s.WriteMessagePactFile(_pactHandle, _pactDir, true));
         }
@@ -128,7 +130,7 @@ namespace PactNet.Native.Tests
             SetServerReifyMessage("{ \"param1\": \"value1\" }");
 
             //Act
-            _builder
+            _pactMessage
                 .Invoking(x => x.Verify<MessageModel>(_ => { }))
                 .Should().Throw<PactMessageConsumerVerificationException>();
         }
@@ -142,29 +144,15 @@ namespace PactNet.Native.Tests
             SetServerReifyMessage(JsonConvert.SerializeObject(testMessage));
 
             //Act
-            _builder
-                .Invoking(x => x.Verify<MessageModel>(_ => throw new Exception("exception test")))
-                .Should().Throw<PactMessageConsumerVerificationException>();
-        }
-
-        [Fact]
-        public void Verify_Checks_Consumer_Handler_Completes_Successfully_With_Message()
-        {
-            //Arrange
-            var testMessage = new MessageModel(1, "this message is a test").ToNativeMessage();
-
-            SetServerReifyMessage(JsonConvert.SerializeObject(testMessage));
-
-            //Act
-            _builder
-                .Invoking(x => x.Verify<MessageModel>(_ => { }))
+            _pactMessage
+                .Invoking(x => x.Verify<MessageModel>(_ => throw new Exception("an exception when running the consumer handler")))
                 .Should().Throw<PactMessageConsumerVerificationException>();
         }
 
         private void SetServerReifyMessage(string message)
         {
             _mockedServer
-                .Setup(x => x.MessageReify(It.IsAny<MessageHandle>()))
+                .Setup(x => x.Reify(It.IsAny<MessageHandle>()))
                 .Returns(message);
         }
     }

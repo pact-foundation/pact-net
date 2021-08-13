@@ -5,10 +5,14 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Newtonsoft.Json;
+
+using PactNet.Exceptions;
 using PactNet.Remote.Configuration.Json;
 using PactNet.Remote.Mappers;
 using PactNet.Remote.Models;
+
 using static System.String;
 
 namespace PactNet.Remote
@@ -24,9 +28,9 @@ namespace PactNet.Remote
             HttpMessageHandler handler,
             JsonSerializerSettings jsonSerializerSettings)
         {
-            this._httpClient = new HttpClient(handler) { BaseAddress = baseUri };
-            this._httpMethodMapper = new HttpMethodMapper();
-            this._jsonSerializerSettings = jsonSerializerSettings ?? JsonConfig.ApiSerializerSettings;
+            _httpClient = new HttpClient(handler) { BaseAddress = baseUri };
+            _httpMethodMapper = new HttpMethodMapper();
+            _jsonSerializerSettings = jsonSerializerSettings ?? JsonConfig.ApiSerializerSettings;
         }
 
         public AdminHttpClient(Uri baseUri) :
@@ -41,12 +45,12 @@ namespace PactNet.Remote
 
         public async Task<string> SendAdminHttpRequest(HttpVerb method, string path, IDictionary<string, string> headers = null)
         {
-            return await this.SendAdminHttpRequest<object>(method, path, null, headers: headers);
+            return await SendAdminHttpRequest<object>(method, path, null, headers: headers);
         }
 
         public async Task<string> SendAdminHttpRequest<T>(HttpVerb method, string path, T requestContent, IDictionary<string, string> headers = null) where T : class
         {
-            var request = new HttpRequestMessage(this._httpMethodMapper.Convert(method), path);
+            var request = new HttpRequestMessage(_httpMethodMapper.Convert(method), path);
             request.Headers.Add(Constants.AdministrativeRequestHeaderKey, "true");
 
             if (headers != null)
@@ -59,11 +63,11 @@ namespace PactNet.Remote
 
             if (requestContent != null)
             {
-                var requestContentJson = JsonConvert.SerializeObject(requestContent, this._jsonSerializerSettings);
+                var requestContentJson = JsonConvert.SerializeObject(requestContent, _jsonSerializerSettings);
                 request.Content = new StringContent(requestContentJson, Encoding.UTF8, "application/json");
             }
 
-            var response = await this._httpClient.SendAsync(request, CancellationToken.None);
+            var response = await _httpClient.SendAsync(request, CancellationToken.None);
             var responseStatusCode = response.StatusCode;
             var responseContent = Empty;
 
@@ -72,8 +76,8 @@ namespace PactNet.Remote
                 responseContent = await response.Content.ReadAsStringAsync();
             }
 
-            this.Dispose(request);
-            this.Dispose(response);
+            Dispose(request);
+            Dispose(response);
 
             if (responseStatusCode != HttpStatusCode.OK)
             {

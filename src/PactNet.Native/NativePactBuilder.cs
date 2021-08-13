@@ -1,6 +1,8 @@
 using System;
 
 using System.Threading.Tasks;
+
+using PactNet.Exceptions;
 using PactNet.Models;
 
 namespace PactNet.Native
@@ -10,7 +12,7 @@ namespace PactNet.Native
     /// </summary>
     public class NativePactBuilder : IPactBuilderV2, IPactBuilderV3
     {
-        private readonly IHttpMockServer server;
+        private readonly IMockServer server;
         private readonly PactHandle pact;
         private readonly PactConfig config;
         private readonly int? port;
@@ -24,7 +26,7 @@ namespace PactNet.Native
         /// <param name="config">Pact config</param>
         /// <param name="port">Optional port, otherwise one is dynamically allocated</param>
         /// <param name="host">Optional host, otherwise loopback is used</param>
-        internal NativePactBuilder(IHttpMockServer server, PactHandle pact, PactConfig config, int? port = null, IPAddress host = IPAddress.Loopback)
+        internal NativePactBuilder(IMockServer server, PactHandle pact, PactConfig config, int? port = null, IPAddress host = IPAddress.Loopback)
         {
             this.server = server;
             this.pact = pact;
@@ -39,7 +41,7 @@ namespace PactNet.Native
         /// <param name="description">Interaction description</param>
         /// <returns>Fluent builder</returns>
         IRequestBuilderV2 IPactBuilderV2.UponReceiving(string description)
-            => this.UponReceiving(description);
+            => UponReceiving(description);
 
         /// <summary>
         /// Add a new interaction to the pact
@@ -47,7 +49,7 @@ namespace PactNet.Native
         /// <param name="description">Interaction description</param>
         /// <returns>Fluent builder</returns>
         IRequestBuilderV3 IPactBuilderV3.UponReceiving(string description)
-            => this.UponReceiving(description);
+            => UponReceiving(description);
 
         /// <summary>
         /// Create a new request/response interaction
@@ -56,9 +58,9 @@ namespace PactNet.Native
         /// <returns>Request builder</returns>
         internal NativeRequestBuilder UponReceiving(string description)
         {
-            InteractionHandle interaction = this.server.NewInteraction(this.pact, description);
+            InteractionHandle interaction = server.NewInteraction(pact, description);
 
-            var requestBuilder = new NativeRequestBuilder(this.server, interaction, this.config.DefaultJsonSettings);
+            var requestBuilder = new NativeRequestBuilder(server, interaction, config.DefaultJsonSettings);
             return requestBuilder;
         }
 
@@ -74,7 +76,7 @@ namespace PactNet.Native
                 throw new ArgumentNullException(nameof(interact));
             }
 
-            Uri uri = this.StartMockServer();
+            Uri uri = StartMockServer();
 
             try
             {
@@ -83,11 +85,11 @@ namespace PactNet.Native
                     MockServerUri = uri
                 });
 
-                this.VerifyInternal(uri);
+                VerifyInternal(uri);
             }
             finally
             {
-                this.server.CleanupMockServer(uri.Port);
+                server.CleanupMockServer(uri.Port);
             }
         }
 
@@ -103,7 +105,7 @@ namespace PactNet.Native
                 throw new ArgumentNullException(nameof(interact));
             }
 
-            Uri uri = this.StartMockServer();
+            Uri uri = StartMockServer();
 
             try
             {
@@ -112,11 +114,11 @@ namespace PactNet.Native
                     MockServerUri = uri
                 });
 
-                this.VerifyInternal(uri);
+                VerifyInternal(uri);
             }
             finally
             {
-                this.server.CleanupMockServer(uri.Port);
+                server.CleanupMockServer(uri.Port);
             }
         }
 
@@ -126,19 +128,19 @@ namespace PactNet.Native
         /// <returns>Mock server URI</returns>
         private Uri StartMockServer()
         {
-            string hostIp = this.host switch
+            string hostIp = host switch
             {
                 IPAddress.Loopback => "127.0.0.1",
                 IPAddress.Any => "0.0.0.0",
-                _ => throw new ArgumentOutOfRangeException(nameof(this.host), this.host, "Unsupported IPAddress value")
+                _ => throw new ArgumentOutOfRangeException(nameof(host), host, "Unsupported IPAddress value")
             };
 
-            string address = $"{hostIp}:{this.port.GetValueOrDefault(0)}";
+            string address = $"{hostIp}:{port.GetValueOrDefault(0)}";
 
             // TODO: add TLS support
-            int serverPort = this.server.CreateMockServerForPact(this.pact, address, false);
+            int serverPort = server.CreateMockServerForPact(pact, address, false);
 
-            var uri = new Uri($"http://{this.host}:{serverPort}");
+            var uri = new Uri($"http://{host}:{serverPort}");
             return uri;
         }
 
@@ -147,17 +149,17 @@ namespace PactNet.Native
         /// </summary>
         private void VerifyInternal(Uri uri)
         {
-            string errors = this.server.MockServerMismatches(uri.Port);
+            string errors = server.MockServerMismatches(uri.Port);
 
             if (string.IsNullOrWhiteSpace(errors) || errors == "[]")
             {
-                this.server.WritePactFile(uri.Port, this.config.PactDir, false);
+                server.WritePactFile(uri.Port, config.PactDir, false);
                 return;
             }
 
-            this.config.WriteLine("Verification mismatches:");
-            this.config.WriteLine(string.Empty);
-            this.config.WriteLine(errors);
+            config.WriteLine("Verification mismatches:");
+            config.WriteLine(string.Empty);
+            config.WriteLine(errors);
 
             throw new PactFailureException("Pact verification failed. See output for details");
         }

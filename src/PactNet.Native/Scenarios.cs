@@ -11,7 +11,7 @@ namespace PactNet.Native
         /// <summary>
         /// The available scenarios
         /// </summary>
-        internal static Dictionary<string, Func<dynamic>> All;
+        internal static Dictionary<string, Func<dynamic>> All = new Dictionary<string, Func<dynamic>>();
 
         /// <summary>
         /// Invokes the scenarios

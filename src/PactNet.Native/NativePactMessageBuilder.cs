@@ -1,9 +1,8 @@
 using System;
-using System.Collections.Generic;
 
 using Newtonsoft.Json;
 
-using PactNet.Native.Exceptions;
+using PactNet.Exceptions;
 using PactNet.Native.Models;
 
 namespace PactNet.Native
@@ -16,7 +15,7 @@ namespace PactNet.Native
         private readonly IMessageMockServer server;
         private readonly MessagePactHandle pact;
         private readonly PactConfig config;
-        private readonly MessageHandle message;
+        private MessageHandle message;
         private readonly JsonSerializerSettings defaultSettings;
 
         /// <summary>
@@ -31,34 +30,17 @@ namespace PactNet.Native
             this.pact = pact;
             this.config = config ?? throw new ArgumentNullException(nameof(config));
             this.server = server ?? throw new ArgumentNullException(nameof(server));
-            message = server.NewMessage(pact, "default message");
             this.defaultSettings = defaultSettings;
         }
 
         #region IPactMessageBuilderV3 explicit implementation
 
         /// <inheritdoc cref="IPactMessageBuilderV3"/>
-        IPactMessageBuilderV3 IPactMessageBuilderV3.ExpectsToReceive(string description)
+        IMessageBuilderV3 IPactMessageBuilderV3.ExpectsToReceive(string description)
             => ExpectsToReceive(description);
 
         /// <inheritdoc cref="IPactMessageBuilderV3"/>
-        IPactMessageBuilderV3 IPactMessageBuilderV3.Given(string providerState)
-            => Given(providerState);
-
-        /// <inheritdoc cref="IPactMessageBuilderV3"/>
-        IPactMessageBuilderV3 IPactMessageBuilderV3.Given(string providerState, IDictionary<string, string> parameters)
-            => Given(providerState, parameters);
-
-        /// <inheritdoc cref="IPactMessageBuilderV3"/>
-        IPactMessageBuilderV3 IPactMessageBuilderV3.WithMetadata(string key, string value)
-            => WithMetadata(key, value);
-
-        /// <inheritdoc cref="IPactMessageBuilderV3"/>
-        IPactMessageBuilderV3 IPactMessageBuilderV3.WithContent(dynamic content)
-            => WithContent(content);
-
-        /// <inheritdoc cref="IPactMessageBuilderV3"/>
-        void IPactMessageBuilderV3.Verify<T>(Action<T> handler)
+        void IPactMessageBuilder.Verify<T>(Action<T> handler)
             => Verify(handler);
 
         #endregion
@@ -70,64 +52,13 @@ namespace PactNet.Native
         /// </summary>
         /// <param name="description">Message description</param>
         /// <returns>Fluent builder</returns>
-        internal IPactMessageBuilderV3 ExpectsToReceive(string description)
+        internal IMessageBuilderV3 ExpectsToReceive(string description)
         {
-            server.MessageExpectsToReceive(message, description);
+            this.message = server.NewMessage(pact, "default message");
 
-            return this;
-        }
+            server.ExpectsToReceive(this.message, description);
 
-        /// <summary>
-        /// Add a provider state
-        /// </summary>
-        /// <param name="providerState">Provider state description</param>
-        /// <returns>Fluent builder</returns>
-        internal IPactMessageBuilderV3 Given(string providerState)
-        {
-            server.MessageGiven(message, providerState);
-
-            return this;
-        }
-
-        /// <summary>
-        /// Add a provider state with one or more parameters
-        /// </summary>
-        /// <param name="providerState">Provider state description</param>
-        /// <param name="parameters">Provider state parameters</param>
-        /// <returns>Fluent builder</returns>
-        internal IPactMessageBuilderV3 Given(string providerState, IDictionary<string, string> parameters)
-        {
-            foreach (var param in parameters)
-            {
-                server.MessageGivenWithParam(message, providerState, param.Key, param.Value);
-            }
-
-            return this;
-        }
-
-        /// <summary>
-        /// Set the metadata
-        /// </summary>
-        /// <param name="key">key of the metadata</param>
-        /// <param name="value">value of the metadata</param>
-        /// <returns>Fluent builder</returns>
-        internal IPactMessageBuilderV3 WithMetadata(string key, string value)
-        {
-            server.MessageWithMetadata(message, key, value);
-
-            return this;
-        }
-
-        /// <summary>
-        /// Set the content
-        /// </summary>
-        /// <param name="content">Dynamic content</param>
-        /// <returns>Fluent builder</returns>
-        internal IPactMessageBuilderV3 WithContent(dynamic content)
-        {
-            server.MessageWithContents(message, "application/json", JsonConvert.SerializeObject(content), 100);
-
-            return this;
+            return new NativeMessageBuilder(server, this.message);
         }
 
         /// <summary>
@@ -138,7 +69,7 @@ namespace PactNet.Native
         {
             try
             {
-                var content = JsonConvert.DeserializeObject<NativeMessage>(server.MessageReify(message));
+                var content = JsonConvert.DeserializeObject<NativeMessage>(server.Reify(message));
 
                 var messageReified = JsonConvert.DeserializeObject<T>(content.Contents.ToString(), defaultSettings);
 

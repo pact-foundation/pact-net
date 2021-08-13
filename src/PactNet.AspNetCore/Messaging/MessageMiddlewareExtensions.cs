@@ -1,7 +1,6 @@
-#if NETSTANDARD2_0_OR_GREATER
 using Microsoft.AspNetCore.Builder;
 
-namespace PactNet.Native.Messaging
+namespace PactNet.AspNetCore.Messaging
 {
     /// <summary>
     /// Defines the message middleware extensions
@@ -19,4 +18,3 @@ namespace PactNet.Native.Messaging
         }
     }
 }
-#endif

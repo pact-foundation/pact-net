@@ -1,6 +1,6 @@
 using System;
 
-namespace PactNet.Native.Exceptions
+namespace PactNet.Exceptions
 {
     /// <summary>
     /// Defines the pact message consumer verification exception

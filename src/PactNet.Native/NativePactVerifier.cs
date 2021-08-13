@@ -1,6 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 
+using PactNet.Exceptions;
+
 namespace PactNet.Native
 {
     /// <summary>
