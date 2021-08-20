@@ -13,8 +13,8 @@ namespace PactNet.Tests.IntegrationTests
 {
     public class XunitIntegrationTests : PactTests<CalculatorApiPact>
     {
-        public XunitIntegrationTests(CalculatorApiPact pact)
-            : base(pact)
+        public XunitIntegrationTests(CalculatorApiPact messagePact)
+            : base(messagePact)
         {
         }
 
@@ -138,9 +138,9 @@ namespace PactNet.Tests.IntegrationTests
     public abstract class PactTests<T> : IClassFixture<T>
         where T : ApiPact
     {
-        protected PactTests(T pact)
+        protected PactTests(T messagePact)
         {
-            Pact = pact;
+            Pact = messagePact;
         }
 
         protected T Pact { get; }

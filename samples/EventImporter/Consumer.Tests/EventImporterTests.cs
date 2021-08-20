@@ -17,7 +17,7 @@ namespace Consumer.Tests
 {
     public class EventImporterTests
     {
-        private readonly IPactMessageBuilderV3 _pactMessage;
+        private readonly IMessagePactBuilderV3 _messagePact;
 
         private readonly PactConfig _config = new PactConfig
         {
@@ -36,8 +36,8 @@ namespace Consumer.Tests
                 new XUnitOutput(output)
             };
 
-            IPactV3 pactV3 = Pact.V3("Event API Consumer V3 Message", "Event API V3 Message", _config);
-            _pactMessage = pactV3.UsingNativeBackendForMessage();
+            IMessagePactV3 v3 = MessagePact.V3("Event API Consumer V3 Message", "Event API V3 Message", _config);
+            _messagePact = v3.UsingNativeBackend();
         }
 
         [Fact]
@@ -54,12 +54,38 @@ namespace Consumer.Tests
 
             var worker = new EventsWorker(new FakeEventProcessor());
 
-            _pactMessage
+            _messagePact
                 .ExpectsToReceive("receiving events from the queue")
                 .Given("A list of events is pushed to the queue")
                 .WithMetadata("key", "valueKey")
-                .WithContent(expected)
-                .Verify<List<Event>>(events => worker.ProcessMessages(events));
+                .WithContent(expected);
+
+            _messagePact.Verify<List<Event>>(events => worker.ProcessMessages(events));
+        }
+
+        [Fact]
+        public void DispatchEvent_FromQueue_Should_CreatePact_WithMessages()
+        {
+            var expected =
+                new
+                {
+                    EventId =
+                        Match.Regex(Guid.Parse("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5").ToString(),
+                            "(^([0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12})$)"),
+                    Timestamp = Match.Type(DateTime.Parse("2014-06-30T01:37:41.0660548")),
+                    EventType = Match.Type("SearchView")
+                };
+            
+
+            var worker = new EventsWorker(new FakeEventProcessor());
+
+            _messagePact
+                .ExpectsToReceive("dispatch event from the queue")
+                .Given("An event is pushed to the queue")
+                .WithMetadata("key", "valueKey")
+                .WithContent(expected);
+
+            _messagePact.Verify<Event>(@event => worker.DispatchEvent(@event));
         }
     }
 }

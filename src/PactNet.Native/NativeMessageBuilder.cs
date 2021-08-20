@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-
 using Newtonsoft.Json;
 
 namespace PactNet.Native
@@ -14,17 +13,17 @@ namespace PactNet.Native
         private readonly MessageHandle message;
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="NativePactMessageBuilder"/> class.
+        /// Initialises a new instance of the <see cref="NativeMessagePactBuilder"/> class.
         /// </summary>
         /// <param name="server">Mock server</param>
-        /// <param name="pact">the pact handle</param>
+        /// <param name="message">the message handle</param>
         internal NativeMessageBuilder(IMessageMockServer server, MessageHandle message)
         {
             this.server = server ?? throw new ArgumentNullException(nameof(server));
             this.message = message;
         }
 
-        #region IPactMessageBuilderV3 explicit implementation
+        #region IMessagePactBuilderV3 explicit implementation
 
         /// <inheritdoc cref="IMessageBuilderV3"/>
         IMessageBuilderV3 IMessageBuilderV3.Given(string providerState)
@@ -47,13 +46,13 @@ namespace PactNet.Native
         #region Internal Methods
 
         /// <summary>
-        /// Add a new message to the pact
+        /// Add a new message to the messagePact
         /// </summary>
         /// <param name="description">Message description</param>
         /// <returns>Fluent builder</returns>
         internal IMessageBuilderV3 ExpectsToReceive(string description)
         {
-            server.ExpectsToReceive(message, description);
+            this.server.ExpectsToReceive(this.message, description);
 
             return this;
         }
@@ -65,7 +64,7 @@ namespace PactNet.Native
         /// <returns>Fluent builder</returns>
         internal IMessageBuilderV3 Given(string providerState)
         {
-            server.Given(message, providerState);
+            this.server.Given(this.message, providerState);
 
             return this;
         }
@@ -80,7 +79,7 @@ namespace PactNet.Native
         {
             foreach (var param in parameters)
             {
-                server.GivenWithParam(message, providerState, param.Key, param.Value);
+                this.server.GivenWithParam(this.message, providerState, param.Key, param.Value);
             }
 
             return this;
@@ -94,7 +93,7 @@ namespace PactNet.Native
         /// <returns>Fluent builder</returns>
         internal IMessageBuilderV3 WithMetadata(string key, string value)
         {
-            server.WithMetadata(message, key, value);
+            this.server.WithMetadata(this.message, key, value);
 
             return this;
         }
@@ -106,7 +105,7 @@ namespace PactNet.Native
         /// <returns>Fluent builder</returns>
         internal IMessageBuilderV3 WithContent(dynamic content)
         {
-            server.WithContents(message, "application/json", JsonConvert.SerializeObject(content), 100);
+            this.server.WithContents(this.message, "application/json", JsonConvert.SerializeObject(content), 100);
 
             return this;
         }

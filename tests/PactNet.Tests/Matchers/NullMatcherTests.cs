@@ -13,7 +13,7 @@ namespace PactNet.Tests.Matchers
             var matcher = new NullMatcher();
 
             string actual = JsonConvert.SerializeObject(matcher);
-            string expected = $@"{{""pact:matcher:type"":""null""}}";
+            string expected = $@"{{""messagePact:matcher:type"":""null""}}";
 
             actual.Should().BeEquivalentTo(expected);
         }

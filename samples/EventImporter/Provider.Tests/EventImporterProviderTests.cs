@@ -13,7 +13,7 @@ using Provider.Api;
 using Provider.Api.Controllers;
 using Provider.Domain;
 using Provider.Domain.Models;
-
+using Provider.Infrastructure;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -77,11 +77,29 @@ namespace Provider.Tests
                         .Setup(x => x.Send(It.IsAny<IReadOnlyCollection<Event>>()))
                         .Callback((IReadOnlyCollection<Event> events) => { eventsPushed = events.ToList(); });
 
-                    var controller = new EventsController(new FakeEventRepository(), new EventHandler(mockEventProducer.Object));
+                    var controller = new EventsController(new FakeEventRepository(), new EventHandler(mockEventProducer.Object, new EventDispatcher()));
 
                     controller.ImportToQueue();
 
                     return eventsPushed;
+                });
+
+            MessageScenarioBuilder
+                .NewScenario
+                .WhenReceiving("dispatch event from the queue")
+                .WillPublishMessage(() =>
+                {
+                    var mockEventDispatcher = new Mock<IEventDispatcher>();
+                    Event eventPushed = null;
+                    mockEventDispatcher
+                        .Setup(x => x.Send(It.IsAny<Event>()))
+                        .Callback((Event eventSingle) => { eventPushed = eventSingle; });
+
+                    var controller = new EventsController(new FakeEventRepository(), new EventHandler(new Mock<IEventProducer>().Object, mockEventDispatcher.Object));
+
+                    controller.DispatchLastEvent();
+
+                    return eventPushed;
                 });
         }
 
@@ -91,7 +109,8 @@ namespace Provider.Tests
             {
                 return new List<Event>
                 {
-                    new Event {
+                    new Event
+                    {
                         EventId = Guid.Parse("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5"),
                         Timestamp = DateTime.Parse("2014-06-30T01:37:41.0660548"),
                         EventType = "SearchView"

@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\src\PactNet.AspNetCore\PactNet.AspNetCore.csproj" />
     <ProjectReference Include="..\..\..\src\PactNet.Native\PactNet.Native.csproj" />
     <ProjectReference Include="..\Provider\Provider.csproj" />
   </ItemGroup>

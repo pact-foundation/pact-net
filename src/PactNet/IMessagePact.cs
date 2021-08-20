@@ -1,9 +1,9 @@
 namespace PactNet
 {
     /// <summary>
-    /// A messagePact between a consumer and a provider
+    /// A messaging messagePact between a consumer and a provider
     /// </summary>
-    public interface IPact
+    public interface IMessagePact
     {
         /// <summary>
         /// Consumer name
@@ -22,16 +22,9 @@ namespace PactNet
     }
 
     /// <summary>
-    /// Marker interface for a v2 Pact
+    /// Marker interface for a v3 message Pact
     /// </summary>
-    public interface IPactV2 : IPact
-    {
-    }
-
-    /// <summary>
-    /// Marker interface for a v3 Pact
-    /// </summary>
-    public interface IPactV3 : IPact
+    public interface IMessagePactV3 : IMessagePact
     {
     }
 }

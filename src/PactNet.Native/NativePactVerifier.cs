@@ -6,7 +6,7 @@ using PactNet.Exceptions;
 namespace PactNet.Native
 {
     /// <summary>
-    /// Native pact verifier
+    /// Native messagePact verifier
     /// </summary>
     internal class NativePactVerifier : IVerifierProvider
     {
@@ -21,7 +21,7 @@ namespace PactNet.Native
         }
 
         /// <summary>
-        /// Verify the pact from the given args
+        /// Verify the messagePact from the given args
         /// </summary>
         /// <param name="args">Verifier args</param>
         public void Verify(string args)
@@ -44,7 +44,7 @@ namespace PactNet.Native
         }
 
         /// <summary>
-        /// P/Invoke bondings to the pact verifier FFI library
+        /// P/Invoke bondings to the messagePact verifier FFI library
         /// </summary>
         private static class Interop
         {

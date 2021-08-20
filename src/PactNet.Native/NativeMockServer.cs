@@ -69,7 +69,7 @@ namespace PactNet.Native
             {
                 -1 => new InvalidOperationException("Invalid handle when starting mock server"),
                 -3 => new InvalidOperationException("Unable to start mock server"),
-                -4 => new InvalidOperationException("The pact reference library panicked"),
+                -4 => new InvalidOperationException("The messagePact reference library panicked"),
                 -5 => new InvalidOperationException("The IPAddress is invalid"),
                 -6 => new InvalidOperationException("Could not create the TLS configuration with the self-signed certificate"),
                 _ => new InvalidOperationException($"Unknown mock server error: {result}")
@@ -108,8 +108,8 @@ namespace PactNet.Native
             {
                 throw result switch
                 {
-                    1 => new InvalidOperationException("The pact reference library panicked"),
-                    2 => new InvalidOperationException("The pact file could not be written"),
+                    1 => new InvalidOperationException("The messagePact reference library panicked"),
+                    2 => new InvalidOperationException("The messagePact file could not be written"),
                     3 => new InvalidOperationException("A mock server with the provided port was not found"),
                     _ => new InvalidOperationException($"Unknown error from backend: {result}")
                 };
@@ -248,15 +248,15 @@ namespace PactNet.Native
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal struct PactHandle
+    internal readonly struct PactHandle
     {
-        public UIntPtr Pact;
+        public readonly UIntPtr Pact;
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal struct MessagePactHandle
+    internal readonly struct MessagePactHandle
     {
-        public UIntPtr Pact;
+        public readonly UIntPtr Pact;
     }
 
     [StructLayout(LayoutKind.Sequential)]

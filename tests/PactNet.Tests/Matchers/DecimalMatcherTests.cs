@@ -15,7 +15,7 @@ namespace PactNet.Tests.Matchers
             var matcher = new DecimalMatcher(example);
 
             string actual = JsonConvert.SerializeObject(matcher);
-            string expected = $@"{{""pact:matcher:type"":""decimal"",""value"":{example}}}";
+            string expected = $@"{{""messagePact:matcher:type"":""decimal"",""value"":{example}}}";
 
             actual.Should().BeEquivalentTo(expected);
         }
@@ -28,7 +28,7 @@ namespace PactNet.Tests.Matchers
             var matcher = new DecimalMatcher(example);
 
             string actual = JsonConvert.SerializeObject(matcher);
-            string expected = $@"{{""pact:matcher:type"":""decimal"",""value"":{example}}}";
+            string expected = $@"{{""messagePact:matcher:type"":""decimal"",""value"":{example}}}";
 
             actual.Should().BeEquivalentTo(expected);
         }
@@ -41,7 +41,7 @@ namespace PactNet.Tests.Matchers
             var matcher = new DecimalMatcher(example);
 
             string actual = JsonConvert.SerializeObject(matcher);
-            string expected = $@"{{""pact:matcher:type"":""decimal"",""value"":{example}}}";
+            string expected = $@"{{""messagePact:matcher:type"":""decimal"",""value"":{example}}}";
 
             actual.Should().BeEquivalentTo(expected);
         }

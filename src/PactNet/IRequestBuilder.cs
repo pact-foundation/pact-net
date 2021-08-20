@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 namespace PactNet
 {
     /// <summary>
-    /// Build up a mock request for a v2 pact
+    /// Build up a mock request for a v2 messagePact
     /// </summary>
     public interface IRequestBuilderV2
     {
@@ -73,7 +73,7 @@ namespace PactNet
     }
 
     /// <summary>
-    /// Build up a mock request for a v3 pact
+    /// Build up a mock request for a v3 messagePact
     /// </summary>
     public interface IRequestBuilderV3
     {

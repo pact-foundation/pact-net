@@ -8,7 +8,7 @@ namespace PactNet
         public const string AdministrativeRequestHeaderKey = "X-Pact-Mock-Service";
         public const string InteractionsPath = "/interactions";
         public const string InteractionsVerificationPath = "/interactions/verification";
-        public const string PactPath = "/pact";
+        public const string PactPath = "/messagePact";
 
 #if USE_NET4X
         public static string BuildDirectory = new Uri(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase.Replace("file:///", ""))).LocalPath;

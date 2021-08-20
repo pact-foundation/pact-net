@@ -6,6 +6,7 @@ namespace Provider.Domain.Handlers
 {
     public interface IEventHandler
     {
-        void ImportAllEvents(IReadOnlyCollection<Event> events);
+        void ImportAll(IReadOnlyCollection<Event> events);
+        void DispatchLast(IReadOnlyCollection<Event> events);
     }
 }

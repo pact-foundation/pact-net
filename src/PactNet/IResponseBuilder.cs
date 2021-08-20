@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace PactNet
 {
     /// <summary>
-    /// Mock response builder for a v2 pact
+    /// Mock response builder for a v2 messagePact
     /// </summary>
     public interface IResponseBuilderV2
     {
@@ -47,7 +47,7 @@ namespace PactNet
     }
 
     /// <summary>
-    /// Mock response builder for a v3 pact
+    /// Mock response builder for a v3 messagePact
     /// </summary>
     public interface IResponseBuilderV3
     {

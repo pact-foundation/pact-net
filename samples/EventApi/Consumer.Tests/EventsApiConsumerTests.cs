@@ -47,8 +47,8 @@ namespace Consumer.Tests
         {
             this.pact
                 .UponReceiving("a request to retrieve all events with no authorization")
-                    .Given("there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
-                    .WithRequest(HttpMethod.Get, "/events")
+                .Given("there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
+                .WithRequest(HttpMethod.Get, "/events")
                     .WithHeader("Accept", "application/json")
                 .WillRespond()
                     .WithStatus(HttpStatusCode.Unauthorized);
@@ -88,8 +88,8 @@ namespace Consumer.Tests
 
             this.pact
                 .UponReceiving("a request to retrieve all events")
-                    .Given("there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
-                    .WithRequest(HttpMethod.Get, "/events")
+                .Given("there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
+                .WithRequest(HttpMethod.Get, "/events")
                     .WithHeader("Accept", "application/json")
                     .WithHeader("Authorization", $"Bearer {Token}")
                 .WillRespond()
@@ -115,8 +115,8 @@ namespace Consumer.Tests
 
             this.pact
                 .UponReceiving($"a request to retrieve events with type '{eventType}'")
-                    .Given($"there is one event with type '{eventType}'")
-                    .WithRequest(HttpMethod.Get, "/events")
+                .Given($"there is one event with type '{eventType}'")
+                .WithRequest(HttpMethod.Get, "/events")
                     .WithQuery("type", eventType)
                     .WithHeader("Accept", "application/json")
                     .WithHeader("Authorization", $"Bearer {Token}")
@@ -150,7 +150,7 @@ namespace Consumer.Tests
 
             this.pact
                 .UponReceiving("a request to create a new event")
-                    .WithRequest(HttpMethod.Post, "/events")
+                .WithRequest(HttpMethod.Post, "/events")
                     .WithHeader("Content-Type", "application/json; charset=utf-8")
                     .WithHeader("Authorization", $"Bearer {Token}")
                     .WithJsonBody(new
@@ -175,7 +175,7 @@ namespace Consumer.Tests
         {
             this.pact
                 .UponReceiving("a request to check the api status")
-                    .WithRequest(HttpMethod.Get, "/stats/status")
+                .WithRequest(HttpMethod.Get, "/stats/status")
                     .WithHeader("Accept", "application/json")
                 .WillRespond()
                     .WithStatus(200)
@@ -209,7 +209,7 @@ namespace Consumer.Tests
 
             this.pact
                 .UponReceiving("a request to check the api status")
-                    .WithRequest(HttpMethod.Get, "/stats/status")
+                .WithRequest(HttpMethod.Get, "/stats/status")
                     .WithHeader("Accept", "application/json")
                 .WillRespond()
                     .WithStatus(200)
@@ -228,10 +228,10 @@ namespace Consumer.Tests
 
             this.pact
                 .UponReceiving("a request to check the api uptime")
-                    .WithRequest(HttpMethod.Get, "/stats/uptime")
+                .WithRequest(HttpMethod.Get, "/stats/uptime")
                     .WithHeader("Accept", "application/json")
                 .WillRespond()
-                .WithStatus(200)
+                    .WithStatus(200)
                     .WithHeader("Content-Type", "application/json; charset=utf-8")
                     .WithJsonBody(new
                     {
@@ -260,8 +260,8 @@ namespace Consumer.Tests
 
             this.pact
                 .UponReceiving($"a request to retrieve event with id '{expected.EventId}'")
-                    .Given($"there is an event with id '{expected.EventId}'")
-                    .WithRequest(HttpMethod.Get, $"/events/{expected.EventId}")
+                .Given($"there is an event with id '{expected.EventId}'")
+                .WithRequest(HttpMethod.Get, $"/events/{expected.EventId}")
                     .WithHeader("accept", "application/json")
                     .WithHeader("authorization", $"Bearer {Token}")
                 .WillRespond()

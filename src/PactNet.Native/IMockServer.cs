@@ -8,7 +8,7 @@ namespace PactNet.Native
     internal interface IMockServer
     {
         /// <summary>
-        /// Create the mock server for the given pact handle
+        /// Create the mock server for the given messagePact handle
         /// </summary>
         /// <param name="pact">Pact handle</param>
         /// <param name="addrStr">Host and port for the mock server</param>
@@ -39,17 +39,17 @@ namespace PactNet.Native
         bool CleanupMockServer(int mockServerPort);
 
         /// <summary>
-        /// Write the pact file to disk
+        /// Write the messagePact file to disk
         /// </summary>
         /// <param name="mockServerPort">Mock server port</param>
-        /// <param name="directory">Directory of the pact file</param>
-        /// <param name="overwrite">Overwrite the existing pact file?</param>
+        /// <param name="directory">Directory of the messagePact file</param>
+        /// <param name="overwrite">Overwrite the existing messagePact file?</param>
         /// <returns>Status code</returns>
-        /// <exception cref="InvalidOperationException">Failed to write pact file</exception>
+        /// <exception cref="InvalidOperationException">Failed to write messagePact file</exception>
         void WritePactFile(int mockServerPort, string directory, bool overwrite);
 
         /// <summary>
-        /// Create a new pact
+        /// Create a new messagePact
         /// </summary>
         /// <param name="consumerName">Consumer name</param>
         /// <param name="providerName">Provider name</param>
@@ -57,7 +57,7 @@ namespace PactNet.Native
         PactHandle NewPact(string consumerName, string providerName);
 
         /// <summary>
-        /// Set the pact specification version
+        /// Set the messagePact specification version
         /// </summary>
         /// <param name="pact">Pact handle</param>
         /// <param name="version">Specification version</param>
@@ -65,7 +65,7 @@ namespace PactNet.Native
         bool WithSpecification(PactHandle pact, PactSpecification version);
 
         /// <summary>
-        /// Create a new interaction on the given pact
+        /// Create a new interaction on the given messagePact
         /// </summary>
         /// <param name="pact">Pact handle</param>
         /// <param name="description">Interaction description</param>

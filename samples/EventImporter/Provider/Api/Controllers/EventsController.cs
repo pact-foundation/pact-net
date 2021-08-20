@@ -19,7 +19,7 @@ namespace Provider.Api.Controllers
         }
 
         /// <summary>
-        /// ImportAllEvents to queue
+        /// ImportAll to queue
         /// </summary>
         /// <returns>no content</returns>
         [Authorize]
@@ -28,7 +28,22 @@ namespace Provider.Api.Controllers
         {
             var events = _eventRepository.GetAllEvents();
 
-            _eventHandler.ImportAllEvents(events);
+            _eventHandler.ImportAll(events);
+
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Dispatch to another queue
+        /// </summary>
+        /// <returns>no content</returns>
+        [Authorize]
+        [HttpPost]
+        public IActionResult DispatchLastEvent()
+        {
+            var events = _eventRepository.GetAllEvents();
+
+            _eventHandler.DispatchLast(events);
 
             return NoContent();
         }

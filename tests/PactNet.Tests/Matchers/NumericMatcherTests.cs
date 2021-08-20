@@ -15,7 +15,7 @@ namespace PactNet.Tests.Matchers
             var matcher = new NumericMatcher(example);
 
             string actual = JsonConvert.SerializeObject(matcher);
-            string expected = $@"{{""pact:matcher:type"":""number"",""value"":{example}}}";
+            string expected = $@"{{""messagePact:matcher:type"":""number"",""value"":{example}}}";
 
             actual.Should().BeEquivalentTo(expected);
         }
@@ -28,7 +28,7 @@ namespace PactNet.Tests.Matchers
             var matcher = new NumericMatcher(example);
 
             string actual = JsonConvert.SerializeObject(matcher);
-            string expected = $@"{{""pact:matcher:type"":""number"",""value"":{example}}}";
+            string expected = $@"{{""messagePact:matcher:type"":""number"",""value"":{example}}}";
 
             actual.Should().BeEquivalentTo(expected);
         }
@@ -41,7 +41,7 @@ namespace PactNet.Tests.Matchers
             var matcher = new NumericMatcher(example);
 
             string actual = JsonConvert.SerializeObject(matcher);
-            string expected = $@"{{""pact:matcher:type"":""number"",""value"":{example}}}";
+            string expected = $@"{{""messagePact:matcher:type"":""number"",""value"":{example}}}";
 
             actual.Should().BeEquivalentTo(expected);
         }
@@ -54,7 +54,7 @@ namespace PactNet.Tests.Matchers
             var matcher = new NumericMatcher(example);
 
             string actual = JsonConvert.SerializeObject(matcher);
-            string expected = $@"{{""pact:matcher:type"":""number"",""value"":{example}}}";
+            string expected = $@"{{""messagePact:matcher:type"":""number"",""value"":{example}}}";
 
             actual.Should().BeEquivalentTo(expected);
         }

@@ -3,7 +3,7 @@ using System;
 namespace PactNet.Exceptions
 {
     /// <summary>
-    /// Defines the pact message consumer verification exception
+    /// Defines the messagePact message consumer verification exception
     /// </summary>
     [Serializable]
     public class PactMessageConsumerVerificationException : Exception

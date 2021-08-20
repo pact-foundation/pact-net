@@ -56,7 +56,7 @@
 //            {
 //                Request =
 //                {
-//                    Path = "/pact-messages"
+//                    Path = "/messagePact-messages"
 //                }
 //            };
 

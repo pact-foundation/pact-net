@@ -10,7 +10,7 @@ namespace PactNet.Matchers
         /// <summary>
         /// Type of the matcher
         /// </summary>
-        [JsonProperty("pact:matcher:type")]
+        [JsonProperty("messagePact:matcher:type")]
         string Type { get; }
 
         /// <summary>

@@ -5,8 +5,8 @@
     <version>$version$</version>
     <authors>seek.com.au</authors>
     <owners>seek.com.au</owners>
-    <licenseUrl>https://github.com/SEEK-Jobs/pact-net/blob/master/LICENSE.txt</licenseUrl>
-    <projectUrl>https://github.com/SEEK-Jobs/pact-net</projectUrl>
+    <licenseUrl>https://github.com/SEEK-Jobs/messagePact-net/blob/master/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/SEEK-Jobs/messagePact-net</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A .NET version of Pact, which enables consumer driven contract testing. NOTE: For version 2 and above, you will need to install one of the following Nuget packages, depending on your target platform and architecture: PactNet.Windows, PactNet.OSX, PactNet.Linux.x86 or PactNet.Linux.x64.</description>
     <dependencies>

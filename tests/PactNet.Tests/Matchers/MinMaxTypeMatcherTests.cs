@@ -18,7 +18,7 @@ namespace PactNet.Tests.Matchers
             var matcher = new MinMaxTypeMatcher(example, min);
 
             string actual = JsonConvert.SerializeObject(matcher);
-            string expected = $@"{{""pact:matcher:type"":""type"",""value"":[22,23,56],""min"":{min}}}";
+            string expected = $@"{{""messagePact:matcher:type"":""type"",""value"":[22,23,56],""min"":{min}}}";
 
             actual.Should().BeEquivalentTo(expected);
         }
@@ -32,7 +32,7 @@ namespace PactNet.Tests.Matchers
             var matcher = new MinMaxTypeMatcher(example, max: max);
 
             string actual = JsonConvert.SerializeObject(matcher);
-            string expected = $@"{{""pact:matcher:type"":""type"",""value"":[22,23,56],""max"":{max}}}";
+            string expected = $@"{{""messagePact:matcher:type"":""type"",""value"":[22,23,56],""max"":{max}}}";
 
             actual.Should().BeEquivalentTo(expected);
         }
@@ -47,7 +47,7 @@ namespace PactNet.Tests.Matchers
             var matcher = new MinMaxTypeMatcher(example, min, max);
 
             string actual = JsonConvert.SerializeObject(matcher);
-            string expected = $@"{{""pact:matcher:type"":""type"",""value"":[22,23,56],""min"":{min},""max"":{max}}}";
+            string expected = $@"{{""messagePact:matcher:type"":""type"",""value"":[22,23,56],""min"":{min},""max"":{max}}}";
 
             actual.Should().BeEquivalentTo(expected);
         }

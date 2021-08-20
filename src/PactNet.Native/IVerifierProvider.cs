@@ -6,7 +6,7 @@ namespace PactNet.Native
     internal interface IVerifierProvider
     {
         /// <summary>
-        /// Verify the pact from the given args
+        /// Verify the messagePact from the given args
         /// </summary>
         /// <param name="args">Verifier args</param>
         void Verify(string args);

@@ -31,7 +31,7 @@ namespace PactNet
     public interface IPactBuilderV2 : IPactBuilder
     {
         /// <summary>
-        /// Add a new interaction to the pact
+        /// Add a new interaction to the messagePact
         /// </summary>
         /// <param name="description">Interaction description</param>
         /// <returns>Fluent builder</returns>
@@ -44,7 +44,7 @@ namespace PactNet
     public interface IPactBuilderV3 : IPactBuilder
     {
         /// <summary>
-        /// Add a new interaction to the pact
+        /// Add a new interaction to the messagePact
         /// </summary>
         /// <param name="description">Interaction description</param>
         /// <returns>Fluent builder</returns>

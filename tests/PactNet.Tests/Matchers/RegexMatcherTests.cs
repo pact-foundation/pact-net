@@ -16,7 +16,7 @@ namespace PactNet.Tests.Matchers
             var matcher = new RegexMatcher(example, regex);
 
             string actual = JsonConvert.SerializeObject(matcher);
-            string expected = $@"{{""pact:matcher:type"":""regex"",""value"":""{example}"",""regex"":{JsonConvert.SerializeObject(regex)}}}";
+            string expected = $@"{{""messagePact:matcher:type"":""regex"",""value"":""{example}"",""regex"":{JsonConvert.SerializeObject(regex)}}}";
 
             actual.Should().BeEquivalentTo(expected);
         }

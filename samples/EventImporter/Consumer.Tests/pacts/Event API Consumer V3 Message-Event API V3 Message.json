@@ -4,6 +4,49 @@
   },
   "messages": [
     {
+      "contents": {
+        "EventId": "45d80d13-d5a2-48d7-8353-cbb4c0eaabf5",
+        "EventType": "SearchView",
+        "Timestamp": "2014-06-30T01:37:41.0660548"
+      },
+      "description": "dispatch event from the queue",
+      "matchingRules": {
+        "body": {
+          "$.EventId": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "regex",
+                "regex": "(^([0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12})$)"
+              }
+            ]
+          },
+          "$.EventType": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          },
+          "$.Timestamp": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        }
+      },
+      "metadata": {},
+      "providerStates": [
+        {
+          "name": "An event is pushed to the queue"
+        }
+      ]
+    },
+    {
       "contents": [
         {
           "EventId": "45d80d13-d5a2-48d7-8353-cbb4c0eaabf5",
@@ -41,10 +84,7 @@
           }
         }
       },
-      "metadata": {
-        "contentType": "application/json",
-        "key": "valueKey"
-      },
+      "metadata": {},
       "providerStates": [
         {
           "name": "A list of events is pushed to the queue"

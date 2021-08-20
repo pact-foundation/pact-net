@@ -5,7 +5,7 @@ namespace PactNet
     /// <summary>
     /// Pact
     /// </summary>
-    public class Pact : IPactV2, IPactV3
+    public class MessagePact : IMessagePactV3
     {
         /// <summary>
         /// Consumer name
@@ -27,7 +27,7 @@ namespace PactNet
         /// </summary>
         /// <param name="consumer">Name of the consumer</param>
         /// <param name="provider">Name of the provider</param>
-        private Pact(string consumer, string provider)
+        private MessagePact(string consumer, string provider)
             : this(
                 consumer,
                 provider,
@@ -41,7 +41,7 @@ namespace PactNet
         /// <param name="consumer">Name of the consumer</param>
         /// <param name="provider">Name of the provider</param>
         /// <param name="config">Pact config</param>
-        private Pact(string consumer, string provider, PactConfig config)
+        private MessagePact(string consumer, string provider, PactConfig config)
         {
             if (string.IsNullOrWhiteSpace(consumer))
             {
@@ -59,37 +59,14 @@ namespace PactNet
         }
 
         /// <summary>
-        /// Create a new v2 messagePact
-        /// </summary>
-        /// <param name="consumer">Name of the consumer</param>
-        /// <param name="provider">Name of the provider</param>
-        /// <returns>v2 Pact</returns>
-        public static IPactV2 V2(string consumer, string provider)
-        {
-            return new Pact(consumer, provider);
-        }
-
-        /// <summary>
-        /// Create a new v2 messagePact
-        /// </summary>
-        /// <param name="consumer">Name of the consumer</param>
-        /// <param name="provider">Name of the provider</param>
-        /// <param name="config">Pact config</param>
-        /// <returns>v2 Pact</returns>
-        public static IPactV2 V2(string consumer, string provider, PactConfig config)
-        {
-            return new Pact(consumer, provider, config);
-        }
-
-        /// <summary>
         /// Create a new v3 messagePact
         /// </summary>
         /// <param name="consumer">Name of the consumer</param>
         /// <param name="provider">Name of the provider</param>
         /// <returns>v2 Pact</returns>
-        public static IPactV3 V3(string consumer, string provider)
+        public static IMessagePactV3 V3(string consumer, string provider)
         {
-            return new Pact(consumer, provider);
+            return new MessagePact(consumer, provider);
         }
 
         /// <summary>
@@ -99,9 +76,9 @@ namespace PactNet
         /// <param name="provider">Name of the provider</param>
         /// <param name="config">Pact config</param>
         /// <returns>v3 Pact</returns>
-        public static IPactV3 V3(string consumer, string provider, PactConfig config)
+        public static IMessagePactV3 V3(string consumer, string provider, PactConfig config)
         {
-            return new Pact(consumer, provider, config);
+            return new MessagePact(consumer, provider, config);
         }
     }
 }

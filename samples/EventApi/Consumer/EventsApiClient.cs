@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -140,7 +140,7 @@ namespace Consumer
 
         public async Task<Event> GetEventById(Guid id)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, string.Format("/events/{0}", id));
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/events/{id}");
             request.Headers.Add("Accept", "application/json");
 
             var response = await _httpClient.SendAsync(request);
@@ -149,7 +149,8 @@ namespace Consumer
             {
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    return JsonConvert.DeserializeObject<Event>(await response.Content.ReadAsStringAsync(), _jsonSettings);
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    return JsonConvert.DeserializeObject<Event>(responseContent, _jsonSettings);
                 }
 
                 await RaiseResponseError(request, response);
@@ -164,7 +165,7 @@ namespace Consumer
 
         public async Task<IEnumerable<Event>> GetEventsByType(string eventType)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, string.Format("/events?type={0}", eventType));
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/events?type={eventType}");
             request.Headers.Add("Accept", "application/json");
 
             var response = await _httpClient.SendAsync(request);

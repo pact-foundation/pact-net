@@ -82,8 +82,8 @@ namespace PactNet.Native.Tests
             IPactBuilderV2 builder = pact.UsingNativeBackend();
 
             builder.UponReceiving("a sample request")
-                       .Given("a provider state")
-                       .WithRequest(HttpMethod.Post, "/things")
+                   .Given("a provider state")
+                   .WithRequest(HttpMethod.Post, "/things")
                        .WithHeader("X-Request", "request1")
                        .WithHeader("X-Request", "request2")
                        .WithQuery("param", "value1")
@@ -113,14 +113,14 @@ namespace PactNet.Native.Tests
             IPactBuilderV3 builder = pact.UsingNativeBackend();
 
             builder.UponReceiving("a sample request")
-                       .Given("a provider state")
-                       .Given("another provider state")
-                       .Given("a provider state with params", new Dictionary<string, string>
-                       {
-                           ["foo"] = "bar",
-                           ["baz"] = "bash"
-                       })
-                       .WithRequest(HttpMethod.Post, "/things")
+                   .Given("a provider state")
+                   .Given("another provider state")
+                   .Given("a provider state with params", new Dictionary<string, string>
+                   {
+                       ["foo"] = "bar",
+                       ["baz"] = "bash"
+                   })
+                   .WithRequest(HttpMethod.Post, "/things")
                        .WithHeader("X-Request", "request1")
                        .WithHeader("X-Request", "request2")
                        .WithQuery("param", "value1")
@@ -144,10 +144,10 @@ namespace PactNet.Native.Tests
         }
 
         [Fact]
-        public void UsingNativeBackendForMessage_V3RequestResponse_CreatesExpectedPactFile()
+        public void UsingNativeBackend_V3Message_CreatesExpectedPactFile()
         {
-            IPactV3 pact = Pact.V3("PactExtensionsTests-MessageConsumer-V3", "PactExtensionsTests-MessageProvider", config);
-            IPactMessageBuilderV3 builder = pact.UsingNativeBackendForMessage();
+            IMessagePactV3 messagePact = MessagePact.V3("PactExtensionsTests-MessageConsumer-V3", "PactExtensionsTests-MessageProvider", config);
+            IMessagePactBuilderV3 builder = messagePact.UsingNativeBackend();
 
             builder.ExpectsToReceive("a sample request")
                 .Given("a provider state")

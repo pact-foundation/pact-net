@@ -7,10 +7,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.6" />
+    <PackageReference Include="Moq" Version="4.16.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\src\PactNet.AspNetCore\PactNet.AspNetCore.csproj" />
     <ProjectReference Include="..\..\..\src\PactNet.Native\PactNet.Native.csproj" />
     <ProjectReference Include="..\..\..\src\PactNet\PactNet.csproj" />
   </ItemGroup>

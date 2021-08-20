@@ -25,24 +25,24 @@ namespace PactNet
         IPactVerifier HonoursPactWith(string consumerName);
 
         /// <summary>
-        /// Verify a pact file directly
+        /// Verify a messagePact file directly
         /// </summary>
         /// <param name="pactFile">Pact file path</param>
         /// <returns>Fluent builder</returns>
         IPactVerifier FromPactFile(FileInfo pactFile);
 
         /// <summary>
-        /// Verify a pact from a URI
+        /// Verify a messagePact from a URI
         /// </summary>
         /// <param name="pactUri">Pact file URI</param>
         /// <returns>Fluent builder</returns>
         IPactVerifier FromPactUri(Uri pactUri);
 
         /// <summary>
-        /// Use the pact broker to retrieve pact files
+        /// Use the messagePact broker to retrieve messagePact files
         /// </summary>
         /// <param name="brokerBaseUri">Base URI for the broker</param>
-        /// <param name="uriOptions">Options for calling the pact broker</param>
+        /// <param name="uriOptions">Options for calling the messagePact broker</param>
         /// <param name="enablePending">Enable pending pacts?</param>
         /// <param name="consumerVersionTags">Consumer tag versions to retrieve</param>
         /// <param name="includeWipPactsSince">Include WIP pacts since the given filter</param>
@@ -69,7 +69,7 @@ namespace PactNet
         IPactVerifier WithFilter(string description = null, string providerState = null);
 
         /// <summary>
-        /// Publish results to the pact broker
+        /// Publish results to the messagePact broker
         /// </summary>
         /// <param name="providerVersion">Provider version</param>
         /// <param name="providerTags">Optional tags to add to the verification</param>

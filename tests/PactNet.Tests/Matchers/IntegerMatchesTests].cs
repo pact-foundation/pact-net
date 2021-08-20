@@ -15,7 +15,7 @@ namespace PactNet.Tests.Matchers
             var matcher = new IntegerMatcher(example);
 
             string actual = JsonConvert.SerializeObject(matcher);
-            string expected = $@"{{""pact:matcher:type"":""integer"",""value"":{example}}}";
+            string expected = $@"{{""messagePact:matcher:type"":""integer"",""value"":{example}}}";
 
             actual.Should().BeEquivalentTo(expected);
         }

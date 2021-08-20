@@ -31,7 +31,7 @@ namespace PactNet.Remote
         }
 
         /// <summary>
-        /// Add a new interaction to the pact
+        /// Add a new interaction to the messagePact
         /// </summary>
         /// <param name="description">Interaction description</param>
         /// <returns>Fluent builder</returns>
@@ -41,7 +41,7 @@ namespace PactNet.Remote
         }
 
         /// <summary>
-        /// Add a new interaction to the pact
+        /// Add a new interaction to the messagePact
         /// </summary>
         /// <param name="description">Interaction description</param>
         /// <returns>Fluent builder</returns>

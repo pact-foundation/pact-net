@@ -68,9 +68,9 @@ namespace PactNet.Native.Tests
         [Fact]
         public void FromPactUri_WhenCalled_AddsUrlArg()
         {
-            this.verifier.FromPactUri(new Uri("http://example.org/pact/file.json"));
+            this.verifier.FromPactUri(new Uri("http://example.org/messagePact/file.json"));
 
-            this.CheckArgs("--url", "http://example.org/pact/file.json");
+            this.CheckArgs("--url", "http://example.org/messagePact/file.json");
         }
 
         [Fact]

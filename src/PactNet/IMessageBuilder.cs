@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace PactNet
 {
     /// <summary>
-    /// Build up a mock message for a v3 message pact
+    /// Build up a mock message for a v3 message messagePact
     /// </summary>
     public interface IMessageBuilderV3
     {

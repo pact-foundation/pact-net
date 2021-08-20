@@ -22,7 +22,7 @@ namespace PactNet.Native.Tests
             _verifier.ServiceProvider("myProvider", new Uri("http://localhost:4444"));
 
             _verifier.VerifierArgs.Should().Contain("--base-path");
-            _verifier.VerifierArgs.Should().Contain("/pact-messages");
+            _verifier.VerifierArgs.Should().Contain("/messagePact-messages");
         }
 
         [Fact]
@@ -33,7 +33,7 @@ namespace PactNet.Native.Tests
             _verifier.ServiceProvider("myProvider", new Uri($"http://localhost:4444{relativePath}"));
 
             _verifier.VerifierArgs.Should().Contain("--base-path");
-            _verifier.VerifierArgs.Should().Contain($"{relativePath}/pact-messages");
+            _verifier.VerifierArgs.Should().Contain($"{relativePath}/messagePact-messages");
         }
 
         public class FakeMessageVerifier : MessagePactVerifier
