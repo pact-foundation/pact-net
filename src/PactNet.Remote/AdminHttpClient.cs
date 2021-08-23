@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using PactNet.Exceptions;
 using PactNet.Remote.Configuration.Json;
 using PactNet.Remote.Mappers;
 using PactNet.Remote.Models;
