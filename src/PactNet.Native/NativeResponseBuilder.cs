@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using Newtonsoft.Json;
+using PactNet.Matchers;
 using PactNet.Native.Interop;
 
 namespace PactNet.Native
@@ -54,8 +55,17 @@ namespace PactNet.Native
         /// <param name="key">Header key</param>
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
-        IResponseBuilderV2 IResponseBuilderV2.WithHeader(string key, dynamic value)
+        IResponseBuilderV2 IResponseBuilderV2.WithHeader(string key, string value)
             => this.WithHeader(key, value);
+
+        /// <summary>
+        /// Add a response header
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="valueMatcher">Header value matcher</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV2 IResponseBuilderV2.WithHeader(string key, IMatcher valueMatcher)
+            => this.WithHeader(key, valueMatcher);
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -100,8 +110,17 @@ namespace PactNet.Native
         /// <param name="key">Header key</param>
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
-        IResponseBuilderV3 IResponseBuilderV3.WithHeader(string key, dynamic value)
+        IResponseBuilderV3 IResponseBuilderV3.WithHeader(string key, string value)
             => this.WithHeader(key, value);
+
+        /// <summary>
+        /// Add a response header
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="valueMatcher">Header value matcher</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV3 IResponseBuilderV3.WithHeader(string key, IMatcher valueMatcher)
+            => this.WithHeader(key, valueMatcher);
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -147,31 +166,34 @@ namespace PactNet.Native
         }
 
         /// <summary>
-        /// Add a request header
+        /// Add a response header
         /// </summary>
         /// <param name="key">Header key</param>
-        /// <param name="value">Header value</param>
+        /// <param name="value">Header value matcher</param>
         /// <returns>Fluent builder</returns>
-        internal NativeResponseBuilder WithHeader(string key, dynamic value)
-            => WithHeader(key, value, this.defaultSettings);
+        internal NativeResponseBuilder WithHeader(string key, string value)
+        {
+            uint index = this.headerCounts.ContainsKey(key) ? this.headerCounts[key] + 1 : 0;
+            this.headerCounts[key] = index;
+
+            this.server.WithResponseHeader(this.interaction, key, value, index);
+
+            return this;
+        }
 
         /// <summary>
         /// Add a response header
         /// </summary>
         /// <param name="key">Header key</param>
-        /// <param name="value">Header value</param>
-        /// <param name="settings">Custom JSON serializer settings</param>
+        /// <param name="valueMatcher">Header value matcher</param>
         /// <returns>Fluent builder</returns>
-        internal NativeResponseBuilder WithHeader(string key, dynamic value, JsonSerializerSettings settings)
+        internal NativeResponseBuilder WithHeader(string key, IMatcher valueMatcher)
         {
             uint index = this.headerCounts.ContainsKey(key) ? this.headerCounts[key] + 1 : 0;
             this.headerCounts[key] = index;
 
-            var serialised = value;
-            if (value is Matchers.IMatcher)
-            {
-                serialised = JsonConvert.SerializeObject(value, settings);
-            }
+            var serialised = JsonConvert.SerializeObject(valueMatcher, this.defaultSettings);
+
             this.server.WithResponseHeader(this.interaction, key, serialised, index);
 
             return this;

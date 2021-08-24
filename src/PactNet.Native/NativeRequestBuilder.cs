@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using Newtonsoft.Json;
+using PactNet.Matchers;
 using PactNet.Native.Interop;
 
 namespace PactNet.Native
@@ -78,8 +79,17 @@ namespace PactNet.Native
         /// <param name="key">Header key</param>
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV2 IRequestBuilderV2.WithHeader(string key, dynamic value)
-            => this.WithHeader(key, value, this.defaultSettings);
+        IRequestBuilderV2 IRequestBuilderV2.WithHeader(string key, string value)
+            => this.WithHeader(key, value);
+
+        /// <summary>
+        /// Add a request header
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="valueMatcher">Header value matcher</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV2 IRequestBuilderV2.WithHeader(string key, IMatcher valueMatcher)
+            => this.WithHeader(key, valueMatcher);
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -160,8 +170,17 @@ namespace PactNet.Native
         /// <param name="key">Header key</param>
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV3 IRequestBuilderV3.WithHeader(string key, dynamic value)
-            => this.WithHeader(key, value, this.defaultSettings);
+        IRequestBuilderV3 IRequestBuilderV3.WithHeader(string key, string value)
+            => this.WithHeader(key, value);
+
+        /// <summary>
+        /// Add a request header
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="valueMatcher">Header value matcher</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 IRequestBuilderV3.WithHeader(string key, IMatcher valueMatcher)
+            => this.WithHeader(key, valueMatcher);
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -261,26 +280,29 @@ namespace PactNet.Native
         /// <param name="key">Header key</param>
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
-        internal NativeRequestBuilder WithHeader(string key, dynamic value)
-            => WithHeader(key, value, this.defaultSettings);
+        internal NativeRequestBuilder WithHeader(string key, string value)
+        {
+            uint index = this.headerCounts.ContainsKey(key) ? this.headerCounts[key] + 1 : 0;
+            this.headerCounts[key] = index;
+
+            this.server.WithRequestHeader(this.interaction, key, value, index);
+
+            return this;
+        }
 
         /// <summary>
         /// Add a request header
         /// </summary>
         /// <param name="key">Header key</param>
-        /// <param name="value">Header value</param>
-        /// <param name="settings">Custom JSON serializer settings</param>
+        /// <param name="valueMatcher">Header value matcher</param>
         /// <returns>Fluent builder</returns>
-        internal NativeRequestBuilder WithHeader(string key, dynamic value, JsonSerializerSettings settings)
+        internal NativeRequestBuilder WithHeader(string key, IMatcher valueMatcher)
         {
             uint index = this.headerCounts.ContainsKey(key) ? this.headerCounts[key] + 1 : 0;
             this.headerCounts[key] = index;
 
-            var serialised = value;
-            if (value is Matchers.IMatcher)
-            {
-                serialised = JsonConvert.SerializeObject(value, settings);
-            }
+            var serialised = JsonConvert.SerializeObject(valueMatcher, this.defaultSettings);
+
             this.server.WithRequestHeader(this.interaction, key, serialised, index);
 
             return this;
