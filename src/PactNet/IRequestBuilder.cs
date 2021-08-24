@@ -47,7 +47,7 @@ namespace PactNet
         /// <param name="key">Header key</param>
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV2 WithHeader(string key, string value);
+        IRequestBuilderV2 WithHeader(string key, dynamic value);
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -122,7 +122,7 @@ namespace PactNet
         /// <param name="key">Header key</param>
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV3 WithHeader(string key, string value);
+        IRequestBuilderV3 WithHeader(string key, dynamic value);
 
         /// <summary>
         /// Set a body which is serialised as JSON

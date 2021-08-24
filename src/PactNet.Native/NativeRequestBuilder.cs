@@ -78,8 +78,8 @@ namespace PactNet.Native
         /// <param name="key">Header key</param>
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV2 IRequestBuilderV2.WithHeader(string key, string value)
-            => this.WithHeader(key, value);
+        IRequestBuilderV2 IRequestBuilderV2.WithHeader(string key, dynamic value)
+            => this.WithHeader(key, value, this.defaultSettings);
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -160,8 +160,8 @@ namespace PactNet.Native
         /// <param name="key">Header key</param>
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV3 IRequestBuilderV3.WithHeader(string key, string value)
-            => this.WithHeader(key, value);
+        IRequestBuilderV3 IRequestBuilderV3.WithHeader(string key, dynamic value)
+            => this.WithHeader(key, value, this.defaultSettings);
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -261,12 +261,28 @@ namespace PactNet.Native
         /// <param name="key">Header key</param>
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
-        internal NativeRequestBuilder WithHeader(string key, string value)
+        internal NativeRequestBuilder WithHeader(string key, dynamic value)
+            => WithHeader(key, value, this.defaultSettings);
+
+        /// <summary>
+        /// Add a request header
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="value">Header value</param>
+        /// <param name="settings">Custom JSON serializer settings</param>
+        /// <returns>Fluent builder</returns>
+        internal NativeRequestBuilder WithHeader(string key, dynamic value, JsonSerializerSettings settings)
         {
             uint index = this.headerCounts.ContainsKey(key) ? this.headerCounts[key] + 1 : 0;
             this.headerCounts[key] = index;
 
-            this.server.WithRequestHeader(this.interaction, key, value, index);
+            var serialised = value;
+            if (value is Matchers.IMatcher)
+            {
+                serialised = JsonConvert.SerializeObject(value, settings);
+            }
+            this.server.WithRequestHeader(this.interaction, key, serialised, index);
+
             return this;
         }
 

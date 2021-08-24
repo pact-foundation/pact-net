@@ -60,7 +60,7 @@ namespace PactNet.Remote
         /// <param name="key">Header key</param>
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV2 IRequestBuilderV2.WithHeader(string key, string value)
+        IRequestBuilderV2 IRequestBuilderV2.WithHeader(string key, dynamic value)
         {
             throw new NotImplementedException();
         }
@@ -156,7 +156,7 @@ namespace PactNet.Remote
         /// <param name="key">Header key</param>
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV3 IRequestBuilderV3.WithHeader(string key, string value)
+        IRequestBuilderV3 IRequestBuilderV3.WithHeader(string key, dynamic value)
         {
             throw new NotImplementedException();
         }

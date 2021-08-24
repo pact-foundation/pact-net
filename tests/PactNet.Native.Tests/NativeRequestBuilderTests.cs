@@ -94,6 +94,14 @@ namespace PactNet.Native.Tests
         }
 
         [Fact]
+        public void WithHeader_WhenCalledWithMatcher_AddsSerialisedHeaderParam()
+        {
+            this.builder.WithHeader("name", PactNet.Matchers.Match.Regex("header", "^header$"));
+
+            this.mockServer.Verify(s => s.WithRequestHeader(this.handle, "name", "{\"pact:matcher:type\":\"regex\",\"value\":\"header\",\"regex\":\"^header$\"}", 0));
+        }
+
+        [Fact]
         public void WithHeader_WhenCalled_AddsHeaderParam()
         {
             this.builder.WithHeader("name", "value");
