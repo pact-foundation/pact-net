@@ -28,7 +28,7 @@ namespace PactNet
         /// <param name="key">Header key</param>
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
-        IResponseBuilderV2 WithHeader(string key, string value);
+        IResponseBuilderV2 WithHeader(string key, dynamic value);
 
         /// <summary>
         /// Set a response body which is serialised as JSON
@@ -71,7 +71,7 @@ namespace PactNet
         /// <param name="key">Header key</param>
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
-        IResponseBuilderV3 WithHeader(string key, string value);
+        IResponseBuilderV3 WithHeader(string key, dynamic value);
 
         /// <summary>
         /// Set a response body which is serialised as JSON

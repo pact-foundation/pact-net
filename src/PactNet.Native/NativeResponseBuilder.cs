@@ -54,7 +54,7 @@ namespace PactNet.Native
         /// <param name="key">Header key</param>
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
-        IResponseBuilderV2 IResponseBuilderV2.WithHeader(string key, string value)
+        IResponseBuilderV2 IResponseBuilderV2.WithHeader(string key, dynamic value)
             => this.WithHeader(key, value);
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace PactNet.Native
         /// <param name="key">Header key</param>
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
-        IResponseBuilderV3 IResponseBuilderV3.WithHeader(string key, string value)
+        IResponseBuilderV3 IResponseBuilderV3.WithHeader(string key, dynamic value)
             => this.WithHeader(key, value);
 
         /// <summary>
@@ -147,17 +147,33 @@ namespace PactNet.Native
         }
 
         /// <summary>
-        /// Add a response header
+        /// Add a request header
         /// </summary>
         /// <param name="key">Header key</param>
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
-        internal NativeResponseBuilder WithHeader(string key, string value)
+        internal NativeResponseBuilder WithHeader(string key, dynamic value)
+            => WithHeader(key, value, this.defaultSettings);
+
+        /// <summary>
+        /// Add a response header
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="value">Header value</param>
+        /// <param name="settings">Custom JSON serializer settings</param>
+        /// <returns>Fluent builder</returns>
+        internal NativeResponseBuilder WithHeader(string key, dynamic value, JsonSerializerSettings settings)
         {
             uint index = this.headerCounts.ContainsKey(key) ? this.headerCounts[key] + 1 : 0;
             this.headerCounts[key] = index;
 
-            this.server.WithResponseHeader(this.interaction, key, value, index);
+            var serialised = value;
+            if (value is Matchers.IMatcher)
+            {
+                serialised = JsonConvert.SerializeObject(value, settings);
+            }
+            this.server.WithResponseHeader(this.interaction, key, serialised, index);
+
             return this;
         }
 
