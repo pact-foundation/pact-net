@@ -177,10 +177,10 @@ namespace PactNet.Native
         /// Add a request header matcher
         /// </summary>
         /// <param name="key">Header key</param>
-        /// <param name="valueMatcher">Header value matcher</param>
+        /// <param name="matcher">Header value matcher</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV3 IRequestBuilderV3.WithHeader(string key, IMatcher valueMatcher)
-            => this.WithHeader(key, valueMatcher);
+        IRequestBuilderV3 IRequestBuilderV3.WithHeader(string key, IMatcher matcher)
+            => this.WithHeader(key, matcher);
 
         /// <summary>
         /// Set a body which is serialised as JSON
