@@ -59,13 +59,13 @@ namespace PactNet.Native
             => this.WithHeader(key, value);
 
         /// <summary>
-        /// Add a response header
+        /// Add a response header matcher
         /// </summary>
         /// <param name="key">Header key</param>
-        /// <param name="valueMatcher">Header value matcher</param>
+        /// <param name="matcher">Header value matcher</param>
         /// <returns>Fluent builder</returns>
-        IResponseBuilderV2 IResponseBuilderV2.WithHeader(string key, IMatcher valueMatcher)
-            => this.WithHeader(key, valueMatcher);
+        IResponseBuilderV2 IResponseBuilderV2.WithHeader(string key, IMatcher matcher)
+            => this.WithHeader(key, matcher);
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -114,13 +114,13 @@ namespace PactNet.Native
             => this.WithHeader(key, value);
 
         /// <summary>
-        /// Add a response header
+        /// Add a response header matcher
         /// </summary>
         /// <param name="key">Header key</param>
-        /// <param name="valueMatcher">Header value matcher</param>
+        /// <param name="matcher">Header value matcher</param>
         /// <returns>Fluent builder</returns>
-        IResponseBuilderV3 IResponseBuilderV3.WithHeader(string key, IMatcher valueMatcher)
-            => this.WithHeader(key, valueMatcher);
+        IResponseBuilderV3 IResponseBuilderV3.WithHeader(string key, IMatcher matcher)
+            => this.WithHeader(key, matcher);
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -169,7 +169,7 @@ namespace PactNet.Native
         /// Add a response header
         /// </summary>
         /// <param name="key">Header key</param>
-        /// <param name="value">Header value matcher</param>
+        /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
         internal NativeResponseBuilder WithHeader(string key, string value)
         {
@@ -185,18 +185,13 @@ namespace PactNet.Native
         /// Add a response header
         /// </summary>
         /// <param name="key">Header key</param>
-        /// <param name="valueMatcher">Header value matcher</param>
+        /// <param name="matcher">Header value matcher</param>
         /// <returns>Fluent builder</returns>
-        internal NativeResponseBuilder WithHeader(string key, IMatcher valueMatcher)
+        internal NativeResponseBuilder WithHeader(string key, IMatcher matcher)
         {
-            uint index = this.headerCounts.ContainsKey(key) ? this.headerCounts[key] + 1 : 0;
-            this.headerCounts[key] = index;
+            var serialised = JsonConvert.SerializeObject(matcher, this.defaultSettings);
 
-            var serialised = JsonConvert.SerializeObject(valueMatcher, this.defaultSettings);
-
-            this.server.WithResponseHeader(this.interaction, key, serialised, index);
-
-            return this;
+            return this.WithHeader(key, serialised);
         }
 
         /// <summary>

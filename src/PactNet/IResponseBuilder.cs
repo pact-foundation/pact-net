@@ -35,9 +35,9 @@ namespace PactNet
         /// Add a response header
         /// </summary>
         /// <param name="key">Header key</param>
-        /// <param name="valueMatcher">Header value matcher</param>
+        /// <param name="matcher">Header value matcher</param>
         /// <returns>Fluent builder</returns>
-        IResponseBuilderV2 WithHeader(string key, IMatcher valueMatcher);
+        IResponseBuilderV2 WithHeader(string key, IMatcher matcher);
 
         /// <summary>
         /// Set a response body which is serialised as JSON
@@ -86,9 +86,9 @@ namespace PactNet
         /// Add a response header
         /// </summary>
         /// <param name="key">Header key</param>
-        /// <param name="valueMatcher">Header value matcher</param>
+        /// <param name="matcher">Header value matcher</param>
         /// <returns>Fluent builder</returns>
-        IResponseBuilderV3 WithHeader(string key, IMatcher valueMatcher);
+        IResponseBuilderV3 WithHeader(string key, IMatcher matcher);
 
         /// <summary>
         /// Set a response body which is serialised as JSON

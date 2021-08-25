@@ -83,13 +83,13 @@ namespace PactNet.Native
             => this.WithHeader(key, value);
 
         /// <summary>
-        /// Add a request header
+        /// Add a request header matcher
         /// </summary>
         /// <param name="key">Header key</param>
-        /// <param name="valueMatcher">Header value matcher</param>
+        /// <param name="matcher">Header value matcher</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV2 IRequestBuilderV2.WithHeader(string key, IMatcher valueMatcher)
-            => this.WithHeader(key, valueMatcher);
+        IRequestBuilderV2 IRequestBuilderV2.WithHeader(string key, IMatcher matcher)
+            => this.WithHeader(key, matcher);
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -174,7 +174,7 @@ namespace PactNet.Native
             => this.WithHeader(key, value);
 
         /// <summary>
-        /// Add a request header
+        /// Add a request header matcher
         /// </summary>
         /// <param name="key">Header key</param>
         /// <param name="valueMatcher">Header value matcher</param>
@@ -291,21 +291,16 @@ namespace PactNet.Native
         }
 
         /// <summary>
-        /// Add a request header
+        /// Add a request header matcher
         /// </summary>
         /// <param name="key">Header key</param>
-        /// <param name="valueMatcher">Header value matcher</param>
+        /// <param name="matcher">Header value matcher</param>
         /// <returns>Fluent builder</returns>
-        internal NativeRequestBuilder WithHeader(string key, IMatcher valueMatcher)
+        internal NativeRequestBuilder WithHeader(string key, IMatcher matcher)
         {
-            uint index = this.headerCounts.ContainsKey(key) ? this.headerCounts[key] + 1 : 0;
-            this.headerCounts[key] = index;
+            var serialised = JsonConvert.SerializeObject(matcher, this.defaultSettings);
 
-            var serialised = JsonConvert.SerializeObject(valueMatcher, this.defaultSettings);
-
-            this.server.WithRequestHeader(this.interaction, key, serialised, index);
-
-            return this;
+            return this.WithHeader(key, serialised);
         }
 
         /// <summary>

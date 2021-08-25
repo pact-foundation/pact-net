@@ -54,9 +54,9 @@ namespace PactNet
         /// Add a request header
         /// </summary>
         /// <param name="key">Header key</param>
-        /// <param name="valueBuilder">Header value matcher</param>
+        /// <param name="matcher">Header value matcher</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV2 WithHeader(string key, IMatcher valueBuilder);
+        IRequestBuilderV2 WithHeader(string key, IMatcher matcher);
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -134,12 +134,12 @@ namespace PactNet
         IRequestBuilderV3 WithHeader(string key, string value);
 
         /// <summary>
-        /// Add a request header
+        /// Add a request header matcher
         /// </summary>
         /// <param name="key">Header key</param>
-        /// <param name="valueMatcher">Header value matcher</param>
+        /// <param name="matcher">Header value matcher</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV3 WithHeader(string key, IMatcher valueMatcher);
+        IRequestBuilderV3 WithHeader(string key, IMatcher matcher);
 
         /// <summary>
         /// Set a body which is serialised as JSON
