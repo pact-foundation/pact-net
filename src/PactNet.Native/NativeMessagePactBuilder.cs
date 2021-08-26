@@ -21,8 +21,8 @@ namespace PactNet.Native
         /// Initialises a new instance of the <see cref="NativeMessagePactBuilder"/> class.
         /// </summary>
         /// <param name="server">Mock server</param>
-        /// <param name="pact">the messagePact handle</param>
-        /// <param name="config">the messagePact configuration</param>
+        /// <param name="pact">the message pact handle</param>
+        /// <param name="config">the message pact configuration</param>
         internal NativeMessagePactBuilder(IMessageMockServer server, MessagePactHandle pact, PactConfig config)
         {
             this.pact = pact;
@@ -45,13 +45,13 @@ namespace PactNet.Native
         #region Internal Methods
 
         /// <summary>
-        /// Add a new message to the messagePact
+        /// Add a new message to the message pact
         /// </summary>
         /// <param name="description">Message description</param>
         /// <returns>Fluent builder</returns>
         internal IMessageBuilderV3 ExpectsToReceive(string description)
         {
-            this.message = this.server.NewMessage(pact, "default message");
+            this.message = this.server.NewMessage(pact, description);
 
             this.server.ExpectsToReceive(this.message, description);
 
@@ -59,7 +59,7 @@ namespace PactNet.Native
         }
 
         /// <summary>
-        /// Add a new metadata to the messagePact
+        /// Add a new metadata to the message pact
         /// </summary>
         /// <param name="namespace">the parent configuration section</param>
         /// <param name="name">the metadata field value</param>
@@ -73,7 +73,7 @@ namespace PactNet.Native
         }
 
         /// <summary>
-        /// Verify a message is read and handled correctly and write the messagePact
+        /// Verify a message is read and handled correctly and write the message pact
         /// </summary>
         /// <param name="handler">The method using the message</param>
         public void Verify<T>(Action<T> handler)
@@ -96,7 +96,7 @@ namespace PactNet.Native
         }
 
         /// <summary>
-        /// Verify a message is read and handled correctly and write the messagePact
+        /// Verify a message is read and handled correctly and write the message pact
         /// </summary>
         /// <param name="handler">The method using the message</param>
         public async Task VerifyAsync<T>(Func<T, Task> handler)

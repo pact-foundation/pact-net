@@ -53,13 +53,13 @@ namespace PactNet
                 throw new ArgumentException("Please provide a valid provider name", nameof(provider));
             }
 
-            Consumer = consumer;
-            Provider = provider;
-            Config = config;
+            this.Consumer = consumer;
+            this.Provider = provider;
+            this.Config = config;
         }
 
         /// <summary>
-        /// Create a new v2 messagePact
+        /// Create a new v2 pact
         /// </summary>
         /// <param name="consumer">Name of the consumer</param>
         /// <param name="provider">Name of the provider</param>
@@ -70,7 +70,7 @@ namespace PactNet
         }
 
         /// <summary>
-        /// Create a new v2 messagePact
+        /// Create a new v2 pact
         /// </summary>
         /// <param name="consumer">Name of the consumer</param>
         /// <param name="provider">Name of the provider</param>
@@ -82,7 +82,7 @@ namespace PactNet
         }
 
         /// <summary>
-        /// Create a new v3 messagePact
+        /// Create a new v3 pact
         /// </summary>
         /// <param name="consumer">Name of the consumer</param>
         /// <param name="provider">Name of the provider</param>
@@ -93,7 +93,7 @@ namespace PactNet
         }
 
         /// <summary>
-        /// Create a new v3 messagePact
+        /// Create a new v3 pact
         /// </summary>
         /// <param name="consumer">Name of the consumer</param>
         /// <param name="provider">Name of the provider</param>

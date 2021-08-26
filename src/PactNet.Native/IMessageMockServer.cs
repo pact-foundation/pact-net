@@ -8,26 +8,18 @@ namespace PactNet.Native
     internal interface IMessageMockServer
     {
         /// <summary>
-        /// Set the messagePact specification version
+        /// Write the message pact message file
         /// </summary>
-        /// <param name="pact">Pact handle</param>
-        /// <param name="version">Specification version</param>
-        /// <returns>Success</returns>
-        bool WithSpecification(PactHandle pact, PactSpecification version);
-
-        /// <summary>
-        /// Write the messagePact message file
-        /// </summary>
-        /// <param name="pact">the messagePact</param>
+        /// <param name="pact">the message pact</param>
         /// <param name="directory">the output folder</param>
         /// <param name="overwrite">overwrite</param>
         /// <returns></returns>
         void WriteMessagePactFile(MessagePactHandle pact, string directory, bool overwrite);
 
         /// <summary>
-        /// Add metadata to the message messagePact
+        /// Add metadata to the message message pact
         /// </summary>
-        /// <param name="pact">the messagePact message handle</param>
+        /// <param name="pact">the message pact message handle</param>
         /// <param name="namespace">the namespace</param>
         /// <param name="name">the name of the parameter</param>
         /// <param name="value">the value of the parameter</param>
@@ -35,7 +27,7 @@ namespace PactNet.Native
         bool WithMessagePactMetadata(MessagePactHandle pact, string @namespace, string name, string value);
 
         /// <summary>
-        /// Create a new message messagePact
+        /// Create a new message pact
         /// </summary>
         /// <param name="consumerName">Consumer name</param>
         /// <param name="providerName">Provider name</param>
@@ -43,7 +35,7 @@ namespace PactNet.Native
         MessagePactHandle NewMessagePact(string consumerName, string providerName);
 
         /// <summary>
-        /// Create a new message on the given messagePact
+        /// Create a new message on the given message pact
         /// </summary>
         /// <param name="pact">Pact handle</param>
         /// <param name="description">Interaction description</param>

@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 
 namespace PactNet
 {
+    /// <summary>
+    /// Message pact Builder
+    /// </summary>
     public interface IMessagePactBuilder
     {
         /// <summary>
@@ -19,12 +22,12 @@ namespace PactNet
     }
 
     /// <summary>
-    /// Build up a mock message for a v3 messagePact
+    /// Message pact v3 Builder
     /// </summary>
     public interface IMessagePactBuilderV3 : IMessagePactBuilder
     {
         /// <summary>
-        /// Add a new message to the messagePact
+        /// Add a new message to the pact
         /// </summary>
         /// <param name="description">Message description</param>
         /// <returns>Fluent builder</returns>
@@ -38,8 +41,5 @@ namespace PactNet
         /// <param name="value">the metadata field value</param>
         /// <returns>Fluent builder</returns>
         IMessagePactBuilderV3 WithPactMetadata(string @namespace, string name, string value);
-        //INTEROP =>
-        //bool WithMessagePactMetadata(MessagePactHandle pact, string @namespace, string name, string value);
-
     }
 }

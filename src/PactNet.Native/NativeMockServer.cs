@@ -50,10 +50,8 @@ namespace PactNet.Native
         public bool CleanupMockServer(int mockServerPort)
             => NativeInterop.CleanupMockServer(mockServerPort);
 
-        public void WritePactFile(int mockServerPort, string directory, bool overwrite)
-            => VerifyResult(() => NativeInterop.WritePactFile(mockServerPort, directory, overwrite));
-
         #region Http Interaction Model Support
+
         public PactHandle NewPact(string consumerName, string providerName)
             => NativeInterop.NewPact(consumerName, providerName);
 
@@ -90,12 +88,25 @@ namespace PactNet.Native
         public bool WithResponseBody(InteractionHandle interaction, string contentType, string body)
             => NativeInterop.WithBody(interaction, InteractionPart.Response, contentType, body);
 
+        public void WritePactFile(int mockServerPort, string directory, bool overwrite)
+        {
+            var result = NativeInterop.WritePactFile(mockServerPort, directory, overwrite);
+
+            if (result != 0)
+            {
+                throw result switch
+                {
+                    1 => new InvalidOperationException("The pact reference library panicked"),
+                    2 => new InvalidOperationException("The pact file could not be written"),
+                    3 => new InvalidOperationException("A mock server with the provided port was not found"),
+                    _ => new InvalidOperationException($"Unknown error from backend: {result}")
+                };
+            }
+        }
+
         #endregion Http Interaction Model Support
 
         #region Message Interaction Model Support
-
-        public void WriteMessagePactFile(MessagePactHandle pact, string directory, bool overwrite)
-            => VerifyResult(() => NativeInterop.WriteMessagePactFile(pact, directory, overwrite));
 
         public bool WithMessagePactMetadata(MessagePactHandle pact, string @namespace, string name, string value)
             => NativeInterop.WithMessagePactMetadata(pact, @namespace, name, value);
@@ -125,24 +136,21 @@ namespace PactNet.Native
             var allocatedString = Marshal.PtrToStringAnsi(NativeInterop.MessageReify(message));
             return allocatedString;
         }
-
-
-        #endregion Message Interaction Model Support
-
-        private void VerifyResult(Func<int> func)
+        public void WriteMessagePactFile(MessagePactHandle pact, string directory, bool overwrite)
         {
-            var result = func.Invoke();
+            var result = NativeInterop.WriteMessagePactFile(pact, directory, overwrite);
 
             if (result != 0)
             {
                 throw result switch
                 {
-                    1 => new InvalidOperationException("The pact reference library panicked"),
-                    2 => new InvalidOperationException("The pact file could not be written"),
-                    3 => new InvalidOperationException("A mock server with the provided port was not found"),
+                    1 => new InvalidOperationException("The pact file was not able to be written"),
+                    2 => new InvalidOperationException("The message pact for the given handle was not found"),
                     _ => new InvalidOperationException($"Unknown error from backend: {result}")
-                    };
+                };
             }
         }
+
+        #endregion Message Interaction Model Support
     }
 }

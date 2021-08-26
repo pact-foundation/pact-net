@@ -28,20 +28,5 @@ namespace Consumer
                 throw new ProcessEventException();
             }
         }
-
-        public void DispatchEvent(Event eventSingle)
-        {
-            if (eventSingle == null)
-            {
-                throw new ArgumentNullException(nameof(eventSingle));
-            }
-
-            var operationSuccessful = _eventHandler.ProcessEvent(eventSingle);
-
-            if (!operationSuccessful)
-            {
-                throw new ProcessEventException();
-            }
-        }
     }
 }
