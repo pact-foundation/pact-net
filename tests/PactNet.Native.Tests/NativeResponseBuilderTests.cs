@@ -59,7 +59,7 @@ namespace PactNet.Native.Tests
         }
 
         [Fact]
-        public void WithHeader_Matcher_RepeatedHeader_SetsIndex()
+        public void WithHeader_RepeatedMatcherHeader_SetsIndex()
         {
             var expectedValue1 = "{\"pact:matcher:type\":\"regex\",\"value\":\"value1\",\"regex\":\"^value1$\"}";
             var expectedValue2 = "{\"pact:matcher:type\":\"type\",\"value\":\"value2\"}";
@@ -83,7 +83,7 @@ namespace PactNet.Native.Tests
         }
 
         [Fact]
-        public void WithHeader_String_RepeatedHeader_SetsIndex()
+        public void WithHeader_RepeatedStringHeader_SetsIndex()
         {
             this.builder.WithHeader("name", "value1");
             this.builder.WithHeader("name", "value2");
