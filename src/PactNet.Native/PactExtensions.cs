@@ -9,7 +9,7 @@ namespace PactNet.Native
     public static class PactExtensions
     {
         /// <summary>
-        /// Establish a new messagePact using the native backend
+        /// Establish a new pact using the native backend
         /// </summary>
         /// <param name="pact">Pact details</param>
         /// <param name="port">Port for the mock server. If null, one will be assigned automatically</param>
@@ -30,7 +30,7 @@ namespace PactNet.Native
         }
 
         /// <summary>
-        /// Establish a new messagePact using the native backend
+        /// Establish a new pact using the native backend
         /// </summary>
         /// <param name="pact">Pact details</param>
         /// <param name="port">Port for the mock server. If null, one will be assigned automatically</param>
