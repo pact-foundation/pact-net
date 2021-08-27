@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using Newtonsoft.Json;
+using PactNet.Matchers;
 
 namespace PactNet.Remote
 {
@@ -61,6 +62,17 @@ namespace PactNet.Remote
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
         IRequestBuilderV2 IRequestBuilderV2.WithHeader(string key, string value)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Add a request header
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="matcher">Header value matcher</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV2 IRequestBuilderV2.WithHeader(string key, IMatcher matcher)
         {
             throw new NotImplementedException();
         }
@@ -157,6 +169,17 @@ namespace PactNet.Remote
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
         IRequestBuilderV3 IRequestBuilderV3.WithHeader(string key, string value)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Add a request header
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="matcher">Header value matcher</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 IRequestBuilderV3.WithHeader(string key, IMatcher matcher)
         {
             throw new NotImplementedException();
         }
