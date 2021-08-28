@@ -56,7 +56,7 @@ namespace Consumer.Tests
                         }
                     }, 1));
 
-            this.messagePact.Verify<List<Event>>(events => worker.ProcessMessages(events));
+            this.messagePact.VerifyAsync<List<Event>>(async events => await worker.ProcessMessages(events));
         }
     }
 }

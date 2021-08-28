@@ -112,49 +112,7 @@ namespace PactNet.Native.Tests
                 .Should().Throw<PactMessageConsumerVerificationException>();
         }
 
-        [Fact]
-        public void VerifyAsync_Should_Write_Pact_File()
-        {
-            //Arrange
-            var content = new MessageModel { Id = 1, Description = "description" };
-            this.messagePact
-                .ExpectsToReceive("a description")
-                .WithContent(content);
-
-            SetServerReifyMessage(JsonConvert.SerializeObject(content.ToNativeMessage()));
-
-            //Act
-            this.messagePact.VerifyAsync<MessageModel>(async _ => await Task.Run(() => true));
-
-            this.mockedServer.Verify(s => s.WriteMessagePactFile(It.IsAny<MessagePactHandle>(), It.IsAny<string>(), false));
-        }
-
-        [Fact]
-        public void VerifyAsync_Should_Fail_If_Type_Is_Not_The_Same_As_The_Message()
-        {
-            //Arrange
-            SetServerReifyMessage("{ \"param1\": \"value1\" }");
-
-            //Act
-            this.messagePact
-                .Invoking(x => x.VerifyAsync<MessageModel>(async _ => await Task.Run(() => true)))
-                .Should().Throw<PactMessageConsumerVerificationException>();
-        }
-
-        [Fact]
-        public void VerifyAsync_Should_Fail_If_Verification_By_The_Consumer_Handler_Throws_Exception()
-        {
-            //Arrange
-            var testMessage = new MessageModel(1, string.Empty).ToNativeMessage();
-
-            SetServerReifyMessage(JsonConvert.SerializeObject(testMessage));
-
-            //Act
-            this.messagePact
-                .Invoking(x => x.VerifyAsync<MessageModel>(async _ =>
-                    await Task.Run(() => throw new Exception("an exception when running the consumer handler"))))
-                .Should().Throw<PactMessageConsumerVerificationException>();
-        }
+        
 
         private void SetServerReifyMessage(string message)
         {

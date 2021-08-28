@@ -1,9 +1,10 @@
-﻿using Consumer.Models;
+using System.Threading.Tasks;
+using Consumer.Models;
 
 namespace Consumer
 {
     public interface IEventProcessor
     {
-        bool ProcessEvent(Event @event);
+        Task<bool> ProcessEvent(Event @event);
     }
 }
