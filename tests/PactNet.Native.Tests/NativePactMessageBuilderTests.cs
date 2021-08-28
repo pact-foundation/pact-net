@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
 using Moq;
@@ -123,7 +124,7 @@ namespace PactNet.Native.Tests
             SetServerReifyMessage(JsonConvert.SerializeObject(content.ToNativeMessage()));
 
             //Act
-            this.messagePact.VerifyAsync<MessageModel>(async _ => { });
+            this.messagePact.VerifyAsync<MessageModel>(async _ => await Task.Run(() => true));
 
             this.mockedServer.Verify(s => s.WriteMessagePactFile(It.IsAny<MessagePactHandle>(), It.IsAny<string>(), false));
         }
@@ -136,7 +137,7 @@ namespace PactNet.Native.Tests
 
             //Act
             this.messagePact
-                .Invoking(x => x.VerifyAsync<MessageModel>(async _ => { }))
+                .Invoking(x => x.VerifyAsync<MessageModel>(async _ => await Task.Run(() => true)))
                 .Should().Throw<PactMessageConsumerVerificationException>();
         }
 
@@ -150,7 +151,8 @@ namespace PactNet.Native.Tests
 
             //Act
             this.messagePact
-                .Invoking(x => x.VerifyAsync<MessageModel>(async _ => throw new Exception("an exception when running the consumer handler")))
+                .Invoking(x => x.VerifyAsync<MessageModel>(async _ =>
+                    await Task.Run(() => throw new Exception("an exception when running the consumer handler"))))
                 .Should().Throw<PactMessageConsumerVerificationException>();
         }
 
