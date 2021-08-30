@@ -1,5 +1,6 @@
 using System.Net;
 using Newtonsoft.Json;
+using PactNet.Matchers;
 
 namespace PactNet
 {
@@ -29,6 +30,14 @@ namespace PactNet
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
         IResponseBuilderV2 WithHeader(string key, string value);
+
+        /// <summary>
+        /// Add a response header
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="matcher">Header value matcher</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV2 WithHeader(string key, IMatcher matcher);
 
         /// <summary>
         /// Set a response body which is serialised as JSON
@@ -72,6 +81,14 @@ namespace PactNet
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
         IResponseBuilderV3 WithHeader(string key, string value);
+
+        /// <summary>
+        /// Add a response header
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="matcher">Header value matcher</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV3 WithHeader(string key, IMatcher matcher);
 
         /// <summary>
         /// Set a response body which is serialised as JSON

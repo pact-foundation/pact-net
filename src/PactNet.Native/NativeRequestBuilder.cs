@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using Newtonsoft.Json;
+using PactNet.Matchers;
 using PactNet.Native.Interop;
 
 namespace PactNet.Native
@@ -80,6 +81,15 @@ namespace PactNet.Native
         /// <returns>Fluent builder</returns>
         IRequestBuilderV2 IRequestBuilderV2.WithHeader(string key, string value)
             => this.WithHeader(key, value);
+
+        /// <summary>
+        /// Add a request header matcher
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="matcher">Header value matcher</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV2 IRequestBuilderV2.WithHeader(string key, IMatcher matcher)
+            => this.WithHeader(key, matcher);
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -162,6 +172,15 @@ namespace PactNet.Native
         /// <returns>Fluent builder</returns>
         IRequestBuilderV3 IRequestBuilderV3.WithHeader(string key, string value)
             => this.WithHeader(key, value);
+
+        /// <summary>
+        /// Add a request header matcher
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="matcher">Header value matcher</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 IRequestBuilderV3.WithHeader(string key, IMatcher matcher)
+            => this.WithHeader(key, matcher);
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -267,7 +286,21 @@ namespace PactNet.Native
             this.headerCounts[key] = index;
 
             this.server.WithRequestHeader(this.interaction, key, value, index);
+
             return this;
+        }
+
+        /// <summary>
+        /// Add a request header matcher
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="matcher">Header value matcher</param>
+        /// <returns>Fluent builder</returns>
+        internal NativeRequestBuilder WithHeader(string key, IMatcher matcher)
+        {
+            var serialised = JsonConvert.SerializeObject(matcher, this.defaultSettings);
+
+            return this.WithHeader(key, serialised);
         }
 
         /// <summary>

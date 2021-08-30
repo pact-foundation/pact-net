@@ -49,7 +49,33 @@ namespace PactNet.Native.Tests
         }
 
         [Fact]
-        public void WithHeader_WhenCalled_AddsHeaderParam()
+        public void WithHeader_Matcher_WhenCalled_AddsSerialisedHeaderParam()
+        {
+            var expectedValue = "{\"pact:matcher:type\":\"regex\",\"value\":\"header\",\"regex\":\"^header$\"}";
+
+            this.builder.WithHeader("name", PactNet.Matchers.Match.Regex("header", "^header$"));
+
+            this.mockServer.Verify(s => s.WithResponseHeader(this.handle, "name", expectedValue, 0));
+        }
+
+        [Fact]
+        public void WithHeader_RepeatedMatcherHeader_SetsIndex()
+        {
+            var expectedValue1 = "{\"pact:matcher:type\":\"regex\",\"value\":\"value1\",\"regex\":\"^value1$\"}";
+            var expectedValue2 = "{\"pact:matcher:type\":\"type\",\"value\":\"value2\"}";
+            var expectedValue = "{\"pact:matcher:type\":\"regex\",\"value\":\"value\",\"regex\":\"^value$\"}";
+
+            this.builder.WithHeader("name", PactNet.Matchers.Match.Regex("value1", "^value1$"));
+            this.builder.WithHeader("name", PactNet.Matchers.Match.Type("value2"));
+            this.builder.WithHeader("other", PactNet.Matchers.Match.Regex("value", "^value$"));
+
+            this.mockServer.Verify(s => s.WithResponseHeader(this.handle, "name", expectedValue1, 0));
+            this.mockServer.Verify(s => s.WithResponseHeader(this.handle, "name", expectedValue2, 1));
+            this.mockServer.Verify(s => s.WithResponseHeader(this.handle, "other", expectedValue, 0));
+        }
+
+        [Fact]
+        public void WithHeader_String_WhenCalled_AddsHeaderParam()
         {
             this.builder.WithHeader("name", "value");
 
@@ -57,7 +83,7 @@ namespace PactNet.Native.Tests
         }
 
         [Fact]
-        public void WithHeader_RepeatedHeader_SetsIndex()
+        public void WithHeader_RepeatedStringHeader_SetsIndex()
         {
             this.builder.WithHeader("name", "value1");
             this.builder.WithHeader("name", "value2");

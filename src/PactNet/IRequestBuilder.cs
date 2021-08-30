@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using Newtonsoft.Json;
+using PactNet.Matchers;
 
 namespace PactNet
 {
@@ -48,6 +49,14 @@ namespace PactNet
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
         IRequestBuilderV2 WithHeader(string key, string value);
+
+        /// <summary>
+        /// Add a request header
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="matcher">Header value matcher</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV2 WithHeader(string key, IMatcher matcher);
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -123,6 +132,14 @@ namespace PactNet
         /// <param name="value">Header value</param>
         /// <returns>Fluent builder</returns>
         IRequestBuilderV3 WithHeader(string key, string value);
+
+        /// <summary>
+        /// Add a request header matcher
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="matcher">Header value matcher</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 WithHeader(string key, IMatcher matcher);
 
         /// <summary>
         /// Set a body which is serialised as JSON
