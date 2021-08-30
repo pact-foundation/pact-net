@@ -51,11 +51,11 @@ namespace PactNet.Native
         /// <returns>Fluent builder</returns>
         internal IMessageBuilderV3 ExpectsToReceive(string description)
         {
-            this.message = this.server.NewMessage(pact, description);
+            this.message = this.server.NewMessage(this.pact, description);
 
             this.server.ExpectsToReceive(this.message, description);
 
-            return new NativeMessageBuilder(this.server, this.message);
+            return new NativeMessageBuilder(this.server, this.message, this.config.DefaultJsonSettings);
         }
 
         /// <summary>
@@ -80,18 +80,19 @@ namespace PactNet.Native
         {
             try
             {
-                var content = JsonConvert.DeserializeObject<NativeMessage>(this.server.Reify(message));
+                string reified = this.server.Reify(this.message);
+                NativeMessage content = JsonConvert.DeserializeObject<NativeMessage>(reified);
 
-                var messageReified = JsonConvert.DeserializeObject<T>(content.Contents.ToString());
+                T messageReified = JsonConvert.DeserializeObject<T>(content.Contents.ToString());
 
                 handler(messageReified);
 
-                this.server.WriteMessagePactFile(pact, config.PactDir, false);
+                this.server.WriteMessagePactFile(this.pact, this.config.PactDir, false);
             }
             catch (Exception e)
             {
                 throw new PactMessageConsumerVerificationException(
-                    $"The message {message} could not be verified by the consumer handler", e);
+                    $"The message {this.message} could not be verified by the consumer handler", e);
             }
         }
 
@@ -103,18 +104,18 @@ namespace PactNet.Native
         {
             try
             {
-                var content = JsonConvert.DeserializeObject<NativeMessage>(this.server.Reify(message));
+                string reified = this.server.Reify(this.message);
+                NativeMessage content = JsonConvert.DeserializeObject<NativeMessage>(reified);
 
-                var messageReified = JsonConvert.DeserializeObject<T>(content.Contents.ToString());
+                T messageReified = JsonConvert.DeserializeObject<T>(content.Contents.ToString());
 
                 await handler(messageReified);
 
-                this.server.WriteMessagePactFile(pact, config.PactDir, false);
+                this.server.WriteMessagePactFile(this.pact, this.config.PactDir, false);
             }
             catch (Exception e)
             {
-                throw new PactMessageConsumerVerificationException(
-                    $"The message {message} could not be verified by the consumer handler", e);
+                throw new PactMessageConsumerVerificationException($"The message {this.message} could not be verified by the consumer handler", e);
             }
         }
 

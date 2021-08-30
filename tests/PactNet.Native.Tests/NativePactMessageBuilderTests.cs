@@ -76,7 +76,7 @@ namespace PactNet.Native.Tests
             var content = new MessageModel { Id = 1, Description = "description" };
             this.messagePact
                 .ExpectsToReceive("a description")
-                .WithContent(content);
+                .WithJsonContent(content);
 
             SetServerReifyMessage(JsonConvert.SerializeObject(content.ToNativeMessage()));
 

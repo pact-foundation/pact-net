@@ -3,10 +3,10 @@ using System;
 namespace PactNet.Exceptions
 {
     /// <summary>
-    /// Defines the messagePact message consumer verification exception
+    /// Error related to verifying a message pact consumer test
     /// </summary>
     [Serializable]
-    public class PactMessageConsumerVerificationException : Exception
+    public class PactMessageConsumerVerificationException : PactFailureException
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PactMessageConsumerVerificationException" /> class
