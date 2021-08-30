@@ -88,7 +88,7 @@ namespace PactNet.Native
         bool WithContents(MessageHandle message, string contentType, string body, uint size);
 
         /// <summary>
-        /// returns the message without the matchers
+        /// Returns the message without the matchers
         /// </summary>
         /// <param name="message">message</param>
         /// <returns>Success</returns>

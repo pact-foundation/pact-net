@@ -5,22 +5,35 @@ using PactNet.Infrastructure.Outputters;
 
 namespace PactNet
 {
+    /// <summary>
+    /// Pact configuration
+    /// </summary>
     public class PactConfig
     {
         private string _pactDir;
+        private string _logDir;
+
+        /// <summary>
+        /// Pact file destination directory
+        /// </summary>
         public string PactDir
         {
             get { return _pactDir; }
             set { _pactDir = ConvertToDirectory(value); }
         }
 
-        private string _logDir;
+        /// <summary>
+        /// Log file destination directory
+        /// </summary>
         public string LogDir
         {
             get { return _logDir; }
             set { _logDir = ConvertToDirectory(value); }
         }
 
+        /// <summary>
+        /// Log outputs
+        /// </summary>
         public IEnumerable<IOutput> Outputters { get; set; } = new List<IOutput>
         {
             new ConsoleOutput()
@@ -31,12 +44,20 @@ namespace PactNet
         /// </summary>
         public JsonSerializerSettings DefaultJsonSettings { get; set; } = new JsonSerializerSettings();
 
+        /// <summary>
+        /// Initialises a new instance of the <see cref="PactConfig"/> class.
+        /// </summary>
         public PactConfig()
         {
-            PactDir = Constants.DefaultPactDir;
-            LogDir = Constants.DefaultLogDir;
+            this.PactDir = Constants.DefaultPactDir;
+            this.LogDir = Constants.DefaultLogDir;
         }
 
+        /// <summary>
+        /// Ensure a string path ends with a trailing slash
+        /// </summary>
+        /// <param name="path">Directory path</param>
+        /// <returns>Path with trailing slash</returns>
         private static string ConvertToDirectory(string path)
         {
             if (!path.EndsWith("/") && !path.EndsWith("\\"))

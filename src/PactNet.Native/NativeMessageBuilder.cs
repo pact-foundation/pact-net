@@ -12,16 +12,19 @@ namespace PactNet.Native
     {
         private readonly IMessageMockServer server;
         private readonly MessageHandle message;
+        private readonly JsonSerializerSettings defaultSettings;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="NativeMessagePactBuilder"/> class.
         /// </summary>
         /// <param name="server">Mock server</param>
-        /// <param name="message">the message handle</param>
-        internal NativeMessageBuilder(IMessageMockServer server, MessageHandle message)
+        /// <param name="message">Message handle</param>
+        /// <param name="defaultSettings">Default JSON serialiser settings</param>
+        internal NativeMessageBuilder(IMessageMockServer server, MessageHandle message, JsonSerializerSettings defaultSettings)
         {
             this.server = server ?? throw new ArgumentNullException(nameof(server));
             this.message = message;
+            this.defaultSettings = defaultSettings;
         }
 
         #region IMessagePactBuilderV3 explicit implementation
@@ -39,8 +42,12 @@ namespace PactNet.Native
             => WithMetadata(key, value);
 
         /// <inheritdoc cref="IMessageBuilderV3"/>
-        IMessageBuilderV3 IMessageBuilderV3.WithContent(dynamic content)
-            => WithContent(content);
+        IMessageBuilderV3 IMessageBuilderV3.WithJsonContent(dynamic content)
+            => WithJsonContent(content);
+
+        /// <inheritdoc cref="IMessageBuilderV3"/>
+        IMessageBuilderV3 IMessageBuilderV3.WithJsonContent(dynamic content, JsonSerializerSettings settings)
+            => WithJsonContent(content, settings);
 
         #endregion
 
@@ -51,7 +58,7 @@ namespace PactNet.Native
         /// </summary>
         /// <param name="providerState">Provider state description</param>
         /// <returns>Fluent builder</returns>
-        internal IMessageBuilderV3 Given(string providerState)
+        internal NativeMessageBuilder Given(string providerState)
         {
             this.server.Given(this.message, providerState);
 
@@ -64,7 +71,7 @@ namespace PactNet.Native
         /// <param name="providerState">Provider state description</param>
         /// <param name="parameters">Provider state parameters</param>
         /// <returns>Fluent builder</returns>
-        internal IMessageBuilderV3 Given(string providerState, IDictionary<string, string> parameters)
+        internal NativeMessageBuilder Given(string providerState, IDictionary<string, string> parameters)
         {
             foreach (var param in parameters)
             {
@@ -80,7 +87,7 @@ namespace PactNet.Native
         /// <param name="key">key of the metadata</param>
         /// <param name="value">value of the metadata</param>
         /// <returns>Fluent builder</returns>
-        internal IMessageBuilderV3 WithMetadata(string key, string value)
+        internal NativeMessageBuilder WithMetadata(string key, string value)
         {
             this.server.WithMetadata(this.message, key, value);
 
@@ -88,14 +95,23 @@ namespace PactNet.Native
         }
 
         /// <summary>
-        /// Set the content
+        /// Set a body which is serialised as JSON
         /// </summary>
-        /// <param name="content">Dynamic content</param>
+        /// <param name="body">Request body</param>
         /// <returns>Fluent builder</returns>
-        internal IMessageBuilderV3 WithContent(dynamic content)
-        {
-            this.server.WithContents(this.message, "application/json", JsonConvert.SerializeObject(content), 100);
+        internal NativeMessageBuilder WithJsonContent(dynamic body) => WithJsonContent(body, this.defaultSettings);
 
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <param name="settings">Custom JSON serializer settings</param>
+        /// <returns>Fluent builder</returns>
+        internal NativeMessageBuilder WithJsonContent(dynamic body, JsonSerializerSettings settings)
+        {
+            string serialised = JsonConvert.SerializeObject(body, settings);
+
+            this.server.WithContents(this.message, "application/json", serialised, 0);
             return this;
         }
 

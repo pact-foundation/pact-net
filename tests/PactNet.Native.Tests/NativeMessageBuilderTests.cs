@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AutoFixture;
 using Moq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using PactNet.Native.Interop;
 using Xunit;
 
@@ -11,8 +12,11 @@ namespace PactNet.Native.Tests
     public class NativeMessageBuilderTests
     {
         private readonly IMessageBuilderV3 builder;
+
         private readonly Mock<IMessageMockServer> mockedServer;
+
         private readonly MessageHandle handle;
+        private readonly JsonSerializerSettings settings;
 
         public NativeMessageBuilderTests()
         {
@@ -22,8 +26,9 @@ namespace PactNet.Native.Tests
             
             this.handle = fixture.Create<MessageHandle>();
             this.mockedServer = new Mock<IMessageMockServer>();
+            this.settings = new JsonSerializerSettings();
 
-            this.builder = new NativeMessageBuilder(this.mockedServer.Object, this.handle);
+            this.builder = new NativeMessageBuilder(this.mockedServer.Object, this.handle, this.settings);
         }
 
         [Fact]
@@ -67,12 +72,28 @@ namespace PactNet.Native.Tests
         }
 
         [Fact]
-        public void WithContent_WhenCalled_AddsContent()
+        public void WithJsonContent_WithoutCustomSettings_AddsContentWithDefaultSettings()
         {
-            var content = new { id = 1, desc = "description" };
-            this.builder.WithContent(content);
+            var content = new { Id = 1, Desc = "description" };
+            const string expected = @"{""Id"":1,""Desc"":""description""}";
 
-            this.mockedServer.Verify(s => s.WithContents(this.handle, "application/json", JsonConvert.SerializeObject(content), 100));
+            this.builder.WithJsonContent(content);
+
+            this.mockedServer.Verify(s => s.WithContents(this.handle, "application/json", expected, 0));
+        }
+
+        [Fact]
+        public void WithJsonContent_WithCustomSettings_AddsContentWithOverriddenSettings()
+        {
+            var content = new { Id = 1, Desc = "description" };
+            const string expected = @"{""id"":1,""desc"":""description""}";
+
+            this.builder.WithJsonContent(content, new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            });
+
+            this.mockedServer.Verify(s => s.WithContents(this.handle, "application/json", expected, 0));
         }
     }
 }

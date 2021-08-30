@@ -23,6 +23,7 @@ namespace Consumer
             }
 
             var operationSuccessful = true;
+
             foreach (var @event in events)
             {
                 operationSuccessful = await _eventHandler.ProcessEvent(@event);

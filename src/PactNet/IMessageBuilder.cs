@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace PactNet
 {
@@ -31,10 +32,18 @@ namespace PactNet
         IMessageBuilderV3 WithMetadata(string key, string value);
 
         /// <summary>
-        /// Set the content
+        /// Set message content which is serialised as JSON
         /// </summary>
-        /// <param name="content">Dynamic content</param>
+        /// <param name="body">Message body</param>
         /// <returns>Fluent builder</returns>
-        IMessageBuilderV3 WithContent(dynamic content);
+        IMessageBuilderV3 WithJsonContent(dynamic body);
+
+        /// <summary>
+        /// Set message content which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Message body</param>
+        /// <param name="settings">Custom JSON serializer settings</param>
+        /// <returns>Fluent builder</returns>
+        IMessageBuilderV3 WithJsonContent(dynamic body, JsonSerializerSettings settings);
     }
 }

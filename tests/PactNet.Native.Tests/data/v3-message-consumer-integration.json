@@ -5,9 +5,9 @@
   "messages": [
     {
       "contents": {
-        "Bool": false,
-        "Int": 1,
-        "String": "a description"
+        "bool": false,
+        "int": 1,
+        "string": "a description"
       },
       "description": "a sample request",
       "metadata": {

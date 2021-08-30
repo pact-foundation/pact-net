@@ -156,7 +156,7 @@ namespace PactNet.Native.Tests
                     ["baz"] = "bash"
                 })
                 .WithMetadata("queueId", "1234")
-                .WithContent(new TestData { Int = 1, String = "a description" });
+                .WithJsonContent(new TestData { Int = 1, String = "a description" });
 
             builder.Verify<TestData>(_ => { });
 
