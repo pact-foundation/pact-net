@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using PactNet.Exceptions;
 using PactNet.Models;
 using PactNet.Native.Interop;
 

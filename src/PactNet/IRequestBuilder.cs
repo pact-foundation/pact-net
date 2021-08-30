@@ -88,7 +88,7 @@ namespace PactNet
         /// </summary>
         /// <param name="providerState">Provider state description</param>
         /// <param name="parameters">Provider state parameters</param>
-        /// <returns>Flient builder</returns>
+        /// <returns>Fluent builder</returns>
         IRequestBuilderV3 Given(string providerState, IDictionary<string, string> parameters);
 
         /// <summary>

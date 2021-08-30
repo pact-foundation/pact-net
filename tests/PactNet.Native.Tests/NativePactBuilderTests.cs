@@ -1,8 +1,8 @@
 using System;
-using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
 using Moq;
+using PactNet.Exceptions;
 using PactNet.Infrastructure.Outputters;
 using PactNet.Native.Interop;
 using Xunit;
