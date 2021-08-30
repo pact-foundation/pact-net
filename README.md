@@ -1,17 +1,43 @@
+# Important Announcement
+
+The PactNet team are excited to share an important announcement! 🎉
+
+PactNet is undergoing a large change in preparation for a v4.0.0 major release with breaking changes. This is primarily
+driven by the move from using the Pact Ruby implementation to using the new Pact Rust implementation. For PactNet users,
+this has the following benefits:
+
+- **PACT SPECIFICATION V3 SUPPORT INCLUDING MESSAGE PACTS**
+- A new fluent API which guides developers into the pit of success more often
+- There is now one NuGet to install which handles all supported platforms instead of one per OS/arch combination
+- The Rust implementation is receiving all the new features and fixes, including Pact specification v4 support in future
+- A number of long-standing issues will be resolved, such as:
+  - Filepath lengths on Windows will no longer be an issue since the Rust implementation is a single file under the `bin/` folder
+  - There is no child Ruby process still running if you abort an interactive debugger session, since the Rust implementation runs in-proc
+  - The mock server can allocate an unused port dynamically, so you no longer need to provide one that you know is unused
+  - You no longer need to remember to call `ClearInteractions()` between each consumer test
+
+We're working really hard to get to a beta release, but until then you can check out our progress on the `feature/4.0.0` branch.
+
+We understand that breaking changes like these can be difficult for users of PactNet, but the major shift in the reference implementation
+from the Pact Foundation core team makes many of them necessary. At the same time, we've taken the opportunity to make changes which will
+make future versions of PactNet easier to extend in non-breaking ways as new features are released, and to fix many long-standing issues.
+We thank you for your patience with this, and rest-assured we'll provide documentation of the new API as well as samples and a full workshop
+showing how to use it.
+
 # PactNet
 
-[![Build status](https://ci.appveyor.com/api/projects/status/5h4t9oerlhqcnwm8/branch/master?svg=true)](https://ci.appveyor.com/project/PactFoundation/pact-net/branch/master)  
-A .NET implementation of the Ruby consumer driven contract library, [Pact](https://github.com/realestate-com-au/pact).  
-Pact is based on the specification found at https://github.com/pact-foundation/pact-specification.  
+[![Build status](https://ci.appveyor.com/api/projects/status/5h4t9oerlhqcnwm8/branch/master?svg=true)](https://ci.appveyor.com/project/PactFoundation/pact-net/branch/master)
+A .NET implementation of the Ruby consumer driven contract library, [Pact](https://github.com/realestate-com-au/pact).
+Pact is based on the specification found at https://github.com/pact-foundation/pact-specification.
 
-PactNet primarily provides a fluent .NET DSL for describing HTTP requests that will be made to a service provider and the HTTP responses the consumer expects back to function correctly.  
-In documenting the consumer interactions, we can replay them on the provider and ensure the provider responds as expected. This basically gives us complete test symmetry and removes the basic need for integrated tests.  
+PactNet primarily provides a fluent .NET DSL for describing HTTP requests that will be made to a service provider and the HTTP responses the consumer expects back to function correctly.
+In documenting the consumer interactions, we can replay them on the provider and ensure the provider responds as expected. This basically gives us complete test symmetry and removes the basic need for integrated tests.
 PactNet also has the ability to support other mock providers should we see fit.
 
-PactNet is Version 2.0 compliant, and we now use the [Ruby standalone engine](https://github.com/pact-foundation/pact-ruby-standalone) as we move towards a common core approach. To enable Version 2.0 support,  make sure you supply a `PactConfig` object with `SpecificationVersion = "2.0.0"` when creating the `PactBuilder`.  
+PactNet is Version 2.0 compliant, and we now use the [Ruby standalone engine](https://github.com/pact-foundation/pact-ruby-standalone) as we move towards a common core approach. To enable Version 2.0 support,  make sure you supply a `PactConfig` object with `SpecificationVersion = "2.0.0"` when creating the `PactBuilder`.
 
-In reaching Version 2.0 compliance, we have made some breaking changes. This readme details the current latest version.  
-See [Version 1.0 readme](https://github.com/pact-foundation/pact-net/blob/master/README_v1.md) for the previous version.  
+In reaching Version 2.0 compliance, we have made some breaking changes. This readme details the current latest version.
+See [Version 1.0 readme](https://github.com/pact-foundation/pact-net/blob/master/README_v1.md) for the previous version.
 
 From the [Pact Specification repo](https://github.com/pact-foundation/pact-specification)
 
@@ -22,8 +48,8 @@ Read more about Pact and the problems it solves at https://docs.pact.io/
 Please feel free to contribute, we do accept pull requests. This solution has been built using VS2017, you will need it to open this project.
 
 ## History
-PactNet was initially built at [SEEK](https://www.seek.com.au/) to help solve some of the challenges faced with testing across service boundaries.  
-The project now lives in the pact-foundation GH organisation, to help group and support the official Pact libraries.  
+PactNet was initially built at [SEEK](https://www.seek.com.au/) to help solve some of the challenges faced with testing across service boundaries.
+The project now lives in the pact-foundation GH organisation, to help group and support the official Pact libraries.
 Massive thanks to the SEEK team for all the time and hard work put into this library.
 
 [![SEEK](https://raw.githubusercontent.com/pact-foundation/pact-net/master/seek.png "SEEK")](https://www.seek.com.au/)
@@ -33,8 +59,8 @@ Massive thanks to the SEEK team for all the time and hard work put into this lib
 1. When debugging a test locally (either consumer or provider) if you click the stop button in your test runner, it will abort the process abruptly and the ruby runtime will not get cleaned up. If you do this, simply kill the ruby process from your task/process manager. We recommend you play the test through to the end to avoid this issue. See https://github.com/pact-foundation/pact-net/issues/108 for more details.
 
 ## Usage
-Below are some samples of usage.  
-For examples of Version 2 usage, please see the [Samples](https://github.com/pact-foundation/pact-net/blob/master/Samples/EventApi/Consumer.Tests/EventsApiConsumerTests.cs).  
+Below are some samples of usage.
+For examples of Version 2 usage, please see the [Samples](https://github.com/pact-foundation/pact-net/blob/master/Samples/EventApi/Consumer.Tests/EventsApiConsumerTests.cs).
 
 We have also written some `//NOTE:` comments inline in the code to help explain what certain calls do.
 
@@ -43,22 +69,22 @@ We have also written some `//NOTE:` comments inline in the code to help explain 
 
 ### Installing
 
-Via Nuget  
+Via Nuget
 
-**Windows**  
-https://www.nuget.org/packages/PactNet.Windows  
+**Windows**
+https://www.nuget.org/packages/PactNet.Windows
 `Install-Package PactNet.Windows`
 
-**OSX**  
-https://www.nuget.org/packages/PactNet.OSX  
+**OSX**
+https://www.nuget.org/packages/PactNet.OSX
 `Install-Package PactNet.OSX`
 
-**Linux x64 (64-bit)**  
-https://www.nuget.org/packages/PactNet.Linux.x64  
+**Linux x64 (64-bit)**
+https://www.nuget.org/packages/PactNet.Linux.x64
 `Install-Package PactNet.Linux.x64`
 
-**Linux x86 (32-bit)**  
-https://www.nuget.org/packages/PactNet.Linux.x86  
+**Linux x86 (32-bit)**
+https://www.nuget.org/packages/PactNet.Linux.x86
 `Install-Package PactNet.Linux.x86`
 
 ### Service Consumer
@@ -106,7 +132,7 @@ public class SomethingApiClient
 ```
 
 #### 2. Describe and configure the pact as a service consumer with a mock service
-Create a new test case within your service consumer test project, using whatever test framework you like (in this case we used xUnit).  
+Create a new test case within your service consumer test project, using whatever test framework you like (in this case we used xUnit).
 This should only be instantiated once for the consumer you are testing.
 
 ```c#
@@ -136,10 +162,10 @@ public class ConsumerMyApiPact : IDisposable
     //or
     MockProviderService = PactBuilder.MockService(MockServerPort, true, sslCert: sslCert, sslKey: sslKey); //By passing true as the second param and an sslCert and sslKey, you can enabled SSL with a custom certificate. See "Using a Custom SSL Certificate" for more details.
     //or
-    MockProviderService = PactBuilder.MockService(MockServerPort, new JsonSerializerSettings()); //You can also change the default Json serialization settings using this overload    
+    MockProviderService = PactBuilder.MockService(MockServerPort, new JsonSerializerSettings()); //You can also change the default Json serialization settings using this overload
     //or
     MockProviderService = PactBuilder.MockService(MockServerPort, host: IPAddress.Any); //By passing host as IPAddress.Any, the mock provider service will bind and listen on all ip addresses
-    
+
   }
 
   public void Dispose()
@@ -210,12 +236,12 @@ public class SomethingApiConsumerTests : IClassFixture<ConsumerMyApiPact>
 }
 ```
 
-#### 4. Run the test 
+#### 4. Run the test
 If you now navigate to [RepositoryRoot]/pacts you will see the pact file your test generated. Take a moment to have a look at what it contains which is a JSON representation of the mocked requests your test made.
 
-Everything should be green. 
+Everything should be green.
 
-Note: we advise using a TDD approach when using this library, however we will leave it up to you.  
+Note: we advise using a TDD approach when using this library, however we will leave it up to you.
 Likely you will be creating a skeleton client, describing the pact, write the failing test, implement the skeleton client, run the test to make sure it passes, then rinse and repeat.
 
 ### Service Provider
@@ -258,7 +284,7 @@ public class SomethingApiTests
             //and / or
             .SetSslCaFilePath("path/to/your/ca.crt") //if you fetch your pact in https and the server certificate authorities are not in the default ca-bundle.crt
             //and / or
-            .SetHttpProxy("http://my-http-proxy:8080"); //if you need to go through a proxy to reach the server hosting the pact  
+            .SetHttpProxy("http://my-http-proxy:8080"); //if you need to go through a proxy to reach the server hosting the pact
 
         pactVerifier
             .ProviderState($"{serviceUri}/provider-states")
@@ -390,7 +416,7 @@ When creating the MockProviderService you can use a custom SSL cert, which allow
 #### 1. Generate a custom SSL certificate
 The simplest way to generate a private key and self-signed certificate for localhost is with this openssl command:
 
-``` 
+```
 openssl req -x509 -out localhost.crt -keyout localhost.key \
   -newkey rsa:2048 -nodes -sha256 \
   -subj '/CN=localhost' -extensions EXT -days 365 -config <( \
@@ -417,7 +443,7 @@ MockProviderService = PactBuilder.MockService(MockServerPort, true, IPAddress.An
 
 ### Using a Remote Mock Server Service to execute Consumer tests
 
-It is possible to execute your consumer test against any remote Mock Server (including a docker container). 
+It is possible to execute your consumer test against any remote Mock Server (including a docker container).
 
 In that case you don't need any other package than PactNet. (Ruby packages are not required i.e.: PactNet.Windows/PactNet.OSX, PactNet.Linux.*)
 
