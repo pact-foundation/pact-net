@@ -51,6 +51,20 @@ namespace PactNet.Native
         }
 
         /// <summary>
+        /// Establish a new message pact using the native backend
+        /// </summary>
+        /// <param name="messagePact">Message Pact details</param>
+        /// <returns>Pact builder</returns>
+        public static IMessagePactBuilderV3 UsingNativeBackend(this IMessagePactV3 messagePact)
+        {
+            NativeMockServer server = new NativeMockServer();
+            MessagePactHandle handle = InitialiseMessage(server, messagePact, PactSpecification.V3);
+
+            var builder = new NativeMessagePactBuilder(server, handle, messagePact.Config);
+            return builder;
+        }
+
+        /// <summary>
         /// Initialise a new pact on the server with the correct version
         /// </summary>
         /// <param name="pact">Pact details</param>
@@ -61,6 +75,20 @@ namespace PactNet.Native
         {
             PactHandle handle = server.NewPact(pact.Consumer, pact.Provider);
             server.WithSpecification(handle, version);
+            return handle;
+        }
+
+        /// <summary>
+        /// Initialise a new message pact with the correct version
+        /// </summary>
+        /// <param name="messagePact">Message Pact details</param>
+        /// <param name="server">Server</param>
+        /// <param name="version">Spec version</param>
+        /// <returns>Initialised message pact handle</returns>
+        private static MessagePactHandle InitialiseMessage(NativeMockServer server, IMessagePact messagePact, PactSpecification version)
+        {
+            MessagePactHandle handle = server.NewMessagePact(messagePact.Consumer, messagePact.Provider);
+
             return handle;
         }
     }

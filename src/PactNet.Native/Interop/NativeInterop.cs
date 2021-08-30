@@ -19,6 +19,8 @@ namespace PactNet.Native.Interop
             LogToBuffer(LevelFilter.Debug);
         }
 
+        #region Http Interop Support
+
         [DllImport(dllName, EntryPoint = "pactffi_log_to_buffer")]
         public static extern int LogToBuffer(LevelFilter levelFilter);
 
@@ -72,5 +74,41 @@ namespace PactNet.Native.Interop
 
         [DllImport(dllName, EntryPoint = "pactffi_verify")]
         public static extern int Verify(string args);
+
+        #endregion Http Interop Support
+
+        #region Messaging Interop Support
+
+        [DllImport(dllName, EntryPoint = "pactffi_write_message_pact_file")]
+        public static extern int WriteMessagePactFile(MessagePactHandle pact, string directory, bool overwrite);
+
+        [DllImport(dllName, EntryPoint = "pactffi_with_message_pact_metadata")]
+        public static extern bool WithMessagePactMetadata(MessagePactHandle pact, string @namespace, string name, string value);
+
+        [DllImport(dllName, EntryPoint = "pactffi_new_message_pact")]
+        public static extern MessagePactHandle NewMessagePact(string consumerName, string providerName);
+
+        [DllImport(dllName, EntryPoint = "pactffi_new_message")]
+        public static extern MessageHandle NewMessage(MessagePactHandle pact, string description);
+
+        [DllImport(dllName, EntryPoint = "pactffi_message_expects_to_receive")]
+        public static extern bool MessageExpectsToReceive(MessageHandle message, string description);
+
+        [DllImport(dllName, EntryPoint = "pactffi_message_given")]
+        public static extern bool MessageGiven(MessageHandle message, string description);
+
+        [DllImport(dllName, EntryPoint = "pactffi_message_given_with_param")]
+        public static extern bool MessageGivenWithParam(MessageHandle message, string description, string name, string value);
+
+        [DllImport(dllName, EntryPoint = "pactffi_message_with_metadata")]
+        public static extern bool MessageWithMetadata(MessageHandle message, string key, string value);
+
+        [DllImport(dllName, EntryPoint = "pactffi_message_with_contents")]
+        public static extern bool MessageWithContents(MessageHandle message, string contentType, string body, UIntPtr size);
+
+        [DllImport(dllName, EntryPoint = "pactffi_message_reify")]
+        public static extern IntPtr MessageReify(MessageHandle message);
+
+        #endregion Http Interop Support
     }
 }

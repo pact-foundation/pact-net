@@ -139,6 +139,33 @@ namespace PactNet.Native.Tests
             actualPact.Should().Be(expectedPact);
         }
 
+        [Fact]
+        public void UsingNativeBackend_V3Message_CreatesExpectedPactFile()
+        {
+            IMessagePactV3 messagePact = MessagePact.V3("PactExtensionsTests-MessageConsumer-V3", "PactExtensionsTests-MessageProvider", config);
+            IMessagePactBuilderV3 builder = messagePact.UsingNativeBackend();
+
+            builder
+                .WithPactMetadata("framework", "language", "C#")
+                .ExpectsToReceive("a sample request")
+                .Given("a provider state")
+                .Given("another provider state")
+                .Given("a provider state with params", new Dictionary<string, string>
+                {
+                    ["foo"] = "bar",
+                    ["baz"] = "bash"
+                })
+                .WithMetadata("queueId", "1234")
+                .WithContent(new TestData { Int = 1, String = "a description" });
+
+            builder.Verify<TestData>(_ => { });
+
+            string actualPact = File.ReadAllText("PactExtensionsTests-MessageConsumer-V3-PactExtensionsTests-MessageProvider.json").TrimEnd();
+            string expectedPact = File.ReadAllText("data/v3-message-consumer-integration.json").TrimEnd();
+
+            actualPact.Should().Be(expectedPact);
+        }
+
         private static async Task PerformRequestAsync(IConsumerContext context, TestData body, JsonSerializerSettings jsonSettings)
         {
             var client = new HttpClient
