@@ -14,8 +14,6 @@ namespace ReadMe.Provider
 {
     public class Startup
     {
-        public static readonly SymmetricSecurityKey IssuerSigningKey = new(Encoding.UTF8.GetBytes("IssuerSigningKey"));
-
         public IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
@@ -33,31 +31,11 @@ namespace ReadMe.Provider
                     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                 });
-
-            services.AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(options =>
-                {
-                    options.Authority = "https://something.api.com";
-                    options.Audience = "something-api";
-                    options.TokenValidationParameters.IssuerSigningKey = IssuerSigningKey;
-
-                    options.Configuration = new OpenIdConnectConfiguration()
-                    {
-                        Issuer = "https://something.api.com",
-                    };
-                    options.RequireHttpsMetadata = false;
-                });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

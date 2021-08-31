@@ -24,14 +24,15 @@ namespace ReadMe.Provider.Tests
         [Fact]
         public void EnsureSomethingApiHonoursPactWithConsumer()
         {
-            //Arrange
+            // Arrange
             var config = new PactVerifierConfig
             {
                 Outputters = new List<IOutput>
                 {
-                    // NOTE: We default to using a ConsoleOutput,
-                    // however xUnit 2 does not capture the console
-                    // output, so a custom outputter is required.
+                    // NOTE: PactNet defaults to a ConsoleOutput, however
+                    // xUnit 2 does not capture the console output, so this
+                    // sample creates a custom xUnit outputter. You will
+                    // have to do the same in xUnit projects.
                     new XUnitOutput(output),
                 },
             };
@@ -42,8 +43,6 @@ namespace ReadMe.Provider.Tests
                                            "..",
                                            "pacts",
                                            "Something API Consumer-Something API.json");
-
-            // Thread.Sleep(TimeSpan.FromMinutes(1));
 
             // Act / Assert
             IPactVerifier pactVerifier = new PactVerifier(config);

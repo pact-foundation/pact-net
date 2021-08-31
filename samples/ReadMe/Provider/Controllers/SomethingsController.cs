@@ -12,7 +12,6 @@ namespace ReadMe.Provider.Controllers
     [Route("[controller]")]
     public class SomethingsController : ControllerBase
     {
-        [Authorize]
         [HttpGet("{id}")]
         public IActionResult Get(string id)
         {

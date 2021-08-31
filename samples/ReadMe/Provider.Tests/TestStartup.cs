@@ -21,8 +21,7 @@ namespace ReadMe.Provider.Tests
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseMiddleware<ProviderStateMiddleware>()
-                .UseMiddleware<AuthorizationTokenMiddleware>();
+            app.UseMiddleware<ProviderStateMiddleware>();
 
             inner.Configure(app, env);
         }

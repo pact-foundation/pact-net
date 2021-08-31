@@ -12,7 +12,7 @@ namespace ReadMe.Consumer.Tests
 {
     public class SomethingApiConsumerTests
     {
-        private readonly IPactBuilderV3 PactBuilder;
+        private readonly IPactBuilderV3 _pactBuilder;
 
         public SomethingApiConsumerTests(ITestOutputHelper output)
         {
@@ -28,14 +28,14 @@ namespace ReadMe.Consumer.Tests
             });
 
             // Initialize Rust backend
-            PactBuilder = pact.UsingNativeBackend();
+            _pactBuilder = pact.UsingNativeBackend();
         }
 
         [Fact]
         public async Task GetSomething_WhenTheTesterSomethingExists_ReturnsTheSomething()
         {
             // Arrange
-            PactBuilder
+            _pactBuilder
                 .UponReceiving("A GET request to retrieve the something")
                     .Given("There is a something with id 'tester'")
                     .WithRequest(HttpMethod.Get, "/somethings/tester")
@@ -51,7 +51,7 @@ namespace ReadMe.Consumer.Tests
                         lastName = "Awesome"
                     });
 
-            await PactBuilder.VerifyAsync(async ctx =>
+            await _pactBuilder.VerifyAsync(async ctx =>
             {
                 // Act
                 var client = new SomethingApiClient(ctx.MockServerUri);

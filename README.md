@@ -4,7 +4,7 @@
 
 # Pact Net
 
-[![Build status](https://ci.appveyor.com/api/projects/status/5h4t9oerlhqcnwm8/branch/master?svg=true)](https://ci.appveyor.com/project/PactFoundation/pact-net/branch/master)
+[![Build status](https://github.com/pact-foundation/pact-net/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/pact-foundation/pact-net/tree/master)
 
 #### Fast, easy and reliable testing for your APIs and microservices.
 
@@ -48,19 +48,9 @@ Watch our [series](https://www.youtube.com/playlist?list=PLwy9Bnco-IpfZ72VQ7hce8
 
 ## Documentation
 
-This readme offers an basic introduction to the library. The full documentation for Pact Net and the rest of the framework is available at https://docs.pact.io/.
-
--   [Installation](#installation)
--   [Consumer Testing](./docs/consumer.md)
--   [Provider Testing](./docs/provider.md)
--   [Event Driven Systems](./docs/messages.md)
--   [Migration guide](./MIGRATION.md)
--   [Troubleshooting](./docs/troubleshooting.md)
--   [Contributing](./docs/contributing.md)
-
 ### Tutorial (60 minutes)
 
-Learn everything in Pact Net in 60 minutes: // TODO
+[Learn everything in Pact Net in 60 minutes](https://github.com/DiUS/pact-workshop-dotnet-core-v3/)
 
 ## Need Help
 
@@ -70,19 +60,7 @@ Learn everything in Pact Net in 60 minutes: // TODO
 
 ## Installation
 
-Via Nuget
-
-**Windows**
-https://www.nuget.org/packages/PactNet.Windows
-
-**OSX**
-https://www.nuget.org/packages/PactNet.OSX
-
-**Linux x64 (64-bit)**
-https://www.nuget.org/packages/PactNet.Linux.x64
-
-**Linux x86 (32-bit)**
-https://www.nuget.org/packages/PactNet.Linux.x86
+[Via Nuget](https://github.com/DiUS/pact-workshop-dotnet-core-v3/#add-the-pacflow-nuget-repository-to-visual-studionugetconfig)
 
 ![----------](https://raw.githubusercontent.com/pactumjs/pactum/master/assets/rainbow.png)
 
@@ -103,7 +81,7 @@ Pact tests have a few key properties. We'll demonstrate a common example using t
 ```C#
 public class SomethingApiConsumerTests
 {
-    private readonly IPactBuilderV3 PactBuilder;
+    private readonly IPactBuilderV3 _pactBuilder;
 
     public SomethingApiConsumerTests(ITestOutputHelper output)
     {
@@ -119,14 +97,14 @@ public class SomethingApiConsumerTests
         });
 
         // Initialize Rust backend
-        PactBuilder = pact.UsingNativeBackend();
+        _pactBuilder = pact.UsingNativeBackend();
     }
 
     [Fact]
     public async Task GetSomething_WhenTheTesterSomethingExists_ReturnsTheSomething()
     {
         // Arrange
-        PactBuilder
+        _pactBuilder
             .UponReceiving("A GET request to retrieve the something")
                 .Given("There is a something with id 'tester'")
                 .WithRequest(HttpMethod.Get, "/somethings/tester")
@@ -142,7 +120,7 @@ public class SomethingApiConsumerTests
                     lastName = "Awesome"
                 });
 
-        await PactBuilder.VerifyAsync(async ctx =>
+        await _pactBuilder.VerifyAsync(async ctx =>
         {
             // Act
             var client = new SomethingApiClient(ctx.MockServerUri);
@@ -207,9 +185,10 @@ public class SomethingApiTests : IClassFixture<SomethingApiFixture>
         {
             Outputters = new List<IOutput>
             {
-                // NOTE: We default to using a ConsoleOutput,
-                // however xUnit 2 does not capture the console
-                // output, so a custom outputter is required.
+                // NOTE: PactNet defaults to a ConsoleOutput, however
+                // xUnit 2 does not capture the console output, so this
+                // sample creates a custom xUnit outputter. You will
+                // have to do the same in xUnit projects.
                 new XUnitOutput(output),
             },
         };
@@ -220,8 +199,6 @@ public class SomethingApiTests : IClassFixture<SomethingApiFixture>
                                         "to",
                                         "pacts",
                                         "Something API Consumer-Something API.json");
-
-        // Thread.Sleep(TimeSpan.FromMinutes(1));
 
         // Act / Assert
         IPactVerifier pactVerifier = new PactVerifier(config);
