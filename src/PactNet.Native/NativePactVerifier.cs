@@ -1,3 +1,4 @@
+using PactNet.Exceptions;
 using PactNet.Native.Interop;
 
 namespace PactNet.Native

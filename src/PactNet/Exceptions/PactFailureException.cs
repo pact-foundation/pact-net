@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace PactNet
+namespace PactNet.Exceptions
 {
     public class PactFailureException : Exception
     {
