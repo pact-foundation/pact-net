@@ -16,7 +16,7 @@ this has the following benefits:
   - The mock server can allocate an unused port dynamically, so you no longer need to provide one that you know is unused
   - You no longer need to remember to call `ClearInteractions()` between each consumer test
 
-We're working really hard to get to a beta release, but until then you can check out our progress on the `feature/4.0.0` branch.
+We're working really hard to get to a beta release, but until then you can check out our progress on the [`feature/4.0.0`](https://github.com/pact-foundation/pact-net/tree/feature/4.0.0) branch.
 
 We understand that breaking changes like these can be difficult for users of PactNet, but the major shift in the reference implementation
 from the Pact Foundation core team makes many of them necessary. At the same time, we've taken the opportunity to make changes which will
