@@ -141,7 +141,8 @@ namespace PactNet.Native
             // TODO: add TLS support
             int serverPort = this.server.CreateMockServerForPact(this.pact, address, false);
 
-            var uri = new Uri($"http://{this.host}:{serverPort}");
+            var mockServerUrl = $"http://{hostIp}:{serverPort}";
+            var uri = new Uri(mockServerUrl);
             return uri;
         }
 
