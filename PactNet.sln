@@ -37,13 +37,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Consumer.Tests", "samples\E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReadMe", "ReadMe", "{87FC5A4B-1977-4FBA-AA71-63F48B28C3B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Readme.Consumer", "samples\ReadMe\Consumer\Readme.Consumer.csproj", "{B7363201-F52A-49C4-A299-C9B459827C04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readme.Consumer", "samples\ReadMe\Consumer\Readme.Consumer.csproj", "{B7363201-F52A-49C4-A299-C9B459827C04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Readme.Consumer.Tests", "samples\ReadMe\Consumer.Tests\Readme.Consumer.Tests.csproj", "{B180E079-9392-44F8-BF44-EB2E0D205FA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readme.Consumer.Tests", "samples\ReadMe\Consumer.Tests\Readme.Consumer.Tests.csproj", "{B180E079-9392-44F8-BF44-EB2E0D205FA1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Readme.Provider", "samples\ReadMe\Provider\Readme.Provider.csproj", "{C0666A04-90F2-4C58-A165-6ADB4C71BBBB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readme.Provider", "samples\ReadMe\Provider\Readme.Provider.csproj", "{C0666A04-90F2-4C58-A165-6ADB4C71BBBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Readme.Provider.Tests", "samples\ReadMe\Provider.Tests\Readme.Provider.Tests.csproj", "{172916A7-5913-4389-8F58-A774036C9566}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readme.Provider.Tests", "samples\ReadMe\Provider.Tests\Readme.Provider.Tests.csproj", "{172916A7-5913-4389-8F58-A774036C9566}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PactNet.AspNetCore", "src\PactNet.AspNetCore\PactNet.AspNetCore.csproj", "{A62A147A-9717-48CB-8CC4-A6A8C6B0DD9C}"
 EndProject
