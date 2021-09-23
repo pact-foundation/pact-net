@@ -42,7 +42,6 @@
         }
       },
       "metadata": {
-        "contentType": "application/json",
         "key": "valueKey"
       },
       "providerStates": [
