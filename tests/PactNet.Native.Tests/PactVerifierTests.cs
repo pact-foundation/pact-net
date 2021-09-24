@@ -154,14 +154,25 @@ namespace PactNet.Native.Tests
                            "--provider-tags", "feature/branch,production");
         }
 
+        [Theory]
+        [InlineData(PactLogLevel.Trace,       "trace")]
+        [InlineData(PactLogLevel.Debug,       "debug")]
+        [InlineData(PactLogLevel.Information, "info")]
+        [InlineData(PactLogLevel.Warn,        "warn")]
+        [InlineData(PactLogLevel.Error,       "error")]
+        [InlineData(PactLogLevel.None,        "none")]
+        public void WithLogLevel_WhenCalled_AddsLogLevelArg(PactLogLevel level, string expected)
+        {
+            this.verifier.WithLogLevel(level);
+
+            this.CheckArgs("--loglevel", expected);
+        }
+
         private void CheckArgs(params string[] args)
         {
             this.verifier.Verify();
 
             string formatted = string.Join(Environment.NewLine, args);
-
-            // log level is fixed at the moment and always included
-            formatted = string.Join(Environment.NewLine, formatted, "--loglevel", "trace");
 
             this.mockProvider.Verify(v => v.Verify(formatted));
         }

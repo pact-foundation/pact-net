@@ -77,6 +77,13 @@ namespace PactNet
         IPactVerifier WithPublishedResults(string providerVersion, IEnumerable<string> providerTags = null);
 
         /// <summary>
+        /// Alter the log level from the default value
+        /// </summary>
+        /// <param name="level">Log level</param>
+        /// <returns>Fluent builder</returns>
+        IPactVerifier WithLogLevel(PactLogLevel level);
+
+        /// <summary>
         /// Verify provider interactions
         /// </summary>
         void Verify();

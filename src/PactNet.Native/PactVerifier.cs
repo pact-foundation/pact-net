@@ -224,14 +224,34 @@ namespace PactNet.Native
         }
 
         /// <summary>
+        /// Alter the log level from the default value
+        /// </summary>
+        /// <param name="level">Log level</param>
+        /// <returns>Fluent builder</returns>
+        public IPactVerifier WithLogLevel(PactLogLevel level)
+        {
+            string arg = level switch
+            {
+                PactLogLevel.Trace => "trace",
+                PactLogLevel.Debug => "debug",
+                PactLogLevel.Information => "info",
+                PactLogLevel.Warn => "warn",
+                PactLogLevel.Error => "error",
+                PactLogLevel.None => "none",
+                _ => throw new ArgumentOutOfRangeException(nameof(level), level, "Unsupported log level")
+            };
+
+            this.verifierArgs.Add("--loglevel");
+            this.verifierArgs.Add(arg);
+
+            return this;
+        }
+
+        /// <summary>
         /// Verify provider interactions
         /// </summary>
         public void Verify()
         {
-            // TODO: make verifier log level configurable
-            this.verifierArgs.Add("--loglevel");
-            this.verifierArgs.Add("trace");
-
             string formatted = string.Join(Environment.NewLine, this.verifierArgs);
 
             this.config.WriteLine("Invoking the pact verifier with args:");
