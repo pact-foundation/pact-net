@@ -57,3 +57,7 @@ build/tools/
 build/linux/
 build/osx/
 build/windows/
+
+samples/ReadMe/Provider.Tests/Properties/launchSettings.json
+samples/ReadMe/Provider/Properties/launchSettings.json
+
