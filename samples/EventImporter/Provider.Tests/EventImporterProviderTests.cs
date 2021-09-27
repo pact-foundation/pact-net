@@ -110,19 +110,20 @@ namespace Provider.Tests
             //   guarantee your actual code is in sync with the
             //   manually generated object below.
             //-----------------------------------------------------
-            //MessageScenarioBuilder
-            //    .AScenario
-            //    .WhenReceiving("receiving events from the queue")
-            //    .WithMetadata(new { key = "valueKey" })
-            //    .WithContent(new List<Event>
-            //    {
-            //        new Event
+            //this.scenarios.AddScenario(
+            //    MessageScenarioBuilder
+            //        .AScenario
+            //        .WhenReceiving("receiving events from the queue")
+            //        .WithMetadata(new { key = "valueKey" })
+            //        .WithContent(new List<Event>
             //        {
-            //            EventId = Guid.Parse("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5"),
-            //            EventType = "SearchView",
-            //            Timestamp = DateTime.Parse("2014-06-30T01:37:41.0660548")
-            //        }
-            //    });
+            //            new Event
+            //            {
+            //                EventId = Guid.Parse("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5"),
+            //                EventType = "SearchView",
+            //                Timestamp = DateTime.Parse("2014-06-30T01:37:41.0660548")
+            //            }
+            //        }));
         }
 
         private class FakeEventRepository : IEventRepository
