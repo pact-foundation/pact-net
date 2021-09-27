@@ -80,14 +80,11 @@ namespace PactNet.Native
         {
             try
             {
-                string reified = this.server.Reify(this.message);
-                NativeMessage content = JsonConvert.DeserializeObject<NativeMessage>(reified);
-
-                T messageReified = JsonConvert.DeserializeObject<T>(content.Contents.ToString());
+                var messageReified = MessageReified<T>();
 
                 handler(messageReified);
 
-                this.server.WriteMessagePactFile(this.pact, this.config.PactDir, false);
+                WritePact();
             }
             catch (Exception e)
             {
@@ -104,14 +101,11 @@ namespace PactNet.Native
         {
             try
             {
-                string reified = this.server.Reify(this.message);
-                NativeMessage content = JsonConvert.DeserializeObject<NativeMessage>(reified);
-
-                T messageReified = JsonConvert.DeserializeObject<T>(content.Contents.ToString());
+                var messageReified = MessageReified<T>();
 
                 await handler(messageReified);
 
-                this.server.WriteMessagePactFile(this.pact, this.config.PactDir, false);
+                WritePact();
             }
             catch (Exception e)
             {
@@ -120,5 +114,31 @@ namespace PactNet.Native
         }
 
         #endregion Internal Methods
+
+        #region Private Methods
+
+        /// <summary>
+        /// Try to read the reified message
+        /// </summary>
+        /// <typeparam name="T">the type of message</typeparam>
+        /// <returns>the message</returns>
+        private T MessageReified<T>()
+        {
+            string reified = this.server.Reify(this.message);
+            NativeMessage content = JsonConvert.DeserializeObject<NativeMessage>(reified);
+
+            T messageReified = JsonConvert.DeserializeObject<T>(content.Contents.ToString());
+            return messageReified;
+        }
+
+        /// <summary>
+        /// Write the pact file
+        /// </summary>
+        private void WritePact()
+        {
+            this.server.WriteMessagePactFile(this.pact, this.config.PactDir, false);
+        }
+
+        #endregion Private Methods
     }
 }

@@ -1,6 +1,6 @@
 using System;
 
-namespace PactNet.Native
+namespace PactNet.Models
 {
     /// <summary>
     /// Defines the scenario model
@@ -10,17 +10,17 @@ namespace PactNet.Native
         /// <summary>
         /// The description of the scenario
         /// </summary>
-        public string Description { get; set; }
-
-        /// <summary>
-        /// The metadata
-        /// </summary>
-        public dynamic Metadata { get; set; }
+        public string Description { get; }
 
         /// <summary>
         /// The invoker that will publish the content
         /// </summary>
-        public Func<dynamic> Invoker { get; set; }
+        private readonly Func<dynamic> invoker;
+
+        /// <summary>
+        /// The metadata
+        /// </summary>
+        public dynamic Metadata { get; }
 
         /// <summary>
         /// Creates an instance of <see cref="Scenario"/>
@@ -29,8 +29,8 @@ namespace PactNet.Native
         /// <param name="invoker">the action invoking the content</param>
         public Scenario(string description, Func<dynamic> invoker)
         {
-            this.Description = description;
-            this.Invoker = invoker;
+            this.Description = !string.IsNullOrWhiteSpace(description) ? description : throw new ArgumentException("Description cannot be null or empty");
+            this.invoker = invoker ?? throw new ArgumentNullException(nameof(invoker));
         }
 
         /// <summary>
@@ -51,12 +51,7 @@ namespace PactNet.Native
         /// <returns>The scenario message content</returns>
         public dynamic InvokeScenario()
         {
-            if (Invoker == null)
-            {
-                throw new InvalidOperationException("The scenario invoker needs to be set before executing it");
-            }
-
-            return Invoker.Invoke();
+            return invoker.Invoke();
         }
     }
 }

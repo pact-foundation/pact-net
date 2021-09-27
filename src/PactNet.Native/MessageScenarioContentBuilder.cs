@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using PactNet.Models;
 
 namespace PactNet.Native
 {
@@ -9,13 +9,11 @@ namespace PactNet.Native
     internal class MessageScenarioContentBuilder : IMessageScenarioContentBuilder
     {
         private readonly string description;
-        private readonly List<Scenario> scenarios;
         private dynamic metadata;
 
-        internal MessageScenarioContentBuilder(string description, List<Scenario> scenarios)
+        internal MessageScenarioContentBuilder(string description)
         {
             this.description = !string.IsNullOrWhiteSpace(description) ? description : throw new ArgumentNullException(nameof(description));
-            this.scenarios = scenarios ?? throw new ArgumentNullException(nameof(scenarios));
         }
 
         /// <inheritdoc />
@@ -31,38 +29,38 @@ namespace PactNet.Native
         }
 
         /// <inheritdoc />
-        public void WithContent(Func<dynamic> action)
+        public Scenario WithContent(Func<dynamic> action)
         {
             if (action == null)
             {
                 throw new ArgumentNullException(nameof(action));
             }
 
-            AddScenario(action);
+            return CreateScenario(action);
         }
 
         /// <inheritdoc />
-        public void WithContent(dynamic messageContent)
+        public Scenario WithContent(dynamic messageContent)
         {
             if (messageContent == null)
             {
                 throw new ArgumentNullException(nameof(messageContent));
             }
 
-            AddScenario(() => messageContent);
+            return CreateScenario(() => messageContent);
         }
 
         /// <summary>
         /// Add a scenario
         /// </summary>
         /// <param name="action">the action that will publish the message</param>
-        private void AddScenario(Func<dynamic> action)
+        private Scenario CreateScenario(Func<dynamic> action)
         {
             var scenario = metadata == null
                 ? new Scenario(description, action)
                 : new Scenario(description, action, metadata);
 
-            scenarios.Add(scenario);
+            return scenario;
         }
     }
 }

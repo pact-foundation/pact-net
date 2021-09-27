@@ -34,21 +34,21 @@ namespace PactNet.Native.Tests
         }
 
         [Fact]
-        public void Ctor_Throws_Exception_If_Server_Not_Set()
+        public void Ctor_Should_Fail_If_Server_Not_Set()
         {
             Assert.Throws<ArgumentNullException>(() =>
                 new NativeMessagePactBuilder(null, new MessagePactHandle(), new PactConfig()));
         }
 
         [Fact]
-        public void Ctor_Throws_Exception_If_Config_Not_Set()
+        public void Ctor_Should_Fail_If_Config_Not_Set()
         {
             Assert.Throws<ArgumentNullException>(() =>
                 new NativeMessagePactBuilder(this.mockedServer.Object, new MessagePactHandle(), null));
         }
 
         [Fact]
-        public void ExpectsTeReceive_WhenCalled_AddsDescription()
+        public void Should_Be_Able_To_Add_Description()
         {
             var expectedDescription = "description of the messaging interaction";
             this.messagePact.ExpectsToReceive(expectedDescription);
@@ -58,7 +58,7 @@ namespace PactNet.Native.Tests
         }
 
         [Fact]
-        public void WithPactMetadata_WhenCalled_AddsMetadataToPact()
+        public void Should_Be_Able_To_Add_Metadata()
         {
             string expectedValue = "value1";
             string expectedName = "parameter1";
@@ -112,7 +112,46 @@ namespace PactNet.Native.Tests
                 .Should().Throw<PactMessageConsumerVerificationException>();
         }
 
-        
+        [Fact]
+        public async Task VerifyAsync_Should_Write_Pact_File()
+        {
+            //Arrange
+            var content = new MessageModel { Id = 1, Description = "description" };
+            this.messagePact
+                .ExpectsToReceive("a description")
+                .WithJsonContent(content);
+
+            SetServerReifyMessage(JsonConvert.SerializeObject(content.ToNativeMessage()));
+
+            //Act
+            await this.messagePact.VerifyAsync<MessageModel>(_ => Task.CompletedTask);
+
+            this.mockedServer.Verify(s => s.WriteMessagePactFile(It.IsAny<MessagePactHandle>(), It.IsAny<string>(), false));
+        }
+
+        [Fact]
+        public async Task VerifyAsync_Should_Fail_If_Type_Is_Not_The_Same_As_The_Message()
+        {
+            //Arrange
+            SetServerReifyMessage("{ \"param1\": \"value1\" }");
+
+            Func<Task> actual = this.messagePact.Awaiting(x => x.VerifyAsync<MessageModel>(_ => Task.CompletedTask));
+
+            await actual.Should().ThrowAsync<PactMessageConsumerVerificationException>();
+        }
+
+        [Fact]
+        public async Task VerifyAsync_Should_Fail_If_Verification_By_The_Consumer_Handler_Throws_Exception()
+        {
+            //Arrange
+            var testMessage = new MessageModel(1, string.Empty).ToNativeMessage();
+
+            SetServerReifyMessage(JsonConvert.SerializeObject(testMessage));
+
+            Func<Task> actual = this.messagePact.Awaiting(x => x.VerifyAsync<MessageModel>(_ => throw new Exception("an exception when running the consumer handler")));
+
+            await actual.Should().ThrowAsync<PactMessageConsumerVerificationException>();
+        }
 
         private void SetServerReifyMessage(string message)
         {
