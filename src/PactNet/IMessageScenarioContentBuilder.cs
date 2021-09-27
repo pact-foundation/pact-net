@@ -1,4 +1,5 @@
 using System;
+using PactNet.Models;
 
 namespace PactNet
 {
@@ -18,12 +19,12 @@ namespace PactNet
         /// Set the action of the scenario
         /// </summary>
         /// <param name="action">the function invoked</param>
-        void WithContent(Func<dynamic> action);
+        Scenario WithContent(Func<dynamic> action);
 
         /// <summary>
         /// Set the object returned by the scenario
         /// </summary>
         /// <param name="messageContent">the message content</param>
-        void WithContent(dynamic messageContent);
+        Scenario WithContent(dynamic messageContent);
     }
 }

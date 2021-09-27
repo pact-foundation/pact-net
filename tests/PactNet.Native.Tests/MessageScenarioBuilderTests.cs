@@ -9,30 +9,23 @@ namespace PactNet.Native.Tests
     /// </summary>
     public class MessageScenarioBuilderTests
     {
-        private readonly IMessageScenarioBuilder messageScenarioBuilder;
-
-        public MessageScenarioBuilderTests()
-        {
-            this.messageScenarioBuilder = MessageScenarioBuilder.WillPublishMessage;
-        }
-
         [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData("  ")]
         public void WhenReceiving_Should_Fail_If_Wrong_Description(string description)
         {
-            messageScenarioBuilder
+            MessageScenarioBuilder.AScenario
                 .Invoking(x => x.WhenReceiving(description))
                 .Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void WhenReceiving_Adding_Scenario_Without_Action_Does_Not_Sets_Scenario()
+        public void WhenReceiving_Should_Add_Scenario()
         {
-            var namedInteraction = "a wrong interaction";
+            var namedInteraction = "an interaction";
 
-            var actualBuilder = this.messageScenarioBuilder.WhenReceiving(namedInteraction);
+            var actualBuilder = MessageScenarioBuilder.AScenario.WhenReceiving(namedInteraction);
 
             actualBuilder.Should().NotBeNull();
         }
