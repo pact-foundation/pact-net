@@ -1,4 +1,4 @@
-namespace PactNet.Native
+namespace PactNet.Native.Verifier
 {
     /// <summary>
     /// Provider of the backend verification process

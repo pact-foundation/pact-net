@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using PactNet.Infrastructure.Outputters;
 
-namespace PactNet
+namespace PactNet.Verifier
 {
     /// <summary>
     /// Pact verifier configuration
@@ -16,6 +16,10 @@ namespace PactNet
             new ConsoleOutput()
         };
 
+        /// <summary>
+        /// Write a line to every configured output
+        /// </summary>
+        /// <param name="line">Line to write</param>
         public void WriteLine(string line)
         {
             foreach (IOutput output in this.Outputters)
