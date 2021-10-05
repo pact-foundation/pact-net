@@ -12,7 +12,7 @@ namespace PactNet.AspNetCore.Messaging
         /// </summary>
         /// <param name="builder">the builder</param>
         /// <returns>Fluent builder</returns>
-        public static IApplicationBuilder UseMessaging(this IApplicationBuilder builder)
+        public static IApplicationBuilder UsePactMessaging(this IApplicationBuilder builder)
         {
             return builder.UseMiddleware<MessageMiddleware>();
         }

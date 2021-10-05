@@ -28,7 +28,7 @@ namespace Provider.Tests
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseMessaging();
+            app.UsePactMessaging();
 
             this.inner.Configure(app, env);
         }

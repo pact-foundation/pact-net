@@ -65,12 +65,14 @@ namespace PactNet.Native
                 throw new ArgumentNullException(nameof(description));
             }
 
-            if (!Exist(description))
+            var scenarioToInvoke = AllScenarios.FirstOrDefault(x => x.Description == description);
+
+            if (scenarioToInvoke == null)
             {
                 throw new InvalidOperationException($"Scenario \"{description}\" not found. You need to add the scenario first");
             }
 
-            return AllScenarios.Single(x => x.Description == description).InvokeScenario();
+            return scenarioToInvoke.InvokeScenario();
         }
 
         /// <summary>
@@ -90,7 +92,9 @@ namespace PactNet.Native
         /// <returns>The scenario</returns>
         public Scenario GetByDescription(string description)
         {
-            return AllScenarios.Single(x => x.Description == description);
+            var scenario = AllScenarios.FirstOrDefault(x => x.Description == description);
+
+            return scenario ?? throw new InvalidOperationException($"Scenario \"{description}\" not found. You need to add the scenario first");
         }
 
         /// <summary>
