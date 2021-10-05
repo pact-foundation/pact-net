@@ -28,7 +28,6 @@ namespace PactNet.Native.Tests
         public void Should_Be_Able_To_Add_A_Scenario()
         {
             var expectedScenario = expectedScenarios.FirstOrDefault();
-            var expectedDescription = expectedScenario.Description;
 
             scenarios.AddScenario(expectedScenario);
 

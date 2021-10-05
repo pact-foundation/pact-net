@@ -2,14 +2,13 @@ using System;
 using System.IO;
 using System.Net;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using PactNet.AspNetCore.Messaging.Models;
 using PactNet.AspNetCore.Messaging.Options;
 using PactNet.Native;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace PactNet.AspNetCore.Messaging
 {
@@ -19,14 +18,6 @@ namespace PactNet.AspNetCore.Messaging
     /// </summary>
     public class MessageMiddleware
     {
-        /// <summary>
-        /// The default serializer options
-        /// </summary>
-        public static JsonSerializerOptions SerializerOptions => new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
-
         /// <summary>
         /// the list of scenarios
         /// </summary>
@@ -48,11 +39,11 @@ namespace PactNet.AspNetCore.Messaging
         /// <param name="options">the middleware options</param>
         /// <param name="scenarios">the list of scenarios</param>
         /// <param name="next">the next handle</param>
-        public MessageMiddleware(IOptionsMonitor<MessagingVerifierOptions> options, Scenarios scenarios, RequestDelegate next)
+        public MessageMiddleware(IOptions<MessagingVerifierOptions> options, Scenarios scenarios, RequestDelegate next)
         {
             this.scenarios = scenarios;
             this.next = next;
-            this.options = options.CurrentValue;
+            this.options = options.Value;
         }
 
         /// <summary>
@@ -102,7 +93,7 @@ namespace PactNet.AspNetCore.Messaging
         /// <param name="response">the dynamic message</param>
         private Task WriteToResponseAsync(HttpContext context, dynamic response)
         {
-            string responseBody = JsonSerializer.Serialize(response, SerializerOptions);
+            string responseBody = JsonConvert.SerializeObject(response);
             return context.Response.WriteAsync(responseBody);
         }
 
@@ -113,7 +104,7 @@ namespace PactNet.AspNetCore.Messaging
         /// <param name="metadata">the metadata</param>
         private void AddMetadataToResponse(HttpContext context, dynamic metadata)
         {
-            string stringifyMetadata = (string)JsonSerializer.Serialize(metadata, SerializerOptions);
+            string stringifyMetadata = JsonConvert.SerializeObject(metadata);
             string metadataBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(stringifyMetadata));
 
             context.Response.ContentType = "application/json";
@@ -133,7 +124,7 @@ namespace PactNet.AspNetCore.Messaging
                 requestBody = await reader.ReadToEndAsync();
             }
 
-            return JsonSerializer.Deserialize<MessageInteraction>(requestBody, SerializerOptions)?.Description;
+            return JsonConvert.DeserializeObject<MessageInteraction>(requestBody)?.Description;
         }
 
         /// <summary>

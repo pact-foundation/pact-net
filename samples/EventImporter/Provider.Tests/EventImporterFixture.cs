@@ -40,7 +40,7 @@ namespace Provider.Tests
         /// <returns>The options</returns>
         public MessagingVerifierOptions GetOptions()
         {
-            return this.server.Services.GetService<IOptionsMonitor<MessagingVerifierOptions>>()?.CurrentValue;
+            return this.server.Services.GetService<IOptions<MessagingVerifierOptions>>()?.Value;
         }
 
         /// <summary>
