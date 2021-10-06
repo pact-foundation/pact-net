@@ -1,4 +1,6 @@
+using System;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace PactNet.AspNetCore.Messaging
 {
@@ -7,6 +9,19 @@ namespace PactNet.AspNetCore.Messaging
     /// </summary>
     public static class MessageMiddlewareExtensions
     {
+        /// <summary>
+        /// Register services for Pact message verifier middleware
+        /// </summary>
+        /// <param name="services">Service collection</param>
+        /// <param name="configure">Configure options</param>
+        /// <returns>Fluent builder</returns>
+        public static IServiceCollection AddPactMessaging(this IServiceCollection services, Action<MessagingVerifierOptions> configure)
+        {
+            services.Configure(configure);
+
+            return services;
+        }
+
         /// <summary>
         /// Extensions method to add the message middleware
         /// </summary>

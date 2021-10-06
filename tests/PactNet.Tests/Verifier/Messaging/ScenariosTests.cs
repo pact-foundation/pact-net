@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using PactNet.Models;
+using PactNet.Verifier.Messaging;
 using Xunit;
 
-namespace PactNet.Native.Tests
+namespace PactNet.Tests.Verifier.Messaging
 {
     public class ScenariosTests
     {

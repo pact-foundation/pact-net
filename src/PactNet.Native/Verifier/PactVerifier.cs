@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using PactNet.Native.Internal;
 using PactNet.Verifier;
+using PactNet.Verifier.Messaging;
 
 namespace PactNet.Native.Verifier
 {
@@ -48,7 +49,7 @@ namespace PactNet.Native.Verifier
         /// <returns>Fluent builder</returns>
         public IPactVerifierProvider ServiceProvider(string providerName, Uri pactUri)
         {
-            SetProviderHost(providerName, pactUri);
+            this.SetProviderHost(providerName, pactUri);
 
             if (pactUri.AbsolutePath != "/")
             {
@@ -59,22 +60,22 @@ namespace PactNet.Native.Verifier
         }
 
         /// <summary>
-        /// Set the provider details
+        /// Set the provider details of a messaging provider
         /// </summary>
         /// <param name="providerName">Name of the provider</param>
         /// <param name="pactUri">URI of the running service</param>
-        /// <param name="relativePath">The relative path of the provider route</param>
+        /// <param name="basePath">Path of the messaging provider endpoint</param>
         /// <returns>Fluent builder</returns>
-        public IPactVerifierProvider ServiceProvider(string providerName, Uri pactUri, string relativePath)
+        public IPactVerifierMessagingProvider MessagingProvider(string providerName, Uri pactUri, string basePath)
         {
-            Guard.NotNull(relativePath, nameof(relativePath));
-            SetProviderHost(providerName, pactUri);
+            Guard.NotNull(basePath, nameof(basePath));
+            this.SetProviderHost(providerName, pactUri);
 
-            var reconciledPath = pactUri.AbsolutePath != "/" ? new Uri(pactUri, relativePath).AbsolutePath : relativePath;
+            string reconciledPath = pactUri.AbsolutePath != "/" ? new Uri(pactUri, basePath).AbsolutePath : basePath;
 
             this.verifierArgs.AddOption("--base-path", reconciledPath);
 
-            return new NativePactVerifierProvider(this.verifierArgs, this.config);
+            return new NativePactVerifierMessagingProvider(this.verifierArgs, this.config);
         }
 
         private void SetProviderHost(string providerName, Uri pactUri)

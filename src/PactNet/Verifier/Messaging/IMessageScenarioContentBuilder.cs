@@ -1,7 +1,6 @@
 using System;
-using PactNet.Models;
 
-namespace PactNet
+namespace PactNet.Verifier.Messaging
 {
     /// <summary>
     /// Defines the message scenario builder interface
@@ -25,6 +24,6 @@ namespace PactNet
         /// Set the object returned by the scenario
         /// </summary>
         /// <param name="messageContent">the message content</param>
-        Scenario WithContent(dynamic messageContent);
+        Scenario WithContent(dynamic messageContent); // TODO: I don't think this works because it doesn't know which overload to call due to the dynamic
     }
 }

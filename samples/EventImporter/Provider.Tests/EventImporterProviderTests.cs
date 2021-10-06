@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Moq;
-using PactNet;
-using PactNet.AspNetCore.Messaging.Options;
+using PactNet.AspNetCore.Messaging;
 using PactNet.Infrastructure.Outputters;
-using PactNet.Models;
-using PactNet.Native;
 using PactNet.Native.Verifier;
 using PactNet.Verifier;
+using PactNet.Verifier.Messaging;
 using Provider.Api;
 using Provider.Api.Controllers;
 using Provider.Domain;
@@ -57,11 +55,15 @@ namespace Provider.Tests
             //Act / Assert
             IPactVerifier pactVerifier = new PactVerifier(config);
             pactVerifier
-                .ServiceProvider("Event API V3 Message", this.fixture.ServerUri, options.BasePathMessage)
+                .MessagingProvider("Event API V3 Message", this.fixture.ServerUri, options.BasePath)
+                .WithProviderMessages(scenarios =>
+                {
+                    scenarios.Add(this.GetEventImporterScenarios)
+                             .Add("a single event", () => new Event("single"))
+                             .Add("a single event with metadata", new { foo = "bar" }, () => new Event("event with metadata"));
+                })
                 .HonoursPactWith("Event API Consumer V3 Message")
                 .FromPactFile(new FileInfo(pactPath))
-                .WithProviderMessages()
-                .AddScenario(GetEventImporterScenarios)
                 .Verify();
         }
 
@@ -75,33 +77,31 @@ namespace Provider.Tests
                 // - here we chose to generate the object from the business component
                 //   by mocking the last call before sending information to the queue
                 //-----------------------------------------------------
-                return
-                    MessageScenarioBuilder
-                        .AScenario
-                        .WhenReceiving("receiving events from the queue")
-                        .WithMetadata(new { key = "valueKey" })
-                        .WithContent(() =>
-                        {
-                            //The component that will send the message to the queue (Kafka, Rabbit, etc)
-                            var mockEventProducer = new Mock<IEventProducer>();
+                return MessageScenarioBuilder
+                      .WhenReceiving("receiving events from the queue")
+                      .WithMetadata(new { key = "valueKey" })
+                      .WithContent(() =>
+                       {
+                           //The component that will send the message to the queue (Kafka, Rabbit, etc)
+                           var mockEventProducer = new Mock<IEventProducer>();
 
-                            List<Event> eventsPushed = null;
+                           List<Event> eventsPushed = null;
 
-                            //The last method called before sending the message to the queue needs to be mocked
-                            //... and the message (here eventPushed) needs to be intercepted in the test for verification
-                            mockEventProducer
-                                .Setup(x => x.Send(It.IsAny<IReadOnlyCollection<Event>>()))
-                                .Callback((IReadOnlyCollection<Event> events) => { eventsPushed = events.ToList(); });
+                           //The last method called before sending the message to the queue needs to be mocked
+                           //... and the message (here eventPushed) needs to be intercepted in the test for verification
+                           mockEventProducer
+                              .Setup(x => x.Send(It.IsAny<IReadOnlyCollection<Event>>()))
+                              .Callback((IReadOnlyCollection<Event> events) => { eventsPushed = events.ToList(); });
 
-                            //We call the endpoint with the payload to generate a real-life message
-                            //The fake event repository would represent an actual storage system
-                            var controller = new EventsController(new FakeEventRepository(),
-                                new EventHandler(mockEventProducer.Object, new EventDispatcher()));
+                           //We call the endpoint with the payload to generate a real-life message
+                           //The fake event repository would represent an actual storage system
+                           var controller = new EventsController(new FakeEventRepository(),
+                                                                 new EventHandler(mockEventProducer.Object, new EventDispatcher()));
 
-                            controller.ImportToQueue();
+                           controller.ImportToQueue();
 
-                            return eventsPushed;
-                        });
+                           return eventsPushed;
+                       });
 
                 //-----------------------------------------------------
                 // A simple example of scenario setting.
@@ -114,7 +114,6 @@ namespace Provider.Tests
                 //-----------------------------------------------------
                 //return
                 //    MessageScenarioBuilder
-                //        .AScenario
                 //        .WhenReceiving("receiving events from the queue")
                 //        .WithMetadata(new { key = "valueKey" })
                 //        .WithContent(new List<Event>

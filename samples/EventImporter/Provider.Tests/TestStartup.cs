@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PactNet.AspNetCore.Messaging;
-using PactNet.AspNetCore.Messaging.Options;
 
 namespace Provider.Tests
 {
@@ -21,7 +20,10 @@ namespace Provider.Tests
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<MessagingVerifierOptions>(configuration.GetSection("PactMessageMiddleware"));
+            services.AddPactMessaging(options =>
+            {
+                options.BasePath = "/pact-messages";
+            });
 
             this.inner.ConfigureServices(services);
         }

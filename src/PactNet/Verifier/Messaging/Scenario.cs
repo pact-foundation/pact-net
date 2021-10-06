@@ -1,6 +1,6 @@
 using System;
 
-namespace PactNet.Models
+namespace PactNet.Verifier.Messaging
 {
     /// <summary>
     /// Defines the scenario model

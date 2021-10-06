@@ -1,4 +1,5 @@
 using System;
+using PactNet.Verifier.Messaging;
 
 namespace PactNet.Verifier
 {
@@ -16,12 +17,12 @@ namespace PactNet.Verifier
         IPactVerifierProvider ServiceProvider(string providerName, Uri pactUri);
 
         /// <summary>
-        /// Set the provider details
+        /// Set the provider details of a messaging provider
         /// </summary>
         /// <param name="providerName">Name of the provider</param>
         /// <param name="pactUri">URI of the running service</param>
-        /// <param name="relativePath">The relative path of the provider route</param>
+        /// <param name="basePath">Path of the messaging provider endpoint</param>
         /// <returns>Fluent builder</returns>
-        IPactVerifierProvider ServiceProvider(string providerName, Uri pactUri, string relativePath);
+        IPactVerifierMessagingProvider MessagingProvider(string providerName, Uri pactUri, string basePath);
     }
 }

@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using PactNet.AspNetCore.Messaging.Models;
-using PactNet.AspNetCore.Messaging.Options;
-using PactNet.Native;
+using PactNet.Verifier.Messaging;
 
 namespace PactNet.AspNetCore.Messaging
 {
@@ -46,13 +44,13 @@ namespace PactNet.AspNetCore.Messaging
         /// <returns>A task</returns>
         public async Task InvokeAsync(HttpContext context)
         {
-            if (!(context.Request.Path.Value?.StartsWith(options.BasePathMessage) ?? false))
+            if (!(context.Request.Path.Value?.StartsWith(options.BasePath) ?? false))
             {
                 await this.next(context);
                 return;
             }
 
-            var interactionDescription = await GetInteractionDescriptionAsync(context);
+            string interactionDescription = await GetInteractionDescriptionAsync(context);
 
             if (string.IsNullOrWhiteSpace(interactionDescription))
             {
@@ -60,16 +58,16 @@ namespace PactNet.AspNetCore.Messaging
                 return;
             }
 
-            context.Response.StatusCode = (int)HttpStatusCode.OK;
-
-            var scenario = Scenarios.GetByDescription(interactionDescription);
-            var response = scenario.InvokeScenario();
+            Scenario scenario = Scenarios.GetByDescription(interactionDescription);
+            dynamic response = scenario.InvokeScenario();
 
             if (response == null)
             {
                 await WriteErrorInResponseAsync(context, "The scenario invocation returned a null object. You must setup your messaging scenario so it returns a non-null object.", HttpStatusCode.NotFound);
                 return;
             }
+
+            context.Response.StatusCode = (int)HttpStatusCode.OK;
 
             if (scenario.Metadata != null)
             {
@@ -84,7 +82,7 @@ namespace PactNet.AspNetCore.Messaging
         /// </summary>
         /// <param name="context">the http context</param>
         /// <param name="response">the dynamic message</param>
-        private Task WriteToResponseAsync(HttpContext context, dynamic response)
+        private static Task WriteToResponseAsync(HttpContext context, dynamic response)
         {
             string responseBody = JsonConvert.SerializeObject(response);
             return context.Response.WriteAsync(responseBody);
@@ -95,7 +93,7 @@ namespace PactNet.AspNetCore.Messaging
         /// </summary>
         /// <param name="context">the http context</param>
         /// <param name="metadata">the metadata</param>
-        private void AddMetadataToResponse(HttpContext context, dynamic metadata)
+        private static void AddMetadataToResponse(HttpContext context, dynamic metadata)
         {
             string stringifyMetadata = JsonConvert.SerializeObject(metadata);
             string metadataBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(stringifyMetadata));
@@ -109,7 +107,7 @@ namespace PactNet.AspNetCore.Messaging
         /// </summary>
         /// <param name="context">The http context</param>
         /// <returns>The request body</returns>
-        private async Task<string> GetInteractionDescriptionAsync(HttpContext context)
+        private static async Task<string> GetInteractionDescriptionAsync(HttpContext context)
         {
             string requestBody;
             using (var reader = new StreamReader(context.Request.Body, Encoding.UTF8))
@@ -126,7 +124,7 @@ namespace PactNet.AspNetCore.Messaging
         /// <param name="context">The http context</param>
         /// <param name="errorMessage">The error message in the response content</param>
         /// <param name="statusCodeError">The status code related to the error</param>
-        private async Task WriteErrorInResponseAsync(HttpContext context, string errorMessage, HttpStatusCode statusCodeError)
+        private static async Task WriteErrorInResponseAsync(HttpContext context, string errorMessage, HttpStatusCode statusCodeError)
         {
             context.Response.StatusCode = (int)statusCodeError;
             await WriteToResponseAsync(context, errorMessage);
