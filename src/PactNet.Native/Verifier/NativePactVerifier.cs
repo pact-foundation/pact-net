@@ -1,7 +1,7 @@
 using PactNet.Exceptions;
 using PactNet.Native.Interop;
 
-namespace PactNet.Native
+namespace PactNet.Native.Verifier
 {
     /// <summary>
     /// Native pact verifier

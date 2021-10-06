@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using PactNet;
 using PactNet.Infrastructure.Outputters;
-using PactNet.Native;
+using PactNet.Native.Verifier;
+using PactNet.Verifier;
 using Provider.Api.Web.Tests;
 using Xunit;
 using Xunit.Abstractions;

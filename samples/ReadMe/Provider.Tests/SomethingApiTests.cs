@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
-using PactNet;
 using PactNet.Infrastructure.Outputters;
-using PactNet.Native;
+using PactNet.Native.Verifier;
+using PactNet.Verifier;
 using Xunit;
 using Xunit.Abstractions;
 
