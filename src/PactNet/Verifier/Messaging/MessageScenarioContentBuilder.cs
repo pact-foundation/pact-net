@@ -1,7 +1,6 @@
 using System;
-using PactNet.Models;
 
-namespace PactNet.Native
+namespace PactNet.Verifier.Messaging
 {
     /// <summary>
     /// Defines the message scenario builder

@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PactNet.Models;
 
-namespace PactNet.Native
+namespace PactNet.Verifier.Messaging
 {
     /// <summary>
     /// Defines the scenarios static list for messaging support

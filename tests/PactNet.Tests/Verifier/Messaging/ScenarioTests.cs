@@ -1,9 +1,9 @@
 using System;
 using FluentAssertions;
-using PactNet.Models;
+using PactNet.Verifier.Messaging;
 using Xunit;
 
-namespace PactNet.Tests
+namespace PactNet.Tests.Verifier.Messaging
 {
     public class ScenarioTests
     {

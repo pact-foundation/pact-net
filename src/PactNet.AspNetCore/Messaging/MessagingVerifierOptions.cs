@@ -1,4 +1,4 @@
-namespace PactNet.AspNetCore.Messaging.Options
+namespace PactNet.AspNetCore.Messaging
 {
     /// <summary>
     /// Defines the message middleware options
@@ -8,6 +8,6 @@ namespace PactNet.AspNetCore.Messaging.Options
         /// <summary>
         /// The base path of the message route
         /// </summary>
-        public string BasePathMessage { get; set; }
+        public string BasePath { get; set; }
     }
 }

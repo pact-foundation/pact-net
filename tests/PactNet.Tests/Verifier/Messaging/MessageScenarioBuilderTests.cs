@@ -1,8 +1,9 @@
 using System;
 using FluentAssertions;
+using PactNet.Verifier.Messaging;
 using Xunit;
 
-namespace PactNet.Native.Tests
+namespace PactNet.Tests.Verifier.Messaging
 {
     /// <summary>
     /// Defines the scenarios tests
@@ -15,9 +16,9 @@ namespace PactNet.Native.Tests
         [InlineData("  ")]
         public void WhenReceiving_Should_Fail_If_Wrong_Description(string description)
         {
-            MessageScenarioBuilder.AScenario
-                .Invoking(x => x.WhenReceiving(description))
-                .Should().Throw<ArgumentNullException>();
+            Action action = () => MessageScenarioBuilder.WhenReceiving(description);
+
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -25,7 +26,7 @@ namespace PactNet.Native.Tests
         {
             var namedInteraction = "an interaction";
 
-            var actualBuilder = MessageScenarioBuilder.AScenario.WhenReceiving(namedInteraction);
+            var actualBuilder = MessageScenarioBuilder.WhenReceiving(namedInteraction);
 
             actualBuilder.Should().NotBeNull();
         }

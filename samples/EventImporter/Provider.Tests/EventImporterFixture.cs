@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using PactNet.AspNetCore.Messaging.Options;
-using PactNet.Native;
+using PactNet.AspNetCore.Messaging;
 
 namespace Provider.Tests
 {

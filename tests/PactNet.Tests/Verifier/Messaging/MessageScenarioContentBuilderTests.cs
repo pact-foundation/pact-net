@@ -1,8 +1,9 @@
 using System;
 using FluentAssertions;
+using PactNet.Verifier.Messaging;
 using Xunit;
 
-namespace PactNet.Native.Tests
+namespace PactNet.Tests.Verifier.Messaging
 {
     /// <summary>
     /// Defines the scenarios tests
