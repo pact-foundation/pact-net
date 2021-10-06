@@ -87,6 +87,13 @@ namespace PactNet.Native.Verifier
             return this;
         }
 
+        public IPactVerifierMessagingScenario WithProviderMessages()
+        {
+            Scenarios.ClearScenarios();
+
+            return new NativePactVerifierMessagingScenario(this);
+        }
+
         /// <summary>
         /// Verify provider interactions
         /// </summary>

@@ -30,6 +30,12 @@ namespace PactNet.Verifier
         IPactVerifierPair WithLogLevel(PactLogLevel level);
 
         /// <summary>
+        /// Using messaging interaction model type of provider
+        /// </summary>
+        /// <returns>Fluent builder</returns>
+        IPactVerifierMessagingScenario WithProviderMessages();
+
+        /// <summary>
         /// Verify provider interactions
         /// </summary>
         void Verify();

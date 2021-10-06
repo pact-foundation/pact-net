@@ -48,11 +48,7 @@ namespace PactNet.Native.Verifier
         /// <returns>Fluent builder</returns>
         public IPactVerifierProvider ServiceProvider(string providerName, Uri pactUri)
         {
-            Guard.NotNull(pactUri, nameof(pactUri));
-
-            this.verifierArgs.AddOption("--provider-name", providerName);
-            this.verifierArgs.AddOption("--hostname", pactUri.Host);
-            this.verifierArgs.AddOption("--port", pactUri.Port.ToString());
+            SetProviderHost(providerName, pactUri);
 
             if (pactUri.AbsolutePath != "/")
             {
@@ -60,6 +56,34 @@ namespace PactNet.Native.Verifier
             }
 
             return new NativePactVerifierProvider(this.verifierArgs, this.config);
+        }
+
+        /// <summary>
+        /// Set the provider details
+        /// </summary>
+        /// <param name="providerName">Name of the provider</param>
+        /// <param name="pactUri">URI of the running service</param>
+        /// <param name="relativePath">The relative path of the provider route</param>
+        /// <returns>Fluent builder</returns>
+        public IPactVerifierProvider ServiceProvider(string providerName, Uri pactUri, string relativePath)
+        {
+            Guard.NotNull(relativePath, nameof(relativePath));
+            SetProviderHost(providerName, pactUri);
+
+            var reconciledPath = pactUri.AbsolutePath != "/" ? new Uri(pactUri, relativePath).AbsolutePath : relativePath;
+
+            this.verifierArgs.AddOption("--base-path", reconciledPath);
+
+            return new NativePactVerifierProvider(this.verifierArgs, this.config);
+        }
+
+        private void SetProviderHost(string providerName, Uri pactUri)
+        {
+            Guard.NotNull(pactUri, nameof(pactUri));
+
+            this.verifierArgs.AddOption("--provider-name", providerName);
+            this.verifierArgs.AddOption("--hostname", pactUri.Host);
+            this.verifierArgs.AddOption("--port", pactUri.Port.ToString());
         }
     }
 }

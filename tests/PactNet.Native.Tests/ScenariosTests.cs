@@ -9,8 +9,6 @@ namespace PactNet.Native.Tests
 {
     public class ScenariosTests
     {
-        private readonly Scenarios scenarios;
-
         private List<Scenario> expectedScenarios => new List<Scenario>()
         {
             new Scenario("scenario1", () => "scenario1_object"),
@@ -21,7 +19,9 @@ namespace PactNet.Native.Tests
 
         public ScenariosTests()
         {
-            this.scenarios = new Scenarios();
+            //The static class Scenarios is intended to be used as a in memory storage for scenario invoking.
+            // - therefore, to make it thread-safe in a unit testing context, a ClearScenario is to be called before each test.
+            Scenarios.ClearScenarios();
         }
 
         [Fact]
@@ -29,17 +29,17 @@ namespace PactNet.Native.Tests
         {
             var expectedScenario = expectedScenarios.FirstOrDefault();
 
-            scenarios.AddScenario(expectedScenario);
+            Scenarios.AddScenario(expectedScenario);
 
-            scenarios.AllScenarios.Should().HaveCount(1);
+            Scenarios.NumberOfScenarios.Should().Be(1);
         }
 
         [Fact]
         public void Should_Fail_To_Add_A_Scenario_If_Invalid_Scenario()
         {
-            scenarios
-                .Invoking(x => x.AddScenario(null))
-                .Should().Throw<ArgumentNullException>();
+            Action actual = () => Scenarios.AddScenario(null);
+
+            actual.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -48,11 +48,11 @@ namespace PactNet.Native.Tests
             var expectedScenario = expectedScenarios.FirstOrDefault();
             var expectedDescription = expectedScenario.Description;
 
-            scenarios.AddScenario(expectedScenario);
+            Scenarios.AddScenario(expectedScenario);
 
-            scenarios
-                .Invoking(x => x.AddScenario(expectedScenario))
-                .Should().Throw<InvalidOperationException>()
+            Action actual = () => Scenarios.AddScenario(expectedScenario);
+
+            actual.Should().Throw<InvalidOperationException>()
                 .WithMessage($"Scenario \"{expectedDescription}\" already added");
         }
 
@@ -61,40 +61,36 @@ namespace PactNet.Native.Tests
         {
             var expectedNumberOfScenarios = expectedScenarios.Count;
 
-            scenarios.AddScenarios(expectedScenarios);
+            Scenarios.AddScenarios(expectedScenarios);
 
-            scenarios.AllScenarios.Should().HaveCount(expectedNumberOfScenarios);
+            Scenarios.NumberOfScenarios.Should().Be(expectedNumberOfScenarios);
         }
 
         [Fact]
         public void Should_Fail_To_Add_Multiple_Scenarios_If_Null_Scenario_List()
         {
-            scenarios
-                .Invoking(x => x.AddScenarios(null))
-                .Should().Throw<ArgumentException>()
-                .WithMessage("scenarios cannot be null or empty");
+            Action actual = () => Scenarios.AddScenarios(null);
+
+            actual.Should().Throw<ArgumentException>();
         }
 
         [Fact]
         public void Should_Fail_To_Add_Multiple_Scenarios_If_Empty_Scenario_List()
         {
-            scenarios
-                .Invoking(x => x.AddScenarios(new List<Scenario>()))
-                .Should().Throw<ArgumentException>()
-                .WithMessage("scenarios cannot be null or empty");
+            Action actual = () => Scenarios.AddScenarios(new List<Scenario>());
+
+            actual.Should().Throw<ArgumentException>();
         }
 
         [Fact]
         public void Should_Fail_To_Add_Multiple_Scenario_If_Scenario_Already_Added()
         {
             var expectedScenario = expectedScenarios.FirstOrDefault();
-            var expectedDescription = expectedScenario.Description;
 
-            scenarios.AddScenarios(expectedScenarios);
+            Scenarios.AddScenarios(expectedScenarios);
 
-            scenarios
-                .Invoking(x => x.AddScenarios(expectedScenarios))
-                .Should().Throw<InvalidOperationException>()
+            Action actual = () => Scenarios.AddScenarios(expectedScenarios);
+            actual.Should().Throw<InvalidOperationException>()
                 .WithMessage($"A scenario has already been added");
         }
 
@@ -104,9 +100,9 @@ namespace PactNet.Native.Tests
             var expectedScenario = expectedScenarios.FirstOrDefault();
             var expectedDescription = expectedScenario.Description;
 
-            scenarios.AddScenario(expectedScenario);
+            Scenarios.AddScenario(expectedScenario);
 
-            var actualScenario = scenarios.GetByDescription(expectedDescription);
+            var actualScenario = Scenarios.GetByDescription(expectedDescription);
 
             actualScenario.Should().BeEquivalentTo(expectedScenario);
         }
@@ -117,9 +113,9 @@ namespace PactNet.Native.Tests
             var expectedScenario = expectedScenarios.FirstOrDefault();
             var expectedDescription = expectedScenario.Description;
 
-            scenarios.AddScenario(expectedScenario);
+            Scenarios.AddScenario(expectedScenario);
 
-            scenarios.Exist(expectedDescription).Should().Be(true);
+            Scenarios.Exist(expectedDescription).Should().Be(true);
         }
 
         [Fact]
@@ -129,9 +125,9 @@ namespace PactNet.Native.Tests
             var expectedDescription = expectedScenario.Description;
             var expectedReturnedObject = expectedScenario.InvokeScenario();
 
-            scenarios.AddScenarios(expectedScenarios);
+            Scenarios.AddScenarios(expectedScenarios);
 
-            var actual = scenarios.InvokeScenario(expectedDescription);
+            var actual = Scenarios.InvokeScenario(expectedDescription);
 
             Assert.Equal(expectedReturnedObject, actual);
         }
@@ -142,41 +138,41 @@ namespace PactNet.Native.Tests
         [InlineData("  ")]
         public void Should_Fail_To_Execute_Scenario_When_Invalid_Description(string description)
         {
-            scenarios.AddScenarios(expectedScenarios);
+            Scenarios.AddScenarios(expectedScenarios);
 
-            scenarios
-                .Invoking(x => x.InvokeScenario(description))
-                .Should().Throw<ArgumentNullException>();
+            Action actual = () => Scenarios.InvokeScenario(description);
+
+            actual.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void Should_Fail_To_Execute_Scenario_If_No_Scenario_Added()
         {
-            scenarios
-                .Invoking(x => x.InvokeScenario("description"))
-                .Should().Throw<InvalidOperationException>()
+            Action actual = () => Scenarios.InvokeScenario("description");
+
+            actual.Should().Throw<InvalidOperationException>()
                 .WithMessage("Scenario \"description\" not found. You need to add the scenario first");
         }
 
         [Fact]
         public void Should_Fail_To_Execute_Scenario_If_Scenario_Not_Found()
         {
-            scenarios.AddScenarios(expectedScenarios);
+            Scenarios.AddScenarios(expectedScenarios);
 
-            scenarios
-                .Invoking(x => x.InvokeScenario("description"))
-                .Should().Throw<InvalidOperationException>()
+            Action actual = () => Scenarios.InvokeScenario("description");
+
+            actual.Should().Throw<InvalidOperationException>()
                 .WithMessage("Scenario \"description\" not found. You need to add the scenario first");
         }
 
         [Fact]
         public void Should_Be_Able_To_Clear_The_Scenarios()
         {
-            scenarios.AddScenarios(expectedScenarios);
+            Scenarios.AddScenarios(expectedScenarios);
 
-            scenarios.ClearScenarios();
+            Scenarios.ClearScenarios();
 
-            scenarios.AllScenarios.Should().BeEmpty();
+            Scenarios.NumberOfScenarios.Should().Be(0);
         }
     }
 }
