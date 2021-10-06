@@ -8,18 +8,23 @@ namespace PactNet.Native
     /// <summary>
     /// Defines the scenarios static list for messaging support
     /// </summary>
-    public class Scenarios
+    public static class Scenarios
     {
         /// <summary>
         /// The available scenarios
         /// </summary>
-        internal readonly List<Scenario> AllScenarios = new List<Scenario>();
+        private static readonly List<Scenario> AllScenarios = new List<Scenario>();
+
+        /// <summary>
+        /// Number of scenarios
+        /// </summary>
+        internal static int NumberOfScenarios => AllScenarios.Count;
 
         /// <summary>
         /// Add a scenario
         /// </summary>
         /// <param name="scenario">the scenario to add</param>
-        public void AddScenario(Scenario scenario)
+        public static void AddScenario(Scenario scenario)
         {
             if (scenario == null)
             {
@@ -38,7 +43,7 @@ namespace PactNet.Native
         /// Add multiple scenarios
         /// </summary>
         /// <param name="scenarios">the scenario list to add</param>
-        public void AddScenarios(IReadOnlyCollection<Scenario> scenarios)
+        public static void AddScenarios(IReadOnlyCollection<Scenario> scenarios)
         {
             if (scenarios == null || scenarios.Any() == false)
             {
@@ -58,7 +63,7 @@ namespace PactNet.Native
         /// </summary>
         /// <param name="description">the name of the scenario</param>
         /// <returns>a dynamic message object</returns>
-        public dynamic InvokeScenario(string description)
+        public static dynamic InvokeScenario(string description)
         {
             if (string.IsNullOrWhiteSpace(description))
             {
@@ -80,7 +85,7 @@ namespace PactNet.Native
         /// </summary>
         /// <param name="description">the scenario description</param>
         /// <returns>If the scenario exists</returns>
-        public bool Exist(string description)
+        public static bool Exist(string description)
         {
             return AllScenarios.Any(x => x.Description == description);
         }
@@ -90,7 +95,7 @@ namespace PactNet.Native
         /// </summary>
         /// <param name="description">the scenario description</param>
         /// <returns>The scenario</returns>
-        public Scenario GetByDescription(string description)
+        public static Scenario GetByDescription(string description)
         {
             var scenario = AllScenarios.FirstOrDefault(x => x.Description == description);
 
@@ -100,7 +105,7 @@ namespace PactNet.Native
         /// <summary>
         /// Clear all scenarios
         /// </summary>
-        public void ClearScenarios()
+        public static void ClearScenarios()
         {
             AllScenarios.Clear();
         }

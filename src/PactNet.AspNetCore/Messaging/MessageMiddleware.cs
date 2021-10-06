@@ -19,11 +19,6 @@ namespace PactNet.AspNetCore.Messaging
     public class MessageMiddleware
     {
         /// <summary>
-        /// the list of scenarios
-        /// </summary>
-        private readonly Scenarios scenarios;
-
-        /// <summary>
         /// The next pointer
         /// </summary>
         private readonly RequestDelegate next;
@@ -37,11 +32,9 @@ namespace PactNet.AspNetCore.Messaging
         /// Creates an instance of <see cref="MessageMiddleware"/>
         /// </summary>
         /// <param name="options">the middleware options</param>
-        /// <param name="scenarios">the list of scenarios</param>
         /// <param name="next">the next handle</param>
-        public MessageMiddleware(IOptions<MessagingVerifierOptions> options, Scenarios scenarios, RequestDelegate next)
+        public MessageMiddleware(IOptions<MessagingVerifierOptions> options, RequestDelegate next)
         {
-            this.scenarios = scenarios;
             this.next = next;
             this.options = options.Value;
         }
@@ -69,7 +62,7 @@ namespace PactNet.AspNetCore.Messaging
 
             context.Response.StatusCode = (int)HttpStatusCode.OK;
 
-            var scenario = scenarios.GetByDescription(interactionDescription);
+            var scenario = Scenarios.GetByDescription(interactionDescription);
             var response = scenario.InvokeScenario();
 
             if (response == null)

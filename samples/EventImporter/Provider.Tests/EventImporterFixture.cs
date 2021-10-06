@@ -14,8 +14,6 @@ namespace Provider.Tests
 
         public Uri ServerUri { get; }
 
-        public Scenarios Scenarios { get; set; } = new Scenarios();
-
 
         public EventImporterFixture()
         {
@@ -26,8 +24,6 @@ namespace Provider.Tests
                               {
                                   webBuilder.UseUrls(ServerUri.ToString());
                                   webBuilder.UseStartup<TestStartup>();
-
-                                  webBuilder.ConfigureServices(services => services.AddSingleton(Scenarios));
                               })
                               .Build();
 
