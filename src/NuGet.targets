@@ -1,0 +1,18 @@
+<Project>
+  <PropertyGroup>
+    <Authors>Pact Foundation</Authors>
+    <Company>Pact Foundation</Company>
+    <Copyright>Copyright 2021 (c) Pact Foundation. All rights reserved.</Copyright>
+    <PackageProjectUrl>https://https://github.com/pact-foundation/pact-net</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/pact-foundation/pact-net</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>Consumer-driven contract testing library</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <IncludeSymbols>true</IncludeSymbols>
+    <VersionPrefix>4.0.0</VersionPrefix>
+    <PackageReleaseNotes>
+      v4.0.0
+      - Complete rewrite to take advantage of new Rust core pact library shared between all language integrations
+    </PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
