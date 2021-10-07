@@ -16,21 +16,7 @@
     <OutputType>Library</OutputType>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <PackageId>PactNet.Native</PackageId>
-    <Authors>Pact Foundation</Authors>
-    <Company>Pact Foundation</Company>
-    <Copyright>Copyright 2021 (c) Pact Foundation All rights reserved.</Copyright>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Description>Native provider for Pact mock server and verifier</Description>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <IncludeSymbols>true</IncludeSymbols>
-    <VersionPrefix>0.1.0</VersionPrefix>
-    <PackageReleaseNotes>
-      v0.1.0
-      - Initial release
-    </PackageReleaseNotes>
-  </PropertyGroup>
+  <Import Project="../NuGet.targets" />
 
   <PropertyGroup>
     <IsWindows>False</IsWindows>

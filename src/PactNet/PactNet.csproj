@@ -11,32 +11,14 @@
     <DebugType>embedded</DebugType>
     <DebugSymbols>True</DebugSymbols>
     <MinClientVersion>3.0</MinClientVersion>
-    <NoWarn>NU5105</NoWarn>
+    <NoWarn>CS1591;NU5105</NoWarn>
     <OutputType>Library</OutputType>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <PackageId>PactNet</PackageId>
-    <Authors>Pact Foundation</Authors>
-    <Company>Pact Foundation</Company>
-    <Copyright>Copyright 2021 (c) Pact Foundation. All rights reserved.</Copyright>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Description>Consumer-driven contract testing library</Description>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <IncludeSymbols>true</IncludeSymbols>
-    <VersionPrefix>4.0.0</VersionPrefix>
-    <PackageReleaseNotes>
-      v4.0.0
-      - Complete rewrite to take advantage of new Rust core pact library shared between all language integrations
-    </PackageReleaseNotes>
-  </PropertyGroup>
+  <Import Project="../NuGet.targets" />
 
   <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
-    <NoWarn>CS1591</NoWarn>
     <DefineConstants>$(DefineConstants);USE_NET4X</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="$(TargetFramework.StartsWith('netstandard'))">
-    <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
