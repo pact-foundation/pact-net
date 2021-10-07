@@ -9,6 +9,14 @@ namespace PactNet.Native.Verifier
         /// Verify the pact from the given args
         /// </summary>
         /// <param name="args">Verifier args</param>
-        void Verify(string args);
+        /// <returns>Verifier result</returns>
+        PactVerifierResult Verify(string args);
+
+        /// <summary>
+        /// Get the logs for the current verification run
+        /// </summary>
+        /// <param name="provider">Name of the provider</param>
+        /// <returns>Verifier logs</returns>
+        string VerifierLogs(string provider);
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using PactNet.Exceptions;
 using PactNet.Native.Internal;
 using PactNet.Verifier;
 
@@ -100,7 +101,29 @@ namespace PactNet.Native.Verifier
             this.config.WriteLine("Invoking the pact verifier with args:");
             this.config.WriteLine(formatted);
 
-            this.verifier.Verify(formatted);
+            PactVerifierResult result = this.verifier.Verify(formatted);
+
+            string provider = this.verifierArgs["--provider-name"];
+            string logs = this.verifier.VerifierLogs(provider);
+
+            this.config.WriteLine(string.Empty);
+            this.config.WriteLine("Verifier logs:");
+            this.config.WriteLine(logs);
+
+            if (result == PactVerifierResult.Success)
+            {
+                return;
+            }
+
+            throw result switch
+            {
+                PactVerifierResult.Failure => new PactFailureException("The verification process failed, see output for errors"),
+                PactVerifierResult.NullPointer => new PactFailureException("A null pointer was received"),
+                PactVerifierResult.Panic => new PactFailureException("The method panicked"),
+                PactVerifierResult.InvalidArguments => new PactFailureException("Invalid arguments were provided to the verification process"),
+                PactVerifierResult.UnknownError => new PactFailureException($"An unknown error occurred with error code {result}"),
+                _ => throw new ArgumentOutOfRangeException(nameof(result), result, "Unexpected result from pact verification")
+            };
         }
     }
 }

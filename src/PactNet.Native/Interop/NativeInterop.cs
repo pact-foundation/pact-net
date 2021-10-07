@@ -75,6 +75,9 @@ namespace PactNet.Native.Interop
         [DllImport(dllName, EntryPoint = "pactffi_verify")]
         public static extern int Verify(string args);
 
+        [DllImport(dllName, EntryPoint = "pactffi_verifier_logs_for_provider")]
+        public static extern IntPtr VerifierLogsForProvider(string provider);
+
         #endregion Http Interop Support
 
         #region Messaging Interop Support

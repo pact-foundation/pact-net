@@ -1,4 +1,5 @@
-using PactNet.Exceptions;
+using System;
+using System.Runtime.InteropServices;
 using PactNet.Native.Interop;
 
 namespace PactNet.Native.Verifier
@@ -12,23 +13,34 @@ namespace PactNet.Native.Verifier
         /// Verify the pact from the given args
         /// </summary>
         /// <param name="args">Verifier args</param>
-        public void Verify(string args)
+        /// <returns>Verifier result</returns>
+        public PactVerifierResult Verify(string args)
         {
             int result = NativeInterop.Verify(args);
 
-            if (result == 0)
+            return result switch
             {
-                return;
-            }
-
-            throw result switch
-            {
-                1 => new PactFailureException("The verification process failed, see output for errors"),
-                2 => new PactFailureException("A null pointer was received"),
-                3 => new PactFailureException("The method panicked"),
-                4 => new PactFailureException("Invalid arguments were provided to the verification process"),
-                _ => new PactFailureException($"An unknown error occurred with error code {result}")
+                0 => PactVerifierResult.Success,
+                1 => PactVerifierResult.Failure,
+                2 => PactVerifierResult.NullPointer,
+                3 => PactVerifierResult.Panic,
+                4 => PactVerifierResult.InvalidArguments,
+                _ => PactVerifierResult.UnknownError
             };
+        }
+
+        /// <summary>
+        /// Get the logs for the given provider
+        /// </summary>
+        /// <param name="provider">Name of the provider</param>
+        /// <returns>Verifier logs</returns>
+        public string VerifierLogs(string provider)
+        {
+            IntPtr logsPtr = NativeInterop.VerifierLogsForProvider(provider);
+
+            return logsPtr == IntPtr.Zero
+                       ? "ERROR: Unable to retrieve verifier logs"
+                       : Marshal.PtrToStringAnsi(logsPtr);
         }
     }
 }

@@ -74,7 +74,7 @@
   ],
   "metadata": {
     "pactRust": {
-      "version": "0.9.5"
+      "version": "0.1.3"
     },
     "pactSpecification": {
       "version": "2.0.0"
