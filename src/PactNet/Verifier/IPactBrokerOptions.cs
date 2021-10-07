@@ -1,3 +1,5 @@
+using System;
+
 namespace PactNet.Verifier
 {
     /// <summary>
@@ -38,7 +40,7 @@ namespace PactNet.Verifier
         /// </summary>
         /// <param name="date">WIP cut-off date</param>
         /// <returns>Fluent builder</returns>
-        IPactBrokerOptions IncludeWipPactsSince(string date); // TODO: Should this be a DateTime or DateTimeOffset so we can format it properly?
+        IPactBrokerOptions IncludeWipPactsSince(DateTime date);
 
         /// <summary>
         /// Publish results to the pact broker
