@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using FluentAssertions;
+using FluentAssertions.Extensions;
 using PactNet.Native.Verifier;
 using Xunit;
 
@@ -55,9 +56,9 @@ namespace PactNet.Native.Tests.Verifier
         [Fact]
         public void FromPactBroker_IncludeWipSince_AddsPactBrokerPendingArgs()
         {
-            this.options.IncludeWipPactsSince("5d");
+            this.options.IncludeWipPactsSince(14.February(2021));
 
-            this.verifierArgs.Should().Contain("--include-wip-pacts-since", "5d");
+            this.verifierArgs.Should().Contain("--include-wip-pacts-since", "2021-02-14");
         }
 
         [Fact]

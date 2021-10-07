@@ -12,7 +12,7 @@ namespace ReadMe.Provider.Tests
 
         public SomethingApiFixture()
         {
-            ServerUri = new Uri("http://localhost:9222");
+            ServerUri = new Uri("http://localhost:9223");
             server = Host.CreateDefaultBuilder()
                         .ConfigureWebHostDefaults(webBuilder =>
                         {

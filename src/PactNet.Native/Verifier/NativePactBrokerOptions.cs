@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using PactNet.Native.Internal;
@@ -79,9 +80,10 @@ namespace PactNet.Native.Verifier
         /// </summary>
         /// <param name="date">WIP cut-off date</param>
         /// <returns>Fluent builder</returns>
-        public IPactBrokerOptions IncludeWipPactsSince(string date)
+        public IPactBrokerOptions IncludeWipPactsSince(DateTime date)
         {
-            this.verifierArgs.AddOption("--include-wip-pacts-since", date, nameof(date));
+            string formatted = date.Date.ToString("yyyy-MM-dd");
+            this.verifierArgs.AddOption("--include-wip-pacts-since", formatted, nameof(date));
 
             return this;
         }
