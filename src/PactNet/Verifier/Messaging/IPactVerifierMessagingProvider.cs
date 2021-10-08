@@ -12,6 +12,6 @@ namespace PactNet.Verifier.Messaging
         /// </summary>
         /// <param name="scenarios">Scenario configuration</param>
         /// <returns>Fluent builder</returns>
-        IPactVerifierMessagingProvider WithProviderMessages(Action<IMessageScenarios> scenarios);
+        IPactVerifierMessagingProvider WithProviderMessages(Action<IMessageScenariosFactory> scenarios);
     }
 }

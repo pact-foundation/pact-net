@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PactNet.AspNetCore.ProviderState;
 
 namespace Provider.Tests
 {
@@ -16,12 +17,17 @@ namespace Provider.Tests
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddPactProviderState(options =>
+            {
+                options.RouteProviderState = "/provider-states";
+            });
+
             this.inner.ConfigureServices(services);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseMiddleware<ProviderStateMiddleware>()
+            app.UsePactProviderStates()
                .UseMiddleware<AuthorizationTokenReplacementMiddleware>();
 
             this.inner.Configure(app, env);

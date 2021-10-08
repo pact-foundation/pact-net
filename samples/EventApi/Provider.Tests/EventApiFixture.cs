@@ -1,6 +1,9 @@
 using System;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using PactNet.AspNetCore.ProviderState;
 
 namespace Provider.Tests
 {
@@ -25,7 +28,18 @@ namespace Provider.Tests
             this.server.Start();
         }
 
-        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+        /// <summary>
+        /// Get the options for the middleware
+        /// </summary>
+        /// <returns>The options</returns>
+        public ProviderStateOptions GetOptions()
+        {
+            return this.server.Services.GetService<IOptions<ProviderStateOptions>>()?.Value;
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
         public void Dispose()
         {
             this.server.Dispose();
