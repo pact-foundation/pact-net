@@ -7,7 +7,7 @@ namespace PactNet.Verifier.Messaging
     /// <summary>
     /// Defines the scenarios static list for messaging support
     /// </summary>
-    public static class Scenarios
+    internal static class Scenarios
     {
         /// <summary>
         /// The available scenarios
@@ -23,7 +23,7 @@ namespace PactNet.Verifier.Messaging
         /// Add a scenario
         /// </summary>
         /// <param name="scenario">the scenario to add</param>
-        public static void AddScenario(Scenario scenario)
+        internal static void AddScenario(Scenario scenario)
         {
             if (scenario == null)
             {
@@ -42,7 +42,7 @@ namespace PactNet.Verifier.Messaging
         /// Add multiple scenarios
         /// </summary>
         /// <param name="scenarios">the scenario list to add</param>
-        public static void AddScenarios(IReadOnlyCollection<Scenario> scenarios)
+        internal static void AddScenarios(IReadOnlyCollection<Scenario> scenarios)
         {
             if (scenarios == null || scenarios.Any() == false)
             {
@@ -62,7 +62,7 @@ namespace PactNet.Verifier.Messaging
         /// </summary>
         /// <param name="description">the name of the scenario</param>
         /// <returns>a dynamic message object</returns>
-        public static dynamic InvokeScenario(string description)
+        internal static dynamic InvokeScenario(string description)
         {
             if (string.IsNullOrWhiteSpace(description))
             {
@@ -84,7 +84,7 @@ namespace PactNet.Verifier.Messaging
         /// </summary>
         /// <param name="description">the scenario description</param>
         /// <returns>If the scenario exists</returns>
-        public static bool Exist(string description)
+        internal static bool Exist(string description)
         {
             return AllScenarios.Any(x => x.Description == description);
         }
@@ -94,7 +94,7 @@ namespace PactNet.Verifier.Messaging
         /// </summary>
         /// <param name="description">the scenario description</param>
         /// <returns>The scenario</returns>
-        public static Scenario GetByDescription(string description)
+        internal static Scenario GetByDescription(string description)
         {
             var scenario = AllScenarios.FirstOrDefault(x => x.Description == description);
 
@@ -104,7 +104,7 @@ namespace PactNet.Verifier.Messaging
         /// <summary>
         /// Clear all scenarios
         /// </summary>
-        public static void ClearScenarios()
+        internal static void ClearScenarios()
         {
             AllScenarios.Clear();
         }

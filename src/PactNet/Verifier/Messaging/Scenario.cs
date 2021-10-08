@@ -5,7 +5,7 @@ namespace PactNet.Verifier.Messaging
     /// <summary>
     /// Defines the scenario model
     /// </summary>
-    public class Scenario
+    public class Scenario : IScenario
     {
         /// <summary>
         /// The description of the scenario

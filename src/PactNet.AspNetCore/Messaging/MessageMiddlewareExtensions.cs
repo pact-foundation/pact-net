@@ -1,7 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using PactNet.Verifier.ProviderState;
+using PactNet.Verifier.Messaging;
 
 namespace PactNet.AspNetCore.Messaging
 {
@@ -30,7 +30,8 @@ namespace PactNet.AspNetCore.Messaging
         /// <returns>Fluent builder</returns>
         public static IApplicationBuilder UsePactMessaging(this IApplicationBuilder builder)
         {
-            return builder.UseMiddleware<MessageMiddleware>();
+            IMessagingScenarioAccessor messagingScenarioAccessor = new MessagingScenarioAccessor();
+            return builder.UseMiddleware<MessageMiddleware>(messagingScenarioAccessor);
         }
     }
 }
