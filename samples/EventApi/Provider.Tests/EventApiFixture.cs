@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using PactNet.AspNetCore.ProviderState;
+using Provider.Controllers;
 
 namespace Provider.Tests
 {
@@ -22,6 +23,7 @@ namespace Provider.Tests
                               {
                                   webBuilder.UseUrls(this.ServerUri.ToString());
                                   webBuilder.UseStartup<TestStartup>();
+                                  webBuilder.ConfigureServices(services => services.AddSingleton<IEventRepository, InMemoryEventRepository>());
                               })
                               .Build();
 
@@ -35,6 +37,11 @@ namespace Provider.Tests
         public ProviderStateOptions GetOptions()
         {
             return this.server.Services.GetService<IOptions<ProviderStateOptions>>()?.Value;
+        }
+
+        public IEventRepository GetFakeEventRepository()
+        {
+            return this.server.Services.GetService<IEventRepository>();
         }
 
         /// <summary>

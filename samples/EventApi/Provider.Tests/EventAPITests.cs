@@ -5,7 +5,9 @@ using PactNet.AspNetCore.ProviderState;
 using PactNet.Infrastructure.Outputters;
 using PactNet.Native.Verifier;
 using PactNet.Verifier;
+using Provider.Api.Web.Models;
 using Provider.Api.Web.Tests;
+using Provider.Controllers;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -16,12 +18,14 @@ namespace Provider.Tests
         private readonly EventApiFixture fixture;
         private readonly ITestOutputHelper output;
         private readonly ProviderStateOptions options;
+        private InMemoryEventRepository repository;
 
         public EventApiTests(EventApiFixture fixture, ITestOutputHelper output)
         {
             this.fixture = fixture;
             this.output = output;
             this.options = fixture.GetOptions();
+            this.repository = fixture.GetFakeEventRepository() as InMemoryEventRepository;
         }
 
         [Fact]
@@ -60,29 +64,63 @@ namespace Provider.Tests
                         .Add("there is one event with type 'DetailsView'", this.EnsureOneDetailsViewEventExists);
                 })
                 .Verify();
-
-            Assert.True(HasExecuteInsertEventsIntoDatabase);
-            Assert.True(HasExecuteInsertEventIntoDatabase);
-            Assert.True(HasExecuteEnsureOneDetailsViewEventExists);
         }
-
-        public bool HasExecuteInsertEventsIntoDatabase { get; set; }
-        public bool HasExecuteInsertEventIntoDatabase { get; set; }
-        public bool HasExecuteEnsureOneDetailsViewEventExists { get; set; }
 
         private void InsertEventsIntoDatabase()
         {
-            HasExecuteInsertEventsIntoDatabase = true;
+            var eventsToAdd = new List<Event>
+            {
+                new Event
+                {
+                    EventId = Guid.Parse("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5"),
+                    Timestamp = DateTime.Parse("2014-06-30T01:37:41.0660548"),
+                    EventType = "SearchView"
+                },
+                new Event
+                {
+                    EventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9"),
+                    Timestamp = DateTime.Parse("2014-06-30T01:37:52.2618864"),
+                    EventType = "DetailsView"
+                },
+                new Event
+                {
+                    EventId = Guid.Parse("3E83A96B-2A0C-49B1-9959-26DF23F83AEB"),
+                    Timestamp = DateTime.Parse("2014-06-30T01:38:00.8518952"),
+                    EventType = "SearchView"
+                }
+            };
+
+            this.repository.AddEvents(eventsToAdd);
         }
 
         private void InsertEventIntoDatabase()
         {
-            HasExecuteInsertEventIntoDatabase = true;
+            var eventsToAdd = new List<Event>
+            {
+                new Event
+                {
+                    EventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9"),
+                    Timestamp = DateTime.Parse("2014-06-30T01:37:52.2618864"),
+                    EventType = "DetailsView"
+                }
+            };
+
+            this.repository.AddEvents(eventsToAdd);
         }
 
         private void EnsureOneDetailsViewEventExists()
         {
-            HasExecuteEnsureOneDetailsViewEventExists = true;
+            var eventsToAdd = new List<Event>
+            {
+                new Event
+                {
+                    EventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9"),
+                    Timestamp = DateTime.Parse("2014-06-30T01:37:52.2618864"),
+                    EventType = "DetailsView"
+                }
+            };
+
+            this.repository.AddEvents(eventsToAdd);
         }
     }
 }

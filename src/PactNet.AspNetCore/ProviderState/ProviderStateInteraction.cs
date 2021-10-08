@@ -4,8 +4,8 @@ namespace PactNet.AspNetCore.ProviderState
 {
     public class ProviderStateInteraction
     {
-        public string Name { get; set; }
+        public string State { get; set; }
 
-        //public IDictionary<string, string> @Params { get; set; }
+        public IDictionary<string, string> Params { get; set; }
     }
 }

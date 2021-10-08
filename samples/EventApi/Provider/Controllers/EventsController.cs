@@ -12,11 +12,18 @@ namespace Provider.Controllers
     [Route("[controller]")]
     public class EventsController : ControllerBase
     {
+        private readonly IEventRepository _eventRepository;
+
+        public EventsController(IEventRepository eventRepository)
+        {
+            _eventRepository = eventRepository;
+        }
+
         [Authorize]
         [HttpGet]
         public IActionResult Get([FromQuery] string type)
         {
-            IEnumerable<Event> events = this.GetAllEventsFromRepo();
+            IEnumerable<Event> events = _eventRepository.GetAllEvents();
 
             if (!string.IsNullOrEmpty(type))
             {
@@ -29,7 +36,7 @@ namespace Provider.Controllers
         [HttpGet("{id}")]
         public IActionResult GetById(Guid id)
         {
-            Event e = this.GetAllEventsFromRepo().First(x => x.EventId == id);
+            Event e = _eventRepository.GetAllEvents().First(x => x.EventId == id);
             return this.Ok(e);
         }
 
@@ -39,31 +46,6 @@ namespace Provider.Controllers
             return @event == null
                        ? this.BadRequest()
                        : this.StatusCode((int)HttpStatusCode.Created);
-        }
-
-        private IEnumerable<Event> GetAllEventsFromRepo()
-        {
-            return new List<Event>
-            {
-                new Event
-                {
-                    EventId = Guid.Parse("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5"),
-                    Timestamp = DateTime.Parse("2014-06-30T01:37:41.0660548"),
-                    EventType = "SearchView"
-                },
-                new Event
-                {
-                    EventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9"),
-                    Timestamp = DateTime.Parse("2014-06-30T01:37:52.2618864"),
-                    EventType = "DetailsView"
-                },
-                new Event
-                {
-                    EventId = Guid.Parse("3E83A96B-2A0C-49B1-9959-26DF23F83AEB"),
-                    Timestamp = DateTime.Parse("2014-06-30T01:38:00.8518952"),
-                    EventType = "SearchView"
-                }
-            };
         }
     }
 }

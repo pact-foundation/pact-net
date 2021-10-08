@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Provider.Controllers;
 
 namespace Provider
 {
@@ -54,6 +55,8 @@ namespace Provider
                         };
                         options.RequireHttpsMetadata = false;
                     });
+
+            services.AddSingleton<IEventRepository, EmptyEventRepository>();
 
             services.AddSwaggerGen(c =>
             {

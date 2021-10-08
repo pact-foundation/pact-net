@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -60,7 +61,7 @@ namespace PactNet.AspNetCore.ProviderState
 
             var providerStateBody = await GetProviderStateInteraction(context);
 
-            IProviderState providerState = this.providerStateAccessor.GetByDescription(providerStateBody.Name);
+            IProviderState providerState = this.providerStateAccessor.GetByDescription(providerStateBody.State);
 
             if (providerState == null)
             {
