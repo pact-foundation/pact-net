@@ -5,7 +5,6 @@ using System.Linq;
 using Moq;
 using PactNet.AspNetCore.Messaging;
 using PactNet.Infrastructure.Outputters;
-using PactNet.Native.Verifier;
 using PactNet.Verifier;
 using PactNet.Verifier.Messaging;
 using Provider.Api;
