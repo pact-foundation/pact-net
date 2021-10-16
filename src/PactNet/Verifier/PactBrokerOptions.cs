@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using PactNet.Internal;
 
 namespace PactNet.Verifier
@@ -69,6 +71,29 @@ namespace PactNet.Verifier
             {
                 string versions = string.Join(",", tags);
                 this.verifierArgs.AddOption("--consumer-version-tags", versions);
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Consumer version selectors to control which pacts are returned from the broker
+        /// </summary>
+        /// <param name="selectors">Consumer version selectors</param>
+        /// <returns>Fluent builder</returns>
+        /// <remarks>See <see href="https://docs.pact.io/pact_broker/advanced_topics/consumer_version_selectors"/></remarks>
+        public IPactBrokerOptions ConsumerVersionSelectors(params ConsumerVersionSelector[] selectors)
+        {
+            if (selectors.Any())
+            {
+                string value = JsonConvert.SerializeObject(selectors, new JsonSerializerSettings
+                {
+                    DefaultValueHandling = DefaultValueHandling.Ignore,
+                    NullValueHandling = NullValueHandling.Ignore,
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                });
+
+                this.verifierArgs.AddOption("--consumer-version-selectors", value);
             }
 
             return this;
