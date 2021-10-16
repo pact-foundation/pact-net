@@ -29,7 +29,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           path: src/PactNet/bin/Release/PactNet.*.nupkg
-      - name: Upload PactNet.Native NuGet
+      - name: Upload PactNet.Abstractions NuGet
         uses: actions/upload-artifact@v2
         with:
-          path: src/PactNet.Native/bin/Release/PactNet.Native.*.nupkg
+          path: src/PactNet.Abstractions/bin/Release/PactNet.Abstractions.*.nupkg

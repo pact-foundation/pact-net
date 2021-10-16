@@ -13,17 +13,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Consumer.Tests", "samples\E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CF67D7A1-AE96-420B-9971-65E535B903E8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PactNet", "src\PactNet\PactNet.csproj", "{C16C70CE-B79E-4108-B94E-2F90CCC9327A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PactNet.Abstractions", "src\PactNet.Abstractions\PactNet.Abstractions.csproj", "{C16C70CE-B79E-4108-B94E-2F90CCC9327A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PactNet.Native", "src\PactNet.Native\PactNet.Native.csproj", "{39945550-12C5-4E3A-9EB7-4CE9BE769E7D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PactNet", "src\PactNet\PactNet.csproj", "{39945550-12C5-4E3A-9EB7-4CE9BE769E7D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PactNet.Remote", "src\PactNet.Remote\PactNet.Remote.csproj", "{A1A6CADF-3529-4A73-948F-1A6319AFF3F1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A117BBC6-60BB-4282-BF10-E616DE0AFAD0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PactNet.Tests", "tests\PactNet.Tests\PactNet.Tests.csproj", "{38A651CF-3EBC-4F77-8EE3-F768E926FD9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PactNet.Abstractions.Tests", "tests\PactNet.Abstractions.Tests\PactNet.Abstractions.Tests.csproj", "{38A651CF-3EBC-4F77-8EE3-F768E926FD9A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PactNet.Native.Tests", "tests\PactNet.Native.Tests\PactNet.Native.Tests.csproj", "{B8C8934E-9581-46D6-A728-BC5EAB9C06DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PactNet.Tests", "tests\PactNet.Tests\PactNet.Tests.csproj", "{B8C8934E-9581-46D6-A728-BC5EAB9C06DD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Provider", "samples\EventApi\Provider\Provider.csproj", "{5E915D66-917B-4730-B31A-C9727C196346}"
 EndProject

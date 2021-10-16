@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PactNet.Native\PactNet.Native.csproj" />
+    <ProjectReference Include="..\PactNet.Abstractions\PactNet.Abstractions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

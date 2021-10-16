@@ -10,7 +10,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using PactNet;
 using PactNet.Matchers;
-using PactNet.Native;
 using Xunit;
 using Xunit.Abstractions;
 
