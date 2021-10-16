@@ -54,6 +54,25 @@ namespace PactNet.Tests.Verifier
         }
 
         [Fact]
+        public void ConsumerVersionSelectors_WhenCalled_AddsConsumerVersionSelectorsArgs()
+        {
+            string expected = string.Join(",",
+                                          @"{""mainBranch"":true,""matchingBranch"":true}",
+                                          @"{""branch"":""feat/foo"",""fallbackBranch"":""main""}",
+                                          @"{""tag"":""foo"",""fallbackTag"":""bar"",""latest"":false}",
+                                          @"{""deployed"":true,""released"":true,""environment"":""prod""}",
+                                          @"{""deployedOrReleased"":true}");
+
+            this.options.ConsumerVersionSelectors(new ConsumerVersionSelector { MainBranch = true, MatchingBranch = true },
+                                                  new ConsumerVersionSelector { Branch = "feat/foo", FallbackBranch = "main" },
+                                                  new ConsumerVersionSelector { Tag = "foo", FallbackTag = "bar", Latest = false },
+                                                  new ConsumerVersionSelector { Released = true, Deployed = true, Environment = "prod" },
+                                                  new ConsumerVersionSelector { DeployedOrReleased = true });
+
+            this.verifierArgs.Should().Contain("--consumer-version-selectors", $"[{expected}]");
+        }
+
+        [Fact]
         public void FromPactBroker_IncludeWipSince_AddsPactBrokerPendingArgs()
         {
             this.options.IncludeWipPactsSince(14.February(2021));

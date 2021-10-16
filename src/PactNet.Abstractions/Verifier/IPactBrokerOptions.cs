@@ -36,6 +36,14 @@ namespace PactNet.Verifier
         IPactBrokerOptions ConsumerTags(params string[] tags);
 
         /// <summary>
+        /// Consumer version selectors to control which pacts are returned from the broker
+        /// </summary>
+        /// <param name="selectors">Consumer version selectors</param>
+        /// <returns>Fluent builder</returns>
+        /// <remarks>See <see href="https://docs.pact.io/pact_broker/advanced_topics/consumer_version_selectors"/></remarks>
+        IPactBrokerOptions ConsumerVersionSelectors(params ConsumerVersionSelector[] selectors);
+
+        /// <summary>
         /// Include WIP pacts since the given date
         /// </summary>
         /// <param name="date">WIP cut-off date</param>
