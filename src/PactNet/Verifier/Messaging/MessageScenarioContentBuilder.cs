@@ -8,14 +8,22 @@ namespace PactNet.Verifier.Messaging
     internal class MessageScenarioContentBuilder : IMessageScenarioContentBuilder
     {
         private readonly string description;
-        private dynamic metadata;
+        private dynamic metadataInternal;
 
+        /// <summary>
+        /// Creates an instance of <see cref="MessageScenarioContentBuilder"/>
+        /// </summary>
+        /// <param name="description">the description of the scenario</param>
         internal MessageScenarioContentBuilder(string description)
         {
             this.description = !string.IsNullOrWhiteSpace(description) ? description : throw new ArgumentNullException(nameof(description));
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Set the metadata of the message content
+        /// </summary>
+        /// <param name="metadata">the metadata</param>
+        /// <returns>Fluent builder</returns>
         public IMessageScenarioContentBuilder WithMetadata(dynamic metadata)
         {
             if (metadata == null)
@@ -23,12 +31,15 @@ namespace PactNet.Verifier.Messaging
                 throw new ArgumentNullException(nameof(metadata));
             }
 
-            this.metadata = metadata;
+            this.metadataInternal = metadata;
             return this;
         }
 
-        /// <inheritdoc />
-        public Scenario WithContent(Func<dynamic> action)
+        /// <summary>
+        /// Set the action of the scenario
+        /// </summary>
+        /// <param name="action">the function invoked</param>
+        public IScenario WithContent(Func<dynamic> action)
         {
             if (action == null)
             {
@@ -38,8 +49,11 @@ namespace PactNet.Verifier.Messaging
             return CreateScenario(action);
         }
 
-        /// <inheritdoc />
-        public Scenario WithContent(dynamic messageContent)
+        /// <summary>
+        /// Set the object returned by the scenario
+        /// </summary>
+        /// <param name="messageContent">the message content</param>
+        public IScenario WithContent(dynamic messageContent)
         {
             if (messageContent == null)
             {
@@ -53,11 +67,11 @@ namespace PactNet.Verifier.Messaging
         /// Add a scenario
         /// </summary>
         /// <param name="action">the action that will publish the message</param>
-        private Scenario CreateScenario(Func<dynamic> action)
+        private IScenario CreateScenario(Func<dynamic> action)
         {
-            var scenario = metadata == null
+            var scenario = metadataInternal == null
                 ? new Scenario(description, action)
-                : new Scenario(description, action, metadata);
+                : new Scenario(description, action, metadataInternal);
 
             return scenario;
         }

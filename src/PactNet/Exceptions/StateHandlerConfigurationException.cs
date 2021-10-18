@@ -14,7 +14,7 @@ namespace PactNet.Exceptions
         /// <summary>
         /// Initializes a new instance of the <see cref="StateHandlerExecutionException" /> class
         /// </summary>
-        public StateHandlerConfigurationException(StateHandler stateHandler)
+        public StateHandlerConfigurationException(IStateHandler stateHandler)
             : this($"State handler \"{stateHandler.Description}\" already added at \"{stateHandler.Action}\"")
         {
         }

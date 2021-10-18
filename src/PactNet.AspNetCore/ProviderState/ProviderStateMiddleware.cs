@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -9,7 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using PactNet.Verifier.ProviderState;
-using Provider.Tests;
 
 namespace PactNet.AspNetCore.ProviderState
 {

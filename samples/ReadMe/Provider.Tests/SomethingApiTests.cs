@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using PactNet.Infrastructure.Outputters;
-using PactNet.Native.Verifier;
 using PactNet.Verifier;
 using Xunit;
 using Xunit.Abstractions;

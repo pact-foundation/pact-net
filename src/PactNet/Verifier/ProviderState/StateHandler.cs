@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using PactNet.Exceptions;
-using Provider.Tests;
 
 namespace PactNet.Verifier.ProviderState
 {
@@ -34,7 +33,7 @@ namespace PactNet.Verifier.ProviderState
         /// <summary>
         /// The invoker that will execute the provider state
         /// </summary>
-        private Action<IDictionary<string, string>> invokerWithArgs;
+        private readonly Action<IDictionary<string, string>> invokerWithArgs;
 
         ///// <summary>
         ///// Arguments

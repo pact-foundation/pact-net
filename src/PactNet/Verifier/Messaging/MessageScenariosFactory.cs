@@ -11,7 +11,7 @@ namespace PactNet.Verifier.Messaging
         /// Add a configured scenario
         /// </summary>
         /// <param name="scenario">Scenario</param>
-        public IMessageScenariosFactory Add(Scenario scenario)
+        public IMessageScenariosFactory Add(IScenario scenario)
         {
             Scenarios.AddScenario(scenario);
             return this;

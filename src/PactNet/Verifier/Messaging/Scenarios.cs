@@ -12,7 +12,7 @@ namespace PactNet.Verifier.Messaging
         /// <summary>
         /// The available scenarios
         /// </summary>
-        private static readonly List<Scenario> AllScenarios = new List<Scenario>();
+        private static readonly List<IScenario> AllScenarios = new List<IScenario>();
 
         /// <summary>
         /// Number of scenarios
@@ -23,7 +23,7 @@ namespace PactNet.Verifier.Messaging
         /// Add a scenario
         /// </summary>
         /// <param name="scenario">the scenario to add</param>
-        internal static void AddScenario(Scenario scenario)
+        internal static void AddScenario(IScenario scenario)
         {
             if (scenario == null)
             {
@@ -42,7 +42,7 @@ namespace PactNet.Verifier.Messaging
         /// Add multiple scenarios
         /// </summary>
         /// <param name="scenarios">the scenario list to add</param>
-        internal static void AddScenarios(IReadOnlyCollection<Scenario> scenarios)
+        internal static void AddScenarios(IReadOnlyCollection<IScenario> scenarios)
         {
             if (scenarios == null || scenarios.Any() == false)
             {
@@ -94,7 +94,7 @@ namespace PactNet.Verifier.Messaging
         /// </summary>
         /// <param name="description">the scenario description</param>
         /// <returns>The scenario</returns>
-        internal static Scenario GetByDescription(string description)
+        internal static IScenario GetByDescription(string description)
         {
             var scenario = AllScenarios.FirstOrDefault(x => x.Description == description);
 

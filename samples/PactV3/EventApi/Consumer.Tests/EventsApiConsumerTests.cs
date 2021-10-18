@@ -1,16 +1,11 @@
-using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Consumer.Models;
 using FluentAssertions;
-using FluentAssertions.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using PactNet;
-using PactNet.Matchers;
-using PactNet.Native;
 using Xunit;
 using Xunit.Abstractions;
 

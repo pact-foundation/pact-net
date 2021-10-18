@@ -2,30 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using PactNet.Exceptions;
-using Provider.Tests;
 
 namespace PactNet.Verifier.ProviderState
 {
     /// <summary>
     /// Defines the stateHandlers static list for messaging support
     /// </summary>
-    public static class StateHandlers
+    internal static class StateHandlers
     {
         /// <summary>
         /// The available stateHandlers
         /// </summary>
-        public static readonly List<StateHandler> AllStateHandlers = new List<StateHandler>();
+        private static readonly List<IStateHandler> AllStateHandlers = new List<IStateHandler>();
 
         /// <summary>
         /// Number of stateHandlers
         /// </summary>
-        public static int NumberOfStates => AllStateHandlers.Count;
+        internal static int NumberOfStates => AllStateHandlers.Count;
 
         /// <summary>
         /// Add a stateHandler
         /// </summary>
         /// <param name="stateHandler">the stateHandler to add</param>
-        internal static void AddStateHandler(StateHandler stateHandler)
+        internal static void AddStateHandler(IStateHandler stateHandler)
         {
             if (stateHandler == null)
             {
@@ -65,7 +64,7 @@ namespace PactNet.Verifier.ProviderState
         /// </summary>
         /// <param name="stateHandler">the stateHandler to verify</param>
         /// <returns>If the stateHandler exists</returns>
-        private static bool Exist(StateHandler stateHandler)
+        private static bool Exist(IStateHandler stateHandler)
         {
             return AllStateHandlers.Any(x => x.Description == stateHandler.Description && x.Action == stateHandler.Action);
         }
@@ -76,7 +75,7 @@ namespace PactNet.Verifier.ProviderState
         /// <param name="description">the description</param>
         /// <param name="stateAction"></param>
         /// <returns>The stateHandler</returns>
-        internal static StateHandler GetByDescriptionAndAction(string description, StateAction stateAction)
+        internal static IStateHandler GetByDescriptionAndAction(string description, StateAction stateAction)
         {
             var providerState = AllStateHandlers.FirstOrDefault(x => x.Description == description && x.Action == stateAction);
 

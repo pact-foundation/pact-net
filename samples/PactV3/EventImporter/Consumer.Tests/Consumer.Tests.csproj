@@ -14,7 +14,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\src\PactNet.Native\PactNet.Native.csproj" />
+    <ProjectReference Include="..\..\..\..\src\PactNet\PactNet.csproj" />
     <ProjectReference Include="..\Consumer\Consumer.csproj" />
   </ItemGroup>
   <ItemGroup>

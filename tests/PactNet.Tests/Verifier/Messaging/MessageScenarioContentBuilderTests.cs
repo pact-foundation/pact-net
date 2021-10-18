@@ -13,7 +13,7 @@ namespace PactNet.Tests.Verifier.Messaging
         /// <summary>
         /// The builder under test
         /// </summary>
-        private readonly MessageScenarioContentBuilder scenarioContentBuilder;
+        private readonly IMessageScenarioContentBuilder scenarioContentBuilder;
 
         public MessageScenarioContentBuilderTests()
         {
@@ -23,7 +23,7 @@ namespace PactNet.Tests.Verifier.Messaging
         [Fact]
         public void Should_Be_Able_To_Add_Metadata()
         {
-            dynamic expectedMetadata = new { key = "value"};
+            dynamic expectedMetadata = new { key = "value" };
 
             this.scenarioContentBuilder.WithMetadata(expectedMetadata);
 
@@ -43,7 +43,7 @@ namespace PactNet.Tests.Verifier.Messaging
         [Fact]
         public void Should_Allow_Scenario_Invoking_After_Setting_Content_With_Method()
         {
-            object expectedContent = new { field = "value"};
+            object expectedContent = new { field = "value" };
 
             var actualScenario = this.scenarioContentBuilder.WithContent(() => expectedContent);
 
@@ -63,7 +63,7 @@ namespace PactNet.Tests.Verifier.Messaging
         [Fact]
         public void Should_Allow_Scenario_Invoking_After_Setting_Content_With_Dynamic_Object()
         {
-            object expectedContent = new { field = "value"};
+            object expectedContent = new { field = "value" };
 
             var actualScenario = this.scenarioContentBuilder.WithContent(expectedContent);
 

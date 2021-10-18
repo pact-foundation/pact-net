@@ -9,7 +9,7 @@ namespace PactNet.Tests.Verifier.Messaging
 {
     public class ScenariosTests
     {
-        private List<Scenario> expectedScenarios => new List<Scenario>()
+        private List<IScenario> expectedScenarios => new List<IScenario>()
         {
             new Scenario("scenario1", () => "scenario1_object"),
             new Scenario("scenario2", () => "scenario2_object"),

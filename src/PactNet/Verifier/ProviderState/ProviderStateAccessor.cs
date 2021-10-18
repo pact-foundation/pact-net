@@ -1,5 +1,4 @@
 using System;
-using Provider.Tests;
 
 namespace PactNet.Verifier.ProviderState
 {

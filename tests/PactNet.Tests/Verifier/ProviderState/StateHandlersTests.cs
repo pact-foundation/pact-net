@@ -4,7 +4,6 @@ using System.Linq;
 using FluentAssertions;
 using PactNet.Exceptions;
 using PactNet.Verifier.ProviderState;
-using Provider.Tests;
 using Xunit;
 
 namespace PactNet.Tests.Verifier.ProviderState

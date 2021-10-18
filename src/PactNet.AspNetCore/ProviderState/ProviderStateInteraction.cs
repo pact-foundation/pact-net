@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Provider.Tests;
+using PactNet.Verifier.ProviderState;
 
 namespace PactNet.AspNetCore.ProviderState
 {

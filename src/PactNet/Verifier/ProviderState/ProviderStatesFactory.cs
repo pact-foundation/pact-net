@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Provider.Tests;
 
 namespace PactNet.Verifier.ProviderState
 {
@@ -14,7 +13,7 @@ namespace PactNet.Verifier.ProviderState
         /// </summary>
         /// <param name="stateHandler">The provider stateHandler object</param>
         /// <returns>Fluent factory</returns>
-        public IProviderStatesFactory Add(StateHandler stateHandler)
+        public IProviderStatesFactory Add(IStateHandler stateHandler)
         {
             StateHandlers.AddStateHandler(stateHandler);
             return this;
@@ -26,7 +25,7 @@ namespace PactNet.Verifier.ProviderState
         /// <param name="stateHandler">The provider stateHandler object</param>
         /// <param name="stateAction">When the provider state is executed</param>
         /// <returns>Fluent factory</returns>
-        public IProviderStatesFactory Add(StateHandler stateHandler, StateAction stateAction)
+        public IProviderStatesFactory Add(IStateHandler stateHandler, StateAction stateAction)
         {
             StateHandlers.AddStateHandler(stateHandler);
             return this;

@@ -1,10 +1,8 @@
-using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using PactNet;
-using PactNet.Native;
 using Xunit;
 using Xunit.Abstractions;
 
