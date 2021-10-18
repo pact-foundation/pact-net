@@ -1,3 +1,5 @@
+using Provider.Tests;
+
 namespace PactNet.Verifier.ProviderState
 {
     /// <summary>
@@ -6,9 +8,9 @@ namespace PactNet.Verifier.ProviderState
     public interface IProviderStateAccessor
     {
         /// <summary>
-        /// Get a provider state by description
+        /// Get a provider state at setup by description
         /// </summary>
         /// <returns>the provider state object</returns>
-        IProviderState GetByDescription(string description);
+        IStateHandler GetByDescriptionAndAction(string description, StateAction stateAction);
     }
 }

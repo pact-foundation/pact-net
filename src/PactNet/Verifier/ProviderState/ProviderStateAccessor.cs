@@ -1,21 +1,22 @@
 using System;
+using Provider.Tests;
 
 namespace PactNet.Verifier.ProviderState
 {
     public class ProviderStateAccessor : IProviderStateAccessor
     {
         /// <summary>
-        /// Get a provider state by description
+        /// Get a provider state at setup by description
         /// </summary>
         /// <returns>the provider state object</returns>
-        public IProviderState GetByDescription(string description)
+        public IStateHandler GetByDescriptionAndAction(string description, StateAction stateAction)
         {
             if (string.IsNullOrWhiteSpace(description))
             {
                 throw new ArgumentException("Description cannot be null or empty");
             }
 
-            return ProviderStates.GetByDescription(description);
+            return StateHandlers.GetByDescriptionAndAction(description, stateAction);
         }
     }
 }

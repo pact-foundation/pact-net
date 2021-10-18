@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Provider.Tests;
 
 namespace PactNet.Verifier.ProviderState
 {
@@ -8,27 +10,52 @@ namespace PactNet.Verifier.ProviderState
     public interface IProviderStatesFactory
     {
         /// <summary>
-        /// Add a configured provider state
+        /// Add a configured provider stateHandler
         /// </summary>
-        /// <param name="providerState">The provider state object</param>
+        /// <param name="stateHandler">The provider stateHandler object</param>
         /// <returns>Fluent factory</returns>
-        IProviderStatesFactory Add(ProviderState providerState);
+        IProviderStatesFactory Add(StateHandler stateHandler);
 
         /// <summary>
-        /// Add a provider state
+        /// Add a configured provider stateHandler
         /// </summary>
-        /// <param name="description">provider state description</param>
-        /// <param name="factory">provider state invoker</param>
+        /// <param name="stateHandler">The provider stateHandler object</param>
+        /// <param name="stateAction">When the provider state is executed</param>
+        /// <returns>Fluent factory</returns>
+        IProviderStatesFactory Add(StateHandler stateHandler, StateAction stateAction);
+
+        /// <summary>
+        /// Add a provider stateHandler
+        /// </summary>
+        /// <param name="description">provider stateHandler description</param>
+        /// <param name="factory">provider stateHandler invoker</param>
         /// <returns>Fluent factory</returns>
         IProviderStatesFactory Add(string description, Action factory);
 
         /// <summary>
-        /// Add a provider state
+        /// Add a provider stateHandler
         /// </summary>
-        /// <param name="description">provider state description</param>
-        /// <param name="factory">provider state invoker</param>
-        /// <param name="args">the arguments of the invoker method</param>
+        /// <param name="description">provider stateHandler description</param>
+        /// <param name="factory">provider stateHandler invoker</param>
         /// <returns>Fluent factory</returns>
-        IProviderStatesFactory Add(string description, Action factory, params object[] args);
+        IProviderStatesFactory Add(string description, Action<IDictionary<string, string>> factory);
+
+        /// <summary>
+        /// Add a provider stateHandler
+        /// </summary>
+        /// <param name="description">provider stateHandler description</param>
+        /// <param name="factory">provider stateHandler invoker</param>
+        /// <param name="stateAction">When the provider state is executed</param>
+        /// <returns>Fluent factory</returns>
+        IProviderStatesFactory Add(string description, Action factory, StateAction stateAction);
+
+        /// <summary>
+        /// Add a provider stateHandler
+        /// </summary>
+        /// <param name="description">provider stateHandler description</param>
+        /// <param name="factory">provider stateHandler invoker</param>
+        /// <param name="stateAction">When the provider state is executed</param>
+        /// <returns>Fluent factory</returns>
+        IProviderStatesFactory Add(string description, Action<IDictionary<string, string>> factory, StateAction stateAction);
     }
 }

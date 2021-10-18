@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using PactNet.Verifier.ProviderState;
+using Provider.Tests;
 
 namespace PactNet.AspNetCore.ProviderState
 {
@@ -31,6 +32,11 @@ namespace PactNet.AspNetCore.ProviderState
         /// The provider state accessor
         /// </summary>
         private readonly IProviderStateAccessor providerStateAccessor;
+
+        ///// <summary>
+        ///// the after interaction callback
+        ///// </summary>
+        //private Dictionary<string, Action> afterInteractionCallbacks;
 
         /// <summary>
         /// Creates an instance of <see cref="ProviderStateMiddleware"/>
@@ -59,21 +65,29 @@ namespace PactNet.AspNetCore.ProviderState
                 return;
             }
 
-            var providerStateBody = await GetProviderStateInteraction(context);
+            var providerStateBody = await ReadProviderStateInteractionAsync(context);
+            var stateHandler = this.providerStateAccessor.GetByDescriptionAndAction(providerStateBody.State,
+                    providerStateBody.Action);
 
-            IProviderState providerState = this.providerStateAccessor.GetByDescription(providerStateBody.State);
-
-            if (providerState == null)
+            if (stateHandler != null)
             {
-                await WriteErrorInResponseAsync(context, "The provider state cannot be invoked because it has not been register in the provider test correctly.", HttpStatusCode.NotFound);
-                return;
+                ExecuteState(providerStateBody, stateHandler);
             }
-
-            providerState.Execute();
-
             context.Response.StatusCode = (int)HttpStatusCode.OK;
 
             await WriteToResponseAsync(context, string.Empty);
+        }
+
+        private static void ExecuteState(ProviderStateInteraction providerStateBody, IStateHandler stateHandler)
+        {
+            if (providerStateBody.Params == null)
+            {
+                stateHandler.Execute();
+            }
+            else
+            {
+                stateHandler.Execute(providerStateBody.Params);
+            }
         }
 
         /// <summary>
@@ -81,7 +95,7 @@ namespace PactNet.AspNetCore.ProviderState
         /// </summary>
         /// <param name="context">The http context</param>
         /// <returns>The request body</returns>
-        private static async Task<ProviderStateInteraction> GetProviderStateInteraction(HttpContext context)
+        private static async Task<ProviderStateInteraction> ReadProviderStateInteractionAsync(HttpContext context)
         {
             string jsonRequestBody;
             using (var reader = new StreamReader(context.Request.Body, Encoding.UTF8))
@@ -99,10 +113,10 @@ namespace PactNet.AspNetCore.ProviderState
         /// </summary>
         /// <param name="context">the http context</param>
         /// <param name="response">the dynamic message</param>
-        private static Task WriteToResponseAsync(HttpContext context, dynamic response)
+        private static async Task WriteToResponseAsync(HttpContext context, dynamic response)
         {
             string responseBody = JsonConvert.SerializeObject(response);
-            return context.Response.WriteAsync(responseBody);
+            await context.Response.WriteAsync(responseBody);
         }
 
         /// <summary>
