@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using PactNet.Internal;
 using PactNet.Verifier.Messaging;
 
@@ -11,7 +10,7 @@ namespace PactNet.Verifier
     public class PactVerifier : IPactVerifier
     {
         private readonly PactVerifierConfig config;
-        private readonly IDictionary<string, string> verifierArgs;
+        private readonly IVerifierArguments verifierArgs;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="PactVerifier"/> class.
@@ -24,7 +23,7 @@ namespace PactNet.Verifier
         /// Initialises a new instance of the <see cref="PactVerifier"/> class.
         /// </summary>
         /// <param name="config">Pact verifier config</param>
-        public PactVerifier(PactVerifierConfig config) : this(new Dictionary<string, string>(), config)
+        public PactVerifier(PactVerifierConfig config) : this(new VerifierArguments(), config)
         {
             Guard.NotNull(config, nameof(config));
         }
@@ -34,7 +33,7 @@ namespace PactNet.Verifier
         /// </summary>
         /// <param name="verifierArgs">Pact verifier args</param>
         /// <param name="config">Pact verifier config</param>
-        internal PactVerifier(IDictionary<string, string> verifierArgs, PactVerifierConfig config)
+        internal PactVerifier(IVerifierArguments verifierArgs, PactVerifierConfig config)
         {
             this.config = config;
             this.verifierArgs = verifierArgs;
@@ -52,7 +51,7 @@ namespace PactNet.Verifier
 
             if (pactUri.AbsolutePath != "/")
             {
-                this.verifierArgs.Add("--base-path", pactUri.AbsolutePath);
+                this.verifierArgs.AddOption("--base-path", pactUri.AbsolutePath);
             }
 
             return new PactVerifierProvider(this.verifierArgs, this.config);
@@ -81,7 +80,7 @@ namespace PactNet.Verifier
         {
             Guard.NotNull(pactUri, nameof(pactUri));
 
-            this.verifierArgs.AddOption("--provider-name", providerName);
+            this.verifierArgs.AddOption("--provider-name", providerName, nameof(providerName));
             this.verifierArgs.AddOption("--hostname", pactUri.Host);
             this.verifierArgs.AddOption("--port", pactUri.Port.ToString());
         }

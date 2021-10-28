@@ -64,5 +64,10 @@ namespace PactNet.Verifier
         /// </summary>
         /// <remarks>This should not be set when used with a branch</remarks>
         public bool? Latest { get; set; }
+
+        /// <summary>
+        /// Only return pacts for the given consumer instead of all consumers
+        /// </summary>
+        public string Consumer { get; set; }
     }
 }

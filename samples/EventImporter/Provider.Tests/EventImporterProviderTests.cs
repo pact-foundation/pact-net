@@ -61,8 +61,7 @@ namespace Provider.Tests
                              .Add("a single event", () => new Event("single"))
                              .Add("a single event with metadata", new { foo = "bar" }, () => new Event("event with metadata"));
                 })
-                .HonoursPactWith("Event API Consumer V3 Message")
-                .FromPactFile(new FileInfo(pactPath))
+                .WithFileSource(new FileInfo(pactPath))
                 .Verify();
         }
 

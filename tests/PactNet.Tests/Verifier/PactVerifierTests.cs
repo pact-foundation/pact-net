@@ -1,6 +1,5 @@
 using System;
-using System.Collections.Generic;
-using FluentAssertions;
+using Moq;
 using PactNet.Verifier;
 using Xunit;
 using Xunit.Abstractions;
@@ -11,13 +10,13 @@ namespace PactNet.Tests.Verifier
     {
         private readonly PactVerifier verifier;
 
-        private readonly IDictionary<string, string> verifierArgs;
+        private readonly Mock<IVerifierArguments> verifierArgs;
 
         public PactVerifierTests(ITestOutputHelper output)
         {
-            this.verifierArgs = new Dictionary<string, string>();
+            this.verifierArgs = new Mock<IVerifierArguments>();
 
-            this.verifier = new PactVerifier(this.verifierArgs, new PactVerifierConfig
+            this.verifier = new PactVerifier(this.verifierArgs.Object, new PactVerifierConfig
             {
                 Outputters = new[]
                 {
@@ -27,26 +26,29 @@ namespace PactNet.Tests.Verifier
         }
 
         [Fact]
-        public void ServiceProvider_NoBasePath_SetsProviderArgs()
+        public void ServiceProvider_WhenCalled_SetsProviderArgs()
         {
             this.verifier.ServiceProvider("provider name", new Uri("http://example.org:8080/"));
 
-            this.verifierArgs
-                .Should().Contain("--provider-name", "provider name")
-                .And.Contain("--hostname", "example.org")
-                .And.Contain("--port", "8080");
+            this.verifierArgs.Verify(a => a.AddOption("--provider-name", "provider name", "providerName"));
+            this.verifierArgs.Verify(a => a.AddOption("--hostname", "example.org", null));
+            this.verifierArgs.Verify(a => a.AddOption("--port", "8080", null));
         }
 
         [Fact]
-        public void ServiceProvider_BasePath_SetsProviderArgs()
+        public void ServiceProvider_WithBasePath_SetsBasePathArgs()
         {
             this.verifier.ServiceProvider("provider name", new Uri("http://example.org:8080/base/path"));
 
-            this.verifierArgs
-                .Should().Contain("--provider-name", "provider name")
-                .And.Contain("--hostname", "example.org")
-                .And.Contain("--port", "8080")
-                .And.Contain("--base-path", "/base/path");
+            this.verifierArgs.Verify(a => a.AddOption("--base-path", "/base/path", null));
+        }
+
+        [Fact]
+        public void ServiceProvider_WithoutBasePath_DoesNotSetBasePathArg()
+        {
+            this.verifier.ServiceProvider("provider name", new Uri("http://example.org:8080/"));
+
+            this.verifierArgs.Verify(a => a.AddOption("--base-path", It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
     }
 }

@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using PactNet.Internal;
 
 namespace PactNet.Verifier
 {
@@ -12,13 +10,13 @@ namespace PactNet.Verifier
     /// </summary>
     internal class PactBrokerOptions : IPactBrokerOptions
     {
-        private readonly IDictionary<string, string> verifierArgs;
+        private readonly IVerifierArguments verifierArgs;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="PactBrokerOptions"/> class.
         /// </summary>
         /// <param name="verifierArgs">Pact verifier args</param>
-        public PactBrokerOptions(IDictionary<string, string> verifierArgs)
+        public PactBrokerOptions(IVerifierArguments verifierArgs)
         {
             this.verifierArgs = verifierArgs;
         }
@@ -70,7 +68,7 @@ namespace PactNet.Verifier
             if (tags.Any())
             {
                 string versions = string.Join(",", tags);
-                this.verifierArgs.AddOption("--consumer-version-tags", versions);
+                this.verifierArgs.AddOption("--consumer-version-tags", versions, nameof(tags));
             }
 
             return this;
