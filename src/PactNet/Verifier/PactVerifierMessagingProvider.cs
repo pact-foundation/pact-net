@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using PactNet.Internal;
 using PactNet.Verifier.Messaging;
 
@@ -10,7 +9,7 @@ namespace PactNet.Verifier
     /// </summary>
     internal class PactVerifierMessagingProvider : IPactVerifierMessagingProvider
     {
-        private readonly IDictionary<string, string> verifierArgs;
+        private readonly IVerifierArguments verifierArgs;
         private readonly PactVerifierConfig config;
 
         /// <summary>
@@ -18,20 +17,10 @@ namespace PactNet.Verifier
         /// </summary>
         /// <param name="verifierArgs">Verifier arguments</param>
         /// <param name="config">Pact verifier config</param>
-        public PactVerifierMessagingProvider(IDictionary<string, string> verifierArgs, PactVerifierConfig config)
+        public PactVerifierMessagingProvider(IVerifierArguments verifierArgs, PactVerifierConfig config)
         {
             this.verifierArgs = verifierArgs;
             this.config = config;
-        }
-
-        /// <summary>
-        /// Set the consumer name
-        /// </summary>
-        /// <param name="consumerName">Consumer name</param>
-        /// <returns>Fluent builder</returns>
-        public IPactVerifierConsumer HonoursPactWith(string consumerName)
-        {
-            return new PactVerifierConsumer(this.verifierArgs, this.config);
         }
 
         /// <summary>
@@ -39,13 +28,13 @@ namespace PactNet.Verifier
         /// </summary>
         /// <param name="scenarios">Scenario configuration</param>
         /// <returns>Fluent builder</returns>
-        public IPactVerifierMessagingProvider WithProviderMessages(Action<IMessageScenarios> scenarios)
+        public IPactVerifierProvider WithProviderMessages(Action<IMessageScenarios> scenarios)
         {
             Guard.NotNull(scenarios, nameof(scenarios));
 
             scenarios(new MessageScenarios());
 
-            return this;
+            return new PactVerifierProvider(this.verifierArgs, this.config);
         }
     }
 }

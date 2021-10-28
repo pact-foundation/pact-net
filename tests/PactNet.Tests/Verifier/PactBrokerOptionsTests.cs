@@ -1,6 +1,5 @@
-using System.Collections.Generic;
-using FluentAssertions;
 using FluentAssertions.Extensions;
+using Moq;
 using PactNet.Verifier;
 using Xunit;
 
@@ -10,31 +9,30 @@ namespace PactNet.Tests.Verifier
     {
         private readonly PactBrokerOptions options;
 
-        private readonly IDictionary<string, string> verifierArgs;
+        private readonly Mock<IVerifierArguments> verifierArgs;
 
         public PactBrokerOptionsTests()
         {
-            this.verifierArgs = new Dictionary<string, string>();
+            this.verifierArgs = new Mock<IVerifierArguments>();
 
-            this.options = new PactBrokerOptions(this.verifierArgs);
+            this.options = new PactBrokerOptions(this.verifierArgs.Object);
         }
 
         [Fact]
         public void BasicAuthentication_WhenCalled_AddsAuthArgs()
         {
-            this.options.BasicAuthentication("username", "password");
+            this.options.BasicAuthentication("user@example.org", "hunter2");
 
-            this.verifierArgs
-                .Should().Contain("--user", "username")
-                .And.Contain("--password", "password");
+            this.verifierArgs.Verify(a => a.AddOption("--user", "user@example.org", "username"));
+            this.verifierArgs.Verify(a => a.AddOption("--password", "hunter2", "password"));
         }
 
         [Fact]
         public void TokenAuthentication_WhenCalled_AddsAuthArgs()
         {
-            this.options.TokenAuthentication("token");
+            this.options.TokenAuthentication("abcde123");
 
-            this.verifierArgs.Should().Contain("--token", "token");
+            this.verifierArgs.Verify(a => a.AddOption("--token", "abcde123", "token"));
         }
 
         [Fact]
@@ -42,15 +40,15 @@ namespace PactNet.Tests.Verifier
         {
             this.options.EnablePending();
 
-            this.verifierArgs.Should().Contain("--enable-pending", string.Empty);
+            this.verifierArgs.Verify(a => a.AddFlag("--enable-pending"));
         }
 
         [Fact]
         public void ConsumerTags_WhenCalled_AddsPactBrokerConsumerVersionArgs()
         {
             this.options.ConsumerTags("v1", "v2");
-
-            this.verifierArgs.Should().Contain("--consumer-version-tags", "v1,v2");
+            
+            this.verifierArgs.Verify(a => a.AddOption("--consumer-version-tags", "v1,v2", "tags"));
         }
 
         [Fact]
@@ -61,23 +59,23 @@ namespace PactNet.Tests.Verifier
                                           @"{""branch"":""feat/foo"",""fallbackBranch"":""main""}",
                                           @"{""tag"":""foo"",""fallbackTag"":""bar"",""latest"":false}",
                                           @"{""deployed"":true,""released"":true,""environment"":""prod""}",
-                                          @"{""deployedOrReleased"":true}");
+                                          @"{""deployedOrReleased"":true,""consumer"":""My Consumer""}");
 
             this.options.ConsumerVersionSelectors(new ConsumerVersionSelector { MainBranch = true, MatchingBranch = true },
                                                   new ConsumerVersionSelector { Branch = "feat/foo", FallbackBranch = "main" },
                                                   new ConsumerVersionSelector { Tag = "foo", FallbackTag = "bar", Latest = false },
                                                   new ConsumerVersionSelector { Released = true, Deployed = true, Environment = "prod" },
-                                                  new ConsumerVersionSelector { DeployedOrReleased = true });
+                                                  new ConsumerVersionSelector { DeployedOrReleased = true, Consumer = "My Consumer" });
 
-            this.verifierArgs.Should().Contain("--consumer-version-selectors", $"[{expected}]");
+            this.verifierArgs.Verify(a => a.AddOption("--consumer-version-selectors", $"[{expected}]", null));
         }
 
         [Fact]
         public void FromPactBroker_IncludeWipSince_AddsPactBrokerPendingArgs()
         {
             this.options.IncludeWipPactsSince(14.February(2021));
-
-            this.verifierArgs.Should().Contain("--include-wip-pacts-since", "2021-02-14");
+            
+            this.verifierArgs.Verify(a => a.AddOption("--include-wip-pacts-since", "2021-02-14", "date"));
         }
 
         [Fact]
@@ -85,10 +83,9 @@ namespace PactNet.Tests.Verifier
         {
             this.options.PublishResults("1.2.3", "feature/branch", "production");
 
-            this.verifierArgs
-                .Should().Contain("--publish", string.Empty)
-                .And.Contain("--provider-version", "1.2.3")
-                .And.Contain("--provider-tags", "feature/branch,production");
+            this.verifierArgs.Verify(a => a.AddFlag("--publish"));
+            this.verifierArgs.Verify(a => a.AddOption("--provider-version", "1.2.3", "providerVersion"));
+            this.verifierArgs.Verify(a => a.AddOption("--provider-tags", "feature/branch,production", null));
         }
     }
 }

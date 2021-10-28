@@ -204,8 +204,7 @@ public class SomethingApiTests : IClassFixture<SomethingApiFixture>
         IPactVerifier pactVerifier = new PactVerifier(config);
         pactVerifier
             .ServiceProvider("Something API", fixture.ServerUri)
-            .HonoursPactWith("Something API Consumer")
-            .FromPactFile(new FileInfo(pactPath))
+            .WithFileSource(new FileInfo(pactPath))
             .WithProviderStateUrl(new Uri(fixture.ServerUri, "/provider-states"))
             .Verify();
     }
