@@ -27,13 +27,20 @@ namespace PactNet.AspNetCore.Messaging
         private readonly MessagingVerifierOptions options;
 
         /// <summary>
+        /// The provider state accessor
+        /// </summary>
+        private readonly IMessagingScenarioAccessor messagingScenarioAccessor;
+
+        /// <summary>
         /// Creates an instance of <see cref="MessageMiddleware"/>
         /// </summary>
         /// <param name="options">the middleware options</param>
         /// <param name="next">the next handle</param>
-        public MessageMiddleware(IOptions<MessagingVerifierOptions> options, RequestDelegate next)
+        /// <param name="messagingScenarioAccessor">the messaging scenario accessor</param>
+        public MessageMiddleware(IOptions<MessagingVerifierOptions> options, RequestDelegate next, IMessagingScenarioAccessor messagingScenarioAccessor)
         {
             this.next = next;
+            this.messagingScenarioAccessor = messagingScenarioAccessor;
             this.options = options.Value;
         }
 
@@ -58,7 +65,7 @@ namespace PactNet.AspNetCore.Messaging
                 return;
             }
 
-            Scenario scenario = Scenarios.GetByDescription(interactionDescription);
+            IScenario scenario = messagingScenarioAccessor.GetByDescription(interactionDescription);
             dynamic response = scenario.InvokeScenario();
 
             if (response == null)

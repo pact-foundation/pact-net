@@ -18,12 +18,12 @@ namespace PactNet.Verifier.Messaging
         /// Set the action of the scenario
         /// </summary>
         /// <param name="action">the function invoked</param>
-        Scenario WithContent(Func<dynamic> action);
+        IScenario WithContent(Func<dynamic> action);
 
         /// <summary>
         /// Set the object returned by the scenario
         /// </summary>
         /// <param name="messageContent">the message content</param>
-        Scenario WithContent(dynamic messageContent); // TODO: I don't think this works because it doesn't know which overload to call due to the dynamic
+        IScenario WithContent(dynamic messageContent); // TODO: I don't think this works because it doesn't know which overload to call due to the dynamic
     }
 }

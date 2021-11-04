@@ -1,4 +1,5 @@
 using System;
+using PactNet.Verifier.ProviderState;
 
 namespace PactNet.Verifier
 {
@@ -13,6 +14,12 @@ namespace PactNet.Verifier
         /// <param name="providerStateUri">Provider state setup URI</param>
         /// <returns>Fluent builder</returns>
         IPactVerifierPair WithProviderStateUrl(Uri providerStateUri);
+
+        /// <summary>
+        /// Adds provider states to execute
+        /// </summary>
+        /// <param name="providerStateAction"></param>
+        IPactVerifierPair WithProviderStates(Action<IProviderStatesFactory> providerStateAction);
 
         /// <summary>
         /// Filter the interactions to only those matching the given description and/or provider state

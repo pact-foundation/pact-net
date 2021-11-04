@@ -39,11 +39,11 @@ namespace PactNet.Verifier
         /// </summary>
         /// <param name="scenarios">Scenario configuration</param>
         /// <returns>Fluent builder</returns>
-        public IPactVerifierMessagingProvider WithProviderMessages(Action<IMessageScenarios> scenarios)
+        public IPactVerifierMessagingProvider WithProviderMessages(Action<IMessageScenariosFactory> scenarios)
         {
             Guard.NotNull(scenarios, nameof(scenarios));
 
-            scenarios(new MessageScenarios());
+            scenarios(new MessageScenariosFactory());
 
             return this;
         }

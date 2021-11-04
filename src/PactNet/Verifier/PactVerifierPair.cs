@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using PactNet.Internal;
+using PactNet.Verifier.ProviderState;
 
 namespace PactNet.Verifier
 {
@@ -37,6 +38,19 @@ namespace PactNet.Verifier
             Guard.NotNull(providerStateUri, nameof(providerStateUri));
 
             this.verifierArgs.AddOption("--state-change-url", providerStateUri.ToString());
+
+            return this;
+        }
+
+        /// <summary>
+        /// Adds provider states to execute
+        /// </summary>
+        /// <param name="providerStateAction">the action to add provider states</param>
+        public IPactVerifierPair WithProviderStates(Action<IProviderStatesFactory> providerStateAction)
+        {
+            Guard.NotNull(providerStateAction, nameof(providerStateAction));
+
+            providerStateAction(new ProviderStatesFactory());
 
             return this;
         }

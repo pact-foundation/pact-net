@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PactNet.Abstractions\PactNet.Abstractions.csproj" />
+    <ProjectReference Include="..\PactNet\PactNet.csproj" />
   </ItemGroup>
 
   <ItemGroup>
