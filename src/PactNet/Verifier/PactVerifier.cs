@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using PactNet.Internal;
 using PactNet.Verifier.Messaging;
 
@@ -75,6 +76,20 @@ namespace PactNet.Verifier
             this.verifierArgs.AddOption("--base-path", reconciledPath);
 
             return new PactVerifierMessagingProvider(this.verifierArgs, this.config);
+        }
+
+        /// <summary>
+        /// Sets the HTTP request timeout for requests to the target API and for state change requests.
+        /// </summary>
+        /// <param name="requestTimeout">The timespan represents the request timeout</param>
+        /// <returns>The modified PactVerifier instance</returns>
+        public IPactVerifier WithRequestTimeout(TimeSpan requestTimeout)
+        {
+            this.verifierArgs.Add(
+                "--request-timeout",
+                requestTimeout.TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
+
+            return this;
         }
 
         private void SetProviderHost(string providerName, Uri pactUri)

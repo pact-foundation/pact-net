@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using FluentAssertions;
 using PactNet.Verifier;
 using Xunit;
@@ -48,5 +49,19 @@ namespace PactNet.Tests.Verifier
                 .And.Contain("--port", "8080")
                 .And.Contain("--base-path", "/base/path");
         }
+
+        [Fact]
+        public void WithRequestTimeout_SetsRequestTimeoutArgs()
+        {
+            var random = new Random();
+            var  requestTimeout = TimeSpan.FromSeconds(random.Next(1, 60));
+
+            this.verifier.WithRequestTimeout(requestTimeout);
+
+            this.verifierArgs
+                .Should()
+                .Contain("--request-timeout", requestTimeout.TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
+        }
+
     }
 }

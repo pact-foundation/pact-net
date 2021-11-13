@@ -24,5 +24,12 @@ namespace PactNet.Verifier
         /// <param name="basePath">Path of the messaging provider endpoint</param>
         /// <returns>Fluent builder</returns>
         IPactVerifierMessagingProvider MessagingProvider(string providerName, Uri pactUri, string basePath);
+
+        /// <summary>
+        /// Sets the HTTP request timeout for requests to the target API and for state change requests.
+        /// </summary>
+        /// <param name="requestTimeout">The timespan represents the request timeout</param>
+        /// <returns>The modified PactVerifier instance</returns>
+        IPactVerifier WithRequestTimeout(TimeSpan requestTimeout);
     }
 }
