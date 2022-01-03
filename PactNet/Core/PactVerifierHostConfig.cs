@@ -96,8 +96,9 @@ namespace PactNet.Core
             var consumerVersionSelectors = BuildTags("consumer-version-selector", config.ConsumerVersionSelectors);
             var enablePending = config.EnablePending ? " --enable-pending" : "";
             var includeWipPactsSince = !string.IsNullOrEmpty(config.IncludeWipPactsSince) ? $" --include-wip-pacts-since \"{config.IncludeWipPactsSince}\"" : string.Empty;
+            var providerVersionBranch = !string.IsNullOrEmpty(config.ProviderVersionBranch) ? $" --provider-version-branch \"{config.ProviderVersionBranch}\"" : string.Empty;
 
-            return $" --pact-broker-base-url \"{config.BrokerBaseUri}\" --provider \"{config.ProviderName}\"{consumerVersionTags}{providerVersionTags}{consumerVersionSelectors}{enablePending}{includeWipPactsSince}";
+            return $" --pact-broker-base-url \"{config.BrokerBaseUri}\" --provider \"{config.ProviderName}\"{consumerVersionTags}{providerVersionTags}{consumerVersionSelectors}{enablePending}{includeWipPactsSince}{providerVersionBranch}";
         }
 
         private string BuildTags<T>(string tagOption, IEnumerable<T> tags)

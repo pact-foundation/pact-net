@@ -22,6 +22,7 @@ namespace PactNet
         public IEnumerable<VersionTagSelector> ConsumerVersionSelectors { get; private set; }
         public bool EnablePending { get; private set; }
         public string IncludeWipPactsSince { get; private set; }
+        public string ProviderVersionBranch { get; private set; }
         public PactUriOptions PactUriOptions { get; private set; }
 
         internal PactVerifier(Func<PactVerifierHostConfig, IPactCoreHost> pactVerifierHostFactory, PactVerifierConfig config)
@@ -109,7 +110,8 @@ namespace PactNet
         }
 
         public IPactVerifier PactBroker(string brokerBaseUri, PactUriOptions uriOptions = null, bool enablePending = false,
-            IEnumerable<string> consumerVersionTags = null, IEnumerable<string> providerVersionTags = null, IEnumerable<VersionTagSelector> consumerVersionSelectors = null, string includeWipPactsSince = null)
+            IEnumerable<string> consumerVersionTags = null, IEnumerable<string> providerVersionTags = null, IEnumerable<VersionTagSelector> consumerVersionSelectors = null, string includeWipPactsSince = null,
+            string providerVersionBranch = null)
         {
             if (IsNullOrEmpty(brokerBaseUri))
             {
@@ -123,6 +125,7 @@ namespace PactNet
             ProviderVersionTags = providerVersionTags;
             ConsumerVersionSelectors = consumerVersionSelectors;
             IncludeWipPactsSince = includeWipPactsSince;
+            ProviderVersionBranch = providerVersionBranch;
 
             return this;
         }
@@ -165,7 +168,8 @@ namespace PactNet
 
             var brokerConfig = !IsNullOrEmpty(BrokerBaseUri) ? 
                 new PactBrokerConfig(ProviderName, BrokerBaseUri, EnablePending,
-                    ConsumerVersionTags, ProviderVersionTags, ConsumerVersionSelectors, IncludeWipPactsSince) : 
+                    ConsumerVersionTags, ProviderVersionTags, ConsumerVersionSelectors, IncludeWipPactsSince,
+                    ProviderVersionBranch) : 
                 null;
 
             var pactVerifier = _pactVerifierHostFactory(

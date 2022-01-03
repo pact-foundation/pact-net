@@ -10,7 +10,8 @@ namespace PactNet
         IPactVerifier HonoursPactWith(string consumerName);
         IPactVerifier PactUri(string fileUri, PactUriOptions options = null, IEnumerable<string> providerVersionTags = null);
         IPactVerifier PactBroker(string brokerBaseUri, PactUriOptions uriOptions = null, bool enablePending = false,
-            IEnumerable<string> consumerVersionTags = null, IEnumerable<string> providerVersionTags = null, IEnumerable<VersionTagSelector> consumerVersionSelectors = null, string includeWipPactsSince = null);
+            IEnumerable<string> consumerVersionTags = null, IEnumerable<string> providerVersionTags = null, IEnumerable<VersionTagSelector> consumerVersionSelectors = null, string includeWipPactsSince = null,
+            string providerVersionBranch = null);
         void Verify(string description = null, string providerState = null);
     }
 }
