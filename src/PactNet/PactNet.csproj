@@ -22,9 +22,11 @@
     <IsWindows>False</IsWindows>
     <IsLinux>False</IsLinux>
     <IsOSX>False</IsOSX>
+    <IsArm64>False</IsArm64>
     <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'True'">True</IsWindows>
     <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'True'">True</IsLinux>
     <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'True'">True</IsOSX>
+    <IsArm64 Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'">True</IsArm64>
   </PropertyGroup>
 
   <ItemGroup>
@@ -46,7 +48,14 @@
       <Link>libpact_ffi.dylib</Link>
       <PackagePath>runtimes/osx-x64/native</PackagePath>
       <Pack>true</Pack>
-      <CopyToOutputDirectory Condition="'$(IsOSX)'">PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory Condition="'$(IsOSX)' == 'True' And '$(IsArm64)' == 'False'">PreserveNewest</CopyToOutputDirectory>
+      <Visible>false</Visible>
+    </Content>
+    <Content Include="$(MSBuildProjectDirectory)\..\..\build\osx\aarch64-apple-darwin\libpact_ffi.dylib">
+      <Link>libpact_ffi.dylib</Link>
+      <PackagePath>runtimes/osx-arm64/native</PackagePath>
+      <Pack>true</Pack>
+      <CopyToOutputDirectory Condition="'$(IsOSX)' == 'True' And '$(IsArm64)' == 'True'">PreserveNewest</CopyToOutputDirectory>
       <Visible>false</Visible>
     </Content>
   </ItemGroup>
