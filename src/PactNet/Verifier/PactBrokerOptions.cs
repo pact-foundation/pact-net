@@ -129,5 +129,17 @@ namespace PactNet.Verifier
 
             return this;
         }
+
+        /// <summary>
+        /// Provider branch to be set when publishing verification results
+        /// </summary>
+        /// <param name="branch">Provider branch</param>
+        /// <returns>Fluent builder</returns>
+        public IPactBrokerOptions ProviderBranch(string branch)
+        {
+            this.verifierArgs.AddOption("--provider-version-branch", branch, nameof(branch));
+
+            return this;
+        }
     }
 }

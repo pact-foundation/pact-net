@@ -47,7 +47,7 @@ namespace PactNet.Tests.Verifier
         public void ConsumerTags_WhenCalled_AddsPactBrokerConsumerVersionArgs()
         {
             this.options.ConsumerTags("v1", "v2");
-            
+
             this.verifierArgs.Verify(a => a.AddOption("--consumer-version-tags", "v1,v2", "tags"));
         }
 
@@ -71,11 +71,19 @@ namespace PactNet.Tests.Verifier
         }
 
         [Fact]
-        public void FromPactBroker_IncludeWipSince_AddsPactBrokerPendingArgs()
+        public void IncludeWipPactsSince_WhenCalled_AddsIncludeWipPactsSinceArgs()
         {
             this.options.IncludeWipPactsSince(14.February(2021));
-            
+
             this.verifierArgs.Verify(a => a.AddOption("--include-wip-pacts-since", "2021-02-14", "date"));
+        }
+
+        [Fact]
+        public void ProviderBranch_WhenCalled_AddsProviderVersionBranchArgs()
+        {
+            this.options.ProviderBranch("branch");
+
+            this.verifierArgs.Verify(a => a.AddOption("--provider-version-branch", "branch", "branch"));
         }
 
         [Fact]
