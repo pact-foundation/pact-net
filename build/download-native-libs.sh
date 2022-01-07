@@ -61,3 +61,4 @@ download_native() {
 download_native "pact_ffi" "windows" "x86_64" "dll"
 download_native "libpact_ffi" "linux" "x86_64" "so"
 download_native "libpact_ffi" "osx" "x86_64" "dylib"
+download_native "libpact_ffi" "osx" "aarch64-apple-darwin" "dylib"
