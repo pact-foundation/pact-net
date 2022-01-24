@@ -129,7 +129,7 @@
         "body": {
           "eventId": "83f9262f-28f1-4703-ab1a-8cfd9e8249c9",
           "eventType": "DetailsView",
-          "timestamp": "2021-06-04T14:59:07.8971463Z"
+          "timestamp": "2014-06-27T23:51:12.0000000Z"
         },
         "headers": {
           "content-type": "application/json; charset=utf-8"
@@ -177,7 +177,9 @@
   ],
   "metadata": {
     "pactRust": {
-      "version": "0.9.5"
+      "ffi": "0.1.6",
+      "mockserver": "0.8.7",
+      "models": "0.2.7"
     },
     "pactSpecification": {
       "version": "2.0.0"

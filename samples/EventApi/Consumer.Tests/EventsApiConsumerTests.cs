@@ -254,7 +254,7 @@ namespace Consumer.Tests
             {
                 EventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9"),
                 EventType = "DetailsView",
-                Timestamp = DateTime.UtcNow
+                Timestamp = 27.June(2014).At(23, 51, 12).AsUtc()
             };
 
             this.pact

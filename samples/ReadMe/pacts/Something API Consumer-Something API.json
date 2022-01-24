@@ -32,7 +32,9 @@
   ],
   "metadata": {
     "pactRust": {
-      "version": "0.9.5"
+      "ffi": "0.1.6",
+      "mockserver": "0.8.7",
+      "models": "0.2.7"
     },
     "pactSpecification": {
       "version": "3.0.0"
