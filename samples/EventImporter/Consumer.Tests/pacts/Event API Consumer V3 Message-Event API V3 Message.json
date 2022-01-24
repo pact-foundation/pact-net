@@ -6,15 +6,24 @@
     {
       "contents": [
         {
-          "EventId": "45d80d13-d5a2-48d7-8353-cbb4c0eaabf5",
-          "EventType": "SearchView",
-          "Timestamp": "2014-06-30T01:37:41.0660548"
+          "eventId": "45d80d13-d5a2-48d7-8353-cbb4c0eaabf5",
+          "eventType": "SearchView",
+          "timestamp": "2014-06-30T01:37:41.0660548"
         }
       ],
       "description": "receiving events from the queue",
       "matchingRules": {
         "body": {
-          "$[0].EventId": {
+          "$": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type",
+                "min": 1
+              }
+            ]
+          },
+          "$[*].eventId": {
             "combine": "AND",
             "matchers": [
               {
@@ -23,7 +32,7 @@
               }
             ]
           },
-          "$[0].EventType": {
+          "$[*].eventType": {
             "combine": "AND",
             "matchers": [
               {
@@ -31,7 +40,7 @@
               }
             ]
           },
-          "$[0].Timestamp": {
+          "$[*].timestamp": {
             "combine": "AND",
             "matchers": [
               {
@@ -42,6 +51,7 @@
         }
       },
       "metadata": {
+        "contentType": "application/json",
         "key": "valueKey"
       },
       "providerStates": [

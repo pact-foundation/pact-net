@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using PactNet.AspNetCore.Messaging;
 
 namespace Provider.Tests
@@ -23,6 +25,10 @@ namespace Provider.Tests
             services.AddPactMessaging(options =>
             {
                 options.BasePath = "/pact-messages";
+                options.DefaultJsonSettings = new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                };
             });
 
             this.inner.ConfigureServices(services);
