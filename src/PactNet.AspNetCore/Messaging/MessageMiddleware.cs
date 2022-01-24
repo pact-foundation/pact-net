@@ -71,10 +71,10 @@ namespace PactNet.AspNetCore.Messaging
 
             if (scenario.Metadata != null)
             {
-                AddMetadataToResponse(context, scenario.Metadata);
+                AddMetadataToResponse(context, scenario.Metadata, this.options.DefaultJsonSettings);
             }
 
-            await WriteToResponseAsync(context, response);
+            await WriteToResponseAsync(context, response, this.options.DefaultJsonSettings);
         }
 
         /// <summary>
@@ -82,9 +82,10 @@ namespace PactNet.AspNetCore.Messaging
         /// </summary>
         /// <param name="context">the http context</param>
         /// <param name="response">the dynamic message</param>
-        private static Task WriteToResponseAsync(HttpContext context, dynamic response)
+        /// <param name="settings">JSON settings</param>
+        private static Task WriteToResponseAsync(HttpContext context, dynamic response, JsonSerializerSettings settings)
         {
-            string responseBody = JsonConvert.SerializeObject(response);
+            string responseBody = JsonConvert.SerializeObject(response, settings);
             return context.Response.WriteAsync(responseBody);
         }
 
@@ -93,9 +94,10 @@ namespace PactNet.AspNetCore.Messaging
         /// </summary>
         /// <param name="context">the http context</param>
         /// <param name="metadata">the metadata</param>
-        private static void AddMetadataToResponse(HttpContext context, dynamic metadata)
+        /// <param name="settings">JSON settings</param>
+        private static void AddMetadataToResponse(HttpContext context, dynamic metadata, JsonSerializerSettings settings)
         {
-            string stringifyMetadata = JsonConvert.SerializeObject(metadata);
+            string stringifyMetadata = JsonConvert.SerializeObject(metadata, settings);
             string metadataBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(stringifyMetadata));
 
             context.Response.ContentType = "application/json";
@@ -127,7 +129,7 @@ namespace PactNet.AspNetCore.Messaging
         private static async Task WriteErrorInResponseAsync(HttpContext context, string errorMessage, HttpStatusCode statusCodeError)
         {
             context.Response.StatusCode = (int)statusCodeError;
-            await WriteToResponseAsync(context, errorMessage);
+            await context.Response.WriteAsync(errorMessage);
         }
     }
 }

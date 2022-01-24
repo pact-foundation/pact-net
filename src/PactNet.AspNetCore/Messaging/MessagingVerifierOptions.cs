@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+
 namespace PactNet.AspNetCore.Messaging
 {
     /// <summary>
@@ -9,5 +11,10 @@ namespace PactNet.AspNetCore.Messaging
         /// The base path of the message route
         /// </summary>
         public string BasePath { get; set; }
+
+        /// <summary>
+        /// Options for JSOn serialisation
+        /// </summary>
+        public JsonSerializerSettings DefaultJsonSettings { get; set; }
     }
 }
