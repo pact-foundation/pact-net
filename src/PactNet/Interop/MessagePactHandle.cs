@@ -6,6 +6,6 @@ namespace PactNet.Interop
     [StructLayout(LayoutKind.Sequential)]
     internal readonly struct MessagePactHandle
     {
-        public readonly UIntPtr Pact;
+        public readonly UIntPtr PactRef;
     }
 }

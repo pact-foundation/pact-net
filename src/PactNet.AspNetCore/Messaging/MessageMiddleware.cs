@@ -95,13 +95,14 @@ namespace PactNet.AspNetCore.Messaging
         /// <param name="context">the http context</param>
         /// <param name="metadata">the metadata</param>
         /// <param name="settings">JSON settings</param>
+        /// <seealso cref="https://github.com/pact-foundation/pact-reference/tree/master/rust/pact_verifier_cli#verifying-metadata" />
         private static void AddMetadataToResponse(HttpContext context, dynamic metadata, JsonSerializerSettings settings)
         {
             string stringifyMetadata = JsonConvert.SerializeObject(metadata, settings);
             string metadataBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(stringifyMetadata));
 
             context.Response.ContentType = "application/json";
-            context.Response.Headers.Add("PACT_MESSAGE_METADATA", metadataBase64);
+            context.Response.Headers.Add("Pact-Message-Metadata", metadataBase64);
         }
 
         /// <summary>
