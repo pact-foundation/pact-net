@@ -25,7 +25,6 @@ namespace Consumer.Tests
         {
             var config = new PactConfig
             {
-                LogDir = "../../../logs/",
                 PactDir = "../../../pacts/",
                 Outputters = new[]
                 {

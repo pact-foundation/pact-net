@@ -1,3 +1,4 @@
+using System;
 using PactNet.Interop;
 using PactNet.Models;
 
@@ -8,6 +9,9 @@ namespace PactNet
     /// </summary>
     public static class PactExtensions
     {
+        private static readonly object LogLocker = new object();
+        private static bool LogInitialised = false;
+
         /// <summary>
         /// Establish a new pact using the native backend
         /// </summary>
@@ -73,6 +77,8 @@ namespace PactNet
         /// <returns>Initialised pact handle</returns>
         private static PactHandle InitialiseServer(MockServer server, IPact pact, PactSpecification version)
         {
+            InitialiseLogging(pact.Config.LogLevel);
+
             PactHandle handle = server.NewPact(pact.Consumer, pact.Provider);
             server.WithSpecification(handle, version);
             return handle;
@@ -87,9 +93,41 @@ namespace PactNet
         /// <returns>Initialised message pact handle</returns>
         private static MessagePactHandle InitialiseMessage(MockServer server, IMessagePact messagePact, PactSpecification version)
         {
+            InitialiseLogging(messagePact.Config.LogLevel);
+
             MessagePactHandle handle = server.NewMessagePact(messagePact.Consumer, messagePact.Provider);
 
             return handle;
+        }
+
+        /// <summary>
+        /// Initialise logging in the native library
+        /// </summary>
+        /// <param name="level">Log level</param>
+        /// <exception cref="ArgumentOutOfRangeException">Invalid log level</exception>
+        /// <remarks>Logging can only be initialised **once**. Subsequent calls will have no effect</remarks>
+        private static void InitialiseLogging(PactLogLevel level)
+        {
+            lock (LogLocker)
+            {
+                if (LogInitialised)
+                {
+                    return;
+                }
+
+                NativeInterop.LogToBuffer(level switch
+                {
+                    PactLogLevel.Trace => LevelFilter.Trace,
+                    PactLogLevel.Debug => LevelFilter.Debug,
+                    PactLogLevel.Information => LevelFilter.Info,
+                    PactLogLevel.Warn => LevelFilter.Warn,
+                    PactLogLevel.Error => LevelFilter.Error,
+                    PactLogLevel.None => LevelFilter.Off,
+                    _ => throw new ArgumentOutOfRangeException(nameof(level), level, "Invalid log level")
+                });
+
+                LogInitialised = true;
+            }
         }
     }
 }

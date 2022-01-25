@@ -17,7 +17,6 @@ namespace Consumer.Tests
 
         private readonly PactConfig config = new PactConfig
         {
-            LogDir = "../../../logs/",
             PactDir = "../../../pacts/",
             DefaultJsonSettings = new JsonSerializerSettings
             {

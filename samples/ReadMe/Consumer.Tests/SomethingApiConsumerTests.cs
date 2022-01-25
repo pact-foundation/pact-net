@@ -21,8 +21,7 @@ namespace ReadMe.Consumer.Tests
             // or specify custom log and pact directories
             pact = Pact.V3("Something API Consumer", "Something API", new PactConfig
             {
-                PactDir = $"{Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName}{Path.DirectorySeparatorChar}pacts",
-                LogDir = @"c:\temp\logs",
+                PactDir = $"{Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName}{Path.DirectorySeparatorChar}pacts"
             });
 
             // Initialize Rust backend

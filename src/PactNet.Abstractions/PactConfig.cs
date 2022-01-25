@@ -11,7 +11,6 @@ namespace PactNet
     public class PactConfig
     {
         private string _pactDir;
-        private string _logDir;
 
         /// <summary>
         /// Pact file destination directory
@@ -23,13 +22,9 @@ namespace PactNet
         }
 
         /// <summary>
-        /// Log file destination directory
+        /// Log level for the verifier
         /// </summary>
-        public string LogDir
-        {
-            get { return _logDir; }
-            set { _logDir = ConvertToDirectory(value); }
-        }
+        public PactLogLevel LogLevel { get; set; } = PactLogLevel.Information;
 
         /// <summary>
         /// Log outputs
@@ -50,7 +45,6 @@ namespace PactNet
         public PactConfig()
         {
             this.PactDir = Constants.DefaultPactDir;
-            this.LogDir = Constants.DefaultLogDir;
         }
 
         /// <summary>

@@ -10,15 +10,6 @@ namespace PactNet.Interop
     {
         private const string dllName = "pact_ffi";
 
-        /// <summary>
-        /// Static initialiser for the Pact FFI library
-        /// </summary>
-        static NativeInterop()
-        {
-            // TODO: Make this configurable and specified by the user
-            LogToBuffer(LevelFilter.Debug);
-        }
-
         #region Http Interop Support
 
         [DllImport(dllName, EntryPoint = "pactffi_log_to_buffer")]
