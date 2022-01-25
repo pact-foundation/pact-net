@@ -9,17 +9,17 @@ namespace PactNet.Verifier
     /// </summary>
     internal class PactVerifierMessagingProvider : IPactVerifierMessagingProvider
     {
-        private readonly IVerifierArguments verifierArgs;
+        private readonly IVerifierProvider provider;
         private readonly PactVerifierConfig config;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="PactVerifierMessagingProvider"/> class.
         /// </summary>
-        /// <param name="verifierArgs">Verifier arguments</param>
+        /// <param name="provider">Pact verifier provider</param>
         /// <param name="config">Pact verifier config</param>
-        public PactVerifierMessagingProvider(IVerifierArguments verifierArgs, PactVerifierConfig config)
+        public PactVerifierMessagingProvider(IVerifierProvider provider, PactVerifierConfig config)
         {
-            this.verifierArgs = verifierArgs;
+            this.provider = provider;
             this.config = config;
         }
 
@@ -34,7 +34,7 @@ namespace PactNet.Verifier
 
             scenarios(new MessageScenarios());
 
-            return new PactVerifierProvider(this.verifierArgs, this.config);
+            return new PactVerifierProvider(this.provider, this.config);
         }
     }
 }

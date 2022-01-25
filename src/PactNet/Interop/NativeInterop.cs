@@ -10,10 +10,10 @@ namespace PactNet.Interop
     {
         private const string dllName = "pact_ffi";
 
-        #region Http Interop Support
-
         [DllImport(dllName, EntryPoint = "pactffi_log_to_buffer")]
         public static extern int LogToBuffer(LevelFilter levelFilter);
+
+        #region Http Interop Support
 
         [DllImport(dllName, EntryPoint = "pactffi_create_mock_server_for_pact")]
         public static extern int CreateMockServerForPact(PactHandle pact, string addrStr, bool tls);
@@ -101,5 +101,69 @@ namespace PactNet.Interop
         public static extern IntPtr MessageReify(MessageHandle message);
 
         #endregion Http Interop Support
+
+        #region Verifier Support
+
+        [DllImport(dllName, EntryPoint = "pactffi_verifier_new_for_application")]
+        public static extern IntPtr VerifierNewForApplication(string name, string version);
+
+        [DllImport(dllName, EntryPoint = "pactffi_verifier_shutdown")]
+        public static extern IntPtr VerifierShutdown(IntPtr handle);
+
+        [DllImport(dllName, EntryPoint = "pactffi_verifier_set_provider_info")]
+        public static extern void VerifierSetProviderInfo(IntPtr handle, string name, string scheme, string host, ushort port, string path);
+
+        [DllImport(dllName, EntryPoint = "pactffi_verifier_set_filter_info")]
+        public static extern void VerifierSetFilterInfo(IntPtr handle, string description, string state, byte noState);
+
+        [DllImport(dllName, EntryPoint = "pactffi_verifier_set_provider_state")]
+        public static extern void VerifierSetProviderState(IntPtr handle, string url, byte teardown, byte body);
+
+        [DllImport(dllName, EntryPoint = "pactffi_verifier_set_verification_options")]
+        public static extern void VerifierSetVerificationOptions(IntPtr handle,
+                                                                 byte publish,
+                                                                 string providerVersion,
+                                                                 string buildUrl,
+                                                                 byte disableSslVerification,
+                                                                 uint requestTimeout,
+                                                                 string[] providerTags,
+                                                                 ushort providerTagsLength);
+
+        [DllImport(dllName, EntryPoint = "pactffi_verifier_set_consumer_filters")]
+        public static extern void VerifierSetConsumerFilters(IntPtr handle, string[] consumerFilters, ushort consumerFiltersLength);
+
+        [DllImport(dllName, EntryPoint = "pactffi_verifier_add_file_source")]
+        public static extern void VerifierAddFileSource(IntPtr handle, string file);
+
+        [DllImport(dllName, EntryPoint = "pactffi_verifier_add_directory_source")]
+        public static extern void VerifierAddDirectorySource(IntPtr handle, string directory);
+
+        [DllImport(dllName, EntryPoint = "pactffi_verifier_url_source")]
+        public static extern void VerifierUrlSource(IntPtr handle, string url, string username, string password, string token);
+
+        [DllImport(dllName, EntryPoint = "pactffi_verifier_broker_source_with_selectors")]
+        public static extern void VerifierBrokerSourceWithSelectors(IntPtr handle,
+                                                                    string url,
+                                                                    string providerName,
+                                                                    string username,
+                                                                    string password,
+                                                                    string token,
+                                                                    byte enablePending,
+                                                                    string IncludeWipPactsSince,
+                                                                    string[] providerTags,
+                                                                    ushort providerTagsLength,
+                                                                    string providerBranch,
+                                                                    string[] consumerVersionSelectors,
+                                                                    ushort consumerVersionSelectorsLength,
+                                                                    string[] consumerVersionTags,
+                                                                    ushort consumerVersionTagsLength);
+
+        [DllImport(dllName, EntryPoint = "pactffi_verifier_execute")]
+        public static extern int VerifierExecute(IntPtr handle);
+
+        [DllImport(dllName, EntryPoint = "pactffi_verifier_logs")]
+        public static extern IntPtr VerifierLogs(IntPtr handle);
+
+        #endregion
     }
 }

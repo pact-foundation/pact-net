@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using PactNet.Internal;
 
 namespace PactNet.Verifier
 {
@@ -10,15 +12,33 @@ namespace PactNet.Verifier
     /// </summary>
     internal class PactBrokerOptions : IPactBrokerOptions
     {
-        private readonly IVerifierArguments verifierArgs;
+        private static readonly JsonSerializerSettings ConsumerSelectorSettings = new()
+        {
+            DefaultValueHandling = DefaultValueHandling.Ignore,
+            NullValueHandling = NullValueHandling.Ignore,
+            ContractResolver = new CamelCasePropertyNamesContractResolver()
+        };
+
+        private readonly IVerifierProvider provider;
+        private readonly Uri brokerUri;
+
+        private string username;
+        private string password;
+        private string token;
+        private bool enablePending;
+        private DateTime? includeWipPactsSince;
+        private ICollection<string> consumerVersionTags = Array.Empty<string>();
+        private ICollection<string> consumerVersionSelectors = Array.Empty<string>();
 
         /// <summary>
         /// Initialises a new instance of the <see cref="PactBrokerOptions"/> class.
         /// </summary>
-        /// <param name="verifierArgs">Pact verifier args</param>
-        public PactBrokerOptions(IVerifierArguments verifierArgs)
+        /// <param name="provider">Pact verifier provider</param>
+        /// <param name="brokerUri">Pact broker URI</param>
+        public PactBrokerOptions(IVerifierProvider provider, Uri brokerUri)
         {
-            this.verifierArgs = verifierArgs;
+            this.provider = provider;
+            this.brokerUri = brokerUri;
         }
 
         /// <summary>
@@ -29,8 +49,11 @@ namespace PactNet.Verifier
         /// <returns>Fluent builder</returns>
         public IPactBrokerOptions BasicAuthentication(string username, string password)
         {
-            this.verifierArgs.AddOption("--user", username, nameof(username));
-            this.verifierArgs.AddOption("--password", password, nameof(password));
+            Guard.NotNullOrEmpty(username, nameof(username));
+            Guard.NotNullOrEmpty(password, nameof(password));
+
+            this.username = username;
+            this.password = password;
 
             return this;
         }
@@ -42,7 +65,9 @@ namespace PactNet.Verifier
         /// <returns>Fluent builder</returns>
         public IPactBrokerOptions TokenAuthentication(string token)
         {
-            this.verifierArgs.AddOption("--token", token, nameof(token));
+            Guard.NotNullOrEmpty(token, nameof(token));
+
+            this.token = token;
 
             return this;
         }
@@ -53,7 +78,7 @@ namespace PactNet.Verifier
         /// <returns>Fluent builder</returns>
         public IPactBrokerOptions EnablePending()
         {
-            this.verifierArgs.AddFlag("--enable-pending");
+            this.enablePending = true;
 
             return this;
         }
@@ -65,11 +90,7 @@ namespace PactNet.Verifier
         /// <returns>Fluent builder</returns>
         public IPactBrokerOptions ConsumerTags(params string[] tags)
         {
-            if (tags.Any())
-            {
-                string versions = string.Join(",", tags);
-                this.verifierArgs.AddOption("--consumer-version-tags", versions, nameof(tags));
-            }
+            this.consumerVersionTags = tags;
 
             return this;
         }
@@ -82,17 +103,9 @@ namespace PactNet.Verifier
         /// <remarks>See <see href="https://docs.pact.io/pact_broker/advanced_topics/consumer_version_selectors"/></remarks>
         public IPactBrokerOptions ConsumerVersionSelectors(params ConsumerVersionSelector[] selectors)
         {
-            if (selectors.Any())
-            {
-                string value = JsonConvert.SerializeObject(selectors, new JsonSerializerSettings
-                {
-                    DefaultValueHandling = DefaultValueHandling.Ignore,
-                    NullValueHandling = NullValueHandling.Ignore,
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
-                });
+            string[] serialised = selectors.Select(s => JsonConvert.SerializeObject(s, ConsumerSelectorSettings)).ToArray();
 
-                this.verifierArgs.AddOption("--consumer-version-selectors", value);
-            }
+            this.consumerVersionSelectors = serialised;
 
             return this;
         }
@@ -104,8 +117,7 @@ namespace PactNet.Verifier
         /// <returns>Fluent builder</returns>
         public IPactBrokerOptions IncludeWipPactsSince(DateTime date)
         {
-            string formatted = date.Date.ToString("yyyy-MM-dd");
-            this.verifierArgs.AddOption("--include-wip-pacts-since", formatted, nameof(date));
+            this.includeWipPactsSince = date;
 
             return this;
         }
@@ -114,20 +126,36 @@ namespace PactNet.Verifier
         /// Publish results to the pact broker
         /// </summary>
         /// <param name="providerVersion">Provider version</param>
-        /// <param name="tags">Optional tags to add to the verification</param>
+        /// <param name="configure">Configure the publish options</param>
         /// <returns>Fluent builder</returns>
-        public IPactBrokerOptions PublishResults(string providerVersion, params string[] tags)
+        public IPactBrokerOptions PublishResults(string providerVersion, Action<IPactBrokerPublishOptions> configure)
         {
-            this.verifierArgs.AddFlag("--publish");
-            this.verifierArgs.AddOption("--provider-version", providerVersion, nameof(providerVersion));
+            Guard.NotNullOrEmpty(providerVersion, nameof(providerVersion));
+            Guard.NotNull(configure, nameof(configure));
 
-            if (tags.Any())
-            {
-                string formatted = string.Join(",", tags);
-                this.verifierArgs.AddOption("--provider-tags", formatted);
-            }
+            var options = new PactBrokerPublishOptions(this.provider, providerVersion);
+            configure.Invoke(options);
+            options.Apply();
 
             return this;
+        }
+
+        /// <summary>
+        /// Finalise the configuration with the provider
+        /// </summary>
+        public void Apply()
+        {
+            this.provider.AddBrokerSource(brokerUri,
+                                          null, // TODO: where do we get the provider name from again?
+                                          this.username,
+                                          this.password,
+                                          this.token,
+                                          this.enablePending,
+                                          this.includeWipPactsSince,
+                                          Array.Empty<string>(), // TODO: What does the provider tags arg do?
+                                          null,                  // TODO: What does the provider branch arg do?
+                                          this.consumerVersionSelectors,
+                                          this.consumerVersionTags);
         }
     }
 }

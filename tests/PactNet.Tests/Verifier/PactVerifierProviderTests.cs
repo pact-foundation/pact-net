@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Moq;
 using PactNet.Verifier;
@@ -11,13 +12,13 @@ namespace PactNet.Tests.Verifier
     {
         private readonly PactVerifierProvider verifier;
 
-        private readonly Mock<IVerifierArguments> verifierArgs;
+        private readonly Mock<IVerifierProvider> mockProvider;
 
         public PactVerifierProviderTests(ITestOutputHelper output)
         {
-            this.verifierArgs = new Mock<IVerifierArguments>();
+            this.mockProvider = new Mock<IVerifierProvider>();
 
-            this.verifier = new PactVerifierProvider(this.verifierArgs.Object, new PactVerifierConfig
+            this.verifier = new PactVerifierProvider(this.mockProvider.Object, new PactVerifierConfig
             {
                 Outputters = new[]
                 {
@@ -33,7 +34,7 @@ namespace PactNet.Tests.Verifier
 
             this.verifier.WithFileSource(file);
 
-            this.verifierArgs.Verify(a => a.AddOption("--file", file.FullName, null));
+            this.mockProvider.Verify(p => p.AddFileSource(file));
         }
 
         [Fact]
@@ -43,7 +44,7 @@ namespace PactNet.Tests.Verifier
 
             this.verifier.WithDirectorySource(directory);
 
-            this.verifierArgs.Verify(a => a.AddOption("--dir", directory.FullName, null));
+            this.mockProvider.Verify(p => p.AddDirectorySource(directory));
         }
 
         [Fact]
@@ -53,24 +54,37 @@ namespace PactNet.Tests.Verifier
 
             this.verifier.WithDirectorySource(directory, "foo", "bar");
 
-            this.verifierArgs.Verify(a => a.AddOption("--filter-consumer", "foo", null));
-            this.verifierArgs.Verify(a => a.AddOption("--filter-consumer", "bar", null));
+            this.mockProvider.Verify(p => p.SetConsumerFilters(new[] { "foo", "bar" }));
         }
 
         [Fact]
-        public void WithUriSource_WhenCalled_AddsUrlArg()
+        public void WithUriSource_NoAuthentication_AddsUrlArg()
         {
-            this.verifier.WithUriSource(new Uri("http://example.org/pact/file.json"));
+            var uri = new Uri("http://example.org/pact/file.json");
 
-            this.verifierArgs.Verify(a => a.AddOption("--url", "http://example.org/pact/file.json", null));
+            this.verifier.WithUriSource(uri);
+
+            this.mockProvider.Verify(p => p.AddUrlSource(uri, null, null, null));
         }
 
         [Fact]
         public void WithPactBrokerSource_WhenCalled_AddsPactBrokerArg()
         {
-            this.verifier.WithPactBrokerSource(new Uri("http://broker.example.org/"));
+            var brokerUri = new Uri("http://broker.example.org/");
 
-            this.verifierArgs.Verify(a => a.AddOption("--broker-url", "http://broker.example.org/", null));
+            this.verifier.WithPactBrokerSource(brokerUri);
+
+            this.mockProvider.Verify(p => p.AddBrokerSource(brokerUri,
+                                                            It.IsAny<string>(),
+                                                            It.IsAny<string>(),
+                                                            It.IsAny<string>(),
+                                                            It.IsAny<string>(),
+                                                            It.IsAny<bool>(),
+                                                            It.IsAny<DateTime?>(),
+                                                            It.IsAny<ICollection<string>>(),
+                                                            It.IsAny<string>(),
+                                                            It.IsAny<ICollection<string>>(),
+                                                            It.IsAny<ICollection<string>>()));
         }
     }
 }

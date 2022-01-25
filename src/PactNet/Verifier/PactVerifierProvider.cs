@@ -9,17 +9,17 @@ namespace PactNet.Verifier
     /// </summary>
     internal class PactVerifierProvider : IPactVerifierProvider
     {
-        private readonly IVerifierArguments verifierArgs;
+        private readonly IVerifierProvider provider;
         private readonly PactVerifierConfig config;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="PactVerifierProvider"/> class.
         /// </summary>
-        /// <param name="verifierArgs">Verifier args to populate</param>
+        /// <param name="provider">Verifier provider</param>
         /// <param name="config">Pact verifier config</param>
-        public PactVerifierProvider(IVerifierArguments verifierArgs, PactVerifierConfig config)
+        public PactVerifierProvider(IVerifierProvider provider, PactVerifierConfig config)
         {
-            this.verifierArgs = verifierArgs;
+            this.provider = provider;
             this.config = config;
         }
 
@@ -32,9 +32,9 @@ namespace PactNet.Verifier
         {
             Guard.NotNull(pactFile, nameof(pactFile));
 
-            this.verifierArgs.AddOption("--file", pactFile.FullName);
+            this.provider.AddFileSource(pactFile);
 
-            return new PactVerifierSource(this.verifierArgs, new InteropVerifierProvider(), this.config);
+            return new PactVerifierSource(this.provider, this.config);
         }
 
         /// <summary>
@@ -48,14 +48,10 @@ namespace PactNet.Verifier
             Guard.NotNull(directory, nameof(directory));
             Guard.NotNull(consumers, nameof(consumers));
 
-            this.verifierArgs.AddOption("--dir", directory.FullName);
+            this.provider.AddDirectorySource(directory);
+            this.provider.SetConsumerFilters(consumers);
 
-            foreach (string consumer in consumers)
-            {
-                this.verifierArgs.AddOption("--filter-consumer", consumer);
-            }
-
-            return new PactVerifierSource(this.verifierArgs, new InteropVerifierProvider(), this.config);
+            return new PactVerifierSource(this.provider, this.config);
         }
 
         /// <summary>
@@ -67,9 +63,10 @@ namespace PactNet.Verifier
         {
             Guard.NotNull(pactUri, nameof(pactUri));
 
-            this.verifierArgs.AddOption("--url", pactUri.ToString());
+            // TODO: Support URI source authentication
+            this.provider.AddUrlSource(pactUri, null, null, null);
 
-            return new PactVerifierSource(this.verifierArgs, new InteropVerifierProvider(), this.config);
+            return new PactVerifierSource(this.provider, this.config);
         }
 
         /// <summary>
@@ -91,12 +88,11 @@ namespace PactNet.Verifier
             Guard.NotNull(brokerBaseUri, nameof(brokerBaseUri));
             Guard.NotNull(configure, nameof(configure));
 
-            this.verifierArgs.AddOption("--broker-url", brokerBaseUri.ToString());
+            var options = new PactBrokerOptions(this.provider, brokerBaseUri);
+            configure.Invoke(options);
+            options.Apply();
 
-            var options = new PactBrokerOptions(this.verifierArgs);
-            configure?.Invoke(options);
-
-            return new PactVerifierSource(this.verifierArgs, new InteropVerifierProvider(), this.config);
+            return new PactVerifierSource(this.provider, this.config);
         }
     }
 }

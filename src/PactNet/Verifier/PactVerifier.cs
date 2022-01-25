@@ -7,10 +7,10 @@ namespace PactNet.Verifier
     /// <summary>
     /// Pact verifier
     /// </summary>
-    public class PactVerifier : IPactVerifier
+    public class PactVerifier : IPactVerifier, IDisposable
     {
         private readonly PactVerifierConfig config;
-        private readonly IVerifierArguments verifierArgs;
+        private readonly IVerifierProvider provider;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="PactVerifier"/> class.
@@ -23,20 +23,21 @@ namespace PactNet.Verifier
         /// Initialises a new instance of the <see cref="PactVerifier"/> class.
         /// </summary>
         /// <param name="config">Pact verifier config</param>
-        public PactVerifier(PactVerifierConfig config) : this(new VerifierArguments(), config)
+        public PactVerifier(PactVerifierConfig config) : this(new InteropVerifierProvider(config), config)
         {
-            Guard.NotNull(config, nameof(config));
         }
 
         /// <summary>
         /// Initialises a new instance of the <see cref="PactVerifier"/> class.
         /// </summary>
-        /// <param name="verifierArgs">Pact verifier args</param>
+        /// <param name="provider">Verifier provider</param>
         /// <param name="config">Pact verifier config</param>
-        internal PactVerifier(IVerifierArguments verifierArgs, PactVerifierConfig config)
+        internal PactVerifier(IVerifierProvider provider, PactVerifierConfig config)
         {
+            Guard.NotNull(config, nameof(config));
+
             this.config = config;
-            this.verifierArgs = verifierArgs;
+            this.provider = provider;
         }
 
         /// <summary>
@@ -47,14 +48,12 @@ namespace PactNet.Verifier
         /// <returns>Fluent builder</returns>
         public IPactVerifierProvider ServiceProvider(string providerName, Uri pactUri)
         {
-            this.SetProviderHost(providerName, pactUri);
+            Guard.NotNullOrEmpty(providerName, nameof(providerName));
+            Guard.NotNull(pactUri, nameof(pactUri));
 
-            if (pactUri.AbsolutePath != "/")
-            {
-                this.verifierArgs.AddOption("--base-path", pactUri.AbsolutePath);
-            }
+            this.InitialiseProvider(providerName, pactUri);
 
-            return new PactVerifierProvider(this.verifierArgs, this.config);
+            return new PactVerifierProvider(this.provider, this.config);
         }
 
         /// <summary>
@@ -66,23 +65,39 @@ namespace PactNet.Verifier
         /// <returns>Fluent builder</returns>
         public IPactVerifierMessagingProvider MessagingProvider(string providerName, Uri pactUri, string basePath)
         {
+            Guard.NotNullOrEmpty(providerName, nameof(providerName));
+            Guard.NotNull(pactUri, nameof(pactUri));
             Guard.NotNull(basePath, nameof(basePath));
-            this.SetProviderHost(providerName, pactUri);
 
-            string reconciledPath = pactUri.AbsolutePath != "/" ? new Uri(pactUri, basePath).AbsolutePath : basePath;
+            var uriWithBasePath = new Uri(pactUri, basePath);
+            this.InitialiseProvider(providerName, uriWithBasePath);
 
-            this.verifierArgs.AddOption("--base-path", reconciledPath);
-
-            return new PactVerifierMessagingProvider(this.verifierArgs, this.config);
+            return new PactVerifierMessagingProvider(this.provider, this.config);
         }
 
-        private void SetProviderHost(string providerName, Uri pactUri)
+        /// <summary>
+        /// Initialise the verifier provider
+        /// </summary>
+        /// <param name="providerName"></param>
+        /// <param name="pactUri"></param>
+        private void InitialiseProvider(string providerName, Uri pactUri)
         {
             Guard.NotNull(pactUri, nameof(pactUri));
 
-            this.verifierArgs.AddOption("--provider-name", providerName, nameof(providerName));
-            this.verifierArgs.AddOption("--hostname", pactUri.Host);
-            this.verifierArgs.AddOption("--port", pactUri.Port.ToString());
+            this.provider.Initialise();
+            this.provider.SetProviderInfo(providerName,
+                                          pactUri.Scheme,
+                                          pactUri.Host,
+                                          (ushort)pactUri.Port,
+                                          pactUri.AbsolutePath);
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            this.provider?.Dispose();
         }
     }
 }
