@@ -12,13 +12,5 @@ namespace PactNet.Abstractions.Tests
 
             options.PactDir.Should().Be(Constants.DefaultPactDir);
         }
-
-        [Fact]
-        public void Ctor_WithDefaults_UsesDefaultLogDir()
-        {
-            var options = new PactConfig();
-
-            options.LogDir.Should().Be(Constants.DefaultLogDir);
-        }
     }
 }
