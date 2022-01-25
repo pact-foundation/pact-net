@@ -1,4 +1,6 @@
 using System;
+using PactNet.Exceptions;
+using PactNet.Internal;
 
 namespace PactNet.Verifier
 {
@@ -7,20 +9,17 @@ namespace PactNet.Verifier
     /// </summary>
     internal class PactVerifierSource : IPactVerifierSource
     {
-        private readonly IVerifierArguments verifierArgs;
-        private readonly IVerifierProvider verifier;
+        private readonly IVerifierProvider provider;
         private readonly PactVerifierConfig config;
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="PactNet.Verifier.PactVerifierSource"/> class.
+        /// Initialises a new instance of the <see cref="PactVerifierSource"/> class.
         /// </summary>
-        /// <param name="verifierArgs">Verifier args to populate</param>
-        /// <param name="verifier">Pact verifier provider</param>
+        /// <param name="provider">Pact verifier provider</param>
         /// <param name="config">Verifier config</param>
-        internal PactVerifierSource(IVerifierArguments verifierArgs, IVerifierProvider verifier, PactVerifierConfig config)
+        internal PactVerifierSource(IVerifierProvider provider, PactVerifierConfig config)
         {
-            this.verifierArgs = verifierArgs;
-            this.verifier = verifier;
+            this.provider = provider;
             this.config = config;
         }
 
@@ -31,7 +30,10 @@ namespace PactNet.Verifier
         /// <returns>Fluent builder</returns>
         public IPactVerifierSource WithProviderStateUrl(Uri providerStateUri)
         {
-            this.verifierArgs.AddOption("--state-change-url", providerStateUri.ToString(), nameof(providerStateUri));
+            Guard.NotNull(providerStateUri, nameof(providerStateUri));
+
+            // TODO: Support teardowns and disabling provider state bodies
+            this.provider.SetProviderState(providerStateUri, false, true);
 
             return this;
         }
@@ -45,38 +47,8 @@ namespace PactNet.Verifier
         public IPactVerifierSource WithFilter(string description = null, string providerState = null)
         {
             // TODO: Allow env vars to specify description and provider state filters like the old version did
-            if (!string.IsNullOrWhiteSpace(description))
-            {
-                this.verifierArgs.AddOption("--filter-description", description, nameof(description));
-            }
-
-            if (!string.IsNullOrWhiteSpace(providerState))
-            {
-                this.verifierArgs.AddOption("--filter-state", providerState, nameof(providerState));
-            }
-
-            return this;
-        }
-
-        /// <summary>
-        /// Alter the log level from the default value
-        /// </summary>
-        /// <param name="level">Log level</param>
-        /// <returns>Fluent builder</returns>
-        public IPactVerifierSource WithLogLevel(PactLogLevel level)
-        {
-            string arg = level switch
-            {
-                PactLogLevel.Trace => "trace",
-                PactLogLevel.Debug => "debug",
-                PactLogLevel.Information => "info",
-                PactLogLevel.Warn => "warn",
-                PactLogLevel.Error => "error",
-                PactLogLevel.None => "none",
-                _ => throw new ArgumentOutOfRangeException(nameof(level), level, "Unsupported log level")
-            };
-
-            this.verifierArgs.AddOption("--loglevel", arg);
+            // TODO: Support the 'no state' option
+            this.provider.SetFilterInfo(description, providerState, null);
 
             return this;
         }
@@ -84,14 +56,11 @@ namespace PactNet.Verifier
         /// <summary>
         /// Verify provider interactions
         /// </summary>
+        /// <exception cref="PactFailureException">Verification failed</exception>
         public void Verify()
         {
-            string formatted = this.verifierArgs.ToString();
-
-            this.config.WriteLine("Invoking the pact verifier with args:");
-            this.config.WriteLine(formatted);
-
-            this.verifier.Verify(formatted);
+            this.config.WriteLine("Starting verification...");
+            this.provider.Execute();
         }
     }
 }

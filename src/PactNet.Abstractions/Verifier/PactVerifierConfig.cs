@@ -9,6 +9,11 @@ namespace PactNet.Verifier
     public class PactVerifierConfig
     {
         /// <summary>
+        /// Log level for the verifier
+        /// </summary>
+        public PactLogLevel LogLevel { get; set; } = PactLogLevel.Information;
+
+        /// <summary>
         /// Log outputs
         /// </summary>
         public IEnumerable<IOutput> Outputters { get; set; } = new List<IOutput>

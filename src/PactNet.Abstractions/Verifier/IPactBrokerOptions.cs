@@ -54,8 +54,8 @@ namespace PactNet.Verifier
         /// Publish results to the pact broker
         /// </summary>
         /// <param name="providerVersion">Provider version</param>
-        /// <param name="tags">Optional tags to add to the verification</param>
+        /// <param name="configure">Configure the publish options</param>
         /// <returns>Fluent builder</returns>
-        IPactBrokerOptions PublishResults(string providerVersion, params string[] tags);
+        IPactBrokerOptions PublishResults(string providerVersion, Action<IPactBrokerPublishOptions> configure);
     }
 }

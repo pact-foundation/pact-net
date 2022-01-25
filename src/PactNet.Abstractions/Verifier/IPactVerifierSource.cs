@@ -1,4 +1,5 @@
 using System;
+using PactNet.Exceptions;
 
 namespace PactNet.Verifier
 {
@@ -23,15 +24,9 @@ namespace PactNet.Verifier
         IPactVerifierSource WithFilter(string description = null, string providerState = null);
 
         /// <summary>
-        /// Alter the log level from the default value
-        /// </summary>
-        /// <param name="level">Log level</param>
-        /// <returns>Fluent builder</returns>
-        IPactVerifierSource WithLogLevel(PactLogLevel level);
-
-        /// <summary>
         /// Verify provider interactions
         /// </summary>
+        /// <exception cref="PactFailureException">Verification failed</exception>
         void Verify();
     }
 }
