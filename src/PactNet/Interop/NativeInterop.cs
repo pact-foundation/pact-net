@@ -121,13 +121,16 @@ namespace PactNet.Interop
 
         [DllImport(dllName, EntryPoint = "pactffi_verifier_set_verification_options")]
         public static extern void VerifierSetVerificationOptions(IntPtr handle,
-                                                                 byte publish,
-                                                                 string providerVersion,
-                                                                 string buildUrl,
                                                                  byte disableSslVerification,
-                                                                 uint requestTimeout,
-                                                                 string[] providerTags,
-                                                                 ushort providerTagsLength);
+                                                                 uint requestTimeout);
+
+        [DllImport(dllName, EntryPoint = "pactffi_verifier_set_publish_options")]
+        public static extern void VerifierSetPublishOptions(IntPtr handle,
+                                                            string providerVersion,
+                                                            string buildUrl,
+                                                            string[] providerTags,
+                                                            ushort providerTagsLength,
+                                                            string providerBranch);
 
         [DllImport(dllName, EntryPoint = "pactffi_verifier_set_consumer_filters")]
         public static extern void VerifierSetConsumerFilters(IntPtr handle, string[] consumerFilters, ushort consumerFiltersLength);
@@ -144,7 +147,6 @@ namespace PactNet.Interop
         [DllImport(dllName, EntryPoint = "pactffi_verifier_broker_source_with_selectors")]
         public static extern void VerifierBrokerSourceWithSelectors(IntPtr handle,
                                                                     string url,
-                                                                    string providerName,
                                                                     string username,
                                                                     string password,
                                                                     string token,

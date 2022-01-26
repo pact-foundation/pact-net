@@ -30,6 +30,14 @@ namespace PactNet.Tests.Verifier
         }
 
         [Fact]
+        public void ProviderBranch_WhenCalled_AddsBranch()
+        {
+            this.options.ProviderBranch("branch");
+
+            this.Verify(branch: "branch");
+        }
+
+        [Fact]
         public void BuildUrl_WhenCalled_AddsBuildUrl()
         {
             var uri = new Uri("https://ci.example.org/builds/12345");
@@ -39,11 +47,11 @@ namespace PactNet.Tests.Verifier
             this.Verify(buildUrl: uri);
         }
 
-        private void Verify(ICollection<string> tags = null, Uri buildUrl = null)
+        private void Verify(ICollection<string> tags = null, Uri buildUrl = null, string branch = null)
         {
             this.options.Apply();
 
-            this.mockProvider.Verify(p => p.SetVerificationOptions(true, Version, buildUrl, false, TimeSpan.FromSeconds(5), tags));
+            this.mockProvider.Verify(p => p.SetPublishOptions(Version, buildUrl, tags, branch));
         }
     }
 }

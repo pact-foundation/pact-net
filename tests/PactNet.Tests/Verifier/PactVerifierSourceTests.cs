@@ -40,7 +40,7 @@ namespace PactNet.Tests.Verifier
         }
 
         [Fact]
-        public void WithFilter_WhenCalled_AddsFilterArgs()
+        public void WithFilter_WhenCalled_SetsFilterInfo()
         {
             this.verifier.WithFilter("description", "provider state");
 
@@ -48,7 +48,43 @@ namespace PactNet.Tests.Verifier
         }
 
         [Fact]
-        public void Verify_WhenCalled_VerifiesWithFormattedArguments()
+        public void WithRequestTimeout_WhenCalled_SetsRequestTimeout()
+        {
+            TimeSpan timeout = TimeSpan.FromSeconds(1);
+
+            this.verifier.WithRequestTimeout(timeout);
+            this.verifier.Verify();
+
+            this.mockProvider.Verify(p => p.SetVerificationOptions(It.IsAny<bool>(), timeout));
+        }
+
+        [Fact]
+        public void WithSslVerificationDisabled_WhenCalled_DisablesSslVerification()
+        {
+            this.verifier.WithSslVerificationDisabled();
+            this.verifier.Verify();
+
+            this.mockProvider.Verify(p => p.SetVerificationOptions(true, It.IsAny<TimeSpan>()));
+        }
+
+        [Fact]
+        public void Verify_WithoutRequestTimeout_UsesDefaultTimeout()
+        {
+            this.verifier.Verify();
+
+            this.mockProvider.Verify(p => p.SetVerificationOptions(It.IsAny<bool>(), TimeSpan.FromSeconds(5)));
+        }
+
+        [Fact]
+        public void Verify_WithoutDisablingSslVerification_EnablesSslVerification()
+        {
+            this.verifier.Verify();
+
+            this.mockProvider.Verify(p => p.SetVerificationOptions(false, It.IsAny<TimeSpan>()));
+        }
+
+        [Fact]
+        public void Verify_WhenCalled_Verifies()
         {
             this.verifier.Verify();
 
