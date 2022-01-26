@@ -1,6 +1,8 @@
 using FluentAssertions;
 using Newtonsoft.Json;
 using PactNet.Matchers;
+using System;
+using System.Globalization;
 using Xunit;
 
 namespace PactNet.Abstractions.Tests.Matchers
@@ -27,10 +29,10 @@ namespace PactNet.Abstractions.Tests.Matchers
 
             var matcher = new NumericMatcher(example);
 
-            string actual = JsonConvert.SerializeObject(matcher);
-            string expected = $@"{{""pact:matcher:type"":""number"",""value"":{example}}}";
+            string actual = JsonConvert.SerializeObject(matcher, new JsonSerializerSettings() { Culture = CultureInfo.InvariantCulture });
+            FormattableString expected = $@"{{""pact:matcher:type"":""number"",""value"":{example}}}";
 
-            actual.Should().BeEquivalentTo(expected);
+            actual.Should().BeEquivalentTo(expected.ToString(CultureInfo.InvariantCulture));
         }
 
         [Fact]
@@ -40,10 +42,10 @@ namespace PactNet.Abstractions.Tests.Matchers
 
             var matcher = new NumericMatcher(example);
 
-            string actual = JsonConvert.SerializeObject(matcher);
-            string expected = $@"{{""pact:matcher:type"":""number"",""value"":{example}}}";
+            string actual = JsonConvert.SerializeObject(matcher, new JsonSerializerSettings() { Culture = CultureInfo.InvariantCulture });
+            FormattableString expected = $@"{{""pact:matcher:type"":""number"",""value"":{example}}}";
 
-            actual.Should().BeEquivalentTo(expected);
+            actual.Should().BeEquivalentTo(expected.ToString(CultureInfo.InvariantCulture));
         }
 
         [Fact]
@@ -53,10 +55,10 @@ namespace PactNet.Abstractions.Tests.Matchers
 
             var matcher = new NumericMatcher(example);
 
-            string actual = JsonConvert.SerializeObject(matcher);
-            string expected = $@"{{""pact:matcher:type"":""number"",""value"":{example}}}";
+            string actual = JsonConvert.SerializeObject(matcher, new JsonSerializerSettings() { Culture = CultureInfo.InvariantCulture });
+            FormattableString expected = $@"{{""pact:matcher:type"":""number"",""value"":{example}}}";
 
-            actual.Should().BeEquivalentTo(expected);
+            actual.Should().BeEquivalentTo(expected.ToString(CultureInfo.InvariantCulture));
         }
     }
 }
