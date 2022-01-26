@@ -12,6 +12,7 @@ namespace PactNet.Verifier
         private readonly string version;
 
         private ICollection<string> tags;
+        private string branch;
         private Uri buildUri;
 
         /// <summary>
@@ -37,6 +38,17 @@ namespace PactNet.Verifier
         }
 
         /// <summary>
+        /// Set the branch of the provider
+        /// </summary>
+        /// <param name="branch">Provider branch</param>
+        /// <returns>Fluent builder</returns>
+        public IPactBrokerPublishOptions ProviderBranch(string branch)
+        {
+            this.branch = branch;
+            return this;
+        }
+
+        /// <summary>
         /// URI of the build that performed the verification
         /// </summary>
         /// <param name="uri">Build URI</param>
@@ -52,12 +64,7 @@ namespace PactNet.Verifier
         /// </summary>
         public void Apply()
         {
-            this.provider.SetVerificationOptions(true,
-                                                 this.version,
-                                                 this.buildUri,
-                                                 false, // TODO: Support disabling SSL verification
-                                                 TimeSpan.FromSeconds(5), // TODO: Support request timeouts
-                                                 this.tags);
+            this.provider.SetPublishOptions(this.version, this.buildUri, this.tags, this.branch);
         }
     }
 }

@@ -74,7 +74,7 @@
   ],
   "metadata": {
     "pactRust": {
-      "ffi": "0.1.6",
+      "ffi": "0.2.0",
       "mockserver": "0.8.7",
       "models": "0.2.7"
     },

@@ -24,6 +24,19 @@ namespace PactNet.Verifier
         IPactVerifierSource WithFilter(string description = null, string providerState = null);
 
         /// <summary>
+        /// Set the timeout for all requests to the provider
+        /// </summary>
+        /// <param name="timeout">Timeout</param>
+        /// <returns>Fluent builder</returns>
+        IPactVerifierSource WithRequestTimeout(TimeSpan timeout);
+
+        /// <summary>
+        /// Disable certificate verification for HTTPS requests
+        /// </summary>
+        /// <returns>Fluent builder</returns>
+        IPactVerifierSource WithSslVerificationDisabled();
+
+        /// <summary>
         /// Verify provider interactions
         /// </summary>
         /// <exception cref="PactFailureException">Verification failed</exception>

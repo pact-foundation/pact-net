@@ -47,6 +47,8 @@ namespace Provider.Tests
                 .ServiceProvider("Event API", this.fixture.ServerUri)
                 .WithFileSource(new FileInfo(pactPath))
                 .WithProviderStateUrl(new Uri(this.fixture.ServerUri, "/provider-states"))
+                .WithRequestTimeout(TimeSpan.FromSeconds(2))
+                .WithSslVerificationDisabled()
                 .Verify();
         }
     }

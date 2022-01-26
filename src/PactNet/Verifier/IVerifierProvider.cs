@@ -44,18 +44,22 @@ namespace PactNet.Verifier
         /// <summary>
         /// Set verification options
         /// </summary>
-        /// <param name="publish">Publish results to the broker (if configured)</param>
-        /// <param name="providerVersion">Provider version</param>
-        /// <param name="buildUrl">URL of the build that ran the verification</param>
         /// <param name="disableSslVerification">Disable SSL verification</param>
         /// <param name="requestTimeout">Request timeout</param>
+        void SetVerificationOptions(bool disableSslVerification,
+                                    TimeSpan requestTimeout);
+
+        /// <summary>
+        /// Set publish options
+        /// </summary>
+        /// <param name="providerVersion">Provider version</param>
+        /// <param name="buildUrl">URL of the build that ran the verification</param>
         /// <param name="providerTags">Provider tags</param>
-        void SetVerificationOptions(bool publish,
-                                    string providerVersion,
-                                    Uri buildUrl,
-                                    bool disableSslVerification,
-                                    TimeSpan requestTimeout,
-                                    ICollection<string> providerTags);
+        /// <param name="providerBranch">Provider branch</param>
+        void SetPublishOptions(string providerVersion,
+                               Uri buildUrl,
+                               ICollection<string> providerTags,
+                               string providerBranch);
 
         /// <summary>
         /// Set consumer filters
@@ -89,7 +93,6 @@ namespace PactNet.Verifier
         /// Add a pact broker source
         /// </summary>
         /// <param name="url">Pact broker URL</param>
-        /// <param name="providerName">Provider name</param>
         /// <param name="username">Username</param>
         /// <param name="password">Password</param>
         /// <param name="token">Authentication token</param>
@@ -100,7 +103,6 @@ namespace PactNet.Verifier
         /// <param name="consumerVersionSelectors">Consumer version selectors</param>
         /// <param name="consumerVersionTags">Consumer version tags</param>
         void AddBrokerSource(Uri url,
-                             string providerName,
                              string username,
                              string password,
                              string token,

@@ -146,14 +146,13 @@ namespace PactNet.Verifier
         public void Apply()
         {
             this.provider.AddBrokerSource(brokerUri,
-                                          null, // TODO: where do we get the provider name from again?
                                           this.username,
                                           this.password,
                                           this.token,
                                           this.enablePending,
                                           this.includeWipPactsSince,
-                                          Array.Empty<string>(), // TODO: What does the provider tags arg do?
-                                          null,                  // TODO: What does the provider branch arg do?
+                                          Array.Empty<string>(), // TODO: Support provider tags matching
+                                          null,                  // TODO: Support provider branch matching
                                           this.consumerVersionSelectors,
                                           this.consumerVersionTags);
         }

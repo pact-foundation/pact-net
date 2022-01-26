@@ -89,12 +89,10 @@ namespace PactNet.Tests.Verifier
             this.options.PublishResults("1.2.3", _ => { });
             this.options.Apply();
 
-            this.mockProvider.Verify(p => p.SetVerificationOptions(true,
-                                                                   "1.2.3",
-                                                                   It.IsAny<Uri>(),
-                                                                   It.IsAny<bool>(),
-                                                                   It.IsAny<TimeSpan>(),
-                                                                   It.IsAny<ICollection<string>>()));
+            this.mockProvider.Verify(p => p.SetPublishOptions("1.2.3",
+                                                              It.IsAny<Uri>(),
+                                                              It.IsAny<ICollection<string>>(),
+                                                              It.IsAny<string>()));
         }
 
         private void Verify(string username = null,
@@ -110,7 +108,6 @@ namespace PactNet.Tests.Verifier
             this.options.Apply();
 
             this.mockProvider.Verify(p => p.AddBrokerSource(BrokerUri,
-                                                            null, // TODO: Work out where to get provider name from
                                                             username,
                                                             password,
                                                             token,

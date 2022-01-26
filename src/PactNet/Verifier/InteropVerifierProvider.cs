@@ -83,27 +83,32 @@ namespace PactNet.Verifier
         /// <summary>
         /// Set verification options
         /// </summary>
-        /// <param name="publish">Publish results to the broker (if configured)</param>
-        /// <param name="providerVersion">Provider version</param>
-        /// <param name="buildUrl">URL of the build that ran the verification</param>
         /// <param name="disableSslVerification">Disable SSL verification</param>
         /// <param name="requestTimeout">Request timeout</param>
-        /// <param name="providerTags">Provider tags</param>
-        public void SetVerificationOptions(bool publish,
-                                           string providerVersion,
-                                           Uri buildUrl,
-                                           bool disableSslVerification,
-                                           TimeSpan requestTimeout,
-                                           ICollection<string> providerTags)
+        public void SetVerificationOptions(bool disableSslVerification, TimeSpan requestTimeout)
         {
+            uint timeout = Convert.ToUInt32(requestTimeout.TotalMilliseconds);
+
             NativeInterop.VerifierSetVerificationOptions(this.handle,
-                                                         ToSafeByte(publish),
-                                                         providerVersion,
-                                                         buildUrl.AbsoluteUri,
                                                          ToSafeByte(disableSslVerification),
-                                                         (uint)requestTimeout.TotalMilliseconds,
-                                                         providerTags.ToArray(),
-                                                         (ushort)providerTags.Count);
+                                                         timeout);
+        }
+
+        /// <summary>
+        /// Set publish options
+        /// </summary>
+        /// <param name="providerVersion">Provider version</param>
+        /// <param name="buildUrl">URL of the build that ran the verification</param>
+        /// <param name="providerTags">Provider tags</param>
+        /// <param name="providerBranch">Provider branch</param>
+        public void SetPublishOptions(string providerVersion, Uri buildUrl, ICollection<string> providerTags, string providerBranch)
+        {
+            NativeInterop.VerifierSetPublishOptions(this.handle,
+                                                    providerVersion,
+                                                    buildUrl.AbsoluteUri,
+                                                    providerTags.ToArray(),
+                                                    (ushort)providerTags.Count,
+                                                    providerBranch);
         }
 
         /// <summary>
@@ -150,7 +155,6 @@ namespace PactNet.Verifier
         /// Add a pact broker source
         /// </summary>
         /// <param name="url">Pact broker URL</param>
-        /// <param name="providerName">Provider name</param>
         /// <param name="username">Username</param>
         /// <param name="password">Password</param>
         /// <param name="token">Authentication token</param>
@@ -161,7 +165,6 @@ namespace PactNet.Verifier
         /// <param name="consumerVersionSelectors">Consumer version selectors</param>
         /// <param name="consumerVersionTags">Consumer version tags</param>
         public void AddBrokerSource(Uri url,
-                                    string providerName,
                                     string username,
                                     string password,
                                     string token,
@@ -174,7 +177,6 @@ namespace PactNet.Verifier
         {
             NativeInterop.VerifierBrokerSourceWithSelectors(this.handle,
                                                             url.AbsoluteUri,
-                                                            providerName,
                                                             username,
                                                             password,
                                                             token,

@@ -12,6 +12,9 @@ namespace PactNet.Verifier
         private readonly IVerifierProvider provider;
         private readonly PactVerifierConfig config;
 
+        private TimeSpan timeout = TimeSpan.FromSeconds(5);
+        private bool disableSslVerification = false;
+
         /// <summary>
         /// Initialises a new instance of the <see cref="PactVerifierSource"/> class.
         /// </summary>
@@ -54,11 +57,34 @@ namespace PactNet.Verifier
         }
 
         /// <summary>
+        /// Set the timeout for all requests to the provider
+        /// </summary>
+        /// <param name="timeout">Timeout</param>
+        /// <returns>Fluent builder</returns>
+        public IPactVerifierSource WithRequestTimeout(TimeSpan timeout)
+        {
+            this.timeout = timeout;
+            return this;
+        }
+
+        /// <summary>
+        /// Disable certificate verification for HTTPS requests
+        /// </summary>
+        /// <returns>Fluent builder</returns>
+        public IPactVerifierSource WithSslVerificationDisabled()
+        {
+            this.disableSslVerification = true;
+            return this;
+        }
+
+        /// <summary>
         /// Verify provider interactions
         /// </summary>
         /// <exception cref="PactFailureException">Verification failed</exception>
         public void Verify()
         {
+            this.provider.SetVerificationOptions(this.disableSslVerification, this.timeout);
+
             this.config.WriteLine("Starting verification...");
             this.provider.Execute();
         }

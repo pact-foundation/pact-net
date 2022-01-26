@@ -15,6 +15,13 @@ namespace PactNet.Verifier
         public IPactBrokerPublishOptions ProviderTags(params string[] tags);
 
         /// <summary>
+        /// Set the branch of the provider
+        /// </summary>
+        /// <param name="branch">Provider branch</param>
+        /// <returns>Fluent builder</returns>
+        public IPactBrokerPublishOptions ProviderBranch(string branch);
+
+        /// <summary>
         /// URI of the build that performed the verification
         /// </summary>
         /// <param name="uri">Build URI</param>

@@ -31,19 +31,14 @@ namespace PactNet.Tests.Verifier
             provider.SetProviderInfo("integration-test", "http", "localhost", 12684, "/path");
             provider.SetProviderState(new Uri("http://localhost:12684/provider-state"), false, true);
             provider.SetConsumerFilters(new[] { "consumer" });
-            provider.SetVerificationOptions(false,
-                                            "1.2.3",
-                                            new Uri("https://ci.example.org/builds/12345"),
-                                            false,
-                                            TimeSpan.FromMilliseconds(100),
-                                            new[] { "tag" });
+            provider.SetVerificationOptions(false, TimeSpan.FromMilliseconds(100));
+            provider.SetPublishOptions("1.2.3", new Uri("https://ci.example.org/builds/12345"), new[] { "tags" }, "branch");
             provider.SetFilterInfo("description", "state", false);
 
             provider.AddFileSource(new FileInfo("data/v2-consumer-integration.json"));
             provider.AddDirectorySource(new DirectoryInfo("data"));
             provider.AddUrlSource(new Uri("http://example.org/file.json"), "user", "pass", "token");
             provider.AddBrokerSource(new Uri("http://broker.example.org"),
-                                     "provider",
                                      "user",
                                      "pass",
                                      "token",
