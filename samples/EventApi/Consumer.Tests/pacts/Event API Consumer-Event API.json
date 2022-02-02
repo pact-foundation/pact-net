@@ -24,6 +24,21 @@
         "headers": {
           "Content-Type": "application/json; charset=utf-8"
         },
+        "matchingRules": {
+          "$.body": {
+            "match": "type"
+          },
+          "$.body.*": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.*.*": {
+            "match": "type"
+          },
+          "$.body.*.*.*": {
+            "match": "type"
+          }
+        },
         "status": 200
       }
     },
@@ -42,6 +57,14 @@
         },
         "headers": {
           "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body": {
+            "match": "type"
+          },
+          "$.body.*": {
+            "match": "type"
+          }
         },
         "status": 200
       }
@@ -177,7 +200,7 @@
   ],
   "metadata": {
     "pactRust": {
-      "ffi": "0.2.0",
+      "ffi": "0.2.1",
       "mockserver": "0.8.7",
       "models": "0.2.7"
     },
