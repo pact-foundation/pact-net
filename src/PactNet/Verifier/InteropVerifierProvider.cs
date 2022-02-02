@@ -199,21 +199,15 @@ namespace PactNet.Verifier
         {
             int result = NativeInterop.VerifierExecute(this.handle);
 
-            IntPtr logsPtr = NativeInterop.VerifierLogs(this.handle);
-
-            string logs = logsPtr == IntPtr.Zero
-                ? "ERROR: Unable to retrieve verifier logs"
-                : Marshal.PtrToStringAnsi(logsPtr);
-
             if (result == 0)
             {
                 this.config.WriteLine("Pact verification successful\n");
-                this.config.WriteLine(logs);
+                this.PrintOutput();
                 return;
             }
 
             this.config.WriteLine("Pact verification failed\n");
-            this.config.WriteLine(logs);
+            this.PrintOutput();
 
             string error = result switch
             {
@@ -265,6 +259,32 @@ namespace PactNet.Verifier
             return value.GetValueOrDefault(false)
                        ? (byte)1
                        : (byte)0;
+        }
+
+        /// <summary>
+        /// Print output and logs of the verifier
+        /// </summary>
+        private void PrintOutput()
+        {
+            IntPtr outputPtr = NativeInterop.VerifierOutput(this.handle, 1);
+
+            string output = outputPtr == IntPtr.Zero
+                                ? "ERROR: Unable to retrieve verifier output"
+                                : Marshal.PtrToStringAnsi(outputPtr);
+
+            this.config.WriteLine("Verifier Output");
+            this.config.WriteLine("---------------");
+            this.config.WriteLine(output);
+
+            IntPtr logsPtr = NativeInterop.VerifierLogs(this.handle);
+
+            string logs = logsPtr == IntPtr.Zero
+                              ? "ERROR: Unable to retrieve verifier logs"
+                              : Marshal.PtrToStringAnsi(logsPtr);
+
+            this.config.WriteLine("Verifier Logs");
+            this.config.WriteLine("-------------");
+            this.config.WriteLine(logs);
         }
     }
 }

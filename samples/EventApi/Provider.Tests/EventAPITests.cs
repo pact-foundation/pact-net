@@ -4,7 +4,6 @@ using System.IO;
 using PactNet;
 using PactNet.Infrastructure.Outputters;
 using PactNet.Verifier;
-using Provider.Api.Web.Tests;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -26,7 +25,7 @@ namespace Provider.Tests
         {
             var config = new PactVerifierConfig
             {
-                LogLevel = PactLogLevel.Trace,
+                LogLevel = PactLogLevel.Information,
                 Outputters = new List<IOutput>
                 {
                     new XUnitOutput(this.output)

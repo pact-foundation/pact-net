@@ -212,29 +212,29 @@ namespace Consumer.Tests
                 .WillRespond()
                     .WithStatus(200)
                     .WithHeader("Content-Type", "application/json; charset=utf-8")
-                    .WithJsonBody(new
+                    .WithJsonBody(Match.Type(new
                     {
-                        alive = true,
-                        _links = new
+                        alive = Match.Type(true),
+                        _links = Match.MinType(new
                         {
-                            uptime = new
+                            uptime = Match.Type(new
                             {
-                                href = "/stats/uptime"
-                            }
-                        }
-                    });
+                                href = Match.Type("/stats/uptime")
+                            })
+                        }, 1)
+                    }));
 
             this.pact
                 .UponReceiving("a request to check the api uptime")
                     .WithRequest(HttpMethod.Get, "/stats/uptime")
                     .WithHeader("Accept", "application/json")
                 .WillRespond()
-                .WithStatus(200)
+                    .WithStatus(200)
                     .WithHeader("Content-Type", "application/json; charset=utf-8")
-                    .WithJsonBody(new
+                    .WithJsonBody(Match.Type(new
                     {
-                        upSince = upSinceDate
-                    });
+                        upSince = Match.Type(upSinceDate)
+                    }));
 
             await this.pact.VerifyAsync(async ctx =>
             {
