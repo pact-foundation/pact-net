@@ -1,3 +1,4 @@
+using System.Linq;
 using FluentAssertions;
 using PactNet.Matchers;
 using Xunit;
@@ -30,7 +31,7 @@ namespace PactNet.Abstractions.Tests.Matchers
         [Fact]
         public void MinType_WhenCalled_ReturnseMatcher()
         {
-            var example = new[] { 22, 23, 56 };
+            var example = 42;
 
             var matcher = Match.MinType(example, 2);
 
@@ -40,7 +41,7 @@ namespace PactNet.Abstractions.Tests.Matchers
         [Fact]
         public void MaxType_WhenCalled_ReturnsMatcher()
         {
-            var example = new[] { 22, 23, 56 };
+            var example = 42;
 
             var matcher = Match.MaxType(example, 2);
 
@@ -50,7 +51,7 @@ namespace PactNet.Abstractions.Tests.Matchers
         [Fact]
         public void MinMaxType_WhenCalled_ReturnsMatcher()
         {
-            var example = new[] { 22, 23, 56 };
+            var example = 42;
 
             var matcher = Match.MinMaxType(example, 2, 3);
 
@@ -192,15 +193,16 @@ namespace PactNet.Abstractions.Tests.Matchers
         [Fact]
         public void ComposingAMinTypeMatcherAndATypeMatcher_WhenCalled_ReturnsAllMatchers()
         {
-            var example = new[] { Match.Type(22), Match.Type(23), Match.Type(56) };
+            var expected = new
+            {
+                foo = Match.Type(42),
+                bar = Match.Type("bar")
+            };
 
-            var matcher = Match.MinType(example, 2);
-
-            Assert.IsType<MinMaxTypeMatcher>(matcher);
-            var actualExample = matcher.Value;
-            Assert.IsType<TypeMatcher>(actualExample[0]);
-            Assert.IsType<TypeMatcher>(actualExample[1]);
-            Assert.IsType<TypeMatcher>(actualExample[2]);
+            IMatcher matcher = Match.MinType(expected, 2);
+            
+            object[] value = matcher.Value as object[];
+            value.First().Should().BeEquivalentTo(expected);
         }
     }
 }

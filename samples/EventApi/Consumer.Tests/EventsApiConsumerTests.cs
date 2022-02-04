@@ -62,38 +62,27 @@ namespace Consumer.Tests
         [Fact]
         public async Task GetAllEvents_WhenCalled_ReturnsAllEvents()
         {
-            var expected = new[]
+            var example = new Event
             {
-                new Event
-                {
-                    EventId = Guid.Parse("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5"),
-                    Timestamp = DateTime.Parse("2014-06-30T01:37:41.0660548"),
-                    EventType = "SearchView"
-                },
-                new Event
-                {
-                    EventId = Guid.Parse("83F9262F-28F1-4703-AB1A-8CFD9E8249C9"),
-                    Timestamp = DateTime.Parse("2014-06-30T01:37:52.2618864"),
-                    EventType = "DetailsView"
-                },
-                new Event
-                {
-                    EventId = Guid.Parse("3E83A96B-2A0C-49B1-9959-26DF23F83AEB"),
-                    Timestamp = DateTime.Parse("2014-06-30T01:38:00.8518952"),
-                    EventType = "SearchView"
-                }
+                EventId = Guid.Parse("3E83A96B-2A0C-49B1-9959-26DF23F83AEB"),
+                Timestamp = DateTime.Parse("2014-06-30T01:38:00.8518952"),
+                EventType = "SearchView"
             };
 
             this.pact
                 .UponReceiving("a request to retrieve all events")
-                    .Given("there are events with ids '45D80D13-D5A2-48D7-8353-CBB4C0EAABF5', '83F9262F-28F1-4703-AB1A-8CFD9E8249C9' and '3E83A96B-2A0C-49B1-9959-26DF23F83AEB'")
                     .WithRequest(HttpMethod.Get, "/events")
                     .WithHeader("Accept", "application/json")
                     .WithHeader("Authorization", $"Bearer {Token}")
                 .WillRespond()
                     .WithStatus(HttpStatusCode.OK)
                     .WithHeader("Content-Type", "application/json; charset=utf-8")
-                    .WithJsonBody(expected);
+                    .WithJsonBody(Match.MinType(new
+                    {
+                        eventId = Match.Type("3E83A96B-2A0C-49B1-9959-26DF23F83AEB"),
+                        timestamp = Match.Type("2014-06-30T01:38:00.8518952"),
+                        eventType = Match.Regex("SearchView", "SearchView|DetailsView")
+                    }, 1));
 
             await this.pact.VerifyAsync(async ctx =>
             {
@@ -101,7 +90,7 @@ namespace Consumer.Tests
 
                 IEnumerable<Event> events = await client.GetAllEvents();
 
-                events.Should().BeEquivalentTo(expected);
+                events.Should().BeEquivalentTo(new[] { example });
             });
         }
 
@@ -121,13 +110,12 @@ namespace Consumer.Tests
                 .WillRespond()
                     .WithStatus(200)
                     .WithHeader("Content-Type", "application/json; charset=utf-8")
-                    .WithJsonBody(new[]
+                    .WithJsonBody(Match.MinType(new
                     {
-                        new
-                        {
-                            eventType
-                        }
-                    });
+                        eventId = Match.Type("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5"),
+                        timestamp = Match.Type("2014-06-30T01:37:41.0660548"),
+                        eventType
+                    }, 1));
 
             await this.pact.VerifyAsync(async ctx =>
             {
@@ -178,17 +166,25 @@ namespace Consumer.Tests
                 .WillRespond()
                     .WithStatus(200)
                     .WithHeader("Content-Type", "application/json; charset=utf-8")
-                    .WithJsonBody(new
+                    .WithJsonBody(Match.Type(new
                     {
-                        alive = true,
-                        _links = new
+                        alive = Match.Type(true),
+                        _links = Match.Type(new
                         {
-                            uptime = new
+                            self = Match.Type(new
                             {
-                                href = "/stats/uptime"
-                            }
-                        }
-                    });
+                                href = Match.Type("/stats/status")
+                            }),
+                            uptime = Match.Type(new
+                            {
+                                href = Match.Type("/stats/uptime")
+                            }),
+                            version = Match.Type(new
+                            {
+                                href = Match.Type("/stats/version")
+                            }),
+                        })
+                    }));
 
             await this.pact.VerifyAsync(async ctx =>
             {
@@ -215,13 +211,21 @@ namespace Consumer.Tests
                     .WithJsonBody(Match.Type(new
                     {
                         alive = Match.Type(true),
-                        _links = Match.MinType(new
+                        _links = Match.Type(new
                         {
+                            self = Match.Type(new
+                            {
+                                href = Match.Type("/stats/status")
+                            }),
                             uptime = Match.Type(new
                             {
                                 href = Match.Type("/stats/uptime")
-                            })
-                        }, 1)
+                            }),
+                            version = Match.Type(new
+                            {
+                                href = Match.Type("/stats/version")
+                            }),
+                        })
                     }));
 
             this.pact
@@ -268,7 +272,7 @@ namespace Consumer.Tests
                     .WithJsonBody(new
                     {
                         eventId = Match.Regex(expected.EventId.ToString(), "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"),
-                        eventType = Match.Type(expected.EventType),
+                        eventType = Match.Regex(expected.EventType, "SearchView|DetailsView"),
                         timestamp = Match.Regex(expected.Timestamp.ToString("o"), "^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[0-1]|0[1-9]|[1-2][0-9])T(2[0-3]|[0-1][0-9]):([0-5][0-9]):([0-5][0-9])(\\.[0-9]+)?(Z|[+-](?:2[0-3]|[0-1][0-9]):[0-5][0-9])?$")
                     });
 
