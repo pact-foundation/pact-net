@@ -29,6 +29,20 @@ namespace PactNet.Verifier
         IPactBrokerOptions EnablePending();
 
         /// <summary>
+        /// Set the provider branch for retrieving pacts
+        /// </summary>
+        /// <param name="branch">Branch name</param>
+        /// <returns>Fluent builder</returns>
+        IPactBrokerOptions ProviderBranch(string branch);
+
+        /// <summary>
+        /// Set the provider tags for retrieving pacts
+        /// </summary>
+        /// <param name="tags">Tags</param>
+        /// <returns>Fluent builder</returns>
+        IPactBrokerOptions ProviderTags(params string[] tags);
+
+        /// <summary>
         /// Consumer tag versions to retrieve
         /// </summary>
         /// <param name="tags">Consumer tags</param>
