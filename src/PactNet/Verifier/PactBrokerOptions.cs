@@ -27,6 +27,8 @@ namespace PactNet.Verifier
         private string token;
         private bool enablePending;
         private DateTime? includeWipPactsSince;
+        private string providerBranch;
+        private ICollection<string> providerTags = Array.Empty<string>();
         private ICollection<string> consumerVersionTags = Array.Empty<string>();
         private ICollection<string> consumerVersionSelectors = Array.Empty<string>();
 
@@ -80,6 +82,28 @@ namespace PactNet.Verifier
         {
             this.enablePending = true;
 
+            return this;
+        }
+
+        /// <summary>
+        /// Set the provider branch for retrieving pacts
+        /// </summary>
+        /// <param name="branch">Branch name</param>
+        /// <returns>Fluent builder</returns>
+        public IPactBrokerOptions ProviderBranch(string branch)
+        {
+            this.providerBranch = branch;
+            return this;
+        }
+
+        /// <summary>
+        /// Set the provider tags for retrieving pacts
+        /// </summary>
+        /// <param name="tags">Tags</param>
+        /// <returns>Fluent builder</returns>
+        public IPactBrokerOptions ProviderTags(params string[] tags)
+        {
+            this.providerTags = tags;
             return this;
         }
 
@@ -151,8 +175,8 @@ namespace PactNet.Verifier
                                           this.token,
                                           this.enablePending,
                                           this.includeWipPactsSince,
-                                          Array.Empty<string>(), // TODO: Support provider tags matching
-                                          null,                  // TODO: Support provider branch matching
+                                          this.providerTags,
+                                          this.providerBranch,
                                           this.consumerVersionSelectors,
                                           this.consumerVersionTags);
         }

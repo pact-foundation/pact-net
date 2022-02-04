@@ -47,6 +47,22 @@ namespace PactNet.Tests.Verifier
         }
 
         [Fact]
+        public void ProviderBranch_WhenCalled_SetsProviderBranch()
+        {
+            this.options.ProviderBranch("branch");
+
+            this.Verify(providerBranch: "branch");
+        }
+
+        [Fact]
+        public void ProviderTags_WhenCalled_SetsProviderTags()
+        {
+            this.options.ProviderTags("one", "two");
+
+            this.Verify(providerTags: new[] { "one", "two" });
+        }
+
+        [Fact]
         public void ConsumerTags_WhenCalled_AddsPactBrokerConsumerVersionArgs()
         {
             this.options.ConsumerTags("v1", "v2");
