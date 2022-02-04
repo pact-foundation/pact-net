@@ -31,7 +31,8 @@ namespace PactNet.Matchers
                 throw new ArgumentException("You must specify at least one of min and max. Min must be > 0");
             }
 
-            this.Value = example;
+            // TODO: Remove this temporary workaround once the core library starts wrapping examples in arrays like Ruby did
+            this.Value = new[] { example };
             this.Min = min;
             this.Max = max;
         }

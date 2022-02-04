@@ -44,17 +44,12 @@ namespace Consumer.Tests
                 .ExpectsToReceive("receiving events from the queue")
                 .Given("A list of events is pushed to the queue")
                 .WithMetadata("key", "valueKey")
-                .WithJsonContent(
-                    Match.MinType(new[]
-                    {
-                        new
-                        {
-                            EventId = Match.Regex(Guid.Parse("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5").ToString(),
-                                "(^([0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12})$)"),
-                            Timestamp = Match.Type(DateTime.Parse("2014-06-30T01:37:41.0660548")),
-                            EventType = Match.Type("SearchView")
-                        }
-                    }, 1));
+                .WithJsonContent(Match.MinType(new
+                {
+                    EventId = Match.Regex(Guid.Parse("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5").ToString(), "(^([0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12})$)"),
+                    Timestamp = Match.Type(DateTime.Parse("2014-06-30T01:37:41.0660548")),
+                    EventType = Match.Type("SearchView")
+                }, 1));
 
             await this.messagePact.VerifyAsync<List<Event>>(events => worker.ProcessMessages(events));
         }
