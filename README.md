@@ -52,6 +52,10 @@ Watch our [series](https://www.youtube.com/playlist?list=PLwy9Bnco-IpfZ72VQ7hce8
 
 [Learn everything in Pact Net in 60 minutes](https://github.com/DiUS/pact-workshop-dotnet-core-v3/)
 
+### Upgrading from PactNet v3.x or earlier to v4.x
+
+[Upgrade Guide](docs/upgrading-to-4.md)
+
 ## Need Help
 
 -   [Join](<(http://slack.pact.io)>) our community [slack workspace](http://pact-foundation.slack.com/).
@@ -87,13 +91,16 @@ public class SomethingApiConsumerTests
     {
         // Use default pact directory ..\..\pacts and default log
         // directory ..\..\logs
-        var pact = Pact.V3("Something API Consumer", "Something API", new PactConfig());
+        var pact = Pact.V3("Something API Consumer", "Something API");
 
-        // or specify custom log and pact directories
+        // or specify custom configuration such as pact file directory and serializer settings
         pact = Pact.V3("Something API Consumer", "Something API", new PactConfig
         {
             PactDir = @"..\pacts",
-            LogDir = @"c:\temp\logs",
+            DefaultJsonSettings = new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            }
         });
 
         // Initialize Rust backend
