@@ -8,7 +8,11 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>Consumer-driven contract testing library</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <MinClientVersion>3.0</MinClientVersion>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
     <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <VersionPrefix>4.0.0</VersionPrefix>
     <PackageReleaseNotes>
       v4.0.0
