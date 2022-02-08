@@ -9,9 +9,6 @@
     </TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <DebugType>embedded</DebugType>
-    <DebugSymbols>True</DebugSymbols>
-    <MinClientVersion>3.0</MinClientVersion>
     <NoWarn>NU5105</NoWarn>
     <OutputType>Library</OutputType>
   </PropertyGroup>

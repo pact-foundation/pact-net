@@ -1,5 +1,14 @@
 name: CI
+
 on: [push, pull_request]
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+  NUGET_FEED: https://api.nuget.org/v3/index.json
+  NUGET_KEY: ${{ secrets.NUGET_API_KEY }}
+
 jobs:
   build-dotnet:
     name: "Build and Test (dotnet)"
@@ -12,21 +21,61 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
+
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: "5.0.x" # runners already have .Net Framework installed as well
-      - uses: actions/cache@v2
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget
+
       - name: Pull interop dependencies
         run: bash -c "build/download-native-libs.sh"
+
       - name: Restore
         run: dotnet restore
+
       - name: Build
         run: dotnet build --no-restore
+
       - name: Test
         run: dotnet test --no-build --verbosity normal -- RunConfiguration.TargetPlatform=x64
+
+      - name: Pack
+        if: matrix.os == 'windows-latest'
+        run: dotnet pack --verbosity normal -c Release --no-restore --include-source --version-suffix alpha.${{ github.run_number }} -o ./dist
+
+      - name: Upload Artifact
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v2
+        with:
+          name: nupkgs
+          path: ./dist/*.*
+
+  release:
+    needs: build-dotnet
+    if: github.ref_type == 'tag'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "5.0.x" # runners already have .Net Framework installed as well
+
+      - name: Pull interop dependencies
+        run: bash -c "build/download-native-libs.sh"
+
+      - name: Pack
+        run: |
+          $VERSION = "${{ github.ref_name }}"
+          echo "Version: $VERSION"
+          dotnet pack -c Release --include-source -p:Version=$VERSION -o ./dist src/PactNet/PactNet.csproj
+          dotnet pack -c Release --include-source -p:Version=$VERSION -o ./dist src/PactNet.Abstractions/PactNet.Abstractions.csproj
+
+      - name: Push
+        run: dotnet nuget push ./dist/*.nupkg --source $NUGET_FEED --skip-duplicate --api-key $NUGET_KEY
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/*.*
