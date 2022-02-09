@@ -10,39 +10,31 @@
 
 </span>
 
-<table>
-<tr>
-<td>
-
 **Pact** is the de-facto API contract testing tool. Replace expensive and brittle end-to-end integration tests with fast, reliable and easy to debug unit tests.
 
--   âš¡ Lightning fast
--   ðŸŽˆ Effortless full-stack integration testing - from the front-end to the back-end
--   ðŸ”Œ Supports HTTP/REST and event-driven systems
--   ðŸ› ï¸ Configurable mock server
--   ðŸ˜Œ Powerful matching rules prevents brittle tests
--   ðŸ¤ Integrates with Pact Broker / Pactflow for powerful CI/CD workflows
--   ðŸ”¡ Supports 12+ languages
+- ⚡ Lightning fast
+- 🎈 Effortless full-stack integration testing - from the front-end to the back-end
+- 🔌 Supports HTTP/REST and event-driven systems
+- 🛠️ Configurable mock server
+- 😌 Powerful matching rules prevents brittle tests
+- 🤝 Integrates with Pact Broker / Pactflow for powerful CI/CD workflows
+- 🔡 Supports 12+ languages
 
 **Why use Pact?**
 
 Contract testing with Pact lets you:
 
--   âš¡ Test locally
--   ðŸš€ Deploy faster
--   â¬‡ï¸ Reduce the lead time for change
--   ðŸ’° Reduce the cost of API integration testing
--   ðŸ’¥ Prevent breaking changes
--   ðŸ”Ž Understand your system usage
--   ðŸ“ƒ Document your APIs for free
--   ðŸ—„ Remove the need for complex data fixtures
--   ðŸ¤·â€â™‚ï¸ Reduce the reliance on complex test environments
+- ⚡ Test locally
+- 🚀 Deploy faster
+- ⬇️ Reduce the lead time for change
+- 💰 Reduce the cost of API integration testing
+- 💥 Prevent breaking changes
+- 🔎 Understand your system usage
+- 📃 Document your APIs for free
+- 🗄 Remove the need for complex data fixtures
+- 🤷‍♂️ Reduce the reliance on complex test environments
 
 Watch our [series](https://www.youtube.com/playlist?list=PLwy9Bnco-IpfZ72VQ7hce8GicVZs7nm0i) on the problems with end-to-end integrated tests, and how contract testing can help.
-
-</td>
-</tr>
-</table>
 
 ![----------](https://raw.githubusercontent.com/pactumjs/pactum/master/assets/rainbow.png)
 
@@ -56,13 +48,13 @@ Watch our [series](https://www.youtube.com/playlist?list=PLwy9Bnco-IpfZ72VQ7hce8
 
 [Upgrade Guide](docs/upgrading-to-4.md)
 
-The 3.x version of PactNet can be found on the [`release/3.x` branch](https://github.com/pact-foundation/pact-net/tree/release/3.x).
+Looking for PactNet v3.x? See the [`release/3.x` branch](https://github.com/pact-foundation/pact-net/tree/release/3.x).
 
 ## Need Help
 
--   [Join](<(http://slack.pact.io)>) our community [slack workspace](http://pact-foundation.slack.com/).
--   Stack Overflow: https://stackoverflow.com/questions/tagged/pact
--   Say ðŸ‘‹ on Twitter: [@pact_up]
+- [Join](<(http://slack.pact.io)>) our community [slack workspace](http://pact-foundation.slack.com/).
+- Stack Overflow: https://stackoverflow.com/questions/tagged/pact
+- Say 👋 on Twitter: [@pact_up]
 
 ## Installation
 
@@ -84,7 +76,7 @@ In this example, we are going to be testing our User API client, responsible for
 
 Pact tests have a few key properties. We'll demonstrate a common example using the 3A `Arrange/Act/Assert` pattern.
 
-```C#
+```csharp
 public class SomethingApiConsumerTests
 {
     private readonly IPactBuilderV3 _pactBuilder;
@@ -150,7 +142,7 @@ public class SomethingApiConsumerTests
 
 A provider test takes one or more pact files (contracts) as input, and Pact verifies that your provider adheres to the contract. In the simplest case, you can verify a provider as per below. In `SomethingApiFixture`, the provider is started. In `SomethingApiTests`, the fixture is verified against the pact files.
 
-```c#
+```csharp
 public class SomethingApiFixture : IDisposable
 {
     private readonly IHost server;
@@ -224,14 +216,10 @@ public class SomethingApiTests : IClassFixture<SomethingApiFixture>
 
 ## Compatibility
 
-<details><summary>Specification Compatibility</summary>
-
 | Version | Stable | [Spec] Compatibility | Install            |
 | ------- | ------ | -------------------- | ------------------ |
 | 4.x     | Beta   | 2, 3                 | See [installation] |
 | 3.x     | Stable | 2                    |                    |
-
-</details>
 
 ## Roadmap
 
