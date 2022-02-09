@@ -1,5 +1,9 @@
 #ignore thumbnails created by windows
 Thumbs.db
+#OSX/Linux Stuff
+*.DS_Store
+*.swp
+*.swo
 #Ignore files build by Visual Studio
 *.obj
 *.exe
@@ -50,3 +54,11 @@ PactNet/Files/pact/
 .vs/
 tools/
 build/tools/
+build/linux/
+build/osx/
+build/windows/
+dist/
+
+samples/ReadMe/Provider.Tests/Properties/launchSettings.json
+samples/ReadMe/Provider/Properties/launchSettings.json
+

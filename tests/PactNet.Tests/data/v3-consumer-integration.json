@@ -1,0 +1,146 @@
+{
+  "consumer": {
+    "name": "PactExtensionsTests-Consumer-V3"
+  },
+  "interactions": [
+    {
+      "description": "a sample request",
+      "providerStates": [
+        {
+          "name": "a provider state"
+        },
+        {
+          "name": "another provider state"
+        },
+        {
+          "name": "a provider state with params",
+          "params": {
+            "baz": "bash",
+            "foo": "bar"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "bool": true,
+          "children": [
+            {
+              "bool": false,
+              "int": 7,
+              "string": "bar"
+            }
+          ],
+          "int": 42,
+          "string": "foo"
+        },
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Request": "request1, request2"
+        },
+        "matchingRules": {
+          "body": {
+            "$.bool": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.children": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 1
+                }
+              ]
+            },
+            "$.children[*].bool": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.children[*].int": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.children[*].string": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.int": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.string": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {},
+          "query": {}
+        },
+        "method": "POST",
+        "path": "/things",
+        "query": {
+          "param": [
+            "value1",
+            "value2"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "bool": true,
+          "children": [
+            {
+              "bool": false,
+              "int": 7,
+              "string": "bar"
+            }
+          ],
+          "int": 42,
+          "string": "foo"
+        },
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Response": "response1, response2"
+        },
+        "status": 201
+      }
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "ffi": "0.2.1",
+      "mockserver": "0.8.7",
+      "models": "0.2.7"
+    },
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  },
+  "provider": {
+    "name": "PactExtensionsTests-Provider"
+  }
+}

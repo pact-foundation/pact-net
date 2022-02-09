@@ -1,0 +1,63 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">
+      netstandard2.0
+    </TargetFrameworks>
+    <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">
+      netstandard2.0; net46
+    </TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>NU5105</NoWarn>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <Import Project="../NuGet.targets" />
+
+  <PropertyGroup>
+    <IsWindows>False</IsWindows>
+    <IsLinux>False</IsLinux>
+    <IsOSX>False</IsOSX>
+    <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'True'">True</IsWindows>
+    <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'True'">True</IsLinux>
+    <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'True'">True</IsOSX>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="$(MSBuildProjectDirectory)\..\..\build\windows\x86_64\pact_ffi.dll">
+      <Link>pact_ffi.dll</Link>
+      <PackagePath>runtimes/win-x64/native</PackagePath>
+      <Pack>true</Pack>
+      <CopyToOutputDirectory Condition="'$(IsWindows)'">PreserveNewest</CopyToOutputDirectory>
+      <Visible>false</Visible>
+    </Content>
+    <Content Include="$(MSBuildProjectDirectory)\..\..\build\linux\x86_64\libpact_ffi.so">
+      <Link>libpact_ffi.so</Link>
+      <PackagePath>runtimes/linux-x64/native</PackagePath>
+      <Pack>true</Pack>
+      <CopyToOutputDirectory Condition="'$(IsLinux)'">PreserveNewest</CopyToOutputDirectory>
+      <Visible>false</Visible>
+    </Content>
+    <Content Include="$(MSBuildProjectDirectory)\..\..\build\osx\x86_64\libpact_ffi.dylib">
+      <Link>libpact_ffi.dylib</Link>
+      <PackagePath>runtimes/osx-x64/native</PackagePath>
+      <Pack>true</Pack>
+      <CopyToOutputDirectory Condition="'$(IsOSX)'">PreserveNewest</CopyToOutputDirectory>
+      <Visible>false</Visible>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard'))">
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PactNet.Abstractions\PactNet.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>
