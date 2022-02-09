@@ -16,27 +16,27 @@
 
 **Pact** is the de-facto API contract testing tool. Replace expensive and brittle end-to-end integration tests with fast, reliable and easy to debug unit tests.
 
--   ⚡ Lightning fast
--   🎈 Effortless full-stack integration testing - from the front-end to the back-end
--   🔌 Supports HTTP/REST and event-driven systems
--   🛠️ Configurable mock server
--   😌 Powerful matching rules prevents brittle tests
--   🤝 Integrates with Pact Broker / Pactflow for powerful CI/CD workflows
--   🔡 Supports 12+ languages
+-   âš¡ Lightning fast
+-   ðŸŽˆ Effortless full-stack integration testing - from the front-end to the back-end
+-   ðŸ”Œ Supports HTTP/REST and event-driven systems
+-   ðŸ› ï¸ Configurable mock server
+-   ðŸ˜Œ Powerful matching rules prevents brittle tests
+-   ðŸ¤ Integrates with Pact Broker / Pactflow for powerful CI/CD workflows
+-   ðŸ”¡ Supports 12+ languages
 
 **Why use Pact?**
 
 Contract testing with Pact lets you:
 
--   ⚡ Test locally
--   🚀 Deploy faster
--   ⬇️ Reduce the lead time for change
--   💰 Reduce the cost of API integration testing
--   💥 Prevent breaking changes
--   🔎 Understand your system usage
--   📃 Document your APIs for free
--   🗄 Remove the need for complex data fixtures
--   🤷‍♂️ Reduce the reliance on complex test environments
+-   âš¡ Test locally
+-   ðŸš€ Deploy faster
+-   â¬‡ï¸ Reduce the lead time for change
+-   ðŸ’° Reduce the cost of API integration testing
+-   ðŸ’¥ Prevent breaking changes
+-   ðŸ”Ž Understand your system usage
+-   ðŸ“ƒ Document your APIs for free
+-   ðŸ—„ Remove the need for complex data fixtures
+-   ðŸ¤·â€â™‚ï¸ Reduce the reliance on complex test environments
 
 Watch our [series](https://www.youtube.com/playlist?list=PLwy9Bnco-IpfZ72VQ7hce8GicVZs7nm0i) on the problems with end-to-end integrated tests, and how contract testing can help.
 
@@ -56,15 +56,17 @@ Watch our [series](https://www.youtube.com/playlist?list=PLwy9Bnco-IpfZ72VQ7hce8
 
 [Upgrade Guide](docs/upgrading-to-4.md)
 
+The 3.x version of PactNet can be found on the [`release/3.x` branch](https://github.com/pact-foundation/pact-net/tree/release/3.x).
+
 ## Need Help
 
 -   [Join](<(http://slack.pact.io)>) our community [slack workspace](http://pact-foundation.slack.com/).
 -   Stack Overflow: https://stackoverflow.com/questions/tagged/pact
--   Say 👋 on Twitter: [@pact_up]
+-   Say ðŸ‘‹ on Twitter: [@pact_up]
 
 ## Installation
 
-[Via Nuget](https://github.com/DiUS/pact-workshop-dotnet-core-v3/#add-the-pacflow-nuget-repository-to-visual-studionugetconfig)
+[Via Nuget](https://www.nuget.org/packages/PactNet/)
 
 ![----------](https://raw.githubusercontent.com/pactumjs/pactum/master/assets/rainbow.png)
 
@@ -226,7 +228,8 @@ public class SomethingApiTests : IClassFixture<SomethingApiFixture>
 
 | Version | Stable | [Spec] Compatibility | Install            |
 | ------- | ------ | -------------------- | ------------------ |
-| 4.0.x   | Beta   | 2, 3                 | See [installation] |
+| 4.x     | Beta   | 2, 3                 | See [installation] |
+| 3.x     | Stable | 2                    |                    |
 
 </details>
 
