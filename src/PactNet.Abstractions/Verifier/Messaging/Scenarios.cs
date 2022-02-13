@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace PactNet.Verifier.Messaging
 {
@@ -23,7 +24,7 @@ namespace PactNet.Verifier.Messaging
         /// Add a scenario
         /// </summary>
         /// <param name="scenario">the scenario to add</param>
-        public static void AddScenario(Scenario scenario)
+        internal static void AddScenario(Scenario scenario)
         {
             if (scenario == null)
             {
@@ -42,7 +43,7 @@ namespace PactNet.Verifier.Messaging
         /// Add multiple scenarios
         /// </summary>
         /// <param name="scenarios">the scenario list to add</param>
-        public static void AddScenarios(IReadOnlyCollection<Scenario> scenarios)
+        internal static void AddScenarios(IReadOnlyCollection<Scenario> scenarios)
         {
             if (scenarios == null || scenarios.Any() == false)
             {
@@ -62,7 +63,7 @@ namespace PactNet.Verifier.Messaging
         /// </summary>
         /// <param name="description">the name of the scenario</param>
         /// <returns>a dynamic message object</returns>
-        public static dynamic InvokeScenario(string description)
+        public static (dynamic metadata, dynamic content, JsonSerializerSettings settings) InvokeScenario(string description)
         {
             if (string.IsNullOrWhiteSpace(description))
             {
@@ -76,7 +77,9 @@ namespace PactNet.Verifier.Messaging
                 throw new InvalidOperationException($"Scenario \"{description}\" not found. You need to add the scenario first");
             }
 
-            return scenarioToInvoke.InvokeScenario();
+            dynamic content = scenarioToInvoke.InvokeScenario();
+
+            return (scenarioToInvoke.Metadata, content, scenarioToInvoke.JsonSettings);
         }
 
         /// <summary>
@@ -94,7 +97,7 @@ namespace PactNet.Verifier.Messaging
         /// </summary>
         /// <param name="description">the scenario description</param>
         /// <returns>The scenario</returns>
-        public static Scenario GetByDescription(string description)
+        internal static Scenario GetByDescription(string description)
         {
             var scenario = AllScenarios.FirstOrDefault(x => x.Description == description);
 

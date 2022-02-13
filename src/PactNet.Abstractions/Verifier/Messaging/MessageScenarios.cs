@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 namespace PactNet.Verifier.Messaging
 {
@@ -7,15 +8,10 @@ namespace PactNet.Verifier.Messaging
     /// </summary>
     public class MessageScenarios : IMessageScenarios
     {
-        /// <summary>
-        /// Add a configured scenario
-        /// </summary>
-        /// <param name="scenario">Scenario</param>
-        public IMessageScenarios Add(Scenario scenario)
+        private static readonly dynamic JsonMetadata = new
         {
-            Scenarios.AddScenario(scenario);
-            return this;
-        }
+            ContentType = "application/json"
+        };
 
         /// <summary>
         /// Add a message scenario
@@ -24,18 +20,44 @@ namespace PactNet.Verifier.Messaging
         /// <param name="factory">Message content factory</param>
         public IMessageScenarios Add(string description, Func<dynamic> factory)
         {
-            return this.Add(new Scenario(description, factory));
+            var scenario = new Scenario(description, factory, JsonMetadata, null);
+            Scenarios.AddScenario(scenario);
+
+            return this;
         }
 
         /// <summary>
         /// Add a message scenario
         /// </summary>
         /// <param name="description">Scenario description</param>
-        /// <param name="metadata">Message metadata</param>
-        /// <param name="factory">Message content factory</param>
-        public IMessageScenarios Add(string description, dynamic metadata, Func<dynamic> factory)
+        /// <param name="configure">Scenario configure</param>
+        /// <returns></returns>
+        public IMessageScenarios Add(string description, Action<IMessageScenarioBuilder> configure)
         {
-            return this.Add(new Scenario(description, factory, metadata));
+            var builder = new MessageScenarioBuilder(description);
+            configure?.Invoke(builder);
+
+            Scenario scenario = builder.Build();
+            Scenarios.AddScenario(scenario);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Add a message scenario
+        /// </summary>
+        /// <param name="description">Scenario description</param>
+        /// <param name="configure">Scenario configure</param>
+        /// <returns></returns>
+        public IMessageScenarios Add(string description, Func<IMessageScenarioBuilder, Task> configure)
+        {
+            var builder = new MessageScenarioBuilder(description);
+            configure?.Invoke(builder).GetAwaiter().GetResult();
+
+            Scenario scenario = builder.Build();
+            Scenarios.AddScenario(scenario);
+
+            return this;
         }
     }
 }

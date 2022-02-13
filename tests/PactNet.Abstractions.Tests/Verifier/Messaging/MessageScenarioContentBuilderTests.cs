@@ -1,5 +1,7 @@
 using System;
+using System.Threading.Tasks;
 using FluentAssertions;
+using Newtonsoft.Json;
 using PactNet.Verifier.Messaging;
 using Xunit;
 
@@ -13,71 +15,81 @@ namespace PactNet.Abstractions.Tests.Verifier.Messaging
         /// <summary>
         /// The builder under test
         /// </summary>
-        private readonly MessageScenarioContentBuilder scenarioContentBuilder;
+        private readonly MessageScenarioBuilder builder;
 
         public MessageScenarioContentBuilderTests()
         {
-            this.scenarioContentBuilder = new MessageScenarioContentBuilder("a good description");
+            this.builder = new MessageScenarioBuilder("a good description");
         }
 
         [Fact]
-        public void Should_Be_Able_To_Add_Metadata()
+        public void WithMetadata_WhenCalled_SetsMetadata()
         {
-            dynamic expectedMetadata = new { key = "value"};
+            object expected = new { Foo = "Bar" };
 
-            this.scenarioContentBuilder.WithMetadata(expectedMetadata);
+            this.builder.WithMetadata(expected).WithContent(() => "foo");
+            object actual = this.builder.Build().Metadata;
 
-            var actualScenario = this.scenarioContentBuilder.WithContent(new { field = "value" });
-
-            Assert.Equal(expectedMetadata, actualScenario.Metadata);
+            actual.Should().BeEquivalentTo(expected);
         }
 
         [Fact]
-        public void Should_Fail_To_Add_Metadata_If_Invalid_Metadata()
+        public void WithMetadata_NullMetadata_ThrowsArgumentNullException()
         {
-            this.scenarioContentBuilder
-                .Invoking(x => x.WithMetadata(null))
+            this.builder
+                .Invoking(b => b.WithMetadata(null))
                 .Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void Should_Allow_Scenario_Invoking_After_Setting_Content_With_Method()
+        public void WithContent_WhenCalled_SetsContent()
         {
-            object expectedContent = new { field = "value"};
+            object expected = new { Foo = 42 };
 
-            var actualScenario = this.scenarioContentBuilder.WithContent(() => expectedContent);
+            this.builder.WithContent(() => expected);
+            object actual = this.builder.Build().InvokeScenario();
 
-            object actualContent = actualScenario.InvokeScenario();
-
-            Assert.Equal(expectedContent, actualContent);
+            actual.Should().Be(expected);
         }
 
         [Fact]
-        public void Should_Fail_Setting_Content_With_Invalid_Method()
+        public void WithContent_WithCustomSettings_SetsSettings()
         {
-            this.scenarioContentBuilder
-                .Invoking(x => x.WithContent(action: null))
-                .Should().Throw<ArgumentNullException>();
+            var expected = new JsonSerializerSettings();
+
+            this.builder.WithContent(() => "foo", expected);
+            var actual = this.builder.Build().JsonSettings;
+
+            actual.Should().Be(expected);
         }
 
         [Fact]
-        public void Should_Allow_Scenario_Invoking_After_Setting_Content_With_Dynamic_Object()
+        public async Task WithContentAsync_WhenCalled_SetsContent()
         {
-            object expectedContent = new { field = "value"};
+            dynamic expected = new { Foo = 42 };
 
-            var actualScenario = this.scenarioContentBuilder.WithContent(expectedContent);
+            await this.builder.WithContentAsync(() => Task.FromResult<dynamic>(expected));
+            object actual = this.builder.Build().InvokeScenario();
 
-            object actualContent = actualScenario.InvokeScenario();
-
-            Assert.Equal(expectedContent, actualContent);
+            actual.Should().Be(expected);
         }
 
         [Fact]
-        public void Should_Fail_Setting_Content_With_Invalid_Dynamic_Object()
+        public async Task WithContentAsync_WithCustomSettings_SetsSettings()
         {
-            this.scenarioContentBuilder
-                .Invoking(x => x.WithContent(messageContent: null))
-                .Should().Throw<ArgumentNullException>();
+            var expected = new JsonSerializerSettings();
+
+            await this.builder.WithContentAsync(() => Task.FromResult<dynamic>(new { Foo = "Bar" }), expected);
+            var actual = this.builder.Build().JsonSettings;
+
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void Build_ContentNotSet_ThrowsInvalidOperationException()
+        {
+            builder.Invoking(b => b.Build())
+                   .Should().Throw<InvalidOperationException>();
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 namespace PactNet.Verifier.Messaging
 {
@@ -7,12 +8,6 @@ namespace PactNet.Verifier.Messaging
     /// </summary>
     public interface IMessageScenarios
     {
-        /// <summary>
-        /// Add a configured scenario
-        /// </summary>
-        /// <param name="scenario">Scenario</param>
-        IMessageScenarios Add(Scenario scenario);
-
         /// <summary>
         /// Add a message scenario
         /// </summary>
@@ -24,8 +19,16 @@ namespace PactNet.Verifier.Messaging
         /// Add a message scenario
         /// </summary>
         /// <param name="description">Scenario description</param>
-        /// <param name="metadata">Message metadata</param>
-        /// <param name="factory">Message content factory</param>
-        IMessageScenarios Add(string description, dynamic metadata, Func<dynamic> factory);
+        /// <param name="configure">Scenario configure</param>
+        /// <returns></returns>
+        IMessageScenarios Add(string description, Action<IMessageScenarioBuilder> configure);
+
+        /// <summary>
+        /// Add a message scenario
+        /// </summary>
+        /// <param name="description">Scenario description</param>
+        /// <param name="configure">Scenario configure</param>
+        /// <returns></returns>
+        IMessageScenarios Add(string description, Func<IMessageScenarioBuilder, Task> configure);
     }
 }

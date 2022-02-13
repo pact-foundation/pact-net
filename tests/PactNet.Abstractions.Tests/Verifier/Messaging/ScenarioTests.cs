@@ -23,7 +23,7 @@ namespace PactNet.Abstractions.Tests.Verifier.Messaging
         {
             object expectedMetadata = new { key = "vvv" };
             var expectedDescription = "a scenario";
-            var scenario = new Scenario(expectedDescription, () => string.Empty, expectedMetadata);
+            var scenario = new Scenario(expectedDescription, () => string.Empty, expectedMetadata, null);
 
             Assert.Equal(expectedMetadata, scenario.Metadata);
             Assert.Equal(expectedDescription, scenario.Description);
@@ -38,7 +38,7 @@ namespace PactNet.Abstractions.Tests.Verifier.Messaging
             object expected = new { field = "value" };
             object expectedMetadata = new { key = "vvv" };
 
-            Action actual = () => new Scenario(description, () => expected, expectedMetadata);
+            Action actual = () => new Scenario(description, () => expected, expectedMetadata, null);
 
             actual.Should().Throw<ArgumentException>();
         }
@@ -48,7 +48,7 @@ namespace PactNet.Abstractions.Tests.Verifier.Messaging
         {
             object expectedMetadata = new { key = "vvv" };
 
-            Action actual = () => new Scenario("description", null, expectedMetadata);
+            Action actual = () => new Scenario("description", null, expectedMetadata, null);
 
             actual.Should().Throw<ArgumentException>();
         }

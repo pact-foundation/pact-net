@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
+using Newtonsoft.Json;
 using PactNet.Verifier.Messaging;
 using Xunit;
 
@@ -121,15 +122,18 @@ namespace PactNet.Abstractions.Tests.Verifier.Messaging
         [Fact]
         public void Should_Be_Able_To_Execute_Scenario()
         {
-            var expectedScenario = expectedScenarios.FirstOrDefault();
-            var expectedDescription = expectedScenario.Description;
-            var expectedReturnedObject = expectedScenario.InvokeScenario();
+            dynamic expectedMetadata = new { ContentType = "application/json" };
+            dynamic expectedContent = new { Foo = 42 };
+            Func<dynamic> factory = () => expectedContent;
+            JsonSerializerSettings expectedSettings = new JsonSerializerSettings();
 
-            Scenarios.AddScenarios(expectedScenarios);
+            Scenarios.AddScenario(new Scenario("description", factory, expectedMetadata, expectedSettings));
 
-            var actual = Scenarios.InvokeScenario(expectedDescription);
-
-            Assert.Equal(expectedReturnedObject, actual);
+            (dynamic metadata, dynamic content, JsonSerializerSettings settings) = Scenarios.InvokeScenario("description");
+            
+            Assert.Equal(expectedMetadata, metadata);
+            Assert.Equal(expectedContent, content);
+            Assert.Equal(expectedSettings, settings);
         }
 
         [Theory]
