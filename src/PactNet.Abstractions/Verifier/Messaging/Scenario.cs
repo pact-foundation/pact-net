@@ -1,11 +1,12 @@
 using System;
+using Newtonsoft.Json;
 
 namespace PactNet.Verifier.Messaging
 {
     /// <summary>
     /// Defines the scenario model
     /// </summary>
-    public class Scenario
+    internal class Scenario
     {
         /// <summary>
         /// The description of the scenario
@@ -21,6 +22,11 @@ namespace PactNet.Verifier.Messaging
         /// The metadata
         /// </summary>
         public dynamic Metadata { get; }
+
+        /// <summary>
+        /// Custom JSON serializer settings
+        /// </summary>
+        public JsonSerializerSettings JsonSettings { get; }
 
         /// <summary>
         /// Creates an instance of <see cref="Scenario"/>
@@ -39,10 +45,12 @@ namespace PactNet.Verifier.Messaging
         /// <param name="description">the scenario description</param>
         /// <param name="invoker">the action invoking the content</param>
         /// <param name="metadata">the metadata</param>
-        public Scenario(string description, Func<dynamic> invoker, dynamic metadata)
+        /// <param name="settings">Custom JSON serializer settings</param>
+        public Scenario(string description, Func<dynamic> invoker, dynamic metadata, JsonSerializerSettings settings)
             : this(description, invoker)
         {
             this.Metadata = metadata;
+            this.JsonSettings = settings;
         }
 
         /// <summary>
@@ -51,7 +59,7 @@ namespace PactNet.Verifier.Messaging
         /// <returns>The scenario message content</returns>
         public dynamic InvokeScenario()
         {
-            return invoker.Invoke();
+            return this.invoker.Invoke();
         }
     }
 }

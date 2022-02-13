@@ -1,25 +1,92 @@
 using System;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace PactNet.Verifier.Messaging
 {
     /// <summary>
     /// Defines the message scenario builder
     /// </summary>
-    public static class MessageScenarioBuilder
+    internal class MessageScenarioBuilder : IMessageScenarioBuilder
     {
+        private readonly string description;
+        private Func<dynamic> factory;
+        private dynamic metadata = new { ContentType = "application/json" };
+        private JsonSerializerSettings settings;
+
         /// <summary>
-        /// Set the description of the scenario
+        /// Initialises a new instance of the <see cref="MessageScenarioBuilder"/> class.
         /// </summary>
-        /// <param name="description">the name of the interaction</param>
-        /// <returns>The content message fluent builder</returns>
-        public static IMessageScenarioContentBuilder WhenReceiving(string description)
+        /// <param name="description">Scenario description</param>
+        public MessageScenarioBuilder(string description)
         {
-            if (string.IsNullOrWhiteSpace(description))
+            this.description = !string.IsNullOrWhiteSpace(description) ? description : throw new ArgumentNullException(nameof(description));
+        }
+
+        /// <summary>
+        /// Set the metadata of the message content
+        /// </summary>
+        /// <param name="metadata">the metadata</param>
+        /// <returns>Fluent builder</returns>
+        public IMessageScenarioBuilder WithMetadata(dynamic metadata)
+        {
+            this.metadata = metadata ?? throw new ArgumentNullException(nameof(metadata));
+            return this;
+        }
+
+        /// <summary>
+        /// Set the action of the scenario
+        /// </summary>
+        /// <param name="factory">Content factory</param>
+        public void WithContent(Func<dynamic> factory)
+        {
+            this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
+        }
+
+        /// <summary>
+        /// Set the content of the scenario
+        /// </summary>
+        /// <param name="factory">Content factory</param>
+        /// <param name="settings">Custom JSON serializer settings</param>
+        public void WithContent(Func<dynamic> factory, JsonSerializerSettings settings)
+        {
+            this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
+        }
+
+        /// <summary>
+        /// Set the action of the scenario
+        /// </summary>
+        /// <param name="factory">Content factory</param>
+        public async Task WithContentAsync(Func<Task<dynamic>> factory)
+        {
+            dynamic value = await factory();
+            this.factory = () => value;
+        }
+
+        /// <summary>
+        /// Set the content of the scenario
+        /// </summary>
+        /// <param name="factory">Content factory</param>
+        /// <param name="settings">Custom JSON serializer settings</param>
+        public async Task WithContentAsync(Func<Task<dynamic>> factory, JsonSerializerSettings settings)
+        {
+            dynamic value = await factory();
+            this.factory = () => value;
+            this.settings = settings;
+        }
+
+        /// <summary>
+        /// Build the scenario
+        /// </summary>
+        internal Scenario Build()
+        {
+            if (this.factory == null)
             {
-                throw new ArgumentNullException(nameof(description));
+                throw new InvalidOperationException("You must set the content of a scenario");
             }
 
-            return new MessageScenarioContentBuilder(description);
+            return new Scenario(this.description, this.factory, this.metadata, this.settings);
         }
     }
 }
