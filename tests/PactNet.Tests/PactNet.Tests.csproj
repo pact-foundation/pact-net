@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">
-      net50
+      net6.0
     </TargetFrameworks>
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">
-      net50;net46
+      net6.0;net461
     </TargetFrameworks>
     <IsPackable>false</IsPackable>
     <LangVersion>latest</LangVersion>
