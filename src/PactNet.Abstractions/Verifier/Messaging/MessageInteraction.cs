@@ -1,9 +1,9 @@
-namespace PactNet.AspNetCore.Messaging
+namespace PactNet.Verifier.Messaging
 {
     /// <summary>
     /// DTO for the request body sent by the pact verifier
     /// </summary>
-    internal class MessageInteraction
+    public class MessageInteraction
     {
         /// <summary>
         /// Message description

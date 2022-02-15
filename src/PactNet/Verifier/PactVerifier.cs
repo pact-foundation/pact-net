@@ -1,4 +1,5 @@
 using System;
+using Newtonsoft.Json;
 using PactNet.Internal;
 using PactNet.Verifier.Messaging;
 
@@ -11,6 +12,7 @@ namespace PactNet.Verifier
     {
         private readonly PactVerifierConfig config;
         private readonly IVerifierProvider provider;
+        private readonly IMessagingProvider messagingProvider;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="PactVerifier"/> class.
@@ -23,7 +25,7 @@ namespace PactNet.Verifier
         /// Initialises a new instance of the <see cref="PactVerifier"/> class.
         /// </summary>
         /// <param name="config">Pact verifier config</param>
-        public PactVerifier(PactVerifierConfig config) : this(new InteropVerifierProvider(config), config)
+        public PactVerifier(PactVerifierConfig config) : this(new InteropVerifierProvider(config), new MessagingProvider(config, new MessageScenarios()), config)
         {
         }
 
@@ -31,13 +33,15 @@ namespace PactNet.Verifier
         /// Initialises a new instance of the <see cref="PactVerifier"/> class.
         /// </summary>
         /// <param name="provider">Verifier provider</param>
+        /// <param name="messagingProvider">Messaging provider</param>
         /// <param name="config">Pact verifier config</param>
-        internal PactVerifier(IVerifierProvider provider, PactVerifierConfig config)
+        internal PactVerifier(IVerifierProvider provider, IMessagingProvider messagingProvider, PactVerifierConfig config)
         {
             Guard.NotNull(config, nameof(config));
 
             this.config = config;
             this.provider = provider;
+            this.messagingProvider = messagingProvider;
         }
 
         /// <summary>
@@ -60,19 +64,27 @@ namespace PactNet.Verifier
         /// Set the provider details of a messaging provider
         /// </summary>
         /// <param name="providerName">Name of the provider</param>
-        /// <param name="pactUri">URI of the running service</param>
-        /// <param name="basePath">Path of the messaging provider endpoint</param>
         /// <returns>Fluent builder</returns>
-        public IPactVerifierMessagingProvider MessagingProvider(string providerName, Uri pactUri, string basePath)
+        public IPactVerifierMessagingProvider MessagingProvider(string providerName)
+            => MessagingProvider(providerName, new JsonSerializerSettings());
+
+        /// <summary>
+        /// Set the provider details of a messaging provider
+        /// </summary>
+        /// <param name="providerName">Name of the provider</param>
+        /// <param name="settings">Default JSON serialisation settings</param>
+        /// <returns>Fluent builder</returns>
+        public IPactVerifierMessagingProvider MessagingProvider(string providerName, JsonSerializerSettings settings)
         {
             Guard.NotNullOrEmpty(providerName, nameof(providerName));
-            Guard.NotNull(pactUri, nameof(pactUri));
-            Guard.NotNull(basePath, nameof(basePath));
+            Guard.NotNull(settings, nameof(settings));
 
-            var uriWithBasePath = new Uri(pactUri, basePath);
-            this.InitialiseProvider(providerName, uriWithBasePath);
+            // start an in-proc server which creates the messaging responses
+            Uri uri = this.messagingProvider.Start(settings);
 
-            return new PactVerifierMessagingProvider(this.provider, this.config);
+            this.InitialiseProvider(providerName, uri);
+
+            return new PactVerifierMessagingProvider(this.provider, this.messagingProvider.Scenarios, this.config);
         }
 
         /// <summary>
@@ -97,6 +109,7 @@ namespace PactNet.Verifier
         /// </summary>
         public void Dispose()
         {
+            this.messagingProvider?.Dispose();
             this.provider?.Dispose();
         }
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using PactNet.Exceptions;
+using PactNet.Internal;
 using PactNet.Interop;
 using PactNet.Models;
 
@@ -70,10 +71,7 @@ namespace PactNet
         /// <exception cref="PactFailureException">Failed to verify the interactions</exception>
         public void Verify(Action<IConsumerContext> interact)
         {
-            if (interact == null)
-            {
-                throw new ArgumentNullException(nameof(interact));
-            }
+            Guard.NotNull(interact, nameof(interact));
 
             Uri uri = this.StartMockServer();
 
@@ -100,10 +98,7 @@ namespace PactNet
         /// <exception cref="PactFailureException">Failed to verify the interactions</exception>
         public async Task VerifyAsync(Func<IConsumerContext, Task> interact)
         {
-            if (interact == null)
-            {
-                throw new ArgumentNullException(nameof(interact));
-            }
+            Guard.NotNull(interact, nameof(interact));
 
             Uri uri = this.StartMockServer();
 
