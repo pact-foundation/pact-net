@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PactNet.Verifier.Messaging
@@ -8,6 +9,11 @@ namespace PactNet.Verifier.Messaging
     /// </summary>
     public interface IMessageScenarios
     {
+        /// <summary>
+        /// Configured scenarios
+        /// </summary>
+        IReadOnlyDictionary<string, Scenario> Scenarios { get; }
+
         /// <summary>
         /// Add a message scenario
         /// </summary>

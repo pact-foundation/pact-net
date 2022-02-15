@@ -6,20 +6,17 @@ namespace PactNet.Verifier.Messaging
     /// <summary>
     /// Defines the scenario model
     /// </summary>
-    internal class Scenario
+    public class Scenario
     {
+        private readonly Func<dynamic> factory;
+
         /// <summary>
         /// The description of the scenario
         /// </summary>
         public string Description { get; }
 
         /// <summary>
-        /// The invoker that will publish the content
-        /// </summary>
-        private readonly Func<dynamic> invoker;
-
-        /// <summary>
-        /// The metadata
+        /// Message metadata
         /// </summary>
         public dynamic Metadata { get; }
 
@@ -32,22 +29,22 @@ namespace PactNet.Verifier.Messaging
         /// Creates an instance of <see cref="Scenario"/>
         /// </summary>
         /// <param name="description">the scenario description</param>
-        /// <param name="invoker">the action invoking the content</param>
-        public Scenario(string description, Func<dynamic> invoker)
+        /// <param name="factory">Message content factory</param>
+        public Scenario(string description, Func<dynamic> factory)
         {
             this.Description = !string.IsNullOrWhiteSpace(description) ? description : throw new ArgumentException("Description cannot be null or empty");
-            this.invoker = invoker ?? throw new ArgumentNullException(nameof(invoker));
+            this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
 
         /// <summary>
         /// Creates an instance of <see cref="Scenario"/>
         /// </summary>
         /// <param name="description">the scenario description</param>
-        /// <param name="invoker">the action invoking the content</param>
+        /// <param name="factory">Message content factory</param>
         /// <param name="metadata">the metadata</param>
         /// <param name="settings">Custom JSON serializer settings</param>
-        public Scenario(string description, Func<dynamic> invoker, dynamic metadata, JsonSerializerSettings settings)
-            : this(description, invoker)
+        public Scenario(string description, Func<dynamic> factory, dynamic metadata, JsonSerializerSettings settings)
+            : this(description, factory)
         {
             this.Metadata = metadata;
             this.JsonSettings = settings;
@@ -57,9 +54,9 @@ namespace PactNet.Verifier.Messaging
         /// Invoke a scenario
         /// </summary>
         /// <returns>The scenario message content</returns>
-        public dynamic InvokeScenario()
+        public dynamic Invoke()
         {
-            return this.invoker.Invoke();
+            return this.factory.Invoke();
         }
     }
 }

@@ -5,19 +5,19 @@ using Newtonsoft.Json;
 using PactNet.Verifier.Messaging;
 using Xunit;
 
-namespace PactNet.Abstractions.Tests.Verifier.Messaging
+namespace PactNet.Tests.Verifier.Messaging
 {
     /// <summary>
     /// Defines the scenarios tests
     /// </summary>
-    public class MessageScenarioContentBuilderTests
+    public class MessageScenarioBuilderTests
     {
         /// <summary>
         /// The builder under test
         /// </summary>
         private readonly MessageScenarioBuilder builder;
 
-        public MessageScenarioContentBuilderTests()
+        public MessageScenarioBuilderTests()
         {
             this.builder = new MessageScenarioBuilder("a good description");
         }
@@ -47,7 +47,7 @@ namespace PactNet.Abstractions.Tests.Verifier.Messaging
             object expected = new { Foo = 42 };
 
             this.builder.WithContent(() => expected);
-            object actual = this.builder.Build().InvokeScenario();
+            object actual = this.builder.Build().Invoke();
 
             actual.Should().Be(expected);
         }
@@ -69,7 +69,7 @@ namespace PactNet.Abstractions.Tests.Verifier.Messaging
             dynamic expected = new { Foo = 42 };
 
             await this.builder.WithContentAsync(() => Task.FromResult<dynamic>(expected));
-            object actual = this.builder.Build().InvokeScenario();
+            object actual = this.builder.Build().Invoke();
 
             actual.Should().Be(expected);
         }

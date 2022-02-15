@@ -1,4 +1,5 @@
 using System;
+using Newtonsoft.Json;
 using PactNet.Verifier.Messaging;
 
 namespace PactNet.Verifier
@@ -20,9 +21,15 @@ namespace PactNet.Verifier
         /// Set the provider details of a messaging provider
         /// </summary>
         /// <param name="providerName">Name of the provider</param>
-        /// <param name="pactUri">URI of the running service</param>
-        /// <param name="basePath">Path of the messaging provider endpoint</param>
         /// <returns>Fluent builder</returns>
-        IPactVerifierMessagingProvider MessagingProvider(string providerName, Uri pactUri, string basePath);
+        IPactVerifierMessagingProvider MessagingProvider(string providerName);
+
+        /// <summary>
+        /// Set the provider details of a messaging provider
+        /// </summary>
+        /// <param name="providerName">Name of the provider</param>
+        /// <param name="settings">Default JSON serialisation settings</param>
+        /// <returns>Fluent builder</returns>
+        IPactVerifierMessagingProvider MessagingProvider(string providerName, JsonSerializerSettings settings);
     }
 }

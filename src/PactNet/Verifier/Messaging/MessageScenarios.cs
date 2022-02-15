@@ -1,17 +1,34 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace PactNet.Verifier.Messaging
 {
     /// <summary>
-    /// Message scenarios
+    /// The scenarios used to generate messages when verifying messaging pacts
     /// </summary>
-    public class MessageScenarios : IMessageScenarios
+    internal class MessageScenarios : IMessageScenarios
     {
         private static readonly dynamic JsonMetadata = new
         {
             ContentType = "application/json"
         };
+
+        private readonly IDictionary<string, Scenario> scenarios;
+
+        /// <summary>
+        /// Configured scenarios
+        /// </summary>
+        public IReadOnlyDictionary<string, Scenario> Scenarios => new ReadOnlyDictionary<string, Scenario>(this.scenarios);
+
+        /// <summary>
+        /// Initialises a new instance of the <see cref="MessageScenarios"/> class.
+        /// </summary>
+        public MessageScenarios()
+        {
+            this.scenarios = new Dictionary<string, Scenario>(StringComparer.OrdinalIgnoreCase);
+        }
 
         /// <summary>
         /// Add a message scenario
@@ -21,7 +38,7 @@ namespace PactNet.Verifier.Messaging
         public IMessageScenarios Add(string description, Func<dynamic> factory)
         {
             var scenario = new Scenario(description, factory, JsonMetadata, null);
-            Scenarios.AddScenario(scenario);
+            this.scenarios.Add(description, scenario);
 
             return this;
         }
@@ -38,7 +55,7 @@ namespace PactNet.Verifier.Messaging
             configure?.Invoke(builder);
 
             Scenario scenario = builder.Build();
-            Scenarios.AddScenario(scenario);
+            this.scenarios.Add(description, scenario);
 
             return this;
         }
@@ -55,7 +72,7 @@ namespace PactNet.Verifier.Messaging
             configure?.Invoke(builder).GetAwaiter().GetResult();
 
             Scenario scenario = builder.Build();
-            Scenarios.AddScenario(scenario);
+            this.scenarios.Add(description, scenario);
 
             return this;
         }

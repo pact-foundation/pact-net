@@ -13,7 +13,7 @@ namespace PactNet.Abstractions.Tests.Verifier.Messaging
             object expected = new { field = "value" };
             var scenario = new Scenario("a scenario", () => expected);
 
-            object actual = scenario.InvokeScenario();
+            object actual = scenario.Invoke();
 
             actual.Should().BeEquivalentTo(expected);
         }

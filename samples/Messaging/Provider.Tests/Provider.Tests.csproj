@@ -20,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\PactNet.AspNetCore.Messaging\PactNet.AspNetCore.Messaging.csproj" />
     <ProjectReference Include="..\..\..\src\PactNet\PactNet.csproj" />
     <ProjectReference Include="..\Provider\Provider.csproj" />
   </ItemGroup>

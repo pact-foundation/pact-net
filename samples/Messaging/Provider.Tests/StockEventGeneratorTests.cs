@@ -4,6 +4,8 @@ using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using PactNet;
 using PactNet.Infrastructure.Outputters;
 using PactNet.Verifier;
@@ -13,15 +15,12 @@ using Xunit.Abstractions;
 
 namespace Provider.Tests
 {
-    public class StockEventGeneratorTests : IClassFixture<ProviderFixture>
+    public class StockEventGeneratorTests : IDisposable
     {
-        private readonly ProviderFixture fixture;
         private readonly PactVerifier verifier;
 
-        public StockEventGeneratorTests(ProviderFixture fixture, ITestOutputHelper output)
+        public StockEventGeneratorTests(ITestOutputHelper output)
         {
-            this.fixture = fixture;
-
             this.verifier = new PactVerifier(new PactVerifierConfig
             {
                 Outputters = new List<IOutput>
@@ -30,6 +29,12 @@ namespace Provider.Tests
                 },
                 LogLevel = PactLogLevel.Debug
             });
+        }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+            this.verifier.Dispose();
         }
 
         [Fact]
@@ -43,8 +48,16 @@ namespace Provider.Tests
                                            "pacts",
                                            "Stock Event Consumer-Stock Event Producer.json");
 
+            var defaultSettings = new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                DefaultValueHandling = DefaultValueHandling.Ignore,
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting = Formatting.Indented
+            };
+
             this.verifier
-                .MessagingProvider("Stock Event Producer", this.fixture.ServerUri, this.fixture.BasePath)
+                .MessagingProvider("Stock Event Producer", defaultSettings)
                 .WithProviderMessages(scenarios =>
                  {
                      scenarios.Add("a single event",
