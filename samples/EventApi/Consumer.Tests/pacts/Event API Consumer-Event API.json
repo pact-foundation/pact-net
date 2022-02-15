@@ -34,13 +34,28 @@
           "$.body": {
             "match": "type"
           },
-          "$.body.*": {
+          "$.body._links": {
             "match": "type"
           },
-          "$.body.*.*": {
+          "$.body._links.self": {
             "match": "type"
           },
-          "$.body.*.*.*": {
+          "$.body._links.self.href": {
+            "match": "type"
+          },
+          "$.body._links.uptime": {
+            "match": "type"
+          },
+          "$.body._links.uptime.href": {
+            "match": "type"
+          },
+          "$.body._links.version": {
+            "match": "type"
+          },
+          "$.body._links.version.href": {
+            "match": "type"
+          },
+          "$.body.alive": {
             "match": "type"
           }
         },
@@ -67,7 +82,7 @@
           "$.body": {
             "match": "type"
           },
-          "$.body.*": {
+          "$.body.upSince": {
             "match": "type"
           }
         },
@@ -225,7 +240,7 @@
   ],
   "metadata": {
     "pactRust": {
-      "ffi": "0.2.1",
+      "ffi": "0.2.2",
       "mockserver": "0.8.7",
       "models": "0.2.7"
     },
