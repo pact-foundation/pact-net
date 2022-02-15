@@ -3,10 +3,11 @@
     <Authors>Pact Foundation</Authors>
     <Company>Pact Foundation</Company>
     <Copyright>Copyright 2021 (c) Pact Foundation. All rights reserved.</Copyright>
-    <PackageProjectUrl>https://https://github.com/pact-foundation/pact-net</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/pact-foundation/pact-net</PackageProjectUrl>
     <RepositoryUrl>https://github.com/pact-foundation/pact-net</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>Consumer-driven contract testing library</Description>
+    <PackageIcon>logo-128x128.png</PackageIcon>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <MinClientVersion>3.0</MinClientVersion>
     <DebugType>portable</DebugType>
@@ -19,4 +20,7 @@
       - Complete rewrite to take advantage of new Rust core pact library shared between all language integrations
     </PackageReleaseNotes>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\docs\logo-128x128.png" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 </Project>
