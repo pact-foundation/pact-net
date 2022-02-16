@@ -66,9 +66,7 @@ Looking for PactNet v3.x? See the [`release/3.x` branch](https://github.com/pact
 
 In the sections below, we provide a brief sample of the typical flow for Pact testing, written in the XUnit framework. To see the complete example and run it, check out the `Samples/ReadMe` folder.
 
-### Consumer
-
-#### Writing a Consumer test
+### Writing a Consumer test
 
 Pact is a consumer-driven contract testing tool, which is a fancy way of saying that the API `Consumer` writes a test to set out its assumptions and needs of its API `Provider`(s). By unit testing our API client with Pact, it will produce a `contract` that we can share to our `Provider` to confirm these assumptions and prevent breaking changes.
 
@@ -136,9 +134,7 @@ public class SomethingApiConsumerTests
 
 ![----------](https://raw.githubusercontent.com/pactumjs/pactum/master/assets/rainbow.png)
 
-### Provider
-
-#### Verifying a Provider
+### Verifying a Provider
 
 A provider test takes one or more pact files (contracts) as input, and Pact verifies that your provider adheres to the contract. In the simplest case, you can verify a provider as per below. In `SomethingApiFixture`, the provider is started. In `SomethingApiTests`, the fixture is verified against the pact files.
 
@@ -211,6 +207,12 @@ public class SomethingApiTests : IClassFixture<SomethingApiFixture>
     }
 }
 ```
+
+![----------](https://raw.githubusercontent.com/pactumjs/pactum/master/assets/rainbow.png)
+
+### Messaging Pacts
+
+For writing messaging pacts instead of requests/response pacts, see the [messaging pacts guide](docs/messaging-pacts.md).
 
 ![----------](https://raw.githubusercontent.com/pactumjs/pactum/master/assets/rainbow.png)
 

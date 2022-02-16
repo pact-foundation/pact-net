@@ -16,6 +16,13 @@ However, due to the Rust library working very differently to the Ruby library, t
 that there are a number of breaking changes. This guide highlights those changes so that
 you can migrate your existing tests to v4.x and beyond.
 
+Steps
+-----
+
+1. Uninstall any OS-specific NuGets you have installed (such as `PactNet.Windows`) so that
+   only the `PactNet` NuGet is installed, at version 4.0.0 or greater.
+2. Migrate your tests to the new API (see details below).
+
 Consumer Tests
 --------------
 
