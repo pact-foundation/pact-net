@@ -66,13 +66,13 @@ jobs:
 
       - name: Pack
         run: |
-          $VERSION = "${{ github.ref_name }}"
+          VERSION="${{ github.ref_name }}"
           echo "Version: $VERSION"
           dotnet pack -c Release --include-source -p:Version=$VERSION -o ./dist src/PactNet/PactNet.csproj
           dotnet pack -c Release --include-source -p:Version=$VERSION -o ./dist src/PactNet.Abstractions/PactNet.Abstractions.csproj
 
       - name: Push
-        run: dotnet nuget push .\dist\*.nupkg --source $env:NUGET_FEED --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }}
+        run: dotnet nuget push ./dist/*.nupkg --source $NUGET_FEED --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }}
 
       - name: Release
         uses: softprops/action-gh-release@v1
