@@ -136,6 +136,7 @@ namespace PactNet
             var allocatedString = Marshal.PtrToStringAnsi(NativeInterop.MessageReify(message));
             return allocatedString;
         }
+
         public void WriteMessagePactFile(MessagePactHandle pact, string directory, bool overwrite)
         {
             var result = NativeInterop.WriteMessagePactFile(pact, directory, overwrite);

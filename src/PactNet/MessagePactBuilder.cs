@@ -1,9 +1,5 @@
 using System;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using PactNet.Exceptions;
 using PactNet.Interop;
-using PactNet.Models;
 
 namespace PactNet
 {
@@ -42,8 +38,6 @@ namespace PactNet
 
         #endregion
 
-        #region Internal Methods
-
         /// <summary>
         /// Add a new message to the message pact
         /// </summary>
@@ -55,7 +49,7 @@ namespace PactNet
 
             this.server.ExpectsToReceive(this.message, description);
 
-            return new MessageBuilder(this.server, this.message, this.config.DefaultJsonSettings);
+            return new MessageBuilder(this.server, this.pact, this.message, this.config);
         }
 
         /// <summary>
@@ -71,74 +65,5 @@ namespace PactNet
 
             return this;
         }
-
-        /// <summary>
-        /// Verify a message is read and handled correctly and write the message pact
-        /// </summary>
-        /// <param name="handler">The method using the message</param>
-        public void Verify<T>(Action<T> handler)
-        {
-            try
-            {
-                var messageReified = MessageReified<T>();
-
-                handler(messageReified);
-
-                WritePact();
-            }
-            catch (Exception e)
-            {
-                throw new PactMessageConsumerVerificationException(
-                    $"The message {this.message} could not be verified by the consumer handler", e);
-            }
-        }
-
-        /// <summary>
-        /// Verify a message is read and handled correctly and write the message pact
-        /// </summary>
-        /// <param name="handler">The method using the message</param>
-        public async Task VerifyAsync<T>(Func<T, Task> handler)
-        {
-            try
-            {
-                var messageReified = MessageReified<T>();
-
-                await handler(messageReified);
-
-                WritePact();
-            }
-            catch (Exception e)
-            {
-                throw new PactMessageConsumerVerificationException($"The message {this.message} could not be verified by the consumer handler", e);
-            }
-        }
-
-        #endregion Internal Methods
-
-        #region Private Methods
-
-        /// <summary>
-        /// Try to read the reified message
-        /// </summary>
-        /// <typeparam name="T">the type of message</typeparam>
-        /// <returns>the message</returns>
-        private T MessageReified<T>()
-        {
-            string reified = this.server.Reify(this.message);
-            NativeMessage content = JsonConvert.DeserializeObject<NativeMessage>(reified);
-
-            T messageReified = JsonConvert.DeserializeObject<T>(content.Contents.ToString());
-            return messageReified;
-        }
-
-        /// <summary>
-        /// Write the pact file
-        /// </summary>
-        private void WritePact()
-        {
-            this.server.WriteMessagePactFile(this.pact, this.config.PactDir, false);
-        }
-
-        #endregion Private Methods
     }
 }

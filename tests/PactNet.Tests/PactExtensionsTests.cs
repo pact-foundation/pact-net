@@ -153,9 +153,8 @@ namespace PactNet.Tests
                     ["baz"] = "bash"
                 })
                 .WithMetadata("queueId", "1234")
-                .WithJsonContent(new TestData { Int = 1, String = "a description" });
-
-            builder.Verify<TestData>(_ => { });
+                .WithJsonContent(new TestData { Int = 1, String = "a description" })
+                .Verify<TestData>(_ => { });
 
             string actualPact = File.ReadAllText("PactExtensionsTests-MessageConsumer-V3-PactExtensionsTests-MessageProvider.json").TrimEnd();
             string expectedPact = File.ReadAllText("data/v3-message-consumer-integration.json").TrimEnd();

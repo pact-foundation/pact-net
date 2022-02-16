@@ -11,20 +11,23 @@ namespace PactNet
     public class MessageBuilder : IMessageBuilderV3
     {
         private readonly IMessageMockServer server;
+        private readonly MessagePactHandle pact;
         private readonly MessageHandle message;
-        private readonly JsonSerializerSettings defaultSettings;
+        private readonly PactConfig config;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="MessagePactBuilder"/> class.
         /// </summary>
         /// <param name="server">Mock server</param>
+        /// <param name="pact">Pact handle</param>
         /// <param name="message">Message handle</param>
-        /// <param name="defaultSettings">Default JSON serialiser settings</param>
-        internal MessageBuilder(IMessageMockServer server, MessageHandle message, JsonSerializerSettings defaultSettings)
+        /// <param name="config">Pact config</param>
+        internal MessageBuilder(IMessageMockServer server, MessagePactHandle pact, MessageHandle message, PactConfig config)
         {
             this.server = server ?? throw new ArgumentNullException(nameof(server));
+            this.pact = pact;
             this.message = message;
-            this.defaultSettings = defaultSettings;
+            this.config = config;
         }
 
         #region IMessagePactBuilderV3 explicit implementation
@@ -42,11 +45,11 @@ namespace PactNet
             => WithMetadata(key, value);
 
         /// <inheritdoc cref="IMessageBuilderV3"/>
-        IMessageBuilderV3 IMessageBuilderV3.WithJsonContent(dynamic content)
+        IConfiguredMessageVerifier IMessageBuilderV3.WithJsonContent(dynamic content)
             => WithJsonContent(content);
 
         /// <inheritdoc cref="IMessageBuilderV3"/>
-        IMessageBuilderV3 IMessageBuilderV3.WithJsonContent(dynamic content, JsonSerializerSettings settings)
+        IConfiguredMessageVerifier IMessageBuilderV3.WithJsonContent(dynamic content, JsonSerializerSettings settings)
             => WithJsonContent(content, settings);
 
         #endregion
@@ -99,7 +102,7 @@ namespace PactNet
         /// </summary>
         /// <param name="body">Request body</param>
         /// <returns>Fluent builder</returns>
-        internal MessageBuilder WithJsonContent(dynamic body) => WithJsonContent(body, this.defaultSettings);
+        internal ConfiguredMessageVerifier WithJsonContent(dynamic body) => WithJsonContent(body, this.config.DefaultJsonSettings);
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -107,12 +110,13 @@ namespace PactNet
         /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        internal MessageBuilder WithJsonContent(dynamic body, JsonSerializerSettings settings)
+        internal ConfiguredMessageVerifier WithJsonContent(dynamic body, JsonSerializerSettings settings)
         {
             string serialised = JsonConvert.SerializeObject(body, settings);
 
             this.server.WithContents(this.message, "application/json", serialised, 0);
-            return this;
+
+            return new ConfiguredMessageVerifier(this.server, this.pact, this.message, this.config);
         }
 
         #endregion Internal Methods

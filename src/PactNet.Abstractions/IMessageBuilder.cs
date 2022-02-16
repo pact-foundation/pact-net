@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace PactNet
 {
     /// <summary>
-    /// Build up a mock message for a v3 message messagePact
+    /// Build up a mock message for a v3 message message pact
     /// </summary>
     public interface IMessageBuilderV3
     {
@@ -35,15 +35,15 @@ namespace PactNet
         /// Set message content which is serialised as JSON
         /// </summary>
         /// <param name="body">Message body</param>
-        /// <returns>Fluent builder</returns>
-        IMessageBuilderV3 WithJsonContent(dynamic body);
+        /// <returns>Configured message</returns>
+        IConfiguredMessageVerifier WithJsonContent(dynamic body);
 
         /// <summary>
         /// Set message content which is serialised as JSON
         /// </summary>
         /// <param name="body">Message body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
-        /// <returns>Fluent builder</returns>
-        IMessageBuilderV3 WithJsonContent(dynamic body, JsonSerializerSettings settings);
+        /// <returns>Configured message</returns>
+        IConfiguredMessageVerifier WithJsonContent(dynamic body, JsonSerializerSettings settings);
     }
 }

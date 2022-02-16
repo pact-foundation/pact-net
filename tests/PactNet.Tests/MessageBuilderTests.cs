@@ -15,20 +15,22 @@ namespace PactNet.Tests
 
         private readonly Mock<IMessageMockServer> mockedServer;
 
+        private readonly MessagePactHandle pact;
         private readonly MessageHandle handle;
-        private readonly JsonSerializerSettings settings;
+        private readonly PactConfig config;
 
         public MessageBuilderTests()
         {
             var fixture = new Fixture();
             var customization = new SupportMutableValueTypesCustomization();
             customization.Customize(fixture);
-            
+
+            this.pact = fixture.Create<MessagePactHandle>();
             this.handle = fixture.Create<MessageHandle>();
             this.mockedServer = new Mock<IMessageMockServer>();
-            this.settings = new JsonSerializerSettings();
+            this.config = new PactConfig { DefaultJsonSettings = new JsonSerializerSettings() };
 
-            this.builder = new MessageBuilder(this.mockedServer.Object, this.handle, this.settings);
+            this.builder = new MessageBuilder(this.mockedServer.Object, this.pact, this.handle, this.config);
         }
 
         [Fact]
