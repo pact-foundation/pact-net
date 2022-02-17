@@ -52,7 +52,7 @@ Looking for PactNet v3.x? See the [`release/3.x` branch](https://github.com/pact
 
 ## Need Help
 
-- [Join](<(http://slack.pact.io)>) our community [slack workspace](http://pact-foundation.slack.com/).
+- Join our community [slack workspace](http://pact-foundation.slack.com).
 - Stack Overflow: https://stackoverflow.com/questions/tagged/pact
 - Say 👋 on Twitter: [@pact_up]
 
