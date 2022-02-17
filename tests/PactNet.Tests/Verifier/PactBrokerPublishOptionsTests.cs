@@ -59,7 +59,7 @@ namespace PactNet.Tests.Verifier
         {
             this.options.Apply();
 
-            this.mockProvider.Verify(p => p.SetPublishOptions(Version, buildUrl, tags, branch));
+            this.mockProvider.Verify(p => p.SetPublishOptions(Version, buildUrl, tags ?? Array.Empty<string>(), branch));
         }
     }
 }
