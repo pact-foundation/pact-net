@@ -47,6 +47,14 @@ namespace PactNet.Tests.Verifier
             this.Verify(buildUrl: uri);
         }
 
+        [Fact]
+        public void Apply_NoTags_UsesEmptyTagsCollection()
+        {
+            this.options.Apply();
+
+            this.mockProvider.Verify(p => p.SetPublishOptions(It.IsAny<string>(), It.IsAny<Uri>(), Array.Empty<string>(), It.IsAny<string>()));
+        }
+
         private void Verify(ICollection<string> tags = null, Uri buildUrl = null, string branch = null)
         {
             this.options.Apply();

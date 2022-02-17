@@ -11,7 +11,7 @@ namespace PactNet.Verifier
         private readonly IVerifierProvider provider;
         private readonly string version;
 
-        private ICollection<string> tags;
+        private ICollection<string> tags = Array.Empty<string>();
         private string branch;
         private Uri buildUri;
 
