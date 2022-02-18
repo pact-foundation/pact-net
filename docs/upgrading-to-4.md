@@ -207,6 +207,16 @@ There are additional options for the source (such as a single file, a directory 
 options for the Pact Broker, such as providing authentication credentials. You can explore the fluent API
 to see what options are available.
 
-[Rust core library]: https://github.com/pact-foundation/pact-reference
-[Pact Specification v3]: https://github.com/pact-foundation/pact-specification/tree/version-3
+Other Changes
+-------------
 
+- The `PactPublisher` class is deprecated in favour of using the [Pact Broker CLI tool] to publish pact files
+  to the broker.
+- Custom headers during provider verification aren't (currently) supported.
+  - It is recommended that verification tests run without authentication, but if authentication is absolutely
+    required then see the samples for an example of how to intercept and override the `Authorization` header with
+    middleware.
+
+[Rust core library]: https://github.com/pact-foundation/pact-reference
+[Pact Broker CLI tool]: https://docs.pact.io/pact_broker/client_cli
+[Pact Specification v3]: https://github.com/pact-foundation/pact-specification/tree/version-3
