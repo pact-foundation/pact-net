@@ -51,11 +51,11 @@ namespace PactNet.Tests
         [Fact]
         public void UponReceiving_WhenCalled_CreatesNewInteraction()
         {
-            const string Description = "test description";
+            const string description = "test description";
 
-            this.builder.UponReceiving(Description);
+            this.builder.UponReceiving(description);
 
-            this.mockServer.Verify(s => s.NewInteraction(this.handle, Description));
+            this.mockServer.Verify(s => s.NewInteraction(this.handle, description));
         }
 
         [Fact]

@@ -4,15 +4,14 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using PactNet;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace ReadMe.Consumer.Tests
 {
     public class SomethingApiConsumerTests
     {
-        private readonly IPactBuilderV3 _pactBuilder;
+        private readonly IPactBuilderV3 pactBuilder;
 
-        public SomethingApiConsumerTests(ITestOutputHelper output)
+        public SomethingApiConsumerTests()
         {
             // Use default pact directory ..\..\pacts and default log
             // directory ..\..\logs
@@ -25,14 +24,14 @@ namespace ReadMe.Consumer.Tests
             });
 
             // Initialize Rust backend
-            _pactBuilder = pact.UsingNativeBackend();
+            this.pactBuilder = pact.UsingNativeBackend();
         }
 
         [Fact]
         public async Task GetSomething_WhenTheTesterSomethingExists_ReturnsTheSomething()
         {
             // Arrange
-            _pactBuilder
+            this.pactBuilder
                 .UponReceiving("A GET request to retrieve the something")
                     .Given("There is a something with id 'tester'")
                     .WithRequest(HttpMethod.Get, "/somethings/tester")
@@ -42,13 +41,12 @@ namespace ReadMe.Consumer.Tests
                     .WithHeader("Content-Type", "application/json; charset=utf-8")
                     .WithJsonBody(new
                     {
-                        // NOTE: These properties are case sensitive!
                         id = "tester",
                         firstName = "Totally",
                         lastName = "Awesome"
                     });
 
-            await _pactBuilder.VerifyAsync(async ctx =>
+            await this.pactBuilder.VerifyAsync(async ctx =>
             {
                 // Act
                 var client = new SomethingApiClient(ctx.MockServerUri);

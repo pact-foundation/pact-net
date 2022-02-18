@@ -159,7 +159,7 @@ namespace PactNet.Verifier
         /// <param name="password">Password</param>
         /// <param name="token">Authentication token</param>
         /// <param name="enablePending">Enable pending pacts</param>
-        /// <param name="IncludeWipPactsSince">Include WIP pacts since this date</param>
+        /// <param name="includeWipPactsSince">Include WIP pacts since this date</param>
         /// <param name="providerTags">Provider tags</param>
         /// <param name="providerBranch">Provider branch</param>
         /// <param name="consumerVersionSelectors">Consumer version selectors</param>
@@ -169,7 +169,7 @@ namespace PactNet.Verifier
                                     string password,
                                     string token,
                                     bool enablePending,
-                                    DateTime? IncludeWipPactsSince,
+                                    DateTime? includeWipPactsSince,
                                     ICollection<string> providerTags,
                                     string providerBranch,
                                     ICollection<string> consumerVersionSelectors,
@@ -181,7 +181,7 @@ namespace PactNet.Verifier
                                                             password,
                                                             token,
                                                             ToSafeByte(enablePending),
-                                                            IncludeWipPactsSince?.ToString("yyyy-MM-dd"),
+                                                            includeWipPactsSince?.ToString("yyyy-MM-dd"),
                                                             providerTags.ToArray(),
                                                             (ushort)providerTags.Count,
                                                             providerBranch,

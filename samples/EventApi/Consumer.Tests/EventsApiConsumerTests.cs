@@ -132,7 +132,7 @@ namespace Consumer.Tests
         {
             var eventId = Guid.Parse("1F587704-2DCC-4313-A233-7B62B4B469DB");
             var dateTime = 1.July(2011).At(1, 41, 3);
-            DateTimeFactory.Now = () => dateTime;
+            DateTimeFactory.Override = dateTime;
 
             this.pact
                 .UponReceiving("a request to create a new event")

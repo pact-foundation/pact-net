@@ -10,15 +10,15 @@ namespace PactNet
     /// </summary>
     public class PactConfig
     {
-        private string _pactDir;
+        private string pactDir;
 
         /// <summary>
         /// Pact file destination directory
         /// </summary>
         public string PactDir
         {
-            get { return _pactDir; }
-            set { _pactDir = ConvertToDirectory(value); }
+            get { return this.pactDir; }
+            set { this.pactDir = ConvertToDirectory(value); }
         }
 
         /// <summary>

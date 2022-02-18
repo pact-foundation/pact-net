@@ -62,7 +62,7 @@ namespace PactNet
         public static IMessagePactBuilderV3 UsingNativeBackend(this IMessagePactV3 messagePact)
         {
             MockServer server = new MockServer();
-            MessagePactHandle handle = InitialiseMessage(server, messagePact, PactSpecification.V3);
+            MessagePactHandle handle = InitialiseMessage(server, messagePact);
 
             var builder = new MessagePactBuilder(server, handle, messagePact.Config);
             return builder;
@@ -89,9 +89,8 @@ namespace PactNet
         /// </summary>
         /// <param name="messagePact">Message Pact details</param>
         /// <param name="server">Server</param>
-        /// <param name="version">Spec version</param>
         /// <returns>Initialised message pact handle</returns>
-        private static MessagePactHandle InitialiseMessage(MockServer server, IMessagePact messagePact, PactSpecification version)
+        private static MessagePactHandle InitialiseMessage(MockServer server, IMessagePact messagePact)
         {
             InitialiseLogging(messagePact.Config.LogLevel);
 

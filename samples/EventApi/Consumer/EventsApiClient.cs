@@ -13,19 +13,19 @@ namespace Consumer
 {
     public class EventsApiClient : IDisposable
     {
-        private readonly HttpClient _httpClient;
+        private readonly HttpClient httpClient;
 
         public EventsApiClient(Uri baseUri, string authToken = null)
         {
-            _httpClient = new HttpClient { BaseAddress = baseUri };
+            this.httpClient = new HttpClient { BaseAddress = baseUri };
 
             if (!string.IsNullOrWhiteSpace(authToken))
             {
-                _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {authToken}");
+                this.httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {authToken}");
             }
         }
 
-        private readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
+        private readonly JsonSerializerSettings jsonSettings = new JsonSerializerSettings
         {
             ContractResolver = new CamelCasePropertyNamesContractResolver(),
             NullValueHandling = NullValueHandling.Ignore
@@ -36,13 +36,13 @@ namespace Consumer
             var request = new HttpRequestMessage(HttpMethod.Get, "/stats/status");
             request.Headers.Add("Accept", "application/json");
 
-            var response = await _httpClient.SendAsync(request);
+            var response = await this.httpClient.SendAsync(request);
 
             try
             {
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    var responseContent = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync(), _jsonSettings);
+                    var responseContent = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync(), this.jsonSettings);
                     return responseContent.alive;
                 }
 
@@ -61,7 +61,7 @@ namespace Consumer
             var statusRequest = new HttpRequestMessage(HttpMethod.Get, "/stats/status");
             statusRequest.Headers.Add("Accept", "application/json");
 
-            var statusResponse = await _httpClient.SendAsync(statusRequest);
+            var statusResponse = await this.httpClient.SendAsync(statusRequest);
 
             try
             {
@@ -69,7 +69,7 @@ namespace Consumer
 
                 if (statusResponse.StatusCode == HttpStatusCode.OK)
                 {
-                    statusResponseBody = JsonConvert.DeserializeObject<StatusResponseBody>(await statusResponse.Content.ReadAsStringAsync(), _jsonSettings);
+                    statusResponseBody = JsonConvert.DeserializeObject<StatusResponseBody>(await statusResponse.Content.ReadAsStringAsync(), this.jsonSettings);
                 }
                 else
                 {
@@ -85,12 +85,12 @@ namespace Consumer
                         var uptimeRequest = new HttpRequestMessage(HttpMethod.Get, uptimeLink);
                         uptimeRequest.Headers.Add("Accept", "application/json");
 
-                        var uptimeResponse = await _httpClient.SendAsync(uptimeRequest);
+                        var uptimeResponse = await this.httpClient.SendAsync(uptimeRequest);
                         try
                         {
                             if (uptimeResponse.StatusCode == HttpStatusCode.OK)
                             {
-                                var uptimeResponseBody = JsonConvert.DeserializeObject<UptimeResponseBody>(await uptimeResponse.Content.ReadAsStringAsync(), _jsonSettings);
+                                var uptimeResponseBody = JsonConvert.DeserializeObject<UptimeResponseBody>(await uptimeResponse.Content.ReadAsStringAsync(), this.jsonSettings);
                                 return uptimeResponseBody.UpSince;
                             }
 
@@ -116,7 +116,7 @@ namespace Consumer
             var request = new HttpRequestMessage(HttpMethod.Get, "/events");
             request.Headers.Add("Accept", "application/json");
 
-            var response = await _httpClient.SendAsync(request);
+            var response = await this.httpClient.SendAsync(request);
 
             try
             {
@@ -124,7 +124,7 @@ namespace Consumer
                 {
                     var content = await response.Content.ReadAsStringAsync();
                     return !string.IsNullOrEmpty(content)
-                                ? JsonConvert.DeserializeObject<IEnumerable<Event>>(content, _jsonSettings)
+                                ? JsonConvert.DeserializeObject<IEnumerable<Event>>(content, this.jsonSettings)
                                 : new List<Event>();
                 }
 
@@ -143,13 +143,13 @@ namespace Consumer
             var request = new HttpRequestMessage(HttpMethod.Get, string.Format("/events/{0}", id));
             request.Headers.Add("Accept", "application/json");
 
-            var response = await _httpClient.SendAsync(request);
+            var response = await this.httpClient.SendAsync(request);
 
             try
             {
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    return JsonConvert.DeserializeObject<Event>(await response.Content.ReadAsStringAsync(), _jsonSettings);
+                    return JsonConvert.DeserializeObject<Event>(await response.Content.ReadAsStringAsync(), this.jsonSettings);
                 }
 
                 await RaiseResponseError(request, response);
@@ -167,13 +167,13 @@ namespace Consumer
             var request = new HttpRequestMessage(HttpMethod.Get, string.Format("/events?type={0}", eventType));
             request.Headers.Add("Accept", "application/json");
 
-            var response = await _httpClient.SendAsync(request);
+            var response = await this.httpClient.SendAsync(request);
 
             try
             {
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    return JsonConvert.DeserializeObject<IEnumerable<Event>>(await response.Content.ReadAsStringAsync(), _jsonSettings);
+                    return JsonConvert.DeserializeObject<IEnumerable<Event>>(await response.Content.ReadAsStringAsync(), this.jsonSettings);
                 }
 
                 await RaiseResponseError(request, response);
@@ -195,11 +195,11 @@ namespace Consumer
                 EventType = eventType
             };
 
-            var eventJson = JsonConvert.SerializeObject(@event, _jsonSettings);
+            var eventJson = JsonConvert.SerializeObject(@event, this.jsonSettings);
             var requestContent = new StringContent(eventJson, Encoding.UTF8, "application/json");
             var request = new HttpRequestMessage(HttpMethod.Post, "/events") { Content = requestContent };
 
-            var response = await _httpClient.SendAsync(request);
+            var response = await this.httpClient.SendAsync(request);
 
             try
             {
@@ -229,7 +229,7 @@ namespace Consumer
 
         public void Dispose()
         {
-            Dispose(_httpClient);
+            Dispose(this.httpClient);
         }
 
         public void Dispose(params IDisposable[] disposables)

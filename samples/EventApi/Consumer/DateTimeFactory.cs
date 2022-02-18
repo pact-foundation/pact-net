@@ -4,6 +4,11 @@ namespace Consumer
 {
     public class DateTimeFactory
     {
-        public static Func<DateTime> Now = () => DateTime.UtcNow;
+        public static DateTime? Override { get; set; } = null;
+
+        public static DateTime Now()
+        {
+            return Override ?? DateTime.Now;
+        }
     }
 }
