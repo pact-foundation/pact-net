@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using PactNet;
 using PactNet.Infrastructure.Outputters;
+using PactNet.Output.Xunit;
 using PactNet.Verifier;
 using PactNet.Verifier.Messaging;
 using Xunit;
@@ -25,7 +26,7 @@ namespace Provider.Tests
             {
                 Outputters = new List<IOutput>
                 {
-                    new XUnitOutput(output)
+                    new XunitOutput(output)
                 },
                 LogLevel = PactLogLevel.Debug
             });

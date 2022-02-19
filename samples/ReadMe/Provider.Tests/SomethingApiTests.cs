@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using PactNet.Infrastructure.Outputters;
+using PactNet.Output.Xunit;
 using PactNet.Verifier;
 using Xunit;
 using Xunit.Abstractions;
@@ -31,7 +32,7 @@ namespace ReadMe.Provider.Tests
                     // xUnit 2 does not capture the console output, so this
                     // sample creates a custom xUnit outputter. You will
                     // have to do the same in xUnit projects.
-                    new XUnitOutput(output),
+                    new XunitOutput(output),
                 },
             };
 

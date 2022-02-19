@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\src\PactNet.Output.Xunit\PactNet.Output.Xunit.csproj" />
     <ProjectReference Include="..\..\..\src\PactNet\PactNet.csproj" />
     <ProjectReference Include="..\Provider\Provider.csproj" />
   </ItemGroup>

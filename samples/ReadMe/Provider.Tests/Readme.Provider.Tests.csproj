@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\src\PactNet.Output.Xunit\PactNet.Output.Xunit.csproj" />
     <ProjectReference Include="..\Provider\Readme.Provider.csproj" />
     <ProjectReference Include="..\..\..\src\PactNet\PactNet.csproj" />
   </ItemGroup>

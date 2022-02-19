@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using PactNet;
 using PactNet.Matchers;
+using PactNet.Output.Xunit;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -25,7 +26,7 @@ namespace Consumer.Tests
                 },
                 Outputters = new[]
                 {
-                    new XUnitOutput(output)
+                    new XunitOutput(output)
                 }
             });
 
