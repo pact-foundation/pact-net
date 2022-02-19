@@ -2,6 +2,7 @@ using System;
 using FluentAssertions.Extensions;
 using Moq;
 using Newtonsoft.Json;
+using PactNet.Output.Xunit;
 using PactNet.Verifier;
 using PactNet.Verifier.Messaging;
 using Xunit;
@@ -27,7 +28,7 @@ namespace PactNet.Tests.Verifier
                                              {
                                                  Outputters = new[]
                                                  {
-                                                     new XUnitOutput(output)
+                                                     new XunitOutput(output)
                                                  }
                                              });
         }
