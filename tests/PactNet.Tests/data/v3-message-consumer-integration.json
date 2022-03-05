@@ -36,8 +36,8 @@
       "language": "C#"
     },
     "pactRust": {
-      "ffi": "0.2.2",
-      "models": "0.2.7"
+      "ffi": "0.2.3",
+      "models": "0.3.0"
     },
     "pactSpecification": {
       "version": "3.0.0"
