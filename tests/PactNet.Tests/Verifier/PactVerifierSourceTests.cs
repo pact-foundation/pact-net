@@ -68,6 +68,15 @@ namespace PactNet.Tests.Verifier
         }
 
         [Fact]
+        public void WithCustomHeader_WhenCalled_AddsCustomHeader()
+        {
+            this.verifier.WithCustomHeader("Authorization", "Bearer abcdef0123456789");
+            this.verifier.Verify();
+
+            this.mockProvider.Verify(p => p.AddCustomHeader("Authorization", "Bearer abcdef0123456789"));
+        }
+
+        [Fact]
         public void Verify_WithoutRequestTimeout_UsesDefaultTimeout()
         {
             this.verifier.Verify();

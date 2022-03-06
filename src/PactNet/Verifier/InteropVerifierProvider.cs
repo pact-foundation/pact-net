@@ -121,6 +121,18 @@ namespace PactNet.Verifier
         }
 
         /// <summary>
+        /// Add a header which will be used in all calls from the verifier to the provider, for example
+        /// an Authorization header with a valid auth token
+        /// </summary>
+        /// <param name="name">Header name</param>
+        /// <param name="value">Header value</param>
+        /// <returns>Fluent builder</returns>
+        public void AddCustomHeader(string name, string value)
+        {
+            NativeInterop.AddCustomHeader(this.handle, name, value);
+        }
+
+        /// <summary>
         /// Add a file source
         /// </summary>
         /// <param name="file">File</param>
