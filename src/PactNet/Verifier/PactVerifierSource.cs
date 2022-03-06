@@ -78,6 +78,19 @@ namespace PactNet.Verifier
         }
 
         /// <summary>
+        /// Add a header which will be used in all calls from the verifier to the provider, for example
+        /// an Authorization header with a valid auth token
+        /// </summary>
+        /// <param name="name">Header name</param>
+        /// <param name="value">Header value</param>
+        /// <returns>Fluent builder</returns>
+        public IPactVerifierSource WithCustomHeader(string name, string value)
+        {
+            this.provider.AddCustomHeader(name, value);
+            return this;
+        }
+
+        /// <summary>
         /// Verify provider interactions
         /// </summary>
         /// <exception cref="PactFailureException">Verification failed</exception>

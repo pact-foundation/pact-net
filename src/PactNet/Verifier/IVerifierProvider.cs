@@ -68,6 +68,15 @@ namespace PactNet.Verifier
         void SetConsumerFilters(ICollection<string> consumerFilters);
 
         /// <summary>
+        /// Add a header which will be used in all calls from the verifier to the provider, for example
+        /// an Authorization header with a valid auth token
+        /// </summary>
+        /// <param name="name">Header name</param>
+        /// <param name="value">Header value</param>
+        /// <returns>Fluent builder</returns>
+        void AddCustomHeader(string name, string value);
+
+        /// <summary>
         /// Add a file source
         /// </summary>
         /// <param name="file">File</param>

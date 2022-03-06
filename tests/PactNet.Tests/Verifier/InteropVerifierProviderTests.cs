@@ -34,6 +34,7 @@ namespace PactNet.Tests.Verifier
             provider.SetVerificationOptions(false, TimeSpan.FromMilliseconds(100));
             provider.SetPublishOptions("1.2.3", new Uri("https://ci.example.org/builds/12345"), new[] { "tags" }, "branch");
             provider.SetFilterInfo("description", "state", false);
+            provider.AddCustomHeader("Authorization", "Bearer abcdef1234567890");
 
             provider.AddFileSource(new FileInfo("data/v2-consumer-integration.json"));
             provider.AddDirectorySource(new DirectoryInfo("data"));

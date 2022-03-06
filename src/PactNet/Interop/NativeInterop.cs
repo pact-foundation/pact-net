@@ -135,6 +135,9 @@ namespace PactNet.Interop
         [DllImport(DllName, EntryPoint = "pactffi_verifier_set_consumer_filters")]
         public static extern void VerifierSetConsumerFilters(IntPtr handle, string[] consumerFilters, ushort consumerFiltersLength);
 
+        [DllImport(DllName, EntryPoint = "pactffi_verifier_add_custom_header")]
+        public static extern void AddCustomHeader(IntPtr handle, string name, string value);
+
         [DllImport(DllName, EntryPoint = "pactffi_verifier_add_file_source")]
         public static extern void VerifierAddFileSource(IntPtr handle, string file);
 
