@@ -105,7 +105,7 @@ namespace PactNet.Verifier
         {
             NativeInterop.VerifierSetPublishOptions(this.handle,
                                                     providerVersion,
-                                                    buildUrl.AbsoluteUri,
+                                                    buildUrl?.AbsoluteUri,
                                                     providerTags.ToArray(),
                                                     (ushort)providerTags.Count,
                                                     providerBranch);

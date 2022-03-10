@@ -54,5 +54,25 @@ namespace PactNet.Tests.Verifier
 
             action.Should().Throw<PactFailureException>();
         }
+
+        [Fact]
+        [Trait("Issue", "https://github.com/pact-foundation/pact-net/issues/376")]
+        public void SetPublishOptions_NoBuildUri_IsValid()
+        {
+            using var provider = new InteropVerifierProvider(new PactVerifierConfig
+            {
+                LogLevel = PactLogLevel.Trace,
+                Outputters = new[] { new XUnitOutput(this.output) }
+            });
+
+            provider.Initialise();
+            provider.SetProviderInfo("integration-test", "http", "localhost", 12684, "/path");
+            provider.SetPublishOptions("1.2.3", null, new[] { "tags" }, "branch");
+            provider.AddFileSource(new FileInfo("data/v2-consumer-integration.json"));
+
+            Action action = () => provider.Execute();
+
+            action.Should().Throw<PactFailureException>();
+        }
     }
 }
