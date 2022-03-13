@@ -44,6 +44,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="$(MSBuildProjectDirectory)\..\..\build\PactNet.targets">
+      <PackagePath>build/net461/</PackagePath>
+      <Pack>true</Pack>
+      <Visible>false</Visible>
+    </Content>
+    <Content Include="$(MSBuildProjectDirectory)\..\..\build\PactNet.targets">
+      <PackagePath>buildTransitive/net461/</PackagePath>
+      <Pack>true</Pack>
+      <Visible>false</Visible>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
 
