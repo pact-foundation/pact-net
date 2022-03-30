@@ -6,6 +6,7 @@ using FluentAssertions;
 using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using PactNet.Generators;
 using PactNet.Interop;
 using Xunit;
 using Match = PactNet.Matchers.Match;
@@ -67,6 +68,18 @@ namespace PactNet.Tests
         }
 
         [Fact]
+        public void WithRequest_HttpMethod_ProviderStateGenerator_AddsRequest()
+        {
+            const string example = "/some/example-path";
+            const string expression = "/some/${path}";
+            const string expectedValue = $@"{{""pact:matcher:type"":""type"",""value"":""{example}"",""pact:generator:type"":""ProviderState"",""expression"":""{expression}""}}";
+
+            this.builder.WithRequest(HttpMethod.Post, Generate.ProviderState(example, expression));
+
+            this.mockServer.Verify(s => s.WithRequest(this.handle, "POST", expectedValue));
+        }
+
+        [Fact]
         public void WithRequest_String_AddsRequest()
         {
             this.builder.WithRequest("POST", "/some/path");
@@ -75,11 +88,32 @@ namespace PactNet.Tests
         }
 
         [Fact]
+        public void WithRequest_String_ProviderStateGenerator_AddsRequest()
+        {
+            const string example = "/some/example-path";
+            const string expression = "/some/${path}";
+            const string expectedValue = $@"{{""pact:matcher:type"":""type"",""value"":""{example}"",""pact:generator:type"":""ProviderState"",""expression"":""{expression}""}}";
+
+            this.builder.WithRequest("POST", Generate.ProviderState(example, expression));
+
+            this.mockServer.Verify(s => s.WithRequest(this.handle, "POST", expectedValue));
+        }
+
+        [Fact]
         public void WithQuery_WhenCalled_AddsQueryParam()
         {
             this.builder.WithQuery("name", "value");
 
             this.mockServer.Verify(s => s.WithQueryParameter(this.handle, "name", "value", 0));
+        }
+
+        [Fact]
+        public void WithQuery_Generator_WhenCalled_AddsQueryParam()
+        {
+            const string expectedValue = $@"{{""pact:matcher:type"":""type"",""value"":""example"",""pact:generator:type"":""ProviderState"",""expression"":""${{value}}""}}";
+
+            this.builder.WithQuery("name", Generate.ProviderState("example", "${value}"));
+            this.mockServer.Verify(s => s.WithQueryParameter(this.handle, "name", expectedValue, 0));
         }
 
         [Fact]
@@ -95,11 +129,35 @@ namespace PactNet.Tests
         }
 
         [Fact]
+        public void WithQuery_Generator_RepeatedQuery_SetsIndex()
+        {
+            const string expectedValue2 = $@"{{""pact:matcher:type"":""type"",""value"":""value2"",""pact:generator:type"":""ProviderState"",""expression"":""${{value}}""}}";
+
+            this.builder.WithQuery("name", "value1");
+            this.builder.WithQuery("name", Generate.ProviderState("value2", "${value}"));
+            this.builder.WithQuery("other", "value");
+
+            this.mockServer.Verify(s => s.WithQueryParameter(this.handle, "name", "value1", 0));
+            this.mockServer.Verify(s => s.WithQueryParameter(this.handle, "name", expectedValue2, 1));
+            this.mockServer.Verify(s => s.WithQueryParameter(this.handle, "other", "value", 0));
+        }
+
+        [Fact]
         public void WithHeader_Matcher_WhenCalled_AddsSerialisedHeaderParam()
         {
             var expectedValue = "{\"pact:matcher:type\":\"regex\",\"value\":\"header\",\"regex\":\"^header$\"}";
 
             this.builder.WithHeader("name", Match.Regex("header", "^header$"));
+
+            this.mockServer.Verify(s => s.WithRequestHeader(this.handle, "name", expectedValue, 0));
+        }
+
+        [Fact]
+        public void WithHeader_Generator_WhenCalled_AddsSerialisedHeaderParam()
+        {
+            var expectedValue = "{\"pact:matcher:type\":\"type\",\"value\":\"header\",\"pact:generator:type\":\"ProviderState\",\"expression\":\"${header}\"}";
+
+            this.builder.WithHeader("name", Generate.ProviderState("header", "${header}"));
 
             this.mockServer.Verify(s => s.WithRequestHeader(this.handle, "name", expectedValue, 0));
         }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using Newtonsoft.Json;
+using PactNet.Generators;
 using PactNet.Matchers;
 
 namespace PactNet
@@ -117,6 +118,22 @@ namespace PactNet
         IRequestBuilderV3 WithRequest(string method, string path);
 
         /// <summary>
+        /// Set the request
+        /// </summary>
+        /// <param name="method">Request method</param>
+        /// <param name="generator">Path value generator</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 WithRequest(HttpMethod method, IGenerator generator);
+
+        /// <summary>
+        /// Set the request
+        /// </summary>
+        /// <param name="method">Request method</param>
+        /// <param name="generator">Path value generator</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 WithRequest(string method, IGenerator generator);
+
+        /// <summary>
         /// Add a query string parameter
         /// </summary>
         /// <param name="key">Query parameter key</param>
@@ -124,6 +141,15 @@ namespace PactNet
         /// <returns>Fluent builder</returns>
         /// <remarks>You can add a query parameter with the same key multiple times</remarks>
         IRequestBuilderV3 WithQuery(string key, string value);
+
+        /// <summary>
+        /// Add a query string parameter
+        /// </summary>
+        /// <param name="key">Query parameter key</param>
+        /// <param name="generator">Query parameter value generator</param>
+        /// <returns>Fluent builder</returns>
+        /// <remarks>You can add a query parameter with the same key multiple times</remarks>
+        IRequestBuilderV3 WithQuery(string key, IGenerator generator);
 
         /// <summary>
         /// Add a request header
