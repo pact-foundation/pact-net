@@ -1,6 +1,4 @@
-using System.Text.RegularExpressions;
 using Newtonsoft.Json;
-using PactNet.Matchers;
 
 namespace PactNet.Generators;
 
