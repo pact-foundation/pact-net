@@ -80,7 +80,7 @@ namespace PactNet
         private T MessageReified<T>()
         {
             string reified = this.server.Reify(this.message);
-            NativeMessage content = JsonConvert.DeserializeObject<NativeMessage>(reified, config.DefaultJsonSettings);
+            NativeMessage content = JsonConvert.DeserializeObject<NativeMessage>(reified);
 
             T messageReified = JsonConvert.DeserializeObject<T>(content.Contents.ToString(), config.DefaultJsonSettings);
             return messageReified;
