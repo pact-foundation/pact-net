@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using PactNet.Exceptions;
 using PactNet.Interop;
 using PactNet.Models;
@@ -12,6 +14,13 @@ namespace PactNet
     /// </summary>
     public class ConfiguredMessageVerifier : IConfiguredMessageVerifier
     {
+        // the native message returned from the FFI always uses camel case property
+        // names, but the inner content may use different settings supplied by the user
+        private static readonly JsonSerializerSettings NativeMessageSettings = new()
+        {
+            ContractResolver = new CamelCasePropertyNamesContractResolver()
+        };
+
         private readonly MessageHandle message;
         private readonly IMessageMockServer server;
         private readonly MessagePactHandle pact;
@@ -80,9 +89,11 @@ namespace PactNet
         private T MessageReified<T>()
         {
             string reified = this.server.Reify(this.message);
-            NativeMessage content = JsonConvert.DeserializeObject<NativeMessage>(reified);
+            NativeMessage content = JsonConvert.DeserializeObject<NativeMessage>(reified, NativeMessageSettings);
 
-            T messageReified = JsonConvert.DeserializeObject<T>(content.Contents.ToString());
+            string contentString = ((JToken)content.Contents).ToString(Formatting.None);
+            T messageReified = JsonConvert.DeserializeObject<T>(contentString, this.config.DefaultJsonSettings);
+
             return messageReified;
         }
 
