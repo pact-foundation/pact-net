@@ -58,11 +58,32 @@ namespace PactNet.Tests.Verifier
         }
 
         [Fact]
-        public void WithUriSource_NoAuthentication_AddsUrlArg()
+        public void WithUriSource_NoOptions_AddsUrlArg()
         {
             var uri = new Uri("http://example.org/pact/file.json");
 
             this.verifier.WithUriSource(uri);
+
+            this.mockProvider.Verify(p => p.AddUrlSource(uri, null, null, null));
+        }
+
+        [Fact]
+        public void WithUriSource_WithOptions_AddsUrlSource()
+        {
+            var uri = new Uri("http://example.org.pact.file.json");
+
+            this.verifier.WithUriSource(uri, options => options.BasicAuthentication("username", "password")
+                                                               .TokenAuthentication("token"));
+
+            this.mockProvider.Verify(p => p.AddUrlSource(uri, "username", "password", "token"));
+        }
+
+        [Fact]
+        public void WithUriSource_NullOptions_AddsUrlSource()
+        {
+            var uri = new Uri("http://example.org/pact/file.json");
+
+            this.verifier.WithUriSource(uri, null);
 
             this.mockProvider.Verify(p => p.AddUrlSource(uri, null, null, null));
         }

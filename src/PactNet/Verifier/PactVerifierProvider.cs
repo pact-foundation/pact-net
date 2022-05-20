@@ -60,11 +60,21 @@ namespace PactNet.Verifier
         /// <param name="pactUri">Pact file URI</param>
         /// <returns>Fluent builder</returns>
         public IPactVerifierSource WithUriSource(Uri pactUri)
+            => this.WithUriSource(pactUri, _ => { });
+
+        /// <summary>
+        /// Verify a pact from a URI
+        /// </summary>
+        /// <param name="pactUri">Pact file URI</param>
+        /// <param name="configure">Configure URI options</param>
+        /// <returns>Fluent builder</returns>
+        public IPactVerifierSource WithUriSource(Uri pactUri, Action<IPactUriOptions> configure)
         {
             Guard.NotNull(pactUri, nameof(pactUri));
 
-            // TODO: Support URI source authentication
-            this.provider.AddUrlSource(pactUri, null, null, null);
+            var options = new PactUriOptions(this.provider, pactUri);
+            configure?.Invoke(options);
+            options.Apply();
 
             return new PactVerifierSource(this.provider, this.config);
         }
@@ -86,10 +96,9 @@ namespace PactNet.Verifier
         public IPactVerifierSource WithPactBrokerSource(Uri brokerBaseUri, Action<IPactBrokerOptions> configure)
         {
             Guard.NotNull(brokerBaseUri, nameof(brokerBaseUri));
-            Guard.NotNull(configure, nameof(configure));
 
             var options = new PactBrokerOptions(this.provider, brokerBaseUri);
-            configure.Invoke(options);
+            configure?.Invoke(options);
             options.Apply();
 
             return new PactVerifierSource(this.provider, this.config);

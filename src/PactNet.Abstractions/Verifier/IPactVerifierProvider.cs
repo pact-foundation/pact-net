@@ -31,6 +31,14 @@ namespace PactNet.Verifier
         IPactVerifierSource WithUriSource(Uri pactUri);
 
         /// <summary>
+        /// Verify a pact from a URI
+        /// </summary>
+        /// <param name="pactUri">Pact file URI</param>
+        /// <param name="configure">Configure URI options</param>
+        /// <returns>Fluent builder</returns>
+        IPactVerifierSource WithUriSource(Uri pactUri, Action<IPactUriOptions> configure);
+
+        /// <summary>
         /// Use the pact broker to retrieve pact files with default options
         /// </summary>
         /// <param name="brokerBaseUri">Base URI for the broker</param>
