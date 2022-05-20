@@ -141,7 +141,7 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void WithJsonBody_WithoutCustomSettings_AddsRequestBodyWithDefaultSettings()
+        public void WithJsonBody_NoOverrides_AddsRequestBodyWithDefaultSettings()
         {
             this.builder.WithJsonBody(new { Foo = 42 });
 
@@ -149,12 +149,33 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void WithJsonBody_WithCustomSettings_AddsRequestBodyWithOverriddenSettings()
+        public void WithJsonBody_OverrideContentType_AddsRequestBodyWithOverriddenContentType()
+        {
+            this.builder.WithJsonBody(new { Foo = 42 }, "application/json-patch+json");
+
+            this.mockServer.Verify(s => s.WithRequestBody(this.handle, "application/json-patch+json", @"{""Foo"":42}"));
+        }
+
+        [Fact]
+        public void WithJsonBody_OverrideJsonSettings_AddsRequestBodyWithOverriddenSettings()
         {
             this.builder.WithJsonBody(new { Foo = 42 },
                                       new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
 
             this.mockServer.Verify(s => s.WithRequestBody(this.handle, "application/json", @"{""foo"":42}"));
+        }
+
+        [Fact]
+        public void WithJsonBody_OverrideContentTypeAndSettings_AddsRequestBodyWithOverriddenContentTypeAndSettings()
+        {
+            this.builder.WithJsonBody(new { Foo = 42 },
+                                      new JsonSerializerSettings
+                                      {
+                                          ContractResolver = new CamelCasePropertyNamesContractResolver()
+                                      },
+                                      "application/json-patch+json");
+
+            this.mockServer.Verify(s => s.WithRequestBody(this.handle, "application/json-patch+json", @"{""foo"":42}"));
         }
 
         [Fact]

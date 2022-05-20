@@ -103,10 +103,29 @@ namespace PactNet
         /// Set a body which is serialised as JSON
         /// </summary>
         /// <param name="body">Request body</param>
+        /// <param name="contentType">Content type override</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV2 IRequestBuilderV2.WithJsonBody(dynamic body, string contentType)
+            => this.WithJsonBody(body, contentType);
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
         IRequestBuilderV2 IRequestBuilderV2.WithJsonBody(dynamic body, JsonSerializerSettings settings)
             => this.WithJsonBody(body, settings);
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <param name="settings">Custom JSON serializer settings</param>
+        /// <param name="contentType">Content type override</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV2 IRequestBuilderV2.WithJsonBody(dynamic body, JsonSerializerSettings settings, string contentType)
+            => this.WithJsonBody(body, settings, contentType);
 
         /// <summary>
         /// Define the response to this request
@@ -194,10 +213,29 @@ namespace PactNet
         /// Set a body which is serialised as JSON
         /// </summary>
         /// <param name="body">Request body</param>
+        /// <param name="contentType">Content type override</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 IRequestBuilderV3.WithJsonBody(dynamic body, string contentType)
+            => this.WithJsonBody(body, contentType);
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
         IRequestBuilderV3 IRequestBuilderV3.WithJsonBody(dynamic body, JsonSerializerSettings settings)
             => this.WithJsonBody(body, settings);
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <param name="settings">Custom JSON serializer settings</param>
+        /// <param name="contentType">Content type override</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 IRequestBuilderV3.WithJsonBody(dynamic body, JsonSerializerSettings settings, string contentType)
+            => this.WithJsonBody(body, settings, contentType);
 
         /// <summary>
         /// Define the response to this request
@@ -308,7 +346,15 @@ namespace PactNet
         /// </summary>
         /// <param name="body">Request body</param>
         /// <returns>Fluent builder</returns>
-        internal RequestBuilder WithJsonBody(dynamic body) => WithJsonBody(body, this.defaultSettings);
+        internal RequestBuilder WithJsonBody(dynamic body) => WithJsonBody(body, this.defaultSettings, "application/json");
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <param name="contentType">Content type override</param>
+        /// <returns>Fluent builder</returns>
+        internal RequestBuilder WithJsonBody(dynamic body, string contentType) => WithJsonBody(body, this.defaultSettings, contentType);
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -316,11 +362,20 @@ namespace PactNet
         /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        internal RequestBuilder WithJsonBody(dynamic body, JsonSerializerSettings settings)
+        internal RequestBuilder WithJsonBody(dynamic body, JsonSerializerSettings settings) => WithJsonBody(body, settings, "application/json");
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <param name="settings">Custom JSON serializer settings</param>
+        /// <param name="contentType">Content type override</param>
+        /// <returns>Fluent builder</returns>
+        internal RequestBuilder WithJsonBody(dynamic body, JsonSerializerSettings settings, string contentType)
         {
             string serialised = JsonConvert.SerializeObject(body, settings);
 
-            this.server.WithRequestBody(this.interaction, "application/json", serialised);
+            this.server.WithRequestBody(this.interaction, contentType, serialised);
             return this;
         }
 

@@ -69,9 +69,26 @@ namespace PactNet
         /// Set a body which is serialised as JSON
         /// </summary>
         /// <param name="body">Request body</param>
+        /// <param name="contentType">Content type override</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV2 WithJsonBody(dynamic body, string contentType);
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
         IRequestBuilderV2 WithJsonBody(dynamic body, JsonSerializerSettings settings);
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <param name="settings">Custom JSON serializer settings</param>
+        /// <param name="contentType">Content type override</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV2 WithJsonBody(dynamic body, JsonSerializerSettings settings, string contentType);
 
         /// <summary>
         /// Define the response to this request
@@ -152,9 +169,26 @@ namespace PactNet
         /// Set a body which is serialised as JSON
         /// </summary>
         /// <param name="body">Request body</param>
+        /// <param name="contentType">Content type override</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 WithJsonBody(dynamic body, string contentType);
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
         IRequestBuilderV3 WithJsonBody(dynamic body, JsonSerializerSettings settings);
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <param name="settings">Custom JSON serializer settings</param>
+        /// <param name="contentType">Content type override</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 WithJsonBody(dynamic body, JsonSerializerSettings settings, string contentType);
 
         // TODO: Support binary and multi-part body
 
