@@ -71,7 +71,7 @@ namespace PactNet.Tests.Verifier
         }
 
         [Fact]
-        public void ConsumerVersionSelectors_WhenCalled_AddsConsumerVersionSelectorsArgs()
+        public void ConsumerVersionSelectors_ParamsStyle_AddsConsumerVersionSelectorsArgs()
         {
             string[] expected =
             {
@@ -87,6 +87,32 @@ namespace PactNet.Tests.Verifier
                                                   new ConsumerVersionSelector { Tag = "foo", FallbackTag = "bar", Latest = false },
                                                   new ConsumerVersionSelector { Released = true, Deployed = true, Environment = "prod" },
                                                   new ConsumerVersionSelector { DeployedOrReleased = true, Consumer = "My Consumer" });
+
+            this.Verify(consumerVersionSelectors: expected);
+        }
+
+        [Fact]
+        public void ConsumerVersionSelectors_CollectionStyle_AddsConsumerVersionSelectorsArgs()
+        {
+            string[] expected =
+            {
+                @"{""mainBranch"":true,""matchingBranch"":true}",
+                @"{""branch"":""feat/foo"",""fallbackBranch"":""main""}",
+                @"{""tag"":""foo"",""fallbackTag"":""bar"",""latest"":false}",
+                @"{""deployed"":true,""released"":true,""environment"":""prod""}",
+                @"{""deployedOrReleased"":true,""consumer"":""My Consumer""}"
+            };
+
+            ICollection<ConsumerVersionSelector> selectors = new List<ConsumerVersionSelector>
+            {
+                new() { MainBranch = true, MatchingBranch = true },
+                new() { Branch = "feat/foo", FallbackBranch = "main" },
+                new() { Tag = "foo", FallbackTag = "bar", Latest = false },
+                new() { Released = true, Deployed = true, Environment = "prod" },
+                new() { DeployedOrReleased = true, Consumer = "My Consumer" }
+            };
+
+            this.options.ConsumerVersionSelectors(selectors);
 
             this.Verify(consumerVersionSelectors: expected);
         }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace PactNet.Verifier
 {
@@ -48,6 +49,14 @@ namespace PactNet.Verifier
         /// <param name="tags">Consumer tags</param>
         /// <returns>Fluent builder</returns>
         IPactBrokerOptions ConsumerTags(params string[] tags);
+
+        /// <summary>
+        /// Consumer version selectors to control which pacts are returned from the broker
+        /// </summary>
+        /// <param name="selectors">Consumer version selectors</param>
+        /// <returns>Fluent builder</returns>
+        /// <remarks>See <see href="https://docs.pact.io/pact_broker/advanced_topics/consumer_version_selectors"/></remarks>
+        IPactBrokerOptions ConsumerVersionSelectors(ICollection<ConsumerVersionSelector> selectors);
 
         /// <summary>
         /// Consumer version selectors to control which pacts are returned from the broker

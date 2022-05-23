@@ -125,7 +125,7 @@ namespace PactNet.Verifier
         /// <param name="selectors">Consumer version selectors</param>
         /// <returns>Fluent builder</returns>
         /// <remarks>See <see href="https://docs.pact.io/pact_broker/advanced_topics/consumer_version_selectors"/></remarks>
-        public IPactBrokerOptions ConsumerVersionSelectors(params ConsumerVersionSelector[] selectors)
+        public IPactBrokerOptions ConsumerVersionSelectors(ICollection<ConsumerVersionSelector> selectors)
         {
             string[] serialised = selectors.Select(s => JsonConvert.SerializeObject(s, ConsumerSelectorSettings)).ToArray();
 
@@ -133,6 +133,15 @@ namespace PactNet.Verifier
 
             return this;
         }
+
+        /// <summary>
+        /// Consumer version selectors to control which pacts are returned from the broker
+        /// </summary>
+        /// <param name="selectors">Consumer version selectors</param>
+        /// <returns>Fluent builder</returns>
+        /// <remarks>See <see href="https://docs.pact.io/pact_broker/advanced_topics/consumer_version_selectors"/></remarks>
+        public IPactBrokerOptions ConsumerVersionSelectors(params ConsumerVersionSelector[] selectors)
+            => this.ConsumerVersionSelectors((ICollection<ConsumerVersionSelector>)selectors);
 
         /// <summary>
         /// Include WIP pacts since the given date
