@@ -80,5 +80,14 @@ namespace PactNet.Verifier
         /// <param name="configure">Configure the publish options</param>
         /// <returns>Fluent builder</returns>
         IPactBrokerOptions PublishResults(string providerVersion, Action<IPactBrokerPublishOptions> configure);
+
+        /// <summary>
+        /// Publish results to the pact broker if the condition is met
+        /// </summary>
+        /// <param name="condition">Only publish if this condition is true</param>
+        /// <param name="providerVersion">Provider version</param>
+        /// <param name="configure">Configure the publish options</param>
+        /// <returns>Fluent builder</returns>
+        IPactBrokerOptions PublishResults(bool condition, string providerVersion, Action<IPactBrokerPublishOptions> configure);
     }
 }

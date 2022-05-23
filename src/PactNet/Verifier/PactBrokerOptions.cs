@@ -174,6 +174,16 @@ namespace PactNet.Verifier
         }
 
         /// <summary>
+        /// Publish results to the pact broker if the condition is met
+        /// </summary>
+        /// <param name="condition">Only publish if this condition is true</param>
+        /// <param name="providerVersion">Provider version</param>
+        /// <param name="configure">Configure the publish options</param>
+        /// <returns>Fluent builder</returns>
+        public IPactBrokerOptions PublishResults(bool condition, string providerVersion, Action<IPactBrokerPublishOptions> configure)
+            => condition ? this.PublishResults(providerVersion, configure) : this;
+
+        /// <summary>
         /// Finalise the configuration with the provider
         /// </summary>
         public void Apply()

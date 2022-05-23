@@ -137,6 +137,31 @@ namespace PactNet.Tests.Verifier
                                                               It.IsAny<string>()));
         }
 
+        [Fact]
+        public void PublishResults_ConditionMet_AddsPublishArgs()
+        {
+            this.options.PublishResults(true, "1.2.3", _ => { });
+            this.options.Apply();
+
+            this.mockProvider.Verify(p => p.SetPublishOptions("1.2.3",
+                                                              It.IsAny<Uri>(),
+                                                              It.IsAny<ICollection<string>>(),
+                                                              It.IsAny<string>()));
+        }
+
+        [Fact]
+        public void PublishResults_ConditionNotMet_DoesNotAddPublishArgs()
+        {
+            this.options.PublishResults(false, null, null);
+            this.options.Apply();
+
+            this.mockProvider.Verify(p => p.SetPublishOptions(It.IsAny<string>(),
+                                                              It.IsAny<Uri>(),
+                                                              It.IsAny<ICollection<string>>(),
+                                                              It.IsAny<string>()),
+                                     Times.Never);
+        }
+
         private void Verify(string username = null,
                             string password = null,
                             string token = null,
