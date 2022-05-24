@@ -10,7 +10,7 @@ namespace PactNet
     /// <summary>
     /// Mock response builder
     /// </summary>
-    public class ResponseBuilder : IResponseBuilderV2, IResponseBuilderV3
+    internal class ResponseBuilder : IResponseBuilderV2, IResponseBuilderV3
     {
         private readonly IMockServer server;
         private readonly InteractionHandle interaction;

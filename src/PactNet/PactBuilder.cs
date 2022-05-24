@@ -10,7 +10,7 @@ namespace PactNet
     /// <summary>
     /// Pact builder for the native backend
     /// </summary>
-    public class PactBuilder : IPactBuilderV2, IPactBuilderV3
+    internal class PactBuilder : IPactBuilderV2, IPactBuilderV3
     {
         private readonly IMockServer server;
         private readonly PactHandle pact;

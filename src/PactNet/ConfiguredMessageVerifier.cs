@@ -12,7 +12,7 @@ namespace PactNet
     /// <summary>
     /// Verifies a configured message interaction
     /// </summary>
-    public class ConfiguredMessageVerifier : IConfiguredMessageVerifier
+    internal class ConfiguredMessageVerifier : IConfiguredMessageVerifier
     {
         // the native message returned from the FFI always uses camel case property
         // names, but the inner content may use different settings supplied by the user

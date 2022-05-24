@@ -3,7 +3,7 @@ namespace PactNet.Models
     /// <summary>
     /// Placeholder for native message from backend
     /// </summary>
-    public class NativeMessage
+    internal class NativeMessage
     {
         /// <summary>
         /// The content

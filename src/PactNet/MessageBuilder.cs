@@ -8,7 +8,7 @@ namespace PactNet
     /// <summary>
     /// Mock request message builder
     /// </summary>
-    public class MessageBuilder : IMessageBuilderV3
+    internal class MessageBuilder : IMessageBuilderV3
     {
         private readonly IMessageMockServer server;
         private readonly MessagePactHandle pact;

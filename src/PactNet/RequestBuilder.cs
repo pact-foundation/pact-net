@@ -10,7 +10,7 @@ namespace PactNet
     /// <summary>
     /// Mock request builder
     /// </summary>
-    public class RequestBuilder : IRequestBuilderV2, IRequestBuilderV3
+    internal class RequestBuilder : IRequestBuilderV2, IRequestBuilderV3
     {
         private readonly IMockServer server;
         private readonly InteractionHandle interaction;
