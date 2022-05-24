@@ -208,6 +208,12 @@ public class SomethingApiTests : IClassFixture<SomethingApiFixture>
 }
 ```
 
+**IMPORTANT**: You can't use the [`Microsoft.AspNetCore.Mvc.Testing](https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.Testing)
+library to host your API for provider tests. If your tests are using `TestServer` or `WebApplicationFactory` then these are running
+the API with a special in-memory test server instead of running on a real TCP socket. This means the Rust internals can't call the
+API and therefore all of your provider tests will fail. You **must** host the API on a proper TCP socket, e.g. by using the `Host`
+method shown in the sample above, so that they can be called from non-.Net code.
+
 ![----------](https://raw.githubusercontent.com/pactumjs/pactum/master/assets/rainbow.png)
 
 ### Messaging Pacts
