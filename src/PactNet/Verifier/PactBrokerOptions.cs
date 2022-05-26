@@ -156,6 +156,14 @@ namespace PactNet.Verifier
         }
 
         /// <summary>
+        /// Publish results to the pact broker without any additional settings
+        /// </summary>
+        /// <param name="providerVersion">Provider version</param>
+        /// <returns>Fluent builder</returns>
+        public IPactBrokerOptions PublishResults(string providerVersion)
+            => this.PublishResults(providerVersion, _ => { });
+
+        /// <summary>
         /// Publish results to the pact broker
         /// </summary>
         /// <param name="providerVersion">Provider version</param>
@@ -172,6 +180,15 @@ namespace PactNet.Verifier
 
             return this;
         }
+
+        /// <summary>
+        /// Publish results to the pact broker without any additional settings, if the condition is met
+        /// </summary>
+        /// <param name="condition">Only publish if this condition is true</param>
+        /// <param name="providerVersion">Provider version</param>
+        /// <returns>Fluent builder</returns>
+        public IPactBrokerOptions PublishResults(bool condition, string providerVersion)
+            => this.PublishResults(condition, providerVersion, _ => { });
 
         /// <summary>
         /// Publish results to the pact broker if the condition is met
