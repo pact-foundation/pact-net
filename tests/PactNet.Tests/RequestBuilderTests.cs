@@ -179,6 +179,14 @@ namespace PactNet.Tests
         }
 
         [Fact]
+        public void WithBody_WhenCalled_AddsRequestBody()
+        {
+            this.builder.WithBody("foo,bar\nbaz,bash", "text/csv");
+
+            this.mockServer.Verify(s => s.WithRequestBody(this.handle, "text/csv", "foo,bar\nbaz,bash"));
+        }
+
+        [Fact]
         public void WillRespond_RequestConfigured_ReturnsResponseBuilder()
         {
             this.builder.WithRequest(HttpMethod.Delete, "/foo");
