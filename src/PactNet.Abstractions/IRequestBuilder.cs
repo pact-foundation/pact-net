@@ -91,6 +91,14 @@ namespace PactNet
         IRequestBuilderV2 WithJsonBody(dynamic body, JsonSerializerSettings settings, string contentType);
 
         /// <summary>
+        /// A pre-formatted body which should be used as-is for the request 
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <param name="contentType">Content type</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV2 WithBody(string body, string contentType);
+
+        /// <summary>
         /// Define the response to this request
         /// </summary>
         /// <returns>Response builder</returns>
@@ -189,6 +197,14 @@ namespace PactNet
         /// <param name="contentType">Content type override</param>
         /// <returns>Fluent builder</returns>
         IRequestBuilderV3 WithJsonBody(dynamic body, JsonSerializerSettings settings, string contentType);
+
+        /// <summary>
+        /// A pre-formatted body which should be used as-is for the request 
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <param name="contentType">Content type</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 WithBody(string body, string contentType);
 
         // TODO: Support binary and multi-part body
 

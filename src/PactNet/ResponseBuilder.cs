@@ -84,6 +84,15 @@ namespace PactNet
         IResponseBuilderV2 IResponseBuilderV2.WithJsonBody(dynamic body, JsonSerializerSettings settings)
             => this.WithJsonBody(body, settings);
 
+        /// <summary>
+        /// A pre-formatted body which should be used as-is for the response 
+        /// </summary>
+        /// <param name="body">Response body</param>
+        /// <param name="contentType">Content type</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV2 IResponseBuilderV2.WithBody(string body, string contentType)
+            => this.WithBody(body, contentType);
+
         #endregion
 
         #region IResponseBuilderV3 explicit implementation
@@ -138,6 +147,15 @@ namespace PactNet
         /// <returns>Fluent builder</returns>
         IResponseBuilderV3 IResponseBuilderV3.WithJsonBody(dynamic body, JsonSerializerSettings settings)
             => this.WithJsonBody(body, settings);
+
+        /// <summary>
+        /// A pre-formatted body which should be used as-is for the response 
+        /// </summary>
+        /// <param name="body">Response body</param>
+        /// <param name="contentType">Content type</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV3 IResponseBuilderV3.WithBody(string body, string contentType)
+            => this.WithBody(body, contentType);
 
         #endregion
 
@@ -211,8 +229,18 @@ namespace PactNet
         internal ResponseBuilder WithJsonBody(dynamic body, JsonSerializerSettings settings)
         {
             string serialised = JsonConvert.SerializeObject(body, settings);
+            return this.WithBody(serialised, "application/json");
+        }
 
-            this.server.WithResponseBody(this.interaction, "application/json", serialised);
+        /// <summary>
+        /// A pre-formatted body which should be used as-is for the response 
+        /// </summary>
+        /// <param name="body">Response body</param>
+        /// <param name="contentType">Content type</param>
+        /// <returns>Fluent builder</returns>
+        internal ResponseBuilder WithBody(string body, string contentType)
+        {
+            this.server.WithResponseBody(this.interaction, contentType, body);
             return this;
         }
     }

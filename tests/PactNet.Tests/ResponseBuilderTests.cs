@@ -111,5 +111,13 @@ namespace PactNet.Tests
 
             this.mockServer.Verify(s => s.WithResponseBody(this.handle, "application/json", @"{""foo"":42}"));
         }
+
+        [Fact]
+        public void WithBody_WhenCalled_AddsRequestBody()
+        {
+            this.builder.WithBody("foo,bar\nbaz,bash", "text/csv");
+
+            this.mockServer.Verify(s => s.WithResponseBody(this.handle, "text/csv", "foo,bar\nbaz,bash"));
+        }
     }
 }

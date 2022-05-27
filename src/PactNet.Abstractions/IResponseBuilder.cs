@@ -53,6 +53,14 @@ namespace PactNet
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
         IResponseBuilderV2 WithJsonBody(dynamic body, JsonSerializerSettings settings);
+
+        /// <summary>
+        /// A pre-formatted body which should be used as-is for the response 
+        /// </summary>
+        /// <param name="body">Response body</param>
+        /// <param name="contentType">Content type</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV2 WithBody(string body, string contentType);
     }
 
     /// <summary>
@@ -104,5 +112,13 @@ namespace PactNet
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
         IResponseBuilderV3 WithJsonBody(dynamic body, JsonSerializerSettings settings);
+
+        /// <summary>
+        /// A pre-formatted body which should be used as-is for the response 
+        /// </summary>
+        /// <param name="body">Response body</param>
+        /// <param name="contentType">Content type</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV3 WithBody(string body, string contentType);
     }
 }
