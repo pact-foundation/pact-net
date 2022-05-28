@@ -20,6 +20,12 @@
       - Complete rewrite to take advantage of new Rust core pact library shared between all language integrations
     </PackageReleaseNotes>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="..\..\docs\logo-128x128.png" Pack="true" PackagePath="\" Visible="false" />
   </ItemGroup>

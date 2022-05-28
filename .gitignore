@@ -62,3 +62,4 @@ dist/
 samples/ReadMe/Provider.Tests/Properties/launchSettings.json
 samples/ReadMe/Provider/Properties/launchSettings.json
 
+.idea/
