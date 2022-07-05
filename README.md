@@ -243,7 +243,7 @@ Due to using a shared native library instead of C# for the main Pact logic only 
 
 | Version | Stable | [Spec] Compatibility | Install            |
 | ------- | ------ | -------------------- | ------------------ |
-| 4.x     | Beta   | 2, 3                 | See [installation] |
+| 4.x     | Stable | 2, 3                 | See [installation] |
 | 3.x     | Stable | 2                    |                    |
 
 ## Roadmap
