@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Moq;
 using PactNet.Verifier;
 using Xunit;
@@ -15,7 +16,7 @@ namespace PactNet.Tests.Verifier
 
         public PactUriOptionsTests()
         {
-            this.mockProvider = new Mock<IVerifierProvider>(MockBehavior.Strict);
+            this.mockProvider = new Mock<IVerifierProvider>();
 
             this.options = new PactUriOptions(this.mockProvider.Object, Uri);
         }
@@ -56,6 +57,43 @@ namespace PactNet.Tests.Verifier
             this.options.Apply();
 
             this.mockProvider.Verify();
+        }
+
+        [Fact]
+        public void PublishResults_WhenCalled_AddsPublishArgs()
+        {
+            this.options.PublishResults("1.2.3", _ => { });
+            this.options.Apply();
+
+            this.mockProvider.Verify(p => p.SetPublishOptions("1.2.3",
+                                                              It.IsAny<Uri>(),
+                                                              It.IsAny<ICollection<string>>(),
+                                                              It.IsAny<string>()));
+        }
+
+        [Fact]
+        public void PublishResults_ConditionMet_AddsPublishArgs()
+        {
+            this.options.PublishResults(true, "1.2.3", _ => { });
+            this.options.Apply();
+
+            this.mockProvider.Verify(p => p.SetPublishOptions("1.2.3",
+                                                              It.IsAny<Uri>(),
+                                                              It.IsAny<ICollection<string>>(),
+                                                              It.IsAny<string>()));
+        }
+
+        [Fact]
+        public void PublishResults_ConditionNotMet_DoesNotAddPublishArgs()
+        {
+            this.options.PublishResults(false, null, null);
+            this.options.Apply();
+
+            this.mockProvider.Verify(p => p.SetPublishOptions(It.IsAny<string>(),
+                                                              It.IsAny<Uri>(),
+                                                              It.IsAny<ICollection<string>>(),
+                                                              It.IsAny<string>()),
+                                     Times.Never);
         }
     }
 }
