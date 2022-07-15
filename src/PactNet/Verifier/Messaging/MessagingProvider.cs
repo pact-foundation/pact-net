@@ -78,10 +78,13 @@ namespace PactNet.Verifier.Messaging
         /// <exception cref="InvalidOperationException">No local ports were available</exception>
         private static int FindUnusedPort()
         {
-            ICollection<int> used = IPGlobalProperties.GetIPGlobalProperties()
-                                                      .GetActiveTcpListeners()
-                                                      .Select(l => l.Port)
-                                                      .ToList();
+            IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
+
+            ICollection<int> used = properties.GetActiveTcpListeners()
+                                              .Concat(properties.GetActiveUdpListeners())
+                                              .Concat(properties.GetActiveTcpConnections().Select(tcp => tcp.LocalEndPoint))
+                                              .Select(l => l.Port)
+                                              .ToList();
 
             int port = Enumerable.Range(MinimumPort, (MaximumPort - MinimumPort))
                                  .FirstOrDefault(port => !used.Contains(port));
