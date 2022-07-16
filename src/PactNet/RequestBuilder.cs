@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using Newtonsoft.Json;
+using PactNet.Generators;
 using PactNet.Interop;
 using PactNet.Matchers;
 
@@ -177,10 +178,28 @@ namespace PactNet
         /// Set the request
         /// </summary>
         /// <param name="method">Request method</param>
+        /// <param name="generator">Path value generator</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 IRequestBuilderV3.WithRequest(HttpMethod method, IGenerator generator)
+            => this.WithRequest(method, generator);
+
+        /// <summary>
+        /// Set the request
+        /// </summary>
+        /// <param name="method">Request method</param>
         /// <param name="path">Request path</param>
         /// <returns>Fluent builder</returns>
         IRequestBuilderV3 IRequestBuilderV3.WithRequest(string method, string path)
             => this.WithRequest(method, path);
+
+        /// <summary>
+        /// Set the request
+        /// </summary>
+        /// <param name="method">Request method</param>
+        /// <param name="generator">Path value generator</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 IRequestBuilderV3.WithRequest(string method, IGenerator generator)
+            => this.WithRequest(method, generator);
 
         /// <summary>
         /// Add a query string parameter
@@ -191,6 +210,16 @@ namespace PactNet
         /// <remarks>You can add a query parameter with the same key multiple times</remarks>
         IRequestBuilderV3 IRequestBuilderV3.WithQuery(string key, string value)
             => this.WithQuery(key, value);
+
+        /// <summary>
+        /// Add a query string parameter
+        /// </summary>
+        /// <param name="key">Query parameter key</param>
+        /// <param name="generator">Query parameter value generator</param>
+        /// <returns>Fluent builder</returns>
+        /// <remarks>You can add a query parameter with the same key multiple times</remarks>
+        IRequestBuilderV3 IRequestBuilderV3.WithQuery(string key, IGenerator generator)
+            => this.WithQuery(key, generator);
 
         /// <summary>
         /// Add a request header
@@ -304,6 +333,15 @@ namespace PactNet
         /// Set the request
         /// </summary>
         /// <param name="method">Request method</param>
+        /// <param name="generator">Path value generator</param>
+        /// <returns>Fluent builder</returns>
+        internal RequestBuilder WithRequest(HttpMethod method, IGenerator generator)
+            => this.WithRequest(method.Method, generator);
+
+        /// <summary>
+        /// Set the request
+        /// </summary>
+        /// <param name="method">Request method</param>
         /// <param name="path">Request path</param>
         /// <returns>Fluent builder</returns>
         internal RequestBuilder WithRequest(string method, string path)
@@ -312,6 +350,18 @@ namespace PactNet
 
             this.server.WithRequest(this.interaction, method, path);
             return this;
+        }
+
+        /// <summary>
+        /// Set the request
+        /// </summary>
+        /// <param name="method">Request method</param>
+        /// <param name="generator">Path value generator</param>
+        /// <returns>Fluent builder</returns>
+        internal RequestBuilder WithRequest(string method, IGenerator generator)
+        {
+            var serialised = JsonConvert.SerializeObject(generator, this.defaultSettings);
+            return this.WithRequest(method, serialised);
         }
 
         /// <summary>
@@ -329,6 +379,20 @@ namespace PactNet
             this.server.WithQueryParameter(this.interaction, key, value, index);
             return this;
         }
+
+        /// <summary>
+        /// Add a query string parameter
+        /// </summary>
+        /// <param name="key">Query parameter key</param>
+        /// <param name="generator">Query parameter value generator</param>
+        /// <returns>Fluent builder</returns>
+        /// <remarks>You can add a query parameter with the same key multiple times</remarks>
+        internal RequestBuilder WithQuery(string key, IGenerator generator)
+        {
+            var serialised = JsonConvert.SerializeObject(generator, this.defaultSettings);
+            return this.WithQuery(key, serialised);
+        }
+
 
         /// <summary>
         /// Add a request header
