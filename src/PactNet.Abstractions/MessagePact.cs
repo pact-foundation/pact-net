@@ -5,6 +5,7 @@ namespace PactNet
     /// <summary>
     /// Pact
     /// </summary>
+    [Obsolete("Use Pact instead")]
     public class MessagePact : IMessagePactV3
     {
         /// <summary>
@@ -64,6 +65,7 @@ namespace PactNet
         /// <param name="consumer">Name of the consumer</param>
         /// <param name="provider">Name of the provider</param>
         /// <returns>v2 Pact</returns>
+        [Obsolete("Use Pact.V3 instead")]
         public static IMessagePactV3 V3(string consumer, string provider)
         {
             return new MessagePact(consumer, provider);
@@ -76,6 +78,7 @@ namespace PactNet
         /// <param name="provider">Name of the provider</param>
         /// <param name="config">Pact config</param>
         /// <returns>v3 Pact</returns>
+        [Obsolete("Use Pact.V3 instead")]
         public static IMessagePactV3 V3(string consumer, string provider, PactConfig config)
         {
             return new MessagePact(consumer, provider, config);

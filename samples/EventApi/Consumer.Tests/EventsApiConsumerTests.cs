@@ -37,7 +37,7 @@ namespace Consumer.Tests
             };
 
             IPactV2 pact = Pact.V2("Event API Consumer", "Event API", config);
-            this.pact = pact.UsingNativeBackend();
+            this.pact = pact.WithHttpInteractions();
         }
 
         [Fact]

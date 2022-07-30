@@ -1,12 +1,12 @@
 using System;
 using PactNet.Interop;
 
-namespace PactNet
+namespace PactNet.Drivers
 {
     /// <summary>
-    /// Mock server
+    /// Driver for synchronous HTTP interactions
     /// </summary>
-    internal interface IMockServer
+    internal interface ISynchronousHttpDriver : IInteractionDriver, ICompletedPactDriver
     {
         /// <summary>
         /// Create the mock server for the given pact handle
@@ -38,58 +38,6 @@ namespace PactNet
         /// <param name="mockServerPort">Mock server port</param>
         /// <returns>Cleanup successful</returns>
         bool CleanupMockServer(int mockServerPort);
-
-        /// <summary>
-        /// Write the pact file to disk
-        /// </summary>
-        /// <param name="mockServerPort">Mock server port</param>
-        /// <param name="directory">Directory of the pact file</param>
-        /// <param name="overwrite">Overwrite the existing pact file?</param>
-        /// <returns>Status code</returns>
-        /// <exception cref="InvalidOperationException">Failed to write pact file</exception>
-        void WritePactFile(int mockServerPort, string directory, bool overwrite);
-
-        /// <summary>
-        /// Create a new pact
-        /// </summary>
-        /// <param name="consumerName">Consumer name</param>
-        /// <param name="providerName">Provider name</param>
-        /// <returns>Pact handle</returns>
-        PactHandle NewPact(string consumerName, string providerName);
-
-        /// <summary>
-        /// Set the pact specification version
-        /// </summary>
-        /// <param name="pact">Pact handle</param>
-        /// <param name="version">Specification version</param>
-        /// <returns>Success</returns>
-        bool WithSpecification(PactHandle pact, PactSpecification version);
-
-        /// <summary>
-        /// Create a new interaction on the given pact
-        /// </summary>
-        /// <param name="pact">Pact handle</param>
-        /// <param name="description">Interaction description</param>
-        /// <returns></returns>
-        InteractionHandle NewInteraction(PactHandle pact, string description);
-
-        /// <summary>
-        /// Add a provider state to the interaction
-        /// </summary>
-        /// <param name="interaction">Interaction</param>
-        /// <param name="description">Provider state description</param>
-        /// <returns>Success</returns>
-        bool Given(InteractionHandle interaction, string description);
-
-        /// <summary>
-        /// Add a provider state with a parameter to the interaction
-        /// </summary>
-        /// <param name="interaction">Interaction</param>
-        /// <param name="description">Provider state description</param>
-        /// <param name="name">Parameter name</param>
-        /// <param name="value">Parameter value</param>
-        /// <returns>Success</returns>
-        bool GivenWithParam(InteractionHandle interaction, string description, string name, string value);
 
         /// <summary>
         /// Add a request to the interaction

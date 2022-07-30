@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using PactNet.Drivers;
 using PactNet.Exceptions;
 using PactNet.Internal;
 using PactNet.Interop;
@@ -12,7 +13,7 @@ namespace PactNet
     /// </summary>
     internal class PactBuilder : IPactBuilderV2, IPactBuilderV3
     {
-        private readonly IMockServer server;
+        private readonly ISynchronousHttpDriver driver;
         private readonly PactHandle pact;
         private readonly PactConfig config;
         private readonly int? port;
@@ -21,14 +22,14 @@ namespace PactNet
         /// <summary>
         /// Initialises a new instance of the <see cref="PactBuilder"/> class.
         /// </summary>
-        /// <param name="server">Mock server</param>
+        /// <param name="driver">Interaction driver</param>
         /// <param name="pact">Pact handle</param>
         /// <param name="config">Pact config</param>
         /// <param name="port">Optional port, otherwise one is dynamically allocated</param>
         /// <param name="host">Optional host, otherwise loopback is used</param>
-        internal PactBuilder(IMockServer server, PactHandle pact, PactConfig config, int? port = null, IPAddress host = IPAddress.Loopback)
+        internal PactBuilder(ISynchronousHttpDriver driver, PactHandle pact, PactConfig config, int? port = null, IPAddress host = IPAddress.Loopback)
         {
-            this.server = server;
+            this.driver = driver;
             this.pact = pact;
             this.config = config;
             this.port = port;
@@ -58,16 +59,16 @@ namespace PactNet
         /// <returns>Request builder</returns>
         internal RequestBuilder UponReceiving(string description)
         {
-            InteractionHandle interaction = this.server.NewInteraction(this.pact, description);
+            InteractionHandle interaction = this.driver.NewHttpInteraction(this.pact, description);
 
-            var requestBuilder = new RequestBuilder(this.server, interaction, this.config.DefaultJsonSettings);
+            var requestBuilder = new RequestBuilder(this.driver, interaction, this.config.DefaultJsonSettings);
             return requestBuilder;
         }
 
         /// <summary>
         /// Verify the configured interactions
         /// </summary>
-        /// <param name="interact">Action to perform the real interactions against the mock server</param>
+        /// <param name="interact">Action to perform the real interactions against the mock driver</param>
         /// <exception cref="PactFailureException">Failed to verify the interactions</exception>
         public void Verify(Action<IConsumerContext> interact)
         {
@@ -87,14 +88,14 @@ namespace PactNet
             finally
             {
                 this.PrintLogs(uri);
-                this.server.CleanupMockServer(uri.Port);
+                this.driver.CleanupMockServer(uri.Port);
             }
         }
 
         /// <summary>
         /// Verify the configured interactions
         /// </summary>
-        /// <param name="interact">Action to perform the real interactions against the mock server</param>
+        /// <param name="interact">Action to perform the real interactions against the mock driver</param>
         /// <exception cref="PactFailureException">Failed to verify the interactions</exception>
         public async Task VerifyAsync(Func<IConsumerContext, Task> interact)
         {
@@ -114,14 +115,14 @@ namespace PactNet
             finally
             {
                 this.PrintLogs(uri);
-                this.server.CleanupMockServer(uri.Port);
+                this.driver.CleanupMockServer(uri.Port);
             }
         }
 
         /// <summary>
-        /// Start the mock server
+        /// Start the mock driver
         /// </summary>
-        /// <returns>Mock server URI</returns>
+        /// <returns>Mock driver URI</returns>
         private Uri StartMockServer()
         {
             string hostIp = this.host switch
@@ -134,7 +135,7 @@ namespace PactNet
             string address = $"{hostIp}:{this.port.GetValueOrDefault(0)}";
 
             // TODO: add TLS support
-            int serverPort = this.server.CreateMockServerForPact(this.pact, address, false);
+            int serverPort = this.driver.CreateMockServerForPact(this.pact, address, false);
 
             var mockServerUrl = $"http://{hostIp}:{serverPort}";
             var uri = new Uri(mockServerUrl);
@@ -146,11 +147,11 @@ namespace PactNet
         /// </summary>
         private void VerifyInternal(Uri uri)
         {
-            string errors = this.server.MockServerMismatches(uri.Port);
+            string errors = this.driver.MockServerMismatches(uri.Port);
 
             if (string.IsNullOrWhiteSpace(errors) || errors == "[]")
             {
-                this.server.WritePactFile(uri.Port, this.config.PactDir, false);
+                this.driver.WritePactFile(this.pact, this.config.PactDir, false);
                 return;
             }
 
@@ -165,12 +166,12 @@ namespace PactNet
         /// <summary>
         /// Print logs to the configured outputs
         /// </summary>
-        /// <param name="uri">Mock server URI</param>
+        /// <param name="uri">Mock driver URI</param>
         private void PrintLogs(Uri uri)
         {
-            string logs = this.server.MockServerLogs(uri.Port);
+            string logs = this.driver.MockServerLogs(uri.Port);
 
-            this.config.WriteLine("Mock server logs:");
+            this.config.WriteLine("Mock driver logs:");
             this.config.WriteLine(string.Empty);
             this.config.WriteLine(logs);
         }

@@ -4,6 +4,7 @@ using AutoFixture;
 using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using PactNet.Drivers;
 using PactNet.Interop;
 using Xunit;
 
@@ -13,10 +14,10 @@ namespace PactNet.Tests
     {
         private readonly IMessageBuilderV3 builder;
 
-        private readonly Mock<IMessageMockServer> mockedServer;
+        private readonly Mock<IAsynchronousMessageDriver> mockDriver;
 
-        private readonly MessagePactHandle pact;
-        private readonly MessageHandle handle;
+        private readonly PactHandle pact;
+        private readonly InteractionHandle handle;
         private readonly PactConfig config;
 
         public MessageBuilderTests()
@@ -25,19 +26,19 @@ namespace PactNet.Tests
             var customization = new SupportMutableValueTypesCustomization();
             customization.Customize(fixture);
 
-            this.pact = fixture.Create<MessagePactHandle>();
-            this.handle = fixture.Create<MessageHandle>();
-            this.mockedServer = new Mock<IMessageMockServer>();
+            this.pact = fixture.Create<PactHandle>();
+            this.handle = fixture.Create<InteractionHandle>();
+            this.mockDriver = new Mock<IAsynchronousMessageDriver>();
             this.config = new PactConfig { DefaultJsonSettings = new JsonSerializerSettings() };
 
-            this.builder = new MessageBuilder(this.mockedServer.Object, this.pact, this.handle, this.config);
+            this.builder = new MessageBuilder(this.mockDriver.Object, this.pact, this.handle, this.config);
         }
 
         [Fact]
         public void Ctor_Throws_Exception_If_Server_Not_Set()
         {
             Assert.Throws<ArgumentNullException>(() =>
-                new MessagePactBuilder(null, new MessagePactHandle(), new PactConfig()));
+                new MessagePactBuilder(null, new PactHandle(), new PactConfig()));
         }
 
         [Fact]
@@ -45,7 +46,7 @@ namespace PactNet.Tests
         {
             this.builder.Given("provider state");
 
-            this.mockedServer.Verify(s => s.Given(this.handle, "provider state"));
+            this.mockDriver.Verify(s => s.Given(this.handle, "provider state"));
         }
 
         [Fact]
@@ -58,8 +59,8 @@ namespace PactNet.Tests
                     ["baz"] = "bash",
                 });
 
-            this.mockedServer.Verify(s => s.GivenWithParam(this.handle, "provider state", "foo", "bar"));
-            this.mockedServer.Verify(s => s.GivenWithParam(this.handle, "provider state", "baz", "bash"));
+            this.mockDriver.Verify(s => s.GivenWithParam(this.handle, "provider state", "foo", "bar"));
+            this.mockDriver.Verify(s => s.GivenWithParam(this.handle, "provider state", "baz", "bash"));
         }
 
         [Fact]
@@ -70,7 +71,7 @@ namespace PactNet.Tests
 
             this.builder.WithMetadata(expectedKey, expectedValue);
 
-            this.mockedServer.Verify(s => s.WithMetadata(this.handle, expectedKey, expectedValue));
+            this.mockDriver.Verify(s => s.WithMetadata(this.handle, expectedKey, expectedValue));
         }
 
         [Fact]
@@ -81,7 +82,7 @@ namespace PactNet.Tests
 
             this.builder.WithJsonContent(content);
 
-            this.mockedServer.Verify(s => s.WithContents(this.handle, "application/json", expected, 0));
+            this.mockDriver.Verify(s => s.WithContents(this.handle, "application/json", expected, 0));
         }
 
         [Fact]
@@ -95,7 +96,7 @@ namespace PactNet.Tests
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
             });
 
-            this.mockedServer.Verify(s => s.WithContents(this.handle, "application/json", expected, 0));
+            this.mockDriver.Verify(s => s.WithContents(this.handle, "application/json", expected, 0));
         }
     }
 }

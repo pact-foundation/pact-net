@@ -1,4 +1,5 @@
 using System;
+using PactNet.Drivers;
 using PactNet.Interop;
 
 namespace PactNet
@@ -8,22 +9,22 @@ namespace PactNet
     /// </summary>
     internal class MessagePactBuilder : IMessagePactBuilderV3
     {
-        private readonly IMessageMockServer server;
-        private readonly MessagePactHandle pact;
+        private readonly IAsynchronousMessageDriver driver;
+        private readonly PactHandle pact;
         private readonly PactConfig config;
-        private MessageHandle message;
+        private InteractionHandle message;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="MessagePactBuilder"/> class.
         /// </summary>
-        /// <param name="server">Mock server</param>
+        /// <param name="driver">Interaction driver</param>
         /// <param name="pact">the message pact handle</param>
         /// <param name="config">the message pact configuration</param>
-        internal MessagePactBuilder(IMessageMockServer server, MessagePactHandle pact, PactConfig config)
+        internal MessagePactBuilder(IAsynchronousMessageDriver driver, PactHandle pact, PactConfig config)
         {
+            this.driver = driver ?? throw new ArgumentNullException(nameof(driver));
             this.pact = pact;
             this.config = config ?? throw new ArgumentNullException(nameof(config));
-            this.server = server ?? throw new ArgumentNullException(nameof(server));
         }
 
         #region IMessagePactBuilderV3 explicit implementation
@@ -45,11 +46,11 @@ namespace PactNet
         /// <returns>Fluent builder</returns>
         internal IMessageBuilderV3 ExpectsToReceive(string description)
         {
-            this.message = this.server.NewMessage(this.pact, description);
+            this.message = this.driver.NewMessageInteraction(this.pact, description);
 
-            this.server.ExpectsToReceive(this.message, description);
+            this.driver.ExpectsToReceive(this.message, description);
 
-            return new MessageBuilder(this.server, this.pact, this.message, this.config);
+            return new MessageBuilder(this.driver, this.pact, this.message, this.config);
         }
 
         /// <summary>
@@ -61,7 +62,7 @@ namespace PactNet
         /// <returns>Fluent builder</returns>
         internal IMessagePactBuilderV3 WithPactMetadata(string @namespace, string name, string value)
         {
-            this.server.WithMessagePactMetadata(this.pact, @namespace, name, value);
+            this.driver.WithMessagePactMetadata(this.pact, @namespace, name, value);
 
             return this;
         }

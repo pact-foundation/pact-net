@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
+using PactNet.Drivers;
 using PactNet.Exceptions;
 using PactNet.Interop;
 using PactNet.Models;
@@ -21,21 +22,21 @@ namespace PactNet
             ContractResolver = new CamelCasePropertyNamesContractResolver()
         };
 
-        private readonly MessageHandle message;
-        private readonly IMessageMockServer server;
-        private readonly MessagePactHandle pact;
+        private readonly IAsynchronousMessageDriver driver;
+        private readonly PactHandle pact;
+        private readonly InteractionHandle message;
         private readonly PactConfig config;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="ConfiguredMessageVerifier"/>
         /// </summary>
-        /// <param name="server">Message server</param>
+        /// <param name="driver">Interaction driver</param>
         /// <param name="pact">Pact handle</param>
         /// <param name="message">Message handle</param>
         /// <param name="config">Pact configuration</param>
-        internal ConfiguredMessageVerifier(IMessageMockServer server, MessagePactHandle pact, MessageHandle message, PactConfig config)
+        internal ConfiguredMessageVerifier(IAsynchronousMessageDriver driver, PactHandle pact, InteractionHandle message, PactConfig config)
         {
-            this.server = server;
+            this.driver = driver;
             this.pact = pact;
             this.message = message;
             this.config = config;
@@ -88,7 +89,7 @@ namespace PactNet
         /// <returns>the message</returns>
         private T MessageReified<T>()
         {
-            string reified = this.server.Reify(this.message);
+            string reified = this.driver.Reify(this.message);
             NativeMessage content = JsonConvert.DeserializeObject<NativeMessage>(reified, NativeMessageSettings);
 
             string contentString = ((JToken)content.Contents).ToString(Formatting.None);
@@ -102,7 +103,7 @@ namespace PactNet
         /// </summary>
         private void WritePact()
         {
-            this.server.WriteMessagePactFile(this.pact, this.config.PactDir, false);
+            this.driver.WritePactFile(this.pact, this.config.PactDir, false);
         }
     }
 }

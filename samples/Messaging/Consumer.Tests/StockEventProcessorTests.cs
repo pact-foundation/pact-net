@@ -16,7 +16,7 @@ namespace Consumer.Tests
 
         public StockEventProcessorTests(ITestOutputHelper output)
         {
-            IMessagePactV3 v3 = MessagePact.V3("Stock Event Consumer", "Stock Event Producer", new PactConfig
+            IPactV3 v3 = Pact.V3("Stock Event Consumer", "Stock Event Producer", new PactConfig
             {
                 PactDir = "../../../pacts/",
                 DefaultJsonSettings = new JsonSerializerSettings
@@ -29,7 +29,7 @@ namespace Consumer.Tests
                 }
             });
 
-            this.messagePact = v3.UsingNativeBackend();
+            this.messagePact = v3.WithMessageInteractions();
         }
 
         [Fact]
