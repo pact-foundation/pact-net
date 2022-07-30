@@ -24,7 +24,7 @@ namespace ReadMe.Consumer.Tests
             });
 
             // Initialize Rust backend
-            this.pactBuilder = pact.UsingNativeBackend();
+            this.pactBuilder = pact.WithHttpInteractions();
         }
 
         [Fact]

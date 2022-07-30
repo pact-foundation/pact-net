@@ -1,8 +1,11 @@
+using System;
+
 namespace PactNet
 {
     /// <summary>
     /// A messaging messagePact between a consumer and a provider
     /// </summary>
+    [Obsolete("Use IPact instead")]
     public interface IMessagePact
     {
         /// <summary>
@@ -24,6 +27,7 @@ namespace PactNet
     /// <summary>
     /// Marker interface for a v3 message Pact
     /// </summary>
+    [Obsolete("Use IPactV3 instead")]
     public interface IMessagePactV3 : IMessagePact
     {
     }

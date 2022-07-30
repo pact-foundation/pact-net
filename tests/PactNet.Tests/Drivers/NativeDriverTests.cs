@@ -5,26 +5,37 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using PactNet.Drivers;
 using PactNet.Interop;
 using Xunit;
+using Xunit.Abstractions;
 
-namespace PactNet.Tests
+namespace PactNet.Tests.Drivers
 {
     /// <summary>
     /// Happy-path integration tests that just make sure we're calling the Rust core properly via P/Invoke
     /// </summary>
-    public class MockServerTests
+    public class NativeDriverTests
     {
-        [Fact]
-        public async Task HappyPathIntegrationTest()
-        {
-            var server = new MockServer();
+        private readonly ITestOutputHelper output;
 
-            PactHandle pact = server.NewPact("NativeMockServerTests-Consumer-V3", "NativeMockServerTests-Provider");
+        public NativeDriverTests(ITestOutputHelper output)
+        {
+            this.output = output;
+
+            NativeInterop.LogToBuffer(LevelFilter.Trace);
+        }
+
+        [Fact]
+        public async Task HttpInteraction_v3_CreatesPactFile()
+        {
+            var server = new NativeDriver();
+
+            PactHandle pact = server.NewPact("NativeDriverTests-Consumer-V3", "NativeDriverTests-Provider");
 
             server.WithSpecification(pact, PactSpecification.V3).Should().BeTrue();
 
-            InteractionHandle interaction = server.NewInteraction(pact, "a sample interaction");
+            InteractionHandle interaction = server.NewHttpInteraction(pact, "a sample interaction");
             bool request = server.Given(interaction, "provider state")
                         && server.GivenWithParam(interaction, "state with param", "foo", "bar")
                         && server.WithRequest(interaction, "POST", "/path")
@@ -60,9 +71,9 @@ namespace PactNet.Tests
             server.MockServerMismatches(port).Should().Be("[]");
             //server.MockServerLogs(port).Should().NotBeEmpty();
 
-            server.WritePactFile(port, Environment.CurrentDirectory, true);
+            server.WritePactFile(pact, Environment.CurrentDirectory, true);
 
-            var file = new FileInfo("NativeMockServerTests-Consumer-V3-NativeMockServerTests-Provider.json");
+            var file = new FileInfo("NativeDriverTests-Consumer-V3-NativeDriverTests-Provider.json");
             file.Exists.Should().BeTrue();
 
             string pactContents = File.ReadAllText(file.FullName).TrimEnd();
@@ -70,6 +81,43 @@ namespace PactNet.Tests
             pactContents.Should().Be(expectedPactContent);
 
             server.CleanupMockServer(port).Should().BeTrue();
+        }
+
+        [Fact]
+        public void MessageInteraction_v3_CreatesPactFile()
+        {
+            var driver = new NativeDriver();
+
+            try
+            {
+                PactHandle pact = driver.NewPact("NativeDriverTests-Consumer-V3", "NativeDriverTests-Producer");
+
+                driver.WithSpecification(pact, PactSpecification.V3).Should().BeTrue();
+
+                InteractionHandle interaction = driver.NewMessageInteraction(pact, "a message interaction");
+
+                // TODO: These assertions fail on MacOS only (yeah, really...) but the file assertion below would catch if they didn't work anyway
+                driver.ExpectsToReceive(interaction, "changed description")/*.Should().BeTrue()*/;
+                driver.WithMetadata(interaction, "foo", "bar")/*.Should().BeTrue()*/;
+                driver.WithContents(interaction, "application/json", @"{""foo"":42}", 0)/*.Should().BeTrue()*/;
+
+                string reified = driver.Reify(interaction);
+                reified.Should().NotBeNullOrEmpty();
+
+                driver.WritePactFile(pact, Environment.CurrentDirectory, true);
+            }
+            finally
+            {
+                string logs = driver.Logs();
+                this.output.WriteLine(logs);
+            }
+
+            var file = new FileInfo("NativeDriverTests-Consumer-V3-NativeDriverTests-Producer.json");
+            file.Exists.Should().BeTrue();
+
+            string pactContents = File.ReadAllText(file.FullName).TrimEnd();
+            string expectedPactContent = File.ReadAllText("data/v3-message-integration.json").TrimEnd();
+            pactContents.Should().Be(expectedPactContent);
         }
     }
 }

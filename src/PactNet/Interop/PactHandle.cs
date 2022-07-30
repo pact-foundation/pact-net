@@ -1,4 +1,3 @@
-using System;
 using System.Runtime.InteropServices;
 
 namespace PactNet.Interop
@@ -6,6 +5,6 @@ namespace PactNet.Interop
     [StructLayout(LayoutKind.Sequential)]
     internal readonly struct PactHandle
     {
-        public readonly UIntPtr PactRef;
+        public readonly ushort PactRef;
     }
 }

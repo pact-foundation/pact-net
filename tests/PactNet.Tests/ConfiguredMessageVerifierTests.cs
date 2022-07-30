@@ -5,6 +5,7 @@ using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
+using PactNet.Drivers;
 using PactNet.Exceptions;
 using PactNet.Interop;
 using PactNet.Models;
@@ -29,18 +30,18 @@ namespace PactNet.Tests
 
         private readonly ConfiguredMessageVerifier verifier;
 
-        private readonly Mock<IMessageMockServer> mockServer;
+        private readonly Mock<IAsynchronousMessageDriver> mockServer;
 
-        private readonly MessagePactHandle pact;
-        private readonly MessageHandle message;
+        private readonly PactHandle pact;
+        private readonly InteractionHandle message;
         private readonly PactConfig config;
 
         public ConfiguredMessageVerifierTests()
         {
-            this.mockServer = new Mock<IMessageMockServer>();
+            this.mockServer = new Mock<IAsynchronousMessageDriver>();
 
-            this.pact = new MessagePactHandle();
-            this.message = new MessageHandle();
+            this.pact = new PactHandle();
+            this.message = new InteractionHandle();
             this.config = new PactConfig { PactDir = "/path/to/pacts" };
 
             this.verifier = new ConfiguredMessageVerifier(this.mockServer.Object, this.pact, this.message, this.config);
@@ -53,7 +54,7 @@ namespace PactNet.Tests
 
             this.verifier.Verify<Message>(m => m.Should().BeEquivalentTo(contents));
 
-            this.mockServer.Verify(s => s.WriteMessagePactFile(this.pact, this.config.PactDir, false));
+            this.mockServer.Verify(s => s.WritePactFile(this.pact, this.config.PactDir, false));
         }
 
         [Fact]
@@ -88,7 +89,7 @@ namespace PactNet.Tests
                 // ignore
             }
 
-            this.mockServer.Verify(s => s.WriteMessagePactFile(It.IsAny<MessagePactHandle>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
+            this.mockServer.Verify(s => s.WritePactFile(It.IsAny<PactHandle>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
         }
 
         [Fact]
@@ -102,7 +103,7 @@ namespace PactNet.Tests
                 return Task.CompletedTask;
             });
 
-            this.mockServer.Verify(s => s.WriteMessagePactFile(this.pact, this.config.PactDir, false));
+            this.mockServer.Verify(s => s.WritePactFile(this.pact, this.config.PactDir, false));
         }
 
         [Fact]
@@ -129,7 +130,7 @@ namespace PactNet.Tests
                 // ignore
             }
 
-            this.mockServer.Verify(s => s.WriteMessagePactFile(It.IsAny<MessagePactHandle>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
+            this.mockServer.Verify(s => s.WritePactFile(It.IsAny<PactHandle>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
         }
 
         private Message SetupMessage(JsonSerializerSettings contentSettings = null)

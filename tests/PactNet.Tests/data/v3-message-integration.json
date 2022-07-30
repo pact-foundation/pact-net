@@ -1,0 +1,29 @@
+{
+  "consumer": {
+    "name": "NativeDriverTests-Consumer-V3"
+  },
+  "messages": [
+    {
+      "contents": {
+        "foo": 42
+      },
+      "description": "changed description",
+      "metadata": {
+        "contentType": "application/json",
+        "foo": "bar"
+      }
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "ffi": "0.3.5",
+      "models": "0.4.1"
+    },
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  },
+  "provider": {
+    "name": "NativeDriverTests-Producer"
+  }
+}

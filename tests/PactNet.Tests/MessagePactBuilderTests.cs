@@ -1,6 +1,7 @@
 ﻿using System;
 using FluentAssertions;
 using Moq;
+using PactNet.Drivers;
 using PactNet.Interop;
 using Xunit;
 
@@ -10,19 +11,19 @@ namespace PactNet.Tests
     {
         private readonly MessagePactBuilder builder;
 
-        private readonly Mock<IMessageMockServer> mockServer;
+        private readonly Mock<IAsynchronousMessageDriver> mockDriver;
 
-        private readonly MessagePactHandle handle;
+        private readonly PactHandle handle;
         private readonly PactConfig config;
 
         public MessagePactBuilderTests()
         {
-            this.mockServer = new Mock<IMessageMockServer>();
+            this.mockDriver = new Mock<IAsynchronousMessageDriver>();
 
-            this.handle = new MessagePactHandle();
+            this.handle = new PactHandle();
             this.config = new PactConfig();
 
-            this.builder = new MessagePactBuilder(this.mockServer.Object, this.handle, this.config);
+            this.builder = new MessagePactBuilder(this.mockDriver.Object, this.handle, this.config);
         }
 
         [Fact]
@@ -41,7 +42,7 @@ namespace PactNet.Tests
         {
             Action action = () =>
             {
-                var _ = new MessagePactBuilder(this.mockServer.Object, this.handle, null);
+                var _ = new MessagePactBuilder(this.mockDriver.Object, this.handle, null);
             };
 
             action.Should().Throw<ArgumentNullException>();
@@ -50,15 +51,15 @@ namespace PactNet.Tests
         [Fact]
         public void ExpectsToReceive_WhenCalled_StartsNewMessage()
         {
-            var message = new MessageHandle();
+            var message = new InteractionHandle();
 
-            this.mockServer
-                .Setup(s => s.NewMessage(this.handle, "a message"))
+            this.mockDriver
+                .Setup(s => s.NewMessageInteraction(this.handle, "a message"))
                 .Returns(message);
 
             this.builder.ExpectsToReceive("a message");
 
-            this.mockServer.Verify(s => s.ExpectsToReceive(message, "a message"), Times.Once);
+            this.mockDriver.Verify(s => s.ExpectsToReceive(message, "a message"), Times.Once);
         }
 
         [Fact]
@@ -66,7 +67,7 @@ namespace PactNet.Tests
         {
             this.builder.WithPactMetadata("test", "name", "value");
 
-            this.mockServer.Verify(s => s.WithMessagePactMetadata(this.handle, "test", "name", "value"));
+            this.mockDriver.Verify(s => s.WithMessagePactMetadata(this.handle, "test", "name", "value"));
         }
 
         [Fact]
