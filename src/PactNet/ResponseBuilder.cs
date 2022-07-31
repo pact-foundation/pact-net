@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net;
 using Newtonsoft.Json;
 using PactNet.Drivers;
-using PactNet.Interop;
 using PactNet.Matchers;
 
 namespace PactNet
@@ -13,8 +12,7 @@ namespace PactNet
     /// </summary>
     internal class ResponseBuilder : IResponseBuilderV2, IResponseBuilderV3
     {
-        private readonly ISynchronousHttpDriver driver;
-        private readonly InteractionHandle interaction;
+        private readonly IHttpInteractionDriver driver;
         private readonly JsonSerializerSettings defaultSettings;
         private readonly Dictionary<string, uint> headerCounts;
 
@@ -22,12 +20,10 @@ namespace PactNet
         /// Initialises a new instance of the <see cref="ResponseBuilder"/> class.
         /// </summary>
         /// <param name="driver">Interaction driver</param>
-        /// <param name="interaction">Interaction handle</param>
         /// <param name="defaultSettings">Default JSON serializer settings</param>
-        internal ResponseBuilder(ISynchronousHttpDriver driver, InteractionHandle interaction, JsonSerializerSettings defaultSettings)
+        internal ResponseBuilder(IHttpInteractionDriver driver, JsonSerializerSettings defaultSettings)
         {
             this.driver = driver;
-            this.interaction = interaction;
             this.defaultSettings = defaultSettings;
             this.headerCounts = new Dictionary<string, uint>(StringComparer.OrdinalIgnoreCase);
         }
@@ -169,7 +165,7 @@ namespace PactNet
         {
             ushort converted = (ushort)status;
 
-            this.driver.ResponseStatus(this.interaction, converted);
+            this.driver.WithResponseStatus(converted);
             return this;
         }
 
@@ -180,7 +176,7 @@ namespace PactNet
         /// <returns>Fluent builder</returns>
         internal ResponseBuilder WithStatus(ushort status)
         {
-            this.driver.ResponseStatus(this.interaction, status);
+            this.driver.WithResponseStatus(status);
             return this;
         }
 
@@ -195,7 +191,7 @@ namespace PactNet
             uint index = this.headerCounts.ContainsKey(key) ? this.headerCounts[key] + 1 : 0;
             this.headerCounts[key] = index;
 
-            this.driver.WithResponseHeader(this.interaction, key, value, index);
+            this.driver.WithResponseHeader(key, value, index);
 
             return this;
         }
@@ -241,7 +237,7 @@ namespace PactNet
         /// <returns>Fluent builder</returns>
         internal ResponseBuilder WithBody(string body, string contentType)
         {
-            this.driver.WithResponseBody(this.interaction, contentType, body);
+            this.driver.WithResponseBody(contentType, body);
             return this;
         }
     }

@@ -5,7 +5,6 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using PactNet.Drivers;
 using PactNet.Exceptions;
-using PactNet.Interop;
 using PactNet.Models;
 
 namespace PactNet
@@ -22,23 +21,17 @@ namespace PactNet
             ContractResolver = new CamelCasePropertyNamesContractResolver()
         };
 
-        private readonly IAsynchronousMessageDriver driver;
-        private readonly PactHandle pact;
-        private readonly InteractionHandle message;
+        private readonly IMessageInteractionDriver driver;
         private readonly PactConfig config;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="ConfiguredMessageVerifier"/>
         /// </summary>
-        /// <param name="driver">Interaction driver</param>
-        /// <param name="pact">Pact handle</param>
-        /// <param name="message">Message handle</param>
+        /// <param name="driver">Pact driver</param>
         /// <param name="config">Pact configuration</param>
-        internal ConfiguredMessageVerifier(IAsynchronousMessageDriver driver, PactHandle pact, InteractionHandle message, PactConfig config)
+        internal ConfiguredMessageVerifier(IMessageInteractionDriver driver, PactConfig config)
         {
             this.driver = driver;
-            this.pact = pact;
-            this.message = message;
             this.config = config;
         }
 
@@ -54,11 +47,11 @@ namespace PactNet
 
                 handler(messageReified);
 
-                this.WritePact();
+                this.driver.WritePactFile(this.config.PactDir);
             }
             catch (Exception e)
             {
-                throw new PactMessageConsumerVerificationException($"The message {this.message} could not be verified by the consumer handler", e);
+                throw new PactMessageConsumerVerificationException($"The message could not be verified by the consumer handler", e);
             }
         }
 
@@ -74,11 +67,11 @@ namespace PactNet
 
                 await handler(messageReified);
 
-                this.WritePact();
+                this.driver.WritePactFile(this.config.PactDir);
             }
             catch (Exception e)
             {
-                throw new PactMessageConsumerVerificationException($"The message {this.message} could not be verified by the consumer handler", e);
+                throw new PactMessageConsumerVerificationException($"The message could not be verified by the consumer handler", e);
             }
         }
 
@@ -89,21 +82,13 @@ namespace PactNet
         /// <returns>the message</returns>
         private T MessageReified<T>()
         {
-            string reified = this.driver.Reify(this.message);
+            string reified = this.driver.Reify();
             NativeMessage content = JsonConvert.DeserializeObject<NativeMessage>(reified, NativeMessageSettings);
 
             string contentString = ((JToken)content.Contents).ToString(Formatting.None);
             T messageReified = JsonConvert.DeserializeObject<T>(contentString, this.config.DefaultJsonSettings);
 
             return messageReified;
-        }
-
-        /// <summary>
-        /// Write the pact file
-        /// </summary>
-        private void WritePact()
-        {
-            this.driver.WritePactFile(this.pact, this.config.PactDir, false);
         }
     }
 }

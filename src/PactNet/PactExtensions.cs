@@ -59,10 +59,12 @@ namespace PactNet
         /// </remarks>
         public static IPactBuilderV2 WithHttpInteractions(this IPactV2 pact, int? port = null, IPAddress host = IPAddress.Loopback)
         {
-            NativeDriver server = new NativeDriver();
-            PactHandle handle = InitialisePact(server, pact, PactSpecification.V2);
+            InitialiseLogging(pact.Config.LogLevel);
 
-            var builder = new PactBuilder(server, handle, pact.Config, port, host);
+            IPactDriver driver = new PactDriver();
+            IHttpPactDriver httpPact = driver.NewHttpPact(pact.Consumer, pact.Provider, PactSpecification.V2);
+
+            var builder = new PactBuilder(httpPact, pact.Config, port, host);
             return builder;
         }
 
@@ -80,10 +82,12 @@ namespace PactNet
         /// </remarks>
         public static IPactBuilderV3 WithHttpInteractions(this IPactV3 pact, int? port = null, IPAddress host = IPAddress.Loopback)
         {
-            NativeDriver driver = new NativeDriver();
-            PactHandle handle = InitialisePact(driver, pact, PactSpecification.V3);
+            InitialiseLogging(pact.Config.LogLevel);
 
-            var builder = new PactBuilder(driver, handle, pact.Config, port, host);
+            IPactDriver driver = new PactDriver();
+            IHttpPactDriver httpPact = driver.NewHttpPact(pact.Consumer, pact.Provider, PactSpecification.V3);
+
+            var builder = new PactBuilder(httpPact, pact.Config, port, host);
             return builder;
         }
 
@@ -106,29 +110,13 @@ namespace PactNet
         /// <returns>Pact builder</returns>
         public static IMessagePactBuilderV3 WithMessageInteractions(this IPactV3 pact)
         {
-            NativeDriver driver = new NativeDriver();
-            PactHandle handle = InitialisePact(driver, pact, PactSpecification.V3);
-
-            var builder = new MessagePactBuilder(driver, handle, pact.Config);
-            return builder;
-        }
-
-        /// <summary>
-        /// Initialise a new pact on the server with the correct version
-        /// </summary>
-        /// <param name="pact">Pact details</param>
-        /// <param name="driver">Server</param>
-        /// <param name="version">Spec version</param>
-        /// <returns>Initialised pact handle</returns>
-        private static PactHandle InitialisePact(INewPactDriver driver, IPact pact, PactSpecification version)
-        {
-            // TODO: Create the driver inside here and return IInteractionDriver instead, with the handle already wrapped inside
-
             InitialiseLogging(pact.Config.LogLevel);
 
-            PactHandle handle = driver.NewPact(pact.Consumer, pact.Provider);
-            driver.WithSpecification(handle, version);
-            return handle;
+            IPactDriver driver = new PactDriver();
+            IMessagePactDriver messagePact = driver.NewMessagePact(pact.Consumer, pact.Provider, PactSpecification.V3);
+
+            var builder = new MessagePactBuilder(messagePact, pact.Config);
+            return builder;
         }
 
         /// <summary>

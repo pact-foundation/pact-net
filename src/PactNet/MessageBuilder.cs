@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using PactNet.Drivers;
-using PactNet.Interop;
 
 namespace PactNet
 {
@@ -11,23 +10,17 @@ namespace PactNet
     /// </summary>
     internal class MessageBuilder : IMessageBuilderV3
     {
-        private readonly IAsynchronousMessageDriver driver;
-        private readonly PactHandle pact;
-        private readonly InteractionHandle message;
+        private readonly IMessageInteractionDriver driver;
         private readonly PactConfig config;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="MessagePactBuilder"/> class.
         /// </summary>
         /// <param name="server">Interaction driver</param>
-        /// <param name="pact">Pact handle</param>
-        /// <param name="message">Message handle</param>
         /// <param name="config">Pact config</param>
-        internal MessageBuilder(IAsynchronousMessageDriver server, PactHandle pact, InteractionHandle message, PactConfig config)
+        internal MessageBuilder(IMessageInteractionDriver server, PactConfig config)
         {
             this.driver = server ?? throw new ArgumentNullException(nameof(server));
-            this.pact = pact;
-            this.message = message;
             this.config = config;
         }
 
@@ -64,7 +57,7 @@ namespace PactNet
         /// <returns>Fluent builder</returns>
         internal MessageBuilder Given(string providerState)
         {
-            this.driver.Given(this.message, providerState);
+            this.driver.Given(providerState);
 
             return this;
         }
@@ -79,7 +72,7 @@ namespace PactNet
         {
             foreach (var param in parameters)
             {
-                this.driver.GivenWithParam(this.message, providerState, param.Key, param.Value);
+                this.driver.GivenWithParam(providerState, param.Key, param.Value);
             }
 
             return this;
@@ -93,7 +86,7 @@ namespace PactNet
         /// <returns>Fluent builder</returns>
         internal MessageBuilder WithMetadata(string key, string value)
         {
-            this.driver.WithMetadata(this.message, key, value);
+            this.driver.WithMetadata(key, value);
 
             return this;
         }
@@ -115,9 +108,9 @@ namespace PactNet
         {
             string serialised = JsonConvert.SerializeObject(body, settings);
 
-            this.driver.WithContents(this.message, "application/json", serialised, 0);
+            this.driver.WithContents("application/json", serialised, 0);
 
-            return new ConfiguredMessageVerifier(this.driver, this.pact, this.message, this.config);
+            return new ConfiguredMessageVerifier(this.driver, this.config);
         }
 
         #endregion Internal Methods

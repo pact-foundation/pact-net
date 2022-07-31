@@ -7,7 +7,6 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using PactNet.Drivers;
 using PactNet.Exceptions;
-using PactNet.Interop;
 using PactNet.Models;
 using Xunit;
 
@@ -30,21 +29,17 @@ namespace PactNet.Tests
 
         private readonly ConfiguredMessageVerifier verifier;
 
-        private readonly Mock<IAsynchronousMessageDriver> mockServer;
-
-        private readonly PactHandle pact;
-        private readonly InteractionHandle message;
+        private readonly Mock<IMessageInteractionDriver> mockDriver;
+        
         private readonly PactConfig config;
 
         public ConfiguredMessageVerifierTests()
         {
-            this.mockServer = new Mock<IAsynchronousMessageDriver>();
-
-            this.pact = new PactHandle();
-            this.message = new InteractionHandle();
+            this.mockDriver = new Mock<IMessageInteractionDriver>();
+            
             this.config = new PactConfig { PactDir = "/path/to/pacts" };
 
-            this.verifier = new ConfiguredMessageVerifier(this.mockServer.Object, this.pact, this.message, this.config);
+            this.verifier = new ConfiguredMessageVerifier(this.mockDriver.Object, this.config);
         }
 
         [Fact]
@@ -54,7 +49,7 @@ namespace PactNet.Tests
 
             this.verifier.Verify<Message>(m => m.Should().BeEquivalentTo(contents));
 
-            this.mockServer.Verify(s => s.WritePactFile(this.pact, this.config.PactDir, false));
+            this.mockDriver.Verify(s => s.WritePactFile(this.config.PactDir));
         }
 
         [Fact]
@@ -89,7 +84,7 @@ namespace PactNet.Tests
                 // ignore
             }
 
-            this.mockServer.Verify(s => s.WritePactFile(It.IsAny<PactHandle>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
+            this.mockDriver.Verify(s => s.WritePactFile(It.IsAny<string>()), Times.Never);
         }
 
         [Fact]
@@ -103,7 +98,7 @@ namespace PactNet.Tests
                 return Task.CompletedTask;
             });
 
-            this.mockServer.Verify(s => s.WritePactFile(this.pact, this.config.PactDir, false));
+            this.mockDriver.Verify(s => s.WritePactFile(this.config.PactDir));
         }
 
         [Fact]
@@ -130,7 +125,7 @@ namespace PactNet.Tests
                 // ignore
             }
 
-            this.mockServer.Verify(s => s.WritePactFile(It.IsAny<PactHandle>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
+            this.mockDriver.Verify(s => s.WritePactFile(It.IsAny<string>()), Times.Never);
         }
 
         private Message SetupMessage(JsonSerializerSettings contentSettings = null)
@@ -150,8 +145,8 @@ namespace PactNet.Tests
             };
 
             // the native message returned from the FFI is always camel-cased
-            this.mockServer
-                .Setup(s => s.Reify(this.message))
+            this.mockDriver
+                .Setup(s => s.Reify())
                 .Returns(JsonConvert.SerializeObject(native, CamelCase));
 
             return contents;

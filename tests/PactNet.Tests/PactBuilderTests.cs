@@ -5,7 +5,6 @@ using Moq;
 using PactNet.Drivers;
 using PactNet.Exceptions;
 using PactNet.Infrastructure.Outputters;
-using PactNet.Interop;
 using Xunit;
 
 namespace PactNet.Tests
@@ -14,24 +13,26 @@ namespace PactNet.Tests
     {
         private readonly PactBuilder builder;
 
-        private readonly Mock<ISynchronousHttpDriver> mockDriver;
+        private readonly Mock<IHttpPactDriver> mockDriver;
+        private readonly Mock<IHttpInteractionDriver> mockInteractions;
+        private readonly Mock<IMockServerDriver> mockServer;
         private readonly Mock<IOutput> mockOutput;
 
         private readonly IFixture fixture;
-        private readonly PactHandle handle;
         private readonly Uri serverUri;
         private readonly PactConfig config;
 
         public PactBuilderTests()
         {
-            this.mockDriver = new Mock<ISynchronousHttpDriver>(MockBehavior.Strict);
+            this.mockDriver = new Mock<IHttpPactDriver>(MockBehavior.Strict);
+            this.mockInteractions = new Mock<IHttpInteractionDriver>(MockBehavior.Strict);
+            this.mockServer = new Mock<IMockServerDriver>(MockBehavior.Strict);
             this.mockOutput = new Mock<IOutput>();
 
             this.fixture = new Fixture();
             var customization = new SupportMutableValueTypesCustomization();
             customization.Customize(this.fixture);
-
-            this.handle = this.fixture.Create<PactHandle>();
+            
             this.serverUri = this.fixture.Create<Uri>();
             this.config = new PactConfig
             {
@@ -39,14 +40,16 @@ namespace PactNet.Tests
             };
 
             // set some default mock setups
-            this.mockDriver.Setup(s => s.CreateMockServerForPact(this.handle, "127.0.0.1:0", false)).Returns(this.serverUri.Port);
-            this.mockDriver.Setup(s => s.NewHttpInteraction(this.handle, It.IsAny<string>())).Returns(new InteractionHandle());
-            this.mockDriver.Setup(s => s.MockServerLogs(this.serverUri.Port)).Returns(string.Empty);
-            this.mockDriver.Setup(s => s.MockServerMismatches(this.serverUri.Port)).Returns(string.Empty);
-            this.mockDriver.Setup(s => s.WritePactFile(this.handle, this.config.PactDir, false));
-            this.mockDriver.Setup(s => s.CleanupMockServer(this.serverUri.Port)).Returns(true);
+            this.mockDriver.Setup(s => s.CreateMockServer("127.0.0.1", null, false)).Returns(this.mockServer.Object);
+            this.mockDriver.Setup(s => s.NewHttpInteraction(It.IsAny<string>())).Returns(this.mockInteractions.Object);
+            this.mockDriver.Setup(s => s.WritePactFile(this.config.PactDir));
 
-            this.builder = new PactBuilder(this.mockDriver.Object, this.handle, this.config);
+            this.mockServer.Setup(s => s.Uri).Returns(this.serverUri);
+            this.mockServer.Setup(s => s.MockServerLogs()).Returns(string.Empty);
+            this.mockServer.Setup(s => s.MockServerMismatches()).Returns(string.Empty);
+            this.mockServer.Setup(s => s.Dispose());
+
+            this.builder = new PactBuilder(this.mockDriver.Object, this.config);
         }
 
         [Fact]
@@ -56,7 +59,7 @@ namespace PactNet.Tests
 
             this.builder.UponReceiving(description);
 
-            this.mockDriver.Verify(s => s.NewHttpInteraction(this.handle, description));
+            this.mockDriver.Verify(d => d.NewHttpInteraction(description));
         }
 
         [Fact]
@@ -64,14 +67,14 @@ namespace PactNet.Tests
         {
             this.builder.Verify(Success);
 
-            this.mockDriver.Verify(s => s.CreateMockServerForPact(this.handle, "127.0.0.1:0", false));
+            this.mockDriver.Verify(d => d.CreateMockServer("127.0.0.1", null, false));
         }
 
         [Fact]
         public void Verify_ErrorStartingMockServer_ThrowsInvalidOperationException()
         {
             this.mockDriver
-                .Setup(s => s.CreateMockServerForPact(It.IsAny<PactHandle>(), It.IsAny<string>(), It.IsAny<bool>()))
+                .Setup(s => s.CreateMockServer(It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<bool>()))
                 .Throws<InvalidOperationException>();
 
             Action action = () => this.builder.Verify(Success);
@@ -83,7 +86,7 @@ namespace PactNet.Tests
         public void Verify_Logs_WritesLogsToOutput()
         {
             const string expected = "some logs";
-            this.mockDriver.Setup(s => s.MockServerLogs(this.serverUri.Port)).Returns(expected);
+            this.mockServer.Setup(s => s.MockServerLogs()).Returns(expected);
 
             this.builder.Verify(Success);
 
@@ -103,7 +106,7 @@ namespace PactNet.Tests
         {
             this.builder.Verify(Success);
 
-            this.mockDriver.Verify(s => s.WritePactFile(this.handle, this.config.PactDir, false));
+            this.mockDriver.Verify(s => s.WritePactFile(this.config.PactDir));
         }
 
         [Fact]
@@ -111,14 +114,14 @@ namespace PactNet.Tests
         {
             this.builder.Verify(Success);
 
-            this.mockDriver.Verify(s => s.CleanupMockServer(this.serverUri.Port));
+            this.mockServer.Verify(s => s.Dispose());
         }
 
         [Fact]
         public void Verify_FailedToWritePactFile_ThrowsInvalidOperationException()
         {
             this.mockDriver
-                .Setup(s => s.WritePactFile(It.IsAny<PactHandle>(), It.IsAny<string>(), It.IsAny<bool>()))
+                .Setup(s => s.WritePactFile(It.IsAny<string>()))
                 .Throws<InvalidOperationException>();
 
             Action action = () => this.builder.Verify(Success);
@@ -129,7 +132,7 @@ namespace PactNet.Tests
         [Fact]
         public void Verify_Mismatches_DoesNotWritePactFile()
         {
-            this.mockDriver.Setup(s => s.MockServerMismatches(this.serverUri.Port)).Returns("some mismatches");
+            this.mockServer.Setup(s => s.MockServerMismatches()).Returns("some mismatches");
 
             try
             {
@@ -140,14 +143,14 @@ namespace PactNet.Tests
             {
             }
 
-            this.mockDriver.Verify(s => s.WritePactFile(It.IsAny<PactHandle>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
+            this.mockDriver.Verify(s => s.WritePactFile(It.IsAny<string>()), Times.Never);
         }
 
         [Fact]
         public void Verify_Mismatches_WritesMismatchesToOutput()
         {
             const string expected = "some mismatches";
-            this.mockDriver.Setup(s => s.MockServerMismatches(this.serverUri.Port)).Returns(expected);
+            this.mockServer.Setup(s => s.MockServerMismatches()).Returns(expected);
 
             try
             {
@@ -164,7 +167,7 @@ namespace PactNet.Tests
         [Fact]
         public void Verify_Mismatches_ThrowsPactFailureException()
         {
-            this.mockDriver.Setup(s => s.MockServerMismatches(this.serverUri.Port)).Returns("some mismatches");
+            this.mockServer.Setup(s => s.MockServerMismatches()).Returns("some mismatches");
 
             Action action = () => this.builder.Verify(Success);
 
@@ -174,7 +177,7 @@ namespace PactNet.Tests
         [Fact]
         public void Verify_Mismatches_ShutsDownMockServer()
         {
-            this.mockDriver.Setup(s => s.MockServerMismatches(this.serverUri.Port)).Returns("some mismatches");
+            this.mockServer.Setup(s => s.MockServerMismatches()).Returns("some mismatches");
 
             try
             {
@@ -185,7 +188,7 @@ namespace PactNet.Tests
             {
             }
 
-            this.mockDriver.Verify(s => s.CleanupMockServer(this.serverUri.Port));
+            this.mockServer.Verify(s => s.Dispose());
         }
 
         private static void Success(IConsumerContext ctx)
