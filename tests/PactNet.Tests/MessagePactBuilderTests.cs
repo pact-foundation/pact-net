@@ -2,7 +2,6 @@
 using FluentAssertions;
 using Moq;
 using PactNet.Drivers;
-using PactNet.Interop;
 using Xunit;
 
 namespace PactNet.Tests
@@ -11,19 +10,23 @@ namespace PactNet.Tests
     {
         private readonly MessagePactBuilder builder;
 
-        private readonly Mock<IAsynchronousMessageDriver> mockDriver;
-
-        private readonly PactHandle handle;
+        private readonly Mock<IMessagePactDriver> mockDriver;
+        private readonly Mock<IMessageInteractionDriver> mockInteractions;
+        
         private readonly PactConfig config;
 
         public MessagePactBuilderTests()
         {
-            this.mockDriver = new Mock<IAsynchronousMessageDriver>();
-
-            this.handle = new PactHandle();
+            this.mockDriver = new Mock<IMessagePactDriver>();
+            this.mockInteractions = new Mock<IMessageInteractionDriver>();
+            
             this.config = new PactConfig();
 
-            this.builder = new MessagePactBuilder(this.mockDriver.Object, this.handle, this.config);
+            this.mockDriver
+                .Setup(d => d.NewMessageInteraction(It.IsAny<string>()))
+                .Returns(this.mockInteractions.Object);
+
+            this.builder = new MessagePactBuilder(this.mockDriver.Object, this.config);
         }
 
         [Fact]
@@ -31,7 +34,7 @@ namespace PactNet.Tests
         {
             Action action = () =>
             {
-                var _ = new MessagePactBuilder(null, this.handle, this.config);
+                var _ = new MessagePactBuilder(null, this.config);
             };
 
             action.Should().Throw<ArgumentNullException>();
@@ -42,7 +45,7 @@ namespace PactNet.Tests
         {
             Action action = () =>
             {
-                var _ = new MessagePactBuilder(this.mockDriver.Object, this.handle, null);
+                var _ = new MessagePactBuilder(this.mockDriver.Object, null);
             };
 
             action.Should().Throw<ArgumentNullException>();
@@ -51,15 +54,9 @@ namespace PactNet.Tests
         [Fact]
         public void ExpectsToReceive_WhenCalled_StartsNewMessage()
         {
-            var message = new InteractionHandle();
-
-            this.mockDriver
-                .Setup(s => s.NewMessageInteraction(this.handle, "a message"))
-                .Returns(message);
-
             this.builder.ExpectsToReceive("a message");
 
-            this.mockDriver.Verify(s => s.ExpectsToReceive(message, "a message"), Times.Once);
+            this.mockDriver.Verify(s => s.NewMessageInteraction("a message"), Times.Once);
         }
 
         [Fact]
@@ -67,7 +64,7 @@ namespace PactNet.Tests
         {
             this.builder.WithPactMetadata("test", "name", "value");
 
-            this.mockDriver.Verify(s => s.WithMessagePactMetadata(this.handle, "test", "name", "value"));
+            this.mockDriver.Verify(s => s.WithMessagePactMetadata("test", "name", "value"));
         }
 
         [Fact]

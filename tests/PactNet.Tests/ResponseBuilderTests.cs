@@ -4,7 +4,6 @@ using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using PactNet.Drivers;
-using PactNet.Interop;
 using Xunit;
 using Match = PactNet.Matchers.Match;
 
@@ -14,24 +13,18 @@ namespace PactNet.Tests
     {
         private readonly ResponseBuilder builder;
 
-        private readonly Mock<ISynchronousHttpDriver> mockDriver;
+        private readonly Mock<IHttpInteractionDriver> mockDriver;
 
         private readonly IFixture fixture;
-        private readonly InteractionHandle handle;
         private readonly JsonSerializerSettings settings;
 
         public ResponseBuilderTests()
         {
-            this.mockDriver = new Mock<ISynchronousHttpDriver>();
+            this.mockDriver = new Mock<IHttpInteractionDriver>();
 
-            this.fixture = new Fixture();
-            var customization = new SupportMutableValueTypesCustomization();
-            customization.Customize(this.fixture);
-
-            this.handle = this.fixture.Create<InteractionHandle>();
             this.settings = new JsonSerializerSettings();
 
-            this.builder = new ResponseBuilder(this.mockDriver.Object, this.handle, this.settings);
+            this.builder = new ResponseBuilder(this.mockDriver.Object, this.settings);
         }
 
         [Fact]
@@ -39,7 +32,7 @@ namespace PactNet.Tests
         {
             this.builder.WithStatus(HttpStatusCode.Unauthorized);
 
-            this.mockDriver.Verify(s => s.ResponseStatus(this.handle, 401));
+            this.mockDriver.Verify(s => s.WithResponseStatus(401));
         }
 
         [Fact]
@@ -47,7 +40,7 @@ namespace PactNet.Tests
         {
             this.builder.WithStatus(429);
 
-            this.mockDriver.Verify(s => s.ResponseStatus(this.handle, 429));
+            this.mockDriver.Verify(s => s.WithResponseStatus(429));
         }
 
         [Fact]
@@ -57,7 +50,7 @@ namespace PactNet.Tests
 
             this.builder.WithHeader("name", Match.Regex("header", "^header$"));
 
-            this.mockDriver.Verify(s => s.WithResponseHeader(this.handle, "name", expectedValue, 0));
+            this.mockDriver.Verify(s => s.WithResponseHeader("name", expectedValue, 0));
         }
 
         [Fact]
@@ -71,9 +64,9 @@ namespace PactNet.Tests
             this.builder.WithHeader("name", Match.Type("value2"));
             this.builder.WithHeader("other", Match.Regex("value", "^value$"));
 
-            this.mockDriver.Verify(s => s.WithResponseHeader(this.handle, "name", expectedValue1, 0));
-            this.mockDriver.Verify(s => s.WithResponseHeader(this.handle, "name", expectedValue2, 1));
-            this.mockDriver.Verify(s => s.WithResponseHeader(this.handle, "other", expectedValue, 0));
+            this.mockDriver.Verify(s => s.WithResponseHeader("name", expectedValue1, 0));
+            this.mockDriver.Verify(s => s.WithResponseHeader("name", expectedValue2, 1));
+            this.mockDriver.Verify(s => s.WithResponseHeader("other", expectedValue, 0));
         }
 
         [Fact]
@@ -81,7 +74,7 @@ namespace PactNet.Tests
         {
             this.builder.WithHeader("name", "value");
 
-            this.mockDriver.Verify(s => s.WithResponseHeader(this.handle, "name", "value", 0));
+            this.mockDriver.Verify(s => s.WithResponseHeader("name", "value", 0));
         }
 
         [Fact]
@@ -91,9 +84,9 @@ namespace PactNet.Tests
             this.builder.WithHeader("name", "value2");
             this.builder.WithHeader("other", "value");
 
-            this.mockDriver.Verify(s => s.WithResponseHeader(this.handle, "name", "value1", 0));
-            this.mockDriver.Verify(s => s.WithResponseHeader(this.handle, "name", "value2", 1));
-            this.mockDriver.Verify(s => s.WithResponseHeader(this.handle, "other", "value", 0));
+            this.mockDriver.Verify(s => s.WithResponseHeader("name", "value1", 0));
+            this.mockDriver.Verify(s => s.WithResponseHeader("name", "value2", 1));
+            this.mockDriver.Verify(s => s.WithResponseHeader("other", "value", 0));
         }
 
         [Fact]
@@ -101,7 +94,7 @@ namespace PactNet.Tests
         {
             this.builder.WithJsonBody(new { Foo = 42 });
 
-            this.mockDriver.Verify(s => s.WithResponseBody(this.handle, "application/json", @"{""Foo"":42}"));
+            this.mockDriver.Verify(s => s.WithResponseBody("application/json", @"{""Foo"":42}"));
         }
 
         [Fact]
@@ -110,7 +103,7 @@ namespace PactNet.Tests
             this.builder.WithJsonBody(new { Foo = 42 },
                                       new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
 
-            this.mockDriver.Verify(s => s.WithResponseBody(this.handle, "application/json", @"{""foo"":42}"));
+            this.mockDriver.Verify(s => s.WithResponseBody("application/json", @"{""foo"":42}"));
         }
 
         [Fact]
@@ -118,7 +111,7 @@ namespace PactNet.Tests
         {
             this.builder.WithBody("foo,bar\nbaz,bash", "text/csv");
 
-            this.mockDriver.Verify(s => s.WithResponseBody(this.handle, "text/csv", "foo,bar\nbaz,bash"));
+            this.mockDriver.Verify(s => s.WithResponseBody("text/csv", "foo,bar\nbaz,bash"));
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using Newtonsoft.Json;
 using PactNet.Drivers;
-using PactNet.Interop;
 using PactNet.Matchers;
 
 namespace PactNet
@@ -13,8 +12,7 @@ namespace PactNet
     /// </summary>
     internal class RequestBuilder : IRequestBuilderV2, IRequestBuilderV3
     {
-        private readonly ISynchronousHttpDriver driver;
-        private readonly InteractionHandle interaction;
+        private readonly IHttpInteractionDriver driver;
         private readonly JsonSerializerSettings defaultSettings;
         private readonly Dictionary<string, uint> queryCounts;
         private readonly Dictionary<string, uint> headerCounts;
@@ -25,12 +23,10 @@ namespace PactNet
         /// Initialises a new instance of the <see cref="RequestBuilder"/> class.
         /// </summary>
         /// <param name="driver">Interaction driver</param>
-        /// <param name="interaction"></param>
         /// <param name="defaultSettings">Default JSON serializer settings</param>
-        internal RequestBuilder(ISynchronousHttpDriver driver, InteractionHandle interaction, JsonSerializerSettings defaultSettings)
+        internal RequestBuilder(IHttpInteractionDriver driver, JsonSerializerSettings defaultSettings)
         {
             this.driver = driver;
-            this.interaction = interaction;
             this.defaultSettings = defaultSettings;
             this.queryCounts = new Dictionary<string, uint>(StringComparer.OrdinalIgnoreCase);
             this.headerCounts = new Dictionary<string, uint>(StringComparer.OrdinalIgnoreCase);
@@ -272,7 +268,7 @@ namespace PactNet
         /// <returns>Fluent builder</returns>
         internal RequestBuilder Given(string providerState)
         {
-            this.driver.Given(this.interaction, providerState);
+            this.driver.Given(providerState);
             return this;
         }
 
@@ -286,7 +282,7 @@ namespace PactNet
         {
             foreach (var param in parameters)
             {
-                this.driver.GivenWithParam(this.interaction, providerState, param.Key, param.Value);
+                this.driver.GivenWithParam(providerState, param.Key, param.Value);
             }
 
             return this;
@@ -311,7 +307,7 @@ namespace PactNet
         {
             this.requestConfigured = true;
 
-            this.driver.WithRequest(this.interaction, method, path);
+            this.driver.WithRequest(method, path);
             return this;
         }
 
@@ -327,7 +323,7 @@ namespace PactNet
             uint index = this.queryCounts.ContainsKey(key) ? this.queryCounts[key] + 1 : 0;
             this.queryCounts[key] = index;
 
-            this.driver.WithQueryParameter(this.interaction, key, value, index);
+            this.driver.WithQueryParameter(key, value, index);
             return this;
         }
 
@@ -342,7 +338,7 @@ namespace PactNet
             uint index = this.headerCounts.ContainsKey(key) ? this.headerCounts[key] + 1 : 0;
             this.headerCounts[key] = index;
 
-            this.driver.WithRequestHeader(this.interaction, key, value, index);
+            this.driver.WithRequestHeader(key, value, index);
 
             return this;
         }
@@ -404,7 +400,7 @@ namespace PactNet
         /// <returns>Fluent builder</returns>
         internal RequestBuilder WithBody(string body, string contentType)
         {
-            this.driver.WithRequestBody(this.interaction, contentType, body);
+            this.driver.WithRequestBody(contentType, body);
             return this;
         }
 
@@ -419,7 +415,7 @@ namespace PactNet
                 throw new InvalidOperationException("You must configure the request before defining the response");
             }
 
-            var builder = new ResponseBuilder(this.driver, this.interaction, this.defaultSettings);
+            var builder = new ResponseBuilder(this.driver, this.defaultSettings);
             return builder;
         }
     }
