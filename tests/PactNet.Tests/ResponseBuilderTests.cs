@@ -1,5 +1,4 @@
 using System.Net;
-using AutoFixture;
 using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -14,8 +13,7 @@ namespace PactNet.Tests
         private readonly ResponseBuilder builder;
 
         private readonly Mock<IHttpInteractionDriver> mockDriver;
-
-        private readonly IFixture fixture;
+        
         private readonly JsonSerializerSettings settings;
 
         public ResponseBuilderTests()

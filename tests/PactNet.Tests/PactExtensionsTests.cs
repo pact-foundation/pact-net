@@ -11,6 +11,7 @@ using Newtonsoft.Json.Serialization;
 using PactNet.Matchers;
 using Xunit;
 using Xunit.Abstractions;
+#pragma warning disable CS0618
 
 namespace PactNet.Tests
 {

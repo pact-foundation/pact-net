@@ -1,6 +1,7 @@
 using System;
 using FluentAssertions;
 using Xunit;
+#pragma warning disable CS0618
 
 namespace PactNet.Abstractions.Tests
 {
