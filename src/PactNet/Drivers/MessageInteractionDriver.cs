@@ -42,7 +42,7 @@ namespace PactNet.Drivers
         /// </summary>
         /// <param name="description">message description</param>
         public void ExpectsToReceive(string description)
-            => NativeInterop.MessageExpectsToReceive(this.interaction, description).CheckInteropSuccess();
+            => NativeInterop.MessageExpectsToReceive(this.interaction, description);
 
         /// <summary>
         /// Set the metadata of the message
@@ -50,7 +50,7 @@ namespace PactNet.Drivers
         /// <param name="key">the key</param>
         /// <param name="value">the value</param>
         public void WithMetadata(string key, string value)
-            => NativeInterop.MessageWithMetadata(this.interaction, key, value).CheckInteropSuccess();
+            => NativeInterop.MessageWithMetadata(this.interaction, key, value);
 
         /// <summary>
         /// Set the contents of the message

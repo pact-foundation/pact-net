@@ -36,6 +36,6 @@ namespace PactNet.Drivers
         /// <param name="name">the name of the parameter</param>
         /// <param name="value">the value of the parameter</param>
         public void WithMessagePactMetadata(string @namespace, string name, string value)
-            => NativeInterop.WithMessagePactMetadata(this.pact, @namespace, name, value).CheckInteropSuccess();
+            => NativeInterop.WithMessagePactMetadata(this.pact, @namespace, name, value);
     }
 }

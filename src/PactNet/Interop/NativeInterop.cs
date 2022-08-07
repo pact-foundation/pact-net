@@ -74,25 +74,19 @@ namespace PactNet.Interop
         #region Messaging Interop Support
 
         [DllImport(DllName, EntryPoint = "pactffi_with_message_pact_metadata")]
-        public static extern bool WithMessagePactMetadata(PactHandle pact, string @namespace, string name, string value);
+        public static extern void WithMessagePactMetadata(PactHandle pact, string @namespace, string name, string value);
 
         [DllImport(DllName, EntryPoint = "pactffi_new_message_interaction")]
         public static extern InteractionHandle NewMessageInteraction(PactHandle pact, string description);
 
         [DllImport(DllName, EntryPoint = "pactffi_message_expects_to_receive")]
-        public static extern bool MessageExpectsToReceive(InteractionHandle message, string description);
-
-        [DllImport(DllName, EntryPoint = "pactffi_message_given")]
-        public static extern bool MessageGiven(InteractionHandle message, string description);
-
-        [DllImport(DllName, EntryPoint = "pactffi_message_given_with_param")]
-        public static extern bool MessageGivenWithParam(InteractionHandle message, string description, string name, string value);
+        public static extern void MessageExpectsToReceive(InteractionHandle message, string description);
 
         [DllImport(DllName, EntryPoint = "pactffi_message_with_metadata")]
-        public static extern bool MessageWithMetadata(InteractionHandle message, string key, string value);
+        public static extern void MessageWithMetadata(InteractionHandle message, string key, string value);
 
         [DllImport(DllName, EntryPoint = "pactffi_message_with_contents")]
-        public static extern bool MessageWithContents(InteractionHandle message, string contentType, string body, UIntPtr size);
+        public static extern void MessageWithContents(InteractionHandle message, string contentType, string body, UIntPtr size);
 
         [DllImport(DllName, EntryPoint = "pactffi_message_reify")]
         public static extern IntPtr MessageReify(InteractionHandle message);
