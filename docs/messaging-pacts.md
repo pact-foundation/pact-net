@@ -28,49 +28,51 @@ public class StockEventProcessorTests
 {
     private readonly IMessagePactBuilderV3 messagePact;
 
-    public StockEventProcessorTests()
+    public StockEventProcessorTests(ITestOutputHelper output)
     {
-        IMessagePactV3 v3 = MessagePact.V3("Stock Event Consumer", "Stock Event Producer", new PactConfig
+        IPactV3 v3 = Pact.V3("Stock Event Consumer", "Stock Event Producer", new PactConfig
         {
-            // the location in which the pact file is written
             PactDir = "../../../pacts/",
-
-            // the settings used to serialise each message by default
             DefaultJsonSettings = new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
+            },
+            Outputters = new[]
+            {
+                new XUnitOutput(output)
             }
         });
 
-        this.messagePact = v3.UsingNativeBackend();
+        this.messagePact = v3.WithMessageInteractions();
     }
 
     [Fact]
-    public void RecieveSomeStockEvents()
+    public void ReceiveSomeStockEvents()
     {
-        // define your expected message, using matchers for the message body
         this.messagePact
             .ExpectsToReceive("some stock ticker events")
-            .WithMetadata("key", "value")
+            .Given("A list of events is pushed to the queue")
+            .WithMetadata("key", "valueKey")
             .WithJsonContent(Match.MinType(new
             {
                 Name = Match.Type("AAPL"),
-                Price = Match.Decimal(1.23m)
+                Price = Match.Decimal(1.23m),
+                Timestamp = Match.Type(14.February(2022).At(13, 14, 15, 678))
             }, 1))
             .Verify<ICollection<StockEvent>>(events =>
             {
-                // here we simply make sure it's expected, but we could run it through a real event processor
-                // to make sure it was processed properly. Warning - this is not meant for integration testing!
                 events.Should().BeEquivalentTo(new[]
                 {
                     new StockEvent
                     {
                         Name = "AAPL",
-                        Price = 1.23m
+                        Price = 1.23m,
+                        Timestamp = 14.February(2022).At(13, 14, 15, 678)
                     }
                 });
             });
     }
+}
 ```
 
 After all of your consumer tests have passed a message pact file is written to disk. This file will be used
@@ -128,28 +130,28 @@ public class StockEventGeneratorTests : IDisposable
         this.verifier
             .MessagingProvider("Stock Event Producer", defaultSettings)
             .WithProviderMessages(scenarios =>
-             {
-                 // register the responses to each interaction
-                 // the descriptions must match those in the pact file(s)
-                 scenarios.Add("a single event", () => new StockEvent
-                          {
-                              Name = "AAPL",
-                              Price = 1.23m
-                          })
-                          .Add("some stock ticker events", builder =>
-                          {
-                              builder.WithMetadata(new
-                                     {
-                                         ContentType = "application/json",
-                                         Key = "value"
-                                     })
-                                     .WithContent(new[]
-                                     {
-                                         new StockEvent { Name = "AAPL", Price = 1.23m },
-                                         new StockEvent { Name = "TSLA", Price = 4.56m }
-                                     });
-                          });
-             })
+            {
+                // register the responses to each interaction
+                // the descriptions must match those in the pact file(s)
+                scenarios.Add("a single event", () => new StockEvent
+                         {
+                             Name = "AAPL",
+                             Price = 1.23m
+                         })
+                         .Add("some stock ticker events", builder =>
+                         {
+                             builder.WithMetadata(new
+                                    {
+                                        ContentType = "application/json",
+                                        Key = "value"
+                                    })
+                                    .WithContent(new[]
+                                    {
+                                        new StockEvent { Name = "AAPL", Price = 1.23m },
+                                        new StockEvent { Name = "TSLA", Price = 4.56m }
+                                    });
+                         });
+            })
             .WithFileSource(new FileInfo(pactPath))
             .Verify();
     }

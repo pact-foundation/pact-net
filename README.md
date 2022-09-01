@@ -77,33 +77,29 @@ Pact tests have a few key properties. We'll demonstrate a common example using t
 ```csharp
 public class SomethingApiConsumerTests
 {
-    private readonly IPactBuilderV3 _pactBuilder;
+    private readonly IPactBuilderV3 pactBuilder;
 
-    public SomethingApiConsumerTests(ITestOutputHelper output)
+    public SomethingApiConsumerTests()
     {
         // Use default pact directory ..\..\pacts and default log
         // directory ..\..\logs
-        var pact = Pact.V3("Something API Consumer", "Something API");
+        var pact = Pact.V3("Something API Consumer", "Something API", new PactConfig());
 
-        // or specify custom configuration such as pact file directory and serializer settings
+        // or specify custom log and pact directories
         pact = Pact.V3("Something API Consumer", "Something API", new PactConfig
         {
-            PactDir = @"..\pacts",
-            DefaultJsonSettings = new JsonSerializerSettings
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
-            }
+            PactDir = $"{Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName}{Path.DirectorySeparatorChar}pacts"
         });
 
         // Initialize Rust backend
-        _pactBuilder = pact.UsingNativeBackend();
+        this.pactBuilder = pact.WithHttpInteractions();
     }
 
     [Fact]
     public async Task GetSomething_WhenTheTesterSomethingExists_ReturnsTheSomething()
     {
         // Arrange
-        _pactBuilder
+        this.pactBuilder
             .UponReceiving("A GET request to retrieve the something")
                 .Given("There is a something with id 'tester'")
                 .WithRequest(HttpMethod.Get, "/somethings/tester")
@@ -113,13 +109,12 @@ public class SomethingApiConsumerTests
                 .WithHeader("Content-Type", "application/json; charset=utf-8")
                 .WithJsonBody(new
                 {
-                    // NOTE: These properties are case sensitive!
                     id = "tester",
                     firstName = "Totally",
                     lastName = "Awesome"
                 });
 
-        await _pactBuilder.VerifyAsync(async ctx =>
+        await this.pactBuilder.VerifyAsync(async ctx =>
         {
             // Act
             var client = new SomethingApiClient(ctx.MockServerUri);
@@ -146,14 +141,14 @@ public class SomethingApiFixture : IDisposable
 
     public SomethingApiFixture()
     {
-        ServerUri = new Uri("http://localhost:9222");
+        ServerUri = new Uri("http://localhost:9223");
         server = Host.CreateDefaultBuilder()
-                    .ConfigureWebHostDefaults(webBuilder =>
-                    {
-                        webBuilder.UseUrls(ServerUri.ToString());
-                        webBuilder.UseStartup<TestStartup>();
-                    })
-                    .Build();
+                     .ConfigureWebHostDefaults(webBuilder =>
+                     {
+                         webBuilder.UseUrls(ServerUri.ToString());
+                         webBuilder.UseStartup<TestStartup>();
+                     })
+                     .Build();
         server.Start();
     }
 
@@ -177,7 +172,7 @@ public class SomethingApiTests : IClassFixture<SomethingApiFixture>
     [Fact]
     public void EnsureSomethingApiHonoursPactWithConsumer()
     {
-        //Arrange
+        // Arrange
         var config = new PactVerifierConfig
         {
             Outputters = new List<IOutput>
@@ -191,11 +186,11 @@ public class SomethingApiTests : IClassFixture<SomethingApiFixture>
         };
 
         string pactPath = Path.Combine("..",
-                                        "..",
-                                        "path",
-                                        "to",
-                                        "pacts",
-                                        "Something API Consumer-Something API.json");
+                                       "..",
+                                       "..",
+                                       "..",
+                                       "pacts",
+                                       "Something API Consumer-Something API.json");
 
         // Act / Assert
         IPactVerifier pactVerifier = new PactVerifier(config);

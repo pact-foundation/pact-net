@@ -14,12 +14,12 @@ namespace ReadMe.Provider.Tests
         {
             ServerUri = new Uri("http://localhost:9223");
             server = Host.CreateDefaultBuilder()
-                        .ConfigureWebHostDefaults(webBuilder =>
-                        {
-                            webBuilder.UseUrls(ServerUri.ToString());
-                            webBuilder.UseStartup<TestStartup>();
-                        })
-                        .Build();
+                            .ConfigureWebHostDefaults(webBuilder =>
+                            {
+                                webBuilder.UseUrls(ServerUri.ToString());
+                                webBuilder.UseStartup<TestStartup>();
+                            })
+                            .Build();
             server.Start();
         }
 
