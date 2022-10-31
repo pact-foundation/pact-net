@@ -13,17 +13,17 @@ namespace ReadMe.Provider.Tests
 {
     public class ProviderStateMiddleware
     {
-        private readonly IDictionary<string, Action> providerStates;
+        private readonly IDictionary<string, (Action Setup, Action Teardown)> providerStates;
         private readonly RequestDelegate next;
 
         public ProviderStateMiddleware(RequestDelegate next)
         {
             this.next = next;
-            providerStates = new Dictionary<string, Action>
+            providerStates = new Dictionary<string, (Action, Action)>
             {
                 {
                     "There is a something with id 'tester'",
-                    AddTesterIfItDoesntExist
+                    (AddTesterIfItDoesntExist, RemoveTester)
                 }
             };
         }
@@ -46,6 +46,11 @@ namespace ReadMe.Provider.Tests
                 });
             }
             File.WriteAllText(dataFilePath, JsonConvert.SerializeObject(somethingsData));
+        }
+
+        private void RemoveTester()
+        {
+            Directory.Delete(Path.Combine("..", "..", "..", "data"), true);
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -73,7 +78,9 @@ namespace ReadMe.Provider.Tests
                 //A null or empty provider state key must be handled
                 if (!string.IsNullOrEmpty(providerState?.State))
                 {
-                    providerStates[providerState.State].Invoke();
+                    var (setupAction, teardownAction) = providerStates[providerState.State];
+                    var action = providerState.Action is ProviderStateAction.Setup ? setupAction : teardownAction;
+                    action.Invoke();
                 }
 
                 await context.Response.WriteAsync(string.Empty);

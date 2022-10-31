@@ -30,13 +30,14 @@ namespace PactNet.Verifier
         /// Set up the provider state setup URI so the service can configure states
         /// </summary>
         /// <param name="providerStateUri">Provider state URI</param>
+        /// <param name="teardown">Whether to invoke a teardown request to the provider state endpoint after each interaction</param>
         /// <returns>Fluent builder</returns>
-        public IPactVerifierSource WithProviderStateUrl(Uri providerStateUri)
+        public IPactVerifierSource WithProviderStateUrl(Uri providerStateUri, bool teardown = false)
         {
             Guard.NotNull(providerStateUri, nameof(providerStateUri));
 
-            // TODO: Support teardowns and disabling provider state bodies
-            this.provider.SetProviderState(providerStateUri, false, true);
+            // TODO: Support disabling provider state bodies
+            this.provider.SetProviderState(providerStateUri, teardown, true);
 
             return this;
         }

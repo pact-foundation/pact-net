@@ -47,7 +47,7 @@ namespace ReadMe.Provider.Tests
             pactVerifier
                 .ServiceProvider("Something API", fixture.ServerUri)
                 .WithFileSource(new FileInfo(pactPath))
-                .WithProviderStateUrl(new Uri(fixture.ServerUri, "/provider-states"))
+                .WithProviderStateUrl(new Uri(fixture.ServerUri, "/provider-states"), teardown: true)
                 .Verify();
         }
     }

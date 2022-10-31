@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -26,12 +25,6 @@ namespace ReadMe.Provider.Tests
         public void Dispose()
         {
             server.Dispose();
-
-            // Clean out leftover data
-            foreach (var dataFile in Directory.GetFiles(Path.Combine("..", "..", "..", "data")))
-            {
-                File.Delete(dataFile);
-            }
         }
     }
 }
