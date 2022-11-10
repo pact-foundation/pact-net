@@ -232,7 +232,7 @@ Due to using a shared native library instead of C# for the main Pact logic only 
 | Linux (libc) | x64      | ✔️ Yes                                                                  |
 | Linux (musl) | Any      | ❌ [No](https://github.com/pact-foundation/pact-net/issues/374)         |
 | OSX          | x64      | ✔️ Yes                                                                  |
-| OSX          | ARM (M1) | ⚠️ [Coming Soon](https://github.com/pact-foundation/pact-net/pull/365)  |
+| OSX          | ARM (M1) | ⚠️ [Alpha](https://github.com/pact-foundation/pact-net/pull/365)        |
 
 ### Pact Specification
 
