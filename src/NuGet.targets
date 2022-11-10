@@ -14,9 +14,9 @@
     <DebugSymbols>true</DebugSymbols>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <VersionPrefix>4.2.1</VersionPrefix>
+    <VersionPrefix>4.3.0</VersionPrefix>
     <PackageReleaseNotes>
-      v4.2.1
+      v4.3.0
     </PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
