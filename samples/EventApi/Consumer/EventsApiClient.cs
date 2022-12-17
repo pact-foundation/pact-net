@@ -217,6 +217,26 @@ namespace Consumer
             }
         }
 
+        public async Task<IEnumerable<Event>> TestRegexInResponseHeader()
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "/test-regex-in-response-header");
+            request.Headers.Add("Accept", "application/json");
+
+            var response = await this.httpClient.SendAsync(request);
+
+            try
+            {
+                if (response.StatusCode != HttpStatusCode.OK)
+                    await RaiseResponseError(request, response);
+            }
+            finally
+            {
+                Dispose(request, response);
+            }
+
+            return null;
+        }
+
         private static async Task RaiseResponseError(HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)
         {
             throw new HttpRequestException(

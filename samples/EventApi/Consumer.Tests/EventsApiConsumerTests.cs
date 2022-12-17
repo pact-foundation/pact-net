@@ -285,5 +285,23 @@ namespace Consumer.Tests
                 result.Should().BeEquivalentTo(expected);
             });
         }
+
+        [Fact]
+        public async Task Verify_regex_in_response_header()
+        {
+            this.pact
+                .UponReceiving("any request")
+                    .WithRequest(HttpMethod.Get, "/test-regex-in-response-header")
+                    .WithHeader("Accept", "application/json")
+                .WillRespond()
+                    .WithStatus(HttpStatusCode.OK)
+                    .WithHeader("RegexHeader", Match.Regex("consumervalue", "^[a-z]$"));
+
+            await this.pact.VerifyAsync(async ctx =>
+            {
+                var client = new EventsApiClient(ctx.MockServerUri, Token);
+                IEnumerable<Event> events = await client.TestRegexInResponseHeader();
+            });
+        }
     }
 }

@@ -79,6 +79,11 @@ namespace Provider
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapGet("/test-regex-in-response-header", async context =>
+                {
+                    context.Response.StatusCode = 200;
+                    context.Response.Headers.Add("RegexHeader", "validprovidervalue");
+                });
             });
         }
     }
