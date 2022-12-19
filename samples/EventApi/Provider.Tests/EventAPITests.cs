@@ -25,7 +25,7 @@ namespace Provider.Tests
         {
             var config = new PactVerifierConfig
             {
-                LogLevel = PactLogLevel.Information,
+                LogLevel = PactLogLevel.Trace,
                 Outputters = new List<IOutput>
                 {
                     new XUnitOutput(this.output)

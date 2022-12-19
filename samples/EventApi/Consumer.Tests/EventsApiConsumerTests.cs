@@ -19,7 +19,7 @@ namespace Consumer.Tests
     {
         private const string Token = "SomeValidAuthToken";
 
-        private readonly IPactBuilderV2 pact;
+        private readonly IPactBuilderV3 pact;
 
         public EventsApiConsumerTests(ITestOutputHelper output)
         {
@@ -36,7 +36,7 @@ namespace Consumer.Tests
                 }
             };
 
-            IPactV2 pact = Pact.V2("Event API Consumer", "Event API", config);
+            IPactV3 pact = Pact.V3("Event API Consumer", "Event API", config);
             this.pact = pact.WithHttpInteractions();
         }
 
@@ -295,7 +295,7 @@ namespace Consumer.Tests
                     .WithHeader("Accept", "application/json")
                 .WillRespond()
                     .WithStatus(HttpStatusCode.OK)
-                    .WithHeader("RegexHeader", Match.Regex("consumervalue", "^[a-z]$"));
+                    .WithHeader("regexheader", Match.Regex("consumervalue", "^[a-z]+$"));
 
             await this.pact.VerifyAsync(async ctx =>
             {

@@ -82,7 +82,7 @@ namespace Provider
                 endpoints.MapGet("/test-regex-in-response-header", async context =>
                 {
                     context.Response.StatusCode = 200;
-                    context.Response.Headers.Add("RegexHeader", "validprovidervalue");
+                    context.Response.Headers.Add("regexheader", "validprovidervalue");
                 });
             });
         }
