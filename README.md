@@ -236,10 +236,10 @@ Due to using a shared native library instead of C# for the main Pact logic only 
 
 ### Pact Specification
 
-| Version | Stable | [Spec] Compatibility | Install            |
-| ------- | ------ | -------------------- | ------------------ |
-| 4.x     | Stable | 2, 3                 | See [installation] |
-| 3.x     | Stable | 2                    |                    |
+| Version | Stable     | [Spec] Compatibility | Install            |
+| ------- | ---------- | -------------------- | ------------------ |
+| 4.x     | Stable     | 2, 3                 | See [installation] |
+| 3.x     | Deprecated | 2                    |                    |
 
 ## Roadmap
 
