@@ -40,6 +40,26 @@ namespace PactNet.Tests.Verifier
         }
 
         [Fact]
+        public void WithProviderStateUrl_WhenCalled_WithBodyDisabled_SetsProviderStatePath()
+        {
+            var uri = new Uri("http://example.org/provider/state/path/");
+
+            this.verifier.WithProviderStateUrl(uri, false, false);
+
+            this.mockProvider.Verify(p => p.SetProviderState(uri, false, false));
+        }
+
+        [Fact]
+        public void WithProviderStateUrl_WhenCalled_WithTeardownEnabled_SetsProviderStatePath()
+        {
+            var uri = new Uri("http://example.org/provider/state/path/");
+
+            this.verifier.WithProviderStateUrl(uri, true, true);
+
+            this.mockProvider.Verify(p => p.SetProviderState(uri, true, true));
+        }
+
+        [Fact]
         public void WithFilter_WhenCalled_SetsFilterInfo()
         {
             this.verifier.WithFilter("description", "provider state");

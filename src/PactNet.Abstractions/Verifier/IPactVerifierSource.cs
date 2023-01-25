@@ -16,6 +16,15 @@ namespace PactNet.Verifier
         IPactVerifierSource WithProviderStateUrl(Uri providerStateUri);
 
         /// <summary>
+        /// Set up the provider state setup URL so the service can configure states
+        /// </summary>
+        /// <param name="providerStateUri">Provider state setup URI</param>
+        /// <param name="teardown">Sets if teardown state change requests should be made after an interaction is validated</param>
+        /// <param name="body">Sets if state change request data should be sent in the body (true) or as query parameters (false)</param>
+        /// <returns>Fluent builder</returns>
+        IPactVerifierSource WithProviderStateUrl(Uri providerStateUri, bool teardown, bool body);
+
+        /// <summary>
         /// Filter the interactions to only those matching the given description and/or provider state
         /// </summary>
         /// <param name="description">Interaction description. All interactions are verified if this is null</param>
