@@ -32,11 +32,21 @@ namespace PactNet.Verifier
         /// <param name="providerStateUri">Provider state URI</param>
         /// <returns>Fluent builder</returns>
         public IPactVerifierSource WithProviderStateUrl(Uri providerStateUri)
+            => WithProviderStateUrl(providerStateUri, _ => { });
+
+        /// <summary>
+        /// Set up the provider state setup URL so the service can configure states
+        /// </summary>
+        /// <param name="providerStateUri">Provider state setup URI</param>
+        /// <param name="configure">Configure provider state options</param>
+        /// <returns>Fluent builder</returns>
+        public IPactVerifierSource WithProviderStateUrl(Uri providerStateUri, Action<IProviderStateOptions> configure)
         {
             Guard.NotNull(providerStateUri, nameof(providerStateUri));
 
-            // TODO: Support teardowns and disabling provider state bodies
-            this.provider.SetProviderState(providerStateUri, false, true);
+            var options = new ProviderStateOptions(this.provider, providerStateUri);
+            configure?.Invoke(options);
+            options.Apply();
 
             return this;
         }
