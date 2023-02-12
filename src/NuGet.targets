@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Authors>Pact Foundation</Authors>
     <Company>Pact Foundation</Company>
-    <Copyright>Copyright 2021 (c) Pact Foundation. All rights reserved.</Copyright>
+    <Copyright>Copyright 2023 (c) Pact Foundation. All rights reserved.</Copyright>
     <PackageProjectUrl>https://github.com/pact-foundation/pact-net</PackageProjectUrl>
     <RepositoryUrl>https://github.com/pact-foundation/pact-net</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -14,9 +14,10 @@
     <DebugSymbols>true</DebugSymbols>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <VersionPrefix>4.3.0</VersionPrefix>
+    <VersionPrefix>4.4.0</VersionPrefix>
     <PackageReleaseNotes>
-      v4.3.0
+      v4.4.0
+          - Upgrade to FFI v0.4.0
     </PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
