@@ -244,6 +244,14 @@ namespace PactNet
             => this.WithJsonBody(body, settings, contentType);
 
         /// <summary>
+        /// Set a body which is multipart/form-data with one part which is a file upload
+        /// </summary>
+        /// <param name="filePath">path to the file being uploaded</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 IRequestBuilderV3.WithMultipartSingleFileUpload(string filePath)
+            => this.WithMultipartSingleFileUpload(filePath, "multipart/form-data", "partDelimiter");
+
+        /// <summary>
         /// A pre-formatted body which should be used as-is for the request 
         /// </summary>
         /// <param name="body">Request body</param>
@@ -392,6 +400,18 @@ namespace PactNet
             return this.WithBody(serialised, contentType);
         }
 
+        /// <summary>
+        /// Set a body which is multipart/form-data but contains only one part, which is a file upload
+        /// </summary>
+        /// <param name="filePath">path to file being uploaded</param>
+        /// <param name="contentType">Content type override</param>
+        /// <param name="partDelimiter">string used as boundary of the part</param>
+        /// <returns>Fluent builder</returns>
+        internal RequestBuilder WithMultipartSingleFileUpload(string filePath, string contentType, string partDelimiter)
+        {
+            this.driver.WithMultipartSingleFileUpload(filePath, contentType, partDelimiter);
+            return this;
+        }
         /// <summary>
         /// A pre-formatted body which should be used as-is for the request 
         /// </summary>

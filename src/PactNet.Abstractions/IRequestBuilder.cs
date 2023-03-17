@@ -206,6 +206,13 @@ namespace PactNet
         /// <returns>Fluent builder</returns>
         IRequestBuilderV3 WithBody(string body, string contentType);
 
+        /// <summary>
+        /// A Multipart body containing a single part, which is an uploaded file
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 WithMultipartSingleFileUpload(string filePath);
+
         // TODO: Support binary and multi-part body
 
         /// <summary>

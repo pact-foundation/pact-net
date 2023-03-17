@@ -195,5 +195,13 @@ namespace PactNet.Tests
 
             action.Should().Throw<InvalidOperationException>("because the request has not been configured");
         }
+
+        [Fact]
+        public void WithMultipartSingleFileUpload_AddsRequestBody()
+        {
+            this.builder.WithMultipartSingleFileUpload("tests/PactNet.Tests/data","multipart/form-data", "boundary");
+
+            this.mockDriver.Verify(s => s.WithMultipartSingleFileUpload("tests/PactNet.Tests/data", "multipart/form-data", "boundary"));
+        }
     }
 }
