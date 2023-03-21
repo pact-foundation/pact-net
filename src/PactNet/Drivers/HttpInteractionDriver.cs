@@ -104,7 +104,7 @@ namespace PactNet.Drivers
         /// <param name="filePath">path to file being uploaded</param>
         /// <param name="contentType">Content type override</param>
         /// <param name="partDelimiter">string used as boundary of the part</param>
-        public void WithMultipartSingleFileUpload(string filePath, string contentType, string partDelimiter)
-            => NativeInterop.WithMultipartSingleFileUpload(this.interaction, InteractionPart.Request, filePath, contentType, partDelimiter).CheckInteropSuccess();
+        public void WithMultipartSingleFileUpload(string contentType, string filePath, string partDelimiter)
+            => NativeInterop.WithMultipartSingleFileUpload(this.interaction, InteractionPart.Request, contentType, filePath, partDelimiter).CheckInteropSuccess();
     }
 }
