@@ -27,7 +27,7 @@ namespace PactNet.Drivers
             if (success.tag!=StringResult.Tag.StringResult_Ok)
             {
                 string errorMsg = Marshal.PtrToStringAnsi(success.failed._0);
-                throw new PactFailureException($"Unable to perform the given action. The interop call failed: {errorMsg}");
+                throw new PactFailureException($"Unable to perform the given action. The interop call returned failure: {errorMsg}");
             }
         }
     }
