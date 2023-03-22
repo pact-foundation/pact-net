@@ -4,6 +4,7 @@ using FluentAssertions;
 using FluentAssertions.Extensions;
 using PactNet.Exceptions;
 using PactNet.Verifier;
+using PactNet.xUnit;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -24,7 +25,7 @@ namespace PactNet.Tests.Verifier
             using var provider = new InteropVerifierProvider(new PactVerifierConfig
             {
                 LogLevel = PactLogLevel.Trace,
-                Outputters = new[] { new XUnitOutput(this.output) }
+                Outputters = new[] { this.output.AsPactOutput() }
             });
 
             provider.Initialise();
@@ -62,7 +63,7 @@ namespace PactNet.Tests.Verifier
             using var provider = new InteropVerifierProvider(new PactVerifierConfig
             {
                 LogLevel = PactLogLevel.Trace,
-                Outputters = new[] { new XUnitOutput(this.output) }
+                Outputters = new[] { this.output.AsPactOutput() }
             });
 
             provider.Initialise();

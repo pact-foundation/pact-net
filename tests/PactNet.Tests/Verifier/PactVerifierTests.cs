@@ -4,6 +4,7 @@ using Moq;
 using Newtonsoft.Json;
 using PactNet.Verifier;
 using PactNet.Verifier.Messaging;
+using PactNet.xUnit;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -27,7 +28,7 @@ namespace PactNet.Tests.Verifier
                                              {
                                                  Outputters = new[]
                                                  {
-                                                     new XUnitOutput(output)
+                                                     output.AsPactOutput()
                                                  }
                                              });
         }

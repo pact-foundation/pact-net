@@ -4,6 +4,7 @@ using System.IO;
 using PactNet;
 using PactNet.Infrastructure.Outputters;
 using PactNet.Verifier;
+using PactNet.xUnit;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -28,7 +29,7 @@ namespace Provider.Tests
                 LogLevel = PactLogLevel.Information,
                 Outputters = new List<IOutput>
                 {
-                    new XUnitOutput(this.output)
+                    this.output.AsPactOutput()
                 }
             };
 

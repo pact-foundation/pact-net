@@ -10,6 +10,7 @@ using PactNet;
 using PactNet.Infrastructure.Outputters;
 using PactNet.Verifier;
 using PactNet.Verifier.Messaging;
+using PactNet.xUnit;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -25,7 +26,7 @@ namespace Provider.Tests
             {
                 Outputters = new List<IOutput>
                 {
-                    new XUnitOutput(output)
+                    output.AsPactOutput()
                 },
                 LogLevel = PactLogLevel.Debug
             });
@@ -110,9 +111,9 @@ namespace Provider.Tests
 
             /*-----------------------------------------------------
              A simple example of scenario setting.
-            
+
              - here we chose to generate the object manually
-            
+
                WARNING: be careful with this approach, you never
                guarantee your actual code is in sync with the
                manually generated object below.

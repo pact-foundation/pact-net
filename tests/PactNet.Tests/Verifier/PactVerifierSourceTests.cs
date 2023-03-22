@@ -3,6 +3,7 @@ using FluentAssertions;
 using Moq;
 using PactNet.Exceptions;
 using PactNet.Verifier;
+using PactNet.xUnit;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -22,7 +23,7 @@ namespace PactNet.Tests.Verifier
             {
                 Outputters = new[]
                 {
-                    new XUnitOutput(output)
+                    output.AsPactOutput()
                 }
             };
 

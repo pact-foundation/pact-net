@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using PactNet.Verifier;
 using PactNet.Verifier.Messaging;
+using PactNet.xUnit;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -37,7 +38,7 @@ namespace PactNet.Tests.Verifier.Messaging
             {
                 Outputters = new[]
                 {
-                    new XUnitOutput(output)
+                    output.AsPactOutput()
                 },
                 LogLevel = PactLogLevel.Debug
             }, this.mockScenarios.Object);

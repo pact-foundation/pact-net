@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
+  <Import Project="../NuGet.targets" />
+  
+  <ItemGroup>
+      <ProjectReference Include="..\PactNet.Abstractions\PactNet.Abstractions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="xunit.abstractions" Version="2.0.0" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Include="README.md" Pack="true" PackagePath="" />
+    </ItemGroup>
+</Project>
