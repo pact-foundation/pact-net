@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using FluentAssertions;
 using Moq;
@@ -199,9 +200,11 @@ namespace PactNet.Tests
         [Fact]
         public void WithMultipartSingleFileUpload_AddsRequestBody()
         {
-            this.builder.WithMultipartSingleFileUpload("tests/PactNet.Tests/data","multipart/form-data", "boundary");
+            var path = Path.GetFullPath("data/test_file.jpeg");
 
-            this.mockDriver.Verify(s => s.WithMultipartSingleFileUpload("tests/PactNet.Tests/data", "multipart/form-data", "boundary"));
+            this.builder.WithMultipartSingleFileUpload(path,"multipart/form-data", "boundary");
+
+            this.mockDriver.Verify(s => s.WithMultipartSingleFileUpload(path, "multipart/form-data", "boundary"));
         }
     }
 }

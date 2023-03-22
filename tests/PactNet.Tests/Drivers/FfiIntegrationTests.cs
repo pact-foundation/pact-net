@@ -41,38 +41,36 @@ namespace PactNet.Tests.Drivers
 
                 interaction.Given("provider state");
                 interaction.GivenWithParam("state with param", "foo", "bar");
+                //TODO make this request work for the test
                 interaction.WithRequest("POST", "/path");
-                //interaction.WithRequestHeader("X-Request-Header", "request1", 0);
-                //interaction.WithRequestHeader("X-Request-Header", "request2", 1);
+                interaction.WithRequestHeader("X-Request-Header", "request1", 0);
+                interaction.WithRequestHeader("X-Request-Header", "request2", 1);
                 interaction.WithQueryParameter("param", "value", 0);
-                var path = Path.GetFullPath("data/test_file.jpeg");
-                Assert.True(File.Exists(path));
-                interaction.WithMultipartSingleFileUpload("multipart/form-data", path, "boundary");
-
-                //interaction.WithRequestBody("application/json", @"{""foo"":42}");
+                //TODO make this a multipart body
+                interaction.WithRequestBody("application/json", @"{""foo"":42}");
 
                 interaction.WithResponseStatus((ushort)HttpStatusCode.Created);
-                //interaction.WithResponseHeader("X-Response-Header", "value1", 0);
-                //interaction.WithResponseHeader("X-Response-Header", "value2", 1);
-                //interaction.WithResponseBody("application/json", @"{""foo"":42}");
-
+                interaction.WithResponseHeader("X-Response-Header", "value1", 0);
+                interaction.WithResponseHeader("X-Response-Header", "value2", 1);
+                interaction.WithResponseBody("application/json", @"{""foo"":42}");
 
                 using IMockServerDriver mockServer = pact.CreateMockServer("127.0.0.1", null, false);
 
                 var client = new HttpClient { BaseAddress = mockServer.Uri };
                 client.DefaultRequestHeaders.Add("X-Request-Header", new[] { "request1", "request2" });
 
+                // Make this multipart for the test
                 HttpResponseMessage result = await client.PostAsync("/path?param=value", new StringContent(@"{""foo"":42}", Encoding.UTF8, "application/json"));
-                //result.StatusCode.Should().Be(HttpStatusCode.Created);
-                //result.Headers.GetValues("X-Response-Header").Should().BeEquivalentTo("value1", "value2");
+                result.StatusCode.Should().Be(HttpStatusCode.Created);
+                result.Headers.GetValues("X-Response-Header").Should().BeEquivalentTo("value1", "value2");
 
                 string content = await result.Content.ReadAsStringAsync();
-                //content.Should().Be(@"{""foo"":42}");
+                content.Should().Be(@"{""foo"":42}");
 
-               // mockServer.MockServerMismatches().Should().Be("[]");
+                mockServer.MockServerMismatches().Should().Be("[]");
 
                 string logs = mockServer.MockServerLogs();
-               // logs.Should().NotBeEmpty();
+                logs.Should().NotBeEmpty();
 
                 this.output.WriteLine("Mock Server Logs");
                 this.output.WriteLine("----------------");
@@ -90,7 +88,7 @@ namespace PactNet.Tests.Drivers
 
             string pactContents = File.ReadAllText(file.FullName).TrimEnd();
             string expectedPactContent = File.ReadAllText("data/v3-server-integration.json").TrimEnd();
-            //pactContents.Should().Be(expectedPactContent);
+            pactContents.Should().Be(expectedPactContent);
         }
 
         private void WriteDriverLogs(IPactDriver pact)
