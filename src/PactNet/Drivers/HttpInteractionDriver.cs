@@ -103,8 +103,8 @@ namespace PactNet.Drivers
         /// </summary>
         /// <param name="contentType">Content type override</param>
         /// <param name="filePath">path to file being uploaded</param>
-        /// <param name="partDelimiter">string used as boundary of the part</param>
-        public void WithMultipartSingleFileUpload(string contentType, string filePath, string partDelimiter)
-            => NativeInterop.WithMultipartSingleFileUpload(this.interaction, InteractionPart.Request, contentType, filePath, partDelimiter).CheckInteropSuccess();
+        /// <param name="mimePartName">the name of the mime part being uploaded</param>
+        public void WithMultipartSingleFileUpload(string contentType, string filePath, string mimePartName)
+            => NativeInterop.WithMultipartSingleFileUpload(this.interaction, InteractionPart.Request, contentType, filePath, mimePartName).CheckInteropSuccess();
     }
 }
