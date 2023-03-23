@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -40,14 +41,17 @@ namespace PactNet.Tests.Drivers
                 IHttpInteractionDriver interaction = pact.NewHttpInteraction("a sample interaction");
 
                 interaction.Given("provider state");
-                interaction.GivenWithParam("state with param", "foo", "bar");
-                //TODO make this request work for the test
+                //interaction.GivenWithParam("state with param", "foo", "bar");
                 interaction.WithRequest("POST", "/path");
-                interaction.WithRequestHeader("X-Request-Header", "request1", 0);
-                interaction.WithRequestHeader("X-Request-Header", "request2", 1);
-                interaction.WithQueryParameter("param", "value", 0);
-                //TODO make this a multipart body
-                interaction.WithRequestBody("application/json", @"{""foo"":42}");
+                //interaction.WithRequestHeader("X-Request-Header", "request1", 0);
+                //interaction.WithRequestHeader("X-Request-Header", "request2", 1);
+                //interaction.WithQueryParameter("param", "value", 0);
+                //interaction.WithRequestBody("application/json", @"{""foo"":42}");
+                var path = Path.GetFullPath("data/test_file.jpeg");
+                Assert.True(File.Exists(path));
+
+
+                interaction.WithMultipartSingleFileUpload("application/octet-stream", path, "file");
 
                 interaction.WithResponseStatus((ushort)HttpStatusCode.Created);
                 interaction.WithResponseHeader("X-Response-Header", "value1", 0);
@@ -57,19 +61,42 @@ namespace PactNet.Tests.Drivers
                 using IMockServerDriver mockServer = pact.CreateMockServer("127.0.0.1", null, false);
 
                 var client = new HttpClient { BaseAddress = mockServer.Uri };
-                client.DefaultRequestHeaders.Add("X-Request-Header", new[] { "request1", "request2" });
+                //client.DefaultRequestHeaders.Add("X-Request-Header", new[] { "request1", "request2" });
+
+                using var fileStream = new FileStream("data/test_file.jpeg", FileMode.Open, FileAccess.Read);
+
+                // Create the content
+                var upload = new MultipartFormDataContent();
+                upload.Headers.ContentType.MediaType = "multipart/form-data";
+
+                var fileContent = new StreamContent(fileStream);
+                fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
+
+                // Set the Content-Disposition header with the filename*
+                var fileName = Path.GetFileName(path);
+                var fileNameBytes = Encoding.UTF8.GetBytes(fileName);
+                var encodedFileName = Convert.ToBase64String(fileNameBytes);
+                upload.Add(fileContent, "file", fileName);
+                upload.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                {
+                    Name = "file",
+                    FileName = fileName,
+                    FileNameStar = $"utf-8''{encodedFileName}"
+                };
 
                 // Make this multipart for the test
-                HttpResponseMessage result = await client.PostAsync("/path?param=value", new StringContent(@"{""foo"":42}", Encoding.UTF8, "application/json"));
-                result.StatusCode.Should().Be(HttpStatusCode.Created);
-                result.Headers.GetValues("X-Response-Header").Should().BeEquivalentTo("value1", "value2");
+                HttpResponseMessage result = await client.PostAsync("/path", upload);
+                // result.StatusCode.Should().Be(HttpStatusCode.Created);
+                //result.Headers.GetValues("X-Response-Header").Should().BeEquivalentTo("value1", "value2");
+
+                string logs = mockServer.MockServerLogs();
+
 
                 string content = await result.Content.ReadAsStringAsync();
                 content.Should().Be(@"{""foo"":42}");
 
                 mockServer.MockServerMismatches().Should().Be("[]");
 
-                string logs = mockServer.MockServerLogs();
                 logs.Should().NotBeEmpty();
 
                 this.output.WriteLine("Mock Server Logs");

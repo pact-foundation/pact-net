@@ -99,10 +99,10 @@ namespace PactNet.Drivers
             => NativeInterop.WithBody(this.interaction, InteractionPart.Response, contentType, body).CheckInteropSuccess();
 
         /// <summary>
-        /// Set the response body to multipart/form-data for file upload
+        /// Set the request body to multipart/form-data for file upload
         /// </summary>
-        /// <param name="filePath">path to file being uploaded</param>
         /// <param name="contentType">Content type override</param>
+        /// <param name="filePath">path to file being uploaded</param>
         /// <param name="partDelimiter">string used as boundary of the part</param>
         public void WithMultipartSingleFileUpload(string contentType, string filePath, string partDelimiter)
             => NativeInterop.WithMultipartSingleFileUpload(this.interaction, InteractionPart.Request, contentType, filePath, partDelimiter).CheckInteropSuccess();
