@@ -46,7 +46,7 @@ namespace PactNet.Tests.Drivers
                 var path = Path.GetFullPath("data/test_file.jpeg");
                 Assert.True(File.Exists(path));
 
-                interaction.WithMultipartSingleFileUpload("application/octet-stream", path, "file");
+                interaction.WithMultipartSingleFileUpload("image/jpeg", path, "file");
 
                 interaction.WithResponseStatus((ushort)HttpStatusCode.Created);
                 interaction.WithResponseHeader("X-Response-Header", "value1", 0);
@@ -63,7 +63,7 @@ namespace PactNet.Tests.Drivers
                 upload.Headers.ContentType.MediaType = "multipart/form-data";
 
                 var fileContent = new StreamContent(fileStream);
-                fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/octet-stream");
+                fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
 
                 var fileName = Path.GetFileName(path);
                 var fileNameBytes = Encoding.UTF8.GetBytes(fileName);
