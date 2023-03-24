@@ -42,4 +42,13 @@
     <ProjectReference Include="..\..\src\PactNet\PactNet.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="data\test_file.jpeg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="data\v3-server-integration-MultipartFormDataBody.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
