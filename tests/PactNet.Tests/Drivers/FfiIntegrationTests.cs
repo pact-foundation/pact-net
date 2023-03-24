@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -41,12 +42,14 @@ namespace PactNet.Tests.Drivers
 
                 IHttpInteractionDriver interaction = pact.NewHttpInteraction("a sample interaction");
 
+                string contentType = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "application/octet-stream" : "image/jpeg";
+
                 interaction.Given("provider state");
                 interaction.WithRequest("POST", "/path");
                 var path = Path.GetFullPath("data/test_file.jpeg");
                 Assert.True(File.Exists(path));
 
-                interaction.WithMultipartSingleFileUpload("image/jpeg", path, "file");
+                interaction.WithMultipartSingleFileUpload(contentType, path, "file");
 
                 interaction.WithResponseStatus((ushort)HttpStatusCode.Created);
                 interaction.WithResponseHeader("X-Response-Header", "value1", 0);
@@ -63,7 +66,8 @@ namespace PactNet.Tests.Drivers
                 upload.Headers.ContentType.MediaType = "multipart/form-data";
 
                 var fileContent = new StreamContent(fileStream);
-                fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
+
+                fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
 
                 var fileName = Path.GetFileName(path);
                 var fileNameBytes = Encoding.UTF8.GetBytes(fileName);
