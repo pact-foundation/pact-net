@@ -63,7 +63,7 @@ namespace PactNet.Tests.Drivers
                 upload.Headers.ContentType.MediaType = "multipart/form-data";
 
                 var fileContent = new StreamContent(fileStream);
-                fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
+                fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/octet-stream");
 
                 var fileName = Path.GetFileName(path);
                 var fileNameBytes = Encoding.UTF8.GetBytes(fileName);
