@@ -244,9 +244,9 @@ namespace PactNet
             => this.WithJsonBody(body, settings, contentType);
 
         /// <summary>
-        /// Set a body which is multipart/form-data with one part which is a file upload
+        /// Set a body which is multipart/form-data but contains only one part, which is a file upload
         /// </summary>
-        /// <param name="filePath">path to the file being uploaded</param>
+        /// <param name="filePath">Path to the file being uploaded</param>
         /// <returns>Fluent builder</returns>
         IRequestBuilderV3 IRequestBuilderV3.WithMultipartSingleFileUpload(string filePath)
             => this.WithMultipartSingleFileUpload(filePath, "multipart/form-data", "file");

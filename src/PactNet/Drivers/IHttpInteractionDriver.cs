@@ -56,7 +56,6 @@ namespace PactNet.Drivers
         /// <param name="body">Serialised body</param>
         void WithResponseBody(string contentType, string body);
 
-
         /// <summary>
         /// Set the response body for a single file to be uploaded as a multipart/form-data content type
         /// </summary>

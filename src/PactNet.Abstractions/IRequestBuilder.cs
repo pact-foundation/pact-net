@@ -209,7 +209,7 @@ namespace PactNet
         /// <summary>
         /// A Multipart body containing a single part, which is an uploaded file
         /// </summary>
-        /// <param name="body">Request body</param>
+        /// <param name="filePath">The absolute path of the file being uploaded</param>
         /// <returns>Fluent builder</returns>
         IRequestBuilderV3 WithMultipartSingleFileUpload(string filePath);
 
