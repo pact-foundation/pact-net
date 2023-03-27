@@ -246,10 +246,11 @@ namespace PactNet
         /// <summary>
         /// Set a body which is multipart/form-data but contains only one part, which is a file upload
         /// </summary>
+        /// <param name="contentType">The content type of the file being uploaded</param>
         /// <param name="filePath">Path to the file being uploaded</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV3 IRequestBuilderV3.WithMultipartSingleFileUpload(string filePath)
-            => this.WithMultipartSingleFileUpload(filePath, "multipart/form-data", "file");
+        IRequestBuilderV3 IRequestBuilderV3.WithMultipartSingleFileUpload(string contentType, string filePath)
+            => this.WithMultipartSingleFileUpload(contentType, filePath, "file");
 
         /// <summary>
         /// A pre-formatted body which should be used as-is for the request 

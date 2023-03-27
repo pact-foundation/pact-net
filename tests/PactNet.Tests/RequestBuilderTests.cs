@@ -202,9 +202,9 @@ namespace PactNet.Tests
         {
             var path = Path.GetFullPath("data/test_file.jpeg");
 
-            this.builder.WithMultipartSingleFileUpload(path,"multipart/form-data", "file");
+            this.builder.WithMultipartSingleFileUpload("image/jpeg", path, "file");
 
-            this.mockDriver.Verify(s => s.WithMultipartSingleFileUpload(path, "multipart/form-data", "file"));
+            this.mockDriver.Verify(s => s.WithMultipartSingleFileUpload("image/jpeg", path, "file"));
         }
     }
 }

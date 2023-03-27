@@ -207,11 +207,12 @@ namespace PactNet
         IRequestBuilderV3 WithBody(string body, string contentType);
 
         /// <summary>
-        /// A Multipart body containing a single part, which is an uploaded file
+        /// Set a body which is multipart/form-data but contains only one part, which is a file upload
         /// </summary>
-        /// <param name="filePath">The absolute path of the file being uploaded</param>
-        /// <returns>Fluent builder</returns>
-        IRequestBuilderV3 WithMultipartSingleFileUpload(string filePath);
+        /// <param name="contentType">The content type of the file being uploaded</param>
+        /// <param name="filePath">Path to the file being uploaded</param>
+        /// <returns>Fluent builder</retu
+        IRequestBuilderV3 WithMultipartSingleFileUpload(string contentType, string filePath);
 
         // TODO: Support binary and multi-part body
 
