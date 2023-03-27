@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 namespace PactNet.Interop
-{
-    
+
+{  
     [StructLayout(LayoutKind.Explicit)]
     internal struct StringResult
     {
@@ -16,21 +16,21 @@ namespace PactNet.Interop
         public Tag tag;
 
         [FieldOffset(8)]
-        public StringResult_Ok_Body ok;
+        public StringResultOkBody ok;
 
         [FieldOffset(8)]
-        public StringResult_Failed_Body failed;
+        public StringResultFailedBody failed;
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal struct StringResult_Ok_Body
+    internal struct StringResultOkBody
     {
-        public IntPtr _0;
+        public IntPtr successPointer;
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal struct StringResult_Failed_Body
+    internal struct StringResultFailedBody
     {
-        public IntPtr _0;
+        public IntPtr errorPointer;
     }
 }

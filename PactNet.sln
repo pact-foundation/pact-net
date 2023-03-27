@@ -34,6 +34,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Consumer.Tests", "samples\Messaging\Consumer.Tests\Consumer.Tests.csproj", "{AED4E706-6E99-47B8-BE17-A3503275DB3E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReadMe", "ReadMe", "{87FC5A4B-1977-4FBA-AA71-63F48B28C3B0}"
+	ProjectSection(SolutionItems) = preProject
+		tests\PactNet.Tests\data\test_file.jpeg = tests\PactNet.Tests\data\test_file.jpeg
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Readme.Consumer", "samples\ReadMe\Consumer\Readme.Consumer.csproj", "{B7363201-F52A-49C4-A299-C9B459827C04}"
 EndProject

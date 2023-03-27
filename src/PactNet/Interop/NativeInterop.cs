@@ -64,7 +64,7 @@ namespace PactNet.Interop
         public static extern bool WithBody(InteractionHandle interaction, InteractionPart part, string contentType, string body);
 
         [DllImport(DllName, EntryPoint = "pactffi_with_multipart_file")]
-        public static extern StringResult WithMultipartSingleFileUpload(InteractionHandle interaction, InteractionPart part, string contentType, string filePath,  string mimePartName );
+        public static extern StringResult WithMultipartSingleFileUpload(InteractionHandle interaction, InteractionPart part, string contentType, string filePath,  string mimePartName);
 
         [DllImport(DllName, EntryPoint = "pactffi_free_string")]
         public static extern void FreeString(IntPtr s);

@@ -22,6 +22,11 @@ namespace PactNet.Drivers
             }
         }
 
+        /// <summary>
+        /// Check the result of an interop action when the response is a StringResult
+        /// </summary>
+        /// <param name="success">The result of the action</param>
+        /// <exception cref="PactFailureException">Action failed</exception>
         public static void CheckInteropSuccess(this StringResult success)
         {
             if (success.tag != StringResult.Tag.StringResult_Ok)
