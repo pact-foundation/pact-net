@@ -248,9 +248,10 @@ namespace PactNet
         /// </summary>
         /// <param name="contentType">The content type of the file being uploaded</param>
         /// <param name="filePath">Path to the file being uploaded</param>
+        /// <param name="partName">The name of the file being uploaded as a part</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV3 IRequestBuilderV3.WithMultipartSingleFileUpload(string contentType, string filePath)
-            => this.WithMultipartSingleFileUpload(contentType, filePath, "file");
+        IRequestBuilderV3 IRequestBuilderV3.WithMultipartSingleFileUpload(string contentType, string filePath, string partName)
+            => this.WithMultipartSingleFileUpload(contentType, filePath, partName);
 
         /// <summary>
         /// A pre-formatted body which should be used as-is for the request 
@@ -406,11 +407,11 @@ namespace PactNet
         /// </summary>
         /// <param name="filePath">path to file being uploaded</param>
         /// <param name="contentType">Content type override</param>
-        /// <param name="mimePartName">The name of the mime part being uploaded</param>
+        /// <param name="partName">The name of the mime part being uploaded</param>
         /// <returns>Fluent builder</returns>
-        internal RequestBuilder WithMultipartSingleFileUpload(string filePath, string contentType, string mimePartName)
+        internal RequestBuilder WithMultipartSingleFileUpload(string filePath, string contentType, string partName = "file")
         {
-            this.driver.WithMultipartSingleFileUpload(filePath, contentType, mimePartName);
+            this.driver.WithMultipartSingleFileUpload(filePath, contentType, partName);
             return this;
         }
         /// <summary>
