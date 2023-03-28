@@ -49,7 +49,7 @@ namespace PactNet.Tests.Drivers
                 var path = Path.GetFullPath("data/test_file.jpeg");
 
                 var fileInfo = new FileInfo(path);
-                Assert.True(File.Exists(path));
+                Assert.True(File.Exists(fileInfo.FullName));
 
                 interaction.WithFileUpload(contentType, fileInfo.FullName, "file");
 
@@ -114,7 +114,7 @@ namespace PactNet.Tests.Drivers
             JObject expectedPactObject = JObject.Parse(pactContents);
 
 
-            string contentTypeHeader = (string)pactObject["interactions"][0]["request"]["headers"]["Content-Type"];
+            string contentTypeHeader = (string)pactObject["interactions"][0]["request"]["headers"]["Content-Type"][0];
             Assert.Contains("multipart/form-data;", contentTypeHeader);
 
 
