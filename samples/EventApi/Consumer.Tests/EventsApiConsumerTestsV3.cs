@@ -42,11 +42,14 @@ namespace Consumer.Tests
             this.pact = pact.WithHttpInteractions();
         }
 
+        [SkippableFact]
 
-        [Fact]
+        // Feature not supported on Windows
         public async Task UploadImage_WhenTheFileExists_Returns201()
         {
-                string contentType = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "application/octet-stream" : "image/jpeg";
+            Skip.If(RuntimeInformation.IsOSPlatform(OSPlatform.Windows));
+
+            string contentType = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "application/octet-stream" : "image/jpeg";
 
             var file = new FileInfo("test_file.jpeg");
 

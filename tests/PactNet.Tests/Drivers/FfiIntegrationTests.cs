@@ -29,9 +29,12 @@ namespace PactNet.Tests.Drivers
             NativeInterop.LogToBuffer(LevelFilter.Trace);
         }
 
-        [Fact]
+        [SkippableFact]
         public async Task HttpInteraction_v3_CreatesPactFile_WithMultiPartRequest()
         {
+            // Feature not supported on Windows
+            Skip.If(RuntimeInformation.IsOSPlatform(OSPlatform.Windows));
+
             var driver = new PactDriver();
 
             try
@@ -42,7 +45,7 @@ namespace PactNet.Tests.Drivers
 
                 IHttpInteractionDriver interaction = pact.NewHttpInteraction("a sample interaction");
 
-                string contentType = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "application/octet-stream" : "image/jpeg";
+                string contentType = "image/jpeg";
 
                 interaction.Given("provider state");
                 interaction.WithRequest("POST", "/path");

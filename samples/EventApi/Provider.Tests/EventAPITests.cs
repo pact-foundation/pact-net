@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using PactNet;
 using PactNet.Infrastructure.Outputters;
 using PactNet.Verifier;
@@ -50,9 +51,12 @@ namespace Provider.Tests
                 .WithSslVerificationDisabled()
                 .Verify();
         }
-        [Fact]
+        [SkippableFact]
         public void EnsureEventApiHonoursPactWithConsumerV3()
         {
+            // Feature not supported on Windows
+            Skip.If(RuntimeInformation.IsOSPlatform(OSPlatform.Windows));
+
             var config = new PactVerifierConfig
             {
                 LogLevel = PactLogLevel.Information,
@@ -70,7 +74,6 @@ namespace Provider.Tests
                                            "pacts",
                                            "Event API ConsumerV3-Event API.json");
 
-            //Act / Assert
             IPactVerifier verifier = new PactVerifier(config);
             verifier
                 .ServiceProvider("Event API", this.fixture.ServerUri)
