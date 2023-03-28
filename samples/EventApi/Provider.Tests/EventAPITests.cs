@@ -50,5 +50,35 @@ namespace Provider.Tests
                 .WithSslVerificationDisabled()
                 .Verify();
         }
+        [Fact]
+        public void EnsureEventApiHonoursPactWithConsumerV3()
+        {
+            var config = new PactVerifierConfig
+            {
+                LogLevel = PactLogLevel.Information,
+                Outputters = new List<IOutput>
+                {
+                    new XUnitOutput(this.output)
+                }
+            };
+
+            string pactPath = Path.Combine("..",
+                                           "..",
+                                           "..",
+                                           "..",
+                                           "Consumer.Tests",
+                                           "pacts",
+                                           "Event API ConsumerV3-Event API.json");
+
+            //Act / Assert
+            IPactVerifier verifier = new PactVerifier(config);
+            verifier
+                .ServiceProvider("Event API", this.fixture.ServerUri)
+                .WithFileSource(new FileInfo(pactPath))
+                .WithProviderStateUrl(new Uri(this.fixture.ServerUri, "/provider-states"))
+                .WithRequestTimeout(TimeSpan.FromSeconds(2))
+                .WithSslVerificationDisabled()
+                .Verify();
+        }
     }
 }

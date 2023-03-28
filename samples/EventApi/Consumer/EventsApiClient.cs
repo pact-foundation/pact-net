@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Consumer.Models;
@@ -216,7 +218,46 @@ namespace Consumer
                 Dispose(request, response);
             }
         }
+        public async Task<HttpStatusCode> UploadFile(FileInfo file)
+        {
 
+            using var fileStream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
+
+            var request = new MultipartFormDataContent();
+            request.Headers.ContentType.MediaType = "multipart/form-data";
+
+            var fileContent = new StreamContent(fileStream);
+            fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
+
+            var fileName = file.Name;
+            var fileNameBytes = Encoding.UTF8.GetBytes(fileName);
+            var encodedFileName = Convert.ToBase64String(fileNameBytes);
+            request.Add(fileContent, "file", fileName);
+            request.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+            {
+                Name = "file",
+                FileName = fileName,
+                FileNameStar = $"utf-8''{encodedFileName}"
+            };
+
+            HttpResponseMessage response = await this.httpClient.PostAsync("/events/upload-file", request);
+            try
+            {
+                var statusCode = response.StatusCode;
+                if (statusCode == HttpStatusCode.Created)
+                {
+                    return statusCode;
+                }
+                throw new HttpRequestException(
+               string.Format("The Events API request for POST /upload-file failed. Response Status: {0}, Response Body: {1}",
+               response.StatusCode,
+               await response.Content.ReadAsStringAsync()));
+            }
+            finally
+            {
+                Dispose(request, response);
+            }
+        }
         private static async Task RaiseResponseError(HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)
         {
             throw new HttpRequestException(

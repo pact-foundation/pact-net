@@ -23,4 +23,9 @@
   <ItemGroup>
     <Folder Include="pacts\" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="test_file.jpeg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
