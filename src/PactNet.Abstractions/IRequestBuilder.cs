@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using Newtonsoft.Json;
 using PactNet.Matchers;
@@ -210,10 +211,10 @@ namespace PactNet
         /// Set a body which is multipart/form-data but contains only one part, which is a file upload
         /// </summary>
         /// <param name="contentType">The content type of the file being uploaded</param>
-        /// <param name="filePath">Path to the file being uploaded</param>
+        /// <param name="fileInfo">Path to the file being uploaded</param>
         /// <param name="partName">The name of the file being uploaded as a part</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV3 WithMultipartSingleFileUpload(string contentType, string filePath, string partName);
+        IRequestBuilderV3 WithFileUpload(string contentType, FileInfo fileInfo, string partName);
 
         // TODO: Support binary and multi-part body
 

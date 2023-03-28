@@ -62,6 +62,6 @@ namespace PactNet.Drivers
         /// <param name="filePath">path to file being uploaded</param>
         /// <param name="contentType">Content type override</param>
         /// <param name="mimePartName">the name of the mime part being uploaded</param>
-        void WithMultipartSingleFileUpload(string filePath, string contentType, string mimePartName);
+        void WithFileUpload(string filePath, string contentType, string mimePartName);
     }
 }

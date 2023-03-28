@@ -198,13 +198,14 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void WithMultipartSingleFileUpload_AddsRequestBody()
+        public void WithFileUpload_AddsRequestBody()
         {
             var path = Path.GetFullPath("data/test_file.jpeg");
+            var fileInfo = new FileInfo(path);
 
-            this.builder.WithMultipartSingleFileUpload("image/jpeg", path, "file");
+            this.builder.WithFileUpload("image/jpeg", fileInfo, "file");
 
-            this.mockDriver.Verify(s => s.WithMultipartSingleFileUpload("image/jpeg", path, "file"));
+            this.mockDriver.Verify(s => s.WithFileUpload("image/jpeg", path, "file"));
         }
     }
 }

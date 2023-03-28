@@ -104,7 +104,7 @@ namespace PactNet.Drivers
         /// <param name="contentType">Content type override</param>
         /// <param name="filePath">path to file being uploaded</param>
         /// <param name="partName">the name of the mime part being uploaded</param>
-        public void WithMultipartSingleFileUpload(string contentType, string filePath, string partName)
-            => NativeInterop.WithMultipartSingleFileUpload(this.interaction, InteractionPart.Request, contentType, filePath, partName).CheckInteropSuccess();
+        public void WithFileUpload(string contentType, string filePath, string partName)
+            => NativeInterop.WithFileUpload(this.interaction, InteractionPart.Request, contentType, filePath, partName).CheckInteropSuccess();
     }
 }

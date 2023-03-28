@@ -38,7 +38,7 @@ namespace PactNet.Tests.Drivers
             {
                 IHttpPactDriver pact = driver.NewHttpPact("NativeDriverTests-Consumer-V3",
                                                           "NativeDriverTests-Provider-Multipart",
-                                                          PactSpecification.V3);
+                                                          PactSpecification.V4);
 
                 IHttpInteractionDriver interaction = pact.NewHttpInteraction("a sample interaction");
 
@@ -47,9 +47,11 @@ namespace PactNet.Tests.Drivers
                 interaction.Given("provider state");
                 interaction.WithRequest("POST", "/path");
                 var path = Path.GetFullPath("data/test_file.jpeg");
+
+                var fileInfo = new FileInfo(path);
                 Assert.True(File.Exists(path));
 
-                interaction.WithMultipartSingleFileUpload(contentType, path, "file");
+                interaction.WithFileUpload(contentType, fileInfo.FullName, "file");
 
                 interaction.WithResponseStatus((ushort)HttpStatusCode.Created);
                 interaction.WithResponseHeader("X-Response-Header", "value1", 0);
