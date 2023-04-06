@@ -87,6 +87,16 @@ namespace PactNet.Tests
         }
 
         [Fact]
+        public void WithQuery_Matcher_WhenCalled_AddsSerialisedQueryParameter()
+        {
+            var expectedValue = "{\"pact:matcher:type\":\"regex\",\"value\":\"queryParameter\",\"regex\":\"^queryParameter$\"}";
+
+            this.builder.WithQuery("name", Match.Regex("queryParameter", "^queryParameter$"));
+
+            this.mockDriver.Verify(s => s.WithQueryParameter("name", expectedValue, 0));
+        }
+
+        [Fact]
         public void WithHeader_Matcher_WhenCalled_AddsSerialisedHeaderParam()
         {
             var expectedValue = "{\"pact:matcher:type\":\"regex\",\"value\":\"header\",\"regex\":\"^header$\"}";

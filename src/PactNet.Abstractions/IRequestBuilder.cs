@@ -151,6 +151,15 @@ namespace PactNet
         IRequestBuilderV3 WithQuery(string key, string value);
 
         /// <summary>
+        /// Add a query parameter matcher
+        /// </summary>
+        /// <param name="key">Query parameter key</param>
+        /// <param name="matcher">Query parameter matcher</param>
+        /// <returns>Fluent builder</returns>
+        /// <remarks>You can add a query parameter with the same key multiple times</remarks>
+        IRequestBuilderV3 WithQuery(string key, IMatcher matcher);
+
+        /// <summary>
         /// Add a request header
         /// </summary>
         /// <param name="key">Header key</param>
