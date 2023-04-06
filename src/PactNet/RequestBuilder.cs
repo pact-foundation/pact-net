@@ -190,6 +190,16 @@ namespace PactNet
             => this.WithQuery(key, value);
 
         /// <summary>
+        /// Add a query parameter matcher
+        /// </summary>
+        /// <param name="key">Query parameter key</param>
+        /// <param name="matcher">Query parameter matcher</param>
+        /// <returns>Fluent builder</returns>
+        /// <remarks>You can add a query parameter with the same key multiple times</remarks>
+        IRequestBuilderV3 IRequestBuilderV3.WithQuery(string key, IMatcher matcher)
+            => this.WithQuery(key, matcher);
+
+        /// <summary>
         /// Add a request header
         /// </summary>
         /// <param name="key">Header key</param>
@@ -325,6 +335,20 @@ namespace PactNet
 
             this.driver.WithQueryParameter(key, value, index);
             return this;
+        }
+
+        /// <summary>
+        /// Add a query parameter matcher
+        /// </summary>
+        /// <param name="key">Query parameter key</param>
+        /// <param name="matcher">Query parameter matcher</param>
+        /// <returns>Fluent builder</returns>
+        /// <remarks>You can add a query parameter with the same key multiple times</remarks>
+        internal RequestBuilder WithQuery(string key, IMatcher matcher)
+        {
+            var serialised = JsonConvert.SerializeObject(matcher, this.defaultSettings);
+
+            return this.WithQuery(key, serialised);
         }
 
         /// <summary>
