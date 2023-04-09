@@ -223,16 +223,16 @@ For writing messaging pacts instead of requests/response pacts, see the [messagi
 
 Due to using a shared native library instead of C# for the main Pact logic only certain OSs are supported:
 
-| OS           | Arch     | Support                                                                 |
-| ------------ | -------- | ----------------------------------------------------------------------- |
-| Windows      | x86      | ❌ No                                                                   |
-| Windows      | x64      | ✔️ Yes                                                                  |
-| Linux (libc) | ARM      | ❌ No                                                                   |
-| Linux (libc) | x86      | ❌ No                                                                   |
-| Linux (libc) | x64      | ✔️ Yes                                                                  |
-| Linux (musl) | Any      | ❌ [No](https://github.com/pact-foundation/pact-net/issues/374)         |
-| OSX          | x64      | ✔️ Yes                                                                  |
-| OSX          | ARM (M1) | ⚠️ [Alpha](https://github.com/pact-foundation/pact-net/pull/365)        |
+| OS           | Arch        | Support                                                            |
+| ------------ | ----------- | -------------------------------------------------------------------|
+| Windows      | x86         | ❌ No                                                              |
+| Windows      | x64         | ✔️ Yes                                                             |
+| Linux (libc) | ARM         | ❌ No                                                              |
+| Linux (libc) | x86         | ❌ No                                                              |
+| Linux (libc) | x64         | ✔️ Yes                                                             |
+| Linux (musl) | Any         | ❌ [No](https://github.com/pact-foundation/pact-net/issues/374)    |
+| OSX          | x64         | ✔️ Yes                                                             |
+| OSX          | ARM (M1/M2) | ⚠️ [Alpha](https://github.com/pact-foundation/pact-net/issues/451) |
 
 ### Pact Specification
 
