@@ -1,0 +1,43 @@
+{
+  "consumer": {
+    "name": "NativeDriverTests-Consumer-NumericProviderStateParam"
+  },
+  "interactions": [
+    {
+      "description": "an interaction with a numeric provider state param",
+      "providerStates": [
+        {
+          "name": "state with param",
+          "params": {
+            "issue": "449"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/path"
+      },
+      "response": {
+        "body": {
+          "foo": 42
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200
+      }
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "ffi": "0.4.0",
+      "models": "1.0.4"
+    },
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  },
+  "provider": {
+    "name": "NativeDriverTests-Provider"
+  }
+}
