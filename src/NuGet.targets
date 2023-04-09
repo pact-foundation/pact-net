@@ -14,10 +14,12 @@
     <DebugSymbols>true</DebugSymbols>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <VersionPrefix>4.4.0</VersionPrefix>
+    <VersionPrefix>4.5.0</VersionPrefix>
     <PackageReleaseNotes>
-      v4.4.0
-          - Upgrade to FFI v0.4.0
+      v4.5.0
+          - Provider state options
+          - Use matchers with query strings
+          - xUnit output project
     </PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
