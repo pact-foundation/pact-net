@@ -10,7 +10,7 @@ namespace PactNet
     /// <summary>
     /// Mock request builder
     /// </summary>
-    internal class RequestBuilder : IRequestBuilderV2, IRequestBuilderV3
+    internal class RequestBuilder : IRequestBuilderV2, IRequestBuilderV3, IRequestBuilderV4
     {
         private readonly IHttpInteractionDriver driver;
         private readonly JsonSerializerSettings defaultSettings;
@@ -267,6 +267,135 @@ namespace PactNet
         /// </summary>
         /// <returns>Response builder</returns>
         IResponseBuilderV3 IRequestBuilderV3.WillRespond()
+            => this.WillRespond();
+
+        #endregion
+
+        #region IRequestBuilderV4 explicit implementation
+
+        /// <summary>
+        /// Add a provider state
+        /// </summary>
+        /// <param name="providerState">Provider state description</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV4 IRequestBuilderV4.Given(string providerState)
+            => this.Given(providerState);
+
+        /// <summary>
+        /// Add a provider state with one or more parameters
+        /// </summary>
+        /// <param name="providerState">Provider state description</param>
+        /// <param name="parameters">Provider state parameters</param>
+        /// <returns>Flient builder</returns>
+        IRequestBuilderV4 IRequestBuilderV4.Given(string providerState, IDictionary<string, string> parameters)
+            => this.Given(providerState, parameters);
+
+        /// <summary>
+        /// Set the request
+        /// </summary>
+        /// <param name="method">Request method</param>
+        /// <param name="path">Request path</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV4 IRequestBuilderV4.WithRequest(HttpMethod method, string path)
+            => this.WithRequest(method, path);
+
+        /// <summary>
+        /// Set the request
+        /// </summary>
+        /// <param name="method">Request method</param>
+        /// <param name="path">Request path</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV4 IRequestBuilderV4.WithRequest(string method, string path)
+            => this.WithRequest(method, path);
+
+        /// <summary>
+        /// Add a query string parameter
+        /// </summary>
+        /// <param name="key">Query parameter key</param>
+        /// <param name="value">Query parameter value</param>
+        /// <returns>Fluent builder</returns>
+        /// <remarks>You can add a query parameter with the same key multiple times</remarks>
+        IRequestBuilderV4 IRequestBuilderV4.WithQuery(string key, string value)
+            => this.WithQuery(key, value);
+
+        /// <summary>
+        /// Add a query parameter matcher
+        /// </summary>
+        /// <param name="key">Query parameter key</param>
+        /// <param name="matcher">Query parameter matcher</param>
+        /// <returns>Fluent builder</returns>
+        /// <remarks>You can add a query parameter with the same key multiple times</remarks>
+        IRequestBuilderV4 IRequestBuilderV4.WithQuery(string key, IMatcher matcher)
+            => this.WithQuery(key, matcher);
+
+        /// <summary>
+        /// Add a request header
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="value">Header value</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV4 IRequestBuilderV4.WithHeader(string key, string value)
+            => this.WithHeader(key, value);
+
+        /// <summary>
+        /// Add a request header matcher
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="matcher">Header value matcher</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV4 IRequestBuilderV4.WithHeader(string key, IMatcher matcher)
+            => this.WithHeader(key, matcher);
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV4 IRequestBuilderV4.WithJsonBody(dynamic body)
+            => this.WithJsonBody(body);
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <param name="contentType">Content type override</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV4 IRequestBuilderV4.WithJsonBody(dynamic body, string contentType)
+            => this.WithJsonBody(body, contentType);
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <param name="settings">Custom JSON serializer settings</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV4 IRequestBuilderV4.WithJsonBody(dynamic body, JsonSerializerSettings settings)
+            => this.WithJsonBody(body, settings);
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <param name="settings">Custom JSON serializer settings</param>
+        /// <param name="contentType">Content type override</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV4 IRequestBuilderV4.WithJsonBody(dynamic body, JsonSerializerSettings settings, string contentType)
+            => this.WithJsonBody(body, settings, contentType);
+
+        /// <summary>
+        /// A pre-formatted body which should be used as-is for the request 
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <param name="contentType">Content type</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV4 IRequestBuilderV4.WithBody(string body, string contentType)
+            => this.WithBody(body, contentType);
+
+        /// <summary>
+        /// Define the response to this request
+        /// </summary>
+        /// <returns>Response builder</returns>
+        IResponseBuilderV4 IRequestBuilderV4.WillRespond()
             => this.WillRespond();
 
         #endregion

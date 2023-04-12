@@ -77,16 +77,16 @@ Pact tests have a few key properties. We'll demonstrate a common example using t
 ```csharp
 public class SomethingApiConsumerTests
 {
-    private readonly IPactBuilderV3 pactBuilder;
+    private readonly IPactBuilderV4 pactBuilder;
 
     public SomethingApiConsumerTests()
     {
         // Use default pact directory ..\..\pacts and default log
         // directory ..\..\logs
-        var pact = Pact.V3("Something API Consumer", "Something API", new PactConfig());
+        var pact = Pact.V4("Something API Consumer", "Something API", new PactConfig());
 
         // or specify custom log and pact directories
-        pact = Pact.V3("Something API Consumer", "Something API", new PactConfig
+        pact = Pact.V4("Something API Consumer", "Something API", new PactConfig
         {
             PactDir = $"{Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName}{Path.DirectorySeparatorChar}pacts"
         });
@@ -236,8 +236,9 @@ Due to using a shared native library instead of C# for the main Pact logic only 
 
 ### Pact Specification
 
-| Version | Stable     | [Spec] Compatibility | Install            |
+| Version | Status     | [Spec] Compatibility | Install            |
 | ------- | ---------- | -------------------- | ------------------ |
+| 5.x     | Beta       | 2, 3, 4              | See [installation] |
 | 4.x     | Stable     | 2, 3                 | See [installation] |
 | 3.x     | Deprecated | 2                    |                    |
 
@@ -253,8 +254,6 @@ See [CONTRIBUTING](CONTRIBUTING.md).
 [pact wiki]: https://github.com/pact-foundation/pact-ruby/wiki
 [getting started with pact]: http://dius.com.au/2016/02/03/microservices-pact/
 [pact website]: http://docs.pact.io/
-[pact specification v2]: https://github.com/pact-foundation/pact-specification/tree/version-2
-[pact specification v3]: https://github.com/pact-foundation/pact-specification/tree/version-3
 [libraries]: https://github.com/pact-foundation/pact-reference/releases
 [cli tools]: https://github.com/pact-foundation/pact-reference/releases
 [installation]: #installation

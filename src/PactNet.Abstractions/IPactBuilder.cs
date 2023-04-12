@@ -49,4 +49,17 @@ namespace PactNet
         /// <returns>Fluent builder</returns>
         IRequestBuilderV3 UponReceiving(string description);
     }
+
+    /// <summary>
+    /// Pact v4 Builder
+    /// </summary>
+    public interface IPactBuilderV4 : IPactBuilder
+    {
+        /// <summary>
+        /// Add a new interaction to the pact
+        /// </summary>
+        /// <param name="description">Interaction description</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV4 UponReceiving(string description);
+    }
 }

@@ -51,9 +51,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		src\NuGet.targets = src\NuGet.targets
+		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PactNet.Output.Xunit", "src\PactNet.Output.Xunit\PactNet.Output.Xunit.csproj", "{02E265A1-A7A2-4106-8F6A-5027FDC3FC50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PactNet.Output.Xunit", "src\PactNet.Output.Xunit\PactNet.Output.Xunit.csproj", "{02E265A1-A7A2-4106-8F6A-5027FDC3FC50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

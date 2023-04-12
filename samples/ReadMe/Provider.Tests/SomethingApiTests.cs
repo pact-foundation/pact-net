@@ -40,6 +40,7 @@ namespace ReadMe.Provider.Tests
                                            "..",
                                            "..",
                                            "..",
+                                           "Consumer.Tests",
                                            "pacts",
                                            "Something API Consumer-Something API.json");
 
