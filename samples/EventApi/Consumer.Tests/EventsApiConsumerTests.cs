@@ -81,7 +81,7 @@ namespace Consumer.Tests
                     .WithJsonBody(Match.MinType(new
                     {
                         eventId = Match.Type("3E83A96B-2A0C-49B1-9959-26DF23F83AEB"),
-                        timestamp = Match.Type("2014-06-30T01:38:00.8518952"),
+                        timestamp = Match.Timestamp(DateTime.Parse("2014-06-30T01:38:00.8518952"), "yyyy-MM-ddTHH:mm:ss.SSSSSSS"),
                         eventType = Match.Regex("SearchView", "SearchView|DetailsView")
                     }, 1));
 
@@ -114,7 +114,7 @@ namespace Consumer.Tests
                     .WithJsonBody(Match.MinType(new
                     {
                         eventId = Match.Type("45D80D13-D5A2-48D7-8353-CBB4C0EAABF5"),
-                        timestamp = Match.Type("2014-06-30T01:37:41.0660548"),
+                        timestamp = Match.Timestamp(DateTime.Parse("2014-06-30T01:37:41.0660548"), "yyyy-MM-ddTHH:mm:ss.SSSSSSS"),
                         eventType
                     }, 1));
 

@@ -142,7 +142,8 @@
             "regex": "SearchView|DetailsView"
           },
           "$.body[*].timestamp": {
-            "match": "type"
+            "format": "yyyy-MM-ddTHH:mm:ss.fffffff",
+            "match": "datetime"
           }
         },
         "status": 200
@@ -230,9 +231,10 @@
           "$.body[*].eventId": {
             "match": "type"
           },
-          "$.body[*].timestamp": {
-            "match": "type"
-          }
+"$.body[*].timestamp": {
+"format": "yyyy-MM-ddTHH:mm:ss.fffffff",
+"match": "datetime"
+}
         },
         "status": 200
       }
