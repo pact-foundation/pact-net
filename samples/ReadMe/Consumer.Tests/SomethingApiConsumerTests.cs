@@ -1,26 +1,26 @@
-using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using PactNet;
+using PactNet.Matchers;
 using Xunit;
 
 namespace ReadMe.Consumer.Tests
 {
     public class SomethingApiConsumerTests
     {
-        private readonly IPactBuilderV3 pactBuilder;
+        private readonly IPactBuilderV4 pactBuilder;
 
         public SomethingApiConsumerTests()
         {
             // Use default pact directory ..\..\pacts and default log
             // directory ..\..\logs
-            var pact = Pact.V3("Something API Consumer", "Something API", new PactConfig());
+            var pact = Pact.V4("Something API Consumer", "Something API", new PactConfig());
 
             // or specify custom log and pact directories
-            pact = Pact.V3("Something API Consumer", "Something API", new PactConfig
+            pact = Pact.V4("Something API Consumer", "Something API", new PactConfig
             {
-                PactDir = $"{Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName}{Path.DirectorySeparatorChar}pacts"
+                PactDir = "../../../pacts/"
             });
 
             // Initialize Rust backend
@@ -41,9 +41,9 @@ namespace ReadMe.Consumer.Tests
                     .WithHeader("Content-Type", "application/json; charset=utf-8")
                     .WithJsonBody(new
                     {
-                        id = "tester",
-                        firstName = "Totally",
-                        lastName = "Awesome"
+                        id = Match.Type("tester"),
+                        firstName = Match.Type("Totally"),
+                        lastName = Match.Type("Awesome")
                     });
 
             await this.pactBuilder.VerifyAsync(async ctx =>

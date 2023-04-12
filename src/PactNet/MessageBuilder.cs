@@ -8,7 +8,7 @@ namespace PactNet
     /// <summary>
     /// Mock request message builder
     /// </summary>
-    internal class MessageBuilder : IMessageBuilderV3
+    internal class MessageBuilder : IMessageBuilderV3, IMessageBuilderV4
     {
         private readonly IMessageInteractionDriver driver;
         private readonly PactConfig config;
@@ -44,6 +44,30 @@ namespace PactNet
 
         /// <inheritdoc cref="IMessageBuilderV3"/>
         IConfiguredMessageVerifier IMessageBuilderV3.WithJsonContent(dynamic content, JsonSerializerSettings settings)
+            => WithJsonContent(content, settings);
+
+        #endregion
+
+        #region IMessagePactBuilderV4 explicit implementation
+
+        /// <inheritdoc cref="IMessageBuilderV4"/>
+        IMessageBuilderV4 IMessageBuilderV4.Given(string providerState)
+            => Given(providerState);
+
+        /// <inheritdoc cref="IMessageBuilderV4"/>
+        IMessageBuilderV4 IMessageBuilderV4.Given(string providerState, IDictionary<string, string> parameters)
+            => Given(providerState, parameters);
+
+        /// <inheritdoc cref="IMessageBuilderV4"/>
+        IMessageBuilderV4 IMessageBuilderV4.WithMetadata(string key, string value)
+            => WithMetadata(key, value);
+
+        /// <inheritdoc cref="IMessageBuilderV4"/>
+        IConfiguredMessageVerifier IMessageBuilderV4.WithJsonContent(dynamic content)
+            => WithJsonContent(content);
+
+        /// <inheritdoc cref="IMessageBuilderV4"/>
+        IConfiguredMessageVerifier IMessageBuilderV4.WithJsonContent(dynamic content, JsonSerializerSettings settings)
             => WithJsonContent(content, settings);
 
         #endregion

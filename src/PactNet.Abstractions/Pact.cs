@@ -5,7 +5,7 @@ namespace PactNet
     /// <summary>
     /// Pact
     /// </summary>
-    public class Pact : IPactV2, IPactV3
+    public class Pact : IPactV2, IPactV3, IPactV4
     {
         /// <summary>
         /// Consumer name
@@ -86,7 +86,7 @@ namespace PactNet
         /// </summary>
         /// <param name="consumer">Name of the consumer</param>
         /// <param name="provider">Name of the provider</param>
-        /// <returns>v2 Pact</returns>
+        /// <returns>v3 Pact</returns>
         public static IPactV3 V3(string consumer, string provider)
         {
             return new Pact(consumer, provider);
@@ -100,6 +100,29 @@ namespace PactNet
         /// <param name="config">Pact config</param>
         /// <returns>v3 Pact</returns>
         public static IPactV3 V3(string consumer, string provider, PactConfig config)
+        {
+            return new Pact(consumer, provider, config);
+        }
+
+        /// <summary>
+        /// Create a new v4 pact
+        /// </summary>
+        /// <param name="consumer">Name of the consumer</param>
+        /// <param name="provider">Name of the provider</param>
+        /// <returns>v4 Pact</returns>
+        public static IPactV4 V4(string consumer, string provider)
+        {
+            return new Pact(consumer, provider);
+        }
+
+        /// <summary>
+        /// Create a new v4 pact
+        /// </summary>
+        /// <param name="consumer">Name of the consumer</param>
+        /// <param name="provider">Name of the provider</param>
+        /// <param name="config">Pact config</param>
+        /// <returns>v4 Pact</returns>
+        public static IPactV4 V4(string consumer, string provider, PactConfig config)
         {
             return new Pact(consumer, provider, config);
         }

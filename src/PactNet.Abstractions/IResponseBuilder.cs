@@ -121,4 +121,63 @@ namespace PactNet
         /// <returns>Fluent builder</returns>
         IResponseBuilderV3 WithBody(string body, string contentType);
     }
+
+    /// <summary>
+    /// Mock response builder for a v4 pact
+    /// </summary>
+    public interface IResponseBuilderV4
+    {
+        /// <summary>
+        /// Set response status code
+        /// </summary>
+        /// <param name="status">Response status code</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV4 WithStatus(HttpStatusCode status);
+
+        /// <summary>
+        /// Set response status code
+        /// </summary>
+        /// <param name="status">Response status code</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV4 WithStatus(ushort status);
+
+        /// <summary>
+        /// Add a response header
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="value">Header value</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV4 WithHeader(string key, string value);
+
+        /// <summary>
+        /// Add a response header
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="matcher">Header value matcher</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV4 WithHeader(string key, IMatcher matcher);
+
+        /// <summary>
+        /// Set a response body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Response body</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV4 WithJsonBody(dynamic body);
+
+        /// <summary>
+        /// Set a response body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Response body</param>
+        /// <param name="settings">Custom JSON serializer settings</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV4 WithJsonBody(dynamic body, JsonSerializerSettings settings);
+
+        /// <summary>
+        /// A pre-formatted body which should be used as-is for the response 
+        /// </summary>
+        /// <param name="body">Response body</param>
+        /// <param name="contentType">Content type</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV4 WithBody(string body, string contentType);
+    }
 }

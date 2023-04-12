@@ -6,7 +6,7 @@ namespace PactNet
     /// <summary>
     /// Mock request builder
     /// </summary>
-    internal class MessagePactBuilder : IMessagePactBuilderV3
+    internal class MessagePactBuilder : IMessagePactBuilderV3, IMessagePactBuilderV4
     {
         private readonly IMessagePactDriver driver;
         private readonly PactConfig config;
@@ -34,12 +34,24 @@ namespace PactNet
 
         #endregion
 
+        #region IMessagePactBuilderV4 explicit implementation
+
+        /// <inheritdoc cref="IMessagePactBuilderV4"/>
+        IMessageBuilderV4 IMessagePactBuilderV4.ExpectsToReceive(string description)
+            => ExpectsToReceive(description);
+
+        /// <inheritdoc cref="IMessagePactBuilderV4"/>
+        IMessagePactBuilderV4 IMessagePactBuilderV4.WithPactMetadata(string @namespace, string name, string value)
+            => WithPactMetadata(@namespace, name, value);
+
+        #endregion
+
         /// <summary>
         /// Add a new message to the message pact
         /// </summary>
         /// <param name="description">Message description</param>
         /// <returns>Fluent builder</returns>
-        internal IMessageBuilderV3 ExpectsToReceive(string description)
+        internal MessageBuilder ExpectsToReceive(string description)
         {
             IMessageInteractionDriver messageDriver = this.driver.NewMessageInteraction(description);
             return new MessageBuilder(messageDriver, this.config);
@@ -52,7 +64,7 @@ namespace PactNet
         /// <param name="name">the metadata field value</param>
         /// <param name="value">the metadata field value</param>
         /// <returns>Fluent builder</returns>
-        internal IMessagePactBuilderV3 WithPactMetadata(string @namespace, string name, string value)
+        internal MessagePactBuilder WithPactMetadata(string @namespace, string name, string value)
         {
             this.driver.WithMessagePactMetadata(@namespace, name, value);
             return this;

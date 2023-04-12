@@ -1,0 +1,85 @@
+{
+  "consumer": {
+    "name": "Something API Consumer"
+  },
+  "interactions": [
+    {
+      "description": "A GET request to retrieve the something",
+      "key": "cfbd01b3cf82d200",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "There is a something with id 'tester'"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Accept": [
+            "application/json"
+          ]
+        },
+        "method": "GET",
+        "path": "/somethings/tester"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "firstName": "Totally",
+            "id": "tester",
+            "lastName": "Awesome"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.firstName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.lastName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {}
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "ffi": "0.4.3",
+      "models": "1.0.9"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  },
+  "provider": {
+    "name": "Something API"
+  }
+}

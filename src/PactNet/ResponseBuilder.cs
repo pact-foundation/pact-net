@@ -10,7 +10,7 @@ namespace PactNet
     /// <summary>
     /// Mock response builder
     /// </summary>
-    internal class ResponseBuilder : IResponseBuilderV2, IResponseBuilderV3
+    internal class ResponseBuilder : IResponseBuilderV2, IResponseBuilderV3, IResponseBuilderV4
     {
         private readonly IHttpInteractionDriver driver;
         private readonly JsonSerializerSettings defaultSettings;
@@ -152,6 +152,70 @@ namespace PactNet
         /// <param name="contentType">Content type</param>
         /// <returns>Fluent builder</returns>
         IResponseBuilderV3 IResponseBuilderV3.WithBody(string body, string contentType)
+            => this.WithBody(body, contentType);
+
+        #endregion
+
+        #region IResponseBuilderV4 explicit implementation
+
+        /// <summary>
+        /// Set response status code
+        /// </summary>
+        /// <param name="status">Response status code</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV4 IResponseBuilderV4.WithStatus(HttpStatusCode status)
+            => this.WithStatus(status);
+
+        /// <summary>
+        /// Set response status code
+        /// </summary>
+        /// <param name="status">Response status code</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV4 IResponseBuilderV4.WithStatus(ushort status)
+            => this.WithStatus(status);
+
+        /// <summary>
+        /// Add a response header
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="value">Header value</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV4 IResponseBuilderV4.WithHeader(string key, string value)
+            => this.WithHeader(key, value);
+
+        /// <summary>
+        /// Add a response header matcher
+        /// </summary>
+        /// <param name="key">Header key</param>
+        /// <param name="matcher">Header value matcher</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV4 IResponseBuilderV4.WithHeader(string key, IMatcher matcher)
+            => this.WithHeader(key, matcher);
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV4 IResponseBuilderV4.WithJsonBody(dynamic body)
+            => this.WithJsonBody(body);
+
+        /// <summary>
+        /// Set a body which is serialised as JSON
+        /// </summary>
+        /// <param name="body">Request body</param>
+        /// <param name="settings">Custom JSON serializer settings</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV4 IResponseBuilderV4.WithJsonBody(dynamic body, JsonSerializerSettings settings)
+            => this.WithJsonBody(body, settings);
+
+        /// <summary>
+        /// A pre-formatted body which should be used as-is for the response 
+        /// </summary>
+        /// <param name="body">Response body</param>
+        /// <param name="contentType">Content type</param>
+        /// <returns>Fluent builder</returns>
+        IResponseBuilderV4 IResponseBuilderV4.WithBody(string body, string contentType)
             => this.WithBody(body, contentType);
 
         #endregion
