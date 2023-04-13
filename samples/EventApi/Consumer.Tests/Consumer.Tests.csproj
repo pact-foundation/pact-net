@@ -12,6 +12,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\PactNet.Output.Xunit\PactNet.Output.Xunit.csproj" />
@@ -23,5 +24,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="pacts\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="test_file.jpeg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using FluentAssertions;
 using Moq;
@@ -204,6 +205,17 @@ namespace PactNet.Tests
             Action action = () => this.builder.WillRespond();
 
             action.Should().Throw<InvalidOperationException>("because the request has not been configured");
+        }
+
+        [Fact]
+        public void WithFileUpload_AddsRequestBody()
+        {
+            var path = Path.GetFullPath("data/test_file.jpeg");
+            var fileInfo = new FileInfo(path);
+
+            this.builder.WithFileUpload("image/jpeg", fileInfo, "file");
+
+            this.mockDriver.Verify(s => s.WithFileUpload("image/jpeg", path, "file"));
         }
     }
 }

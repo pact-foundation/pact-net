@@ -97,5 +97,14 @@ namespace PactNet.Drivers
         /// <param name="body">Serialised body</param>
         public void WithResponseBody(string contentType, string body)
             => NativeInterop.WithBody(this.interaction, InteractionPart.Response, contentType, body).CheckInteropSuccess();
+
+        /// <summary>
+        /// Set the request body to multipart/form-data for file upload
+        /// </summary>
+        /// <param name="contentType">Content type override</param>
+        /// <param name="filePath">path to file being uploaded</param>
+        /// <param name="partName">the name of the mime part being uploaded</param>
+        public void WithFileUpload(string contentType, string filePath, string partName)
+            => NativeInterop.WithFileUpload(this.interaction, InteractionPart.Request, contentType, filePath, partName).CheckInteropSuccess();
     }
 }

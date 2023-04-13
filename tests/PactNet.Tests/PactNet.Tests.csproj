@@ -36,11 +36,21 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\PactNet.Output.Xunit\PactNet.Output.Xunit.csproj" />
     <ProjectReference Include="..\..\src\PactNet\PactNet.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="data\test_file.jpeg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="data\v3-server-integration-MultipartFormDataBody.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

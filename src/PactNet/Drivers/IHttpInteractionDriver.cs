@@ -55,5 +55,13 @@ namespace PactNet.Drivers
         /// <param name="contentType">Context type</param>
         /// <param name="body">Serialised body</param>
         void WithResponseBody(string contentType, string body);
+
+        /// <summary>
+        /// Set the response body for a single file to be uploaded as a multipart/form-data content type
+        /// </summary>
+        /// <param name="filePath">path to file being uploaded</param>
+        /// <param name="contentType">Content type override</param>
+        /// <param name="mimePartName">the name of the mime part being uploaded</param>
+        void WithFileUpload(string filePath, string contentType, string mimePartName);
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using Newtonsoft.Json;
 using PactNet.Drivers;
@@ -254,6 +255,16 @@ namespace PactNet
             => this.WithJsonBody(body, settings, contentType);
 
         /// <summary>
+        /// Set a body which is multipart/form-data but contains only one part, which is a file upload
+        /// </summary>
+        /// <param name="contentType">The content type of the file being uploaded</param>
+        /// <param name="fileInfo">>file info of the file being uploaded</param>
+        /// <param name="partName">The name of the file being uploaded as a part</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV3 IRequestBuilderV3.WithFileUpload(string contentType, FileInfo fileInfo, string partName)
+            => this.WithFileUpload(contentType, fileInfo, partName);
+
+        /// <summary>
         /// A pre-formatted body which should be used as-is for the request 
         /// </summary>
         /// <param name="body">Request body</param>
@@ -416,6 +427,18 @@ namespace PactNet
             return this.WithBody(serialised, contentType);
         }
 
+        /// <summary>
+        /// Set a body which is multipart/form-data but contains only one part, which is a file upload
+        /// </summary>
+        /// <param name="fileInfo">file info of the file being uploaded</param>
+        /// <param name="contentType">Content type override</param>
+        /// <param name="partName">The name of the mime part being uploaded</param>
+        /// <returns>Fluent builder</returns>
+        internal RequestBuilder WithFileUpload(string contentType, FileInfo fileInfo,  string partName = "file")
+        {
+            this.driver.WithFileUpload(contentType, fileInfo.FullName, partName = "file");
+            return this;
+        }
         /// <summary>
         /// A pre-formatted body which should be used as-is for the request 
         /// </summary>
