@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using PactNet.Drivers;
 using PactNet.Exceptions;
+using PactNet.Interop;
 using PactNet.Models;
 
 namespace PactNet
@@ -23,16 +24,19 @@ namespace PactNet
 
         private readonly IMessageInteractionDriver driver;
         private readonly PactConfig config;
+        private readonly PactSpecification version;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="ConfiguredMessageVerifier"/>
         /// </summary>
         /// <param name="driver">Pact driver</param>
         /// <param name="config">Pact configuration</param>
-        internal ConfiguredMessageVerifier(IMessageInteractionDriver driver, PactConfig config)
+        /// <param name="version">Pact specification version</param>
+        internal ConfiguredMessageVerifier(IMessageInteractionDriver driver, PactConfig config, PactSpecification version)
         {
             this.driver = driver;
             this.config = config;
+            this.version = version;
         }
 
         /// <summary>
@@ -85,7 +89,13 @@ namespace PactNet
             string reified = this.driver.Reify();
             NativeMessage content = JsonConvert.DeserializeObject<NativeMessage>(reified, NativeMessageSettings);
 
-            string contentString = ((JToken)content.Contents).ToString(Formatting.None);
+            string contentString = this.version switch
+            {
+                PactSpecification.V3 => ((JToken)content.Contents).ToString(Formatting.None),
+                PactSpecification.V4 => ((JToken)content.Contents)["content"].ToString(Formatting.None),
+                _ => throw new ArgumentOutOfRangeException(nameof(version), this.version, "Unsupported specification version")
+            };
+
             T messageReified = JsonConvert.DeserializeObject<T>(contentString, this.config.DefaultJsonSettings);
 
             return messageReified;

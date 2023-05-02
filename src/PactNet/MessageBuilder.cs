@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using PactNet.Drivers;
+using PactNet.Interop;
 
 namespace PactNet
 {
@@ -12,16 +13,19 @@ namespace PactNet
     {
         private readonly IMessageInteractionDriver driver;
         private readonly PactConfig config;
+        private readonly PactSpecification version;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="MessagePactBuilder"/> class.
         /// </summary>
         /// <param name="server">Interaction driver</param>
         /// <param name="config">Pact config</param>
-        internal MessageBuilder(IMessageInteractionDriver server, PactConfig config)
+        /// <param name="version">Pact specification version</param>
+        internal MessageBuilder(IMessageInteractionDriver server, PactConfig config, PactSpecification version)
         {
             this.driver = server ?? throw new ArgumentNullException(nameof(server));
             this.config = config;
+            this.version = version;
         }
 
         #region IMessagePactBuilderV3 explicit implementation
@@ -134,7 +138,7 @@ namespace PactNet
 
             this.driver.WithContents("application/json", serialised, 0);
 
-            return new ConfiguredMessageVerifier(this.driver, this.config);
+            return new ConfiguredMessageVerifier(this.driver, this.config, this.version);
         }
 
         #endregion Internal Methods

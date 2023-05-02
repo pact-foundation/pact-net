@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using PactNet.Drivers;
 using PactNet.Exceptions;
+using PactNet.Interop;
 using PactNet.Models;
 using Xunit;
 
@@ -27,8 +28,6 @@ namespace PactNet.Tests
             }
         };
 
-        private readonly ConfiguredMessageVerifier verifier;
-
         private readonly Mock<IMessageInteractionDriver> mockDriver;
         
         private readonly PactConfig config;
@@ -38,46 +37,52 @@ namespace PactNet.Tests
             this.mockDriver = new Mock<IMessageInteractionDriver>();
             
             this.config = new PactConfig { PactDir = "/path/to/pacts" };
-
-            this.verifier = new ConfiguredMessageVerifier(this.mockDriver.Object, this.config);
         }
 
-        [Fact]
-        public void Verify_SuccessfullyVerified_WritesPactFile()
+        [Theory]
+        [InlineData(PactSpecification.V3)]
+        [InlineData(PactSpecification.V4)]
+        internal void Verify_SuccessfullyVerified_WritesPactFile(PactSpecification version)
         {
-            Message contents = this.SetupMessage();
+            (var verifier, Message contents) = this.SetupMessage(version);
 
-            this.verifier.Verify<Message>(m => m.Should().BeEquivalentTo(contents));
+            verifier.Verify<Message>(m => m.Should().BeEquivalentTo(contents));
 
             this.mockDriver.Verify(s => s.WritePactFile(this.config.PactDir));
         }
 
-        [Fact]
-        public void Verify_MessageContentWithSnakeCasing_VerifiesSuccessfully()
+        [Theory]
+        [InlineData(PactSpecification.V3)]
+        [InlineData(PactSpecification.V4)]
+        internal void Verify_MessageContentWithSnakeCasing_VerifiesSuccessfully(PactSpecification version)
         {
-            var contents = this.SetupMessage(SnakeCase);
+            (var verifier, Message contents) = this.SetupMessage(version, SnakeCase);
 
-            this.verifier.Verify<Message>(m => m.Should().BeEquivalentTo(contents));
+            verifier.Verify<Message>(m => m.Should().BeEquivalentTo(contents));
         }
 
-        [Fact]
-        public void Verify_FailedToVerify_ThrowsVerificationException()
+        [Theory]
+        [InlineData(PactSpecification.V3)]
+        [InlineData(PactSpecification.V4)]
+        internal void Verify_FailedToVerify_ThrowsVerificationException(PactSpecification version)
         {
-            this.SetupMessage();
+            (var verifier, _) = this.SetupMessage(version);
 
-            Action action = () => this.verifier.Verify<Message>(_ => throw new Exception("oh noes"));
+            Action action = () => verifier.Verify<Message>(_ => throw new Exception("oh noes"));
 
             action.Should().Throw<PactMessageConsumerVerificationException>().WithInnerException<Exception>();
         }
 
-        [Fact]
-        public void Verify_FailedToVerify_DoesNotWritePactFile()
+        [Theory]
+        [InlineData(PactSpecification.V3)]
+        [InlineData(PactSpecification.V4)]
+        internal void Verify_FailedToVerify_DoesNotWritePactFile(PactSpecification version)
         {
-            this.SetupMessage();
+            (var verifier, _) = this.SetupMessage(version);
 
             try
             {
-                this.verifier.Verify<Message>(_ => throw new Exception("oh noes"));
+                verifier.Verify<Message>(_ => throw new Exception("oh noes"));
             }
             catch
             {
@@ -87,12 +92,14 @@ namespace PactNet.Tests
             this.mockDriver.Verify(s => s.WritePactFile(It.IsAny<string>()), Times.Never);
         }
 
-        [Fact]
-        public async Task VerifyAsync_SuccessfullyVerified_WritesPactFile()
+        [Theory]
+        [InlineData(PactSpecification.V3)]
+        [InlineData(PactSpecification.V4)]
+        internal async Task VerifyAsync_SuccessfullyVerified_WritesPactFile(PactSpecification version)
         {
-            Message contents = this.SetupMessage();
+            (var verifier, Message contents) = this.SetupMessage(version);
 
-            await this.verifier.VerifyAsync<Message>(m =>
+            await verifier.VerifyAsync<Message>(m =>
             {
                 m.Should().BeEquivalentTo(contents);
                 return Task.CompletedTask;
@@ -101,24 +108,28 @@ namespace PactNet.Tests
             this.mockDriver.Verify(s => s.WritePactFile(this.config.PactDir));
         }
 
-        [Fact]
-        public async Task VerifyAsync_FailedToVerifyAsync_ThrowsVerificationException()
+        [Theory]
+        [InlineData(PactSpecification.V3)]
+        [InlineData(PactSpecification.V4)]
+        internal async Task VerifyAsync_FailedToVerifyAsync_ThrowsVerificationException(PactSpecification version)
         {
-            this.SetupMessage();
+            (var verifier, _) = this.SetupMessage(version);
 
-            Func<Task> action = () => this.verifier.VerifyAsync<Message>(_ => throw new Exception("oh noes"));
+            Func<Task> action = () => verifier.VerifyAsync<Message>(_ => throw new Exception("oh noes"));
 
             await action.Should().ThrowAsync<PactMessageConsumerVerificationException>();
         }
 
-        [Fact]
-        public async Task VerifyAsync_FailedToVerifyAsync_DoesNotWritePactFile()
+        [Theory]
+        [InlineData(PactSpecification.V3)]
+        [InlineData(PactSpecification.V4)]
+        internal async Task VerifyAsync_FailedToVerifyAsync_DoesNotWritePactFile(PactSpecification version)
         {
-            this.SetupMessage();
+            (var verifier, _) = this.SetupMessage(version);
 
             try
             {
-                await this.verifier.VerifyAsync<Message>(_ => throw new Exception("oh noes"));
+                await verifier.VerifyAsync<Message>(_ => throw new Exception("oh noes"));
             }
             catch
             {
@@ -128,15 +139,22 @@ namespace PactNet.Tests
             this.mockDriver.Verify(s => s.WritePactFile(It.IsAny<string>()), Times.Never);
         }
 
-        private Message SetupMessage(JsonSerializerSettings contentSettings = null)
+        private (ConfiguredMessageVerifier Verifier, Message Message) SetupMessage(PactSpecification version, JsonSerializerSettings contentSettings = null)
         {
+            var verifier = new ConfiguredMessageVerifier(this.mockDriver.Object, this.config, version);
             this.config.DefaultJsonSettings = contentSettings ?? CamelCase;
 
             // this simulates what the FFI library does - the content uses user-supplied JSON settings
             // then they are interpreted literally to a JToken
             var contents = new Message { FooBar = 42 };
             string serialised = JsonConvert.SerializeObject(contents, this.config.DefaultJsonSettings);
-            JObject token = JObject.Parse(serialised);
+
+            JObject token = version switch
+            {
+                PactSpecification.V3 => JObject.Parse(serialised),
+                PactSpecification.V4 => JObject.Parse(@$"{{""content"":{serialised},""contentType"":""application/json"",""encoded"":false}}"),
+                _ => throw new ArgumentOutOfRangeException(nameof(version), version, "Unsupported version")
+            };
 
             NativeMessage native = new NativeMessage
             {
@@ -149,7 +167,7 @@ namespace PactNet.Tests
                 .Setup(s => s.Reify())
                 .Returns(JsonConvert.SerializeObject(native, CamelCase));
 
-            return contents;
+            return (verifier, contents);
         }
 
         private class Message

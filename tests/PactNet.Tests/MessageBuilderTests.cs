@@ -4,6 +4,7 @@ using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using PactNet.Drivers;
+using PactNet.Interop;
 using Xunit;
 
 namespace PactNet.Tests
@@ -22,14 +23,14 @@ namespace PactNet.Tests
 
             this.config = new PactConfig { DefaultJsonSettings = new JsonSerializerSettings() };
 
-            this.builder = new MessageBuilder(this.mockDriver.Object, this.config);
+            this.builder = new MessageBuilder(this.mockDriver.Object, this.config, PactSpecification.V4);
         }
 
         [Fact]
         public void Ctor_Throws_Exception_If_Server_Not_Set()
         {
             Assert.Throws<ArgumentNullException>(() =>
-                new MessagePactBuilder(null, new PactConfig()));
+                new MessagePactBuilder(null, new PactConfig(), PactSpecification.V4));
         }
 
         [Fact]

@@ -138,7 +138,7 @@ namespace PactNet
             IPactDriver driver = new PactDriver();
             IMessagePactDriver messagePact = driver.NewMessagePact(pact.Consumer, pact.Provider, PactSpecification.V3);
 
-            var builder = new MessagePactBuilder(messagePact, pact.Config);
+            var builder = new MessagePactBuilder(messagePact, pact.Config, PactSpecification.V3);
             return builder;
         }
 
@@ -154,7 +154,7 @@ namespace PactNet
             IPactDriver driver = new PactDriver();
             IMessagePactDriver messagePact = driver.NewMessagePact(pact.Consumer, pact.Provider, PactSpecification.V4);
 
-            var builder = new MessagePactBuilder(messagePact, pact.Config);
+            var builder = new MessagePactBuilder(messagePact, pact.Config, PactSpecification.V4);
             return builder;
         }
 
