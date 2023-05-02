@@ -1,5 +1,6 @@
 using System;
 using PactNet.Drivers;
+using PactNet.Interop;
 
 namespace PactNet
 {
@@ -10,16 +11,19 @@ namespace PactNet
     {
         private readonly IMessagePactDriver driver;
         private readonly PactConfig config;
+        private readonly PactSpecification version;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="MessagePactBuilder"/> class.
         /// </summary>
         /// <param name="pact">Pact driver</param>
         /// <param name="config">the message pact configuration</param>
-        internal MessagePactBuilder(IMessagePactDriver pact, PactConfig config)
+        /// <param name="version">Pact specification version</param>
+        internal MessagePactBuilder(IMessagePactDriver pact, PactConfig config, PactSpecification version)
         {
             this.driver = pact ?? throw new ArgumentNullException(nameof(pact));
             this.config = config ?? throw new ArgumentNullException(nameof(config));
+            this.version = version;
         }
 
         #region IMessagePactBuilderV3 explicit implementation
@@ -54,7 +58,7 @@ namespace PactNet
         internal MessageBuilder ExpectsToReceive(string description)
         {
             IMessageInteractionDriver messageDriver = this.driver.NewMessageInteraction(description);
-            return new MessageBuilder(messageDriver, this.config);
+            return new MessageBuilder(messageDriver, this.config, this.version);
         }
 
         /// <summary>
