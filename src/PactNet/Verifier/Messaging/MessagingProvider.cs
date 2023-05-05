@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using PactNet.Exceptions;
 using PactNet.Internal;
 
 namespace PactNet.Verifier.Messaging
@@ -59,16 +60,23 @@ namespace PactNet.Verifier.Messaging
             Guard.NotNull(settings, nameof(settings));
             this.defaultSettings = settings;
 
-            int port = FindUnusedPort();
-            var uri = new Uri($"http://localhost:{port}/pact-messages/");
+            try
+            {
+                int port = FindUnusedPort();
+                var uri = new Uri($"http://localhost:{port}/pact-messages/");
 
-            this.config.WriteLine($"Starting messaging provider at {uri}");
-            this.server.Prefixes.Add(uri.AbsoluteUri);
+                this.config.WriteLine($"Starting messaging provider at {uri}");
+                this.server.Prefixes.Add(uri.AbsoluteUri);
 
-            this.server.Start();
-            this.thread.Start();
+                this.server.Start();
+                this.thread.Start();
 
-            return uri;
+                return uri;
+            }
+            catch (Exception e)
+            {
+                throw new PactFailureException("Unable to start the internal messaging server", e);
+            }
         }
 
         /// <summary>

@@ -98,7 +98,7 @@ public class StockEventGeneratorTests : IDisposable
 
     public StockEventGeneratorTests()
     {
-        this.verifier = new PactVerifier();
+        this.verifier = new PactVerifier("Stock Event Producer");
     }
 
     public void Dispose()
@@ -128,8 +128,7 @@ public class StockEventGeneratorTests : IDisposable
         };
 
         this.verifier
-            .MessagingProvider("Stock Event Producer", defaultSettings)
-            .WithProviderMessages(scenarios =>
+            .MessagingProvider(scenarios =>
             {
                 // register the responses to each interaction
                 // the descriptions must match those in the pact file(s)
@@ -151,7 +150,7 @@ public class StockEventGeneratorTests : IDisposable
                                         new StockEvent { Name = "TSLA", Price = 4.56m }
                                     });
                          });
-            })
+            }, defaultSettings)
             .WithFileSource(new FileInfo(pactPath))
             .Verify();
     }

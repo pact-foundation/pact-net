@@ -59,6 +59,18 @@ namespace PactNet.Verifier
         }
 
         /// <summary>
+        /// Add an extra transport to the provider
+        /// </summary>
+        /// <param name="protocol">Transport protocol</param>
+        /// <param name="port">Port</param>
+        /// <param name="path">Path</param>
+        /// <param name="scheme">Scheme</param>
+        public void AddTransport(string protocol, ushort port, string path, string scheme)
+        {
+            NativeInterop.AddProviderTransport(this.handle, protocol, port, path, scheme);
+        }
+
+        /// <summary>
         /// Set filter info. Null arguments indicate the option is unused
         /// </summary>
         /// <param name="description">Filter by description</param>
