@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Newtonsoft.Json;
 using PactNet.Internal;
 using PactNet.Verifier.Messaging;
@@ -10,98 +11,205 @@ namespace PactNet.Verifier
     /// </summary>
     public class PactVerifier : IPactVerifier, IDisposable
     {
+        private const string VerifierNotInitialised = $"You must add at least one verifier transport by calling {nameof(WithHttpEndpoint)} and/or {nameof(WithMessages)}";
+
+        private readonly string providerName;
         private readonly PactVerifierConfig config;
         private readonly IVerifierProvider provider;
         private readonly IMessagingProvider messagingProvider;
 
+        private bool providerInitialised;
+        private bool httpTransportAdded;
+        private bool messageTransportAdded;
+
         /// <summary>
         /// Initialises a new instance of the <see cref="PactVerifier"/> class.
         /// </summary>
-        public PactVerifier() : this(new PactVerifierConfig())
+        /// <param name="providerName">Provider name</param>
+        public PactVerifier(string providerName) : this(providerName, new PactVerifierConfig())
         {
         }
 
         /// <summary>
         /// Initialises a new instance of the <see cref="PactVerifier"/> class.
         /// </summary>
+        /// <param name="providerName">Provider name</param>
         /// <param name="config">Pact verifier config</param>
-        public PactVerifier(PactVerifierConfig config) : this(new InteropVerifierProvider(config), new MessagingProvider(config, new MessageScenarios()), config)
+        public PactVerifier(string providerName, PactVerifierConfig config) : this(providerName, config, new InteropVerifierProvider(config), new MessagingProvider(config, new MessageScenarios()))
         {
         }
 
         /// <summary>
         /// Initialises a new instance of the <see cref="PactVerifier"/> class.
         /// </summary>
+        /// <param name="providerName">Provider name</param>
+        /// <param name="config">Pact verifier config</param>
         /// <param name="provider">Verifier provider</param>
         /// <param name="messagingProvider">Messaging provider</param>
-        /// <param name="config">Pact verifier config</param>
-        internal PactVerifier(IVerifierProvider provider, IMessagingProvider messagingProvider, PactVerifierConfig config)
+        internal PactVerifier(string providerName, PactVerifierConfig config, IVerifierProvider provider, IMessagingProvider messagingProvider)
         {
-            Guard.NotNull(config, nameof(config));
+            Guard.NotNull(providerName, nameof(providerName));
 
+            this.providerName = providerName;
             this.config = config;
             this.provider = provider;
             this.messagingProvider = messagingProvider;
         }
 
         /// <summary>
-        /// Set the provider details
+        /// Add a HTTP endpoint for verifying pacts containing synchronous HTTP interactions
         /// </summary>
-        /// <param name="providerName">Name of the provider</param>
         /// <param name="pactUri">URI of the running service</param>
         /// <returns>Fluent builder</returns>
-        public IPactVerifierProvider ServiceProvider(string providerName, Uri pactUri)
+        public IPactVerifier WithHttpEndpoint(Uri pactUri)
         {
-            Guard.NotNullOrEmpty(providerName, nameof(providerName));
             Guard.NotNull(pactUri, nameof(pactUri));
 
-            this.InitialiseProvider(providerName, pactUri);
+            if (this.httpTransportAdded)
+            {
+                throw new InvalidOperationException("Only one HTTP endpoint can be added");
+            }
 
-            return new PactVerifierProvider(this.provider, this.config);
+            if (!this.providerInitialised)
+            {
+                this.provider.Initialise();
+                this.provider.SetProviderInfo(this.providerName, pactUri.Scheme, pactUri.Host, (ushort)pactUri.Port, pactUri.AbsolutePath);
+                this.providerInitialised = true;
+            }
+            else
+            {
+                this.provider.AddTransport("http", (ushort)pactUri.Port, pactUri.AbsolutePath, pactUri.Scheme);
+            }
+
+            this.httpTransportAdded = true;
+            return this;
         }
 
         /// <summary>
-        /// Set the provider details of a messaging provider
+        /// Define messages for verifying pacts containing asynchronous message interactions
         /// </summary>
-        /// <param name="providerName">Name of the provider</param>
+        /// <param name="configure">Configure message scenarios</param>
         /// <returns>Fluent builder</returns>
-        public IPactVerifierMessagingProvider MessagingProvider(string providerName)
-            => MessagingProvider(providerName, new JsonSerializerSettings());
+        public IPactVerifier WithMessages(Action<IMessageScenarios> configure) => WithMessages(configure, new JsonSerializerSettings());
 
         /// <summary>
-        /// Set the provider details of a messaging provider
+        /// Define messages for verifying pacts containing asynchronous message interactions
         /// </summary>
-        /// <param name="providerName">Name of the provider</param>
-        /// <param name="settings">Default JSON serialisation settings</param>
+        /// <param name="configure">Configure message scenarios</param>
+        /// <param name="settings">Settings for serialising messages</param>
         /// <returns>Fluent builder</returns>
-        public IPactVerifierMessagingProvider MessagingProvider(string providerName, JsonSerializerSettings settings)
+        public IPactVerifier WithMessages(Action<IMessageScenarios> configure, JsonSerializerSettings settings)
         {
-            Guard.NotNullOrEmpty(providerName, nameof(providerName));
             Guard.NotNull(settings, nameof(settings));
+
+            if (this.messageTransportAdded)
+            {
+                throw new InvalidOperationException("Only one messaging endpoint can be added");
+            }
 
             // start an in-proc server which creates the messaging responses
             Uri uri = this.messagingProvider.Start(settings);
 
-            this.InitialiseProvider(providerName, uri);
+            if (!this.providerInitialised)
+            {
+                this.provider.Initialise();
+                this.provider.SetProviderInfo(this.providerName, "message", uri.Host, (ushort)uri.Port, uri.AbsolutePath);
+                this.providerInitialised = true;
+            }
+            else
+            {
+                this.provider.AddTransport("message", (ushort)uri.Port, uri.AbsolutePath, null);
+            }
 
-            return new PactVerifierMessagingProvider(this.provider, this.messagingProvider.Scenarios, this.config);
+            configure(this.messagingProvider.Scenarios);
+
+            this.messageTransportAdded = true;
+            return this;
         }
 
         /// <summary>
-        /// Initialise the verifier provider
+        /// Verify a pact file directly
         /// </summary>
-        /// <param name="providerName"></param>
-        /// <param name="pactUri"></param>
-        private void InitialiseProvider(string providerName, Uri pactUri)
+        /// <param name="pactFile">Pact file path</param>
+        /// <returns>Fluent builder</returns>
+        public IPactVerifierSource WithFileSource(FileInfo pactFile)
+        {
+            Guard.NotNull(pactFile, nameof(pactFile));
+            Guard.That(this.providerInitialised, VerifierNotInitialised);
+
+            this.provider.AddFileSource(pactFile);
+
+            return new PactVerifierSource(this.provider, this.config);
+        }
+
+        /// <summary>
+        /// Verify all pacts in the given directory which match the given consumers (or all pact files if no consumers are specified)
+        /// </summary>
+        /// <param name="directory">Directory containing the pact files</param>
+        /// <param name="consumers">(Optional) Consumer names to filter on</param>
+        /// <returns>Fluent builder</returns>
+        public IPactVerifierSource WithDirectorySource(DirectoryInfo directory, params string[] consumers)
+        {
+            Guard.NotNull(directory, nameof(directory));
+            Guard.NotNull(consumers, nameof(consumers));
+            Guard.That(this.providerInitialised, VerifierNotInitialised);
+
+            this.provider.AddDirectorySource(directory);
+            this.provider.SetConsumerFilters(consumers);
+
+            return new PactVerifierSource(this.provider, this.config);
+        }
+
+        /// <summary>
+        /// Verify a pact from a URI
+        /// </summary>
+        /// <param name="pactUri">Pact file URI</param>
+        /// <returns>Fluent builder</returns>
+        public IPactVerifierSource WithUriSource(Uri pactUri)
+            => this.WithUriSource(pactUri, _ => { });
+
+        /// <summary>
+        /// Verify a pact from a URI
+        /// </summary>
+        /// <param name="pactUri">Pact file URI</param>
+        /// <param name="configure">Configure URI options</param>
+        /// <returns>Fluent builder</returns>
+        public IPactVerifierSource WithUriSource(Uri pactUri, Action<IPactUriOptions> configure)
         {
             Guard.NotNull(pactUri, nameof(pactUri));
+            Guard.That(this.providerInitialised, VerifierNotInitialised);
 
-            this.provider.Initialise();
-            this.provider.SetProviderInfo(providerName,
-                                          pactUri.Scheme,
-                                          pactUri.Host,
-                                          (ushort)pactUri.Port,
-                                          pactUri.AbsolutePath);
+            var options = new PactUriOptions(this.provider, pactUri);
+            configure?.Invoke(options);
+            options.Apply();
+
+            return new PactVerifierSource(this.provider, this.config);
+        }
+
+        /// <summary>
+        /// Use the pact broker to retrieve pact files with default options
+        /// </summary>
+        /// <param name="brokerBaseUri">Base URI for the broker</param>
+        /// <returns>Fluent builder</returns>
+        public IPactVerifierSource WithPactBrokerSource(Uri brokerBaseUri)
+            => this.WithPactBrokerSource(brokerBaseUri, _ => { });
+
+        /// <summary>
+        /// Use the pact broker to retrieve pact files
+        /// </summary>
+        /// <param name="brokerBaseUri">Base URI for the broker</param>
+        /// <param name="configure">Configure pact broker options</param>
+        /// <returns>Fluent builder</returns>
+        public IPactVerifierSource WithPactBrokerSource(Uri brokerBaseUri, Action<IPactBrokerOptions> configure)
+        {
+            Guard.NotNull(brokerBaseUri, nameof(brokerBaseUri));
+            Guard.That(this.providerInitialised, VerifierNotInitialised);
+
+            var options = new PactBrokerOptions(this.provider, brokerBaseUri);
+            configure?.Invoke(options);
+            options.Apply();
+
+            return new PactVerifierSource(this.provider, this.config);
         }
 
         /// <summary>

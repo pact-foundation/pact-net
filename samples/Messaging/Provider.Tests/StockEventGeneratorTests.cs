@@ -22,7 +22,7 @@ namespace Provider.Tests
 
         public StockEventGeneratorTests(ITestOutputHelper output)
         {
-            this.verifier = new PactVerifier(new PactVerifierConfig
+            this.verifier = new PactVerifier("Stock Event Producer", new PactVerifierConfig
             {
                 Outputters = new List<IOutput>
                 {
@@ -57,19 +57,19 @@ namespace Provider.Tests
                 Formatting = Formatting.Indented
             };
 
+            static void Messages(IMessageScenarios scenarios)
+            {
+                scenarios.Add("a single event", () => new StockEvent
+                              {
+                                  Name = "AAPL",
+                                  Price = 1.23m,
+                                  Timestamp = new DateTimeOffset(2022, 2, 14, 13, 14, 15, TimeSpan.Zero)
+                              })
+                         .Add("some stock ticker events", SetupStockEvents);
+            }
+
             this.verifier
-                .MessagingProvider("Stock Event Producer", defaultSettings)
-                .WithProviderMessages(scenarios =>
-                 {
-                     scenarios.Add("a single event",
-                                   () => new StockEvent
-                                   {
-                                       Name = "AAPL",
-                                       Price = 1.23m,
-                                       Timestamp = new DateTimeOffset(2022, 2, 14, 13, 14, 15, TimeSpan.Zero)
-                                   })
-                              .Add("some stock ticker events", SetupStockEvents);
-                 })
+                .WithMessages(Messages, defaultSettings)
                 .WithFileSource(new FileInfo(pactPath))
                 .Verify();
         }

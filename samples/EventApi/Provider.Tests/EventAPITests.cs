@@ -42,9 +42,10 @@ namespace Provider.Tests
                                            "Event API Consumer-Event API.json");
 
             //Act / Assert
-            IPactVerifier verifier = new PactVerifier(config);
+            IPactVerifier verifier = new PactVerifier("Event API", config);
+
             verifier
-                .ServiceProvider("Event API", this.fixture.ServerUri)
+                .WithHttpEndpoint(this.fixture.ServerUri)
                 .WithFileSource(new FileInfo(pactPath))
                 .WithProviderStateUrl(new Uri(this.fixture.ServerUri, "/provider-states"))
                 .WithRequestTimeout(TimeSpan.FromSeconds(2))

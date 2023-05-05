@@ -104,6 +104,9 @@ namespace PactNet.Interop
         [DllImport(DllName, EntryPoint = "pactffi_verifier_set_provider_info")]
         public static extern void VerifierSetProviderInfo(IntPtr handle, string name, string scheme, string host, ushort port, string path);
 
+        [DllImport(DllName, EntryPoint = "pactffi_verifier_add_provider_transport")]
+        public static extern void AddProviderTransport(IntPtr handle, string protocol, ushort port, string path, string scheme);
+
         [DllImport(DllName, EntryPoint = "pactffi_verifier_set_filter_info")]
         public static extern void VerifierSetFilterInfo(IntPtr handle, string description, string state, byte noState);
 

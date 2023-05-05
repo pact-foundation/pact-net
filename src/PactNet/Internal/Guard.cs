@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace PactNet.Internal
 {
@@ -31,6 +32,20 @@ namespace PactNet.Internal
             if (value == null)
             {
                 throw new ArgumentException("Value must not be null", name);
+            }
+        }
+
+        /// <summary>
+        /// Ensures a condition is true
+        /// </summary>
+        /// <param name="value">Condition to check</param>
+        /// <param name="message">Message for failed condition</param>
+        /// <exception cref="InvalidOleVariantTypeException">Condition was not met</exception>
+        internal static void That(bool value, string message)
+        {
+            if (!value)
+            {
+                throw new InvalidOperationException(message);
             }
         }
     }
