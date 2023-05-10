@@ -1,0 +1,48 @@
+BUILD_TEST_TASK_TEMPLATE: &BUILD_TEST_TASK_TEMPLATE
+  arch_check_script: |
+      $USE_ROSETTA uname -m
+  ffi_download_script: |
+      chmod +x build/download-native-libs.sh
+      build/download-native-libs.sh
+  restore_script: |
+      $USE_ROSETTA dotnet restore
+  build_script: |
+      $USE_ROSETTA dotnet build --no-restore
+  test_script: |
+      $USE_ROSETTA dotnet test --no-build --verbosity normal
+  pack_script: |
+      $USE_ROSETTA dotnet pack --verbosity normal -c Release --no-restore --include-source --version-suffix alpha.123 -o ./dist
+
+linux_arm64_task: 
+  arm_container:
+    image: mcr.microsoft.com/dotnet/sdk:6.0
+  << : *BUILD_TEST_TASK_TEMPLATE
+
+linux_amd64_task: 
+  container:
+    image: mcr.microsoft.com/dotnet/sdk:6.0
+  << : *BUILD_TEST_TASK_TEMPLATE
+
+INSTALL_DOTNET_MACOS_TEMPLATE: &INSTALL_DOTNET_MACOS_TEMPLATE
+  setup_script: |
+    $USE_ROSETTA brew tap isen-ng/dotnet-sdk-versions
+    $USE_ROSETTA brew install --cask dotnet-sdk6-0-400
+    $USE_ROSETTA dotnet --version
+
+macosx_arm64_task:
+  macos_instance:
+    image: ghcr.io/cirruslabs/macos-ventura-base:latest
+  env:
+    PATH: "/usr/local/share/dotnet/:$PATH"
+  << : *INSTALL_DOTNET_MACOS_TEMPLATE
+  << : *BUILD_TEST_TASK_TEMPLATE
+
+macosx_amd64_task:
+  macos_instance:
+    image: ghcr.io/cirruslabs/macos-ventura-base:latest
+  rosetta_script: softwareupdate --install-rosetta --agree-to-license
+  env:
+    PATH: "/usr/local/share/dotnet/x64/:$PATH"
+    USE_ROSETTA: arch -x86_64
+  << : *INSTALL_DOTNET_MACOS_TEMPLATE
+  << : *BUILD_TEST_TASK_TEMPLATE
