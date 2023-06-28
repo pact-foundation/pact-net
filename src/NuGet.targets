@@ -19,6 +19,7 @@
       v5.0.0
         - Add Pact Specification v4 support
         - BREAKING CHANGE: Remove obsolete WithNativeBackend calls
+        - BREAKING CHANGE: Remove obsolete IMessagePact and MessagePact
         - BREAKING CHANGE: Refactor verifier to support verifying combined HTTP and message pacts
     </PackageReleaseNotes>
   </PropertyGroup>
