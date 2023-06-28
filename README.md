@@ -44,13 +44,15 @@ Watch our [series](https://www.youtube.com/playlist?list=PLwy9Bnco-IpfZ72VQ7hce8
 
 [Learn everything in Pact Net in 60 minutes](https://github.com/DiUS/pact-workshop-dotnet-core-v3/)
 
+### Upgrade Guides
+
+- [Upgrade guide for 3.x or lower to 4.x](docs/upgrading-to-4.md)
+- [Upgrade guide for 4.x to 5.x](docs/upgrading-to-5.md)
+
 ### Older Versions
 
-[Upgrade guide for 3.x or lower to 4.x](docs/upgrading-to-4.md)
-[Upgrade guide for 4.x to 5.x](docs/upgrading-to-5.md)
-
-[`release/3.x` branch](https://github.com/pact-foundation/pact-net/tree/release/3.x)
-[`release/4.x` branch](https://github.com/pact-foundation/pact-net/tree/release/4.x)
+- [`release/3.x` branch](https://github.com/pact-foundation/pact-net/tree/release/3.x)
+- [`release/4.x` branch](https://github.com/pact-foundation/pact-net/tree/release/4.x)
 
 ## Need Help
 
