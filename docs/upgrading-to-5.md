@@ -4,6 +4,16 @@ Upgrading to PactNet 5.x
 PactNet 5.x contains some breaking changes to improve the ergonomics of working with the new capabilities of Pact
 Specification v4.
 
+Obsolete Methods
+----------------
+
+The `IMessagePact` interface and `MessagePact` implementations were marked obsolete in PactNet 4.x and have been removed
+in 5.0. The `IPact` and `Pact` implementation should be used instead.
+
+The extension methods for `IPact.UsingNativeBackend` and `IMessagePact.UsingNativeBackend` were marked obsolete in PactNet
+4.x and have been removed in 5.0. They have been replaced with `IPact.WithHttpInteractions` and `IPact.WithMessageInteractions`
+respectively.
+
 Combined Pacts
 --------------
 
