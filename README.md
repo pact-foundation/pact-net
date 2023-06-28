@@ -68,7 +68,11 @@ Watch our [series](https://www.youtube.com/playlist?list=PLwy9Bnco-IpfZ72VQ7hce8
 
 ## Usage
 
-In the sections below, we provide a brief sample of the typical flow for Pact testing, written in the XUnit framework. To see the complete example and run it, check out the `Samples/ReadMe` folder.
+In the sections below, we provide a brief sample of the typical flow for Pact testing using HTTP interactions, written in
+the XUnit framework.
+
+A more comprehensive example which uses both HTTP and message interactions, provider states, matchers and more can be
+found in the [`samples/OrdersApi`](samples/OrdersApi) folder.
 
 ### Writing a Consumer test
 
@@ -197,7 +201,8 @@ public class SomethingApiTests : IClassFixture<SomethingApiFixture>
                                        "Something API Consumer-Something API.json");
 
         // Act / Assert
-        IPactVerifier pactVerifier = new PactVerifier("Something API", config);
+        using var pactVerifier = new PactVerifier("Something API", config);
+
         pactVerifier
             .WithHttpEndpoint(fixture.ServerUri)
             .WithFileSource(new FileInfo(pactPath))
