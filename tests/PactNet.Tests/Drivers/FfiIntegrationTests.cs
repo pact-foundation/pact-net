@@ -13,7 +13,7 @@ using Xunit.Abstractions;
 namespace PactNet.Tests.Drivers
 {
     /// <summary>
-    /// Happy path integration tests to make sure wwe're calling the Rust FFI library properly with P/Invoke
+    /// Happy path integration tests to make sure we're calling the Rust FFI library properly with P/Invoke
     /// </summary>
     public class FfiIntegrationTests
     {

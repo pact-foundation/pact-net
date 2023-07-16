@@ -71,6 +71,7 @@ namespace PactNet.Tests
             File.Delete("PactExtensionsTests-Consumer-V3-PactExtensionsTests-Provider.json");
             File.Delete("PactExtensionsTests-Consumer-V4-PactExtensionsTests-Provider.json");
             File.Delete("PactExtensionsTests-Combined-V4-PactExtensionsTests-Provider.json");
+            File.Delete("PactExtensioñsTests-Combined-V4-PactExtensioñsTests-Provider.json");
         }
 
         [Fact]
@@ -282,6 +283,74 @@ namespace PactNet.Tests
 
             string actualPact = File.ReadAllText("PactExtensionsTests-Combined-V4-PactExtensionsTests-Provider.json").TrimEnd();
             string expectedPact = File.ReadAllText("data/v4-combined-integration.json").TrimEnd();
+
+            actualPact.Should().Be(expectedPact);
+        }
+
+        [Fact]
+        public async Task CombinedHttpAndMessageInteractions_v4_HandlesNonAsciiCharactersInUserInput()
+        {
+            IPactV4 pact = Pact.V4("PactExtensioñsTests-Combined-V4", "PactExtensioñsTests-Provider", config);
+
+            // http interaction
+            IPactBuilderV4 http = pact.WithHttpInteractions();
+
+            http.UponReceiving("a HTTP request with non-ASCII characters like ñ")
+                    .Given("a provider state with ñ")
+                    .Given("another provider state with ñ")
+                    .Given("a provider state with params with ñ", new Dictionary<string, string>
+                    {
+                        ["foo"] = "bañ",
+                        ["bañ"] = "bash"
+                    })
+                    .WithRequest(HttpMethod.Post, "/things")
+                    .WithJsonBody(new
+                     {
+                        foo = Match.Type("ñ request")
+                     })
+                .WillRespond()
+                    .WithStatus(HttpStatusCode.Created)
+                    .WithJsonBody(new
+                     {
+                        Foo = "ñ response"
+                    });
+
+            await http.VerifyAsync(async ctx =>
+            {
+                var client = new HttpClient
+                {
+                    BaseAddress = ctx.MockServerUri
+                };
+
+                string content = JsonConvert.SerializeObject(new{ Foo = "ñ request" }, this.config.DefaultJsonSettings);
+
+                HttpResponseMessage response = await client.PostAsync("/things", new StringContent(content, Encoding.UTF8, "application/json"));
+
+                string responseContent = await response.Content.ReadAsStringAsync();
+                responseContent.Should().Be(@"{""foo"":""ñ response""}");
+
+                response.StatusCode.Should().Be(HttpStatusCode.Created);
+            });
+
+            // message interaction
+            IMessagePactBuilderV4 message = pact.WithMessageInteractions();
+
+            message
+                .WithPactMetadata("framework", "language", "C#")
+                .ExpectsToReceive("a message with ñ")
+                .Given("a provider state with ñ")
+                .Given("another provider state with ñ")
+                .Given("a provider state with params with ñ", new Dictionary<string, string>
+                {
+                    ["foo"] = "bañ",
+                    ["bañ"] = "bash"
+                })
+                .WithMetadata("queueId", "1234ñ")
+                .WithJsonContent(new TestData { Int = 1, String = "a description with ñ" })
+                .Verify<TestData>(_ => { });
+
+            string actualPact = File.ReadAllText("PactExtensioñsTests-Combined-V4-PactExtensioñsTests-Provider.json").TrimEnd();
+            string expectedPact = File.ReadAllText("data/v4-non-ascii-integration.json").TrimEnd();
 
             actualPact.Should().Be(expectedPact);
         }

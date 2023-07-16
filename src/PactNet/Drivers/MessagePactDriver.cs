@@ -25,7 +25,7 @@ namespace PactNet.Drivers
         /// <returns>Message interaction driver</returns>
         public IMessageInteractionDriver NewMessageInteraction(string description)
         {
-            InteractionHandle interaction = NativeInterop.NewMessageInteraction(this.pact, description);
+            InteractionHandle interaction = NativeInterop.NewMessageInteraction(this.pact, NativeInterop.StringToUtf8(description));
             return new MessageInteractionDriver(this.pact, interaction);
         }
 
@@ -36,6 +36,9 @@ namespace PactNet.Drivers
         /// <param name="name">the name of the parameter</param>
         /// <param name="value">the value of the parameter</param>
         public void WithMessagePactMetadata(string @namespace, string name, string value)
-            => NativeInterop.WithMessagePactMetadata(this.pact, @namespace, name, value);
+            => NativeInterop.WithMessagePactMetadata(this.pact,
+                                                     NativeInterop.StringToUtf8(@namespace),
+                                                     NativeInterop.StringToUtf8(name),
+                                                     NativeInterop.StringToUtf8(value));
     }
 }

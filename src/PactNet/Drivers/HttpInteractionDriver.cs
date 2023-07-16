@@ -28,7 +28,7 @@ namespace PactNet.Drivers
         /// <param name="description">Provider state description</param>
         /// <returns>Success</returns>
         public void Given(string description)
-            => NativeInterop.Given(this.interaction, description).CheckInteropSuccess();
+            => NativeInterop.Given(this.interaction, NativeInterop.StringToUtf8(description)).CheckInteropSuccess();
 
         /// <summary>
         /// Add a provider state with a parameter to the interaction
@@ -38,7 +38,11 @@ namespace PactNet.Drivers
         /// <param name="value">Parameter value</param>
         /// <returns>Success</returns>
         public void GivenWithParam(string description, string name, string value)
-            => NativeInterop.GivenWithParam(this.interaction, description, name, value).CheckInteropSuccess();
+            => NativeInterop.GivenWithParam(this.interaction,
+                                            NativeInterop.StringToUtf8(description),
+                                            NativeInterop.StringToUtf8(name),
+                                            NativeInterop.StringToUtf8(value))
+                            .CheckInteropSuccess();
 
         /// <summary>
         /// Add a request to the interaction
@@ -46,7 +50,9 @@ namespace PactNet.Drivers
         /// <param name="method">Request method</param>
         /// <param name="path">Request path</param>
         public void WithRequest(string method, string path)
-            => NativeInterop.WithRequest(this.interaction, method, path).CheckInteropSuccess();
+            => NativeInterop
+              .WithRequest(this.interaction, method, path)
+              .CheckInteropSuccess();
 
         /// <summary>
         /// Add a query string parameter to the interaction
@@ -55,7 +61,11 @@ namespace PactNet.Drivers
         /// <param name="value">Parameter value</param>
         /// <param name="index">Parameter index (for if the same name is used multiple times)</param>
         public void WithQueryParameter(string name, string value, uint index)
-            => NativeInterop.WithQueryParameter(this.interaction, name, new UIntPtr(index), value).CheckInteropSuccess();
+            => NativeInterop.WithQueryParameter(this.interaction,
+                                                NativeInterop.StringToUtf8(name),
+                                                new UIntPtr(index),
+                                                NativeInterop.StringToUtf8(value))
+                            .CheckInteropSuccess();
 
         /// <summary>
         /// Set a request header
@@ -64,7 +74,12 @@ namespace PactNet.Drivers
         /// <param name="value">Header value</param>
         /// <param name="index">Header index (for if the same header is added multiple times)</param>
         public void WithRequestHeader(string name, string value, uint index)
-            => NativeInterop.WithHeader(this.interaction, InteractionPart.Request, name, new UIntPtr(index), value).CheckInteropSuccess();
+            => NativeInterop.WithHeader(this.interaction,
+                                        InteractionPart.Request,
+                                        NativeInterop.StringToUtf8(name),
+                                        new UIntPtr(index),
+                                        NativeInterop.StringToUtf8(value))
+                            .CheckInteropSuccess();
 
         /// <summary>
         /// Set a response header
@@ -73,7 +88,12 @@ namespace PactNet.Drivers
         /// <param name="value">Header value</param>
         /// <param name="index">Header index (for if the same header is added multiple times)</param>
         public void WithResponseHeader(string name, string value, uint index)
-            => NativeInterop.WithHeader(this.interaction, InteractionPart.Response, name, new UIntPtr(index), value).CheckInteropSuccess();
+            => NativeInterop.WithHeader(this.interaction,
+                                        InteractionPart.Response,
+                                        NativeInterop.StringToUtf8(name),
+                                        new UIntPtr(index),
+                                        NativeInterop.StringToUtf8(value))
+                            .CheckInteropSuccess();
 
         /// <summary>
         /// Set the response status
@@ -88,7 +108,11 @@ namespace PactNet.Drivers
         /// <param name="contentType">Context type</param>
         /// <param name="body">Serialised body</param>
         public void WithRequestBody(string contentType, string body)
-            => NativeInterop.WithBody(this.interaction, InteractionPart.Request, contentType, body).CheckInteropSuccess();
+            => NativeInterop.WithBody(this.interaction,
+                                      InteractionPart.Request,
+                                      NativeInterop.StringToUtf8(contentType),
+                                      NativeInterop.StringToUtf8(body))
+                            .CheckInteropSuccess();
 
         /// <summary>
         /// Set the response body
@@ -96,6 +120,10 @@ namespace PactNet.Drivers
         /// <param name="contentType">Context type</param>
         /// <param name="body">Serialised body</param>
         public void WithResponseBody(string contentType, string body)
-            => NativeInterop.WithBody(this.interaction, InteractionPart.Response, contentType, body).CheckInteropSuccess();
+            => NativeInterop.WithBody(this.interaction,
+                                      InteractionPart.Response,
+                                      NativeInterop.StringToUtf8(contentType),
+                                      NativeInterop.StringToUtf8(body))
+                            .CheckInteropSuccess();
     }
 }

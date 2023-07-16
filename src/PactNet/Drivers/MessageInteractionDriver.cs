@@ -26,7 +26,7 @@ namespace PactNet.Drivers
         /// </summary>
         /// <param name="description">Provider state description</param>
         public void Given(string description)
-            => NativeInterop.Given(this.interaction, description).CheckInteropSuccess();
+            => NativeInterop.Given(this.interaction, NativeInterop.StringToUtf8(description)).CheckInteropSuccess();
 
         /// <summary>
         /// Add a provider state with a parameter to the interaction
@@ -35,14 +35,18 @@ namespace PactNet.Drivers
         /// <param name="name">Parameter name</param>
         /// <param name="value">Parameter value</param>
         public void GivenWithParam(string description, string name, string value)
-            => NativeInterop.GivenWithParam(this.interaction, description, name, value).CheckInteropSuccess();
+            => NativeInterop.GivenWithParam(this.interaction,
+                                            NativeInterop.StringToUtf8(description),
+                                            NativeInterop.StringToUtf8(name),
+                                            NativeInterop.StringToUtf8(value))
+                            .CheckInteropSuccess();
 
         /// <summary>
         /// Set the description of the message interaction
         /// </summary>
         /// <param name="description">message description</param>
         public void ExpectsToReceive(string description)
-            => NativeInterop.MessageExpectsToReceive(this.interaction, description);
+            => NativeInterop.MessageExpectsToReceive(this.interaction, NativeInterop.StringToUtf8(description));
 
         /// <summary>
         /// Set the metadata of the message
@@ -50,7 +54,7 @@ namespace PactNet.Drivers
         /// <param name="key">the key</param>
         /// <param name="value">the value</param>
         public void WithMetadata(string key, string value)
-            => NativeInterop.MessageWithMetadata(this.interaction, key, value);
+            => NativeInterop.MessageWithMetadata(this.interaction, NativeInterop.StringToUtf8(key), NativeInterop.StringToUtf8(value));
 
         /// <summary>
         /// Set the contents of the message
@@ -59,7 +63,7 @@ namespace PactNet.Drivers
         /// <param name="body">the body of the message</param>
         /// <param name="size">the size of the message</param>
         public void WithContents(string contentType, string body, uint size)
-            => NativeInterop.MessageWithContents(this.interaction, contentType, body, new UIntPtr(0));
+            => NativeInterop.MessageWithContents(this.interaction, NativeInterop.StringToUtf8(contentType), NativeInterop.StringToUtf8(body), new UIntPtr(0));
 
         /// <summary>
         /// Returns the message without the matchers

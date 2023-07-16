@@ -42,7 +42,8 @@ namespace PactNet.Verifier
                 _ => throw new ArgumentOutOfRangeException(nameof(config.LogLevel), config.LogLevel, "Invalid log level")
             });
 
-            this.handle = NativeInterop.VerifierNewForApplication("pact-net", typeof(InteropVerifierProvider).Assembly.GetName().Version.ToString());
+            this.handle = NativeInterop.VerifierNewForApplication(NativeInterop.StringToUtf8("pact-net"),
+                                                                  NativeInterop.StringToUtf8(typeof(InteropVerifierProvider).Assembly.GetName().Version.ToString()));
         }
 
         /// <summary>
@@ -55,7 +56,7 @@ namespace PactNet.Verifier
         /// <param name="path">Provider URI path</param>
         public void SetProviderInfo(string name, string scheme, string host, ushort port, string path)
         {
-            NativeInterop.VerifierSetProviderInfo(this.handle, name, scheme, host, port, path);
+            NativeInterop.VerifierSetProviderInfo(this.handle, NativeInterop.StringToUtf8(name), scheme, host, port, path);
         }
 
         /// <summary>
@@ -78,7 +79,7 @@ namespace PactNet.Verifier
         /// <param name="noState">Filter to only interactions with (false) or without (true) provider state</param>
         public void SetFilterInfo(string description = null, string state = null, bool? noState = null)
         {
-            NativeInterop.VerifierSetFilterInfo(this.handle, description, state, ToSafeByte(noState));
+            NativeInterop.VerifierSetFilterInfo(this.handle, NativeInterop.StringToUtf8(description), NativeInterop.StringToUtf8(state), ToSafeByte(noState));
         }
 
         /// <summary>
@@ -116,11 +117,11 @@ namespace PactNet.Verifier
         public void SetPublishOptions(string providerVersion, Uri buildUrl, ICollection<string> providerTags, string providerBranch)
         {
             NativeInterop.VerifierSetPublishOptions(this.handle,
-                                                    providerVersion,
-                                                    buildUrl?.AbsoluteUri,
+                                                    NativeInterop.StringToUtf8(providerVersion),
+                                                    NativeInterop.StringToUtf8(buildUrl?.AbsoluteUri),
                                                     providerTags.ToArray(),
                                                     (ushort)providerTags.Count,
-                                                    providerBranch);
+                                                    NativeInterop.StringToUtf8(providerBranch));
         }
 
         /// <summary>
@@ -129,7 +130,9 @@ namespace PactNet.Verifier
         /// <param name="consumerFilters">Consumer filters</param>
         public void SetConsumerFilters(ICollection<string> consumerFilters)
         {
-            NativeInterop.VerifierSetConsumerFilters(this.handle, consumerFilters.ToArray(), (ushort)consumerFilters.Count);
+            NativeInterop.VerifierSetConsumerFilters(this.handle,
+                                                     consumerFilters.ToArray(),
+                                                     (ushort)consumerFilters.Count);
         }
 
         /// <summary>
@@ -141,7 +144,7 @@ namespace PactNet.Verifier
         /// <returns>Fluent builder</returns>
         public void AddCustomHeader(string name, string value)
         {
-            NativeInterop.AddCustomHeader(this.handle, name, value);
+            NativeInterop.AddCustomHeader(this.handle, NativeInterop.StringToUtf8(name), NativeInterop.StringToUtf8(value));
         }
 
         /// <summary>
@@ -150,7 +153,7 @@ namespace PactNet.Verifier
         /// <param name="file">File</param>
         public void AddFileSource(FileInfo file)
         {
-            NativeInterop.VerifierAddFileSource(this.handle, file.FullName);
+            NativeInterop.VerifierAddFileSource(this.handle, NativeInterop.StringToUtf8(file.FullName));
         }
 
         /// <summary>
@@ -160,7 +163,7 @@ namespace PactNet.Verifier
         /// <remarks>Can be used with <see cref="IVerifierProvider.SetConsumerFilters"/> to filter the files in the directory</remarks>
         public void AddDirectorySource(DirectoryInfo directory)
         {
-            NativeInterop.VerifierAddDirectorySource(this.handle, directory.FullName);
+            NativeInterop.VerifierAddDirectorySource(this.handle, NativeInterop.StringToUtf8(directory.FullName));
         }
 
         /// <summary>
@@ -172,7 +175,11 @@ namespace PactNet.Verifier
         /// <param name="token">Authentication token</param>
         public void AddUrlSource(Uri url, string username, string password, string token)
         {
-            NativeInterop.VerifierUrlSource(this.handle, url.AbsoluteUri, username, password, token);
+            NativeInterop.VerifierUrlSource(this.handle,
+                                            NativeInterop.StringToUtf8(url.AbsoluteUri),
+                                            NativeInterop.StringToUtf8(username),
+                                            NativeInterop.StringToUtf8(password),
+                                            NativeInterop.StringToUtf8(token));
         }
 
         /// <summary>
@@ -200,15 +207,15 @@ namespace PactNet.Verifier
                                     ICollection<string> consumerVersionTags)
         {
             NativeInterop.VerifierBrokerSourceWithSelectors(this.handle,
-                                                            url.AbsoluteUri,
-                                                            username,
-                                                            password,
-                                                            token,
+                                                            NativeInterop.StringToUtf8(url.AbsoluteUri),
+                                                            NativeInterop.StringToUtf8(username),
+                                                            NativeInterop.StringToUtf8(password),
+                                                            NativeInterop.StringToUtf8(token),
                                                             ToSafeByte(enablePending),
                                                             includeWipPactsSince?.ToString("yyyy-MM-dd"),
                                                             providerTags.ToArray(),
                                                             (ushort)providerTags.Count,
-                                                            providerBranch,
+                                                            NativeInterop.StringToUtf8(providerBranch),
                                                             consumerVersionSelectors.ToArray(),
                                                             (ushort)consumerVersionSelectors.Count,
                                                             consumerVersionTags.ToArray(),

@@ -26,7 +26,7 @@ namespace PactNet.Drivers
         /// <returns>HTTP interaction handle</returns>
         public IHttpInteractionDriver NewHttpInteraction(string description)
         {
-            InteractionHandle interaction = NativeInterop.NewInteraction(this.pact, description);
+            InteractionHandle interaction = NativeInterop.NewInteraction(this.pact, NativeInterop.StringToUtf8(description));
             return new HttpInteractionDriver(this.pact, interaction);
         }
 
