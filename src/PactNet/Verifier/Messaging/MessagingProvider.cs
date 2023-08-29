@@ -88,11 +88,10 @@ namespace PactNet.Verifier.Messaging
         {
             IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
 
-            ICollection<int> used = properties.GetActiveTcpListeners()
-                                              .Concat(properties.GetActiveUdpListeners())
-                                              .Concat(properties.GetActiveTcpConnections().Select(tcp => tcp.LocalEndPoint))
-                                              .Select(l => l.Port)
-                                              .ToList();
+            var used = new HashSet<int>(properties.GetActiveTcpListeners()
+                                                  .Concat(properties.GetActiveUdpListeners())
+                                                  .Concat(properties.GetActiveTcpConnections().Select(tcp => tcp.LocalEndPoint))
+                                                  .Select(l => l.Port));
 
             int port = Enumerable.Range(MinimumPort, (MaximumPort - MinimumPort))
                                  .FirstOrDefault(port => !used.Contains(port));
