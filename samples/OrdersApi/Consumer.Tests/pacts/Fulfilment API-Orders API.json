@@ -89,23 +89,6 @@
       "type": "Synchronous/HTTP"
     },
     {
-      "description": "a request for an order with an unknown ID",
-      "pending": false,
-      "request": {
-        "headers": {
-          "Accept": [
-            "application/json"
-          ]
-        },
-        "method": "GET",
-        "path": "/api/orders/404"
-      },
-      "response": {
-        "status": 404
-      },
-      "type": "Synchronous/HTTP"
-    },
-    {
       "description": "a request to update the status of an order",
       "pending": false,
       "providerStates": [
@@ -147,30 +130,6 @@
         "status": 204
       },
       "type": "Synchronous/HTTP"
-    },
-    {
-      "contents": {
-        "content": {
-          "id": 1
-        },
-        "contentType": "application/json",
-        "encoded": false
-      },
-      "description": "an event indicating that an order has been created",
-      "matchingRules": {
-        "body": {
-          "$.id": {
-            "combine": "AND",
-            "matchers": [
-              {
-                "match": "integer"
-              }
-            ]
-          }
-        }
-      },
-      "pending": false,
-      "type": "Asynchronous/Messages"
     },
     {
       "contents": {
