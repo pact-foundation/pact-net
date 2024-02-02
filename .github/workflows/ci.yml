@@ -37,7 +37,7 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Test
-        run: dotnet test --no-build --verbosity normal -- RunConfiguration.TargetPlatform=x64
+        run: dotnet test --no-build --verbosity normal
 
       - name: Pack
         if: matrix.os == 'windows-latest'
