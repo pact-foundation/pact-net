@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <Import Project="../NuGet.targets" />
+  
 
   <PropertyGroup>
     <IsWindows>False</IsWindows>
@@ -20,6 +21,8 @@
     <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'True'">True</IsOSX>
     <IsArm64 Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'">True</IsArm64>
   </PropertyGroup>
+
+  <Import Project="$(MSBuildProjectDirectory)\..\..\build\Download.Native.Libs.targets"/>
 
   <ItemGroup>
     <Content Include="$(MSBuildProjectDirectory)\..\..\build\windows\x86_64\pact_ffi.dll">

@@ -1,0 +1,112 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="DownloadNativeLibraryIfMissing">
+
+  <PropertyGroup>
+
+    <FfiVersion>0.4.5</FfiVersion>
+    <FfiBaseUrl>https://github.com/pact-foundation/pact-reference/releases/download/libpact_ffi-v$(FfiVersion)</FfiBaseUrl>
+
+    <LibFile>libpact_ffi</LibFile>
+    <LibFile Condition="'$(IsWindows)' == 'True'">pact_ffi</LibFile>
+
+    <OsName Condition="'$(IsWindows)' == 'True'">windows</OsName>
+    <OsName Condition="'$(IsLinux)' == 'True'">linux</OsName>
+    <OsName Condition="'$(IsOSX)' == 'True'">osx</OsName>
+
+    <PlatformType>x86_64</PlatformType>
+    <PlatformType Condition="'$(IsOSX)' == 'True'">aarch64-apple-darwin</PlatformType>
+
+    <FileExtension Condition="'$(IsWindows)' == 'True'">dll</FileExtension>
+    <FileExtension Condition="'$(IsLinux)' == 'True'">so</FileExtension>
+    <FileExtension Condition="'$(IsOSX)' == 'True'">dylib</FileExtension>
+
+    <SrcFile>$(LibFile)-$(OsName)-$(PlatformType).$(FileExtension).gz</SrcFile>
+    <DestDir>$(MSBuildThisFileDirectory)\$(OsName)\$(PlatformType)</DestDir>
+  </PropertyGroup>
+  <Target Name="DownloadNativeLibraryIfMissing" BeforeTargets="PrepareForBuild" Condition="!Exists('$(DestDir)\$(LibFile).$(FileExtension)')">
+    <Message Text="Downloading Native Lib $(SrcFile) archive" Importance="high"/>
+    <DownloadFile
+      SourceUrl="$(FfiBaseUrl)/$(SrcFile)"
+      DestinationFolder="$(DestDir)">
+      <Output TaskParameter="DownloadedFile" ItemName="DownloadLib" />
+    </DownloadFile>
+    <DownloadFile
+      SourceUrl="$(FfiBaseUrl)/$(SrcFile).sha256"
+      DestinationFolder="$(DestDir)">
+      <Output TaskParameter="DownloadedFile" ItemName="DownloadLibSha256" />
+    </DownloadFile>
+    <Message Text="Downloaded Native Lib $(SrcFile) archive" Importance="high"/>
+  </Target>
+  <Target Name="VerifyDownload" AfterTargets="DownloadNativeLibraryIfNeeded" Condition="Exists(@(DownloadLibSha256))">
+    <Message Text="Verifying Native Lib $(SrcFile) archive" Importance="high"/>
+    <PropertyGroup>
+      <DownloadedLibSha256FileContents>$([System.IO.File]::ReadAllText(%(DownloadLibSha256.Identity)))</DownloadedLibSha256FileContents>
+      <DownloadedLibSha>$(DownloadedLibSha256FileContents.Split(' ')[0].Trim())</DownloadedLibSha>
+      <VerificationFileContainsSrcFile>$(DownloadedLibSha256FileContents.Split(' ')[1].Trim().EndsWith($(SrcFile)))</VerificationFileContainsSrcFile>
+    </PropertyGroup>
+    <Error Text="Downloaded $(DestDir)\$(SrcFile).sha256 file is not for $(DestDir)\$(SrcFile)" Condition="$(VerificationFileContainsSrcFile) == 'False'"/>
+    <VerifyFileHash File="%(DownloadLib.Identity)"
+                    Hash="$(DownloadedLibSha)" />
+    <Message Text="Verified Native Lib $(SrcFile) archive" Importance="high"/>
+  </Target>
+  <Target Name="UnCompressArchive" AfterTargets="VerifyDownload" Condition="Exists(@(DownloadLib))">
+    <UnGZip
+      SourceFile="%(DownloadLib.Identity)"
+      DestinationFolder="$(DestDir)"
+      DestinationFile="$(LibFile).$(FileExtension)"
+    />
+  </Target>
+  <Target Name="Cleanup" AfterTargets="UnCompressArchive" Condition="Exists(@(DownloadLib)) or Exists(@(DownloadLibSha256))">
+    <ItemGroup>
+      <FilesToDelete Include="$(DestDir)\$(LibFile)-$(OsName)-$(PlatformType).$(FileExtension)*"/>
+    </ItemGroup>
+    <Delete Files="@(FilesToDelete)">
+      <Output
+        TaskParameter="DeletedFiles"
+        ItemName="FilesDeleted"/>
+    </Delete>
+  </Target>
+  <UsingTask TaskName="UnGZip"
+             TaskFactory="RoslynCodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <SourceFile ParameterType="Microsoft.Build.Framework.ITaskItem"
+                  Required="true" />
+      <DestinationFolder ParameterType="Microsoft.Build.Framework.ITaskItem"
+                         Required="true" />
+      <DestinationFile ParameterType="Microsoft.Build.Framework.ITaskItem"
+                         Required="false" />
+      <Result ParameterType="Microsoft.Build.Framework.ITaskItem"
+              Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.IO.Compression" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+        string compressedFileName = SourceFile.GetMetadata("FullPath");
+        string destinationFolder = DestinationFolder.GetMetadata("FullPath");
+        string decompressedFileName = Path.GetFileNameWithoutExtension(SourceFile.ItemSpec);
+        string decompressedFilePath = DestinationFile?.GetMetadata("Identity") == null 
+                                        ? Path.Combine(destinationFolder,decompressedFileName)
+                                        : Path.Combine(destinationFolder,DestinationFile.GetMetadata("Identity") );
+
+        Log.LogMessage(MessageImportance.High, 
+                $"Decompressing {compressedFileName} to {decompressedFilePath}");
+
+        using (var compressedFileStream = File.Open(compressedFileName, FileMode.Open))
+        using (var outputFileStream = File.Create(decompressedFilePath))
+        using (var decompressor = new GZipStream(compressedFileStream, 
+          CompressionMode.Decompress))
+        {
+            decompressor.CopyTo(outputFileStream);
+        }
+        Log.LogMessage(MessageImportance.High, 
+                $"Sucessfully decompressed {compressedFileName} to {decompressedFilePath}");
+        var destinationItem = new TaskItem(decompressedFilePath);
+              
+        Result = destinationItem;
+    ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+</Project>
