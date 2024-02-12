@@ -27,35 +27,35 @@
     <DownloadFile
       SourceUrl="$(FfiBaseUrl)/$(SrcFile)"
       DestinationFolder="$(DestDir)">
-      <Output TaskParameter="DownloadedFile" ItemName="DownloadLib" />
+      <Output TaskParameter="DownloadedFile" ItemName="DownloadedLibArchive" />
     </DownloadFile>
     <DownloadFile
       SourceUrl="$(FfiBaseUrl)/$(SrcFile).sha256"
       DestinationFolder="$(DestDir)">
-      <Output TaskParameter="DownloadedFile" ItemName="DownloadLibSha256" />
+      <Output TaskParameter="DownloadedFile" ItemName="DownloadedLibArchiveSha256" />
     </DownloadFile>
     <Message Text="Downloaded Native Lib $(SrcFile) archive" Importance="high"/>
   </Target>
-  <Target Name="VerifyDownload" AfterTargets="DownloadNativeLibraryIfNeeded" Condition="Exists(@(DownloadLibSha256))">
+  <Target Name="VerifyDownload" AfterTargets="DownloadNativeLibraryIfMissing" Condition="Exists(@(DownloadedLibArchiveSha256))">
     <Message Text="Verifying Native Lib $(SrcFile) archive" Importance="high"/>
     <PropertyGroup>
-      <DownloadedLibSha256FileContents>$([System.IO.File]::ReadAllText(%(DownloadLibSha256.Identity)))</DownloadedLibSha256FileContents>
-      <DownloadedLibSha>$(DownloadedLibSha256FileContents.Split(' ')[0].Trim())</DownloadedLibSha>
-      <VerificationFileContainsSrcFile>$(DownloadedLibSha256FileContents.Split(' ')[1].Trim().EndsWith($(SrcFile)))</VerificationFileContainsSrcFile>
+      <DownloadedLibArchiveSha256FileContents>$([System.IO.File]::ReadAllText(%(DownloadedLibArchiveSha256.Identity)))</DownloadedLibArchiveSha256FileContents>
+      <DownloadedLibArchiveSha>$(DownloadedLibArchiveSha256FileContents.Split(' ')[0].Trim())</DownloadedLibArchiveSha>
+      <VerificationFileContainsSrcFile>$(DownloadedLibArchiveSha256FileContents.Split(' ')[1].Trim().EndsWith($(SrcFile)))</VerificationFileContainsSrcFile>
     </PropertyGroup>
     <Error Text="Downloaded $(DestDir)\$(SrcFile).sha256 file is not for $(DestDir)\$(SrcFile)" Condition="$(VerificationFileContainsSrcFile) == 'False'"/>
-    <VerifyFileHash File="%(DownloadLib.Identity)"
-                    Hash="$(DownloadedLibSha)" />
+    <VerifyFileHash File="%(DownloadedLibArchive.Identity)"
+                    Hash="$(DownloadedLibArchiveSha)" />
     <Message Text="Verified Native Lib $(SrcFile) archive" Importance="high"/>
   </Target>
-  <Target Name="UnCompressArchive" AfterTargets="VerifyDownload" Condition="Exists(@(DownloadLib))">
+  <Target Name="UnCompressArchive" AfterTargets="VerifyDownload" Condition="Exists(@(DownloadedLibArchive))">
     <UnGZip
-      SourceFile="%(DownloadLib.Identity)"
+      SourceFile="%(DownloadedLibArchive.Identity)"
       DestinationFolder="$(DestDir)"
       DestinationFile="$(LibFile).$(FileExtension)"
     />
   </Target>
-  <Target Name="Cleanup" AfterTargets="UnCompressArchive" Condition="Exists(@(DownloadLib)) or Exists(@(DownloadLibSha256))">
+  <Target Name="Cleanup" AfterTargets="UnCompressArchive" Condition="Exists(@(DownloadedLibArchive)) or Exists(@(DownloadedLibArchiveSha256))">
     <ItemGroup>
       <FilesToDelete Include="$(DestDir)\$(LibFile)-$(OsName)-$(PlatformType).$(FileExtension)*"/>
     </ItemGroup>
