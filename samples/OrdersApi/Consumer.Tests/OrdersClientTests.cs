@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
 using PactNet;
 using PactNet.Output.Xunit;
 using Xunit;
@@ -33,10 +32,11 @@ namespace Consumer.Tests
                 {
                     new XunitOutput(output)
                 },
-                DefaultJsonSettings = new JsonSerializerSettings
+                DefaultJsonSettings = new JsonSerializerOptions
                 {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                    Converters = new JsonConverter[] { new StringEnumConverter() }
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    PropertyNameCaseInsensitive = true,
+                    Converters = { new JsonStringEnumConverter() }
                 },
                 LogLevel = PactLogLevel.Debug
             };

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
-using Newtonsoft.Json;
+using System.Text.Json;
 using PactNet.Drivers;
 using PactNet.Matchers;
 
@@ -13,7 +13,7 @@ namespace PactNet
     internal class ResponseBuilder : IResponseBuilderV2, IResponseBuilderV3, IResponseBuilderV4
     {
         private readonly IHttpInteractionDriver driver;
-        private readonly JsonSerializerSettings defaultSettings;
+        private readonly JsonSerializerOptions defaultSettings;
         private readonly Dictionary<string, uint> headerCounts;
 
         /// <summary>
@@ -21,7 +21,7 @@ namespace PactNet
         /// </summary>
         /// <param name="driver">Interaction driver</param>
         /// <param name="defaultSettings">Default JSON serializer settings</param>
-        internal ResponseBuilder(IHttpInteractionDriver driver, JsonSerializerSettings defaultSettings)
+        internal ResponseBuilder(IHttpInteractionDriver driver, JsonSerializerOptions defaultSettings)
         {
             this.driver = driver;
             this.defaultSettings = defaultSettings;
@@ -78,7 +78,7 @@ namespace PactNet
         /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        IResponseBuilderV2 IResponseBuilderV2.WithJsonBody(dynamic body, JsonSerializerSettings settings)
+        IResponseBuilderV2 IResponseBuilderV2.WithJsonBody(dynamic body, JsonSerializerOptions settings)
             => this.WithJsonBody(body, settings);
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace PactNet
         /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        IResponseBuilderV3 IResponseBuilderV3.WithJsonBody(dynamic body, JsonSerializerSettings settings)
+        IResponseBuilderV3 IResponseBuilderV3.WithJsonBody(dynamic body, JsonSerializerOptions settings)
             => this.WithJsonBody(body, settings);
 
         /// <summary>
@@ -206,7 +206,7 @@ namespace PactNet
         /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        IResponseBuilderV4 IResponseBuilderV4.WithJsonBody(dynamic body, JsonSerializerSettings settings)
+        IResponseBuilderV4 IResponseBuilderV4.WithJsonBody(dynamic body, JsonSerializerOptions settings)
             => this.WithJsonBody(body, settings);
 
         /// <summary>
@@ -268,7 +268,7 @@ namespace PactNet
         /// <returns>Fluent builder</returns>
         internal ResponseBuilder WithHeader(string key, IMatcher matcher)
         {
-            var serialised = JsonConvert.SerializeObject(matcher, this.defaultSettings);
+            var serialised = JsonSerializer.Serialize(matcher, this.defaultSettings);
 
             return this.WithHeader(key, serialised);
         }
@@ -287,9 +287,9 @@ namespace PactNet
         /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        internal ResponseBuilder WithJsonBody(dynamic body, JsonSerializerSettings settings)
+        internal ResponseBuilder WithJsonBody(dynamic body, JsonSerializerOptions settings)
         {
-            string serialised = JsonConvert.SerializeObject(body, settings);
+            string serialised = JsonSerializer.Serialize(body, settings);
             return this.WithBody(serialised, "application/json");
         }
 

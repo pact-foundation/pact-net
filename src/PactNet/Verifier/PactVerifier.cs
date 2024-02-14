@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using Newtonsoft.Json;
+using System.Text.Json;
 using PactNet.Internal;
 using PactNet.Verifier.Messaging;
 
@@ -90,7 +90,7 @@ namespace PactNet.Verifier
         /// </summary>
         /// <param name="configure">Configure message scenarios</param>
         /// <returns>Fluent builder</returns>
-        public IPactVerifier WithMessages(Action<IMessageScenarios> configure) => WithMessages(configure, new JsonSerializerSettings());
+        public IPactVerifier WithMessages(Action<IMessageScenarios> configure) => WithMessages(configure, new JsonSerializerOptions());
 
         /// <summary>
         /// Define messages for verifying pacts containing asynchronous message interactions
@@ -98,7 +98,7 @@ namespace PactNet.Verifier
         /// <param name="configure">Configure message scenarios</param>
         /// <param name="settings">Settings for serialising messages</param>
         /// <returns>Fluent builder</returns>
-        public IPactVerifier WithMessages(Action<IMessageScenarios> configure, JsonSerializerSettings settings)
+        public IPactVerifier WithMessages(Action<IMessageScenarios> configure, JsonSerializerOptions settings)
         {
             Guard.NotNull(settings, nameof(settings));
 

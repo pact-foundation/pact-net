@@ -4,10 +4,10 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using PactNet.Matchers;
 using PactNet.Output.Xunit;
 using Xunit;
@@ -52,9 +52,9 @@ namespace PactNet.Tests
 
         public PactExtensionsTests(ITestOutputHelper output)
         {
-            var jsonSettings = new JsonSerializerSettings
+            var jsonSettings = new JsonSerializerOptions
             {
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
 
             this.config = new PactConfig
@@ -286,7 +286,7 @@ namespace PactNet.Tests
             actualPact.Should().Be(expectedPact);
         }
 
-        private static async Task PerformRequestAsync(IConsumerContext context, TestData body, JsonSerializerSettings jsonSettings)
+        private static async Task PerformRequestAsync(IConsumerContext context, TestData body, JsonSerializerOptions jsonSettings)
         {
             var client = new HttpClient
             {
@@ -294,7 +294,7 @@ namespace PactNet.Tests
             };
             client.DefaultRequestHeaders.Add("X-Request", new[] { "request1", "request2" });
 
-            string content = JsonConvert.SerializeObject(body, jsonSettings);
+            string content = JsonSerializer.Serialize(body, jsonSettings);
 
             HttpResponseMessage response = await client.PostAsync("/things?param=value1&param=value2",
                                                                   new StringContent(content, Encoding.UTF8, "application/json"));
@@ -303,7 +303,7 @@ namespace PactNet.Tests
             response.Headers.GetValues("X-Response").Should().BeEquivalentTo(new[] { "response1", "response2" });
 
             string responseContent = await response.Content.ReadAsStringAsync();
-            TestData responseData = JsonConvert.DeserializeObject<TestData>(responseContent, jsonSettings);
+            TestData responseData = JsonSerializer.Deserialize<TestData>(responseContent, jsonSettings);
             responseData.Should().BeEquivalentTo(body);
         }
 
@@ -312,7 +312,7 @@ namespace PactNet.Tests
             public bool Bool { get; set; }
             public int Int { get; set; }
             public string String { get; set; }
-            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public ICollection<TestData> Children { get; set; }
         }
     }

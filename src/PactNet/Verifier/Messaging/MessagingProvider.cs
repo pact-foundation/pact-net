@@ -5,9 +5,8 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using PactNet.Exceptions;
 using PactNet.Internal;
 
@@ -21,16 +20,17 @@ namespace PactNet.Verifier.Messaging
         private const int MinimumPort = 49152;
         private const int MaximumPort = 65535;
 
-        private static readonly JsonSerializerSettings InteractionSettings = new JsonSerializerSettings
+        private static readonly JsonSerializerOptions InteractionSettings = new JsonSerializerOptions
         {
-            ContractResolver = new CamelCasePropertyNamesContractResolver()
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNameCaseInsensitive = true
         };
 
         private readonly PactVerifierConfig config;
         private readonly HttpListener server;
         private readonly Thread thread;
 
-        private JsonSerializerSettings defaultSettings;
+        private JsonSerializerOptions defaultSettings;
 
         /// <summary>
         /// Scenarios configured for the provider
@@ -55,7 +55,7 @@ namespace PactNet.Verifier.Messaging
         /// </summary>
         /// <param name="settings">Default JSON serializer settings</param>
         /// <returns>URI of the started service</returns>
-        public Uri Start(JsonSerializerSettings settings)
+        public Uri Start(JsonSerializerOptions settings)
         {
             Guard.NotNull(settings, nameof(settings));
             this.defaultSettings = settings;
@@ -137,7 +137,7 @@ namespace PactNet.Verifier.Messaging
                 {
                     var reader = new StreamReader(context.Request.InputStream);
                     string body = reader.ReadToEnd();
-                    interaction = JsonConvert.DeserializeObject<MessageInteraction>(body, InteractionSettings);
+                    interaction = JsonSerializer.Deserialize<MessageInteraction>(body, InteractionSettings);
 
                     if (string.IsNullOrWhiteSpace(interaction.Description))
                     {
@@ -172,11 +172,11 @@ namespace PactNet.Verifier.Messaging
                     return;
                 }
 
-                JsonSerializerSettings settings = scenario.JsonSettings ?? this.defaultSettings;
+                JsonSerializerOptions settings = scenario.JsonSettings ?? this.defaultSettings;
 
                 if (scenario.Metadata != null)
                 {
-                    string stringifyMetadata = JsonConvert.SerializeObject(scenario.Metadata, settings);
+                    string stringifyMetadata = JsonSerializer.Serialize(scenario.Metadata, settings);
                     string metadataBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(stringifyMetadata));
                     context.Response.AddHeader("Pact-Message-Metadata", metadataBase64);
 
@@ -184,7 +184,7 @@ namespace PactNet.Verifier.Messaging
                 }
 
                 dynamic content = scenario.Invoke();
-                string response = JsonConvert.SerializeObject(content, settings);
+                string response = JsonSerializer.Serialize(content, settings);
                 this.OkResponse(context, response);
 
                 this.config.WriteLine($"Successfully simulated message with description: {interaction.Description}");

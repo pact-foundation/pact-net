@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using PactNet.Output.Xunit;
 using PactNet.Verifier;
 using PactNet.Verifier.Messaging;
@@ -18,11 +18,10 @@ namespace PactNet.Tests.Verifier.Messaging
 {
     public class MessagingProviderTests : IDisposable
     {
-        private static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
+        private static readonly JsonSerializerOptions Settings = new JsonSerializerOptions
         {
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.Ignore
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
         };
 
         private readonly MessagingProvider provider;
@@ -107,9 +106,9 @@ namespace PactNet.Tests.Verifier.Messaging
                      ["a message"] = new Scenario("a message",
                                                   factory,
                                                   metadata,
-                                                  new JsonSerializerSettings
+                                                  new JsonSerializerOptions
                                                   {
-                                                      ContractResolver = new CamelCasePropertyNamesContractResolver()
+                                                      PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                                                   })
                  }));
 
@@ -133,9 +132,9 @@ namespace PactNet.Tests.Verifier.Messaging
                      ["a message"] = new Scenario("a message",
                                                   factory,
                                                   null,
-                                                  new JsonSerializerSettings
+                                                  new JsonSerializerOptions
                                                   {
-                                                      ContractResolver = new CamelCasePropertyNamesContractResolver()
+                                                      PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                                                   })
                  }));
 

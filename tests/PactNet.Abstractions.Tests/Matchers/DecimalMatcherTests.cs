@@ -1,8 +1,6 @@
+using System.Text.Json;
 using FluentAssertions;
-using Newtonsoft.Json;
 using PactNet.Matchers;
-using System;
-using System.Globalization;
 using Xunit;
 
 namespace PactNet.Abstractions.Tests.Matchers
@@ -16,10 +14,10 @@ namespace PactNet.Abstractions.Tests.Matchers
 
             var matcher = new DecimalMatcher(example);
 
-            string actual = JsonConvert.SerializeObject(matcher, new JsonSerializerSettings() { Culture = CultureInfo.InvariantCulture });
-            FormattableString expected = $@"{{""pact:matcher:type"":""decimal"",""value"":{example}}}";
+            string actual = JsonSerializer.Serialize(matcher);
+            string expected = $@"{{""pact:matcher:type"":""decimal"",""value"":{JsonSerializer.Serialize(example)}}}";
 
-            actual.Should().BeEquivalentTo(expected.ToString(CultureInfo.InvariantCulture));
+            actual.Should().Be(expected);
         }
 
         [Fact]
@@ -29,23 +27,23 @@ namespace PactNet.Abstractions.Tests.Matchers
 
             var matcher = new DecimalMatcher(example);
 
-            string actual = JsonConvert.SerializeObject(matcher, new JsonSerializerSettings() { Culture = CultureInfo.InvariantCulture });
-            FormattableString expected = $@"{{""pact:matcher:type"":""decimal"",""value"":{example}}}";
+            string actual = JsonSerializer.Serialize(matcher);
+            string expected = $@"{{""pact:matcher:type"":""decimal"",""value"":{JsonSerializer.Serialize(example)}}}";
 
-            actual.Should().BeEquivalentTo(expected.ToString(CultureInfo.InvariantCulture));
+            actual.Should().Be(expected);
         }
 
         [Fact]
         public void Ctor_Decimal_SerialisesCorrectly()
         {
-            const decimal example = 3.14m;
+            const decimal example = 3.1m;
 
             var matcher = new DecimalMatcher(example);
 
-            string actual = JsonConvert.SerializeObject(matcher, new JsonSerializerSettings() { Culture = CultureInfo.InvariantCulture });
-            FormattableString expected = $@"{{""pact:matcher:type"":""decimal"",""value"":{example}}}";
+            string actual = JsonSerializer.Serialize(matcher);
+            string expected = $@"{{""pact:matcher:type"":""decimal"",""value"":{JsonSerializer.Serialize(example)}}}";
 
-            actual.Should().BeEquivalentTo(expected.ToString(CultureInfo.InvariantCulture));
+            actual.Should().Be(expected);
         }
     }
 }

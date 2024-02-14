@@ -1,6 +1,6 @@
 using System;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace PactNet.Verifier.Messaging
 {
@@ -12,7 +12,7 @@ namespace PactNet.Verifier.Messaging
         private readonly string description;
         private Func<dynamic> factory;
         private dynamic metadata = new { ContentType = "application/json" };
-        private JsonSerializerSettings settings;
+        private JsonSerializerOptions settings;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="MessageScenarioBuilder"/> class.
@@ -48,7 +48,7 @@ namespace PactNet.Verifier.Messaging
         /// </summary>
         /// <param name="factory">Content factory</param>
         /// <param name="settings">Custom JSON serializer settings</param>
-        public void WithContent(Func<dynamic> factory, JsonSerializerSettings settings)
+        public void WithContent(Func<dynamic> factory, JsonSerializerOptions settings)
         {
             this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
             this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
@@ -69,7 +69,7 @@ namespace PactNet.Verifier.Messaging
         /// </summary>
         /// <param name="factory">Content factory</param>
         /// <param name="settings">Custom JSON serializer settings</param>
-        public async Task WithContentAsync(Func<Task<dynamic>> factory, JsonSerializerSettings settings)
+        public async Task WithContentAsync(Func<Task<dynamic>> factory, JsonSerializerOptions settings)
         {
             dynamic value = await factory();
             this.factory = () => value;

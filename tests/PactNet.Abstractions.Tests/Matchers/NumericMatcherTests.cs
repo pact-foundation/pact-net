@@ -1,8 +1,7 @@
-using FluentAssertions;
-using Newtonsoft.Json;
-using PactNet.Matchers;
-using System;
 using System.Globalization;
+using System.Text.Json;
+using FluentAssertions;
+using PactNet.Matchers;
 using Xunit;
 
 namespace PactNet.Abstractions.Tests.Matchers
@@ -16,8 +15,8 @@ namespace PactNet.Abstractions.Tests.Matchers
 
             var matcher = new NumericMatcher(example);
 
-            string actual = JsonConvert.SerializeObject(matcher);
-            string expected = $@"{{""pact:matcher:type"":""number"",""value"":{example}}}";
+            string actual = JsonSerializer.Serialize(matcher);
+            string expected = $@"{{""pact:matcher:type"":""number"",""value"":{JsonSerializer.Serialize(example)}}}";
 
             actual.Should().BeEquivalentTo(expected);
         }
@@ -29,10 +28,10 @@ namespace PactNet.Abstractions.Tests.Matchers
 
             var matcher = new NumericMatcher(example);
 
-            string actual = JsonConvert.SerializeObject(matcher, new JsonSerializerSettings() { Culture = CultureInfo.InvariantCulture });
-            FormattableString expected = $@"{{""pact:matcher:type"":""number"",""value"":{example}}}";
+            string actual = JsonSerializer.Serialize(matcher);
+            string expected = $@"{{""pact:matcher:type"":""number"",""value"":{JsonSerializer.Serialize(example)}}}";
 
-            actual.Should().BeEquivalentTo(expected.ToString(CultureInfo.InvariantCulture));
+            actual.Should().Be(expected);
         }
 
         [Fact]
@@ -42,10 +41,10 @@ namespace PactNet.Abstractions.Tests.Matchers
 
             var matcher = new NumericMatcher(example);
 
-            string actual = JsonConvert.SerializeObject(matcher, new JsonSerializerSettings() { Culture = CultureInfo.InvariantCulture });
-            FormattableString expected = $@"{{""pact:matcher:type"":""number"",""value"":{example}}}";
+            string actual = JsonSerializer.Serialize(matcher);
+            string expected = $@"{{""pact:matcher:type"":""number"",""value"":{JsonSerializer.Serialize(example)}}}";
 
-            actual.Should().BeEquivalentTo(expected.ToString(CultureInfo.InvariantCulture));
+            actual.Should().Be(expected);
         }
 
         [Fact]
@@ -55,10 +54,10 @@ namespace PactNet.Abstractions.Tests.Matchers
 
             var matcher = new NumericMatcher(example);
 
-            string actual = JsonConvert.SerializeObject(matcher, new JsonSerializerSettings() { Culture = CultureInfo.InvariantCulture });
-            FormattableString expected = $@"{{""pact:matcher:type"":""number"",""value"":{example}}}";
+            string actual = JsonSerializer.Serialize(matcher);
+            string expected = $@"{{""pact:matcher:type"":""number"",""value"":{JsonSerializer.Serialize(example)}}}";
 
-            actual.Should().BeEquivalentTo(expected.ToString(CultureInfo.InvariantCulture));
+            actual.Should().Be(expected.ToString(CultureInfo.InvariantCulture));
         }
     }
 }

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json;
 using PactNet.Drivers;
 using PactNet.Interop;
 
@@ -47,7 +47,7 @@ namespace PactNet
             => WithJsonContent(content);
 
         /// <inheritdoc cref="IMessageBuilderV3"/>
-        IConfiguredMessageVerifier IMessageBuilderV3.WithJsonContent(dynamic content, JsonSerializerSettings settings)
+        IConfiguredMessageVerifier IMessageBuilderV3.WithJsonContent(dynamic content, JsonSerializerOptions settings)
             => WithJsonContent(content, settings);
 
         #endregion
@@ -71,7 +71,7 @@ namespace PactNet
             => WithJsonContent(content);
 
         /// <inheritdoc cref="IMessageBuilderV4"/>
-        IConfiguredMessageVerifier IMessageBuilderV4.WithJsonContent(dynamic content, JsonSerializerSettings settings)
+        IConfiguredMessageVerifier IMessageBuilderV4.WithJsonContent(dynamic content, JsonSerializerOptions settings)
             => WithJsonContent(content, settings);
 
         #endregion
@@ -132,9 +132,9 @@ namespace PactNet
         /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        internal ConfiguredMessageVerifier WithJsonContent(dynamic body, JsonSerializerSettings settings)
+        internal ConfiguredMessageVerifier WithJsonContent(dynamic body, JsonSerializerOptions settings)
         {
-            string serialised = JsonConvert.SerializeObject(body, settings);
+            string serialised = JsonSerializer.Serialize(body, settings);
 
             this.driver.WithContents("application/json", serialised, 0);
 

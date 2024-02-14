@@ -5,7 +5,7 @@
       net7.0
     </TargetFrameworks>
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">
-      net7.0;net461
+      net7.0;net462
     </TargetFrameworks>
     <IsPackable>false</IsPackable>
     <LangVersion>latest</LangVersion>

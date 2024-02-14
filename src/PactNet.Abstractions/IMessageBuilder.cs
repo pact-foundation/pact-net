@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace PactNet
 {
@@ -44,7 +44,7 @@ namespace PactNet
         /// <param name="body">Message body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Configured message</returns>
-        IConfiguredMessageVerifier WithJsonContent(dynamic body, JsonSerializerSettings settings);
+        IConfiguredMessageVerifier WithJsonContent(dynamic body, JsonSerializerOptions settings);
     }
 
     /// <summary>
@@ -88,6 +88,6 @@ namespace PactNet
         /// <param name="body">Message body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Configured message</returns>
-        IConfiguredMessageVerifier WithJsonContent(dynamic body, JsonSerializerSettings settings);
+        IConfiguredMessageVerifier WithJsonContent(dynamic body, JsonSerializerOptions settings);
     }
 }

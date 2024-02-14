@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using Moq;
-using Newtonsoft.Json;
 using PactNet.Output.Xunit;
 using PactNet.Verifier;
 using PactNet.Verifier.Messaging;
@@ -62,7 +62,7 @@ namespace PactNet.Tests.Verifier
             [Fact]
             public void WithMessages_WhenCalled_SetsProviderInfo()
             {
-                var settings = new JsonSerializerSettings();
+                var settings = new JsonSerializerOptions();
                 this.mockMessaging
                     .Setup(m => m.Start(settings))
                     .Returns(new Uri("https://localhost:1234/pact-messaging/"));
@@ -76,7 +76,7 @@ namespace PactNet.Tests.Verifier
             public void WithMessages_CalledTwice_Throws()
             {
                 this.mockMessaging
-                    .Setup(m => m.Start(It.IsAny<JsonSerializerSettings>()))
+                    .Setup(m => m.Start(It.IsAny<JsonSerializerOptions>()))
                     .Returns(new Uri("https://localhost:1234/pact-messaging/"));
 
                 Action action = () => this.verifier.WithMessages(_ => { }).WithMessages(_ => { });
@@ -178,7 +178,7 @@ namespace PactNet.Tests.Verifier
             {
                 // arrange
                 this.mockMessaging
-                    .Setup(m => m.Start(It.IsAny<JsonSerializerSettings>()))
+                    .Setup(m => m.Start(It.IsAny<JsonSerializerOptions>()))
                     .Returns(new Uri("https://localhost:1234/pact-messaging/"));
 
                 this.mockMessaging

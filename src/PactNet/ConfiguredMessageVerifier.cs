@@ -1,8 +1,6 @@
 using System;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 using PactNet.Drivers;
 using PactNet.Exceptions;
 using PactNet.Interop;
@@ -17,9 +15,9 @@ namespace PactNet
     {
         // the native message returned from the FFI always uses camel case property
         // names, but the inner content may use different settings supplied by the user
-        private static readonly JsonSerializerSettings NativeMessageSettings = new()
+        private static readonly JsonSerializerOptions NativeMessageSettings = new()
         {
-            ContractResolver = new CamelCasePropertyNamesContractResolver()
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
         private readonly IMessageInteractionDriver driver;
@@ -87,16 +85,16 @@ namespace PactNet
         private T MessageReified<T>()
         {
             string reified = this.driver.Reify();
-            NativeMessage content = JsonConvert.DeserializeObject<NativeMessage>(reified, NativeMessageSettings);
+            NativeMessage content = JsonSerializer.Deserialize<NativeMessage>(reified, NativeMessageSettings);
 
             string contentString = this.version switch
             {
-                PactSpecification.V3 => ((JToken)content.Contents).ToString(Formatting.None),
-                PactSpecification.V4 => ((JToken)content.Contents)["content"].ToString(Formatting.None),
+                PactSpecification.V3 => ((JsonElement)content.Contents).GetRawText(),
+                PactSpecification.V4 => ((JsonElement)content.Contents).GetProperty("content").GetRawText(),
                 _ => throw new ArgumentOutOfRangeException(nameof(version), this.version, "Unsupported specification version")
             };
 
-            T messageReified = JsonConvert.DeserializeObject<T>(contentString, this.config.DefaultJsonSettings);
+            T messageReified = JsonSerializer.Deserialize<T>(contentString, this.config.DefaultJsonSettings);
 
             return messageReified;
         }

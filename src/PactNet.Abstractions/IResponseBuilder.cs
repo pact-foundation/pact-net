@@ -1,5 +1,5 @@
 using System.Net;
-using Newtonsoft.Json;
+using System.Text.Json;
 using PactNet.Matchers;
 
 namespace PactNet
@@ -52,7 +52,7 @@ namespace PactNet
         /// <param name="body">Response body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        IResponseBuilderV2 WithJsonBody(dynamic body, JsonSerializerSettings settings);
+        IResponseBuilderV2 WithJsonBody(dynamic body, JsonSerializerOptions settings);
 
         /// <summary>
         /// A pre-formatted body which should be used as-is for the response 
@@ -111,7 +111,7 @@ namespace PactNet
         /// <param name="body">Response body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        IResponseBuilderV3 WithJsonBody(dynamic body, JsonSerializerSettings settings);
+        IResponseBuilderV3 WithJsonBody(dynamic body, JsonSerializerOptions settings);
 
         /// <summary>
         /// A pre-formatted body which should be used as-is for the response 
@@ -170,7 +170,7 @@ namespace PactNet
         /// <param name="body">Response body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        IResponseBuilderV4 WithJsonBody(dynamic body, JsonSerializerSettings settings);
+        IResponseBuilderV4 WithJsonBody(dynamic body, JsonSerializerOptions settings);
 
         /// <summary>
         /// A pre-formatted body which should be used as-is for the response 

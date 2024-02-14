@@ -31,7 +31,7 @@ namespace Provider.Orders
         /// <returns>Order</returns>
         /// <response code="200">Order</response>
         /// <response code="404">Unknown order</response>
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "get")]
         [ProducesResponseType(typeof(OrderDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
@@ -60,7 +60,7 @@ namespace Provider.Orders
 
             await this.orders.InsertAsync(order);
 
-            return this.CreatedAtAction(nameof(GetByIdAsync), new { id = order.Id }, order);
+            return this.CreatedAtRoute("get", new { id = order.Id }, order);
         }
 
         /// <summary>

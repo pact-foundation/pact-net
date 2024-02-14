@@ -1,10 +1,9 @@
 ﻿using System;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 using PactNet.Drivers;
 using PactNet.Exceptions;
 using PactNet.Interop;
@@ -15,17 +14,14 @@ namespace PactNet.Tests
 {
     public class ConfiguredMessageVerifierTests
     {
-        private static readonly JsonSerializerSettings CamelCase = new()
+        private static readonly JsonSerializerOptions CamelCase = new()
         {
-            ContractResolver = new CamelCasePropertyNamesContractResolver()
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        private static readonly JsonSerializerSettings SnakeCase = new()
+        private static readonly JsonSerializerOptions SnakeCase = new()
         {
-            ContractResolver = new DefaultContractResolver()
-            {
-                NamingStrategy = new SnakeCaseNamingStrategy()
-            }
+            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
         };
 
         private readonly Mock<IMessageInteractionDriver> mockDriver;
@@ -139,7 +135,7 @@ namespace PactNet.Tests
             this.mockDriver.Verify(s => s.WritePactFile(It.IsAny<string>()), Times.Never);
         }
 
-        private (ConfiguredMessageVerifier Verifier, Message Message) SetupMessage(PactSpecification version, JsonSerializerSettings contentSettings = null)
+        private (ConfiguredMessageVerifier Verifier, Message Message) SetupMessage(PactSpecification version, JsonSerializerOptions contentSettings = null)
         {
             var verifier = new ConfiguredMessageVerifier(this.mockDriver.Object, this.config, version);
             this.config.DefaultJsonSettings = contentSettings ?? CamelCase;
@@ -147,12 +143,12 @@ namespace PactNet.Tests
             // this simulates what the FFI library does - the content uses user-supplied JSON settings
             // then they are interpreted literally to a JToken
             var contents = new Message { FooBar = 42 };
-            string serialised = JsonConvert.SerializeObject(contents, this.config.DefaultJsonSettings);
+            string serialised = JsonSerializer.Serialize(contents, this.config.DefaultJsonSettings);
 
-            JObject token = version switch
+            JsonNode token = version switch
             {
-                PactSpecification.V3 => JObject.Parse(serialised),
-                PactSpecification.V4 => JObject.Parse(@$"{{""content"":{serialised},""contentType"":""application/json"",""encoded"":false}}"),
+                PactSpecification.V3 => JsonSerializer.Deserialize<JsonNode>(serialised),
+                PactSpecification.V4 => JsonSerializer.Deserialize<JsonNode>(@$"{{""content"":{serialised},""contentType"":""application/json"",""encoded"":false}}"),
                 _ => throw new ArgumentOutOfRangeException(nameof(version), version, "Unsupported version")
             };
 
@@ -165,7 +161,7 @@ namespace PactNet.Tests
             // the native message returned from the FFI is always camel-cased
             this.mockDriver
                 .Setup(s => s.Reify())
-                .Returns(JsonConvert.SerializeObject(native, CamelCase));
+                .Returns(JsonSerializer.Serialize(native, CamelCase));
 
             return (verifier, contents);
         }

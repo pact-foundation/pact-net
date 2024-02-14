@@ -1,7 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Text.Json;
+using System.Threading.Tasks;
 using Moq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using PactNet;
 using PactNet.Output.Xunit;
 using Xunit;
@@ -29,9 +28,10 @@ namespace Consumer.Tests
                 {
                     new XunitOutput(output)
                 },
-                DefaultJsonSettings = new JsonSerializerSettings
+                DefaultJsonSettings = new JsonSerializerOptions
                 {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    PropertyNameCaseInsensitive = true
                 }
             };
 

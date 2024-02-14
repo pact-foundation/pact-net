@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
-using Newtonsoft.Json;
+using System.Text.Json;
 using PactNet.Infrastructure.Outputters;
 
 namespace PactNet
@@ -37,7 +37,7 @@ namespace PactNet
         /// <summary>
         /// Default JSON serializer settings
         /// </summary>
-        public JsonSerializerSettings DefaultJsonSettings { get; set; } = new JsonSerializerSettings();
+        public JsonSerializerOptions DefaultJsonSettings { get; set; } = new JsonSerializerOptions();
 
         /// <summary>
         /// Initialises a new instance of the <see cref="PactConfig"/> class.

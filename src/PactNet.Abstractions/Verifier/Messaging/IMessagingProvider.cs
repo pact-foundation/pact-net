@@ -1,5 +1,5 @@
 using System;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace PactNet.Verifier.Messaging
 {
@@ -18,6 +18,6 @@ namespace PactNet.Verifier.Messaging
         /// </summary>
         /// <param name="settings">Default JSON serializer settings</param>
         /// <returns>URI of the started service</returns>
-        Uri Start(JsonSerializerSettings settings);
+        Uri Start(JsonSerializerOptions settings);
     }
 }

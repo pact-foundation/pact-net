@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using Newtonsoft.Json;
+using System.Text.Json;
 using PactNet.Verifier.Messaging;
 
 namespace PactNet.Verifier
@@ -30,7 +30,7 @@ namespace PactNet.Verifier
         /// <param name="configure">Configure message scenarios</param>
         /// <param name="settings">Settings for serialising messages</param>
         /// <returns>Fluent builder</returns>
-        IPactVerifier WithMessages(Action<IMessageScenarios> configure, JsonSerializerSettings settings);
+        IPactVerifier WithMessages(Action<IMessageScenarios> configure, JsonSerializerOptions settings);
 
         /// <summary>
         /// Verify a pact file directly

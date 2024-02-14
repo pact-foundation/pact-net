@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Net.Http;
-using Newtonsoft.Json;
+using System.Text.Json;
 using PactNet.Matchers;
 
 namespace PactNet
@@ -79,7 +79,7 @@ namespace PactNet
         /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV2 WithJsonBody(dynamic body, JsonSerializerSettings settings);
+        IRequestBuilderV2 WithJsonBody(dynamic body, JsonSerializerOptions settings);
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -88,7 +88,7 @@ namespace PactNet
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <param name="contentType">Content type override</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV2 WithJsonBody(dynamic body, JsonSerializerSettings settings, string contentType);
+        IRequestBuilderV2 WithJsonBody(dynamic body, JsonSerializerOptions settings, string contentType);
 
         /// <summary>
         /// A pre-formatted body which should be used as-is for the request 
@@ -196,7 +196,7 @@ namespace PactNet
         /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV3 WithJsonBody(dynamic body, JsonSerializerSettings settings);
+        IRequestBuilderV3 WithJsonBody(dynamic body, JsonSerializerOptions settings);
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -205,7 +205,7 @@ namespace PactNet
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <param name="contentType">Content type override</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV3 WithJsonBody(dynamic body, JsonSerializerSettings settings, string contentType);
+        IRequestBuilderV3 WithJsonBody(dynamic body, JsonSerializerOptions settings, string contentType);
 
         /// <summary>
         /// A pre-formatted body which should be used as-is for the request 
@@ -315,7 +315,7 @@ namespace PactNet
         /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV4 WithJsonBody(dynamic body, JsonSerializerSettings settings);
+        IRequestBuilderV4 WithJsonBody(dynamic body, JsonSerializerOptions settings);
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -324,7 +324,7 @@ namespace PactNet
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <param name="contentType">Content type override</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV4 WithJsonBody(dynamic body, JsonSerializerSettings settings, string contentType);
+        IRequestBuilderV4 WithJsonBody(dynamic body, JsonSerializerOptions settings, string contentType);
 
         /// <summary>
         /// A pre-formatted body which should be used as-is for the request 

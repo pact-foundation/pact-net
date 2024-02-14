@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using Moq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using PactNet.Drivers;
 using PactNet.Interop;
 using Xunit;
+using Match = PactNet.Matchers.Match;
 
 namespace PactNet.Tests
 {
@@ -21,7 +21,7 @@ namespace PactNet.Tests
         {
             this.mockDriver = new Mock<IMessageInteractionDriver>();
 
-            this.config = new PactConfig { DefaultJsonSettings = new JsonSerializerSettings() };
+            this.config = new PactConfig { DefaultJsonSettings = new JsonSerializerOptions() };
 
             this.builder = new MessageBuilder(this.mockDriver.Object, this.config, PactSpecification.V4);
         }
@@ -83,9 +83,23 @@ namespace PactNet.Tests
             var content = new { Id = 1, Desc = "description" };
             const string expected = @"{""id"":1,""desc"":""description""}";
 
-            this.builder.WithJsonContent(content, new JsonSerializerSettings
+            this.builder.WithJsonContent(content, new JsonSerializerOptions
             {
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
+            this.mockDriver.Verify(s => s.WithContents("application/json", expected, 0));
+        }
+
+        [Fact]
+        public void WithJsonContent_MatcherProperties_AddsContent()
+        {
+            dynamic content = new { Matcher = Match.Integer(42) };
+            const string expected = @"{""matcher"":{""pact:matcher:type"":""integer"",""value"":42}}";
+
+            this.builder.WithJsonContent(content, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             });
 
             this.mockDriver.Verify(s => s.WithContents("application/json", expected, 0));

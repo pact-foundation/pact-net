@@ -1,5 +1,8 @@
 namespace PactNet.Matchers
 {
+    /// <summary>
+    /// Supported Pact matchers
+    /// </summary>
     public static class Match
     {
         /// <summary>

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using Newtonsoft.Json;
+using System.Text.Json;
 using PactNet.Drivers;
 using PactNet.Matchers;
 
@@ -13,7 +13,7 @@ namespace PactNet
     internal class RequestBuilder : IRequestBuilderV2, IRequestBuilderV3, IRequestBuilderV4
     {
         private readonly IHttpInteractionDriver driver;
-        private readonly JsonSerializerSettings defaultSettings;
+        private readonly JsonSerializerOptions defaultSettings;
         private readonly Dictionary<string, uint> queryCounts;
         private readonly Dictionary<string, uint> headerCounts;
 
@@ -24,7 +24,7 @@ namespace PactNet
         /// </summary>
         /// <param name="driver">Interaction driver</param>
         /// <param name="defaultSettings">Default JSON serializer settings</param>
-        internal RequestBuilder(IHttpInteractionDriver driver, JsonSerializerSettings defaultSettings)
+        internal RequestBuilder(IHttpInteractionDriver driver, JsonSerializerOptions defaultSettings)
         {
             this.driver = driver;
             this.defaultSettings = defaultSettings;
@@ -111,7 +111,7 @@ namespace PactNet
         /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV2 IRequestBuilderV2.WithJsonBody(dynamic body, JsonSerializerSettings settings)
+        IRequestBuilderV2 IRequestBuilderV2.WithJsonBody(dynamic body, JsonSerializerOptions settings)
             => this.WithJsonBody(body, settings);
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace PactNet
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <param name="contentType">Content type override</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV2 IRequestBuilderV2.WithJsonBody(dynamic body, JsonSerializerSettings settings, string contentType)
+        IRequestBuilderV2 IRequestBuilderV2.WithJsonBody(dynamic body, JsonSerializerOptions settings, string contentType)
             => this.WithJsonBody(body, settings, contentType);
 
         /// <summary>
@@ -240,7 +240,7 @@ namespace PactNet
         /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV3 IRequestBuilderV3.WithJsonBody(dynamic body, JsonSerializerSettings settings)
+        IRequestBuilderV3 IRequestBuilderV3.WithJsonBody(dynamic body, JsonSerializerOptions settings)
             => this.WithJsonBody(body, settings);
 
         /// <summary>
@@ -250,7 +250,7 @@ namespace PactNet
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <param name="contentType">Content type override</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV3 IRequestBuilderV3.WithJsonBody(dynamic body, JsonSerializerSettings settings, string contentType)
+        IRequestBuilderV3 IRequestBuilderV3.WithJsonBody(dynamic body, JsonSerializerOptions settings, string contentType)
             => this.WithJsonBody(body, settings, contentType);
 
         /// <summary>
@@ -369,7 +369,7 @@ namespace PactNet
         /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV4 IRequestBuilderV4.WithJsonBody(dynamic body, JsonSerializerSettings settings)
+        IRequestBuilderV4 IRequestBuilderV4.WithJsonBody(dynamic body, JsonSerializerOptions settings)
             => this.WithJsonBody(body, settings);
 
         /// <summary>
@@ -379,7 +379,7 @@ namespace PactNet
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <param name="contentType">Content type override</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV4 IRequestBuilderV4.WithJsonBody(dynamic body, JsonSerializerSettings settings, string contentType)
+        IRequestBuilderV4 IRequestBuilderV4.WithJsonBody(dynamic body, JsonSerializerOptions settings, string contentType)
             => this.WithJsonBody(body, settings, contentType);
 
         /// <summary>
@@ -475,7 +475,7 @@ namespace PactNet
         /// <remarks>You can add a query parameter with the same key multiple times</remarks>
         internal RequestBuilder WithQuery(string key, IMatcher matcher)
         {
-            var serialised = JsonConvert.SerializeObject(matcher, this.defaultSettings);
+            var serialised = JsonSerializer.Serialize(matcher, this.defaultSettings);
 
             return this.WithQuery(key, serialised);
         }
@@ -504,7 +504,7 @@ namespace PactNet
         /// <returns>Fluent builder</returns>
         internal RequestBuilder WithHeader(string key, IMatcher matcher)
         {
-            var serialised = JsonConvert.SerializeObject(matcher, this.defaultSettings);
+            var serialised = JsonSerializer.Serialize(matcher, this.defaultSettings);
 
             return this.WithHeader(key, serialised);
         }
@@ -530,7 +530,7 @@ namespace PactNet
         /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        internal RequestBuilder WithJsonBody(dynamic body, JsonSerializerSettings settings) => WithJsonBody(body, settings, "application/json");
+        internal RequestBuilder WithJsonBody(dynamic body, JsonSerializerOptions settings) => WithJsonBody(body, settings, "application/json");
 
         /// <summary>
         /// Set a body which is serialised as JSON
@@ -539,9 +539,9 @@ namespace PactNet
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <param name="contentType">Content type override</param>
         /// <returns>Fluent builder</returns>
-        internal RequestBuilder WithJsonBody(dynamic body, JsonSerializerSettings settings, string contentType)
+        internal RequestBuilder WithJsonBody(dynamic body, JsonSerializerOptions settings, string contentType)
         {
-            string serialised = JsonConvert.SerializeObject(body, settings);
+            string serialised = JsonSerializer.Serialize(body, settings);
             return this.WithBody(serialised, contentType);
         }
 
