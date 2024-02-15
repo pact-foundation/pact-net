@@ -127,3 +127,8 @@ Minimum Supported .Net Framework Version
 
 The minimum supported version of .Net Framework is now 4.6.2 instead of 4.6.1 in line with the minimum supported version in
 `System.Text.Json`.
+
+MacOS ARM64 Full Support
+------------------------
+
+MacOS now has full x86-64 and ARM support.

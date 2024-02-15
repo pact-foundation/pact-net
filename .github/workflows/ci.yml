@@ -16,7 +16,12 @@ jobs:
         os:
           - windows-latest
           - ubuntu-latest
-          - macos-latest
+          - macos-12
+          - macos-14
+        include:
+          - arch: x64
+          - arch: ARM64
+            os: macos-14
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -36,7 +41,7 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Test
-        run: dotnet test --no-build --verbosity normal -- RunConfiguration.TargetPlatform=x64
+        run: dotnet test --no-build --verbosity normal -- RunConfiguration.TargetPlatform=${{matrix.arch}}
 
       - name: Pack
         if: matrix.os == 'windows-latest'
