@@ -60,22 +60,32 @@ namespace PactNet.Verifier.Messaging
             Guard.NotNull(settings, nameof(settings));
             this.defaultSettings = settings;
 
-            try
+            while (true)
             {
-                int port = FindUnusedPort();
-                var uri = new Uri($"http://localhost:{port}/pact-messages/");
+                Uri uri;
 
-                this.config.WriteLine($"Starting messaging provider at {uri}");
-                this.server.Prefixes.Add(uri.AbsoluteUri);
+                try
+                {
+                    int port = FindUnusedPort();
+                    uri = new Uri($"http://localhost:{port}/pact-messages/");
 
-                this.server.Start();
+                    this.config.WriteLine($"Starting messaging provider at {uri}");
+                    this.server.Prefixes.Add(uri.AbsoluteUri);
+                    this.server.Start();
+                }
+                catch (HttpListenerException e) when (e.Message == "Address already in use")
+                {
+                    // handle intermittent race condition, mostly on MacOS, where a port says it's unused but still throws when you try to use it
+                    this.config.WriteLine("Failed to start messaging provider as the port is already in use, retrying...");
+                    continue;
+                }
+                catch (Exception e)
+                {
+                    throw new PactFailureException("Unable to start the internal messaging server", e);
+                }
+
                 this.thread.Start();
-
                 return uri;
-            }
-            catch (Exception e)
-            {
-                throw new PactFailureException("Unable to start the internal messaging server", e);
             }
         }
 
