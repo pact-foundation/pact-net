@@ -27,9 +27,9 @@ namespace PactNet.Verifier.Messaging
         };
 
         private readonly PactVerifierConfig config;
-        private readonly HttpListener server;
         private readonly Thread thread;
 
+        private HttpListener server;
         private JsonSerializerOptions defaultSettings;
 
         /// <summary>
@@ -46,7 +46,6 @@ namespace PactNet.Verifier.Messaging
         {
             this.config = config;
             this.Scenarios = scenarios;
-            this.server = new HttpListener();
             this.thread = new Thread(this.HandleRequest);
         }
 
@@ -70,6 +69,8 @@ namespace PactNet.Verifier.Messaging
                     uri = new Uri($"http://localhost:{port}/pact-messages/");
 
                     this.config.WriteLine($"Starting messaging provider at {uri}");
+
+                    this.server = new HttpListener();
                     this.server.Prefixes.Add(uri.AbsoluteUri);
                     this.server.Start();
                 }
@@ -283,8 +284,8 @@ namespace PactNet.Verifier.Messaging
 
             try
             {
-                this.server.Stop();
-                this.server.Close();
+                this.server?.Stop();
+                this.server?.Close();
             }
             catch
             {
