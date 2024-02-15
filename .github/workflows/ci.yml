@@ -33,7 +33,7 @@ jobs:
 
       - name: Cache FFI dependencies
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: cache-ffi-${{ hashFiles('build/download-native-libs.sh') }}
           enableCrossOsArchive: true
