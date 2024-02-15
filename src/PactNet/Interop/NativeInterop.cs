@@ -15,8 +15,8 @@ namespace PactNet.Interop
 
         #region Http Interop Support
 
-        [DllImport(DllName, EntryPoint = "pactffi_create_mock_server_for_pact")]
-        public static extern int CreateMockServerForPact(PactHandle pact, string addrStr, bool tls);
+        [DllImport(DllName, EntryPoint = "pactffi_create_mock_server_for_transport")]
+        public static extern int CreateMockServerForTransport(PactHandle pact, string addrStr, ushort port, string transport, string transportConfig);
 
         [DllImport(DllName, EntryPoint = "pactffi_mock_server_mismatches")]
         public static extern IntPtr MockServerMismatches(int mockServerPort);
