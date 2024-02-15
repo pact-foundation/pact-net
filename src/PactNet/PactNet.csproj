@@ -54,12 +54,12 @@
 
   <ItemGroup>
     <Content Include="$(MSBuildProjectDirectory)\..\..\build\PactNet.targets">
-      <PackagePath>build/net461/</PackagePath>
+      <PackagePath>build/net462/</PackagePath>
       <Pack>true</Pack>
       <Visible>false</Visible>
     </Content>
     <Content Include="$(MSBuildProjectDirectory)\..\..\build\PactNet.targets">
-      <PackagePath>buildTransitive/net461/</PackagePath>
+      <PackagePath>buildTransitive/net462/</PackagePath>
       <Pack>true</Pack>
       <Visible>false</Visible>
     </Content>
