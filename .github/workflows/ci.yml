@@ -31,8 +31,20 @@ jobs:
         with:
           dotnet-version: "8.0.x" # runners already have .Net Framework installed as well
 
+      - name: Cache FFI dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          key: cache-ffi-${{ hashFiles('build/download-native-libs.sh') }}
+          enableCrossOsArchive: true
+          path: |
+            build/linux
+            build/osx
+            build/windows
+
       - name: Pull interop dependencies
         run: bash -c "build/download-native-libs.sh"
+        if: ${{ steps.cache.outputs.cache-hit != 'true' }}
 
       - name: Restore
         run: dotnet restore
