@@ -68,3 +68,62 @@ verifier
     .WithFileSource(new FileInfo(@"..."))
     .Verify();
 ```
+
+Replace Newtonsoft with System.Text.Json
+----------------------------------------
+
+See: [RFC 458](https://github.com/pact-foundation/pact-net/issues/458)
+
+The dominant web framework in .Net is now ASP.Net Core, which uses the `System.Text.Json` serialiser by default instead of the
+previously-favoured `Newtonsoft.Json` library. In order to reduce friction when using the now-default JSON serialiser, PactNet
+now uses `System.Text.Json` for serialisation.
+
+The main implication of this change is that any API previously referencing `JsonSerializerSettings` will now use `JsonSerializerOptions`
+instead. Whenever PactNet serialises one of your types (e.g. during message interaction definitions) it will now be serialised using
+`System.text.Json` instead of `Newtonsoft`, and so you may need to update any annotations on your types. Previously you likely had to
+annotate your types with both types of annotation so that both ASP.Net Core and PactNet could serialise them properly, whereas now only
+the `System.Text.Json` annotations will be needed in the vast majority of cases.
+
+For example, the following messaging interaction test has the same API as before but is a breaking change because it will now use
+`System.Text.Json` to deserialise:
+
+```csharp
+[Fact]
+public async Task OnMessageAsync_OrderCreated_HandlesMessage()
+{
+    await this.pact
+              .ExpectsToReceive("an event indicating that an order has been created")
+              // BREAKING CHANGE: This will be serialised to the Pact file using System.Text.Json
+              .WithJsonContent(new
+              {
+                  Id = Match.Integer(1)
+              })
+              // BREAKING CHANGE: OrderCreatedEvent will now be deserialised from the message definition above using System.Text.Json
+              .VerifyAsync<OrderCreatedEvent>(async message =>
+              {
+                  await this.consumer.OnMessageAsync(message);
+
+                  this.mockService.Verify(s => s.FulfilOrderAsync(message.Id));
+              });
+}
+```
+
+When verifying messages, the serialisation will also use `System.Text.Json`:
+
+```csharp
+var verifier = new PactVerifier("My API");
+
+verifier.WithMessages(scenarios =>
+        {
+            // BREAKING CHANGE: The messaging response body will be serialised using System.Text.Json
+            scenarios.Add<MyEvent>("an event happens")
+        })
+        .WithFileSource(new FileInfo(@"..."))
+        .Verify();
+```
+
+Minimum Supported .Net Framework Version
+----------------------------------------
+
+The minimum supported version of .Net Framework is now 4.6.2 instead of 4.6.1 in line with the minimum supported version in
+`System.Text.Json`.

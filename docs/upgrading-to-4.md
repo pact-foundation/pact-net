@@ -34,7 +34,7 @@ v4.x is:
 ```csharp
 public class ConsumerTests
 {
-    private readonly IPactBuilderV3 pact;
+    private readonly IPactBuilderV4 pact;
 
     public ConsumerTests(ITestOutputHelper output)
     {
@@ -45,14 +45,14 @@ public class ConsumerTests
             {
                 new XUnitOutput(output)
             },
-            DefaultJsonSettings = new JsonSerializerSettings
+            DefaultJsonSettings = new JsonSerializerOptions
             {
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             }
         };
 
-        // you select which specification version you wish to use by calling either V2 or V3
-        IPactV3 pact = Pact.V3("My Consumer", "My Provider", config);
+        // you select which specification version you wish to use by calling V2, V3 or V4
+        IPactV4 pact = Pact.V4("My Consumer", "My Provider", config);
 
         // the pact builder is created in the constructor so it's unique to each test
         this.pact = pact.UsingNativeBackend();
@@ -171,18 +171,16 @@ public class EventApiTests : IClassFixture<ProviderFixture>
         string branch = Environment.GetEnvironmentVariable("BRANCH");
         string buildUri = Environment.GetEnvironmentVariable("BUILD_URL");
 
-        var config = new PactVerifierConfig
+        var verifier = new PactVerifier("My Provider", new PactVerifierConfig
         {
             LogLevel = PactLogLevel.Information,
             Outputters = new List<IOutput>
             {
                 new XUnitOutput(this.output)
             }
-        };
+        });
 
-        IPactVerifier verifier = new PactVerifier(config);
-
-        verifier.ServiceProvider("My Provider", this.fixture.ServerUri)
+        verifier.WithHttpEndpoint(this.fixture.ServerUri)
                 .WithPactBrokerSource(new Uri("https://broker.example.org"), options =>
                 {
                     options.ConsumerVersionSelectors(new ConsumerVersionSelector { MainBranch = true, Latest = true })

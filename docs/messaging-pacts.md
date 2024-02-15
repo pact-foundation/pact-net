@@ -119,16 +119,13 @@ public class StockEventGeneratorTests : IDisposable
                                        "pacts",
                                        "Stock Event Consumer-Stock Event Producer.json");
 
-        var defaultSettings = new JsonSerializerSettings
+        var defaultSettings = new JsonSerializerOptions
         {
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            DefaultValueHandling = DefaultValueHandling.Ignore,
-            NullValueHandling = NullValueHandling.Ignore,
-            Formatting = Formatting.Indented
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
         this.verifier
-            .MessagingProvider(scenarios =>
+            .WithMessages(scenarios =>
             {
                 // register the responses to each interaction
                 // the descriptions must match those in the pact file(s)
