@@ -1,0 +1,117 @@
+{
+  "consumer": {
+    "name": "PactExtensioñsTests-Combined-V4-UTF8"
+  },
+  "interactions": [
+    {
+      "description": "a HTTP request with non-ASCII characters like ñ",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a provider state with ñ"
+        },
+        {
+          "name": "another provider state with ñ"
+        },
+        {
+          "name": "a provider state with params with ñ",
+          "params": {
+            "bañ": "bash",
+            "foo": "bañ"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "foo": "ñ request"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.foo": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "POST",
+        "path": "/things"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "foo": "ñ response"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "status": 201
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "contents": {
+        "content": {
+          "bool": false,
+          "int": 1,
+          "string": "a description with ñ"
+        },
+        "contentType": "application/json",
+        "encoded": false
+      },
+      "description": "a message with ñ",
+      "metadata": {
+        "queueId": "1234ñ"
+      },
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a provider state with ñ"
+        },
+        {
+          "name": "another provider state with ñ"
+        },
+        {
+          "name": "a provider state with params with ñ",
+          "params": {
+            "bañ": "bash",
+            "foo": "bañ"
+          }
+        }
+      ],
+      "type": "Asynchronous/Messages"
+    }
+  ],
+  "metadata": {
+    "framework": {
+      "language": "C#"
+    },
+    "pactRust": {
+      "ffi": "0.4.16",
+      "models": "1.1.19"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  },
+  "provider": {
+    "name": "PactExtensioñsTests-Provider-UTF8"
+  }
+}
