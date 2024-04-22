@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-FFI_VERSION="0.4.16"
+FFI_VERSION="0.4.19"
 FFI_BASE_URL="https://github.com/pact-foundation/pact-reference/releases/download/libpact_ffi-v$FFI_VERSION"
 
 GREEN="\e[32m"
@@ -42,10 +42,10 @@ download_native() {
 
     if [[ "$OSTYPE" == "darwin"* ]]; then
         # OSX requires an empty arg passed to -i, but this doesn't work on Lin/Win
-        sed -Ei '' "s|../release_artifacts/.+$|$path/$dest_file|" "$path/$dest_file.sha256"
+        sed -Ei '' "s|\s+.+$|\ *$path/$dest_file|" "$path/$dest_file.sha256"
         shasum -a 256 --check --quiet "$path/$dest_file.sha256"
     else
-        sed -Ei "s|../release_artifacts/.+$|$path/$dest_file|" "$path/$dest_file.sha256"
+        sed -Ei "s|\s+.+$|\ *$path/$dest_file|" "$path/$dest_file.sha256"
         sha256sum --check --quiet "$path/$dest_file.sha256"
     fi
 
@@ -60,5 +60,6 @@ download_native() {
 
 download_native "pact_ffi" "windows" "x86_64" "dll"
 download_native "libpact_ffi" "linux" "x86_64" "so"
+download_native "libpact_ffi" "linux" "x86_64-musl" "so"
 download_native "libpact_ffi" "osx" "x86_64" "dylib"
 download_native "libpact_ffi" "osx" "aarch64-apple-darwin" "dylib"

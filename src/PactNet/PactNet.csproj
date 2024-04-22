@@ -36,6 +36,13 @@
       <CopyToOutputDirectory Condition="'$(IsLinux)'">PreserveNewest</CopyToOutputDirectory>
       <Visible>false</Visible>
     </Content>
+    <Content Include="$(MSBuildProjectDirectory)\..\..\build\linux\x86_64-musl\libpact_ffi.so">
+      <Link>libpact_ffi.so</Link>
+      <PackagePath>runtimes/linux-musl-x64/native</PackagePath>
+      <Pack>true</Pack>
+      <CopyToOutputDirectory Condition="'$(IsLinux)'">PreserveNewest</CopyToOutputDirectory>
+      <Visible>false</Visible>
+    </Content>
     <Content Include="$(MSBuildProjectDirectory)\..\..\build\osx\x86_64\libpact_ffi.dylib">
       <Link>libpact_ffi.dylib</Link>
       <PackagePath>runtimes/osx-x64/native</PackagePath>

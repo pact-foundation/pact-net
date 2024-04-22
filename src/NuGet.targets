@@ -14,17 +14,10 @@
     <DebugSymbols>true</DebugSymbols>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <VersionPrefix>5.0.0</VersionPrefix>
+    <VersionPrefix>5.1.0</VersionPrefix>
     <PackageReleaseNotes>
-      v5.0.0
-      - BREAKING CHANGE: Remove obsolete WithNativeBackend calls
-      - BREAKING CHANGE: Remove obsolete IMessagePact and MessagePact
-      - BREAKING CHANGE: Refactor verifier to support verifying combined HTTP and message pacts
-      - BREAKING CHANGE: Replace Newtonsoft with System.Text.Json
-      - BREAKING CHANGE: Minimum supported .Net Framework version is now 4.6.2 instead of 4.6.1
-      - feat: Add Pact Specification v4 support
-      - feat: MacOS ARM64 target is now fully supported
-      - feat: More efficient and robust messaging interaction verification
+      v5.1.0
+      - feat: Add linux-musl-x64 runtime support
     </PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
