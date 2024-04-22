@@ -63,18 +63,19 @@ Alternatively you can download a particular FFI version from the [pact-reference
 locally, and then copy the artifacts into the folders:
 
 ```
-build/
-    linux/
-        x86_64/
-            libpact_ffi.so
-    osx/
-        aarch64-apple-darwin/
-            libpact_ffi.dylib
-        x86_64/
-            libpact_ffi.dylib
-    windows/
-        x86_64/
-            pact_ffi.dll
+├── linux
+│   ├── x86_64
+│   │   └── libpact_ffi.so
+│   └── x86_64-musl
+│       └── libpact_ffi.so
+├── osx
+│   ├── aarch64-apple-darwin
+│   │   └── libpact_ffi.dylib
+│   └── x86_64
+│       └── libpact_ffi.dylib
+└── windows
+    └── x86_64
+        └── pact_ffi.dll
 ```
 
 After the native libraries are in the expected places then the solution can be built in your IDE or on the command
