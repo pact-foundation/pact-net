@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RuntimeIdentifier>linux-musl-x64</RuntimeIdentifier>
+    <PackageId>PactNet.runtime.linux-musl-x64</PackageId>
+    <Version>0.4.19</Version>
+    <PackageTags>native</PackageTags>
+    <PackageOutputPath>../../packages</PackageOutputPath>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="$(MSBuildProjectDirectory)/../../build/linux/x86_64-musl/libpact_ffi.so">
+      <PackagePath>runtimes/linux-musl-x64/native</PackagePath>
+      <Pack>true</Pack>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

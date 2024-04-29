@@ -6,50 +6,24 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>NU5105</NoWarn>
     <OutputType>Library</OutputType>
+    <RestoreAdditionalProjectSources>../../packages</RestoreAdditionalProjectSources>
+    <PackageOutputPath>../../packages</PackageOutputPath>
   </PropertyGroup>
 
   <Import Project="../NuGet.targets" />
 
-  <PropertyGroup>
-    <IsWindows>False</IsWindows>
-    <IsLinux>False</IsLinux>
-    <IsOSX>False</IsOSX>
-    <IsArm64>False</IsArm64>
-    <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'True'">True</IsWindows>
-    <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'True'">True</IsLinux>
-    <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'True'">True</IsOSX>
-    <IsArm64 Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'">True</IsArm64>
-  </PropertyGroup>
-
   <ItemGroup>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\windows\x86_64\pact_ffi.dll">
-      <Link>pact_ffi.dll</Link>
-      <PackagePath>runtimes/win-x64/native</PackagePath>
-      <Pack>true</Pack>
-      <CopyToOutputDirectory Condition="'$(IsWindows)'">PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
-    </Content>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\linux\x86_64\libpact_ffi.so">
-      <Link>libpact_ffi.so</Link>
-      <PackagePath>runtimes/linux-x64/native</PackagePath>
-      <Pack>true</Pack>
-      <CopyToOutputDirectory Condition="'$(IsLinux)'">PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
-    </Content>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\osx\x86_64\libpact_ffi.dylib">
-      <Link>libpact_ffi.dylib</Link>
-      <PackagePath>runtimes/osx-x64/native</PackagePath>
-      <Pack>true</Pack>
-      <CopyToOutputDirectory Condition="'$(IsOSX)' == 'True' And '$(IsArm64)' == 'False'">PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
-    </Content>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\osx\aarch64-apple-darwin\libpact_ffi.dylib">
-      <Link>libpact_ffi.dylib</Link>
-      <PackagePath>runtimes/osx-arm64/native</PackagePath>
-      <Pack>true</Pack>
-      <CopyToOutputDirectory Condition="'$(IsOSX)' == 'True' And '$(IsArm64)' == 'True'">PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
-    </Content>
+    <RuntimeLinuxMusl Include="../../packages/PactNet.runtime.linux-musl-x64.*.nupkg"/>
+    <RuntimeLinux Include="../../packages/PactNet.runtime.linux-x64.*.nupkg"/>
+    <RuntimeOsxArm Include="../../packages/PactNet.runtime.osx-arm64.*.nupkg"/>
+    <RuntimeOsx Include="../../packages/PactNet.runtime.osx-x64.*.nupkg"/>
+    <RuntimeWin Include="../../packages/PactNet.runtime.win-x64.*.nupkg"/>
+
+    <PackageReference Include="PactNet.runtime.linux-musl-x64" Version="0.4.19" Condition="Exists('@(RuntimeLinuxMusl)')"/>
+    <PackageReference Include="PactNet.runtime.linux-x64" Version="0.4.19" Condition="Exists('@(RuntimeLinux)')"/>
+    <PackageReference Include="PactNet.runtime.osx-arm64" Version="0.4.19" Condition="Exists('@(RuntimeOsxArm)')"/>
+    <PackageReference Include="PactNet.runtime.osx-x64" Version="0.4.19" Condition="Exists('@(RuntimeOsx)')"/>
+    <PackageReference Include="PactNet.runtime.win-x64" Version="0.4.19" Condition="Exists('@(RuntimeWin)')"/>
   </ItemGroup>
 
   <ItemGroup>

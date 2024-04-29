@@ -6,6 +6,7 @@
     <NoWarn>CS1591;NU5105</NoWarn>
     <OutputType>Library</OutputType>
     <RootNamespace>PactNet</RootNamespace>
+    <PackageOutputPath>../../packages</PackageOutputPath>
   </PropertyGroup>
 
   <Import Project="../NuGet.targets" />

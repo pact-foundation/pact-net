@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RuntimeIdentifier>osx-arm64</RuntimeIdentifier>
+    <PackageId>PactNet.runtime.osx-arm64</PackageId>
+    <Version>0.4.19</Version>
+    <PackageTags>native</PackageTags>
+    <PackageOutputPath>../../packages</PackageOutputPath>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="$(MSBuildProjectDirectory)/../../build/osx/aarch64-apple-darwin/libpact_ffi.dylib">
+      <PackagePath>runtimes/osx-arm64/native</PackagePath>
+      <Pack>true</Pack>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

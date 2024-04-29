@@ -1,0 +1,8 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine
+WORKDIR /home/app
+
+COPY packages packages
+COPY samples samples
+
+RUN dotnet test samples/OrdersApi/Consumer.Tests/Consumer.Tests.csproj
+RUN dotnet test samples/OrdersApi/Provider.Tests/Provider.Tests.csproj

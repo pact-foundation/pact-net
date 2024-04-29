@@ -1,0 +1,10 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0-bookworm-slim
+WORKDIR /home/app
+
+RUN apt-get update && apt-get install tree
+
+COPY packages packages
+COPY samples samples
+
+RUN dotnet test samples/OrdersApi/Consumer.Tests/Consumer.Tests.csproj
+RUN dotnet test samples/OrdersApi/Provider.Tests/Provider.Tests.csproj

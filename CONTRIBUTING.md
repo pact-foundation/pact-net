@@ -10,7 +10,7 @@ Before raising any issues, please make as much effort as you can to rule out iss
 For example, if you are using a self-hosted Pact Broker instance and PactNet is failing to connect, please ensure things like the
 authentication token and SSL certificate are valid.
 
-If you are sure that the issye is with PactNet then please raise an issue, including as many of the following details as you can:
+If you are sure that the issue is with PactNet then please raise an issue, including as many of the following details as you can:
 
 - PactNet version
 - Your operating system and version
@@ -59,22 +59,23 @@ version by executing the script in Bash (or Git Bash on Windows):
 build/download-native-libs.sh
 ```
 
-Alternatively you can download a particular FFI version from the [pact-referece] releases or build your own version
+Alternatively you can download a particular FFI version from the [pact-reference] releases or build your own version
 locally, and then copy the artifacts into the folders:
 
 ```
-build/
-    linux/
-        x86_64/
-            libpact_ffi.so
-    osx/
-        aarch64-apple-darwin/
-            libpact_ffi.dylib
-        x86_64/
-            libpact_ffi.dylib
-    windows/
-        x86_64/
-            pact_ffi.dll
+├── linux
+│   ├── x86_64
+│   │   └── libpact_ffi.so
+│   └── x86_64-musl
+│       └── libpact_ffi.so
+├── osx
+│   ├── aarch64-apple-darwin
+│   │   └── libpact_ffi.dylib
+│   └── x86_64
+│       └── libpact_ffi.dylib
+└── windows
+    └── x86_64
+        └── pact_ffi.dll
 ```
 
 After the native libraries are in the expected places then the solution can be built in your IDE or on the command

@@ -6,6 +6,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>CS1591;NU5105</NoWarn>
     <OutputType>Library</OutputType>
+    <PackageOutputPath>../../packages</PackageOutputPath>
   </PropertyGroup>
 
   <Import Project="../NuGet.targets" />
