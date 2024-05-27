@@ -1,6 +1,7 @@
 ﻿using System;
 using PactNet.Interop;
-
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 namespace PactNet.Drivers
 {
     /// <summary>
@@ -38,7 +39,10 @@ namespace PactNet.Drivers
         /// <param name="value">Parameter value</param>
         /// <returns>Success</returns>
         public void GivenWithParam(string description, string name, string value)
-            => NativeInterop.GivenWithParam(this.interaction, description, name, value).CheckInteropSuccess();
+            {
+                var jsonValue = JsonConvert.SerializeObject(value);
+                NativeInterop.GivenWithParam(this.interaction, description, name, jsonValue).CheckInteropSuccess();
+            }
 
         /// <summary>
         /// Add a request to the interaction
