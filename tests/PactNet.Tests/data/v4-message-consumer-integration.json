@@ -1,0 +1,54 @@
+{
+  "consumer": {
+    "name": "PactExtensionsTests-MessageConsumer-V4"
+  },
+  "interactions": [
+    {
+      "contents": {
+        "content": {
+          "bool": false,
+          "int": 1,
+          "string": "a description"
+        },
+        "contentType": "application/json",
+        "encoded": false
+      },
+      "description": "a sample request",
+      "metadata": {
+        "queueId": "1234"
+      },
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a provider state"
+        },
+        {
+          "name": "another provider state"
+        },
+        {
+          "name": "a provider state with params",
+          "params": {
+            "baz": "bash",
+            "foo": "bar"
+          }
+        }
+      ],
+      "type": "Asynchronous/Messages"
+    }
+  ],
+  "metadata": {
+    "framework": {
+      "language": "C#"
+    },
+    "pactRust": {
+      "ffi": "0.4.16",
+      "models": "1.1.19"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  },
+  "provider": {
+    "name": "PactExtensionsTests-MessageProvider"
+  }
+}

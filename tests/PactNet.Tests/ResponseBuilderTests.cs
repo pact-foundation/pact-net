@@ -1,7 +1,6 @@
 using System.Net;
+using System.Text.Json;
 using Moq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using PactNet.Drivers;
 using Xunit;
 using Match = PactNet.Matchers.Match;
@@ -14,13 +13,13 @@ namespace PactNet.Tests
 
         private readonly Mock<IHttpInteractionDriver> mockDriver;
         
-        private readonly JsonSerializerSettings settings;
+        private readonly JsonSerializerOptions settings;
 
         public ResponseBuilderTests()
         {
             this.mockDriver = new Mock<IHttpInteractionDriver>();
 
-            this.settings = new JsonSerializerSettings();
+            this.settings = new JsonSerializerOptions();
 
             this.builder = new ResponseBuilder(this.mockDriver.Object, this.settings);
         }
@@ -99,7 +98,7 @@ namespace PactNet.Tests
         public void WithJsonBody_WithCustomSettings_AddsRequestBodyWithOverriddenSettings()
         {
             this.builder.WithJsonBody(new { Foo = 42 },
-                                      new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+                                      new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
             this.mockDriver.Verify(s => s.WithResponseBody("application/json", @"{""foo"":42}"));
         }

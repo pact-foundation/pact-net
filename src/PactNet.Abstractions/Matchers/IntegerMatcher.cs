@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace PactNet.Matchers
 {
     /// <summary>
@@ -8,11 +10,13 @@ namespace PactNet.Matchers
         /// <summary>
         /// Type of the matcher
         /// </summary>
+        [JsonPropertyName("pact:matcher:type")]
         public string Type => "integer";
 
         /// <summary>
         /// Matcher value
         /// </summary>
+        [JsonPropertyName("value")]
         public dynamic Value { get; }
 
         /// <summary>

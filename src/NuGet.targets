@@ -14,10 +14,17 @@
     <DebugSymbols>true</DebugSymbols>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <VersionPrefix>4.4.0</VersionPrefix>
+    <VersionPrefix>5.0.0</VersionPrefix>
     <PackageReleaseNotes>
-      v4.4.0
-          - Upgrade to FFI v0.4.0
+      v5.0.0
+      - BREAKING CHANGE: Remove obsolete WithNativeBackend calls
+      - BREAKING CHANGE: Remove obsolete IMessagePact and MessagePact
+      - BREAKING CHANGE: Refactor verifier to support verifying combined HTTP and message pacts
+      - BREAKING CHANGE: Replace Newtonsoft with System.Text.Json
+      - BREAKING CHANGE: Minimum supported .Net Framework version is now 4.6.2 instead of 4.6.1
+      - feat: Add Pact Specification v4 support
+      - feat: MacOS ARM64 target is now fully supported
+      - feat: More efficient and robust messaging interaction verification
     </PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
@@ -25,7 +32,7 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\docs\logo-128x128.png" Pack="true" PackagePath="\" Visible="false" />

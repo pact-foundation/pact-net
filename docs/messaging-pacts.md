@@ -13,7 +13,7 @@ types use two different names, for example "Stock Broker API" and "Stock Broker 
 Sample
 ------
 
-See the [sample](../samples/Messaging/) for additional detail.
+See the [sample](../samples/OrdersApi/) for additional detail.
 
 Consumer Tests
 --------------
@@ -26,16 +26,16 @@ In code, this is:
 ```csharp
 public class StockEventProcessorTests
 {
-    private readonly IMessagePactBuilderV3 messagePact;
+    private readonly IMessagePactBuilderV4 messagePact;
 
     public StockEventProcessorTests(ITestOutputHelper output)
     {
-        IPactV3 v3 = Pact.V3("Stock Event Consumer", "Stock Event Producer", new PactConfig
+        IPactV4 v4 = Pact.V4("Stock Event Consumer", "Stock Event Producer", new PactConfig
         {
             PactDir = "../../../pacts/",
-            DefaultJsonSettings = new JsonSerializerSettings
+            DefaultJsonSettings = new JsonSerializerOptions
             {
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             },
             Outputters = new[]
             {
@@ -43,7 +43,7 @@ public class StockEventProcessorTests
             }
         });
 
-        this.messagePact = v3.WithMessageInteractions();
+        this.messagePact = v4.WithMessageInteractions();
     }
 
     [Fact]
@@ -98,7 +98,7 @@ public class StockEventGeneratorTests : IDisposable
 
     public StockEventGeneratorTests()
     {
-        this.verifier = new PactVerifier();
+        this.verifier = new PactVerifier("Stock Event Producer");
     }
 
     public void Dispose()
@@ -119,17 +119,13 @@ public class StockEventGeneratorTests : IDisposable
                                        "pacts",
                                        "Stock Event Consumer-Stock Event Producer.json");
 
-        var defaultSettings = new JsonSerializerSettings
+        var defaultSettings = new JsonSerializerOptions
         {
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            DefaultValueHandling = DefaultValueHandling.Ignore,
-            NullValueHandling = NullValueHandling.Ignore,
-            Formatting = Formatting.Indented
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
         this.verifier
-            .MessagingProvider("Stock Event Producer", defaultSettings)
-            .WithProviderMessages(scenarios =>
+            .WithMessages(scenarios =>
             {
                 // register the responses to each interaction
                 // the descriptions must match those in the pact file(s)
@@ -151,7 +147,7 @@ public class StockEventGeneratorTests : IDisposable
                                         new StockEvent { Name = "TSLA", Price = 4.56m }
                                     });
                          });
-            })
+            }, defaultSettings)
             .WithFileSource(new FileInfo(pactPath))
             .Verify();
     }

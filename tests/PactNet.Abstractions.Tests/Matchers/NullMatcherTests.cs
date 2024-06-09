@@ -1,5 +1,5 @@
+using System.Text.Json;
 using FluentAssertions;
-using Newtonsoft.Json;
 using PactNet.Matchers;
 using Xunit;
 
@@ -12,7 +12,7 @@ namespace PactNet.Abstractions.Tests.Matchers
         {
             var matcher = new NullMatcher();
 
-            string actual = JsonConvert.SerializeObject(matcher);
+            string actual = JsonSerializer.Serialize(matcher);
             string expected = $@"{{""pact:matcher:type"":""null""}}";
 
             actual.Should().BeEquivalentTo(expected);

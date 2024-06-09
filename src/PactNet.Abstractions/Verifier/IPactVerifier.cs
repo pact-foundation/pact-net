@@ -1,5 +1,6 @@
 using System;
-using Newtonsoft.Json;
+using System.IO;
+using System.Text.Json;
 using PactNet.Verifier.Messaging;
 
 namespace PactNet.Verifier
@@ -10,26 +11,70 @@ namespace PactNet.Verifier
     public interface IPactVerifier
     {
         /// <summary>
-        /// Set the provider details
+        /// Add a HTTP endpoint for verifying pacts containing synchronous HTTP interactions
         /// </summary>
-        /// <param name="providerName">Name of the provider</param>
         /// <param name="pactUri">URI of the running service</param>
         /// <returns>Fluent builder</returns>
-        IPactVerifierProvider ServiceProvider(string providerName, Uri pactUri);
+        IPactVerifier WithHttpEndpoint(Uri pactUri);
 
         /// <summary>
-        /// Set the provider details of a messaging provider
+        /// Define messages for verifying pacts containing asynchronous message interactions
         /// </summary>
-        /// <param name="providerName">Name of the provider</param>
+        /// <param name="configure">Configure message scenarios</param>
         /// <returns>Fluent builder</returns>
-        IPactVerifierMessagingProvider MessagingProvider(string providerName);
+        IPactVerifier WithMessages(Action<IMessageScenarios> configure);
 
         /// <summary>
-        /// Set the provider details of a messaging provider
+        /// Define messages for verifying pacts containing asynchronous message interactions
         /// </summary>
-        /// <param name="providerName">Name of the provider</param>
-        /// <param name="settings">Default JSON serialisation settings</param>
+        /// <param name="configure">Configure message scenarios</param>
+        /// <param name="settings">Settings for serialising messages</param>
         /// <returns>Fluent builder</returns>
-        IPactVerifierMessagingProvider MessagingProvider(string providerName, JsonSerializerSettings settings);
+        IPactVerifier WithMessages(Action<IMessageScenarios> configure, JsonSerializerOptions settings);
+
+        /// <summary>
+        /// Verify a pact file directly
+        /// </summary>
+        /// <param name="pactFile">Pact file path</param>
+        /// <returns>Fluent builder</returns>
+        IPactVerifierSource WithFileSource(FileInfo pactFile);
+
+        /// <summary>
+        /// Verify all pacts in the given directory which match the given consumers (or all pact files if no consumers are specified)
+        /// </summary>
+        /// <param name="directory">Directory containing the pact files</param>
+        /// <param name="consumers">(Optional) Consumer names to filter on</param>
+        /// <returns>Fluent builder</returns>
+        IPactVerifierSource WithDirectorySource(DirectoryInfo directory, params string[] consumers);
+
+        /// <summary>
+        /// Verify a pact from a URI
+        /// </summary>
+        /// <param name="pactUri">Pact file URI</param>
+        /// <returns>Fluent builder</returns>
+        IPactVerifierSource WithUriSource(Uri pactUri);
+
+        /// <summary>
+        /// Verify a pact from a URI
+        /// </summary>
+        /// <param name="pactUri">Pact file URI</param>
+        /// <param name="configure">Configure URI options</param>
+        /// <returns>Fluent builder</returns>
+        IPactVerifierSource WithUriSource(Uri pactUri, Action<IPactUriOptions> configure);
+
+        /// <summary>
+        /// Use the pact broker to retrieve pact files with default options
+        /// </summary>
+        /// <param name="brokerBaseUri">Base URI for the broker</param>
+        /// <returns>Fluent builder</returns>
+        IPactVerifierSource WithPactBrokerSource(Uri brokerBaseUri);
+
+        /// <summary>
+        /// Use the pact broker to retrieve pact files
+        /// </summary>
+        /// <param name="brokerBaseUri">Base URI for the broker</param>
+        /// <param name="configure">Configure pact broker options</param>
+        /// <returns>Fluent builder</returns>
+        IPactVerifierSource WithPactBrokerSource(Uri brokerBaseUri, Action<IPactBrokerOptions> configure);
     }
 }

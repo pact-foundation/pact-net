@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace PactNet.Matchers
 {
@@ -10,6 +10,7 @@ namespace PactNet.Matchers
         /// <summary>
         /// Type of the matcher
         /// </summary>
+        [JsonPropertyName("pact:matcher:type")]
         public string Type => "null";
 
         /// <summary>

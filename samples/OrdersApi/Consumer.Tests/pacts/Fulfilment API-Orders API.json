@@ -1,0 +1,171 @@
+{
+  "consumer": {
+    "name": "Fulfilment API"
+  },
+  "interactions": [
+    {
+      "description": "a request for an order by ID",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an order with ID {id} exists",
+          "params": {
+            "id": 1
+          }
+        }
+      ],
+      "request": {
+        "headers": {
+          "Accept": [
+            "application/json"
+          ]
+        },
+        "method": "GET",
+        "path": "/api/orders/1"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "date": "2023-06-28T12:13:14.0000000+01:00",
+            "id": 1,
+            "status": "Pending"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.date": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "integer"
+                }
+              ]
+            },
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "Pending|Fulfilling|Shipped"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "description": "a request for an order with an unknown ID",
+      "pending": false,
+      "request": {
+        "headers": {
+          "Accept": [
+            "application/json"
+          ]
+        },
+        "method": "GET",
+        "path": "/api/orders/404"
+      },
+      "response": {
+        "status": 404
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "description": "a request to update the status of an order",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an order with ID {id} exists",
+          "params": {
+            "id": 1
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": "Fulfilling",
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "Pending|Fulfilling|Shipped"
+                }
+              ]
+            }
+          }
+        },
+        "method": "PUT",
+        "path": "/api/orders/1/status"
+      },
+      "response": {
+        "status": 204
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "contents": {
+        "content": {
+          "id": 1
+        },
+        "contentType": "application/json",
+        "encoded": false
+      },
+      "description": "an event indicating that an order has been created",
+      "matchingRules": {
+        "body": {
+          "$.id": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "integer"
+              }
+            ]
+          }
+        }
+      },
+      "pending": false,
+      "type": "Asynchronous/Messages"
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "ffi": "0.4.16",
+      "models": "1.1.19"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  },
+  "provider": {
+    "name": "Orders API"
+  }
+}

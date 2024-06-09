@@ -44,11 +44,15 @@ Watch our [series](https://www.youtube.com/playlist?list=PLwy9Bnco-IpfZ72VQ7hce8
 
 [Learn everything in Pact Net in 60 minutes](https://github.com/DiUS/pact-workshop-dotnet-core-v3/)
 
-### Upgrading from PactNet v3.x or earlier to v4.x
+### Upgrade Guides
 
-[Upgrade Guide](docs/upgrading-to-4.md)
+- [Upgrade guide for 3.x or lower to 4.x](docs/upgrading-to-4.md)
+- [Upgrade guide for 4.x to 5.x](docs/upgrading-to-5.md)
 
-Looking for PactNet v3.x? See the [`release/3.x` branch](https://github.com/pact-foundation/pact-net/tree/release/3.x).
+### Older Versions
+
+- [`release/3.x` branch](https://github.com/pact-foundation/pact-net/tree/release/3.x)
+- [`release/4.x` branch](https://github.com/pact-foundation/pact-net/tree/release/4.x)
 
 ## Need Help
 
@@ -64,7 +68,11 @@ Looking for PactNet v3.x? See the [`release/3.x` branch](https://github.com/pact
 
 ## Usage
 
-In the sections below, we provide a brief sample of the typical flow for Pact testing, written in the XUnit framework. To see the complete example and run it, check out the `Samples/ReadMe` folder.
+In the sections below, we provide a brief sample of the typical flow for Pact testing using HTTP interactions, written in
+the XUnit framework.
+
+A more comprehensive example which uses both HTTP and message interactions, provider states, matchers and more can be
+found in the [`samples/OrdersApi`](samples/OrdersApi) folder.
 
 ### Writing a Consumer test
 
@@ -77,16 +85,16 @@ Pact tests have a few key properties. We'll demonstrate a common example using t
 ```csharp
 public class SomethingApiConsumerTests
 {
-    private readonly IPactBuilderV3 pactBuilder;
+    private readonly IPactBuilderV4 pactBuilder;
 
     public SomethingApiConsumerTests()
     {
         // Use default pact directory ..\..\pacts and default log
         // directory ..\..\logs
-        var pact = Pact.V3("Something API Consumer", "Something API", new PactConfig());
+        var pact = Pact.V4("Something API Consumer", "Something API", new PactConfig());
 
         // or specify custom log and pact directories
-        pact = Pact.V3("Something API Consumer", "Something API", new PactConfig
+        pact = Pact.V4("Something API Consumer", "Something API", new PactConfig
         {
             PactDir = $"{Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName}{Path.DirectorySeparatorChar}pacts"
         });
@@ -193,9 +201,10 @@ public class SomethingApiTests : IClassFixture<SomethingApiFixture>
                                        "Something API Consumer-Something API.json");
 
         // Act / Assert
-        IPactVerifier pactVerifier = new PactVerifier(config);
+        using var pactVerifier = new PactVerifier("Something API", config);
+
         pactVerifier
-            .ServiceProvider("Something API", fixture.ServerUri)
+            .WithHttpEndpoint(fixture.ServerUri)
             .WithFileSource(new FileInfo(pactPath))
             .WithProviderStateUrl(new Uri(fixture.ServerUri, "/provider-states"))
             .Verify();
@@ -223,21 +232,22 @@ For writing messaging pacts instead of requests/response pacts, see the [messagi
 
 Due to using a shared native library instead of C# for the main Pact logic only certain OSs are supported:
 
-| OS           | Arch     | Support                                                                 |
-| ------------ | -------- | ----------------------------------------------------------------------- |
-| Windows      | x86      | ❌ No                                                                   |
-| Windows      | x64      | ✔️ Yes                                                                  |
-| Linux (libc) | ARM      | ❌ No                                                                   |
-| Linux (libc) | x86      | ❌ No                                                                   |
-| Linux (libc) | x64      | ✔️ Yes                                                                  |
-| Linux (musl) | Any      | ❌ [No](https://github.com/pact-foundation/pact-net/issues/374)         |
-| OSX          | x64      | ✔️ Yes                                                                  |
-| OSX          | ARM (M1) | ⚠️ [Alpha](https://github.com/pact-foundation/pact-net/pull/365)        |
+| OS           | Arch        | Support                                                            |
+| ------------ | ----------- | -------------------------------------------------------------------|
+| Windows      | x86         | ❌ No                                                              |
+| Windows      | x64         | ✔️ Yes                                                             |
+| Linux (libc) | ARM         | ❌ No                                                              |
+| Linux (libc) | x86         | ❌ No                                                              |
+| Linux (libc) | x64         | ✔️ Yes                                                             |
+| Linux (musl) | Any         | ❌ [No](https://github.com/pact-foundation/pact-net/issues/374)    |
+| OSX          | x64         | ✔️ Yes                                                             |
+| OSX          | ARM (M1/M2) | ✔️ Yes                                                             |
 
 ### Pact Specification
 
-| Version | Stable     | [Spec] Compatibility | Install            |
+| Version | Status     | [Spec] Compatibility | Install            |
 | ------- | ---------- | -------------------- | ------------------ |
+| 5.x     | Beta       | 2, 3, 4              | See [installation] |
 | 4.x     | Stable     | 2, 3                 | See [installation] |
 | 3.x     | Deprecated | 2                    |                    |
 
@@ -253,8 +263,6 @@ See [CONTRIBUTING](CONTRIBUTING.md).
 [pact wiki]: https://github.com/pact-foundation/pact-ruby/wiki
 [getting started with pact]: http://dius.com.au/2016/02/03/microservices-pact/
 [pact website]: http://docs.pact.io/
-[pact specification v2]: https://github.com/pact-foundation/pact-specification/tree/version-2
-[pact specification v3]: https://github.com/pact-foundation/pact-specification/tree/version-3
 [libraries]: https://github.com/pact-foundation/pact-reference/releases
 [cli tools]: https://github.com/pact-foundation/pact-reference/releases
 [installation]: #installation

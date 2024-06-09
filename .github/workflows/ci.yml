@@ -1,6 +1,6 @@
 name: CI
 
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
@@ -17,17 +17,34 @@ jobs:
           - windows-latest
           - ubuntu-latest
           - macos-12
+          - macos-14
+        include:
+          - arch: x64
+          - arch: ARM64
+            os: macos-14
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "6.0.x" # runners already have .Net Framework installed as well
+          dotnet-version: "8.0.x" # runners already have .Net Framework installed as well
+
+      - name: Cache FFI dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          key: cache-ffi-${{ hashFiles('build/download-native-libs.sh') }}
+          enableCrossOsArchive: true
+          path: |
+            build/linux
+            build/osx
+            build/windows
 
       - name: Pull interop dependencies
         run: bash -c "build/download-native-libs.sh"
+        if: ${{ steps.cache.outputs.cache-hit != 'true' }}
 
       - name: Restore
         run: dotnet restore
@@ -36,7 +53,7 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Test
-        run: dotnet test --no-build --verbosity normal -- RunConfiguration.TargetPlatform=x64
+        run: dotnet test --no-build --verbosity normal -- RunConfiguration.TargetPlatform=${{matrix.arch}}
 
       - name: Pack
         if: matrix.os == 'windows-latest'
@@ -44,7 +61,7 @@ jobs:
 
       - name: Upload Artifact
         if: matrix.os == 'windows-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: nupkgs
           path: ./dist/*.*
@@ -54,12 +71,12 @@ jobs:
     if: github.ref_type == 'tag'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "6.0.x" # runners already have .Net Framework installed as well
+          dotnet-version: "8.0.x" # runners already have .Net Framework installed as well
 
       - name: Pull interop dependencies
         run: bash -c "build/download-native-libs.sh"
@@ -70,6 +87,7 @@ jobs:
           echo "Version: $VERSION"
           dotnet pack -c Release --include-source -p:Version=$VERSION -o ./dist src/PactNet/PactNet.csproj
           dotnet pack -c Release --include-source -p:Version=$VERSION -o ./dist src/PactNet.Abstractions/PactNet.Abstractions.csproj
+          dotnet pack -c Release --include-source -o ./dist src/PactNet.Output.Xunit/PactNet.Output.Xunit.csproj
 
       - name: Push
         run: dotnet nuget push ./dist/*.nupkg --source $NUGET_FEED --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }}

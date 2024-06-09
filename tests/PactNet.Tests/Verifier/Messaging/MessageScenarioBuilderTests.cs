@@ -1,7 +1,7 @@
 using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Newtonsoft.Json;
 using PactNet.Verifier.Messaging;
 using Xunit;
 
@@ -55,7 +55,7 @@ namespace PactNet.Tests.Verifier.Messaging
         [Fact]
         public void WithContent_WithCustomSettings_SetsSettings()
         {
-            var expected = new JsonSerializerSettings();
+            var expected = new JsonSerializerOptions();
 
             this.builder.WithContent(() => "foo", expected);
             var actual = this.builder.Build().JsonSettings;
@@ -77,7 +77,7 @@ namespace PactNet.Tests.Verifier.Messaging
         [Fact]
         public async Task WithContentAsync_WithCustomSettings_SetsSettings()
         {
-            var expected = new JsonSerializerSettings();
+            var expected = new JsonSerializerOptions();
 
             await this.builder.WithContentAsync(() => Task.FromResult<dynamic>(new { Foo = "Bar" }), expected);
             var actual = this.builder.Build().JsonSettings;

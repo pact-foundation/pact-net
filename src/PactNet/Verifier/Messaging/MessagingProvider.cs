@@ -5,9 +5,9 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using PactNet.Exceptions;
 using PactNet.Internal;
 
 namespace PactNet.Verifier.Messaging
@@ -20,16 +20,17 @@ namespace PactNet.Verifier.Messaging
         private const int MinimumPort = 49152;
         private const int MaximumPort = 65535;
 
-        private static readonly JsonSerializerSettings InteractionSettings = new JsonSerializerSettings
+        private static readonly JsonSerializerOptions InteractionSettings = new JsonSerializerOptions
         {
-            ContractResolver = new CamelCasePropertyNamesContractResolver()
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNameCaseInsensitive = true
         };
 
         private readonly PactVerifierConfig config;
-        private readonly HttpListener server;
         private readonly Thread thread;
 
-        private JsonSerializerSettings defaultSettings;
+        private HttpListener server;
+        private JsonSerializerOptions defaultSettings;
 
         /// <summary>
         /// Scenarios configured for the provider
@@ -45,7 +46,6 @@ namespace PactNet.Verifier.Messaging
         {
             this.config = config;
             this.Scenarios = scenarios;
-            this.server = new HttpListener();
             this.thread = new Thread(this.HandleRequest);
         }
 
@@ -54,21 +54,40 @@ namespace PactNet.Verifier.Messaging
         /// </summary>
         /// <param name="settings">Default JSON serializer settings</param>
         /// <returns>URI of the started service</returns>
-        public Uri Start(JsonSerializerSettings settings)
+        public Uri Start(JsonSerializerOptions settings)
         {
             Guard.NotNull(settings, nameof(settings));
             this.defaultSettings = settings;
 
-            int port = FindUnusedPort();
-            var uri = new Uri($"http://localhost:{port}/pact-messages/");
+            while (true)
+            {
+                Uri uri;
 
-            this.config.WriteLine($"Starting messaging provider at {uri}");
-            this.server.Prefixes.Add(uri.AbsoluteUri);
+                try
+                {
+                    int port = FindUnusedPort();
+                    uri = new Uri($"http://localhost:{port}/pact-messages/");
 
-            this.server.Start();
-            this.thread.Start();
+                    this.config.WriteLine($"Starting messaging provider at {uri}");
 
-            return uri;
+                    this.server = new HttpListener();
+                    this.server.Prefixes.Add(uri.AbsoluteUri);
+                    this.server.Start();
+                }
+                catch (HttpListenerException e) when (e.Message == "Address already in use")
+                {
+                    // handle intermittent race condition, mostly on MacOS, where a port says it's unused but still throws when you try to use it
+                    this.config.WriteLine("Failed to start messaging provider as the port is already in use, retrying...");
+                    continue;
+                }
+                catch (Exception e)
+                {
+                    throw new PactFailureException("Unable to start the internal messaging server", e);
+                }
+
+                this.thread.Start();
+                return uri;
+            }
         }
 
         /// <summary>
@@ -80,11 +99,10 @@ namespace PactNet.Verifier.Messaging
         {
             IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
 
-            ICollection<int> used = properties.GetActiveTcpListeners()
-                                              .Concat(properties.GetActiveUdpListeners())
-                                              .Concat(properties.GetActiveTcpConnections().Select(tcp => tcp.LocalEndPoint))
-                                              .Select(l => l.Port)
-                                              .ToList();
+            var used = new HashSet<int>(properties.GetActiveTcpListeners()
+                                                  .Concat(properties.GetActiveUdpListeners())
+                                                  .Concat(properties.GetActiveTcpConnections().Select(tcp => tcp.LocalEndPoint))
+                                                  .Select(l => l.Port));
 
             int port = Enumerable.Range(MinimumPort, (MaximumPort - MinimumPort))
                                  .FirstOrDefault(port => !used.Contains(port));
@@ -130,7 +148,7 @@ namespace PactNet.Verifier.Messaging
                 {
                     var reader = new StreamReader(context.Request.InputStream);
                     string body = reader.ReadToEnd();
-                    interaction = JsonConvert.DeserializeObject<MessageInteraction>(body, InteractionSettings);
+                    interaction = JsonSerializer.Deserialize<MessageInteraction>(body, InteractionSettings);
 
                     if (string.IsNullOrWhiteSpace(interaction.Description))
                     {
@@ -165,11 +183,11 @@ namespace PactNet.Verifier.Messaging
                     return;
                 }
 
-                JsonSerializerSettings settings = scenario.JsonSettings ?? this.defaultSettings;
+                JsonSerializerOptions settings = scenario.JsonSettings ?? this.defaultSettings;
 
                 if (scenario.Metadata != null)
                 {
-                    string stringifyMetadata = JsonConvert.SerializeObject(scenario.Metadata, settings);
+                    string stringifyMetadata = JsonSerializer.Serialize(scenario.Metadata, settings);
                     string metadataBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(stringifyMetadata));
                     context.Response.AddHeader("Pact-Message-Metadata", metadataBase64);
 
@@ -177,7 +195,7 @@ namespace PactNet.Verifier.Messaging
                 }
 
                 dynamic content = scenario.Invoke();
-                string response = JsonConvert.SerializeObject(content, settings);
+                string response = JsonSerializer.Serialize(content, settings);
                 this.OkResponse(context, response);
 
                 this.config.WriteLine($"Successfully simulated message with description: {interaction.Description}");
@@ -266,8 +284,8 @@ namespace PactNet.Verifier.Messaging
 
             try
             {
-                this.server.Stop();
-                this.server.Close();
+                this.server?.Stop();
+                this.server?.Close();
             }
             catch
             {

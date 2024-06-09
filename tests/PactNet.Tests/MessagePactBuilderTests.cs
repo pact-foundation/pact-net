@@ -2,6 +2,7 @@
 using FluentAssertions;
 using Moq;
 using PactNet.Drivers;
+using PactNet.Interop;
 using Xunit;
 
 namespace PactNet.Tests
@@ -26,7 +27,7 @@ namespace PactNet.Tests
                 .Setup(d => d.NewMessageInteraction(It.IsAny<string>()))
                 .Returns(this.mockInteractions.Object);
 
-            this.builder = new MessagePactBuilder(this.mockDriver.Object, this.config);
+            this.builder = new MessagePactBuilder(this.mockDriver.Object, this.config, PactSpecification.V4);
         }
 
         [Fact]
@@ -34,7 +35,7 @@ namespace PactNet.Tests
         {
             Action action = () =>
             {
-                var _ = new MessagePactBuilder(null, this.config);
+                var _ = new MessagePactBuilder(null, this.config, PactSpecification.V4);
             };
 
             action.Should().Throw<ArgumentNullException>();
@@ -45,7 +46,7 @@ namespace PactNet.Tests
         {
             Action action = () =>
             {
-                var _ = new MessagePactBuilder(this.mockDriver.Object, null);
+                var _ = new MessagePactBuilder(this.mockDriver.Object, null, PactSpecification.V4);
             };
 
             action.Should().Throw<ArgumentNullException>();

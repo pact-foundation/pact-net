@@ -1,5 +1,5 @@
 using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace PactNet.Matchers
 {
@@ -8,14 +8,30 @@ namespace PactNet.Matchers
     /// </summary>
     public class MinMaxTypeMatcher : IMatcher
     {
+        /// <summary>
+        /// Type of the matcher
+        /// </summary>
+        [JsonPropertyName("pact:matcher:type")]
         public string Type => "type";
 
+        /// <summary>
+        /// Matcher value
+        /// </summary>
+        [JsonPropertyName("value")]
         public dynamic Value { get; }
 
-        [JsonProperty(PropertyName = "min", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        /// <summary>
+        /// Minimum items
+        /// </summary>
+        [JsonPropertyName("min")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int Min { get; set; }
 
-        [JsonProperty(PropertyName = "max", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        /// <summary>
+        /// Maximum items
+        /// </summary>
+        [JsonPropertyName("max")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int Max { get; set; }
 
         /// <summary>

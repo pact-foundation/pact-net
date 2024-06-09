@@ -1,6 +1,6 @@
 using System;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace PactNet.Verifier.Messaging
 {
@@ -27,7 +27,7 @@ namespace PactNet.Verifier.Messaging
         /// </summary>
         /// <param name="factory">Content factory</param>
         /// <param name="settings">Custom JSON serializer settings</param>
-        void WithContent(Func<dynamic> factory, JsonSerializerSettings settings);
+        void WithContent(Func<dynamic> factory, JsonSerializerOptions settings);
 
         /// <summary>
         /// Set the action of the scenario
@@ -40,6 +40,6 @@ namespace PactNet.Verifier.Messaging
         /// </summary>
         /// <param name="factory">Content factory</param>
         /// <param name="settings">Custom JSON serializer settings</param>
-        Task WithContentAsync(Func<Task<dynamic>> factory, JsonSerializerSettings settings);
+        Task WithContentAsync(Func<Task<dynamic>> factory, JsonSerializerOptions settings);
     }
 }

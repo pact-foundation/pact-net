@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Newtonsoft.Json;
 using PactNet.Verifier.Messaging;
 using Xunit;
 
@@ -35,7 +35,7 @@ namespace PactNet.Tests.Verifier.Messaging
         {
             object metadata = new { Key = "value" };
             Func<dynamic> factory = () => new { Foo = 42 };
-            JsonSerializerSettings settings = new JsonSerializerSettings();
+            JsonSerializerOptions settings = new JsonSerializerOptions();
 
             this.scenarios.Add("description", builder => builder.WithMetadata(metadata).WithContent(factory, settings));
 
@@ -50,7 +50,7 @@ namespace PactNet.Tests.Verifier.Messaging
         {
             object metadata = new { Key = "value" };
             Func<Task<dynamic>> factory = () => Task.FromResult<dynamic>(new { Foo = 42 });
-            JsonSerializerSettings settings = new JsonSerializerSettings();
+            JsonSerializerOptions settings = new JsonSerializerOptions();
 
             this.scenarios.Add("description", async builder => await builder.WithMetadata(metadata).WithContentAsync(factory, settings));
 

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using PactNet.Internal;
 
 namespace PactNet.Verifier
@@ -12,11 +12,11 @@ namespace PactNet.Verifier
     /// </summary>
     internal class PactBrokerOptions : IPactBrokerOptions
     {
-        private static readonly JsonSerializerSettings ConsumerSelectorSettings = new()
+        private static readonly JsonSerializerOptions ConsumerSelectorSettings = new()
         {
-            DefaultValueHandling = DefaultValueHandling.Ignore,
-            NullValueHandling = NullValueHandling.Ignore,
-            ContractResolver = new CamelCasePropertyNamesContractResolver()
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNameCaseInsensitive = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
         };
 
         private readonly IVerifierProvider provider;
@@ -127,7 +127,7 @@ namespace PactNet.Verifier
         /// <remarks>See <see href="https://docs.pact.io/pact_broker/advanced_topics/consumer_version_selectors"/></remarks>
         public IPactBrokerOptions ConsumerVersionSelectors(ICollection<ConsumerVersionSelector> selectors)
         {
-            string[] serialised = selectors.Select(s => JsonConvert.SerializeObject(s, ConsumerSelectorSettings)).ToArray();
+            string[] serialised = selectors.Select(s => JsonSerializer.Serialize(s, ConsumerSelectorSettings)).ToArray();
 
             this.consumerVersionSelectors = serialised;
 

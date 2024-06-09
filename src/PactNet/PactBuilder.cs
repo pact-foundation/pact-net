@@ -10,7 +10,7 @@ namespace PactNet
     /// <summary>
     /// Pact builder for the native backend
     /// </summary>
-    internal class PactBuilder : IPactBuilderV2, IPactBuilderV3
+    internal class PactBuilder : IPactBuilderV2, IPactBuilderV3, IPactBuilderV4
     {
         private readonly IHttpPactDriver pact;
         private readonly PactConfig config;
@@ -46,6 +46,14 @@ namespace PactNet
         /// <param name="description">Interaction description</param>
         /// <returns>Fluent builder</returns>
         IRequestBuilderV3 IPactBuilderV3.UponReceiving(string description)
+            => this.UponReceiving(description);
+
+        /// <summary>
+        /// Add a new interaction to the pact
+        /// </summary>
+        /// <param name="description">Interaction description</param>
+        /// <returns>Fluent builder</returns>
+        IRequestBuilderV4 IPactBuilderV4.UponReceiving(string description)
             => this.UponReceiving(description);
 
         /// <summary>

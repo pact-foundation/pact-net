@@ -1,22 +1,25 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace PactNet.Matchers
 {
     /// <summary>
     /// Matcher
     /// </summary>
+    [JsonConverter(typeof(MatcherConverter))]
     public interface IMatcher
     {
         /// <summary>
         /// Type of the matcher
         /// </summary>
-        [JsonProperty("pact:matcher:type")]
+
+        [JsonPropertyName("pact:matcher:type")]
         string Type { get; }
 
         /// <summary>
         /// Matcher value
         /// </summary>
-        [JsonProperty("value")]
+
+        [JsonPropertyName("value")]
         dynamic Value { get; }
     }
 }

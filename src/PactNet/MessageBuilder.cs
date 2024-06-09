@@ -1,27 +1,31 @@
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json;
 using PactNet.Drivers;
+using PactNet.Interop;
 
 namespace PactNet
 {
     /// <summary>
     /// Mock request message builder
     /// </summary>
-    internal class MessageBuilder : IMessageBuilderV3
+    internal class MessageBuilder : IMessageBuilderV3, IMessageBuilderV4
     {
         private readonly IMessageInteractionDriver driver;
         private readonly PactConfig config;
+        private readonly PactSpecification version;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="MessagePactBuilder"/> class.
         /// </summary>
         /// <param name="server">Interaction driver</param>
         /// <param name="config">Pact config</param>
-        internal MessageBuilder(IMessageInteractionDriver server, PactConfig config)
+        /// <param name="version">Pact specification version</param>
+        internal MessageBuilder(IMessageInteractionDriver server, PactConfig config, PactSpecification version)
         {
             this.driver = server ?? throw new ArgumentNullException(nameof(server));
             this.config = config;
+            this.version = version;
         }
 
         #region IMessagePactBuilderV3 explicit implementation
@@ -43,7 +47,31 @@ namespace PactNet
             => WithJsonContent(content);
 
         /// <inheritdoc cref="IMessageBuilderV3"/>
-        IConfiguredMessageVerifier IMessageBuilderV3.WithJsonContent(dynamic content, JsonSerializerSettings settings)
+        IConfiguredMessageVerifier IMessageBuilderV3.WithJsonContent(dynamic content, JsonSerializerOptions settings)
+            => WithJsonContent(content, settings);
+
+        #endregion
+
+        #region IMessagePactBuilderV4 explicit implementation
+
+        /// <inheritdoc cref="IMessageBuilderV4"/>
+        IMessageBuilderV4 IMessageBuilderV4.Given(string providerState)
+            => Given(providerState);
+
+        /// <inheritdoc cref="IMessageBuilderV4"/>
+        IMessageBuilderV4 IMessageBuilderV4.Given(string providerState, IDictionary<string, string> parameters)
+            => Given(providerState, parameters);
+
+        /// <inheritdoc cref="IMessageBuilderV4"/>
+        IMessageBuilderV4 IMessageBuilderV4.WithMetadata(string key, string value)
+            => WithMetadata(key, value);
+
+        /// <inheritdoc cref="IMessageBuilderV4"/>
+        IConfiguredMessageVerifier IMessageBuilderV4.WithJsonContent(dynamic content)
+            => WithJsonContent(content);
+
+        /// <inheritdoc cref="IMessageBuilderV4"/>
+        IConfiguredMessageVerifier IMessageBuilderV4.WithJsonContent(dynamic content, JsonSerializerOptions settings)
             => WithJsonContent(content, settings);
 
         #endregion
@@ -104,13 +132,13 @@ namespace PactNet
         /// <param name="body">Request body</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         /// <returns>Fluent builder</returns>
-        internal ConfiguredMessageVerifier WithJsonContent(dynamic body, JsonSerializerSettings settings)
+        internal ConfiguredMessageVerifier WithJsonContent(dynamic body, JsonSerializerOptions settings)
         {
-            string serialised = JsonConvert.SerializeObject(body, settings);
+            string serialised = JsonSerializer.Serialize(body, settings);
 
             this.driver.WithContents("application/json", serialised, 0);
 
-            return new ConfiguredMessageVerifier(this.driver, this.config);
+            return new ConfiguredMessageVerifier(this.driver, this.config, this.version);
         }
 
         #endregion Internal Methods

@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text.Json;
 using FluentAssertions;
 using Moq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using PactNet.Drivers;
 using Xunit;
 using Match = PactNet.Matchers.Match;
@@ -17,13 +16,13 @@ namespace PactNet.Tests
 
         private readonly Mock<IHttpInteractionDriver> mockDriver;
         
-        private readonly JsonSerializerSettings settings;
+        private readonly JsonSerializerOptions settings;
 
         public RequestBuilderTests()
         {
             this.mockDriver = new Mock<IHttpInteractionDriver>();
             
-            this.settings = new JsonSerializerSettings();
+            this.settings = new JsonSerializerOptions();
 
             this.builder = new RequestBuilder(this.mockDriver.Object, this.settings);
         }
@@ -84,6 +83,16 @@ namespace PactNet.Tests
             this.mockDriver.Verify(s => s.WithQueryParameter("name", "value1", 0));
             this.mockDriver.Verify(s => s.WithQueryParameter("name", "value2", 1));
             this.mockDriver.Verify(s => s.WithQueryParameter("other", "value", 0));
+        }
+
+        [Fact]
+        public void WithQuery_Matcher_WhenCalled_AddsSerialisedQueryParameter()
+        {
+            var expectedValue = "{\"pact:matcher:type\":\"regex\",\"value\":\"queryParameter\",\"regex\":\"^queryParameter$\"}";
+
+            this.builder.WithQuery("name", Match.Regex("queryParameter", "^queryParameter$"));
+
+            this.mockDriver.Verify(s => s.WithQueryParameter("name", expectedValue, 0));
         }
 
         [Fact]
@@ -152,7 +161,7 @@ namespace PactNet.Tests
         public void WithJsonBody_OverrideJsonSettings_AddsRequestBodyWithOverriddenSettings()
         {
             this.builder.WithJsonBody(new { Foo = 42 },
-                                      new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+                                      new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
             this.mockDriver.Verify(s => s.WithRequestBody("application/json", @"{""foo"":42}"));
         }
@@ -161,10 +170,7 @@ namespace PactNet.Tests
         public void WithJsonBody_OverrideContentTypeAndSettings_AddsRequestBodyWithOverriddenContentTypeAndSettings()
         {
             this.builder.WithJsonBody(new { Foo = 42 },
-                                      new JsonSerializerSettings
-                                      {
-                                          ContractResolver = new CamelCasePropertyNamesContractResolver()
-                                      },
+                                      new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase },
                                       "application/json-patch+json");
 
             this.mockDriver.Verify(s => s.WithRequestBody("application/json-patch+json", @"{""foo"":42}"));

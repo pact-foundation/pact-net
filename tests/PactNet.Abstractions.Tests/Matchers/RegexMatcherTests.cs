@@ -1,5 +1,5 @@
+using System.Text.Json;
 using FluentAssertions;
-using Newtonsoft.Json;
 using PactNet.Matchers;
 using Xunit;
 
@@ -15,8 +15,8 @@ namespace PactNet.Abstractions.Tests.Matchers
 
             var matcher = new RegexMatcher(example, regex);
 
-            string actual = JsonConvert.SerializeObject(matcher);
-            string expected = $@"{{""pact:matcher:type"":""regex"",""value"":""{example}"",""regex"":{JsonConvert.SerializeObject(regex)}}}";
+            string actual = JsonSerializer.Serialize(matcher);
+            string expected = $@"{{""pact:matcher:type"":""regex"",""value"":""{example}"",""regex"":{JsonSerializer.Serialize(regex)}}}";
 
             actual.Should().BeEquivalentTo(expected);
         }

@@ -1,5 +1,5 @@
 using System;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace PactNet.Verifier.Messaging
 {
@@ -23,7 +23,7 @@ namespace PactNet.Verifier.Messaging
         /// <summary>
         /// Custom JSON serializer settings
         /// </summary>
-        public JsonSerializerSettings JsonSettings { get; }
+        public JsonSerializerOptions JsonSettings { get; }
 
         /// <summary>
         /// Creates an instance of <see cref="Scenario"/>
@@ -43,7 +43,7 @@ namespace PactNet.Verifier.Messaging
         /// <param name="factory">Message content factory</param>
         /// <param name="metadata">the metadata</param>
         /// <param name="settings">Custom JSON serializer settings</param>
-        public Scenario(string description, Func<dynamic> factory, dynamic metadata, JsonSerializerSettings settings)
+        public Scenario(string description, Func<dynamic> factory, dynamic metadata, JsonSerializerOptions settings)
             : this(description, factory)
         {
             this.Metadata = metadata;

@@ -34,4 +34,11 @@ namespace PactNet
     public interface IPactV3 : IPact
     {
     }
+
+    /// <summary>
+    /// Marker interface for a v4 Pact
+    /// </summary>
+    public interface IPactV4 : IPact
+    {
+    }
 }

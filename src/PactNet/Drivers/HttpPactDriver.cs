@@ -40,8 +40,7 @@ namespace PactNet.Drivers
         /// <exception cref="InvalidOperationException">Failed to start mock server</exception>
         public IMockServerDriver CreateMockServer(string host, int? port, bool tls)
         {
-            string addrStr = $"{host}:{port.GetValueOrDefault(0)}";
-            int result = NativeInterop.CreateMockServerForPact(this.pact, addrStr, tls);
+            int result = NativeInterop.CreateMockServerForTransport(this.pact, host, (ushort)port.GetValueOrDefault(0), "http", null);
 
             if (result > 0)
             {
