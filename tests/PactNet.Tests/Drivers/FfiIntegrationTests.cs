@@ -145,7 +145,7 @@ namespace PactNet.Tests.Drivers
 
                 IHttpInteractionDriver interaction = pact.NewHttpInteraction("an interaction with a numeric provider state param");
                 
-                interaction.GivenWithParam("state with param", "issue", "449");
+                interaction.GivenWithParam("state with param", "issue", 449);
                 interaction.WithRequest("GET", "/path");
 
                 interaction.WithResponseStatus((ushort)HttpStatusCode.OK);
@@ -182,6 +182,60 @@ namespace PactNet.Tests.Drivers
 
             string pactContents = File.ReadAllText(file.FullName).TrimEnd();
             string expectedPactContent = File.ReadAllText("data/v3-server-numeric-provider-state-param.json").TrimEnd();
+            pactContents.Should().Be(expectedPactContent);
+        }
+
+        [Fact]
+        [Trait("issue", "449")]
+        public async Task HttpInteraction_StringProviderStateParameter_CreatesPactFile()
+        {
+            var driver = new PactDriver();
+
+            try
+            {
+                IHttpPactDriver pact = driver.NewHttpPact("NativeDriverTests-Consumer-StringProviderStateParam",
+                                                          "NativeDriverTests-Provider",
+                                                          PactSpecification.V3);
+
+                IHttpInteractionDriver interaction = pact.NewHttpInteraction("an interaction with a string provider state param");
+                
+                interaction.GivenWithParam("state with param", "issue", "449");
+                interaction.WithRequest("GET", "/path");
+
+                interaction.WithResponseStatus((ushort)HttpStatusCode.OK);
+                interaction.WithResponseBody("application/json", @"{""foo"":42}");
+
+                using IMockServerDriver mockServer = pact.CreateMockServer("127.0.0.1", null, false);
+
+                var client = new HttpClient { BaseAddress = mockServer.Uri };
+
+                HttpResponseMessage result = await client.GetAsync("/path");
+                result.StatusCode.Should().Be(HttpStatusCode.OK);
+
+                string content = await result.Content.ReadAsStringAsync();
+                content.Should().Be(@"{""foo"":42}");
+
+                mockServer.MockServerMismatches().Should().Be("[]");
+
+                string logs = mockServer.MockServerLogs();
+                logs.Should().NotBeEmpty();
+
+                this.output.WriteLine("Mock Server Logs");
+                this.output.WriteLine("----------------");
+                this.output.WriteLine(logs);
+
+                pact.WritePactFile(Environment.CurrentDirectory);
+            }
+            finally
+            {
+                this.WriteDriverLogs(driver);
+            }
+
+            var file = new FileInfo("NativeDriverTests-Consumer-StringProviderStateParam-NativeDriverTests-Provider.json");
+            file.Exists.Should().BeTrue();
+
+            string pactContents = File.ReadAllText(file.FullName).TrimEnd();
+            string expectedPactContent = File.ReadAllText("data/v3-server-string-provider-state-param.json").TrimEnd();
             pactContents.Should().Be(expectedPactContent);
         }
     }

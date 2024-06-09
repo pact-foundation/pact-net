@@ -1,15 +1,15 @@
 {
   "consumer": {
-    "name": "NativeDriverTests-Consumer-NumericProviderStateParam"
+    "name": "NativeDriverTests-Consumer-StringProviderStateParam"
   },
   "interactions": [
     {
-      "description": "an interaction with a numeric provider state param",
+      "description": "an interaction with a string provider state param",
       "providerStates": [
         {
           "name": "state with param",
           "params": {
-            "issue": 449
+            "issue": "449"
           }
         }
       ],
