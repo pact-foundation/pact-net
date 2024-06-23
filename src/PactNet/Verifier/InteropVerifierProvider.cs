@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Newtonsoft.Json;
 using PactNet.Exceptions;
 using PactNet.Interop;
+using PactNet.Models.VerifierJson;
 
 namespace PactNet.Verifier
 {
@@ -221,14 +223,12 @@ namespace PactNet.Verifier
             this.config.WriteLine("Pact verification failed\n");
             this.PrintOutput();
 
-            string error = result switch
+            throw result switch
             {
-                1 => "Pact verification failed",
-                2 => "Failed to run the verification",
-                _ => $"An unknown error occurred: {result}"
+                1 => new PactVerificationFailedException(this.ParseExecutionResult()),
+                2 => new PactFailureException("Failed to run the verification"),
+                _ => new PactFailureException($"An unknown error occurred: {result}")
             };
-
-            throw new PactFailureException(error);
         }
 
         /// <summary>
@@ -297,6 +297,16 @@ namespace PactNet.Verifier
             this.config.WriteLine("Verifier Logs");
             this.config.WriteLine("-------------");
             this.config.WriteLine(logs);
+        }
+
+        private VerificationExecutionResult ParseExecutionResult()
+        {
+            IntPtr jsonPtr = NativeInterop.VerifierJson(this.handle);
+            var json = jsonPtr == IntPtr.Zero ? null : Marshal.PtrToStringAnsi(jsonPtr);
+
+            return json == null
+                ? null
+                : JsonConvert.DeserializeObject<VerificationExecutionResult>(json);
         }
     }
 }
