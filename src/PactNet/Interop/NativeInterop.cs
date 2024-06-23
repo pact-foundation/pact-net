@@ -164,6 +164,9 @@ namespace PactNet.Interop
         [DllImport(DllName, EntryPoint = "pactffi_verifier_output")]
         public static extern IntPtr VerifierOutput(IntPtr handle, byte stripAnsi);
 
+        [DllImport(DllName, EntryPoint = "pactffi_verifier_json")]
+        public static extern IntPtr VerifierJson(IntPtr handle);
+
         #endregion
     }
 }
