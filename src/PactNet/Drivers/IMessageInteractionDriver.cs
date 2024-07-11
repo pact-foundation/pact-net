@@ -3,7 +3,7 @@ namespace PactNet.Drivers
     /// <summary>
     /// Driver for asynchronous message interactions
     /// </summary>
-    internal interface IMessageInteractionDriver : IProviderStateDriver, ICompletedPactDriver
+    public interface IMessageInteractionDriver : IProviderStateDriver, ICompletedPactDriver
     {
         /// <summary>
         /// Set the description of the message interaction

@@ -5,7 +5,7 @@ namespace PactNet.Drivers
     /// <summary>
     /// Driver for creating new pacts
     /// </summary>
-    internal class PactDriver : IPactDriver
+    public class PactDriver : IPactDriver
     {
         /// <summary>
         /// Create a new HTTP pact

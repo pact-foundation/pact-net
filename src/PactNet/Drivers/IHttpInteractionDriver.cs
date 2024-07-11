@@ -3,7 +3,7 @@ namespace PactNet.Drivers
     /// <summary>
     /// Driver for synchronous HTTP interactions
     /// </summary>
-    internal interface IHttpInteractionDriver : IProviderStateDriver
+    public interface IHttpInteractionDriver : IProviderStateDriver
     {
         /// <summary>
         /// Add a request to the interaction

@@ -3,7 +3,7 @@
     /// <summary>
     /// Driver for setting provider states on an interaction
     /// </summary>
-    internal interface IProviderStateDriver
+    public interface IProviderStateDriver
     {
         /// <summary>
         /// Add a provider state to the interaction

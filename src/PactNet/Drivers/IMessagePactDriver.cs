@@ -3,7 +3,7 @@
     /// <summary>
     /// Driver for message pacts
     /// </summary>
-    internal interface IMessagePactDriver
+    public interface IMessagePactDriver
     {
         /// <summary>
         /// Create a new message interaction on the current pact
