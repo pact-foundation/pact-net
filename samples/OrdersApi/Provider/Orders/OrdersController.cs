@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +40,29 @@ namespace Provider.Orders
             {
                 OrderDto order = await this.orders.GetAsync(id);
                 return this.Ok(order);
+            }
+            catch (KeyNotFoundException)
+            {
+                return this.NotFound();
+            }
+        }
+
+        [HttpGet("many/{ids}", Name = "getMany")]
+        [ProducesResponseType(typeof(OrderDto[]), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetManyAsync(string ids)
+        {
+            try
+            {
+                var idsAsInts = ids.Split(',').Select(int.Parse);
+
+                List<OrderDto> result = new List<OrderDto>();
+                foreach (int id in idsAsInts)
+                {
+                    var order = await this.orders.GetAsync(id);
+                    result.Add(order);
+                }
+
+                return this.Ok(result.ToArray());
             }
             catch (KeyNotFoundException)
             {

@@ -168,5 +168,10 @@ namespace PactNet.Matchers
         {
             return new IncludeMatcher(example);
         }
+
+        public static IMatcher ArrayContains(dynamic[] variations)
+        {
+            return new ArrayContainsMatcher(variations);
+        }
     }
 }
