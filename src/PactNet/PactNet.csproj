@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>net8.0;netstandard2.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>NU5105</NoWarn>
@@ -52,18 +52,6 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\PactNet.targets">
-      <PackagePath>build/net462/</PackagePath>
-      <Pack>true</Pack>
-      <Visible>false</Visible>
-    </Content>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\PactNet.targets">
-      <PackagePath>buildTransitive/net462/</PackagePath>
-      <Pack>true</Pack>
-      <Visible>false</Visible>
-    </Content>
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\PactNet.Abstractions\PactNet.Abstractions.csproj" />
