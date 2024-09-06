@@ -42,7 +42,7 @@ Watch our [series](https://www.youtube.com/playlist?list=PLwy9Bnco-IpfZ72VQ7hce8
 
 ### Tutorial (60 minutes)
 
-[Learn everything in Pact Net in 60 minutes](https://github.com/DiUS/pact-workshop-dotnet-core-v3/)
+[Learn everything in Pact Net in 60 minutes](https://github.com/pact-foundation/pact-workshop-dotnet)
 
 ### Upgrade Guides
 
