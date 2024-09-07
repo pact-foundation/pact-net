@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-FFI_VERSION="0.4.16"
+FFI_VERSION="0.4.23"
 FFI_BASE_URL="https://github.com/pact-foundation/pact-reference/releases/download/libpact_ffi-v$FFI_VERSION"
 
 GREEN="\e[32m"
@@ -20,7 +20,7 @@ download_native() {
     # e.g.
     #   pact_ffi-windows-x86_64.dll.gz
     #   libpact_ffi-linux-x86_64.so.gz
-    #   libpact_ffi-osx-x86_64.dylib.gz
+    #   libpact_ffi-macos-x86_64.dylib.gz
     src_file="$file-$os-$platform.$extension.gz"
     url="$FFI_BASE_URL/$src_file"
     sha="$url.sha256"
@@ -45,7 +45,7 @@ download_native() {
         sed -Ei '' "s|../release_artifacts/.+$|$path/$dest_file|" "$path/$dest_file.sha256"
         shasum -a 256 --check --quiet "$path/$dest_file.sha256"
     else
-        sed -Ei "s|../release_artifacts/.+$|$path/$dest_file|" "$path/$dest_file.sha256"
+        sed -Ei "s|$src_file|$path/$dest_file|" "$path/$dest_file.sha256"
         sha256sum --check --quiet "$path/$dest_file.sha256"
     fi
 
@@ -60,5 +60,5 @@ download_native() {
 
 download_native "pact_ffi" "windows" "x86_64" "dll"
 download_native "libpact_ffi" "linux" "x86_64" "so"
-download_native "libpact_ffi" "osx" "x86_64" "dylib"
-download_native "libpact_ffi" "osx" "aarch64-apple-darwin" "dylib"
+download_native "libpact_ffi" "macos" "x86_64" "dylib"
+download_native "libpact_ffi" "macos" "aarch64" "dylib"
