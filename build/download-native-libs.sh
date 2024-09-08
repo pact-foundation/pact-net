@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-FFI_VERSION="0.4.16"
+FFI_VERSION="0.4.23"
 FFI_BASE_URL="https://github.com/pact-foundation/pact-reference/releases/download/libpact_ffi-v$FFI_VERSION"
 
 GREEN="\e[32m"
@@ -20,45 +20,51 @@ download_native() {
     # e.g.
     #   pact_ffi-windows-x86_64.dll.gz
     #   libpact_ffi-linux-x86_64.so.gz
-    #   libpact_ffi-osx-x86_64.dylib.gz
-    src_file="$file-$os-$platform.$extension.gz"
-    url="$FFI_BASE_URL/$src_file"
+    #   libpact_ffi-macos-x86_64.dylib.gz
+    src_file="$file-$os-$platform.$extension"
+    src_archive="$src_file.gz"
+    src_sha="$src_archive.sha256"
+    dest_file="$file.$extension"
+    url="$FFI_BASE_URL/$src_archive"
     sha="$url.sha256"
 
     path="$base_path/$os/$platform"
-    dest_file="$file.$extension.gz"
     mkdir -p "$path"
+    pushd $path > /dev/null
 
     echo -e "Downloading FFI library for ${YELLOW}$os/$platform${CLEAR}"
-    echo -e "    Destination: ${BLUE}$path/$dest_file${CLEAR}"
+    echo -e "    Destination: ${BLUE}$path/$src_archive${CLEAR}"
     echo -e "    URL: ${BLUE}$url${CLEAR}"
 
     echo -n "    Downloading... "
-    curl --silent -L "$url" -o "$path/$dest_file"
-    curl --silent -L "$sha" -o "$path/$dest_file.sha256"
+    curl --silent -L "$url" -o "$src_archive"
+    curl --silent -L "$sha" -o "$src_archive.sha256"
     echo -e "${GREEN}OK${CLEAR}"
 
     echo -n "    Verifying... "
 
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        # OSX requires an empty arg passed to -i, but this doesn't work on Lin/Win
-        sed -Ei '' "s|../release_artifacts/.+$|$path/$dest_file|" "$path/$dest_file.sha256"
-        shasum -a 256 --check --quiet "$path/$dest_file.sha256"
+        shasum -a 256 --check --quiet "$src_sha"
     else
-        sed -Ei "s|../release_artifacts/.+$|$path/$dest_file|" "$path/$dest_file.sha256"
-        sha256sum --check --quiet "$path/$dest_file.sha256"
+        sha256sum --check --quiet "$src_sha"
     fi
 
-    rm "$path/$dest_file.sha256"
     echo -e "${GREEN}OK${CLEAR}"
 
     echo -n "    Extracting... "
-    gunzip -f "$path/$dest_file"
+    gunzip -f "$src_archive"
     echo -e "${GREEN}OK${CLEAR}"
     echo ""
+
+    mv "$src_file" "$dest_file"
+    rm "$src_sha"
+
+    popd > /dev/null
 }
 
 download_native "pact_ffi" "windows" "x86_64" "dll"
 download_native "libpact_ffi" "linux" "x86_64" "so"
-download_native "libpact_ffi" "osx" "x86_64" "dylib"
-download_native "libpact_ffi" "osx" "aarch64-apple-darwin" "dylib"
+download_native "libpact_ffi" "macos" "x86_64" "dylib"
+download_native "libpact_ffi" "macos" "aarch64" "dylib"
+
+echo "Successfully downloaded FFI libraries"

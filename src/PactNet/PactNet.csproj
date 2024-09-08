@@ -36,14 +36,14 @@
       <CopyToOutputDirectory Condition="'$(IsLinux)'">PreserveNewest</CopyToOutputDirectory>
       <Visible>false</Visible>
     </Content>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\osx\x86_64\libpact_ffi.dylib">
+    <Content Include="$(MSBuildProjectDirectory)\..\..\build\macos\x86_64\libpact_ffi.dylib">
       <Link>libpact_ffi.dylib</Link>
       <PackagePath>runtimes/osx-x64/native</PackagePath>
       <Pack>true</Pack>
       <CopyToOutputDirectory Condition="'$(IsOSX)' == 'True' And '$(IsArm64)' == 'False'">PreserveNewest</CopyToOutputDirectory>
       <Visible>false</Visible>
     </Content>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\osx\aarch64-apple-darwin\libpact_ffi.dylib">
+    <Content Include="$(MSBuildProjectDirectory)\..\..\build\macos\aarch64\libpact_ffi.dylib">
       <Link>libpact_ffi.dylib</Link>
       <PackagePath>runtimes/osx-arm64/native</PackagePath>
       <Pack>true</Pack>

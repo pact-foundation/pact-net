@@ -55,7 +55,7 @@ PactNet/Files/pact/
 tools/
 build/tools/
 build/linux/
-build/osx/
+build/macos/
 build/windows/
 dist/
 
