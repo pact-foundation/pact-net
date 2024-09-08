@@ -53,7 +53,7 @@ namespace PactNet.Tests.Verifier
 
             Action action = () => provider.Execute();
 
-            action.Should().Throw<PactFailureException>();
+            action.Should().Throw<PactVerificationFailedException>();
         }
 
         [Fact]
@@ -73,7 +73,7 @@ namespace PactNet.Tests.Verifier
 
             Action action = () => provider.Execute();
 
-            action.Should().Throw<PactFailureException>();
+            action.Should().Throw<PactVerificationFailedException>();
         }
     }
 }
