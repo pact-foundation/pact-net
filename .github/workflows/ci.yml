@@ -39,7 +39,7 @@ jobs:
           enableCrossOsArchive: true
           path: |
             build/linux
-            build/osx
+            build/macos
             build/windows
 
       - name: Pull interop dependencies
