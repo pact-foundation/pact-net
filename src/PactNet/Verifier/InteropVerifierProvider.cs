@@ -235,7 +235,7 @@ namespace PactNet.Verifier
 
             string error = result switch
             {
-                1 => "Pact verification failed",
+                1 => throw new PactVerificationFailedException("Pact verification failed"),
                 2 => "Failed to run the verification",
                 _ => $"An unknown error occurred: {result}"
             };
