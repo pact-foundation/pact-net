@@ -59,7 +59,7 @@ version by executing the script in Bash (or Git Bash on Windows):
 build/download-native-libs.sh
 ```
 
-Alternatively you can download a particular FFI version from the [pact-referece] releases or build your own version
+Alternatively you can download a particular FFI version from the [pact-reference] releases or build your own version
 locally, and then copy the artifacts into the folders:
 
 ```
@@ -67,8 +67,10 @@ build/
     linux/
         x86_64/
             libpact_ffi.so
+        aarch64/
+            libpact_ffi.so
     osx/
-        aarch64-apple-darwin/
+        aarch64/
             libpact_ffi.dylib
         x86_64/
             libpact_ffi.dylib
