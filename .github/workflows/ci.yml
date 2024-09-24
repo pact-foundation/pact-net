@@ -72,8 +72,52 @@ jobs:
           name: nupkgs
           path: ./dist/*.*
 
+  build-dotnet-containers:
+    runs-on: ubuntu-latest
+    name: ${{ matrix.arch }}-${{ matrix.distro }}-build-dotnet-container
+    strategy:
+      fail-fast: false
+      matrix:
+        arch:
+          - amd64 
+          # - arm64
+        distro:
+          - "mcr.microsoft.com/dotnet/sdk:8.0"
+          - "mcr.microsoft.com/dotnet/sdk:8.0-alpine3.20"
+          - "mcr.microsoft.com/dotnet/sdk:8.0-alpine3.19"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Docker dependencies
+        id: docker_commands
+        shell: bash
+        run: |
+          if [[ ${{ matrix.distro }} == *"alpine"* ]]; then
+            echo "deps=apk add --no-cache curl bash gzip && " >> "$GITHUB_OUTPUT"
+          else
+            echo "deps=" >> "$GITHUB_OUTPUT"
+          fi
+  
+      - name: Restore, Build & Test
+        run: |
+          docker run \
+            --rm \
+            -v $(pwd):/${{ github.workspace }} \
+            -w ${{ github.workspace }} \
+            --platform linux/${{ matrix.arch }} \
+            --entrypoint /bin/sh \
+            ${{ matrix.distro }} \
+            -c '${{ steps.docker_commands.outputs.deps }} \
+            build/download-native-libs.sh && \
+            dotnet restore && dotnet build --no-restore && \
+            dotnet test --no-build --verbosity normal'      
+
   release:
-    needs: build-dotnet
+    needs: [
+      build-dotnet,
+      build-dotnet-containers
+      ]
     if: github.ref_type == 'tag'
     runs-on: ubuntu-latest
     steps:

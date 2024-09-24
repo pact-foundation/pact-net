@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk" InitialTargets="build_libs">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -9,56 +9,84 @@
   </PropertyGroup>
 
   <Import Project="../NuGet.targets" />
+  <Target Name="build_libs">
+    <!-- musl detection notes -->
+    <!-- Main fallback behaviour is to default to glibc flavour, ensuring miminal impact on existing supported targets -->
+    <!-- ContinueOnError True and Fallback to IsLinuxX64 / IsLinuxArm64  -->
+    <!-- 1. Check host is Linux - IsLinux -->
+    <!-- 2. Check if supported arch specific musl lib exists - IsLinuxMuslX64LibFound/IsLinuxMuslArm64LibFound  -->
+    <!-- 3. Check if musl is the loaded libc -->
+    <!-- 3a. glibc hosts could have musl cross libs installed, in the standard musl location -->
+    <!-- 3b. use ldd on a well known binary such as /bin/sh and grep for musl -->
+    <!-- 3c. note ldd may not be available on all musl targets -->
+    <PropertyGroup>
+      <IsLinux>False</IsLinux>
+      <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'True'">True</IsLinux>
+      <IsLinuxMuslX64LibFound Condition="$([System.IO.File]::Exists('/lib/ld-musl-x86_64.so.1')) == 'True'">True</IsLinuxMuslX64LibFound>
+      <IsLinuxMuslArm64LibFound Condition="$([System.IO.File]::Exists('/lib/ld-musl-aarch64.so.1')) == 'True'">True</IsLinuxMuslArm64LibFound>
+    </PropertyGroup>
+    <!-- only run this check if linux and the musl shared libs were found -->
+    <Exec Command="ldd /bin/sh | grep musl" ConsoleToMSBuild="true" StandardOutputImportance="low" ContinueOnError="true" Condition="$(IsLinux) == 'True' And ($(IsLinuxMuslX64LibFound) == 'True' Or $(IsLinuxMuslArm64LibFound) == 'True')">
+        <Output TaskParameter="ExitCode" PropertyName="IsLinuxMuslLoaded"/>
+    </Exec>
+    <PropertyGroup>
+      <IsWindows>False</IsWindows>
+      <IsOSX>False</IsOSX>
+      <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'True'">True</IsWindows>
+      <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'True'">True</IsOSX>
+      <IsArm64>False</IsArm64>
+      <IsArm64 Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'">True</IsArm64>
+      <IsLinuxX64 Condition="'$(IsLinux)' == 'True' And '$(IsArm64)' == 'False'">True</IsLinuxX64>
+      <IsLinuxArm64 Condition="'$(IsLinux)' == 'True' And '$(IsArm64)' == 'True'">True</IsLinuxArm64>
+      <IsLinuxMuslX64 Condition="'$(IsLinux)' == 'True' And '$(IsLinuxMuslLoaded)' == '0' And '$(IsArm64)' == 'False'">True</IsLinuxMuslX64>
+      <IsLinuxMuslArm64 Condition="'$(IsLinux)' == 'True' And '$(IsLinuxMuslLoaded)' == '0' And '$(IsArm64)' == 'True'">True</IsLinuxMuslArm64>
+    </PropertyGroup>
 
-  <PropertyGroup>
-    <IsWindows>False</IsWindows>
-    <IsLinux>False</IsLinux>
-    <IsOSX>False</IsOSX>
-    <IsArm64>False</IsArm64>
-    <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'True'">True</IsWindows>
-    <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'True'">True</IsLinux>
-    <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'True'">True</IsOSX>
-    <IsArm64 Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'">True</IsArm64>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\windows\x86_64\pact_ffi.dll">
-      <Link>pact_ffi.dll</Link>
-      <PackagePath>runtimes/win-x64/native</PackagePath>
-      <Pack>true</Pack>
-      <CopyToOutputDirectory Condition="'$(IsWindows)'">PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
-    </Content>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\linux\x86_64\libpact_ffi.so">
-      <Link>libpact_ffi.so</Link>
-      <PackagePath>runtimes/linux-x64/native</PackagePath>
-      <Pack>true</Pack>
-      <CopyToOutputDirectory Condition="'$(IsLinux)' And '$(IsArm64)' == 'False'">PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
-    </Content>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\linux\aarch64\libpact_ffi.so">
-      <Link>libpact_ffi.so</Link>
-      <PackagePath>runtimes/linux-arm64/native</PackagePath>
-      <Pack>true</Pack>
-      <CopyToOutputDirectory Condition="'$(IsLinux)' And '$(IsArm64)' == 'True'">PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
-    </Content>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\macos\x86_64\libpact_ffi.dylib">
-      <Link>libpact_ffi.dylib</Link>
-      <PackagePath>runtimes/osx-x64/native</PackagePath>
-      <Pack>true</Pack>
-      <CopyToOutputDirectory Condition="'$(IsOSX)' == 'True' And '$(IsArm64)' == 'False'">PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
-    </Content>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\macos\aarch64\libpact_ffi.dylib">
-      <Link>libpact_ffi.dylib</Link>
-      <PackagePath>runtimes/osx-arm64/native</PackagePath>
-      <Pack>true</Pack>
-      <CopyToOutputDirectory Condition="'$(IsOSX)' == 'True' And '$(IsArm64)' == 'True'">PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
-    </Content>
-  </ItemGroup>
-
+    <ItemGroup>
+      <Content Include="$(MSBuildProjectDirectory)\..\..\build\windows\x86_64\pact_ffi.dll">
+        <Link>pact_ffi.dll</Link>
+        <PackagePath>runtimes/win-x64/native</PackagePath>
+        <Pack>true</Pack>
+        <CopyToOutputDirectory Condition="'$(IsWindows)'">PreserveNewest</CopyToOutputDirectory>
+        <Visible>false</Visible>
+      </Content>
+      <Content Include="$(MSBuildProjectDirectory)\..\..\build\linux\x86_64\libpact_ffi.so">
+        <Link>libpact_ffi.so</Link>
+        <PackagePath>runtimes/linux-x64/native</PackagePath>
+        <Pack>true</Pack>
+        <CopyToOutputDirectory Condition="'$(IsLinuxX64)' == 'True'">PreserveNewest</CopyToOutputDirectory>
+        <Visible>false</Visible>
+      </Content>
+      <Content Include="$(MSBuildProjectDirectory)\..\..\build\linux\x86_64-musl\libpact_ffi.so">
+        <Link>libpact_ffi.so</Link>
+        <PackagePath>runtimes/linux-x64-musl/native</PackagePath>
+        <Pack>true</Pack>
+        <CopyToOutputDirectory Condition="'$(IsLinuxMuslX64)' == 'True'">PreserveNewest</CopyToOutputDirectory>
+        <Visible>false</Visible>
+      </Content>
+      <Content Include="$(MSBuildProjectDirectory)\..\..\build\linux\aarch64-musl\libpact_ffi.so">
+        <Link>libpact_ffi.so</Link>
+        <PackagePath>runtimes/linux-arm64-musl/native</PackagePath>
+        <Pack>true</Pack>
+        <CopyToOutputDirectory Condition="'$(IsLinuxMuslArm64)' == 'True'">PreserveNewest</CopyToOutputDirectory>
+        <Visible>false</Visible>
+      </Content>
+      <Content Include="$(MSBuildProjectDirectory)\..\..\build\macos\x86_64\libpact_ffi.dylib">
+        <Link>libpact_ffi.dylib</Link>
+        <PackagePath>runtimes/osx-x64/native</PackagePath>
+        <Pack>true</Pack>
+        <CopyToOutputDirectory Condition="'$(IsOSX)' == 'True' And '$(IsArm64)' == 'False'">PreserveNewest</CopyToOutputDirectory>
+        <Visible>false</Visible>
+      </Content>
+      <Content Include="$(MSBuildProjectDirectory)\..\..\build\macos\aarch64\libpact_ffi.dylib">
+        <Link>libpact_ffi.dylib</Link>
+        <PackagePath>runtimes/osx-arm64/native</PackagePath>
+        <Pack>true</Pack>
+        <CopyToOutputDirectory Condition="'$(IsOSX)' == 'True' And '$(IsArm64)' == 'True'">PreserveNewest</CopyToOutputDirectory>
+        <Visible>false</Visible>
+      </Content>
+    </ItemGroup>
+  </Target>
   <ItemGroup>
     <Content Include="$(MSBuildProjectDirectory)\..\..\build\PactNet.targets">
       <PackagePath>build/net462/</PackagePath>

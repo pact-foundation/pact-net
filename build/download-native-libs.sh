@@ -46,7 +46,23 @@ download_native() {
     if [[ "$OSTYPE" == "darwin"* ]]; then
         shasum -a 256 --check --quiet "$src_sha"
     else
-        sha256sum --check --quiet "$src_sha"
+        if [[ "$OSTYPE" == "linux"* ]]; then
+            if ldd /bin/ls >/dev/null 2>&1; then
+                ldd_output=$(ldd /bin/ls)
+                case "$ldd_output" in
+                    *musl*) 
+                        sha256sum -c -s "$src_sha"
+                        ;;
+                    *) 
+                        sha256sum --check --quiet "$src_sha"
+                        ;;
+                esac
+            else
+                sha256sum --check --quiet "$src_sha"  
+            fi
+        else
+            sha256sum --check --quiet "$src_sha"
+        fi
     fi
 
     echo -e "${GREEN}OK${CLEAR}"
@@ -67,5 +83,7 @@ download_native "libpact_ffi" "linux" "x86_64" "so"
 download_native "libpact_ffi" "linux" "aarch64" "so"
 download_native "libpact_ffi" "macos" "x86_64" "dylib"
 download_native "libpact_ffi" "macos" "aarch64" "dylib"
+download_native "libpact_ffi" "linux" "x86_64-musl" "so"
+download_native "libpact_ffi" "linux" "aarch64-musl" "so"
 
 echo "Successfully downloaded FFI libraries"
