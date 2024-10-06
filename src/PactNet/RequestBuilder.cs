@@ -158,7 +158,7 @@ namespace PactNet
         /// <param name="providerState">Provider state description</param>
         /// <param name="parameters">Provider state parameters</param>
         /// <returns>Flient builder</returns>
-        IRequestBuilderV3 IRequestBuilderV3.Given(string providerState, IDictionary<string, string> parameters)
+        IRequestBuilderV3 IRequestBuilderV3.Given(string providerState, IDictionary<string, object> parameters)
             => this.Given(providerState, parameters);
 
         /// <summary>
@@ -287,7 +287,7 @@ namespace PactNet
         /// <param name="providerState">Provider state description</param>
         /// <param name="parameters">Provider state parameters</param>
         /// <returns>Flient builder</returns>
-        IRequestBuilderV4 IRequestBuilderV4.Given(string providerState, IDictionary<string, string> parameters)
+        IRequestBuilderV4 IRequestBuilderV4.Given(string providerState, IDictionary<string, object> parameters)
             => this.Given(providerState, parameters);
 
         /// <summary>
@@ -416,8 +416,8 @@ namespace PactNet
         /// </summary>
         /// <param name="providerState">Provider state description</param>
         /// <param name="parameters">Provider state parameters</param>
-        /// <returns>Flient builder</returns>
-        internal RequestBuilder Given(string providerState, IDictionary<string, string> parameters)
+        /// <returns>Fluent builder</returns>
+        internal RequestBuilder Given(string providerState, IDictionary<string, object> parameters)
         {
             foreach (var param in parameters)
             {

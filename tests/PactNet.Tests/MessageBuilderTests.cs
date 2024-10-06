@@ -45,7 +45,7 @@ namespace PactNet.Tests
         public void Given_WithParams_AddsProviderState()
         {
             this.builder.Given("provider state",
-                new Dictionary<string, string>
+                new Dictionary<string, object>
                 {
                     ["foo"] = "bar",
                     ["baz"] = "bash",

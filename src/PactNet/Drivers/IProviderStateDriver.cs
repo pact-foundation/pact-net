@@ -17,6 +17,6 @@
         /// <param name="description">Provider state description</param>
         /// <param name="name">Parameter name</param>
         /// <param name="value">Parameter value</param>
-        void GivenWithParam(string description, string name, string value);
+        void GivenWithParam(string description, string name, object value);
     }
 }

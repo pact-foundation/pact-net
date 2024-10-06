@@ -21,7 +21,7 @@ namespace PactNet
         /// <param name="providerState">Provider state description</param>
         /// <param name="parameters">Provider state parameters</param>
         /// <returns>Fluent builder</returns>
-        IMessageBuilderV3 Given(string providerState, IDictionary<string, string> parameters);
+        IMessageBuilderV3 Given(string providerState, IDictionary<string, object> parameters);
 
         /// <summary>
         /// Set the metadata
@@ -65,7 +65,7 @@ namespace PactNet
         /// <param name="providerState">Provider state description</param>
         /// <param name="parameters">Provider state parameters</param>
         /// <returns>Fluent builder</returns>
-        IMessageBuilderV4 Given(string providerState, IDictionary<string, string> parameters);
+        IMessageBuilderV4 Given(string providerState, IDictionary<string, object> parameters);
 
         /// <summary>
         /// Set the metadata

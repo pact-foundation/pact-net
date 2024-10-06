@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using PactNet.Interop;
-
+using System.Text.Json.Serialization;
 namespace PactNet.Drivers
 {
     /// <summary>
@@ -34,8 +34,11 @@ namespace PactNet.Drivers
         /// <param name="description">Provider state description</param>
         /// <param name="name">Parameter name</param>
         /// <param name="value">Parameter value</param>
-        public void GivenWithParam(string description, string name, string value)
-            => NativeInterop.GivenWithParam(this.interaction, description, name, value).CheckInteropSuccess();
+        public void GivenWithParam(string description, string name, object value)
+        {
+            var jsonValue = System.Text.Json.JsonSerializer.Serialize(value);
+            NativeInterop.GivenWithParam(this.interaction, description, name, jsonValue).CheckInteropSuccess();
+        }
 
         /// <summary>
         /// Set the description of the message interaction
