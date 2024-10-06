@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -36,7 +37,8 @@ namespace Provider.Tests
 
             this.providerStates = new Dictionary<string, Func<IDictionary<string, object>, Task>>
             {
-                ["an order with ID {id} exists"] = this.EnsureEventExistsAsync
+                ["an order with ID {id} exists"] = this.EnsureEventExistsAsync,
+                ["orders with ids {ids} exist"] = this.EnsureEventsExistAsync
             };
         }
 
@@ -50,6 +52,15 @@ namespace Provider.Tests
             JsonElement id = (JsonElement)parameters["id"];
 
             await this.orders.InsertAsync(new OrderDto(id.GetInt32(), OrderStatus.Fulfilling, DateTimeOffset.Now));
+        }
+
+        private async Task EnsureEventsExistAsync(IDictionary<string, object> parameters)
+        {
+            var ids = (JsonElement)parameters["ids"];
+            foreach (var id in ids.GetString()!.Split(',').Select(int.Parse))
+            {
+                await this.orders.InsertAsync(new OrderDto(id, OrderStatus.Fulfilling, DateTimeOffset.Now));
+            }
         }
 
         /// <summary>
@@ -79,7 +90,7 @@ namespace Provider.Tests
                 try
                 {
                     ProviderState providerState = JsonSerializer.Deserialize<ProviderState>(jsonRequestBody, Options);
-                    
+
                     if (!string.IsNullOrEmpty(providerState?.State))
                     {
                         await this.providerStates[providerState.State].Invoke(providerState.Params);
