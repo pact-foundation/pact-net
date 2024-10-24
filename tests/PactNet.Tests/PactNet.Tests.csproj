@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>
-      net8.0
+      net8.0;net462
     </TargetFrameworks>
     <IsPackable>false</IsPackable>
     <LangVersion>latest</LangVersion>
