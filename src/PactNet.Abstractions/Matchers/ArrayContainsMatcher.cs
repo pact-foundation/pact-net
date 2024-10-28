@@ -2,6 +2,9 @@ using System.Text.Json.Serialization;
 
 namespace PactNet.Matchers
 {
+    /// <summary>
+    /// Matcher for array-contains. Checks whether an array contains the specified variations.
+    /// </summary>
     public class ArrayContainsMatcher : IMatcher
     {
         /// <summary>

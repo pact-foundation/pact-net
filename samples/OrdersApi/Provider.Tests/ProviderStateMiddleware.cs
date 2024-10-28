@@ -54,6 +54,11 @@ namespace Provider.Tests
             await this.orders.InsertAsync(new OrderDto(id.GetInt32(), OrderStatus.Fulfilling, DateTimeOffset.Now));
         }
 
+        /// <summary>
+        /// Ensure a series of events exist
+        /// </summary>
+        /// <param name="parameters">Event parameters</param>
+        /// <returns>Awaitable</returns>
         private async Task EnsureEventsExistAsync(IDictionary<string, object> parameters)
         {
             var ids = (JsonElement)parameters["ids"];

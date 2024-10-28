@@ -47,6 +47,11 @@ namespace Provider.Orders
             }
         }
 
+        /// <summary>
+        /// Get several orders by their comma-separated IDs
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
         [HttpGet("many/{ids}", Name = "getMany")]
         [ProducesResponseType(typeof(OrderDto[]), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetManyAsync(string ids)
