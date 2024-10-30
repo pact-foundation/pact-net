@@ -51,7 +51,7 @@ namespace Consumer.Tests
 
             this.pact
                 .UponReceiving("a request for an order by ID")
-                    .Given("an order with ID {id} exists", new Dictionary<string, string> { ["id"] = "1" })
+                    .Given("an order with ID {id} exists", new Dictionary<string, object> { ["id"] = 1 })
                     .WithRequest(HttpMethod.Get, "/api/orders/1")
                     .WithHeader("Accept", "application/json")
                 .WillRespond()
@@ -121,7 +121,7 @@ namespace Consumer.Tests
         {
             this.pact
                 .UponReceiving("a request to update the status of an order")
-                    .Given("an order with ID {id} exists", new Dictionary<string, string> { ["id"] = "1" })
+                    .Given("an order with ID {id} exists", new Dictionary<string, object> { ["id"] = 1 })
                     .WithRequest(HttpMethod.Put, "/api/orders/1/status")
                     .WithJsonBody(Match.Regex(OrderStatus.Fulfilling.ToString(), string.Join("|", Enum.GetNames<OrderStatus>())))
                 .WillRespond()

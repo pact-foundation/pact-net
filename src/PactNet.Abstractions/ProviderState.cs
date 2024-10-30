@@ -15,6 +15,6 @@ namespace PactNet
         /// <summary>
         /// State parameters
         /// </summary>
-        public IDictionary<string, string> Params { get; set; }
+        public IDictionary<string, object> Params { get; set; }
     }
 }

@@ -113,7 +113,7 @@ namespace PactNet.Tests
             builder.UponReceiving("a sample request")
                        .Given("a provider state")
                        .Given("another provider state")
-                       .Given("a provider state with params", new Dictionary<string, string>
+                       .Given("a provider state with params", new Dictionary<string, object>
                        {
                            ["foo"] = "bar",
                            ["baz"] = "bash"
@@ -150,7 +150,7 @@ namespace PactNet.Tests
             builder.UponReceiving("a sample request")
                        .Given("a provider state")
                        .Given("another provider state")
-                       .Given("a provider state with params", new Dictionary<string, string>
+                       .Given("a provider state with params", new Dictionary<string, object>
                         {
                             ["foo"] = "bar",
                             ["baz"] = "bash"
@@ -189,7 +189,7 @@ namespace PactNet.Tests
                 .ExpectsToReceive("a sample request")
                 .Given("a provider state")
                 .Given("another provider state")
-                .Given("a provider state with params", new Dictionary<string, string>
+                .Given("a provider state with params", new Dictionary<string, object>
                 {
                     ["foo"] = "bar",
                     ["baz"] = "bash"
@@ -215,7 +215,7 @@ namespace PactNet.Tests
                .ExpectsToReceive("a sample request")
                .Given("a provider state")
                .Given("another provider state")
-               .Given("a provider state with params", new Dictionary<string, string>
+               .Given("a provider state with params", new Dictionary<string, object>
                 {
                     ["foo"] = "bar",
                     ["baz"] = "bash"
@@ -241,7 +241,7 @@ namespace PactNet.Tests
             http.UponReceiving("a HTTP request")
                     .Given("a provider state")
                     .Given("another provider state")
-                    .Given("a provider state with params", new Dictionary<string, string>
+                    .Given("a provider state with params", new Dictionary<string, object>
                     {
                         ["foo"] = "bar",
                         ["baz"] = "bash"
@@ -271,7 +271,7 @@ namespace PactNet.Tests
                 .ExpectsToReceive("a message")
                 .Given("a provider state")
                 .Given("another provider state")
-                .Given("a provider state with params", new Dictionary<string, string>
+                .Given("a provider state with params", new Dictionary<string, object>
                 {
                     ["foo"] = "bar",
                     ["baz"] = "bash"

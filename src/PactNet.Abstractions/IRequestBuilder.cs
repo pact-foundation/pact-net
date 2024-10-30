@@ -123,7 +123,7 @@ namespace PactNet
         /// <param name="providerState">Provider state description</param>
         /// <param name="parameters">Provider state parameters</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV3 Given(string providerState, IDictionary<string, string> parameters);
+        IRequestBuilderV3 Given(string providerState, IDictionary<string, object> parameters);
 
         /// <summary>
         /// Set the request
@@ -242,7 +242,7 @@ namespace PactNet
         /// <param name="providerState">Provider state description</param>
         /// <param name="parameters">Provider state parameters</param>
         /// <returns>Fluent builder</returns>
-        IRequestBuilderV4 Given(string providerState, IDictionary<string, string> parameters);
+        IRequestBuilderV4 Given(string providerState, IDictionary<string, object> parameters);
 
         /// <summary>
         /// Set the request

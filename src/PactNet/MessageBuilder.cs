@@ -35,7 +35,7 @@ namespace PactNet
             => Given(providerState);
 
         /// <inheritdoc cref="IMessageBuilderV3"/>
-        IMessageBuilderV3 IMessageBuilderV3.Given(string providerState, IDictionary<string, string> parameters)
+        IMessageBuilderV3 IMessageBuilderV3.Given(string providerState, IDictionary<string, object> parameters)
             => Given(providerState, parameters);
 
         /// <inheritdoc cref="IMessageBuilderV3"/>
@@ -59,7 +59,7 @@ namespace PactNet
             => Given(providerState);
 
         /// <inheritdoc cref="IMessageBuilderV4"/>
-        IMessageBuilderV4 IMessageBuilderV4.Given(string providerState, IDictionary<string, string> parameters)
+        IMessageBuilderV4 IMessageBuilderV4.Given(string providerState, IDictionary<string, object> parameters)
             => Given(providerState, parameters);
 
         /// <inheritdoc cref="IMessageBuilderV4"/>
@@ -96,7 +96,7 @@ namespace PactNet
         /// <param name="providerState">Provider state description</param>
         /// <param name="parameters">Provider state parameters</param>
         /// <returns>Fluent builder</returns>
-        internal MessageBuilder Given(string providerState, IDictionary<string, string> parameters)
+        internal MessageBuilder Given(string providerState, IDictionary<string, object> parameters)
         {
             foreach (var param in parameters)
             {
