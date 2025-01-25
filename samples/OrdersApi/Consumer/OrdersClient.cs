@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Collections.Generic;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -38,6 +39,19 @@ namespace Consumer
 
             OrderDto order = await client.GetFromJsonAsync<OrderDto>($"/api/orders/{orderId}", Options);
             return order;
+        }
+
+        /// <summary>
+        /// Get a orders by ID
+        /// </summary>
+        /// <param name="orderIds">Order IDs</param>
+        /// <returns>Order</returns>
+        public async Task<OrderDto[]> GetOrdersAsync(IEnumerable<int> orderIds)
+        {
+            using HttpClient client = this.factory.CreateClient("Orders");
+
+            OrderDto[] orders = await client.GetFromJsonAsync<OrderDto[]>($"/api/orders/many/{string.Join(',', orderIds)}", Options);
+            return orders;
         }
 
         /// <summary>
