@@ -74,17 +74,19 @@ jobs:
 
   build-dotnet-containers:
     runs-on: ubuntu-latest
-    name: ${{ matrix.arch }}-${{ matrix.distro }}-build-dotnet-container
+    name: ${{ matrix.os }}-${{ matrix.distro }}-build-dotnet-container
     strategy:
       fail-fast: false
       matrix:
-        arch:
-          - amd64 
-          # - arm64
+        os: 
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
         distro:
           - "mcr.microsoft.com/dotnet/sdk:8.0"
+          - "mcr.microsoft.com/dotnet/sdk:8.0-alpine3.21"
           - "mcr.microsoft.com/dotnet/sdk:8.0-alpine3.20"
           - "mcr.microsoft.com/dotnet/sdk:8.0-alpine3.19"
+          - "mcr.microsoft.com/dotnet/sdk:8.0-alpine3.18"
 
     steps:
       - uses: actions/checkout@v4
@@ -105,7 +107,6 @@ jobs:
             --rm \
             -v $(pwd):/${{ github.workspace }} \
             -w ${{ github.workspace }} \
-            --platform linux/${{ matrix.arch }} \
             --entrypoint /bin/sh \
             ${{ matrix.distro }} \
             -c '${{ steps.docker_commands.outputs.deps }} \

@@ -57,6 +57,13 @@
         <CopyToOutputDirectory Condition="'$(IsLinuxX64)' == 'True'">PreserveNewest</CopyToOutputDirectory>
         <Visible>false</Visible>
       </Content>
+      <Content Include="$(MSBuildProjectDirectory)\..\..\build\linux\aarch64\libpact_ffi.so">
+        <Link>libpact_ffi.so</Link>
+        <PackagePath>runtimes/linux-arm64/native</PackagePath>
+        <Pack>true</Pack>
+        <CopyToOutputDirectory Condition="'$(IsLinuxArm64)' == 'True'">PreserveNewest</CopyToOutputDirectory>
+        <Visible>false</Visible>
+      </Content>
       <Content Include="$(MSBuildProjectDirectory)\..\..\build\linux\x86_64-musl\libpact_ffi.so">
         <Link>libpact_ffi.so</Link>
         <PackagePath>runtimes/linux-x64-musl/native</PackagePath>
