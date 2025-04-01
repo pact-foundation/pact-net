@@ -17,29 +17,29 @@ namespace PactNet.Verifier.Messaging
         IMessageScenarioBuilder WithMetadata(dynamic metadata);
 
         /// <summary>
-        /// Set the action of the scenario
+        /// Set the content factory of the scenario. The factory is invoked each time the scenario is required.
         /// </summary>
         /// <param name="factory">Content factory</param>
         void WithContent(Func<dynamic> factory);
 
         /// <summary>
-        /// Set the content of the scenario
+        /// Set the content factory of the scenario. The factory is invoked each time the scenario is required.
         /// </summary>
         /// <param name="factory">Content factory</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         void WithContent(Func<dynamic> factory, JsonSerializerOptions settings);
 
         /// <summary>
-        /// Set the action of the scenario
+        /// Set the content factory of the scenario. The factory is invoked each time the scenario is required.
         /// </summary>
         /// <param name="factory">Content factory</param>
-        Task WithContentAsync(Func<Task<dynamic>> factory);
+        void WithAsyncContent(Func<Task<dynamic>> factory);
 
         /// <summary>
-        /// Set the content of the scenario
+        /// Set the content factory of the scenario. The factory is invoked each time the scenario is required.
         /// </summary>
         /// <param name="factory">Content factory</param>
         /// <param name="settings">Custom JSON serializer settings</param>
-        Task WithContentAsync(Func<Task<dynamic>> factory, JsonSerializerOptions settings);
+        void WithAsyncContent(Func<Task<dynamic>> factory, JsonSerializerOptions settings);
     }
 }
