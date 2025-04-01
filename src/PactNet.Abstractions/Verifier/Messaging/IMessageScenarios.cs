@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace PactNet.Verifier.Messaging
 {
@@ -22,19 +21,11 @@ namespace PactNet.Verifier.Messaging
         IMessageScenarios Add(string description, Func<dynamic> factory);
 
         /// <summary>
-        /// Add a message scenario
+        /// Add a message scenario by configuring a scenario builder
         /// </summary>
         /// <param name="description">Scenario description</param>
         /// <param name="configure">Scenario configure</param>
-        /// <returns></returns>
+        /// <returns>Fluent builder</returns>
         IMessageScenarios Add(string description, Action<IMessageScenarioBuilder> configure);
-
-        /// <summary>
-        /// Add a message scenario
-        /// </summary>
-        /// <param name="description">Scenario description</param>
-        /// <param name="configure">Scenario configure</param>
-        /// <returns></returns>
-        IMessageScenarios Add(string description, Func<IMessageScenarioBuilder, Task> configure);
     }
 }
