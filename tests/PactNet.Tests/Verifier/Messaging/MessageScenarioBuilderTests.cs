@@ -42,12 +42,12 @@ namespace PactNet.Tests.Verifier.Messaging
         }
 
         [Fact]
-        public void WithContent_WhenCalled_SetsContent()
+        public async Task WithContent_WhenCalled_SetsContent()
         {
             object expected = new { Foo = 42 };
 
             this.builder.WithContent(() => expected);
-            object actual = this.builder.Build().Invoke();
+            object actual = await this.builder.Build().InvokeAsync();
 
             actual.Should().Be(expected);
         }
@@ -64,12 +64,12 @@ namespace PactNet.Tests.Verifier.Messaging
         }
 
         [Fact]
-        public void WithAsyncContent_WhenCalled_SetsContent()
+        public async Task WithAsyncContent_WhenCalled_SetsContent()
         {
             dynamic expected = new { Foo = 42 };
 
             this.builder.WithAsyncContent(() => Task.FromResult<dynamic>(expected));
-            object actual = this.builder.Build().Invoke();
+            object actual = await this.builder.Build().InvokeAsync();
 
             actual.Should().Be(expected);
         }

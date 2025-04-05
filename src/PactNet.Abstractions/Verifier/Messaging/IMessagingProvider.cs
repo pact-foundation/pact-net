@@ -6,7 +6,7 @@ namespace PactNet.Verifier.Messaging
     /// <summary>
     /// Messaging provider service, which simulates messaging responses in order to verify interactions
     /// </summary>
-    public interface IMessagingProvider : IDisposable
+    public interface IMessagingProvider : IAsyncDisposable
     {
         /// <summary>
         /// Scenarios configured for the provider

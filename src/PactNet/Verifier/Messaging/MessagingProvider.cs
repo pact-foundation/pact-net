@@ -7,6 +7,7 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
+using System.Threading.Tasks;
 using PactNet.Exceptions;
 using PactNet.Internal;
 
@@ -27,9 +28,10 @@ namespace PactNet.Verifier.Messaging
         };
 
         private readonly PactVerifierConfig config;
-        private readonly Thread thread;
+        private readonly CancellationTokenSource cts;
 
         private HttpListener server;
+        private Task serverTask;
         private JsonSerializerOptions defaultSettings;
 
         /// <summary>
@@ -46,7 +48,7 @@ namespace PactNet.Verifier.Messaging
         {
             this.config = config;
             this.Scenarios = scenarios;
-            this.thread = new Thread(this.HandleRequest);
+            this.cts = new CancellationTokenSource();
         }
 
         /// <summary>
@@ -59,7 +61,7 @@ namespace PactNet.Verifier.Messaging
             Guard.NotNull(settings, nameof(settings));
             this.defaultSettings = settings;
 
-            while (true)
+            while (!this.cts.Token.IsCancellationRequested)
             {
                 Uri uri;
 
@@ -85,9 +87,11 @@ namespace PactNet.Verifier.Messaging
                     throw new PactFailureException("Unable to start the internal messaging server", e);
                 }
 
-                this.thread.Start();
+                this.serverTask = Task.Run(this.HandleRequest, this.cts.Token);
                 return uri;
             }
+
+            return null;
         }
 
         /// <summary>
@@ -118,21 +122,21 @@ namespace PactNet.Verifier.Messaging
         /// <summary>
         /// Handle an incoming request from the Pact Core messaging driver
         /// </summary>
-        private void HandleRequest()
+        private async Task HandleRequest()
         {
             this.config.WriteLine("Messaging provider successfully started");
 
-            while (this.server.IsListening)
+            while (this.server.IsListening && !this.cts.Token.IsCancellationRequested)
             {
                 HttpListenerContext context;
 
                 try
                 {
-                    context = this.server.GetContext();
+                    context = await this.server.GetContextAsync().ConfigureAwait(false);
                 }
                 catch (HttpListenerException)
                 {
-                    // this thread blocks waiting for the next request, and if the server stops then this exception is raised
+                    // this task blocks waiting for the next request, and if the server stops then this exception is raised
                     break;
                 }
 
@@ -146,8 +150,10 @@ namespace PactNet.Verifier.Messaging
 
                 try
                 {
+                    // buffer the body instead of async deserialisation so we can log it if anything goes wrong
                     var reader = new StreamReader(context.Request.InputStream);
-                    string body = reader.ReadToEnd();
+                    string body = await reader.ReadToEndAsync().ConfigureAwait(false);
+
                     interaction = JsonSerializer.Deserialize<MessageInteraction>(body, InteractionSettings);
 
                     if (string.IsNullOrWhiteSpace(interaction.Description))
@@ -162,8 +168,10 @@ namespace PactNet.Verifier.Messaging
                     continue;
                 }
 
-                this.HandleInteraction(context, interaction);
+                await this.HandleInteractionAsync(context, interaction).ConfigureAwait(false);
             }
+
+            this.config.WriteLine("Messaging provider stopped");
         }
 
         /// <summary>
@@ -171,7 +179,7 @@ namespace PactNet.Verifier.Messaging
         /// </summary>
         /// <param name="context">HTTP context</param>
         /// <param name="interaction">Interaction</param>
-        private void HandleInteraction(HttpListenerContext context, MessageInteraction interaction)
+        private async Task HandleInteractionAsync(HttpListenerContext context, MessageInteraction interaction)
         {
             try
             {
@@ -194,7 +202,7 @@ namespace PactNet.Verifier.Messaging
                     this.config.WriteLine($"Metadata: {stringifyMetadata}");
                 }
 
-                dynamic content = scenario.Invoke();
+                dynamic content = await scenario.InvokeAsync().ConfigureAwait(false);
                 string response = JsonSerializer.Serialize(content, settings);
                 this.OkResponse(context, response);
 
@@ -278,19 +286,24 @@ namespace PactNet.Verifier.Messaging
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
             GC.SuppressFinalize(this);
 
             try
             {
+                this.cts.Cancel(false);
+
                 this.server?.Stop();
+                await this.serverTask;
                 this.server?.Close();
             }
             catch
             {
                 // ignore - we're shutting down anyway
             }
+
+            this.config.WriteLine("Messaging provider disposed");
         }
     }
 }

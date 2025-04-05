@@ -11,7 +11,7 @@ namespace PactNet.Verifier.Messaging
     {
         private readonly string description;
 
-        private Func<dynamic> factory;
+        private Func<Task<dynamic>> factory;
         private dynamic metadata = new { ContentType = "application/json" };
         private JsonSerializerOptions settings;
 
@@ -36,23 +36,37 @@ namespace PactNet.Verifier.Messaging
         }
 
         /// <summary>
-        /// Set the action of the scenario
+        /// Set the content factory of the scenario. The factory is invoked each time the scenario is required.
         /// </summary>
         /// <param name="factory">Content factory</param>
         public void WithContent(Func<dynamic> factory)
         {
-            this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            if (factory == null)
+            {
+                throw new ArgumentNullException(nameof(factory));
+            }
+
+            this.WithAsyncContent(() => Task.FromResult<dynamic>(factory()));
         }
 
         /// <summary>
-        /// Set the content of the scenario
+        /// Set the content factory of the scenario. The factory is invoked each time the scenario is required.
         /// </summary>
         /// <param name="factory">Content factory</param>
         /// <param name="settings">Custom JSON serializer settings</param>
         public void WithContent(Func<dynamic> factory, JsonSerializerOptions settings)
         {
-            this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
-            this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            if (factory == null)
+            {
+                throw new ArgumentNullException(nameof(factory));
+            }
+
+            if (settings == null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
+
+            this.WithAsyncContent(() => Task.FromResult<dynamic>(factory()), settings);
         }
 
         /// <summary>
@@ -61,12 +75,7 @@ namespace PactNet.Verifier.Messaging
         /// <param name="factory">Content factory</param>
         public void WithAsyncContent(Func<Task<dynamic>> factory)
         {
-            if (factory == null)
-            {
-                throw new ArgumentNullException(nameof(factory));
-            }
-
-            this.WithContent(() => factory().GetAwaiter().GetResult());
+            this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
 
         /// <summary>
@@ -76,12 +85,8 @@ namespace PactNet.Verifier.Messaging
         /// <param name="settings">Custom JSON serializer settings</param>
         public void WithAsyncContent(Func<Task<dynamic>> factory, JsonSerializerOptions settings)
         {
-            if (factory == null)
-            {
-                throw new ArgumentNullException(nameof(factory));
-            }
-
-            this.WithContent(() => factory().GetAwaiter().GetResult(), settings);
+            this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }
 
         /// <summary>

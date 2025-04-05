@@ -16,7 +16,7 @@ using Xunit.Abstractions;
 
 namespace PactNet.Tests.Verifier.Messaging
 {
-    public class MessagingProviderTests : IDisposable
+    public class MessagingProviderTests : IAsyncDisposable
     {
         private static readonly JsonSerializerOptions Settings = new JsonSerializerOptions
         {
@@ -46,9 +46,9 @@ namespace PactNet.Tests.Verifier.Messaging
             this.client = new HttpClient { BaseAddress = uri };
         }
 
-        public void Dispose()
+        public ValueTask DisposeAsync()
         {
-            this.provider.Dispose();
+            return this.provider.DisposeAsync();
         }
 
         [Fact]
