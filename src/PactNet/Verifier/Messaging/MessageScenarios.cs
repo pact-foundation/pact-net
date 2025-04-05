@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace PactNet.Verifier.Messaging
 {
@@ -35,6 +36,18 @@ namespace PactNet.Verifier.Messaging
         /// <param name="description">Scenario description</param>
         /// <param name="factory">Message content factory</param>
         public IMessageScenarios Add(string description, Func<dynamic> factory)
+        {
+            Func<Task<dynamic>> asyncFactory = () => Task.FromResult<dynamic>(factory());
+
+            return this.Add(description, asyncFactory);
+        }
+
+        /// <summary>
+        /// Add a message scenario
+        /// </summary>
+        /// <param name="description">Scenario description</param>
+        /// <param name="factory">Message content factory</param>
+        public IMessageScenarios Add(string description, Func<Task<dynamic>> factory)
         {
             var scenario = new Scenario(description, factory, JsonMetadata, null);
             this.scenarios.Add(description, scenario);

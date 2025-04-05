@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text.Json;
+using System.Threading.Tasks;
 using PactNet.Internal;
 using PactNet.Verifier.Messaging;
 
@@ -9,7 +10,7 @@ namespace PactNet.Verifier
     /// <summary>
     /// Pact verifier
     /// </summary>
-    public class PactVerifier : IPactVerifier, IDisposable
+    public class PactVerifier : IPactVerifier, IAsyncDisposable
     {
         private const string VerifierNotInitialised = $"You must add at least one verifier transport by calling {nameof(WithHttpEndpoint)} and/or {nameof(WithMessages)}";
 
@@ -213,12 +214,21 @@ namespace PactNet.Verifier
         }
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// Performs application-defined tasks associated with freeing, releasing, or
+        /// resetting unmanaged resources asynchronously.
         /// </summary>
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
-            this.messagingProvider?.Dispose();
-            this.provider?.Dispose();
+            if (this.provider is IAsyncDisposable providerAsyncDisposable)
+            {
+                await providerAsyncDisposable.DisposeAsync();
+            }
+            else
+            {
+                this.provider.Dispose();
+            }
+
+            await this.messagingProvider.DisposeAsync();
         }
     }
 }

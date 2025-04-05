@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using PactNet.Verifier.Messaging;
 using Xunit;
@@ -8,12 +9,12 @@ namespace PactNet.Abstractions.Tests.Verifier.Messaging
     public class ScenarioTests
     {
         [Fact]
-        public void InvokeScenario_Should_Invoke_Scenario_And_Return_Object()
+        public async Task InvokeScenario_Should_Invoke_Scenario_And_Return_Object()
         {
             object expected = new { field = "value" };
             var scenario = new Scenario("a scenario", () => expected);
 
-            object actual = scenario.Invoke();
+            object actual = await scenario.InvokeAsync();
 
             actual.Should().BeEquivalentTo(expected);
         }
@@ -23,7 +24,7 @@ namespace PactNet.Abstractions.Tests.Verifier.Messaging
         {
             object expectedMetadata = new { key = "vvv" };
             var expectedDescription = "a scenario";
-            var scenario = new Scenario(expectedDescription, () => string.Empty, expectedMetadata, null);
+            var scenario = new Scenario(expectedDescription, () => (dynamic)string.Empty, expectedMetadata, null);
 
             Assert.Equal(expectedMetadata, scenario.Metadata);
             Assert.Equal(expectedDescription, scenario.Description);
@@ -35,7 +36,7 @@ namespace PactNet.Abstractions.Tests.Verifier.Messaging
         [InlineData(" ")]
         public void Ctor_Should_Fail_If_Invalid_Description(string description)
         {
-            object expected = new { field = "value" };
+            dynamic expected = new { field = "value" };
             object expectedMetadata = new { key = "vvv" };
 
             Action actual = () => new Scenario(description, () => expected, expectedMetadata, null);

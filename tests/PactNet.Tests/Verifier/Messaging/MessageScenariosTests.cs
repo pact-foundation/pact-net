@@ -20,7 +20,7 @@ namespace PactNet.Tests.Verifier.Messaging
         [Fact]
         public void Add_SimpleScenario_AddsScenarioWithJsonMetadata()
         {
-            Func<dynamic> factory = () => new { Foo = 42 };
+            Func<Task<dynamic>> factory = () => Task.FromResult((dynamic)new { Foo = 42 });
 
             this.scenarios.Add("description", factory);
 
