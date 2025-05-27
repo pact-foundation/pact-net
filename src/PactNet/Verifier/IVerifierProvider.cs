@@ -132,6 +132,14 @@ namespace PactNet.Verifier
                              ICollection<string> consumerVersionTags);
 
         /// <summary>
+        /// Configures the verifier to return an error
+        /// if no pacts were found when looking up from a broker
+        /// </summary>
+        /// <param name="isError"></param>
+        /// <returns>Fluent builder</returns>
+        void SetNoPactsIsError(bool isError);
+
+        /// <summary>
         /// Verify the pact from the given args
         /// </summary>
         /// <exception cref="PactFailureException">Verification failed</exception>

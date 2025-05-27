@@ -101,6 +101,17 @@ namespace PactNet.Verifier
         }
 
         /// <summary>
+        /// Return an error or not if no pacts were found when looking up from a broker. Default value is true.
+        /// </summary>
+        /// <param name="fail">fail or not</param>
+        /// <returns>Fluent builder</returns>
+        public IPactVerifierSource FailIfNoPactsFound(bool fail)
+        {
+            this.provider.SetNoPactsIsError(fail);
+            return this;
+        }
+
+        /// <summary>
         /// Verify provider interactions
         /// </summary>
         /// <exception cref="PactFailureException">Verification failed</exception>
