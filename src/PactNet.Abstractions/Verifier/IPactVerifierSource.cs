@@ -54,13 +54,6 @@ namespace PactNet.Verifier
         IPactVerifierSource WithCustomHeader(string name, string value);
 
         /// <summary>
-        /// Return an error or not if no pacts were found when looking up from a broker. Default value is true.
-        /// </summary>
-        /// <param name="fail">fail or not</param>
-        /// <returns>Fluent builder</returns>
-        IPactVerifierSource FailIfNoPactsFound(bool fail);
-
-        /// <summary>
         /// Verify provider interactions
         /// </summary>
         /// <exception cref="PactFailureException">Verification failed</exception>

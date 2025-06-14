@@ -110,23 +110,5 @@ namespace PactNet.Tests.Verifier
 
             action.Should().Throw<PactFailureException>();
         }
-
-        [Fact]
-        public void FailIfNoPactsFound_WhenTrue_SetsNoPactsIsErrorTrue()
-        {
-            this.verifier.FailIfNoPactsFound(true);
-            this.verifier.Verify();
-
-            this.mockProvider.Verify(p => p.SetNoPactsIsError(true));
-        }
-
-        [Fact]
-        public void FailIfNoPactsFound_WhenFalse_SetsNoPactsIsErrorFalse()
-        {
-            this.verifier.FailIfNoPactsFound(false);
-            this.verifier.Verify();
-
-            this.mockProvider.Verify(p => p.SetNoPactsIsError(false));
-        }
     }
 }

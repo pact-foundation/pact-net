@@ -104,5 +104,12 @@ namespace PactNet.Verifier
         /// <param name="configure">Configure the publish options</param>
         /// <returns>Fluent builder</returns>
         IPactBrokerOptions PublishResults(bool condition, string providerVersion, Action<IPactBrokerPublishOptions> configure);
+
+        /// <summary>
+        /// Return an error when no pacts are found on the Pact Broker. By default, an error is returned.
+        /// </summary>
+        /// <param name="isError">return error or not</param>
+        /// <returns>Fluent builder</returns>
+        IPactBrokerOptions NoPactsIsError(bool isError);
     }
 }

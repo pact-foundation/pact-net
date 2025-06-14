@@ -38,7 +38,7 @@ namespace Provider.Tests
                               .Build();
 
             this.server.Start();
-            
+
             this.verifier = new PactVerifier("Orders API", new PactVerifierConfig
             {
                 LogLevel = PactLogLevel.Debug,
