@@ -1,9 +1,11 @@
-﻿namespace PactNet.Drivers
+﻿using System;
+
+namespace PactNet.Drivers
 {
     /// <summary>
     /// Driver for message pacts
     /// </summary>
-    internal interface IMessagePactDriver
+    internal interface IMessagePactDriver : IDisposable
     {
         /// <summary>
         /// Create a new message interaction on the current pact

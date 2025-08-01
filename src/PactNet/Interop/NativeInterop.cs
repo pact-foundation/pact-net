@@ -36,6 +36,9 @@ namespace PactNet.Interop
         [DllImport(DllName, EntryPoint = "pactffi_new_pact")]
         public static extern PactHandle NewPact(string consumerName, string providerName);
 
+        [DllImport(DllName, EntryPoint = "pactffi_free_pact_handle")]
+        public static extern uint FreePact(PactHandle pact);
+
         [DllImport(DllName, EntryPoint = "pactffi_with_specification")]
         public static extern bool WithSpecification(PactHandle pact, PactSpecification version);
 
@@ -72,6 +75,12 @@ namespace PactNet.Interop
         #endregion Http Interop Support
 
         #region Messaging Interop Support
+
+        [DllImport(DllName, EntryPoint = "pactffi_new_message_pact")]
+        public static extern PactHandle NewMessagePact(string consumerName, string providerName);
+
+        [DllImport(DllName, EntryPoint = "pactffi_free_message_pact_handle")]
+        public static extern uint FreeMessagePact(PactHandle pact);
 
         [DllImport(DllName, EntryPoint = "pactffi_with_message_pact_metadata")]
         public static extern void WithMessagePactMetadata(PactHandle pact, string @namespace, string name, string value);

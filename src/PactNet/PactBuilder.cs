@@ -172,5 +172,13 @@ namespace PactNet
             this.config.WriteLine(string.Empty);
             this.config.WriteLine(logs);
         }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            this.pact.Dispose();
+        }
     }
 }
