@@ -141,7 +141,7 @@ public class StockEventGeneratorTests : IDisposable
                                         ContentType = "application/json",
                                         Key = "value"
                                     })
-                                    .WithContent(new[]
+                                    .WithContent(()=>new[]
                                     {
                                         new StockEvent { Name = "AAPL", Price = 1.23m },
                                         new StockEvent { Name = "TSLA", Price = 4.56m }
