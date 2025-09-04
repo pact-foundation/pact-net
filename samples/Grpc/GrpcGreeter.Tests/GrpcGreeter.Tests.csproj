@@ -13,7 +13,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\PactNet\PactNet.csproj" />
+    <ProjectReference Include="..\..\..\src\PactNet.Interop\PactNet.Interop.csproj" />
     <ProjectReference Include="..\GrpcGreeter\GrpcGreeter.csproj" />
   </ItemGroup>
   <ItemGroup>

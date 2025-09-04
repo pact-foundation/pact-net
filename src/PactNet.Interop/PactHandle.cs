@@ -3,8 +3,8 @@ using System.Runtime.InteropServices;
 namespace PactNet.Interop
 {
     [StructLayout(LayoutKind.Sequential)]
-    internal readonly struct InteractionHandle
+    public readonly struct PactHandle
     {
-        public readonly uint InteractionRef;
+        public readonly ushort PactRef;
     }
 }

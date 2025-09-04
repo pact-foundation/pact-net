@@ -1,6 +1,6 @@
 namespace PactNet.Interop
 {
-    internal enum InteractionPart
+    public enum InteractionPart
     {
         Request = 0,
         Response = 1

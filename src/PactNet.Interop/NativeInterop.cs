@@ -6,7 +6,7 @@ namespace PactNet.Interop
     /// <summary>
     /// Interop definitions to the Pact FFI library
     /// </summary>
-    internal static class NativeInterop
+    public static class NativeInterop
     {
         private const string DllName = "pact_ffi";
 

@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrpcGreeterClient.Tests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrpcGreeter.Tests", "samples\Grpc\GrpcGreeter.Tests\GrpcGreeter.Tests.csproj", "{DC5371A0-7DE2-4CC5-D0E1-1DF6CB567FA6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PactNet.Interop", "src\PactNet.Interop\PactNet.Interop.csproj", "{D1D174A6-0027-49C4-AC6B-62CDF0F8511B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -213,6 +215,18 @@ Global
 		{DC5371A0-7DE2-4CC5-D0E1-1DF6CB567FA6}.Release|x64.Build.0 = Release|Any CPU
 		{DC5371A0-7DE2-4CC5-D0E1-1DF6CB567FA6}.Release|x86.ActiveCfg = Release|Any CPU
 		{DC5371A0-7DE2-4CC5-D0E1-1DF6CB567FA6}.Release|x86.Build.0 = Release|Any CPU
+		{D1D174A6-0027-49C4-AC6B-62CDF0F8511B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1D174A6-0027-49C4-AC6B-62CDF0F8511B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1D174A6-0027-49C4-AC6B-62CDF0F8511B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D1D174A6-0027-49C4-AC6B-62CDF0F8511B}.Debug|x64.Build.0 = Debug|Any CPU
+		{D1D174A6-0027-49C4-AC6B-62CDF0F8511B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D1D174A6-0027-49C4-AC6B-62CDF0F8511B}.Debug|x86.Build.0 = Debug|Any CPU
+		{D1D174A6-0027-49C4-AC6B-62CDF0F8511B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1D174A6-0027-49C4-AC6B-62CDF0F8511B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1D174A6-0027-49C4-AC6B-62CDF0F8511B}.Release|x64.ActiveCfg = Release|Any CPU
+		{D1D174A6-0027-49C4-AC6B-62CDF0F8511B}.Release|x64.Build.0 = Release|Any CPU
+		{D1D174A6-0027-49C4-AC6B-62CDF0F8511B}.Release|x86.ActiveCfg = Release|Any CPU
+		{D1D174A6-0027-49C4-AC6B-62CDF0F8511B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -233,6 +247,7 @@ Global
 		{917DAC61-55B4-D721-B1ED-B0E352E4CF1A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{13756BC3-0750-E2AF-E1F0-565855A3E636} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{DC5371A0-7DE2-4CC5-D0E1-1DF6CB567FA6} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{D1D174A6-0027-49C4-AC6B-62CDF0F8511B} = {CF67D7A1-AE96-420B-9971-65E535B903E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C2CBC30C-92D4-4E3A-A5B8-1E5D4E938DFC}

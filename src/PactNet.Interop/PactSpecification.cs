@@ -1,6 +1,6 @@
 namespace PactNet.Interop
 {
-    internal enum PactSpecification
+    public enum PactSpecification
     {
         Unknown = 0,
         V1 = 1,

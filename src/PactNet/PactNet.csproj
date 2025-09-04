@@ -9,76 +9,9 @@
   </PropertyGroup>
 
   <Import Project="../NuGet.targets" />
-
-  <PropertyGroup>
-    <IsWindows>False</IsWindows>
-    <IsLinux>False</IsLinux>
-    <IsOSX>False</IsOSX>
-    <IsArm64>False</IsArm64>
-    <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'True'">True</IsWindows>
-    <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'True'">True</IsLinux>
-    <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'True'">True</IsOSX>
-    <IsArm64 Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'">True</IsArm64>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\windows\x86_64\pact_ffi.dll">
-      <Link>pact_ffi.dll</Link>
-      <PackagePath>runtimes/win-x64/native</PackagePath>
-      <Pack>true</Pack>
-      <CopyToOutputDirectory Condition="'$(IsWindows)'">PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
-    </Content>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\linux\x86_64\libpact_ffi.so">
-      <Link>libpact_ffi.so</Link>
-      <PackagePath>runtimes/linux-x64/native</PackagePath>
-      <Pack>true</Pack>
-      <CopyToOutputDirectory Condition="'$(IsLinux)' And '$(IsArm64)' == 'False'">PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
-    </Content>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\linux\aarch64\libpact_ffi.so">
-      <Link>libpact_ffi.so</Link>
-      <PackagePath>runtimes/linux-arm64/native</PackagePath>
-      <Pack>true</Pack>
-      <CopyToOutputDirectory Condition="'$(IsLinux)' And '$(IsArm64)' == 'True'">PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
-    </Content>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\macos\x86_64\libpact_ffi.dylib">
-      <Link>libpact_ffi.dylib</Link>
-      <PackagePath>runtimes/osx-x64/native</PackagePath>
-      <Pack>true</Pack>
-      <CopyToOutputDirectory Condition="'$(IsOSX)' == 'True' And '$(IsArm64)' == 'False'">PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
-    </Content>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\macos\aarch64\libpact_ffi.dylib">
-      <Link>libpact_ffi.dylib</Link>
-      <PackagePath>runtimes/osx-arm64/native</PackagePath>
-      <Pack>true</Pack>
-      <CopyToOutputDirectory Condition="'$(IsOSX)' == 'True' And '$(IsArm64)' == 'True'">PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\PactNet.targets">
-      <PackagePath>build/net462/</PackagePath>
-      <Pack>true</Pack>
-      <Visible>false</Visible>
-    </Content>
-    <Content Include="$(MSBuildProjectDirectory)\..\..\build\PactNet.targets">
-      <PackagePath>buildTransitive/net462/</PackagePath>
-      <Pack>true</Pack>
-      <Visible>false</Visible>
-    </Content>
-  </ItemGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="..\PactNet.Abstractions\PactNet.Abstractions.csproj" />
+    <ProjectReference Include="..\PactNet.Interop\PactNet.Interop.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <InternalsVisibleTo Include="GrpcGreeterClient.Tests" />
-    <InternalsVisibleTo Include="GrpcGreeter.Tests" />
-  </ItemGroup>
-
 </Project>
