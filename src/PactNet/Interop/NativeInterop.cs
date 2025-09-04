@@ -13,10 +13,32 @@ namespace PactNet.Interop
         [DllImport(DllName, EntryPoint = "pactffi_log_to_buffer")]
         public static extern int LogToBuffer(LevelFilter levelFilter);
 
+        [DllImport(DllName, EntryPoint = "pactffi_log_to_stdout")]
+        public static extern Int32 LogToStdOut(Int32 levelFilter);
+
+        [DllImport(DllName, EntryPoint = "pactffi_new_sync_message_interaction")]
+        public static extern uint NewSyncMessageInteraction(PactHandle pact, string description);
+
+        #region Plugin Support
+
+        [DllImport(DllName, EntryPoint = "pactffi_using_plugin")]
+        public static extern uint PluginAdd(PactHandle pact, string name, string version);
+
+        [DllImport(DllName, EntryPoint = "pactffi_interaction_contents")]
+        public static extern uint PluginInteractionContents(uint interaction, InteractionPart part, string contentType, string body);
+
+        [DllImport(DllName, EntryPoint = "pactffi_cleanup_plugins")]
+        public static extern void PluginCleanup(PactHandle pact);
+
+        #endregion
+
         #region Http Interop Support
 
         [DllImport(DllName, EntryPoint = "pactffi_create_mock_server_for_transport")]
         public static extern int CreateMockServerForTransport(PactHandle pact, string addrStr, ushort port, string transport, string transportConfig);
+
+        [DllImport(DllName, EntryPoint = "pactffi_mock_server_matched")]
+        public static extern bool MockServerMatched(int mockServerPort);
 
         [DllImport(DllName, EntryPoint = "pactffi_mock_server_mismatches")]
         public static extern IntPtr MockServerMismatches(int mockServerPort);
@@ -29,6 +51,9 @@ namespace PactNet.Interop
 
         [DllImport(DllName, EntryPoint = "pactffi_pact_handle_write_file")]
         public static extern int WritePactFile(PactHandle pact, string directory, bool overwrite);
+
+        [DllImport(DllName, EntryPoint = "pactffi_write_pact_file")]
+        public static extern int WritePactFileForPort(int port, string directory, bool overwrite);
 
         [DllImport(DllName, EntryPoint = "pactffi_fetch_log_buffer")]
         public static extern string FetchLogBuffer(string logId);

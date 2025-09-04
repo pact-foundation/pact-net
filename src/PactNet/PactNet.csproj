@@ -76,4 +76,9 @@
     <ProjectReference Include="..\PactNet.Abstractions\PactNet.Abstractions.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="GrpcGreeterClient.Tests" />
+    <InternalsVisibleTo Include="GrpcGreeter.Tests" />
+  </ItemGroup>
+
 </Project>

@@ -1,0 +1,96 @@
+{
+  "consumer": {
+    "name": "grpc-greeter-client"
+  },
+  "interactions": [
+    {
+      "description": "a request to a plugin",
+      "interactionMarkup": {
+        "markup": "```protobuf\nmessage HelloReply {\n    string message = 1;\n}\n```\n",
+        "markupType": "COMMON_MARK"
+      },
+      "pending": false,
+      "pluginConfiguration": {
+        "protobuf": {
+          "descriptorKey": "e8e1fe144f808b9b0faecd7b2605efea",
+          "service": "Greeter/SayHello"
+        }
+      },
+      "request": {
+        "contents": {
+          "content": "CgNmb28=",
+          "contentType": "application/protobuf;message=HelloRequest",
+          "contentTypeHint": "BINARY",
+          "encoded": "base64"
+        },
+        "matchingRules": {
+          "body": {
+            "$.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "metadata": {
+          "contentType": "application/protobuf;message=HelloRequest"
+        }
+      },
+      "response": [
+        {
+          "contents": {
+            "content": "CglIZWxsbyBmb28=",
+            "contentType": "application/protobuf;message=HelloReply",
+            "contentTypeHint": "BINARY",
+            "encoded": "base64"
+          },
+          "matchingRules": {
+            "body": {
+              "$.message": {
+                "combine": "AND",
+                "matchers": [
+                  {
+                    "match": "type"
+                  }
+                ]
+              }
+            }
+          },
+          "metadata": {
+            "contentType": "application/protobuf;message=HelloReply"
+          }
+        }
+      ],
+      "transport": "grpc",
+      "type": "Synchronous/Messages"
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "ffi": "0.4.27",
+      "mockserver": "1.2.11",
+      "models": "1.2.8"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    },
+    "plugins": [
+      {
+        "configuration": {
+          "e8e1fe144f808b9b0faecd7b2605efea": {
+            "protoDescriptors": "Cr0BCgtncmVldC5wcm90bxIFZ3JlZXQiIgoMSGVsbG9SZXF1ZXN0EhIKBG5hbWUYASABKAlSBG5hbWUiJgoKSGVsbG9SZXBseRIYCgdtZXNzYWdlGAEgASgJUgdtZXNzYWdlMj0KB0dyZWV0ZXISMgoIU2F5SGVsbG8SEy5ncmVldC5IZWxsb1JlcXVlc3QaES5ncmVldC5IZWxsb1JlcGx5QhSqAhFHcnBjR3JlZXRlckNsaWVudGIGcHJvdG8z",
+            "protoFile": "syntax = \"proto3\";\r\n\r\noption csharp_namespace = \"GrpcGreeterClient\";\r\n\r\npackage greet;\r\n\r\n// The greeting service definition.\r\nservice Greeter {\r\n  // Sends a greeting\r\n  rpc SayHello (HelloRequest) returns (HelloReply);\r\n}\r\n\r\n// The request message containing the user's name.\r\nmessage HelloRequest {\r\n  string name = 1;\r\n}\r\n\r\n// The response message containing the greetings.\r\nmessage HelloReply {\r\n  string message = 1;\r\n}\r\n"
+          }
+        },
+        "name": "protobuf",
+        "version": "0.4.0"
+      }
+    ]
+  },
+  "provider": {
+    "name": "grpc-greeter"
+  }
+}
