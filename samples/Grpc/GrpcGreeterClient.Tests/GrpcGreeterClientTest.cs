@@ -6,12 +6,12 @@ using Xunit;
 using PactNet.Interop;
 using System.Runtime.InteropServices;
 using System.IO;
+using Xunit.Abstractions;
 
 namespace GrpcGreeterClient.Tests
 {
-    public class GrpcGreeterClientTests
+    public class GrpcGreeterClientTests(ITestOutputHelper testOutputHelper)
     {
-
         [Fact]
         public async Task ReturnsMismatchWhenNoGrpcClientRequestMade()
         {
@@ -37,15 +37,15 @@ namespace GrpcGreeterClient.Tests
             NativeInterop.PluginInteractionContents(interaction, 0, "application/grpc", content);
 
             var port = NativeInterop.CreateMockServerForTransport(pact, host, 0, "grpc", null);
-            Console.WriteLine("Port: " + port);
+            testOutputHelper.WriteLine("Port: " + port);
 
             var matched = NativeInterop.MockServerMatched(port);
-            Console.WriteLine("Matched: " + matched);
+            testOutputHelper.WriteLine("Matched: " + matched);
             matched.Should().BeFalse();
 
             var MismatchesPtr = NativeInterop.MockServerMismatches(port);
             var MismatchesString = Marshal.PtrToStringAnsi(MismatchesPtr);
-            Console.WriteLine("Mismatches: " + MismatchesString);
+            testOutputHelper.WriteLine("Mismatches: " + MismatchesString);
             var MismatchesJson = JsonSerializer.Deserialize<JsonElement>(MismatchesString);
             var ErrorString = MismatchesJson[0].GetProperty("error").GetString();
             var ExpectedPath = MismatchesJson[0].GetProperty("path").GetString();
@@ -83,27 +83,27 @@ namespace GrpcGreeterClient.Tests
             NativeInterop.PluginInteractionContents(interaction, 0, "application/grpc", content);
 
             var port = NativeInterop.CreateMockServerForTransport(pact, host, 0, "grpc", null);
-            Console.WriteLine("Port: " + port);
+            testOutputHelper.WriteLine("Port: " + port);
 
             // act
             var client = new GreeterClientWrapper("http://localhost:" + port);
             var result = await client.SayHello("foo");
-            Console.WriteLine("Result: " + result);
+            testOutputHelper.WriteLine("Result: " + result);
 
             // assert
             result.Should().Be("Hello foo");
             var matched = NativeInterop.MockServerMatched(port);
-            Console.WriteLine("Matched: " + matched);
+            testOutputHelper.WriteLine("Matched: " + matched);
             matched.Should().BeTrue();
 
             var MismatchesPtr = NativeInterop.MockServerMismatches(port);
             var MismatchesString = Marshal.PtrToStringAnsi(MismatchesPtr);
-            Console.WriteLine("Mismatches: " + MismatchesString);
+            testOutputHelper.WriteLine("Mismatches: " + MismatchesString);
 
             MismatchesString.Should().Be("[]");
 
             var writeRes = NativeInterop.WritePactFileForPort(port, "../../../../pacts", false);
-            Console.WriteLine("WriteRes: " + writeRes);
+            testOutputHelper.WriteLine("WriteRes: " + writeRes);
             NativeInterop.CleanupMockServer(port);
             NativeInterop.PluginCleanup(pact);
         }
