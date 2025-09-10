@@ -106,8 +106,7 @@ namespace GrpcGreeterClient.Tests
 
             MismatchesString.Should().Be("[]");
 
-            var writeRes = NativeInterop.WritePactFileForPort(port, "../../../../pacts", false);
-            testOutputHelper.WriteLine("WriteRes: " + writeRes);
+            PactFileWriter.WritePactFileForPort(port, "../../../../pacts");
             NativeInterop.CleanupMockServer(port);
             NativeInterop.PluginCleanup(pact);
         }

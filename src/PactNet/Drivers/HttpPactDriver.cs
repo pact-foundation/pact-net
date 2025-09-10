@@ -6,7 +6,7 @@ namespace PactNet.Drivers
     /// <summary>
     /// Driver for synchronous HTTP pacts
     /// </summary>
-    internal class HttpPactDriver : AbstractPactDriver, IHttpPactDriver
+    internal class HttpPactDriver :  IHttpPactDriver
     {
         private readonly PactHandle pact;
 
@@ -14,7 +14,7 @@ namespace PactNet.Drivers
         /// Initialises a new instance of the <see cref="HttpPactDriver"/> class.
         /// </summary>
         /// <param name="pact">Pact handle</param>
-        internal HttpPactDriver(PactHandle pact) : base(pact)
+        internal HttpPactDriver(PactHandle pact)
         {
             this.pact = pact;
         }
@@ -57,5 +57,7 @@ namespace PactNet.Drivers
                 _ => new InvalidOperationException($"Unknown mock server error: {result}")
             };
         }
+
+        public void WritePactFile(string directory) => PactFileWriter.WritePactFile(this.pact,  directory);
     }
 }

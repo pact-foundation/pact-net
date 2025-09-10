@@ -5,7 +5,7 @@ namespace PactNet.Drivers
     /// <summary>
     /// Driver for message pacts
     /// </summary>
-    internal class MessagePactDriver : AbstractPactDriver, IMessagePactDriver
+    internal class MessagePactDriver : IMessagePactDriver
     {
         private readonly PactHandle pact;
 
@@ -13,7 +13,7 @@ namespace PactNet.Drivers
         /// Initialises a new instance of the <see cref="MessagePactDriver"/> class.
         /// </summary>
         /// <param name="pact">Pact handle</param>
-        internal MessagePactDriver(PactHandle pact) : base(pact)
+        internal MessagePactDriver(PactHandle pact)
         {
             this.pact = pact;
         }

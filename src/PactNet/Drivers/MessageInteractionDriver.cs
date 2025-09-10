@@ -7,8 +7,9 @@ namespace PactNet.Drivers
     /// <summary>
     /// Driver for asynchronous message interactions
     /// </summary>
-    internal class MessageInteractionDriver : AbstractPactDriver, IMessageInteractionDriver
+    internal class MessageInteractionDriver : IMessageInteractionDriver
     {
+        private readonly PactHandle pact;
         private readonly InteractionHandle interaction;
 
         /// <summary>
@@ -16,8 +17,9 @@ namespace PactNet.Drivers
         /// </summary>
         /// <param name="pact">Pact handle</param>
         /// <param name="interaction">Interaction handle</param>
-        internal MessageInteractionDriver(PactHandle pact, InteractionHandle interaction) : base(pact)
+        internal MessageInteractionDriver(PactHandle pact, InteractionHandle interaction)
         {
+            this.pact = pact;
             this.interaction = interaction;
         }
 
@@ -71,5 +73,7 @@ namespace PactNet.Drivers
             string body = Marshal.PtrToStringAnsi(pointer);
             return body;
         }
+
+        public void WritePactFile(string directory) => PactFileWriter.WritePactFile(this.pact, directory);
     }
 }
