@@ -24,8 +24,7 @@ namespace PactNet.Tests.Drivers
         public FfiIntegrationTests(ITestOutputHelper output)
         {
             this.output = output;
-
-            NativeInterop.LogToBuffer(LevelFilter.Trace);
+            PactLogLevel.Trace.LogToBuffer();
         }
 
         [Fact]
@@ -38,7 +37,6 @@ namespace PactNet.Tests.Drivers
                 IHttpPactDriver pact = driver.NewHttpPact("NativeDriverTests-Consumer-V3",
                                                           "NativeDriverTests-Provider",
                                                           PactSpecification.V3);
-            
                 IHttpInteractionDriver interaction = pact.NewHttpInteraction("a sample interaction");
 
                 interaction.Given("provider state");
