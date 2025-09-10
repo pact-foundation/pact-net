@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using System.Threading;
 using FluentAssertions;
+using PactNet;
 using Xunit;
 using PactNet.Interop;
 
@@ -8,13 +9,14 @@ namespace GrpcGreeter.Tests
 {
     public class GrpcGreeterTests
     {
+        public GrpcGreeterTests()
+        {
+            PactLogLevel.Information.InitialiseLogging();
+        }
 
         [Fact]
         public void ReturnsVerificationFailureWhenNoRunningProvider()
         {
-
-            _ = NativeInterop.LogToStdOut(3);
-
             var verifier = NativeInterop.VerifierNewForApplication("pact-dotnet","0.0.0");
             NativeInterop.VerifierSetProviderInfo(verifier,"grpc-greeter",null,null,0,null);
             NativeInterop.AddProviderTransport(verifier, "grpc",5060,"/","http");
@@ -25,8 +27,6 @@ namespace GrpcGreeter.Tests
         [Fact]
         public async Task ReturnsVerificationSuccessRunningProviderAsync()
         {
-            _ = NativeInterop.LogToStdOut(3);
-
             var verifier = NativeInterop.VerifierNewForApplication("pact-dotnet", "0.0.0");
             NativeInterop.VerifierSetProviderInfo(verifier, "grpc-greeter", null, null, 0, null);
             NativeInterop.AddProviderTransport(verifier, "grpc", 5000, "/", "https");

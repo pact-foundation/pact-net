@@ -71,4 +71,8 @@
       <Visible>false</Visible>
     </Content>
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PactNet.Abstractions\PactNet.Abstractions.csproj" />
+  </ItemGroup>
 </Project>

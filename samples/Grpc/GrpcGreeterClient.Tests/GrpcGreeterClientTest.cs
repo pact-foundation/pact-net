@@ -1,4 +1,3 @@
-using System;
 using System.Text.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -6,17 +5,24 @@ using Xunit;
 using PactNet.Interop;
 using System.Runtime.InteropServices;
 using System.IO;
+using PactNet;
 using Xunit.Abstractions;
 
 namespace GrpcGreeterClient.Tests
 {
-    public class GrpcGreeterClientTests(ITestOutputHelper testOutputHelper)
+    public class GrpcGreeterClientTests
     {
+        private readonly ITestOutputHelper testOutputHelper;
+
+        public GrpcGreeterClientTests(ITestOutputHelper testOutputHelper)
+        {
+            this.testOutputHelper = testOutputHelper;
+            PactLogLevel.Information.InitialiseLogging();
+        }
+
         [Fact]
         public async Task ReturnsMismatchWhenNoGrpcClientRequestMade()
         {
-
-            _ = NativeInterop.LogToStdOut(3);
             // arrange
             var host = "0.0.0.0";
             var pact = NativeInterop.NewPact("grpc-greeter-client", "grpc-greeter");
@@ -60,8 +66,6 @@ namespace GrpcGreeterClient.Tests
         [Fact]
         public async Task WritesPactWhenGrpcClientRequestMade()
         {
-
-            _ = NativeInterop.LogToStdOut(3);
             // arrange
             var host = "0.0.0.0";
             var pact = NativeInterop.NewPact("grpc-greeter-client", "grpc-greeter");

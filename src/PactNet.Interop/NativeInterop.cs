@@ -13,9 +13,6 @@ namespace PactNet.Interop
         [DllImport(DllName, EntryPoint = "pactffi_log_to_buffer")]
         public static extern int LogToBuffer(LevelFilter levelFilter);
 
-        [DllImport(DllName, EntryPoint = "pactffi_log_to_stdout")]
-        public static extern Int32 LogToStdOut(Int32 levelFilter);
-
         [DllImport(DllName, EntryPoint = "pactffi_new_sync_message_interaction")]
         public static extern uint NewSyncMessageInteraction(PactHandle pact, string description);
 
