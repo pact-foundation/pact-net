@@ -26,7 +26,7 @@ namespace PactNet.Drivers
         /// </summary>
         /// <param name="description">Provider state description</param>
         public void Given(string description)
-            => NativeInterop.Given(this.interaction, description).CheckInteropSuccess();
+            => NativeInterop.Given(this.interaction, description).ThrowExceptionOnFailure();
 
         /// <summary>
         /// Add a provider state with a parameter to the interaction
@@ -35,7 +35,7 @@ namespace PactNet.Drivers
         /// <param name="name">Parameter name</param>
         /// <param name="value">Parameter value</param>
         public void GivenWithParam(string description, string name, string value)
-            => NativeInterop.GivenWithParam(this.interaction, description, name, value).CheckInteropSuccess();
+            => NativeInterop.GivenWithParam(this.interaction, description, name, value).ThrowExceptionOnFailure();
 
         /// <summary>
         /// Set the description of the message interaction

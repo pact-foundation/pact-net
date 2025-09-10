@@ -17,7 +17,7 @@ namespace PactNet.Drivers
         public IHttpPactDriver NewHttpPact(string consumerName, string providerName, PactSpecification version)
         {
             PactHandle pact = NativeInterop.NewPact(consumerName, providerName);
-            NativeInterop.WithSpecification(pact, version).CheckInteropSuccess();
+            NativeInterop.WithSpecification(pact, version).ThrowExceptionOnFailure();
 
             return new HttpPactDriver(pact);
         }
@@ -32,7 +32,7 @@ namespace PactNet.Drivers
         public IMessagePactDriver NewMessagePact(string consumerName, string providerName, PactSpecification version)
         {
             PactHandle pact = NativeInterop.NewPact(consumerName, providerName);
-            NativeInterop.WithSpecification(pact, version).CheckInteropSuccess();
+            NativeInterop.WithSpecification(pact, version).ThrowExceptionOnFailure();
 
             return new MessagePactDriver(pact);
         }

@@ -1,18 +1,18 @@
 ﻿using PactNet.Exceptions;
 
-namespace PactNet.Drivers
+namespace PactNet.Interop
 {
     /// <summary>
     /// Extensions for checking interop action success
     /// </summary>
-    internal static class InteropActionExtensions
+    public static class InteropActionExtensions
     {
         /// <summary>
         /// Check the result of an interop action to ensure it succeeded
         /// </summary>
         /// <param name="success">Action succeeded</param>
         /// <exception cref="PactFailureException">Action failed</exception>
-        public static void CheckInteropSuccess(this bool success)
+        public static void ThrowExceptionOnFailure(this bool success)
         {
             if (!success)
             {
