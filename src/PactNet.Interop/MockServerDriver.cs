@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using PactNet.Interop;
+using PactNet.Drivers;
 
-namespace PactNet.Drivers
+namespace PactNet.Interop
 {
     /// <summary>
     /// Driver for managing a HTTP mock server
     /// </summary>
     internal class MockServerDriver : IMockServerDriver
     {
-        private readonly int port;
+        /// <summary>
+        /// <inheritdoc cref="Port"/>
+        /// </summary>
+        public int Port { get; }
 
         /// <summary>
-        /// Mock server URI
+        /// <inheritdoc cref="Uri"/>
         /// </summary>
         public Uri Uri { get; }
 
@@ -26,16 +29,23 @@ namespace PactNet.Drivers
         {
             string scheme = tls ? "https" : "http";
             this.Uri = new Uri($"{scheme}://{host}:{port}");
-            this.port = port;
+            this.Port = port;
         }
 
         /// <summary>
-        /// Get a string representing the mismatches following interaction testing
+        /// <inheritdoc cref="MockServerMatched"/>
         /// </summary>
-        /// <returns>Mismatch string</returns>
+        public bool MockServerMatched()
+        {
+            return NativeInterop.MockServerMatched(Port);
+        }
+
+        /// <summary>
+        /// <inheritdoc cref="MockServerMismatches"/>
+        /// </summary>
         public string MockServerMismatches()
         {
-            IntPtr matchesPtr = NativeInterop.MockServerMismatches(this.port);
+            IntPtr matchesPtr = NativeInterop.MockServerMismatches(this.Port);
 
             return matchesPtr == IntPtr.Zero
                        ? string.Empty
@@ -43,17 +53,17 @@ namespace PactNet.Drivers
         }
 
         /// <summary>
-        /// Get a string representing the mock server logs following interaction testing
+        /// <inheritdoc cref="MockServerLogs"/>
         /// </summary>
-        /// <returns>Log string</returns>
         public string MockServerLogs()
         {
-            IntPtr logsPtr = NativeInterop.MockServerLogs(this.port);
+            IntPtr logsPtr = NativeInterop.MockServerLogs(this.Port);
 
             return logsPtr == IntPtr.Zero
                        ? "ERROR: Unable to retrieve mock server logs"
                        : Marshal.PtrToStringAnsi(logsPtr);
         }
+
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
@@ -76,7 +86,7 @@ namespace PactNet.Drivers
         /// </summary>
         private void ReleaseUnmanagedResources()
         {
-            NativeInterop.CleanupMockServer(this.port);
+            NativeInterop.CleanupMockServer(this.Port);
         }
     }
 }

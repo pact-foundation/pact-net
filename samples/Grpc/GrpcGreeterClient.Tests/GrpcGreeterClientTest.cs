@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
 using PactNet.Interop;
-using System.Runtime.InteropServices;
 using System.IO;
 using PactNet;
 using Xunit.Abstractions;
@@ -42,15 +41,15 @@ namespace GrpcGreeterClient.Tests
             NativeInterop.PluginAdd(pact, "protobuf", "0.4.0");
             NativeInterop.PluginInteractionContents(interaction, 0, "application/grpc", content);
 
-            var port = NativeInterop.CreateMockServerForTransport(pact, host, 0, "grpc", null);
+            using var driver = MockServer.CreateMockServer(pact, host, 0, "grpc", false);
+            var port = driver.Port;
             testOutputHelper.WriteLine("Port: " + port);
 
-            var matched = NativeInterop.MockServerMatched(port);
+            var matched = driver.MockServerMatched();
             testOutputHelper.WriteLine("Matched: " + matched);
             matched.Should().BeFalse();
 
-            var MismatchesPtr = NativeInterop.MockServerMismatches(port);
-            var MismatchesString = Marshal.PtrToStringAnsi(MismatchesPtr);
+            var MismatchesString = driver.MockServerMismatches();
             testOutputHelper.WriteLine("Mismatches: " + MismatchesString);
             var MismatchesJson = JsonSerializer.Deserialize<JsonElement>(MismatchesString);
             var ErrorString = MismatchesJson[0].GetProperty("error").GetString();
@@ -59,7 +58,6 @@ namespace GrpcGreeterClient.Tests
             ErrorString.Should().Be("Did not receive any requests for path 'Greeter/SayHello'");
             ExpectedPath.Should().Be("Greeter/SayHello");
 
-            NativeInterop.CleanupMockServer(port);
             NativeInterop.PluginCleanup(pact);
             await Task.Delay(1);
         }
@@ -86,7 +84,8 @@ namespace GrpcGreeterClient.Tests
             NativeInterop.PluginAdd(pact, "protobuf", "0.4.0");
             NativeInterop.PluginInteractionContents(interaction, 0, "application/grpc", content);
 
-            var port = NativeInterop.CreateMockServerForTransport(pact, host, 0, "grpc", null);
+            using var driver = MockServer.CreateMockServer(pact, host, 0, "grpc", false);
+            var port = driver.Port;
             testOutputHelper.WriteLine("Port: " + port);
 
             // act
@@ -96,18 +95,16 @@ namespace GrpcGreeterClient.Tests
 
             // assert
             result.Should().Be("Hello foo");
-            var matched = NativeInterop.MockServerMatched(port);
+            var matched = driver.MockServerMatched();
             testOutputHelper.WriteLine("Matched: " + matched);
             matched.Should().BeTrue();
 
-            var MismatchesPtr = NativeInterop.MockServerMismatches(port);
-            var MismatchesString = Marshal.PtrToStringAnsi(MismatchesPtr);
+            var MismatchesString = driver.MockServerMismatches();
             testOutputHelper.WriteLine("Mismatches: " + MismatchesString);
 
             MismatchesString.Should().Be("[]");
 
             PactFileWriter.WritePactFileForPort(port, "../../../../pacts");
-            NativeInterop.CleanupMockServer(port);
             NativeInterop.PluginCleanup(pact);
         }
 

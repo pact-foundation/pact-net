@@ -38,25 +38,7 @@ namespace PactNet.Drivers
         /// <param name="tls">Enable TLS</param>
         /// <returns>Mock server port</returns>
         /// <exception cref="InvalidOperationException">Failed to start mock server</exception>
-        public IMockServerDriver CreateMockServer(string host, int? port, bool tls)
-        {
-            int result = NativeInterop.CreateMockServerForTransport(this.pact, host, (ushort)port.GetValueOrDefault(0), "http", null);
-
-            if (result > 0)
-            {
-                return new MockServerDriver(host, result, tls);
-            }
-
-            throw result switch
-            {
-                -1 => new InvalidOperationException("Invalid handle when starting mock server"),
-                -3 => new InvalidOperationException("Unable to start mock server"),
-                -4 => new InvalidOperationException("The pact reference library panicked"),
-                -5 => new InvalidOperationException("The IPAddress is invalid"),
-                -6 => new InvalidOperationException("Could not create the TLS configuration with the self-signed certificate"),
-                _ => new InvalidOperationException($"Unknown mock server error: {result}")
-            };
-        }
+        public IMockServerDriver CreateMockServer(string host, int? port, bool tls) => MockServer.CreateMockServer(this.pact, host, port, "http", tls);
 
         public void WritePactFile(string directory) => PactFileWriter.WritePactFile(this.pact,  directory);
     }

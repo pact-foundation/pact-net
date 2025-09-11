@@ -13,9 +13,6 @@ namespace PactNet.Interop
         [DllImport(DllName, EntryPoint = "pactffi_log_to_buffer")]
         public static extern int LogToBuffer(LevelFilter levelFilter);
 
-        [DllImport(DllName, EntryPoint = "pactffi_new_sync_message_interaction")]
-        public static extern uint NewSyncMessageInteraction(PactHandle pact, string description);
-
         #region Plugin Support
 
         [DllImport(DllName, EntryPoint = "pactffi_using_plugin")]
@@ -29,28 +26,36 @@ namespace PactNet.Interop
 
         #endregion
 
-        #region Http Interop Support
+        #region Mock Server Support
 
         [DllImport(DllName, EntryPoint = "pactffi_create_mock_server_for_transport")]
-        public static extern int CreateMockServerForTransport(PactHandle pact, string addrStr, ushort port, string transport, string transportConfig);
+        internal static extern int CreateMockServerForTransport(PactHandle pact, string addrStr, ushort port, string transport, string transportConfig);
 
         [DllImport(DllName, EntryPoint = "pactffi_mock_server_matched")]
-        public static extern bool MockServerMatched(int mockServerPort);
+        internal static extern bool MockServerMatched(int mockServerPort);
 
         [DllImport(DllName, EntryPoint = "pactffi_mock_server_mismatches")]
-        public static extern IntPtr MockServerMismatches(int mockServerPort);
+        internal static extern IntPtr MockServerMismatches(int mockServerPort);
 
         [DllImport(DllName, EntryPoint = "pactffi_mock_server_logs")]
-        public static extern IntPtr MockServerLogs(int mockServerPort);
+        internal static extern IntPtr MockServerLogs(int mockServerPort);
 
         [DllImport(DllName, EntryPoint = "pactffi_cleanup_mock_server")]
-        public static extern bool CleanupMockServer(int mockServerPort);
+        internal static extern bool CleanupMockServer(int mockServerPort);
+
+        #endregion Mock Server Support
+
+        #region Write Pact File  Support
 
         [DllImport(DllName, EntryPoint = "pactffi_pact_handle_write_file")]
         internal static extern int WritePactFile(PactHandle pact, string directory, bool overwrite);
 
         [DllImport(DllName, EntryPoint = "pactffi_write_pact_file")]
         internal static extern int WritePactFileForPort(int port, string directory, bool overwrite);
+
+        #endregion Write Pact File  Support
+
+        #region Http Interop Support
 
         [DllImport(DllName, EntryPoint = "pactffi_fetch_log_buffer")]
         public static extern string FetchLogBuffer(string logId);
@@ -94,6 +99,9 @@ namespace PactNet.Interop
         #endregion Http Interop Support
 
         #region Messaging Interop Support
+
+        [DllImport(DllName, EntryPoint = "pactffi_new_sync_message_interaction")]
+        public static extern uint NewSyncMessageInteraction(PactHandle pact, string description);
 
         [DllImport(DllName, EntryPoint = "pactffi_with_message_pact_metadata")]
         public static extern void WithMessagePactMetadata(PactHandle pact, string @namespace, string name, string value);
