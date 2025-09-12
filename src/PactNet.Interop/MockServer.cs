@@ -17,7 +17,7 @@ public static class MockServer
     /// <exception cref="InvalidOperationException">Failed to start mock server</exception>
     public static IMockServerDriver CreateMockServer(PactHandle pact, string host, int? port, string transport, bool tls)
     {
-        int result = NativeInterop.CreateMockServerForTransport(pact, host, (ushort)port.GetValueOrDefault(0), transport, null);
+        int result = MockServerInterop.CreateMockServerForTransport(pact, host, (ushort)port.GetValueOrDefault(0), transport, null);
 
         if (result > 0)
         {

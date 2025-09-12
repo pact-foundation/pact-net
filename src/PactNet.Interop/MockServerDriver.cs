@@ -37,7 +37,7 @@ namespace PactNet.Interop
         /// </summary>
         public bool MockServerMatched()
         {
-            return NativeInterop.MockServerMatched(Port);
+            return MockServerInterop.MockServerMatched(Port);
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace PactNet.Interop
         /// </summary>
         public string MockServerMismatches()
         {
-            IntPtr matchesPtr = NativeInterop.MockServerMismatches(this.Port);
+            IntPtr matchesPtr = MockServerInterop.MockServerMismatches(this.Port);
 
             return matchesPtr == IntPtr.Zero
                        ? string.Empty
@@ -57,7 +57,7 @@ namespace PactNet.Interop
         /// </summary>
         public string MockServerLogs()
         {
-            IntPtr logsPtr = NativeInterop.MockServerLogs(this.Port);
+            IntPtr logsPtr = MockServerInterop.MockServerLogs(this.Port);
 
             return logsPtr == IntPtr.Zero
                        ? "ERROR: Unable to retrieve mock server logs"
@@ -86,7 +86,7 @@ namespace PactNet.Interop
         /// </summary>
         private void ReleaseUnmanagedResources()
         {
-            NativeInterop.CleanupMockServer(this.Port);
+            MockServerInterop.CleanupMockServer(this.Port);
         }
     }
 }

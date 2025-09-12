@@ -26,35 +26,6 @@ namespace PactNet.Interop
 
         #endregion
 
-        #region Mock Server Support
-
-        [DllImport(DllName, EntryPoint = "pactffi_create_mock_server_for_transport")]
-        internal static extern int CreateMockServerForTransport(PactHandle pact, string addrStr, ushort port, string transport, string transportConfig);
-
-        [DllImport(DllName, EntryPoint = "pactffi_mock_server_matched")]
-        internal static extern bool MockServerMatched(int mockServerPort);
-
-        [DllImport(DllName, EntryPoint = "pactffi_mock_server_mismatches")]
-        internal static extern IntPtr MockServerMismatches(int mockServerPort);
-
-        [DllImport(DllName, EntryPoint = "pactffi_mock_server_logs")]
-        internal static extern IntPtr MockServerLogs(int mockServerPort);
-
-        [DllImport(DllName, EntryPoint = "pactffi_cleanup_mock_server")]
-        internal static extern bool CleanupMockServer(int mockServerPort);
-
-        #endregion Mock Server Support
-
-        #region Write Pact File  Support
-
-        [DllImport(DllName, EntryPoint = "pactffi_pact_handle_write_file")]
-        internal static extern int WritePactFile(PactHandle pact, string directory, bool overwrite);
-
-        [DllImport(DllName, EntryPoint = "pactffi_write_pact_file")]
-        internal static extern int WritePactFileForPort(int port, string directory, bool overwrite);
-
-        #endregion Write Pact File  Support
-
         #region Http Interop Support
 
         [DllImport(DllName, EntryPoint = "pactffi_fetch_log_buffer")]
