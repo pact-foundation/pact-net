@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace PactNet.Interop;
 
@@ -22,7 +23,7 @@ public static class LogLevelExtensions
                 return;
             }
 
-            NativeInterop.LogToBuffer(level switch
+            LoggingInterop.LogToBuffer(level switch
             {
                 PactLogLevel.Trace => LevelFilter.Trace,
                 PactLogLevel.Debug => LevelFilter.Debug,
@@ -35,5 +36,14 @@ public static class LogLevelExtensions
 
             LogInitialised = true;
         }
+
+    }
+
+    private static class LoggingInterop
+    {
+        private const string DllName = "pact_ffi";
+
+        [DllImport(DllName, EntryPoint = "pactffi_log_to_buffer")]
+        public static extern int LogToBuffer(LevelFilter levelFilter);
     }
 }

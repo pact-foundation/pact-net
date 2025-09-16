@@ -31,17 +31,7 @@ namespace PactNet.Verifier
         /// </summary>
         public void Initialise()
         {
-            NativeInterop.LogToBuffer(config.LogLevel switch
-            {
-                PactLogLevel.Trace => LevelFilter.Trace,
-                PactLogLevel.Debug => LevelFilter.Debug,
-                PactLogLevel.Information => LevelFilter.Info,
-                PactLogLevel.Warn => LevelFilter.Warn,
-                PactLogLevel.Error => LevelFilter.Error,
-                PactLogLevel.None => LevelFilter.Off,
-                _ => throw new ArgumentOutOfRangeException(nameof(config.LogLevel), config.LogLevel, "Invalid log level")
-            });
-
+            config.LogLevel.InitialiseLogging();
             this.handle = NativeInterop.VerifierNewForApplication("pact-net", typeof(InteropVerifierProvider).Assembly.GetName().Version.ToString());
         }
 

@@ -10,9 +10,6 @@ namespace PactNet.Interop
     {
         private const string DllName = "pact_ffi";
 
-        [DllImport(DllName, EntryPoint = "pactffi_log_to_buffer")]
-        public static extern int LogToBuffer(LevelFilter levelFilter);
-
         #region Http Interop Support
 
         [DllImport(DllName, EntryPoint = "pactffi_fetch_log_buffer")]
