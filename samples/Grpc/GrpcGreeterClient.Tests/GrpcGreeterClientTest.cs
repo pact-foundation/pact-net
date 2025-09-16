@@ -38,8 +38,8 @@ namespace GrpcGreeterClient.Tests
                         ""message"": ""matching(type, 'Hello foo')""
                     }}
                 }}";
-            NativeInterop.PluginAdd(pact, "protobuf", "0.4.0");
-            NativeInterop.PluginInteractionContents(interaction, 0, "application/grpc", content);
+            PluginInterop.PluginAdd(pact, "protobuf", "0.4.0");
+            PluginInterop.PluginInteractionContents(interaction, 0, "application/grpc", content);
 
             using var driver = MockServer.CreateMockServer(pact, host, 0, "grpc", false);
             var port = driver.Port;
@@ -58,7 +58,7 @@ namespace GrpcGreeterClient.Tests
             ErrorString.Should().Be("Did not receive any requests for path 'Greeter/SayHello'");
             ExpectedPath.Should().Be("Greeter/SayHello");
 
-            NativeInterop.PluginCleanup(pact);
+            PluginInterop.PluginCleanup(pact);
             await Task.Delay(1);
         }
         [Fact]
@@ -81,8 +81,8 @@ namespace GrpcGreeterClient.Tests
                     }}
                 }}";
 
-            NativeInterop.PluginAdd(pact, "protobuf", "0.4.0");
-            NativeInterop.PluginInteractionContents(interaction, 0, "application/grpc", content);
+            PluginInterop.PluginAdd(pact, "protobuf", "0.4.0");
+            PluginInterop.PluginInteractionContents(interaction, 0, "application/grpc", content);
 
             using var driver = MockServer.CreateMockServer(pact, host, 0, "grpc", false);
             var port = driver.Port;
@@ -105,7 +105,7 @@ namespace GrpcGreeterClient.Tests
             MismatchesString.Should().Be("[]");
 
             PactFileWriter.WritePactFileForPort(port, "../../../../pacts");
-            NativeInterop.PluginCleanup(pact);
+            PluginInterop.PluginCleanup(pact);
         }
 
     }

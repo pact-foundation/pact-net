@@ -13,19 +13,6 @@ namespace PactNet.Interop
         [DllImport(DllName, EntryPoint = "pactffi_log_to_buffer")]
         public static extern int LogToBuffer(LevelFilter levelFilter);
 
-        #region Plugin Support
-
-        [DllImport(DllName, EntryPoint = "pactffi_using_plugin")]
-        public static extern uint PluginAdd(PactHandle pact, string name, string version);
-
-        [DllImport(DllName, EntryPoint = "pactffi_interaction_contents")]
-        public static extern uint PluginInteractionContents(uint interaction, InteractionPart part, string contentType, string body);
-
-        [DllImport(DllName, EntryPoint = "pactffi_cleanup_plugins")]
-        public static extern void PluginCleanup(PactHandle pact);
-
-        #endregion
-
         #region Http Interop Support
 
         [DllImport(DllName, EntryPoint = "pactffi_fetch_log_buffer")]
