@@ -3,7 +3,7 @@ using PactNet.Drivers;
 
 namespace PactNet.Interop;
 
-public static class MockServer
+public static class PactHandleExtensions
 {
     /// <summary>
     /// Create the mock server for the current pact
@@ -13,9 +13,9 @@ public static class MockServer
     /// <param name="port">Port for the mock server, or null to allocate one automatically</param>
     /// <param name="transport">Transport type for the mock server</param>
     /// <param name="tls">Enable TLS</param>
-    /// <returns>Mock server port</returns>
+    /// <returns>IMockServerDriver</returns>
     /// <exception cref="InvalidOperationException">Failed to start mock server</exception>
-    public static IMockServerDriver CreateMockServer(PactHandle pact, string host, int? port, string transport, bool tls)
+    public static IMockServerDriver CreateMockServer(this PactHandle pact, string host, int? port, string transport, bool tls)
     {
         int result = MockServerInterop.CreateMockServerForTransport(pact, host, (ushort)port.GetValueOrDefault(0), transport, null);
 
@@ -31,6 +31,25 @@ public static class MockServer
             -4 => new InvalidOperationException("The pact reference library panicked"),
             -5 => new InvalidOperationException("The IPAddress is invalid"),
             -6 => new InvalidOperationException("Could not create the TLS configuration with the self-signed certificate"),
+            _ => new InvalidOperationException($"Unknown mock server error: {result}")
+        };
+    }
+
+
+    public static IPluginDriver UsePlugin(this PactHandle pact, string plugInName, string pluginVersion)
+    {
+        uint result = PluginInterop.PluginAdd(pact, plugInName, pluginVersion);
+
+        if (result == 0)
+        {
+            return new PluginDriver(pact);
+        }
+
+        throw result switch
+        {
+            1 => new InvalidOperationException("The pact reference library panicked."),
+            2 => new InvalidOperationException("Failed to load the plugin."),
+            3 => new InvalidOperationException("Pact Handle is not valid."),
             _ => new InvalidOperationException($"Unknown mock server error: {result}")
         };
     }

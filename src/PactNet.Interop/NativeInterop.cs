@@ -55,9 +55,6 @@ namespace PactNet.Interop
 
         #region Messaging Interop Support
 
-        [DllImport(DllName, EntryPoint = "pactffi_new_sync_message_interaction")]
-        public static extern uint NewSyncMessageInteraction(PactHandle pact, string description);
-
         [DllImport(DllName, EntryPoint = "pactffi_with_message_pact_metadata")]
         public static extern void WithMessagePactMetadata(PactHandle pact, string @namespace, string name, string value);
 

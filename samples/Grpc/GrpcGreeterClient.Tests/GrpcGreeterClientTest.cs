@@ -25,7 +25,7 @@ namespace GrpcGreeterClient.Tests
             // arrange
             var host = "0.0.0.0";
             var pact = NativeInterop.NewPact("grpc-greeter-client", "grpc-greeter");
-            var interaction = NativeInterop.NewSyncMessageInteraction(pact, "a request to a plugin");
+            var interaction = PluginInterop.NewSyncMessageInteraction(pact, "a request to a plugin");
             NativeInterop.WithSpecification(pact, PactSpecification.V4);
             var content = $@"{{
                     ""pact:proto"":""{Path.Join(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "GrpcGreeterClient", "Protos", "greet.proto").Replace("\\", "\\\\")}"",
@@ -38,10 +38,11 @@ namespace GrpcGreeterClient.Tests
                         ""message"": ""matching(type, 'Hello foo')""
                     }}
                 }}";
-            PluginInterop.PluginAdd(pact, "protobuf", "0.4.0");
+
+            using var pluginDriver = pact.UsePlugin("protobuf", "0.4.0");
             PluginInterop.PluginInteractionContents(interaction, 0, "application/grpc", content);
 
-            using var driver = MockServer.CreateMockServer(pact, host, 0, "grpc", false);
+            using var driver = pact.CreateMockServer(host, 0, "grpc", false);
             var port = driver.Port;
             testOutputHelper.WriteLine("Port: " + port);
 
@@ -58,7 +59,6 @@ namespace GrpcGreeterClient.Tests
             ErrorString.Should().Be("Did not receive any requests for path 'Greeter/SayHello'");
             ExpectedPath.Should().Be("Greeter/SayHello");
 
-            PluginInterop.PluginCleanup(pact);
             await Task.Delay(1);
         }
         [Fact]
@@ -67,7 +67,7 @@ namespace GrpcGreeterClient.Tests
             // arrange
             var host = "0.0.0.0";
             var pact = NativeInterop.NewPact("grpc-greeter-client", "grpc-greeter");
-            var interaction = NativeInterop.NewSyncMessageInteraction(pact, "a request to a plugin");
+            var interaction = PluginInterop.NewSyncMessageInteraction(pact, "a request to a plugin");
             NativeInterop.WithSpecification(pact, PactSpecification.V4);
             var content = $@"{{
                     ""pact:proto"":""{Path.Join(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "GrpcGreeterClient", "Protos", "greet.proto").Replace("\\", "\\\\")}"",
@@ -81,10 +81,10 @@ namespace GrpcGreeterClient.Tests
                     }}
                 }}";
 
-            PluginInterop.PluginAdd(pact, "protobuf", "0.4.0");
+            using var pluginDriver = pact.UsePlugin("protobuf", "0.4.0");
             PluginInterop.PluginInteractionContents(interaction, 0, "application/grpc", content);
 
-            using var driver = MockServer.CreateMockServer(pact, host, 0, "grpc", false);
+            using var driver = pact.CreateMockServer(host, 0, "grpc", false);
             var port = driver.Port;
             testOutputHelper.WriteLine("Port: " + port);
 
@@ -105,7 +105,6 @@ namespace GrpcGreeterClient.Tests
             MismatchesString.Should().Be("[]");
 
             PactFileWriter.WritePactFileForPort(port, "../../../../pacts");
-            PluginInterop.PluginCleanup(pact);
         }
 
     }

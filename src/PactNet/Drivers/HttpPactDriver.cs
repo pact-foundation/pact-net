@@ -38,7 +38,7 @@ namespace PactNet.Drivers
         /// <param name="tls">Enable TLS</param>
         /// <returns>Mock server port</returns>
         /// <exception cref="InvalidOperationException">Failed to start mock server</exception>
-        public IMockServerDriver CreateMockServer(string host, int? port, bool tls) => MockServer.CreateMockServer(this.pact, host, port, "http", tls);
+        public IMockServerDriver CreateMockServer(string host, int? port, bool tls) => this.pact.CreateMockServer(host, port, "http", tls);
 
         public void WritePactFile(string directory) => PactFileWriter.WritePactFile(this.pact,  directory);
     }
