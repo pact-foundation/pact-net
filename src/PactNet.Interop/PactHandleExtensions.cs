@@ -53,4 +53,16 @@ public static class PactHandleExtensions
             _ => new InvalidOperationException($"Unknown mock server error: {result}")
         };
     }
+
+    /// <summary>
+    /// Creates a new synchronous message interaction (request/response) and returns a handle to it.
+    /// Calling this function with the same description as an existing interaction will result in that interaction being replaced with the new one.
+    /// </summary>
+    /// <param name="pact"></param>
+    /// <param name="description">The interaction description. It needs to be unique for each interaction.</param>
+    /// <returns>A new InteractionHandle</returns>
+    public static InteractionHandle NewSyncMessageInteraction(this PactHandle pact, string description)
+    {
+        return PluginInterop.NewSyncMessageInteraction(pact, description);
+    }
 }

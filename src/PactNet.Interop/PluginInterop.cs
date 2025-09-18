@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 
 namespace PactNet.Interop;
 
-public class PluginInterop
+internal class PluginInterop
 {
     private const string DllName = "pact_ffi";
 

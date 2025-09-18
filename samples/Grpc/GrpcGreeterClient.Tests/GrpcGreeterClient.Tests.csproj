@@ -13,7 +13,9 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\src\PactNet.Extensions.Grpc\PactNet.Extensions.Grpc.csproj" />
     <ProjectReference Include="..\..\..\src\PactNet.Interop\PactNet.Interop.csproj" />
+    <ProjectReference Include="..\..\..\src\PactNet.Output.Xunit\PactNet.Output.Xunit.csproj" />
     <ProjectReference Include="..\GrpcGreeterClient\GrpcGreeterClient.csproj" />
   </ItemGroup>
   <ItemGroup>

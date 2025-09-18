@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PactNet.Abstractions\PactNet.Abstractions.csproj" />
+    <ProjectReference Include="..\PactNet.Interop\PactNet.Interop.csproj" />
+  </ItemGroup>
+
+  <Import Project="../NuGet.targets" />
+
+</Project>

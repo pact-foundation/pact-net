@@ -4,7 +4,7 @@
   },
   "interactions": [
     {
-      "description": "a request to a plugin",
+      "description": "A greeting request to say hello.",
       "interactionMarkup": {
         "markup": "```protobuf\nmessage HelloReply {\n    string message = 1;\n}\n```\n",
         "markupType": "COMMON_MARK"

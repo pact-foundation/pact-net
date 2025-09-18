@@ -1,111 +1,87 @@
+using System;
 using System.Text.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
-using PactNet.Interop;
 using System.IO;
+using System.Text.Json.Serialization;
 using PactNet;
+using PactNet.Exceptions;
+using PactNet.Extensions.Grpc;
+using PactNet.Output.Xunit;
 using Xunit.Abstractions;
 
 namespace GrpcGreeterClient.Tests
 {
-    public class GrpcGreeterClientTests
+    public class GrpcGreeterClientTests : IDisposable
     {
-        private readonly ITestOutputHelper testOutputHelper;
+        private readonly IGrpcPactBuilderV4 pact;
 
-        public GrpcGreeterClientTests(ITestOutputHelper testOutputHelper)
+        public GrpcGreeterClientTests(ITestOutputHelper output)
         {
-            this.testOutputHelper = testOutputHelper;
-            PactLogLevel.Information.InitialiseLogging();
+            var config = new PactConfig
+            {
+                PactDir = "../../../../pacts/",
+                Outputters = new[]
+                {
+                    new XunitOutput(output)
+                },
+                DefaultJsonSettings = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    PropertyNameCaseInsensitive = true,
+                    Converters = { new JsonStringEnumConverter() }
+                },
+                LogLevel = PactLogLevel.Debug
+            };
+
+            this.pact = Pact.V4("grpc-greeter-client", "grpc-greeter", config).WithGrpcInteractions();
         }
 
         [Fact]
-        public async Task ReturnsMismatchWhenNoGrpcClientRequestMade()
+        public void ThrowsExceptionWhenNoGrpcClientRequestMade()
         {
-            // arrange
-            var host = "0.0.0.0";
-            var pact = NativeInterop.NewPact("grpc-greeter-client", "grpc-greeter");
-            var interaction = PluginInterop.NewSyncMessageInteraction(pact, "a request to a plugin");
-            NativeInterop.WithSpecification(pact, PactSpecification.V4);
-            var content = $@"{{
-                    ""pact:proto"":""{Path.Join(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "GrpcGreeterClient", "Protos", "greet.proto").Replace("\\", "\\\\")}"",
-                    ""pact:proto-service"": ""Greeter/SayHello"",
-                    ""pact:content-type"": ""application/protobuf"",
-                    ""request"": {{
-                        ""name"": ""matching(type, 'foo')""
-                    }},
-                    ""response"": {{
-                        ""message"": ""matching(type, 'Hello foo')""
-                    }}
-                }}";
+            string protoFilePath = Path.Join(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "GrpcGreeterClient", "Protos", "greet.proto");
+            this.pact
+                .UponReceiving("A greeting request to say hello.")
+                .WithRequest(protoFilePath, nameof(Greeter), "SayHello",
+                    new { name = "matching(type, 'foo')" })
+                .WillRespond()
+                .WithBody(new { message = "matching(type, 'Hello foo')" });
 
-            using var pluginDriver = pact.UsePlugin("protobuf", "0.4.0");
-            PluginInterop.PluginInteractionContents(interaction, 0, "application/grpc", content);
-
-            using var driver = pact.CreateMockServer(host, 0, "grpc", false);
-            var port = driver.Port;
-            testOutputHelper.WriteLine("Port: " + port);
-
-            var matched = driver.MockServerMatched();
-            testOutputHelper.WriteLine("Matched: " + matched);
-            matched.Should().BeFalse();
-
-            var MismatchesString = driver.MockServerMismatches();
-            testOutputHelper.WriteLine("Mismatches: " + MismatchesString);
-            var MismatchesJson = JsonSerializer.Deserialize<JsonElement>(MismatchesString);
-            var ErrorString = MismatchesJson[0].GetProperty("error").GetString();
-            var ExpectedPath = MismatchesJson[0].GetProperty("path").GetString();
-
-            ErrorString.Should().Be("Did not receive any requests for path 'Greeter/SayHello'");
-            ExpectedPath.Should().Be("Greeter/SayHello");
-
-            await Task.Delay(1);
+            Assert.Throws<PactFailureException>(() =>
+                this.pact.Verify(ctx =>
+                {
+                    // No grpc call here results in failure.
+                }));
         }
+
         [Fact]
-        public async Task WritesPactWhenGrpcClientRequestMade()
+        public async Task WritesPactForGreeterSayHelloRequest()
         {
-            // arrange
-            var host = "0.0.0.0";
-            var pact = NativeInterop.NewPact("grpc-greeter-client", "grpc-greeter");
-            var interaction = PluginInterop.NewSyncMessageInteraction(pact, "a request to a plugin");
-            NativeInterop.WithSpecification(pact, PactSpecification.V4);
-            var content = $@"{{
-                    ""pact:proto"":""{Path.Join(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "GrpcGreeterClient", "Protos", "greet.proto").Replace("\\", "\\\\")}"",
-                    ""pact:proto-service"": ""Greeter/SayHello"",
-                    ""pact:content-type"": ""application/protobuf"",
-                    ""request"": {{
-                        ""name"": ""matching(type, 'foo')""
-                    }},
-                    ""response"": {{
-                        ""message"": ""matching(type, 'Hello foo')""
-                    }}
-                }}";
+            // Arrange
+            string protoFilePath = Path.Join(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "GrpcGreeterClient", "Protos", "greet.proto");
+            this.pact
+                .UponReceiving("A greeting request to say hello.")
+                .WithRequest(protoFilePath, nameof(Greeter), "SayHello",
+                    new { name = "matching(type, 'foo')" })
+                .WillRespond()
+                .WithBody(new { message = "matching(type, 'Hello foo')" });
 
-            using var pluginDriver = pact.UsePlugin("protobuf", "0.4.0");
-            PluginInterop.PluginInteractionContents(interaction, 0, "application/grpc", content);
+            await this.pact.VerifyAsync(async ctx =>
+            {
 
-            using var driver = pact.CreateMockServer(host, 0, "grpc", false);
-            var port = driver.Port;
-            testOutputHelper.WriteLine("Port: " + port);
+                // Arrange
+                var client = new GreeterClientWrapper(ctx.MockServerUri.AbsoluteUri);
 
-            // act
-            var client = new GreeterClientWrapper("http://localhost:" + port);
-            var result = await client.SayHello("foo");
-            testOutputHelper.WriteLine("Result: " + result);
+                // Act
+                var greeting = await client.SayHello("foo");
 
-            // assert
-            result.Should().Be("Hello foo");
-            var matched = driver.MockServerMatched();
-            testOutputHelper.WriteLine("Matched: " + matched);
-            matched.Should().BeTrue();
-
-            var MismatchesString = driver.MockServerMismatches();
-            testOutputHelper.WriteLine("Mismatches: " + MismatchesString);
-
-            MismatchesString.Should().Be("[]");
-
-            PactFileWriter.WritePactFileForPort(port, "../../../../pacts");
+                // Assert
+                greeting.Should().Be("Hello foo");
+            });
         }
 
+        public void Dispose() => this.pact?.Dispose();
     }
 }
