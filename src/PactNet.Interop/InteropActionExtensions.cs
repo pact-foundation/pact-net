@@ -5,7 +5,7 @@ namespace PactNet.Interop
     /// <summary>
     /// Extensions for checking interop action success
     /// </summary>
-    public static class InteropActionExtensions
+    internal static class InteropActionExtensions
     {
         /// <summary>
         /// Check the result of an interop action to ensure it succeeded

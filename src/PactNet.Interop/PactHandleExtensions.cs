@@ -1,9 +1,9 @@
 using System;
-using PactNet.Drivers;
+using PactNet.Interop.Drivers;
 
 namespace PactNet.Interop;
 
-public static class PactHandleExtensions
+internal static class PactHandleExtensions
 {
     /// <summary>
     /// Create the mock server for the current pact

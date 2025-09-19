@@ -58,7 +58,7 @@ internal class GrpcRequestBuilder(InteractionHandle interaction) : IGrpcRequestB
     /// <returns>Fluent builder</returns>
     public IGrpcRequestBuilderV4 Given(string providerState)
     {
-        NativeInterop.Given(interaction, providerState).ThrowExceptionOnFailure();
+        PactInterop.Given(interaction, providerState).ThrowExceptionOnFailure();
         return this;
     }
 
@@ -72,7 +72,7 @@ internal class GrpcRequestBuilder(InteractionHandle interaction) : IGrpcRequestB
     {
         foreach (var param in parameters)
         {
-            NativeInterop.GivenWithParam(interaction, providerState, param.Key, param.Value).ThrowExceptionOnFailure();
+            PactInterop.GivenWithParam(interaction, providerState, param.Key, param.Value).ThrowExceptionOnFailure();
         }
 
         return this;

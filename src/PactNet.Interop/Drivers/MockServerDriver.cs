@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using PactNet.Drivers;
 
-namespace PactNet.Interop
+namespace PactNet.Interop.Drivers
 {
     /// <summary>
     /// Driver for managing a HTTP mock server
@@ -37,7 +36,7 @@ namespace PactNet.Interop
         /// </summary>
         public bool MockServerMatched()
         {
-            return MockServerInterop.MockServerMatched(Port);
+            return MockServerInterop.MockServerMatched(this.Port);
         }
 
         /// <summary>

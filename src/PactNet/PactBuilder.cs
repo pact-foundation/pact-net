@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using PactNet.Drivers;
 using PactNet.Exceptions;
 using PactNet.Internal;
+using PactNet.Interop.Drivers;
 using PactNet.Models;
 
 namespace PactNet

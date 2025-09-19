@@ -1,6 +1,6 @@
 namespace PactNet.Interop
 {
-    public enum LevelFilter
+    internal enum LevelFilter
     {
         Off = 0,
         Error = 1,

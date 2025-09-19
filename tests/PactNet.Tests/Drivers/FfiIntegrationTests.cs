@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using PactNet.Drivers;
 using PactNet.Interop;
+using PactNet.Interop.Drivers;
 using Xunit;
 using Xunit.Abstractions;
 

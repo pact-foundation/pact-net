@@ -16,8 +16,8 @@ namespace PactNet.Drivers
         /// <returns>HTTP pact driver</returns>
         public IHttpPactDriver NewHttpPact(string consumerName, string providerName, PactSpecification version)
         {
-            PactHandle pact = NativeInterop.NewPact(consumerName, providerName);
-            NativeInterop.WithSpecification(pact, version).ThrowExceptionOnFailure();
+            PactHandle pact = PactInterop.NewPact(consumerName, providerName);
+            PactInterop.WithSpecification(pact, version).ThrowExceptionOnFailure();
 
             return new HttpPactDriver(pact);
         }
@@ -31,8 +31,8 @@ namespace PactNet.Drivers
         /// <returns>Message pact driver driver</returns>
         public IMessagePactDriver NewMessagePact(string consumerName, string providerName, PactSpecification version)
         {
-            PactHandle pact = NativeInterop.NewPact(consumerName, providerName);
-            NativeInterop.WithSpecification(pact, version).ThrowExceptionOnFailure();
+            PactHandle pact = PactInterop.NewPact(consumerName, providerName);
+            PactInterop.WithSpecification(pact, version).ThrowExceptionOnFailure();
 
             return new MessagePactDriver(pact);
         }
@@ -41,6 +41,6 @@ namespace PactNet.Drivers
         /// Get the driver logs
         /// </summary>
         /// <returns>Logs</returns>
-        public string DriverLogs() => NativeInterop.FetchLogBuffer(null);
+        public string DriverLogs() => LoggingInterop.FetchLogBuffer(null);
     }
 }

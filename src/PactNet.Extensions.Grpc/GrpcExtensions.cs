@@ -27,8 +27,8 @@ public static class GrpcExtensions
 
     private static PactHandle NewGrpcPact(string consumerName, string providerName)
     {
-        PactHandle pact = NativeInterop.NewPact(consumerName, providerName);
-        NativeInterop.WithSpecification(pact, PactSpecification.V4).ThrowExceptionOnFailure();
+        PactHandle pact = PactInterop.NewPact(consumerName, providerName);
+        PactInterop.WithSpecification(pact, PactSpecification.V4).ThrowExceptionOnFailure();
         return pact;
     }
 }

@@ -6,7 +6,7 @@ namespace PactNet.Interop
     /// <summary>
     /// Wrapper for interpreting results of pact file write operations
     /// </summary>
-    public static class PactFileWriter
+    internal static class PactFileWriter
     {
         /// <summary>
         /// Write the pact file to disk

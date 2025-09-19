@@ -1,7 +1,6 @@
 using System;
-using PactNet.Drivers;
 
-namespace PactNet.Interop;
+namespace PactNet.Interop.Drivers;
 
 internal class PluginDriver(PactHandle pact) : IPluginDriver
 {

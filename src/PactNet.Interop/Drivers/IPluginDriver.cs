@@ -1,9 +1,8 @@
 using System;
-using PactNet.Interop;
 
-namespace PactNet.Drivers;
+namespace PactNet.Interop.Drivers;
 
-public interface IPluginDriver : IDisposable
+internal interface IPluginDriver : IDisposable
 {
     /// <summary>
     /// Add interaction contents for a plugin interaction.

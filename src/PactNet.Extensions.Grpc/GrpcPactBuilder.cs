@@ -1,9 +1,9 @@
 using System;
 using System.Text.Json;
 using System.Threading.Tasks;
-using PactNet.Drivers;
 using PactNet.Exceptions;
 using PactNet.Interop;
+using PactNet.Interop.Drivers;
 using PactNet.Models;
 
 namespace PactNet.Extensions.Grpc;
@@ -91,7 +91,7 @@ internal class GrpcPactBuilder : IGrpcPactBuilderV4
         }
         finally
         {
-            this.PrintLogs(mockServer);
+            this.PrintLogs();
         }
     }
 
@@ -119,7 +119,7 @@ internal class GrpcPactBuilder : IGrpcPactBuilderV4
         }
         finally
         {
-            this.PrintLogs(mockServer);
+            this.PrintLogs();
         }
     }
 
@@ -165,10 +165,9 @@ internal class GrpcPactBuilder : IGrpcPactBuilderV4
     /// <summary>
     /// Print logs to the configured outputs
     /// </summary>
-    /// <param name="mockServer">Mock server</param>
-    private void PrintLogs(IMockServerDriver mockServer)
+    private void PrintLogs()
     {
-        string logs = NativeInterop.FetchLogBuffer(null);
+        string logs = LoggingInterop.FetchLogBuffer(null);
 
         this.config.WriteLine("Mock driver logs:");
         this.config.WriteLine(string.Empty);
