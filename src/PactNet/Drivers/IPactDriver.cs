@@ -1,4 +1,6 @@
-﻿using PactNet.Interop;
+﻿using PactNet.Drivers.Http;
+using PactNet.Drivers.Message;
+using PactNet.Interop;
 
 namespace PactNet.Drivers
 {

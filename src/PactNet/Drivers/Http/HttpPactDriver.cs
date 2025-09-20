@@ -1,7 +1,7 @@
 ﻿using System;
 using PactNet.Interop;
 
-namespace PactNet.Drivers
+namespace PactNet.Drivers.Http
 {
     /// <summary>
     /// Driver for synchronous HTTP pacts

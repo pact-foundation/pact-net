@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using PactNet.Drivers;
+using PactNet.Drivers.Http;
 using PactNet.Exceptions;
 using PactNet.Internal;
 using PactNet.Models;

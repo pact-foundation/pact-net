@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using Moq;
-using PactNet.Drivers;
+using PactNet.Drivers.Message;
 using PactNet.Interop;
 using Xunit;
 using Match = PactNet.Matchers.Match;
