@@ -42,6 +42,9 @@ namespace PactNet.Interop
         [DllImport(DllName, EntryPoint = "pactffi_new_interaction")]
         public static extern InteractionHandle NewInteraction(PactHandle pact, string description);
 
+        [DllImport(DllName, EntryPoint = "pactffi_new_sync_message_interaction")]
+        public static extern InteractionHandle NewSyncMessageInteraction(PactHandle pact, string description);
+
         [DllImport(DllName, EntryPoint = "pactffi_given")]
         public static extern bool Given(InteractionHandle interaction, string description);
 
@@ -166,6 +169,19 @@ namespace PactNet.Interop
 
         [DllImport(DllName, EntryPoint = "pactffi_verifier_output")]
         public static extern IntPtr VerifierOutput(IntPtr handle, byte stripAnsi);
+
+        #endregion
+
+        #region Plugins
+
+        [DllImport(DllName, EntryPoint = "pactffi_using_plugin")]
+        public static extern uint UsingPlugin(PactHandle pact, string name, string version);
+
+        [DllImport(DllName, EntryPoint = "pactffi_interaction_contents")]
+        public static extern uint InteractionContents(InteractionHandle interaction, InteractionPart part, string contentType, string body);
+
+        [DllImport(DllName, EntryPoint = "pactffi_cleanup_plugins")]
+        public static extern void CleanupPlugins(PactHandle pact);
 
         #endregion
     }

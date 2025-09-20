@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using PactNet.Drivers;
+using PactNet.Drivers.Http;
+using PactNet.Drivers.Message;
 using PactNet.Interop;
 using Xunit;
 using Xunit.Abstractions;

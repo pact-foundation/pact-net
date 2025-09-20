@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Text.Json;
 using FluentAssertions;
 using Moq;
-using PactNet.Drivers;
+using PactNet.Drivers.Http;
 using Xunit;
 using Match = PactNet.Matchers.Match;
 

@@ -1,5 +1,7 @@
 using System;
 using PactNet.Drivers;
+using PactNet.Drivers.Http;
+using PactNet.Drivers.Message;
 using PactNet.Interop;
 using PactNet.Models;
 

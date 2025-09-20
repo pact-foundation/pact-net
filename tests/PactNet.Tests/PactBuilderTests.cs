@@ -3,6 +3,7 @@ using AutoFixture;
 using FluentAssertions;
 using Moq;
 using PactNet.Drivers;
+using PactNet.Drivers.Http;
 using PactNet.Exceptions;
 using PactNet.Infrastructure.Outputters;
 using Xunit;

@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using Moq;
-using PactNet.Drivers;
+using PactNet.Drivers.Http;
 using Xunit;
 using Match = PactNet.Matchers.Match;
 

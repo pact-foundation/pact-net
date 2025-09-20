@@ -1,7 +1,7 @@
 using System;
 using System.Text.Json;
 using System.Threading.Tasks;
-using PactNet.Drivers;
+using PactNet.Drivers.Message;
 using PactNet.Exceptions;
 using PactNet.Interop;
 using PactNet.Models;

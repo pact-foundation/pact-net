@@ -1,7 +1,7 @@
 ﻿using System;
 using FluentAssertions;
 using Moq;
-using PactNet.Drivers;
+using PactNet.Drivers.Message;
 using PactNet.Interop;
 using Xunit;
 
