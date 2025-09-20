@@ -5,7 +5,7 @@ namespace PactNet.Drivers
     /// <summary>
     /// Driver for message pacts
     /// </summary>
-    internal class MessagePactDriver : AbstractPactDriver, IMessagePactDriver
+    internal class MessagePactDriver : IMessagePactDriver
     {
         private readonly PactHandle pact;
 
@@ -13,7 +13,7 @@ namespace PactNet.Drivers
         /// Initialises a new instance of the <see cref="MessagePactDriver"/> class.
         /// </summary>
         /// <param name="pact">Pact handle</param>
-        internal MessagePactDriver(PactHandle pact) : base(pact)
+        internal MessagePactDriver(PactHandle pact)
         {
             this.pact = pact;
         }
@@ -25,7 +25,7 @@ namespace PactNet.Drivers
         /// <returns>Message interaction driver</returns>
         public IMessageInteractionDriver NewMessageInteraction(string description)
         {
-            InteractionHandle interaction = NativeInterop.NewMessageInteraction(this.pact, description);
+            InteractionHandle interaction = MessagingInterop.NewMessageInteraction(this.pact, description);
             return new MessageInteractionDriver(this.pact, interaction);
         }
 
@@ -36,6 +36,6 @@ namespace PactNet.Drivers
         /// <param name="name">the name of the parameter</param>
         /// <param name="value">the value of the parameter</param>
         public void WithMessagePactMetadata(string @namespace, string name, string value)
-            => NativeInterop.WithMessagePactMetadata(this.pact, @namespace, name, value);
+            => MessagingInterop.WithMessagePactMetadata(this.pact, @namespace, name, value);
     }
 }

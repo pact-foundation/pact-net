@@ -31,18 +31,8 @@ namespace PactNet.Verifier
         /// </summary>
         public void Initialise()
         {
-            NativeInterop.LogToBuffer(config.LogLevel switch
-            {
-                PactLogLevel.Trace => LevelFilter.Trace,
-                PactLogLevel.Debug => LevelFilter.Debug,
-                PactLogLevel.Information => LevelFilter.Info,
-                PactLogLevel.Warn => LevelFilter.Warn,
-                PactLogLevel.Error => LevelFilter.Error,
-                PactLogLevel.None => LevelFilter.Off,
-                _ => throw new ArgumentOutOfRangeException(nameof(config.LogLevel), config.LogLevel, "Invalid log level")
-            });
-
-            this.handle = NativeInterop.VerifierNewForApplication("pact-net", typeof(InteropVerifierProvider).Assembly.GetName().Version.ToString());
+            config.LogLevel.InitialiseLogging();
+            this.handle = VerifierInterop.VerifierNewForApplication("pact-net", typeof(InteropVerifierProvider).Assembly.GetName().Version.ToString());
         }
 
         /// <summary>
@@ -55,7 +45,7 @@ namespace PactNet.Verifier
         /// <param name="path">Provider URI path</param>
         public void SetProviderInfo(string name, string scheme, string host, ushort port, string path)
         {
-            NativeInterop.VerifierSetProviderInfo(this.handle, name, scheme, host, port, path);
+            VerifierInterop.VerifierSetProviderInfo(this.handle, name, scheme, host, port, path);
         }
 
         /// <summary>
@@ -67,7 +57,7 @@ namespace PactNet.Verifier
         /// <param name="scheme">Scheme</param>
         public void AddTransport(string protocol, ushort port, string path, string scheme)
         {
-            NativeInterop.AddProviderTransport(this.handle, protocol, port, path, scheme);
+            VerifierInterop.AddProviderTransport(this.handle, protocol, port, path, scheme);
         }
 
         /// <summary>
@@ -78,7 +68,7 @@ namespace PactNet.Verifier
         /// <param name="noState">Filter to only interactions with (false) or without (true) provider state</param>
         public void SetFilterInfo(string description = null, string state = null, bool? noState = null)
         {
-            NativeInterop.VerifierSetFilterInfo(this.handle, description, state, ToSafeByte(noState));
+            VerifierInterop.VerifierSetFilterInfo(this.handle, description, state, ToSafeByte(noState));
         }
 
         /// <summary>
@@ -89,7 +79,7 @@ namespace PactNet.Verifier
         /// <param name="body">Use request body for provider state requests instead of query params</param>
         public void SetProviderState(Uri url, bool teardown, bool body)
         {
-            NativeInterop.VerifierSetProviderState(this.handle, url.AbsoluteUri, ToSafeByte(teardown), ToSafeByte(body));
+            VerifierInterop.VerifierSetProviderState(this.handle, url.AbsoluteUri, ToSafeByte(teardown), ToSafeByte(body));
         }
 
         /// <summary>
@@ -101,7 +91,7 @@ namespace PactNet.Verifier
         {
             uint timeout = Convert.ToUInt32(requestTimeout.TotalMilliseconds);
 
-            NativeInterop.VerifierSetVerificationOptions(this.handle,
+            VerifierInterop.VerifierSetVerificationOptions(this.handle,
                                                          ToSafeByte(disableSslVerification),
                                                          timeout);
         }
@@ -115,7 +105,7 @@ namespace PactNet.Verifier
         /// <param name="providerBranch">Provider branch</param>
         public void SetPublishOptions(string providerVersion, Uri buildUrl, ICollection<string> providerTags, string providerBranch)
         {
-            NativeInterop.VerifierSetPublishOptions(this.handle,
+            VerifierInterop.VerifierSetPublishOptions(this.handle,
                                                     providerVersion,
                                                     buildUrl?.AbsoluteUri,
                                                     providerTags.ToArray(),
@@ -129,7 +119,7 @@ namespace PactNet.Verifier
         /// <param name="consumerFilters">Consumer filters</param>
         public void SetConsumerFilters(ICollection<string> consumerFilters)
         {
-            NativeInterop.VerifierSetConsumerFilters(this.handle, consumerFilters.ToArray(), (ushort)consumerFilters.Count);
+            VerifierInterop.VerifierSetConsumerFilters(this.handle, consumerFilters.ToArray(), (ushort)consumerFilters.Count);
         }
 
         /// <summary>
@@ -141,7 +131,7 @@ namespace PactNet.Verifier
         /// <returns>Fluent builder</returns>
         public void AddCustomHeader(string name, string value)
         {
-            NativeInterop.AddCustomHeader(this.handle, name, value);
+            VerifierInterop.AddCustomHeader(this.handle, name, value);
         }
 
         /// <summary>
@@ -150,7 +140,7 @@ namespace PactNet.Verifier
         /// <param name="file">File</param>
         public void AddFileSource(FileInfo file)
         {
-            NativeInterop.VerifierAddFileSource(this.handle, file.FullName);
+            VerifierInterop.VerifierAddFileSource(this.handle, file.FullName);
         }
 
         /// <summary>
@@ -160,7 +150,7 @@ namespace PactNet.Verifier
         /// <remarks>Can be used with <see cref="IVerifierProvider.SetConsumerFilters"/> to filter the files in the directory</remarks>
         public void AddDirectorySource(DirectoryInfo directory)
         {
-            NativeInterop.VerifierAddDirectorySource(this.handle, directory.FullName);
+            VerifierInterop.VerifierAddDirectorySource(this.handle, directory.FullName);
         }
 
         /// <summary>
@@ -172,7 +162,7 @@ namespace PactNet.Verifier
         /// <param name="token">Authentication token</param>
         public void AddUrlSource(Uri url, string username, string password, string token)
         {
-            NativeInterop.VerifierUrlSource(this.handle, url.AbsoluteUri, username, password, token);
+            VerifierInterop.VerifierUrlSource(this.handle, url.AbsoluteUri, username, password, token);
         }
 
         /// <summary>
@@ -199,7 +189,7 @@ namespace PactNet.Verifier
                                     ICollection<string> consumerVersionSelectors,
                                     ICollection<string> consumerVersionTags)
         {
-            NativeInterop.VerifierBrokerSourceWithSelectors(this.handle,
+            VerifierInterop.VerifierBrokerSourceWithSelectors(this.handle,
                                                             url.AbsoluteUri,
                                                             username,
                                                             password,
@@ -221,7 +211,7 @@ namespace PactNet.Verifier
         /// <exception cref="PactFailureException">Verification failed</exception>
         public void Execute()
         {
-            int result = NativeInterop.VerifierExecute(this.handle);
+            int result = VerifierInterop.VerifierExecute(this.handle);
 
             if (result == 0)
             {
@@ -267,7 +257,7 @@ namespace PactNet.Verifier
         {
             if (this.handle != IntPtr.Zero)
             {
-                NativeInterop.VerifierShutdown(this.handle);
+                VerifierInterop.VerifierShutdown(this.handle);
             }
 
             this.handle = IntPtr.Zero;
@@ -290,7 +280,7 @@ namespace PactNet.Verifier
         /// </summary>
         private void PrintOutput()
         {
-            IntPtr outputPtr = NativeInterop.VerifierOutput(this.handle, 1);
+            IntPtr outputPtr = VerifierInterop.VerifierOutput(this.handle, 1);
 
             string output = outputPtr == IntPtr.Zero
                                 ? "ERROR: Unable to retrieve verifier output"
@@ -300,7 +290,7 @@ namespace PactNet.Verifier
             this.config.WriteLine("---------------");
             this.config.WriteLine(output);
 
-            IntPtr logsPtr = NativeInterop.VerifierLogs(this.handle);
+            IntPtr logsPtr = VerifierInterop.VerifierLogs(this.handle);
 
             string logs = logsPtr == IntPtr.Zero
                               ? "ERROR: Unable to retrieve verifier logs"

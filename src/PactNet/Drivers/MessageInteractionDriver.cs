@@ -7,8 +7,9 @@ namespace PactNet.Drivers
     /// <summary>
     /// Driver for asynchronous message interactions
     /// </summary>
-    internal class MessageInteractionDriver : AbstractPactDriver, IMessageInteractionDriver
+    internal class MessageInteractionDriver : IMessageInteractionDriver
     {
+        private readonly PactHandle pact;
         private readonly InteractionHandle interaction;
 
         /// <summary>
@@ -16,8 +17,9 @@ namespace PactNet.Drivers
         /// </summary>
         /// <param name="pact">Pact handle</param>
         /// <param name="interaction">Interaction handle</param>
-        internal MessageInteractionDriver(PactHandle pact, InteractionHandle interaction) : base(pact)
+        internal MessageInteractionDriver(PactHandle pact, InteractionHandle interaction)
         {
+            this.pact = pact;
             this.interaction = interaction;
         }
 
@@ -26,7 +28,7 @@ namespace PactNet.Drivers
         /// </summary>
         /// <param name="description">Provider state description</param>
         public void Given(string description)
-            => NativeInterop.Given(this.interaction, description).CheckInteropSuccess();
+            => PactInterop.Given(this.interaction, description).ThrowExceptionOnFailure();
 
         /// <summary>
         /// Add a provider state with a parameter to the interaction
@@ -35,14 +37,14 @@ namespace PactNet.Drivers
         /// <param name="name">Parameter name</param>
         /// <param name="value">Parameter value</param>
         public void GivenWithParam(string description, string name, string value)
-            => NativeInterop.GivenWithParam(this.interaction, description, name, value).CheckInteropSuccess();
+            => PactInterop.GivenWithParam(this.interaction, description, name, value).ThrowExceptionOnFailure();
 
         /// <summary>
         /// Set the description of the message interaction
         /// </summary>
         /// <param name="description">message description</param>
         public void ExpectsToReceive(string description)
-            => NativeInterop.MessageExpectsToReceive(this.interaction, description);
+            => MessagingInterop.MessageExpectsToReceive(this.interaction, description);
 
         /// <summary>
         /// Set the metadata of the message
@@ -50,7 +52,7 @@ namespace PactNet.Drivers
         /// <param name="key">the key</param>
         /// <param name="value">the value</param>
         public void WithMetadata(string key, string value)
-            => NativeInterop.MessageWithMetadata(this.interaction, key, value);
+            => MessagingInterop.MessageWithMetadata(this.interaction, key, value);
 
         /// <summary>
         /// Set the contents of the message
@@ -59,7 +61,7 @@ namespace PactNet.Drivers
         /// <param name="body">the body of the message</param>
         /// <param name="size">the size of the message</param>
         public void WithContents(string contentType, string body, uint size)
-            => NativeInterop.MessageWithContents(this.interaction, contentType, body, new UIntPtr(0));
+            => MessagingInterop.MessageWithContents(this.interaction, contentType, body, new UIntPtr(0));
 
         /// <summary>
         /// Returns the message without the matchers
@@ -67,9 +69,11 @@ namespace PactNet.Drivers
         /// <returns>Reified message</returns>
         public string Reify()
         {
-            IntPtr pointer = NativeInterop.MessageReify(this.interaction);
+            IntPtr pointer = MessagingInterop.MessageReify(this.interaction);
             string body = Marshal.PtrToStringAnsi(pointer);
             return body;
         }
+
+        public void WritePactFile(string directory) => PactFileWriter.WritePactFile(this.pact, directory);
     }
 }

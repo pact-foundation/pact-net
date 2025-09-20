@@ -1,6 +1,6 @@
 ﻿using PactNet.Exceptions;
 
-namespace PactNet.Drivers
+namespace PactNet.Interop
 {
     /// <summary>
     /// Extensions for checking interop action success
@@ -12,7 +12,7 @@ namespace PactNet.Drivers
         /// </summary>
         /// <param name="success">Action succeeded</param>
         /// <exception cref="PactFailureException">Action failed</exception>
-        public static void CheckInteropSuccess(this bool success)
+        public static void ThrowExceptionOnFailure(this bool success)
         {
             if (!success)
             {

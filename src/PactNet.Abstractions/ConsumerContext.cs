@@ -5,11 +5,11 @@ namespace PactNet
     /// <summary>
     /// Context for consumer interaction verification
     /// </summary>
-    internal class ConsumerContext : IConsumerContext
+    public class ConsumerContext : IConsumerContext
     {
         /// <summary>
         /// URI for the mock server
         /// </summary>
-        public Uri MockServerUri { get; internal set; }
+        public Uri MockServerUri { get; set; }
     }
 }

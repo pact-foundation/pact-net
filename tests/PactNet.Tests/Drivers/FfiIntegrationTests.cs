@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using PactNet.Drivers;
 using PactNet.Interop;
+using PactNet.Interop.Drivers;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -23,7 +24,7 @@ namespace PactNet.Tests.Drivers
         {
             this.output = output;
 
-            NativeInterop.LogToBuffer(LevelFilter.Trace);
+            PactLogLevel.Trace.InitialiseLogging();
         }
 
         [Fact]
@@ -36,7 +37,7 @@ namespace PactNet.Tests.Drivers
                 IHttpPactDriver pact = driver.NewHttpPact("NativeDriverTests-Consumer-V3",
                                                           "NativeDriverTests-Provider",
                                                           PactSpecification.V3);
-            
+
                 IHttpInteractionDriver interaction = pact.NewHttpInteraction("a sample interaction");
 
                 interaction.Given("provider state");

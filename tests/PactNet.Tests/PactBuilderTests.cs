@@ -5,6 +5,7 @@ using Moq;
 using PactNet.Drivers;
 using PactNet.Exceptions;
 using PactNet.Infrastructure.Outputters;
+using PactNet.Interop.Drivers;
 using Xunit;
 
 namespace PactNet.Tests
@@ -32,7 +33,7 @@ namespace PactNet.Tests
             this.fixture = new Fixture();
             var customization = new SupportMutableValueTypesCustomization();
             customization.Customize(this.fixture);
-            
+
             this.serverUri = this.fixture.Create<Uri>();
             this.config = new PactConfig
             {

@@ -1,0 +1,5 @@
+﻿[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("PactNet")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("PactNet.Extensions.Grpc")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("PactNet.Tests")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("PactNet.Extensions.Grpc.Tests")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("DynamicProxyGenAssembly2")]
