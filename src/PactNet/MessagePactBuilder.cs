@@ -73,5 +73,13 @@ namespace PactNet
             this.driver.WithMessagePactMetadata(@namespace, name, value);
             return this;
         }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            this.driver.Dispose();
+        }
     }
 }

@@ -1,9 +1,18 @@
+using System;
+
 namespace PactNet
 {
     /// <summary>
+    /// Message Pact Builder
+    /// </summary>
+    public interface IMessagePactBuilder : IDisposable
+    {
+    }
+
+    /// <summary>
     /// Message pact v3 Builder
     /// </summary>
-    public interface IMessagePactBuilderV3
+    public interface IMessagePactBuilderV3 : IMessagePactBuilder
     {
         /// <summary>
         /// Add a new message to the pact
@@ -25,7 +34,7 @@ namespace PactNet
     /// <summary>
     /// Message pact v4 Builder
     /// </summary>
-    public interface IMessagePactBuilderV4
+    public interface IMessagePactBuilderV4 : IMessagePactBuilder
     {
         /// <summary>
         /// Add a new message to the pact

@@ -1,4 +1,5 @@
-﻿using PactNet.Interop;
+﻿using System;
+using PactNet.Interop;
 
 namespace PactNet.Drivers
 {
@@ -37,5 +38,30 @@ namespace PactNet.Drivers
         /// <param name="value">the value of the parameter</param>
         public void WithMessagePactMetadata(string @namespace, string name, string value)
             => NativeInterop.WithMessagePactMetadata(this.pact, @namespace, name, value);
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            this.ReleaseUnmanagedResources();
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Allows an object to try to free resources and perform other cleanup operations before it is reclaimed by garbage collection.
+        /// </summary>
+        ~MessagePactDriver()
+        {
+            this.ReleaseUnmanagedResources();
+        }
+
+        /// <summary>
+        /// Release unmanaged resources
+        /// </summary>
+        private void ReleaseUnmanagedResources()
+        {
+            NativeInterop.FreeMessagePact(this.pact);
+        }
     }
 }
