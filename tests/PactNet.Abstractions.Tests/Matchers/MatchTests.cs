@@ -167,6 +167,23 @@ namespace PactNet.Abstractions.Tests.Matchers
         }
 
         [Fact]
+        public void ArrayContainsMatcher_WhenCalled_ReturnsMatcher()
+        {
+            // Arrange
+            var example = new[]
+            {
+                "test1",
+                "test2",
+            };
+
+            // Act
+            var matcher = Match.ArrayContains(example);
+
+            // Assert
+            matcher.Should().BeEquivalentTo(new ArrayContainsMatcher(example));
+        }
+
+        [Fact]
         public void ComposingTwoTypeMatchers_WhenCalled_ReturnsAllMatchers()
         {
             const int example = 22;
@@ -200,7 +217,7 @@ namespace PactNet.Abstractions.Tests.Matchers
             };
 
             IMatcher matcher = Match.MinType(expected, 2);
-            
+
             object[] value = matcher.Value as object[];
             value.First().Should().BeEquivalentTo(expected);
         }

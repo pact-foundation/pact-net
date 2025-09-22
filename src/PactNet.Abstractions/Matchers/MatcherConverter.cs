@@ -52,6 +52,9 @@ namespace PactNet.Matchers
                 case TypeMatcher matcher:
                     JsonSerializer.Serialize(writer, matcher, options);
                     break;
+                case ArrayContainsMatcher matcher:
+                    JsonSerializer.Serialize(writer, matcher, options);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException($"Unsupported matcher: {value.GetType()}");
             }
