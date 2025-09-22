@@ -177,6 +177,20 @@ namespace PactNet.Tests.Verifier
                                      Times.Never);
         }
 
+        [Fact]
+        public void NoPactsIsError_WhenTrue_SetsNoPactsIsErrorTrue()
+        {
+            this.options.NoPactsIsError(true);
+            this.mockProvider.Verify(p => p.SetNoPactsIsError(true));
+        }
+
+        [Fact]
+        public void NoPactsIsError_WhenFalse_SetsNoPactsIsErrorFalse()
+        {
+            this.options.NoPactsIsError(false);
+            this.mockProvider.Verify(p => p.SetNoPactsIsError(false));
+        }
+
         private void Verify(string username = null,
                             string password = null,
                             string token = null,
