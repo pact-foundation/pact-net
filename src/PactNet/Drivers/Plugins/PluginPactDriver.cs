@@ -27,7 +27,7 @@ namespace PactNet.Drivers.Plugins
         public IPluginInteractionDriver NewSyncInteraction(string description)
         {
             InteractionHandle interaction = NativeInterop.NewSyncMessageInteraction(this.pact, description);
-            return new PluginInteractionDriver(this.pact, interaction);
+            return new PluginInteractionDriver(interaction);
         }
 
         /// <summary>

@@ -8,17 +8,14 @@ namespace PactNet.Drivers.Plugins
     /// </summary>
     internal class PluginInteractionDriver : IPluginInteractionDriver
     {
-        private readonly PactHandle pact;
         private readonly InteractionHandle interaction;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="PluginInteractionDriver"/> class.
         /// </summary>
-        /// <param name="pact">Pact handle</param>
         /// <param name="interaction">Interaction handle</param>
-        public PluginInteractionDriver(PactHandle pact, InteractionHandle interaction)
+        public PluginInteractionDriver(InteractionHandle interaction)
         {
-            this.pact = pact;
             this.interaction = interaction;
         }
 

@@ -8,17 +8,14 @@ namespace PactNet.Drivers.Http
     /// </summary>
     internal class HttpInteractionDriver : IHttpInteractionDriver
     {
-        private readonly PactHandle pact;
         private readonly InteractionHandle interaction;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="HttpInteractionDriver"/> class.
         /// </summary>
-        /// <param name="pact">Pact handle</param>
         /// <param name="interaction">Interaction handle</param>
-        internal HttpInteractionDriver(PactHandle pact, InteractionHandle interaction)
+        internal HttpInteractionDriver(InteractionHandle interaction)
         {
-            this.pact = pact;
             this.interaction = interaction;
         }
 
