@@ -1,11 +1,12 @@
 ﻿using PactNet.Drivers.Http;
 using PactNet.Drivers.Message;
+using PactNet.Drivers.Plugins;
 using PactNet.Interop;
 
 namespace PactNet.Drivers
 {
     /// <summary>
-    /// Driver for creating a new pact and 
+    /// Driver for creating a new pact and
     /// </summary>
     internal interface IPactDriver
     {
@@ -32,5 +33,16 @@ namespace PactNet.Drivers
         /// </summary>
         /// <returns>Logs</returns>
         string DriverLogs();
+
+        /// <summary>
+        /// Create a new plugin pact
+        /// </summary>
+        /// <param name="consumerName">Consumer name</param>
+        /// <param name="providerName">Provider name</param>
+        /// <param name="pluginName">Plugin name</param>
+        /// <param name="pluginVersion">Plugin version</param>
+        /// <param name="version">Specification version</param>
+        /// <returns>Plugin pact driver</returns>
+        IPluginPactDriver NewPluginPact(string consumerName, string providerName, string pluginName, string pluginVersion, PactSpecification version);
     }
 }

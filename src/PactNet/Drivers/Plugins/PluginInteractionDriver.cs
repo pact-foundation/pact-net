@@ -1,4 +1,6 @@
-﻿using PactNet.Exceptions;
+﻿using System.Collections.Generic;
+using System.Text.Json;
+using PactNet.Exceptions;
 using PactNet.Interop;
 
 namespace PactNet.Drivers.Plugins
@@ -36,13 +38,13 @@ namespace PactNet.Drivers.Plugins
             => NativeInterop.GivenWithParam(this.interaction, description, name, value).CheckInteropSuccess();
 
         /// <summary>
-        /// Add a plugin interaction content
+        /// Add plugin interaction content
         /// </summary>
         /// <param name="contentType">Content type</param>
-        /// <param name="content">Content</param>
-        public void WithContent(string contentType, string content)
+        /// <param name="content">A dictionary containing the plugin content.</param>
+        public void WithContent(string contentType, Dictionary<string, object> content)
         {
-            uint code = NativeInterop.InteractionContents(this.interaction, InteractionPart.Request, contentType, content);
+            uint code = NativeInterop.InteractionContents(this.interaction, InteractionPart.Request, contentType,  JsonSerializer.Serialize(content));
 
             if (code != 0)
             {

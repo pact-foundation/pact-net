@@ -1,9 +1,11 @@
-﻿namespace PactNet.Drivers.Plugins
+﻿using System;
+
+namespace PactNet.Drivers.Plugins
 {
     /// <summary>
     /// Driver for plugin-based pacts
     /// </summary>
-    internal interface IPluginPactDriver : ICompletedPactDriver
+    internal interface IPluginPactDriver : ICompletedPactDriver, IDisposable
     {
         /// <summary>
         /// Create a new sync interaction on the current pact

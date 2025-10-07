@@ -1,4 +1,6 @@
-﻿namespace PactNet.Drivers.Plugins
+﻿using System.Collections.Generic;
+
+namespace PactNet.Drivers.Plugins
 {
     /// <summary>
     /// Driver for plugin interactions
@@ -9,7 +11,7 @@
         /// Add a plugin interaction content
         /// </summary>
         /// <param name="contentType">Content type</param>
-        /// <param name="content">Content</param>
-        void WithContent(string contentType, string content);
+        /// <param name="content">A dictionary containing the plugin content.</param>
+        void WithContent(string contentType, Dictionary<string, object> content);
     }
 }
