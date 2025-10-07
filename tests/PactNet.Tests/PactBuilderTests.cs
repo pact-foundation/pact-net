@@ -33,7 +33,7 @@ namespace PactNet.Tests
             this.fixture = new Fixture();
             var customization = new SupportMutableValueTypesCustomization();
             customization.Customize(this.fixture);
-            
+
             this.serverUri = this.fixture.Create<Uri>();
             this.config = new PactConfig
             {
@@ -41,7 +41,7 @@ namespace PactNet.Tests
             };
 
             // set some default mock setups
-            this.mockDriver.Setup(s => s.CreateMockServer("127.0.0.1", null, false)).Returns(this.mockServer.Object);
+            this.mockDriver.Setup(s => s.CreateMockServer("127.0.0.1", null, false, "http")).Returns(this.mockServer.Object);
             this.mockDriver.Setup(s => s.NewHttpInteraction(It.IsAny<string>())).Returns(this.mockInteractions.Object);
             this.mockDriver.Setup(s => s.WritePactFile(this.config.PactDir));
 
@@ -68,14 +68,14 @@ namespace PactNet.Tests
         {
             this.builder.Verify(Success);
 
-            this.mockDriver.Verify(d => d.CreateMockServer("127.0.0.1", null, false));
+            this.mockDriver.Verify(d => d.CreateMockServer("127.0.0.1", null, false, "http"));
         }
 
         [Fact]
         public void Verify_ErrorStartingMockServer_ThrowsInvalidOperationException()
         {
             this.mockDriver
-                .Setup(s => s.CreateMockServer(It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<bool>()))
+                .Setup(s => s.CreateMockServer(It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<bool>(), It.IsAny<string>()))
                 .Throws<InvalidOperationException>();
 
             Action action = () => this.builder.Verify(Success);
