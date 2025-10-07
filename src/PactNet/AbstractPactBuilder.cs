@@ -106,7 +106,7 @@ internal abstract class AbstractPactBuilder : IPactBuilder
 
         if (string.IsNullOrWhiteSpace(errors) || errors == "[]")
         {
-            this.pact.WritePactFile(this.config.PactDir);
+            this.pact.WritePactFile(mockServer.Port, this.config.PactDir);
             return;
         }
 

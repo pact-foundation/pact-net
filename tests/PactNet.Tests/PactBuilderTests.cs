@@ -12,6 +12,7 @@ namespace PactNet.Tests
 {
     public class PactBuilderTests
     {
+        private const int MockServerPort = 5000;
         private readonly PactBuilder builder;
 
         private readonly Mock<IHttpPactDriver> mockDriver;
@@ -28,6 +29,7 @@ namespace PactNet.Tests
             this.mockDriver = new Mock<IHttpPactDriver>(MockBehavior.Strict);
             this.mockInteractions = new Mock<IHttpInteractionDriver>(MockBehavior.Strict);
             this.mockServer = new Mock<IMockServerDriver>(MockBehavior.Strict);
+            this.mockServer.Setup(s => s.Port).Returns(MockServerPort);
             this.mockOutput = new Mock<IOutput>();
 
             this.fixture = new Fixture();
@@ -43,7 +45,7 @@ namespace PactNet.Tests
             // set some default mock setups
             this.mockDriver.Setup(s => s.CreateMockServer("127.0.0.1", null, false, "http")).Returns(this.mockServer.Object);
             this.mockDriver.Setup(s => s.NewHttpInteraction(It.IsAny<string>())).Returns(this.mockInteractions.Object);
-            this.mockDriver.Setup(s => s.WritePactFile(this.config.PactDir));
+            this.mockDriver.Setup(s => s.WritePactFile(MockServerPort, this.config.PactDir));
 
             this.mockServer.Setup(s => s.Uri).Returns(this.serverUri);
             this.mockServer.Setup(s => s.MockServerLogs()).Returns(string.Empty);
@@ -107,7 +109,7 @@ namespace PactNet.Tests
         {
             this.builder.Verify(Success);
 
-            this.mockDriver.Verify(s => s.WritePactFile(this.config.PactDir));
+            this.mockDriver.Verify(s => s.WritePactFile(MockServerPort, this.config.PactDir));
         }
 
         [Fact]
@@ -122,7 +124,7 @@ namespace PactNet.Tests
         public void Verify_FailedToWritePactFile_ThrowsInvalidOperationException()
         {
             this.mockDriver
-                .Setup(s => s.WritePactFile(It.IsAny<string>()))
+                .Setup(s => s.WritePactFile(It.IsAny<int>(), It.IsAny<string>()))
                 .Throws<InvalidOperationException>();
 
             Action action = () => this.builder.Verify(Success);

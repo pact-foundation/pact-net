@@ -30,6 +30,9 @@ namespace PactNet.Interop
         [DllImport(DllName, EntryPoint = "pactffi_pact_handle_write_file")]
         public static extern int WritePactFile(PactHandle pact, string directory, bool overwrite);
 
+        [DllImport(DllName, EntryPoint = "pactffi_write_pact_file")]
+        public static extern int WritePactFileForPort(int port, string directory, bool overwrite);
+
         [DllImport(DllName, EntryPoint = "pactffi_fetch_log_buffer")]
         public static extern string FetchLogBuffer(string logId);
 

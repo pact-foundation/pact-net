@@ -16,6 +16,13 @@ namespace PactNet.Drivers
         void WritePactFile(string directory);
 
         /// <summary>
+        /// Write the pact file to disk
+        /// </summary>
+        /// <param name="port">Port of the mock server</param>
+        /// <param name="directory">Directory of the pact file</param>
+        void WritePactFile(int port, string directory);
+
+        /// <summary>
         /// Create the mock server for the current pact
         /// </summary>
         /// <param name="host">Host for the mock server</param>

@@ -28,7 +28,22 @@ namespace PactNet.Drivers
         public void WritePactFile(string directory)
         {
             var result = NativeInterop.WritePactFile(this.pact, directory, false);
+            ThrowExceptionOnWritePactFileFailure(result);
+        }
 
+        /// <summary>
+        /// Write the pact file to disk
+        /// </summary>
+        /// <param name="port">Port of the mock server</param>
+        /// <param name="directory">Directory of the pact file</param>
+        public void WritePactFile(int port, string directory)
+        {
+            var result = NativeInterop.WritePactFileForPort(port, directory, false);
+            ThrowExceptionOnWritePactFileFailure(result);
+        }
+
+        private static void ThrowExceptionOnWritePactFileFailure(int result)
+        {
             if (result != 0)
             {
                 throw result switch
