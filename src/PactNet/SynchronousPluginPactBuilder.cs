@@ -1,3 +1,4 @@
+using PactNet.Drivers;
 using PactNet.Drivers.Plugins;
 using PactNet.Models;
 
@@ -15,6 +16,11 @@ internal class SynchronousPluginPactBuilder(
     {
         return new SynchronousPluginRequestBuilder(pact.NewSyncInteraction(description));
     }
+
+    /// <summary>
+    /// Driver for writing completed pact files containing interactions
+    /// </summary>
+    public ICompletedPactDriver CompletedPactDriver { get { return pact; } }
 
     public void Dispose() => pact?.Dispose();
 }

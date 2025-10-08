@@ -9,6 +9,7 @@ namespace PactNet
     internal class PactBuilder : AbstractPactBuilder, IPactBuilderV2, IPactBuilderV3, IPactBuilderV4
     {
         private readonly IHttpPactDriver pact;
+        private readonly PactConfig config;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="PactBuilder"/> class.
@@ -21,6 +22,7 @@ namespace PactNet
             IPAddress host = IPAddress.Loopback) : base(pact, config, port, host, "http")
         {
             this.pact = pact;
+            this.config = config;
         }
 
         /// <summary>

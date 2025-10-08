@@ -5,7 +5,7 @@ namespace PactNet.Drivers
     /// <summary>
     /// Driver for writing completed pact files containing interactions
     /// </summary>
-    internal interface ICompletedPactDriver
+    public interface ICompletedPactDriver
     {
         /// <summary>
         /// Write the pact file to disk

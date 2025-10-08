@@ -7,12 +7,15 @@ using PactNet.Models;
 
 namespace PactNet;
 
-internal abstract class AbstractPactBuilder : IPactBuilder
+/// <summary>
+/// Abstract pact builder that contains shared functionality of different types of pact interactions.
+/// </summary>
+public abstract class AbstractPactBuilder : IPactBuilder
 {
     private readonly ICompletedPactDriver pact;
-    protected readonly PactConfig config;
-    protected readonly int? port;
-    protected readonly IPAddress host;
+    private readonly PactConfig config;
+    private readonly int? port;
+    private readonly IPAddress host;
     private readonly string transport;
 
     /// <summary>
@@ -38,7 +41,7 @@ internal abstract class AbstractPactBuilder : IPactBuilder
     /// </summary>
     /// <param name="interact">Action to perform the real interactions against the mock driver</param>
     /// <exception cref="PactFailureException">Failed to verify the interactions</exception>
-    public void Verify(Action<IConsumerContext> interact)
+    public virtual void Verify(Action<IConsumerContext> interact)
     {
         Guard.NotNull(interact, nameof(interact));
 
@@ -61,7 +64,7 @@ internal abstract class AbstractPactBuilder : IPactBuilder
     /// </summary>
     /// <param name="interact">Action to perform the real interactions against the mock driver</param>
     /// <exception cref="PactFailureException">Failed to verify the interactions</exception>
-    public async Task VerifyAsync(Func<IConsumerContext, Task> interact)
+    public virtual async Task VerifyAsync(Func<IConsumerContext, Task> interact)
     {
         Guard.NotNull(interact, nameof(interact));
 
