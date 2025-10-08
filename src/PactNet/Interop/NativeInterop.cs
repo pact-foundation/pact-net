@@ -21,9 +21,6 @@ namespace PactNet.Interop
         [DllImport(DllName, EntryPoint = "pactffi_mock_server_mismatches")]
         public static extern IntPtr MockServerMismatches(int mockServerPort);
 
-        [DllImport(DllName, EntryPoint = "pactffi_mock_server_logs")]
-        public static extern IntPtr MockServerLogs(int mockServerPort);
-
         [DllImport(DllName, EntryPoint = "pactffi_cleanup_mock_server")]
         public static extern bool CleanupMockServer(int mockServerPort);
 

@@ -53,12 +53,9 @@ namespace PactNet.Drivers
         /// <returns>Log string</returns>
         public string MockServerLogs()
         {
-            IntPtr logsPtr = NativeInterop.MockServerLogs(this.Port);
-
-            return logsPtr == IntPtr.Zero
-                       ? "ERROR: Unable to retrieve mock server logs"
-                       : Marshal.PtrToStringAnsi(logsPtr);
+            return NativeInterop.FetchLogBuffer(null);
         }
+
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
