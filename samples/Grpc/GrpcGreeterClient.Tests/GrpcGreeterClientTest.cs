@@ -53,11 +53,7 @@ namespace GrpcGreeterClient.Tests
 
             this.pact.UponReceiving("A greeting request to say hello.").WithContent("application/grpc", content);
 
-            Assert.Throws<PactFailureException>(() =>
-                this.pact.Verify(_ =>
-                {
-                    // No grpc call here results in failure.
-                }));
+            this.pact.Invoking(p => p.Verify(_ => { })).Should().Throw<PactFailureException>();
         }
 
         [Fact]

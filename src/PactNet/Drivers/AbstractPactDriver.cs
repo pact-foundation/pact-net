@@ -27,7 +27,7 @@ namespace PactNet.Drivers
         /// <exception cref="InvalidOperationException">Failed to write pact file</exception>
         public void WritePactFile(string directory)
         {
-            var result = NativeInterop.WritePactFile(this.pact, directory, false);
+            int result = NativeInterop.WritePactFile(this.pact, directory, false);
             ThrowExceptionOnWritePactFileFailure(result);
         }
 
@@ -38,7 +38,7 @@ namespace PactNet.Drivers
         /// <param name="directory">Directory of the pact file</param>
         public void WritePactFile(int port, string directory)
         {
-            var result = NativeInterop.WritePactFileForPort(port, directory, false);
+            int result = NativeInterop.WritePactFileForPort(port, directory, false);
             ThrowExceptionOnWritePactFileFailure(result);
         }
 

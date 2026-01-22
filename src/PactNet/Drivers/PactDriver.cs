@@ -48,8 +48,7 @@ namespace PactNet.Drivers
         /// <returns>Plugin pact driver</returns>
         public IPluginPactDriver NewPluginPact(string consumerName, string providerName, string pluginName, string pluginVersion, PactSpecification version)
         {
-            PactHandle pact = NativeInterop.NewPact(consumerName, providerName);
-            NativeInterop.WithSpecification(pact, version).CheckInteropSuccess();
+            PactHandle pact = CreatePactHandle(consumerName, providerName, version);
 
             uint code = NativeInterop.UsingPlugin(pact, pluginName, pluginVersion);
 

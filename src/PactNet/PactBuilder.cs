@@ -18,8 +18,11 @@ namespace PactNet
         /// <param name="config">Pact config</param>
         /// <param name="port">Optional port, otherwise one is dynamically allocated</param>
         /// <param name="host">Optional host, otherwise loopback is used</param>
-        internal PactBuilder(IHttpPactDriver pact, PactConfig config, int? port = null,
-            IPAddress host = IPAddress.Loopback) : base(pact, config, port, host, "http")
+        internal PactBuilder(IHttpPactDriver pact,
+                             PactConfig config,
+                             int? port = null,
+                             IPAddress host = IPAddress.Loopback)
+            : base(pact, config, port, host, "http")
         {
             this.pact = pact;
             this.config = config;

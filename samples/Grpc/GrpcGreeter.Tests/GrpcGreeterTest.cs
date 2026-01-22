@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using FluentAssertions;
 using PactNet;
 using PactNet.Exceptions;
 using PactNet.Infrastructure.Outputters;
@@ -28,10 +29,11 @@ namespace GrpcGreeter.Tests
         [Fact]
         public void VerificationThrowsExceptionWhenNoRunningProvider()
         {
-            Assert.Throws<PactVerificationFailedException>(() => verifier
+            var source = this.verifier
                 .WithHttpEndpoint(new Uri("http://localhost:5060"))
-                .WithFileSource(new FileInfo(pactPath))
-                .Verify());
+                .WithFileSource(new FileInfo(this.pactPath));
+
+            source.Invoking(s => s.Verify()).Should().Throw<PactVerificationFailedException>();
         }
 
         [Fact]

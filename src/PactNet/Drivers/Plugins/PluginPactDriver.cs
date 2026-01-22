@@ -6,7 +6,7 @@ namespace PactNet.Drivers.Plugins
     /// <summary>
     /// Driver for plugin-based pacts
     /// </summary>
-    internal class PluginPactDriver : AbstractPactDriver, IPluginPactDriver, IDisposable
+    internal class PluginPactDriver : AbstractPactDriver, IPluginPactDriver
     {
         /// <summary>
         /// Initialize a new instance of the <see cref="PluginPactDriver"/> class.

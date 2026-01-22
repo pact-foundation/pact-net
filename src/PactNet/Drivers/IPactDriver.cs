@@ -25,14 +25,8 @@ namespace PactNet.Drivers
         /// <param name="consumerName">Consumer name</param>
         /// <param name="providerName">Provider name</param>
         /// <param name="version">Specification version</param>
-        /// <returns>Message pact driver driver</returns>
+        /// <returns>Message pact driver</returns>
         IMessagePactDriver NewMessagePact(string consumerName, string providerName, PactSpecification version);
-
-        /// <summary>
-        /// Get the driver logs
-        /// </summary>
-        /// <returns>Logs</returns>
-        string DriverLogs();
 
         /// <summary>
         /// Create a new plugin pact
@@ -44,5 +38,11 @@ namespace PactNet.Drivers
         /// <param name="version">Specification version</param>
         /// <returns>Plugin pact driver</returns>
         IPluginPactDriver NewPluginPact(string consumerName, string providerName, string pluginName, string pluginVersion, PactSpecification version);
+
+        /// <summary>
+        /// Get the driver logs
+        /// </summary>
+        /// <returns>Logs</returns>
+        string DriverLogs();
     }
 }
