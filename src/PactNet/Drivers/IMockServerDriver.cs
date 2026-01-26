@@ -5,7 +5,7 @@ namespace PactNet.Drivers
     /// <summary>
     /// Driver for managing a HTTP mock server
     /// </summary>
-    public interface IMockServerDriver : IDisposable
+    internal interface IMockServerDriver : IDisposable
     {
         /// <summary>
         /// Mock server port

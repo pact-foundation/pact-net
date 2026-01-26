@@ -10,7 +10,7 @@ namespace PactNet
     /// <summary>
     /// Abstract pact builder that contains shared functionality of different types of pact interactions.
     /// </summary>
-    public abstract class AbstractPactBuilder : IPactBuilder
+    internal abstract class AbstractPactBuilder : IPactBuilder
     {
         private readonly ICompletedPactDriver pact;
         private readonly PactConfig config;

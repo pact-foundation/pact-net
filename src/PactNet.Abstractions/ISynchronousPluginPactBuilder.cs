@@ -1,5 +1,4 @@
 using System;
-using PactNet.Drivers;
 
 namespace PactNet
 {
@@ -14,10 +13,5 @@ namespace PactNet
         /// <param name="description">Interaction description</param>
         /// <returns>Fluent builder</returns>
         ISynchronousPluginRequestBuilderV4 UponReceiving(string description);
-
-        /// <summary>
-        /// Driver for writing completed pact files containing interactions
-        /// </summary>
-        ICompletedPactDriver CompletedPactDriver { get; }
     }
 }
