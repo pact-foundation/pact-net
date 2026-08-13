@@ -11,7 +11,7 @@ namespace PactNet.Tests
 {
     public class MessageBuilderTests
     {
-        private readonly IMessageBuilderV3 builder;
+        private readonly IMessageBuilderV4 builder;
 
         private readonly Mock<IMessageInteractionDriver> mockDriver;
         
@@ -64,6 +64,44 @@ namespace PactNet.Tests
             this.builder.WithMetadata(expectedKey, expectedValue);
 
             this.mockDriver.Verify(s => s.WithMetadata(expectedKey, expectedValue));
+        }
+
+        [Fact]
+        public void WithComment_WhenCalled_AddsComment()
+        {
+            var expectedKey = "testKey";
+            var expectedValue = "testValue";
+
+            this.builder.WithComment(expectedKey, expectedValue);
+
+            this.mockDriver.Verify(s => s.WithComment(expectedKey, expectedValue));
+        }
+
+        [Fact]
+        public void WithTextComment_WhenCalled_AddsTextComment()
+        {
+            var expectedComment = "This is a test comment";
+
+            this.builder.WithTextComment(expectedComment);
+
+            this.mockDriver.Verify(s => s.WithTextComment(expectedComment));
+        }
+
+        [Fact]
+        public void WithAsyncApiReference_WhenCalled_AddsAsyncApiReference()
+        {
+            var expectedOperationId = "sendEmailMessage";
+
+            this.builder.WithAsyncApiReference(expectedOperationId);
+
+            this.mockDriver.Verify(s => s.WithComment(
+                "references",
+                It.Is<string>(json =>
+                    json.Contains("AsyncAPI") &&
+                    json.Contains("operationId") &&
+                    json.Contains(expectedOperationId)
+                )
+            ));
         }
 
         [Fact]

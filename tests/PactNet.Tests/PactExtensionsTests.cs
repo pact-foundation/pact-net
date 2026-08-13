@@ -231,6 +231,26 @@ namespace PactNet.Tests
         }
 
         [Fact]
+        public void WithMessageInteractions_V4_WithAsyncApiReferenceAndComments_CreatesExpectedPactFile()
+        {
+            IPactV4 messagePact = Pact.V4("PactExtensionsTests-AsyncAPI-Consumer-V4", "PactExtensionsTests-AsyncAPI-Provider", config);
+            IMessagePactBuilderV4 builder = messagePact.WithMessageInteractions();
+
+            builder
+               .ExpectsToReceive("test event")
+               .WithTextComment("This interaction is documented in AsyncAPI spec")
+               .WithComment("testCommentKey", "testCommentValue")
+               .WithAsyncApiReference("someTestEvent")
+               .WithJsonContent(new { OrderId = 123, Status = "created" })
+               .Verify<dynamic>(_ => { });
+
+            string actualPact = File.ReadAllText("PactExtensionsTests-AsyncAPI-Consumer-V4-PactExtensionsTests-AsyncAPI-Provider.json").TrimEnd();
+            string expectedPact = File.ReadAllText("data/v4-message-asyncapi-consumer-integration.json").TrimEnd();
+
+            actualPact.Should().Be(expectedPact);
+        }
+
+        [Fact]
         public async Task CombinedHttpAndMessageInteractions_v4_CreatesExpectedPactFile()
         {
             IPactV4 pact = Pact.V4("PactExtensionsTests-Combined-V4", "PactExtensionsTests-Provider", config);

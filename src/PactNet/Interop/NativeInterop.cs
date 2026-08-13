@@ -91,7 +91,13 @@ namespace PactNet.Interop
         [DllImport(DllName, EntryPoint = "pactffi_message_reify")]
         public static extern IntPtr MessageReify(InteractionHandle message);
 
-        #endregion Http Interop Support
+        [DllImport(DllName, EntryPoint = "pactffi_set_comment")]
+        public static extern void SetComment(InteractionHandle interaction, string key, string value);
+
+        [DllImport(DllName, EntryPoint = "pactffi_add_text_comment")]
+        public static extern void AddTextComment(InteractionHandle interaction, string comment);
+
+        #endregion Messaging Interop Support
 
         #region Verifier Support
 

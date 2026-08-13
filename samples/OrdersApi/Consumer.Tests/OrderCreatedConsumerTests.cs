@@ -43,6 +43,7 @@ namespace Consumer.Tests
         {
             await this.pact
                       .ExpectsToReceive("an event indicating that an order has been created")
+                      .WithAsyncApiReference("orderCreated")
                       .WithJsonContent(new
                       {
                           Id = Match.Integer(1)

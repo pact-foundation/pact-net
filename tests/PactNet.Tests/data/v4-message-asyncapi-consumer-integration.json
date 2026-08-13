@@ -1,0 +1,43 @@
+{
+  "consumer": {
+    "name": "PactExtensionsTests-AsyncAPI-Consumer-V4"
+  },
+  "interactions": [
+    {
+      "comments": {
+        "references": {
+          "AsyncAPI": {
+            "operationId": "someTestEvent"
+          }
+        },
+        "testCommentKey": "testCommentValue",
+        "text": [
+          "This interaction is documented in AsyncAPI spec"
+        ]
+      },
+      "contents": {
+        "content": {
+          "orderId": 123,
+          "status": "created"
+        },
+        "contentType": "application/json",
+        "encoded": false
+      },
+      "description": "test event",
+      "pending": false,
+      "type": "Asynchronous/Messages"
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "ffi": "0.4.27",
+      "models": "1.2.8"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  },
+  "provider": {
+    "name": "PactExtensionsTests-AsyncAPI-Provider"
+  }
+}

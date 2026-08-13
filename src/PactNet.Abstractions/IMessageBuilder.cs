@@ -76,6 +76,32 @@ namespace PactNet
         IMessageBuilderV4 WithMetadata(string key, string value);
 
         /// <summary>
+        /// Add a comment with a key-value pair to the interaction
+        /// </summary>
+        /// <param name="key">the comment key</param>
+        /// <param name="value">the comment value</param>
+        /// <returns>Fluent builder</returns>
+        IMessageBuilderV4 WithComment(string key, string value);
+
+        /// <summary>
+        /// Add a text comment to the interaction text comments array
+        /// </summary>
+        /// <param name="comment">the text comment</param>
+        /// <returns>Fluent builder</returns>
+        IMessageBuilderV4 WithTextComment(string comment);
+
+        /// <summary>
+        /// Add an AsyncAPI operation reference to the interaction
+        /// </summary>
+        /// <param name="operationId">the AsyncAPI operation ID</param>
+        /// <returns>Fluent builder</returns>
+        /// <remarks>
+        /// If called multiple times, only the last operationId will be retained.
+        /// For multiple reference types, use WithComment() with a custom JSON structure.
+        /// </remarks>
+        IMessageBuilderV4 WithAsyncApiReference(string operationId);
+
+        /// <summary>
         /// Set message content which is serialised as JSON
         /// </summary>
         /// <param name="body">Message body</param>
