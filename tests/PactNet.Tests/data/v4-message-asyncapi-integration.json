@@ -9,10 +9,7 @@
           "AsyncAPI": {
             "operationId": "sendTestMessage"
           }
-        },
-        "text": [
-          "This is a test comment"
-        ]
+        }
       },
       "contents": {
         "content": {

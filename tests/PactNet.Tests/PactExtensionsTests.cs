@@ -71,6 +71,8 @@ namespace PactNet.Tests
             File.Delete("PactExtensionsTests-Consumer-V3-PactExtensionsTests-Provider.json");
             File.Delete("PactExtensionsTests-Consumer-V4-PactExtensionsTests-Provider.json");
             File.Delete("PactExtensionsTests-Combined-V4-PactExtensionsTests-Provider.json");
+            File.Delete("PactExtensionsTests-AsyncAPI-Consumer-V4-PactExtensionsTests-AsyncAPI-Provider.json");
+            File.Delete("PactExtensionsTests-AsyncAPI-MultiRef-Consumer-V4-PactExtensionsTests-AsyncAPI-MultiRef-Provider.json");
         }
 
         [Fact]
@@ -231,21 +233,38 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void WithMessageInteractions_V4_WithAsyncApiReferenceAndComments_CreatesExpectedPactFile()
+        public void WithMessageInteractions_V4_WithAsyncApiReference_CreatesExpectedPactFile()
         {
             IPactV4 messagePact = Pact.V4("PactExtensionsTests-AsyncAPI-Consumer-V4", "PactExtensionsTests-AsyncAPI-Provider", config);
             IMessagePactBuilderV4 builder = messagePact.WithMessageInteractions();
 
             builder
                .ExpectsToReceive("test event")
-               .WithTextComment("This interaction is documented in AsyncAPI spec")
-               .WithComment("testCommentKey", "testCommentValue")
-               .WithAsyncApiReference("someTestEvent")
+               .WithReference("AsyncAPI", "operationId", "someTestEvent")
                .WithJsonContent(new { OrderId = 123, Status = "created" })
                .Verify<dynamic>(_ => { });
 
             string actualPact = File.ReadAllText("PactExtensionsTests-AsyncAPI-Consumer-V4-PactExtensionsTests-AsyncAPI-Provider.json").TrimEnd();
             string expectedPact = File.ReadAllText("data/v4-message-asyncapi-consumer-integration.json").TrimEnd();
+
+            actualPact.Should().Be(expectedPact);
+        }
+
+        [Fact]
+        public void WithMessageInteractions_V4_WithMultipleAsyncApiReferences_CreatesExpectedPactFile()
+        {
+            IPactV4 messagePact = Pact.V4("PactExtensionsTests-AsyncAPI-MultiRef-Consumer-V4", "PactExtensionsTests-AsyncAPI-MultiRef-Provider", config);
+            IMessagePactBuilderV4 builder = messagePact.WithMessageInteractions();
+
+            builder
+               .ExpectsToReceive("test event with multiple references")
+               .WithReference("AsyncAPI", "operationId", "someTestEvent")
+               .WithReference("AsyncAPI", "channel", "orders/created")
+               .WithJsonContent(new { OrderId = 456, Status = "pending" })
+               .Verify<dynamic>(_ => { });
+
+            string actualPact = File.ReadAllText("PactExtensionsTests-AsyncAPI-MultiRef-Consumer-V4-PactExtensionsTests-AsyncAPI-MultiRef-Provider.json").TrimEnd();
+            string expectedPact = File.ReadAllText("data/v4-message-asyncapi-multiref-integration.json").TrimEnd();
 
             actualPact.Should().Be(expectedPact);
         }

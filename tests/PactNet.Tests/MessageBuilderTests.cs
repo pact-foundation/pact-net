@@ -67,41 +67,42 @@ namespace PactNet.Tests
         }
 
         [Fact]
-        public void WithComment_WhenCalled_AddsComment()
+        public void WithReference_WhenCalled_AddsReference()
         {
-            var expectedKey = "testKey";
-            var expectedValue = "testValue";
+            var expectedGroup = "AsyncAPI";
+            var expectedName = "operationId";
+            var expectedValue = "sendEmailMessage";
 
-            this.builder.WithComment(expectedKey, expectedValue);
-
-            this.mockDriver.Verify(s => s.WithComment(expectedKey, expectedValue));
-        }
-
-        [Fact]
-        public void WithTextComment_WhenCalled_AddsTextComment()
-        {
-            var expectedComment = "This is a test comment";
-
-            this.builder.WithTextComment(expectedComment);
-
-            this.mockDriver.Verify(s => s.WithTextComment(expectedComment));
-        }
-
-        [Fact]
-        public void WithAsyncApiReference_WhenCalled_AddsAsyncApiReference()
-        {
-            var expectedOperationId = "sendEmailMessage";
-
-            this.builder.WithAsyncApiReference(expectedOperationId);
+            this.builder.WithReference(expectedGroup, expectedName, expectedValue);
 
             this.mockDriver.Verify(s => s.WithComment(
                 "references",
                 It.Is<string>(json =>
                     json.Contains("AsyncAPI") &&
                     json.Contains("operationId") &&
-                    json.Contains(expectedOperationId)
+                    json.Contains(expectedValue)
                 )
             ));
+        }
+
+        [Fact]
+        public void WithReference_CalledMultipleTimes_AccumulatesReferences()
+        {
+            this.builder
+                .WithReference("AsyncAPI", "operationId", "sendMessage")
+                .WithReference("AsyncAPI", "channel", "orders/created");
+
+            // Verify last call contains both references
+            this.mockDriver.Verify(s => s.WithComment(
+                "references",
+                It.Is<string>(json =>
+                    json.Contains("AsyncAPI") &&
+                    json.Contains("operationId") &&
+                    json.Contains("channel") &&
+                    json.Contains("sendMessage") &&
+                    json.Contains("orders/created")
+                )
+            ), Times.AtLeastOnce);
         }
 
         [Fact]

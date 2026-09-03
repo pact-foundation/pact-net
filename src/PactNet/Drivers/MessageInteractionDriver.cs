@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using PactNet.Interop;
 
@@ -59,13 +59,6 @@ namespace PactNet.Drivers
         /// <param name="value">the comment value</param>
         public void WithComment(string key, string value)
             => NativeInterop.SetComment(this.interaction, key, value);
-
-        /// <summary>
-        /// Add a text comment to the interaction text comments array
-        /// </summary>
-        /// <param name="comment">the text comment</param>
-        public void WithTextComment(string comment)
-            => NativeInterop.AddTextComment(this.interaction, comment);
 
         /// <summary>
         /// Set the contents of the message

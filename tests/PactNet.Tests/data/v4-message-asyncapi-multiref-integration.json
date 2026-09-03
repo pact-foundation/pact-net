@@ -1,25 +1,26 @@
 {
   "consumer": {
-    "name": "PactExtensionsTests-AsyncAPI-Consumer-V4"
+    "name": "PactExtensionsTests-AsyncAPI-MultiRef-Consumer-V4"
   },
   "interactions": [
     {
       "comments": {
         "references": {
           "AsyncAPI": {
+            "channel": "orders/created",
             "operationId": "someTestEvent"
           }
         }
       },
       "contents": {
         "content": {
-          "orderId": 123,
-          "status": "created"
+          "orderId": 456,
+          "status": "pending"
         },
         "contentType": "application/json",
         "encoded": false
       },
-      "description": "test event",
+      "description": "test event with multiple references",
       "pending": false,
       "type": "Asynchronous/Messages"
     }
@@ -34,6 +35,6 @@
     }
   },
   "provider": {
-    "name": "PactExtensionsTests-AsyncAPI-Provider"
+    "name": "PactExtensionsTests-AsyncAPI-MultiRef-Provider"
   }
 }

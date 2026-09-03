@@ -26,12 +26,6 @@ namespace PactNet.Drivers
         void WithComment(string key, string value);
 
         /// <summary>
-        /// Add a text comment to the interaction text comments array
-        /// </summary>
-        /// <param name="comment">the text comment</param>
-        void WithTextComment(string comment);
-
-        /// <summary>
         /// Set the contents of the message
         /// </summary>
         /// <param name="contentType">the content type</param>

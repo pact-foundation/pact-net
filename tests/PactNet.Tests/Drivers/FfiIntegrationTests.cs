@@ -146,7 +146,6 @@ namespace PactNet.Tests.Drivers
 
                 interaction.ExpectsToReceive("message with AsyncAPI reference");
                 interaction.WithMetadata("foo", "bar");
-                interaction.WithTextComment("This is a test comment");
                 interaction.WithComment("references", @"{""AsyncAPI"":{""operationId"":""sendTestMessage""}}");
                 interaction.WithContents("application/json", @"{""foo"":42}", 0);
 

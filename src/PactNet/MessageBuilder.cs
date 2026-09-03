@@ -14,6 +14,7 @@ namespace PactNet
         private readonly IMessageInteractionDriver driver;
         private readonly PactConfig config;
         private readonly PactSpecification version;
+        private readonly Dictionary<string, Dictionary<string, string>> references = new();
 
         /// <summary>
         /// Initialises a new instance of the <see cref="MessagePactBuilder"/> class.
@@ -67,16 +68,8 @@ namespace PactNet
             => WithMetadata(key, value);
 
         /// <inheritdoc cref="IMessageBuilderV4"/>
-        IMessageBuilderV4 IMessageBuilderV4.WithComment(string key, string value)
-            => WithComment(key, value);
-
-        /// <inheritdoc cref="IMessageBuilderV4"/>
-        IMessageBuilderV4 IMessageBuilderV4.WithTextComment(string comment)
-            => WithTextComment(comment);
-
-        /// <inheritdoc cref="IMessageBuilderV4"/>
-        IMessageBuilderV4 IMessageBuilderV4.WithAsyncApiReference(string operationId)
-            => WithAsyncApiReference(operationId);
+        IMessageBuilderV4 IMessageBuilderV4.WithReference(string group, string name, string value)
+            => WithReference(group, name, value);
 
         /// <inheritdoc cref="IMessageBuilderV4"/>
         IConfiguredMessageVerifier IMessageBuilderV4.WithJsonContent(dynamic content)
@@ -132,43 +125,27 @@ namespace PactNet
         }
 
         /// <summary>
-        /// Add a comment with a key-value pair to the interaction
+        /// Add a reference to an external specification for this interaction
         /// </summary>
-        /// <param name="key">the comment key</param>
-        /// <param name="value">the comment value</param>
-        /// <returns>Fluent builder</returns>
-        internal MessageBuilder WithComment(string key, string value)
-        {
-            this.driver.WithComment(key, value);
-
-            return this;
-        }
-
-        /// <summary>
-        /// Add a text comment to the interaction text comments array
-        /// </summary>
-        /// <param name="comment">the text comment</param>
-        /// <returns>Fluent builder</returns>
-        internal MessageBuilder WithTextComment(string comment)
-        {
-            this.driver.WithTextComment(comment);
-
-            return this;
-        }
-
-        /// <summary>
-        /// Add an AsyncAPI operation reference to the interaction
-        /// </summary>
-        /// <param name="operationId">the AsyncAPI operation ID</param>
+        /// <param name="group">the reference group (e.g., "AsyncAPI")</param>
+        /// <param name="name">the reference name (e.g., "operationId")</param>
+        /// <param name="value">the reference value</param>
         /// <returns>Fluent builder</returns>
         /// <remarks>
-        /// If called multiple times, only the last operationId will be retained.
-        /// For multiple reference types, use WithComment() with a custom JSON structure.
+        /// Multiple references can be added to the same interaction.
+        /// This is useful for linking to AsyncAPI operation IDs.
         /// </remarks>
-        internal MessageBuilder WithAsyncApiReference(string operationId)
+        internal MessageBuilder WithReference(string group, string name, string value)
         {
-            // Create the nested JSON structure: { "AsyncAPI": { "operationId": "..." } }
-            string referencesJson = $"{{\"AsyncAPI\":{{\"operationId\":\"{operationId}\"}}}}";
+            if (!this.references.ContainsKey(group))
+            {
+                this.references[group] = new Dictionary<string, string>();
+            }
+
+            this.references[group][name] = value;
+
+            // Serialize all accumulated references and update the comment
+            string referencesJson = JsonSerializer.Serialize(this.references);
             this.driver.WithComment("references", referencesJson);
 
             return this;
