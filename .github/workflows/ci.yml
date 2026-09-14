@@ -24,26 +24,25 @@ jobs:
         os:
           - windows-latest
           - ubuntu-latest
-          - macos-13
-          - macos-14
+          - macos-15-intel
         include:
           - arch: x64
           - arch: ARM64
-            os: macos-14
+            os: macos-15
           - arch: ARM64
             os: ubuntu-24.04-arm
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: "8.0.x" # runners already have .Net Framework installed as well
 
       - name: Cache FFI dependencies
         id: cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           key: cache-ffi-${{ hashFiles('build/download-native-libs.sh') }}
           enableCrossOsArchive: true
@@ -71,7 +70,7 @@ jobs:
 
       - name: Upload Artifact
         if: matrix.os == 'windows-latest'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nupkgs
           path: ./dist/*.*
@@ -81,10 +80,10 @@ jobs:
     if: github.ref_type == 'tag'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: "8.0.x" # runners already have .Net Framework installed as well
 
@@ -103,6 +102,6 @@ jobs:
         run: dotnet nuget push ./dist/*.nupkg --source $NUGET_FEED --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }}
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           files: dist/*.*
