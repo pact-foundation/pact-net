@@ -43,14 +43,13 @@ namespace PactNet
         }
 
         /// <summary>
-        /// Add plugin interaction content
+        /// Set the plugin interaction contents. This completes the interaction and must be the last call.
         /// </summary>
-        /// <param name="contentType">Content type</param>
+        /// <param name="contentType">Content type understood by the plugin</param>
         /// <param name="content">A dictionary containing the plugin content.</param>
-        public ISynchronousPluginRequestBuilderV4 WithContent(string contentType, Dictionary<string, object> content)
+        public void WithContent(string contentType, Dictionary<string, object> content)
         {
             this.interactionDriver.WithContent(contentType, content);
-            return this;
         }
     }
 }

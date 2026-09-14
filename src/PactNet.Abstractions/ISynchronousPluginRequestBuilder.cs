@@ -23,10 +23,15 @@ namespace PactNet
         ISynchronousPluginRequestBuilderV4 Given(string description, string name, string value);
 
         /// <summary>
-        /// Add plugin interaction content
+        /// Set the plugin interaction contents. This completes the interaction and must be the last call.
         /// </summary>
-        /// <param name="contentType">Content type</param>
+        /// <remarks>
+        /// The plugin interprets the contents and splits them into the request and response(s) itself, so
+        /// this is called exactly once per interaction. Setting the contents again would replace the request
+        /// but append a further response, which is why the builder does not allow a second call.
+        /// </remarks>
+        /// <param name="contentType">Content type understood by the plugin, e.g. <c>application/grpc</c></param>
         /// <param name="content">A dictionary containing the plugin content.</param>
-        ISynchronousPluginRequestBuilderV4 WithContent(string contentType, Dictionary<string, object> content);
+        void WithContent(string contentType, Dictionary<string, object> content);
     }
 }
