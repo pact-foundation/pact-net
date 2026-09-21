@@ -52,7 +52,7 @@ namespace PactNet.Tests.Verifier.Messaging
             Func<Task<dynamic>> factory = () => Task.FromResult<dynamic>(new { Foo = 42 });
             JsonSerializerOptions settings = new JsonSerializerOptions();
 
-            this.scenarios.Add("description", async builder => await builder.WithMetadata(metadata).WithContentAsync(factory, settings));
+            this.scenarios.Add("description", builder => builder.WithMetadata(metadata).WithAsyncContent(factory, settings));
 
             this.scenarios.Scenarios.Should().BeEquivalentTo(new Dictionary<string, Scenario>
             {

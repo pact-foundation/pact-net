@@ -64,22 +64,22 @@ namespace PactNet.Tests.Verifier.Messaging
         }
 
         [Fact]
-        public async Task WithContentAsync_WhenCalled_SetsContent()
+        public void WithAsyncContent_WhenCalled_SetsContent()
         {
             dynamic expected = new { Foo = 42 };
 
-            await this.builder.WithContentAsync(() => Task.FromResult<dynamic>(expected));
+            this.builder.WithAsyncContent(() => Task.FromResult<dynamic>(expected));
             object actual = this.builder.Build().Invoke();
 
             actual.Should().Be(expected);
         }
 
         [Fact]
-        public async Task WithContentAsync_WithCustomSettings_SetsSettings()
+        public void WithAsyncContent_WithCustomSettings_SetsSettings()
         {
             var expected = new JsonSerializerOptions();
 
-            await this.builder.WithContentAsync(() => Task.FromResult<dynamic>(new { Foo = "Bar" }), expected);
+            this.builder.WithAsyncContent(() => Task.FromResult<dynamic>(new { Foo = "Bar" }), expected);
             var actual = this.builder.Build().JsonSettings;
 
             actual.Should().Be(expected);
