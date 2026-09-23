@@ -145,12 +145,14 @@
         },
         "status": 201
       },
+      "transport": "http",
       "type": "Synchronous/HTTP"
     }
   ],
   "metadata": {
     "pactRust": {
       "ffi": "0.4.27",
+      "mockserver": "1.2.11",
       "models": "1.2.8"
     },
     "pactSpecification": {

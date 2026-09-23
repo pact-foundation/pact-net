@@ -131,6 +131,7 @@
   "metadata": {
     "pactRust": {
       "ffi": "0.4.27",
+      "mockserver": "1.2.11",
       "models": "1.2.8"
     },
     "pactSpecification": {

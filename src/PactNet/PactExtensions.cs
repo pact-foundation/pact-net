@@ -1,5 +1,7 @@
-using System;
 using PactNet.Drivers;
+using PactNet.Drivers.Http;
+using PactNet.Drivers.Message;
+using PactNet.Drivers.Plugins;
 using PactNet.Interop;
 using PactNet.Models;
 
@@ -10,9 +12,6 @@ namespace PactNet
     /// </summary>
     public static class PactExtensions
     {
-        private static readonly object LogLocker = new object();
-        private static bool LogInitialised = false;
-
         /// <summary>
         /// Establish a new pact using the native backend
         /// </summary>
@@ -27,7 +26,7 @@ namespace PactNet
         /// </remarks>
         public static IPactBuilderV2 WithHttpInteractions(this IPactV2 pact, int? port = null, IPAddress host = IPAddress.Loopback)
         {
-            InitialiseLogging(pact.Config.LogLevel);
+            pact.Config.LogLevel.LogToBuffer();
 
             IPactDriver driver = new PactDriver();
             IHttpPactDriver httpPact = driver.NewHttpPact(pact.Consumer, pact.Provider, PactSpecification.V2);
@@ -50,7 +49,7 @@ namespace PactNet
         /// </remarks>
         public static IPactBuilderV3 WithHttpInteractions(this IPactV3 pact, int? port = null, IPAddress host = IPAddress.Loopback)
         {
-            InitialiseLogging(pact.Config.LogLevel);
+            pact.Config.LogLevel.LogToBuffer();
 
             IPactDriver driver = new PactDriver();
             IHttpPactDriver httpPact = driver.NewHttpPact(pact.Consumer, pact.Provider, PactSpecification.V3);
@@ -73,7 +72,7 @@ namespace PactNet
         /// </remarks>
         public static IPactBuilderV4 WithHttpInteractions(this IPactV4 pact, int? port = null, IPAddress host = IPAddress.Loopback)
         {
-            InitialiseLogging(pact.Config.LogLevel);
+            pact.Config.LogLevel.LogToBuffer();
 
             IPactDriver driver = new PactDriver();
             IHttpPactDriver httpPact = driver.NewHttpPact(pact.Consumer, pact.Provider, PactSpecification.V4);
@@ -89,7 +88,7 @@ namespace PactNet
         /// <returns>Pact builder</returns>
         public static IMessagePactBuilderV3 WithMessageInteractions(this IPactV3 pact)
         {
-            InitialiseLogging(pact.Config.LogLevel);
+            pact.Config.LogLevel.LogToBuffer();
 
             IPactDriver driver = new PactDriver();
             IMessagePactDriver messagePact = driver.NewMessagePact(pact.Consumer, pact.Provider, PactSpecification.V3);
@@ -105,7 +104,7 @@ namespace PactNet
         /// <returns>Pact builder</returns>
         public static IMessagePactBuilderV4 WithMessageInteractions(this IPactV4 pact)
         {
-            InitialiseLogging(pact.Config.LogLevel);
+            pact.Config.LogLevel.LogToBuffer();
 
             IPactDriver driver = new PactDriver();
             IMessagePactDriver messagePact = driver.NewMessagePact(pact.Consumer, pact.Provider, PactSpecification.V4);
@@ -115,33 +114,28 @@ namespace PactNet
         }
 
         /// <summary>
-        /// Initialise logging in the native library
+        /// Establish a new pact with synchronous plugin interactions.
         /// </summary>
-        /// <param name="level">Log level</param>
-        /// <exception cref="ArgumentOutOfRangeException">Invalid log level</exception>
-        /// <remarks>Logging can only be initialised **once**. Subsequent calls will have no effect</remarks>
-        private static void InitialiseLogging(PactLogLevel level)
+        /// <param name="pact"></param>
+        /// <param name="pluginName">Plugin name</param>
+        /// <param name="pluginVersion">Plugin version</param>
+        /// <param name="transport">The transport to use (i.e. http, https, grpc). Must be a valid UTF-8 NULL-terminated string, or NULL or empty, in which case http will be used.</param>
+        /// <param name="port">Port for the mock server. If null, one will be assigned automatically</param>
+        /// <param name="host">Host for the mock server</param>
+        /// <returns>Synchronous plugin builder</returns>
+        public static ISynchronousPluginPactBuilderV4 WithSynchronousPluginInteractions(this IPactV4 pact,
+            string pluginName,
+            string pluginVersion,
+            string transport = null,
+            int? port = null,
+            IPAddress host = IPAddress.Loopback)
         {
-            lock (LogLocker)
-            {
-                if (LogInitialised)
-                {
-                    return;
-                }
+            pact.Config.LogLevel.LogToBuffer();
 
-                NativeInterop.LogToBuffer(level switch
-                {
-                    PactLogLevel.Trace => LevelFilter.Trace,
-                    PactLogLevel.Debug => LevelFilter.Debug,
-                    PactLogLevel.Information => LevelFilter.Info,
-                    PactLogLevel.Warn => LevelFilter.Warn,
-                    PactLogLevel.Error => LevelFilter.Error,
-                    PactLogLevel.None => LevelFilter.Off,
-                    _ => throw new ArgumentOutOfRangeException(nameof(level), level, "Invalid log level")
-                });
+            IPactDriver driver = new PactDriver();
+            IPluginPactDriver pluginDriver = driver.NewPluginPact(pact.Consumer, pact.Provider, pluginName, pluginVersion, PactSpecification.V4);
 
-                LogInitialised = true;
-            }
+            return new SynchronousPluginPactBuilder(pluginDriver, pact.Config, port, host, transport);
         }
     }
 }

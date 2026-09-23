@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using PactNet.Drivers;
+using PactNet.Drivers.Http;
+using PactNet.Drivers.Message;
 using PactNet.Interop;
 using Xunit;
 using Xunit.Abstractions;
@@ -22,8 +24,7 @@ namespace PactNet.Tests.Drivers
         public FfiIntegrationTests(ITestOutputHelper output)
         {
             this.output = output;
-
-            NativeInterop.LogToBuffer(LevelFilter.Trace);
+            PactLogLevel.Trace.LogToBuffer();
         }
 
         [Fact]
@@ -36,7 +37,6 @@ namespace PactNet.Tests.Drivers
                 IHttpPactDriver pact = driver.NewHttpPact("NativeDriverTests-Consumer-V3",
                                                           "NativeDriverTests-Provider",
                                                           PactSpecification.V3);
-            
                 IHttpInteractionDriver interaction = pact.NewHttpInteraction("a sample interaction");
 
                 interaction.Given("provider state");
@@ -52,7 +52,7 @@ namespace PactNet.Tests.Drivers
                 interaction.WithResponseHeader("X-Response-Header", "value2", 1);
                 interaction.WithResponseBody("application/json", @"{""foo"":42}");
 
-                using IMockServerDriver mockServer = pact.CreateMockServer("127.0.0.1", null, false);
+                using IMockServerDriver mockServer = pact.CreateMockServer("127.0.0.1", null, false, "http");
 
                 var client = new HttpClient { BaseAddress = mockServer.Uri };
                 client.DefaultRequestHeaders.Add("X-Request-Header", new[] { "request1", "request2" });

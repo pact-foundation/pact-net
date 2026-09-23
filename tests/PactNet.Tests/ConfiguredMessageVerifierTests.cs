@@ -4,7 +4,7 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
-using PactNet.Drivers;
+using PactNet.Drivers.Message;
 using PactNet.Exceptions;
 using PactNet.Interop;
 using PactNet.Models;
