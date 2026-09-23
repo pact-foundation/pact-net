@@ -201,6 +201,17 @@ namespace PactNet.Verifier
             => condition ? this.PublishResults(providerVersion, configure) : this;
 
         /// <summary>
+        /// Return an error when no pacts are found on the Pact Broker. By default, an error is returned.
+        /// </summary>
+        /// <param name="isError">return error or not</param>
+        /// <returns>Fluent builder</returns>
+        public IPactBrokerOptions NoPactsIsError(bool isError)
+        {
+            this.provider.SetNoPactsIsError(isError);
+            return this;
+        }
+
+        /// <summary>
         /// Finalise the configuration with the provider
         /// </summary>
         public void Apply()

@@ -216,6 +216,15 @@ namespace PactNet.Verifier
         }
 
         /// <summary>
+        /// Configures the verifier to return an error when no pacts are found on the Pact Broker. By default, an error is returned.
+        /// </summary>
+        /// <param name="isError">return error or not</param>
+        public void SetNoPactsIsError(bool isError)
+        {
+            NativeInterop.VerifierSetNoPactsIsError(this.handle, isError);
+        }
+
+        /// <summary>
         /// Verify the pact from the given args
         /// </summary>
         /// <exception cref="PactFailureException">Verification failed</exception>

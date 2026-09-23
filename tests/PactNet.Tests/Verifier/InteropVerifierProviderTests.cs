@@ -50,6 +50,7 @@ namespace PactNet.Tests.Verifier
                                      "main",
                                      new[] { @"{""branch"":""main""}" },
                                      new[] { "consumer-tag" });
+            provider.SetNoPactsIsError(true);
 
             Action action = () => provider.Execute();
 
