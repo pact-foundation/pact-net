@@ -5,7 +5,7 @@ namespace PactNet.Drivers
     /// <summary>
     /// Driver for synchronous HTTP pacts
     /// </summary>
-    internal interface IHttpPactDriver : ICompletedPactDriver
+    internal interface IHttpPactDriver : ICompletedPactDriver, IDisposable
     {
         /// <summary>
         /// Create a new interaction on the current pact

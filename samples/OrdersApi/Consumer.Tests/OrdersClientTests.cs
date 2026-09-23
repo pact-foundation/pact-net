@@ -16,7 +16,7 @@ using Match = PactNet.Matchers.Match;
 
 namespace Consumer.Tests
 {
-    public class OrdersClientTests
+    public sealed class OrdersClientTests : IDisposable
     {
         private readonly IPactBuilderV4 pact;
         private readonly Mock<IHttpClientFactory> mockFactory;
@@ -43,6 +43,8 @@ namespace Consumer.Tests
 
             this.pact = Pact.V4("Fulfilment API", "Orders API", config).WithHttpInteractions();
         }
+
+        public void Dispose() => this.pact.Dispose();
 
         [Fact]
         public async Task GetOrderAsync_WhenCalled_ReturnsOrder()

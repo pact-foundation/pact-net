@@ -7,7 +7,7 @@ namespace PactNet
     /// <summary>
     /// Pact Builder
     /// </summary>
-    public interface IPactBuilder
+    public interface IPactBuilder : IDisposable
     {
         /// <summary>
         /// Verify the configured interactions

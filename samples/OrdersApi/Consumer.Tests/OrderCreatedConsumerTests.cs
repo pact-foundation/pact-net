@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Moq;
 using PactNet;
@@ -9,7 +10,7 @@ using Match = PactNet.Matchers.Match;
 
 namespace Consumer.Tests
 {
-    public class OrderCreatedConsumerTests
+    public sealed class OrderCreatedConsumerTests : IDisposable
     {
         private readonly OrderCreatedConsumer consumer;
         private readonly Mock<IFulfilmentService> mockService;
@@ -37,6 +38,9 @@ namespace Consumer.Tests
 
             this.pact = Pact.V4("Fulfilment API", "Orders API", config).WithMessageInteractions();
         }
+
+        public void Dispose() => this.pact.Dispose();
+
 
         [Fact]
         public async Task OnMessageAsync_OrderCreated_HandlesMessage()

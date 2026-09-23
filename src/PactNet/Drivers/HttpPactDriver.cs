@@ -57,5 +57,30 @@ namespace PactNet.Drivers
                 _ => new InvalidOperationException($"Unknown mock server error: {result}")
             };
         }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            this.ReleaseUnmanagedResources();
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Allows an object to try to free resources and perform other cleanup operations before it is reclaimed by garbage collection.
+        /// </summary>
+        ~HttpPactDriver()
+        {
+            this.ReleaseUnmanagedResources();
+        }
+
+        /// <summary>
+        /// Release unmanaged resources
+        /// </summary>
+        private void ReleaseUnmanagedResources()
+        {
+            NativeInterop.FreePact(this.pact);
+        }
     }
 }
