@@ -9,7 +9,12 @@ namespace PactNet.Drivers
     /// </summary>
     internal class MockServerDriver : IMockServerDriver
     {
-        private readonly int port;
+
+        /// <summary>
+        /// Mock server port
+        /// </summary>
+        public int Port { get; }
+
 
         /// <summary>
         /// Mock server URI
@@ -26,7 +31,7 @@ namespace PactNet.Drivers
         {
             string scheme = tls ? "https" : "http";
             this.Uri = new Uri($"{scheme}://{host}:{port}");
-            this.port = port;
+            this.Port = port;
         }
 
         /// <summary>
@@ -35,7 +40,7 @@ namespace PactNet.Drivers
         /// <returns>Mismatch string</returns>
         public string MockServerMismatches()
         {
-            IntPtr matchesPtr = NativeInterop.MockServerMismatches(this.port);
+            IntPtr matchesPtr = NativeInterop.MockServerMismatches(this.Port);
 
             return matchesPtr == IntPtr.Zero
                        ? string.Empty
@@ -48,12 +53,9 @@ namespace PactNet.Drivers
         /// <returns>Log string</returns>
         public string MockServerLogs()
         {
-            IntPtr logsPtr = NativeInterop.MockServerLogs(this.port);
-
-            return logsPtr == IntPtr.Zero
-                       ? "ERROR: Unable to retrieve mock server logs"
-                       : Marshal.PtrToStringAnsi(logsPtr);
+            return NativeInterop.FetchLogBuffer(null);
         }
+
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
@@ -76,7 +78,7 @@ namespace PactNet.Drivers
         /// </summary>
         private void ReleaseUnmanagedResources()
         {
-            NativeInterop.CleanupMockServer(this.port);
+            NativeInterop.CleanupMockServer(this.Port);
         }
     }
 }

@@ -145,6 +145,7 @@
         },
         "status": 201
       },
+      "transport": "http",
       "type": "Synchronous/HTTP"
     },
     {

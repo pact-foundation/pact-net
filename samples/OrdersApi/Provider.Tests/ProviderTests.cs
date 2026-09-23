@@ -16,7 +16,7 @@ namespace Provider.Tests
 {
     public class ProviderTests : IDisposable
     {
-        private static readonly Uri ProviderUri = new("http://localhost:5000");
+        private static readonly Uri ProviderUri = new("http://localhost:65098");
 
         private static readonly JsonSerializerOptions Options = new()
         {
@@ -38,7 +38,7 @@ namespace Provider.Tests
                               .Build();
 
             this.server.Start();
-            
+
             this.verifier = new PactVerifier("Orders API", new PactVerifierConfig
             {
                 LogLevel = PactLogLevel.Debug,

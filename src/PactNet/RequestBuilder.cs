@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
-using PactNet.Drivers;
+using PactNet.Drivers.Http;
 using PactNet.Matchers;
 
 namespace PactNet
