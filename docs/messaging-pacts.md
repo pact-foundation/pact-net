@@ -153,3 +153,59 @@ public class StockEventGeneratorTests : IDisposable
     }
 }
 ```
+
+Synchronous (Request/Response) Messages
+----------------------------------------
+
+> This is a V4-only pact feature (`Pact.V4(...)`). It's used for message flows that expect a reply
+> to each request - for example an AsyncAPI operation with a `reply` block.
+
+Unlike the fire-and-forget messages above, a synchronous message interaction has both a request and a
+response. The consumer specifies the expected request and response content, and PactNet feeds the
+generated request to your handler under test.
+
+In code, this is:
+
+```csharp
+public class OrderLookupConsumerTests
+{
+    private readonly ISyncMessagePactBuilderV4 messagePact;
+
+    public OrderLookupConsumerTests(ITestOutputHelper output)
+    {
+        IPactV4 v4 = Pact.V4("Order Lookup Consumer", "Order Lookup Producer", new PactConfig
+        {
+            PactDir = "../../../pacts/",
+            Outputters = new[]
+            {
+                new XUnitOutput(output)
+            }
+        });
+
+        this.messagePact = v4.WithSynchronousMessageInteractions();
+    }
+
+    [Fact]
+    public void LooksUpAnOrder()
+    {
+        this.messagePact
+            .ExpectsToReceive("a request for an order")
+            .Given("order 1234 exists")
+            .WithRequestJsonContent(new { OrderId = Match.Type("1234") })
+            .WithResponseJsonContent(new { Status = Match.Type("shipped") })
+            .Verify<OrderRequest, OrderStatus>(request =>
+            {
+                OrderStatus response = this.orderLookupClient.Lookup(request);
+                return response;
+            });
+    }
+}
+```
+
+As with fire-and-forget messages, a pact file is written to disk once all consumer tests have passed.
+
+Only consumer-side pact generation is currently supported for synchronous messages; provider
+verification support is tracked separately. See
+[pact-foundation/pact-net#562](https://github.com/pact-foundation/pact-net/pull/562) for status - it
+also depends on `pactffi_sync_message_generate_contents`, proposed in
+[pact-foundation/pact-reference#555](https://github.com/pact-foundation/pact-reference/pull/555).
