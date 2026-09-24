@@ -202,10 +202,4 @@ public class OrderLookupConsumerTests
 }
 ```
 
-As with fire-and-forget messages, a pact file is written to disk once all consumer tests have passed.
-
-Only consumer-side pact generation is currently supported for synchronous messages; provider
-verification support is tracked separately. See
-[pact-foundation/pact-net#562](https://github.com/pact-foundation/pact-net/pull/562) for status - it
-also depends on `pactffi_sync_message_generate_contents`, proposed in
-[pact-foundation/pact-reference#555](https://github.com/pact-foundation/pact-reference/pull/555).
+As with fire-and-forget messages, a pact file is written to disk once all consumer tests have passed
