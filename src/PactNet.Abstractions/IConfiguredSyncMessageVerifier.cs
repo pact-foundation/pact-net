@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace PactNet
 {
     /// <summary>
-    /// A configured synchronous (request/response) message type state, which can now be verified
+    /// A configured synchronous (request/response) message type state
     /// </summary>
     public interface IConfiguredSyncMessageVerifier
     {
