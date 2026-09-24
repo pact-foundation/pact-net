@@ -53,6 +53,7 @@ public class StockEventProcessorTests
             .ExpectsToReceive("some stock ticker events")
             .Given("A list of events is pushed to the queue")
             .WithMetadata("key", "valueKey")
+            .WithReference("AsyncAPI", "operationId", "receiveStockTickerEvents")  // links to AsyncAPI spec
             .WithJsonContent(Match.MinType(new
             {
                 Name = Match.Type("AAPL"),

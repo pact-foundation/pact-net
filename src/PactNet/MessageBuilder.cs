@@ -14,6 +14,7 @@ namespace PactNet
         private readonly IMessageInteractionDriver driver;
         private readonly PactConfig config;
         private readonly PactSpecification version;
+        private readonly Dictionary<string, Dictionary<string, string>> references = new();
 
         /// <summary>
         /// Initialises a new instance of the <see cref="MessagePactBuilder"/> class.
@@ -67,6 +68,10 @@ namespace PactNet
             => WithMetadata(key, value);
 
         /// <inheritdoc cref="IMessageBuilderV4"/>
+        IMessageBuilderV4 IMessageBuilderV4.WithReference(string group, string name, string value)
+            => WithReference(group, name, value);
+
+        /// <inheritdoc cref="IMessageBuilderV4"/>
         IConfiguredMessageVerifier IMessageBuilderV4.WithJsonContent(dynamic content)
             => WithJsonContent(content);
 
@@ -115,6 +120,33 @@ namespace PactNet
         internal MessageBuilder WithMetadata(string key, string value)
         {
             this.driver.WithMetadata(key, value);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Add a reference to an external specification for this interaction
+        /// </summary>
+        /// <param name="group">the reference group (e.g., "AsyncAPI")</param>
+        /// <param name="name">the reference name (e.g., "operationId")</param>
+        /// <param name="value">the reference value</param>
+        /// <returns>Fluent builder</returns>
+        /// <remarks>
+        /// Multiple references can be added to the same interaction.
+        /// This is useful for linking to AsyncAPI operation IDs.
+        /// </remarks>
+        internal MessageBuilder WithReference(string group, string name, string value)
+        {
+            if (!this.references.ContainsKey(group))
+            {
+                this.references[group] = new Dictionary<string, string>();
+            }
+
+            this.references[group][name] = value;
+
+            // Serialize all accumulated references and update the comment
+            string referencesJson = JsonSerializer.Serialize(this.references);
+            this.driver.WithComment("references", referencesJson);
 
             return this;
         }

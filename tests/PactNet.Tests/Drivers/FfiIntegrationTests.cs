@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -128,6 +128,42 @@ namespace PactNet.Tests.Drivers
 
             string pactContents = File.ReadAllText(file.FullName).TrimEnd();
             string expectedPactContent = File.ReadAllText("data/v3-message-integration.json").TrimEnd();
+            pactContents.Should().Be(expectedPactContent);
+        }
+
+        [Fact]
+        public void MessageInteraction_v4_WithAsyncApiReference_CreatesPactFile()
+        {
+            var driver = new PactDriver();
+
+            try
+            {
+                IMessagePactDriver pact = driver.NewMessagePact("NativeDriverTests-Consumer-V4",
+                                                                "NativeDriverTests-Producer",
+                                                                PactSpecification.V4);
+
+                IMessageInteractionDriver interaction = pact.NewMessageInteraction("a message interaction");
+
+                interaction.ExpectsToReceive("message with AsyncAPI reference");
+                interaction.WithMetadata("foo", "bar");
+                interaction.WithComment("references", @"{""AsyncAPI"":{""operationId"":""sendTestMessage""}}");
+                interaction.WithContents("application/json", @"{""foo"":42}", 0);
+
+                string reified = interaction.Reify();
+                reified.Should().NotBeNullOrEmpty();
+
+                interaction.WritePactFile(Environment.CurrentDirectory);
+            }
+            finally
+            {
+                this.WriteDriverLogs(driver);
+            }
+
+            var file = new FileInfo("NativeDriverTests-Consumer-V4-NativeDriverTests-Producer.json");
+            file.Exists.Should().BeTrue();
+
+            string pactContents = File.ReadAllText(file.FullName).TrimEnd();
+            string expectedPactContent = File.ReadAllText("data/v4-message-asyncapi-integration.json").TrimEnd();
             pactContents.Should().Be(expectedPactContent);
         }
     }

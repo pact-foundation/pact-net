@@ -76,6 +76,19 @@ namespace PactNet
         IMessageBuilderV4 WithMetadata(string key, string value);
 
         /// <summary>
+        /// Add a reference to an external specification for this interaction
+        /// </summary>
+        /// <param name="group">the reference group (e.g., "AsyncAPI")</param>
+        /// <param name="name">the reference name (e.g., "operationId")</param>
+        /// <param name="value">the reference value</param>
+        /// <returns>Fluent builder</returns>
+        /// <remarks>
+        /// Multiple references can be added to the same interaction.
+        /// This is useful for linking to AsyncAPI operation IDs.
+        /// </remarks>
+        IMessageBuilderV4 WithReference(string group, string name, string value);
+
+        /// <summary>
         /// Set message content which is serialised as JSON
         /// </summary>
         /// <param name="body">Message body</param>

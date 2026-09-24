@@ -132,6 +132,13 @@
       "type": "Synchronous/HTTP"
     },
     {
+      "comments": {
+        "references": {
+          "AsyncAPI": {
+            "operationId": "orderCreated"
+          }
+        }
+      },
       "contents": {
         "content": {
           "id": 1

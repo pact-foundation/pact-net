@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using PactNet.Interop;
 
@@ -51,6 +51,14 @@ namespace PactNet.Drivers
         /// <param name="value">the value</param>
         public void WithMetadata(string key, string value)
             => NativeInterop.MessageWithMetadata(this.interaction, key, value);
+
+        /// <summary>
+        /// Add a comment with a key-value pair to the interaction
+        /// </summary>
+        /// <param name="key">the comment key</param>
+        /// <param name="value">the comment value</param>
+        public void WithComment(string key, string value)
+            => NativeInterop.SetComment(this.interaction, key, value);
 
         /// <summary>
         /// Set the contents of the message

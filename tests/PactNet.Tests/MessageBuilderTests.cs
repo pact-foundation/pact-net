@@ -11,7 +11,7 @@ namespace PactNet.Tests
 {
     public class MessageBuilderTests
     {
-        private readonly IMessageBuilderV3 builder;
+        private readonly IMessageBuilderV4 builder;
 
         private readonly Mock<IMessageInteractionDriver> mockDriver;
         
@@ -64,6 +64,45 @@ namespace PactNet.Tests
             this.builder.WithMetadata(expectedKey, expectedValue);
 
             this.mockDriver.Verify(s => s.WithMetadata(expectedKey, expectedValue));
+        }
+
+        [Fact]
+        public void WithReference_WhenCalled_AddsReference()
+        {
+            var expectedGroup = "AsyncAPI";
+            var expectedName = "operationId";
+            var expectedValue = "sendEmailMessage";
+
+            this.builder.WithReference(expectedGroup, expectedName, expectedValue);
+
+            this.mockDriver.Verify(s => s.WithComment(
+                "references",
+                It.Is<string>(json =>
+                    json.Contains("AsyncAPI") &&
+                    json.Contains("operationId") &&
+                    json.Contains(expectedValue)
+                )
+            ));
+        }
+
+        [Fact]
+        public void WithReference_CalledMultipleTimes_AccumulatesReferences()
+        {
+            this.builder
+                .WithReference("AsyncAPI", "operationId", "sendMessage")
+                .WithReference("AsyncAPI", "channel", "orders/created");
+
+            // Verify last call contains both references
+            this.mockDriver.Verify(s => s.WithComment(
+                "references",
+                It.Is<string>(json =>
+                    json.Contains("AsyncAPI") &&
+                    json.Contains("operationId") &&
+                    json.Contains("channel") &&
+                    json.Contains("sendMessage") &&
+                    json.Contains("orders/created")
+                )
+            ), Times.AtLeastOnce);
         }
 
         [Fact]

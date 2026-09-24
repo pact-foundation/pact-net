@@ -19,6 +19,13 @@ namespace PactNet.Drivers
         void WithMetadata(string key, string value);
 
         /// <summary>
+        /// Add a comment with a key-value pair to the interaction
+        /// </summary>
+        /// <param name="key">the comment key</param>
+        /// <param name="value">the comment value</param>
+        void WithComment(string key, string value);
+
+        /// <summary>
         /// Set the contents of the message
         /// </summary>
         /// <param name="contentType">the content type</param>

@@ -1,0 +1,41 @@
+{
+  "consumer": {
+    "name": "NativeDriverTests-Consumer-V4"
+  },
+  "interactions": [
+    {
+      "comments": {
+        "references": {
+          "AsyncAPI": {
+            "operationId": "sendTestMessage"
+          }
+        }
+      },
+      "contents": {
+        "content": {
+          "foo": 42
+        },
+        "contentType": "application/json",
+        "encoded": false
+      },
+      "description": "message with AsyncAPI reference",
+      "metadata": {
+        "foo": "bar"
+      },
+      "pending": false,
+      "type": "Asynchronous/Messages"
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "ffi": "0.4.27",
+      "models": "1.2.8"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  },
+  "provider": {
+    "name": "NativeDriverTests-Producer"
+  }
+}

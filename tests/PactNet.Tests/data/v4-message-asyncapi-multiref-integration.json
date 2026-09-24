@@ -1,0 +1,40 @@
+{
+  "consumer": {
+    "name": "PactExtensionsTests-AsyncAPI-MultiRef-Consumer-V4"
+  },
+  "interactions": [
+    {
+      "comments": {
+        "references": {
+          "AsyncAPI": {
+            "channel": "orders/created",
+            "operationId": "someTestEvent"
+          }
+        }
+      },
+      "contents": {
+        "content": {
+          "orderId": 456,
+          "status": "pending"
+        },
+        "contentType": "application/json",
+        "encoded": false
+      },
+      "description": "test event with multiple references",
+      "pending": false,
+      "type": "Asynchronous/Messages"
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "ffi": "0.4.27",
+      "models": "1.2.8"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  },
+  "provider": {
+    "name": "PactExtensionsTests-AsyncAPI-MultiRef-Provider"
+  }
+}

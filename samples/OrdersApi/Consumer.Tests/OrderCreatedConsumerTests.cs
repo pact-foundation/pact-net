@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Moq;
 using PactNet;
@@ -43,6 +43,7 @@ namespace Consumer.Tests
         {
             await this.pact
                       .ExpectsToReceive("an event indicating that an order has been created")
+                      .WithReference("AsyncAPI", "operationId", "orderCreated")
                       .WithJsonContent(new
                       {
                           Id = Match.Integer(1)
