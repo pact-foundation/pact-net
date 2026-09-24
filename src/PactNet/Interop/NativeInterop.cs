@@ -97,8 +97,8 @@ namespace PactNet.Interop
         [DllImport(DllName, EntryPoint = "pactffi_with_metadata")]
         public static extern bool WithMetadata(InteractionHandle interaction, string key, string value, InteractionPart part);
 
-        [DllImport(DllName, EntryPoint = "pactffi_sync_message_reify")]
-        public static extern IntPtr SyncMessageReify(InteractionHandle message);
+        [DllImport(DllName, EntryPoint = "pactffi_sync_message_generate_contents")]
+        public static extern IntPtr SyncMessageGenerateContents(InteractionHandle message);
 
         #endregion Http Interop Support
 

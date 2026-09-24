@@ -131,7 +131,7 @@ namespace PactNet.Tests.Drivers
             pactContents.Should().Be(expectedPactContent);
         }
 
-        [Fact(Skip = "Requires a pact_ffi build with pactffi_sync_message_reify " +
+        [Fact(Skip = "Requires a pact_ffi build with pactffi_sync_message_generate_contents " +
                      "(see https://github.com/pact-foundation/pact-reference/pull/555); " +
                      "remove this Skip once that lands in a released pact_ffi version")]
         public void SyncMessageInteraction_v4_CreatesPactFile()
@@ -151,8 +151,8 @@ namespace PactNet.Tests.Drivers
                 interaction.WithResponseMetadata("baz", "bash");
                 interaction.WithResponseContents("application/json", @"{""baz"":42}");
 
-                string reified = interaction.Reify();
-                reified.Should().NotBeNullOrEmpty();
+                string generated = interaction.GenerateContents();
+                generated.Should().NotBeNullOrEmpty();
 
                 interaction.WritePactFile(Environment.CurrentDirectory);
             }

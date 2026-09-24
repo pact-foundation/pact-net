@@ -120,7 +120,7 @@ namespace PactNet.Tests
 
             // the native message returned from the FFI is always camel-cased
             this.mockDriver
-                .Setup(s => s.Reify())
+                .Setup(s => s.GenerateContents())
                 .Returns(JsonSerializer.Serialize(native, CamelCase));
 
             return (verifier, request);

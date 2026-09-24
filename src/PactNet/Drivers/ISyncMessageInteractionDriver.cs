@@ -34,10 +34,10 @@ namespace PactNet.Drivers
         void WithResponseContents(string contentType, string body);
 
         /// <summary>
-        /// Returns the request and response contents without the matchers, with any configured
-        /// generators applied
+        /// Get the actual request and response contents, with any matchers removed and any
+        /// configured generators applied
         /// </summary>
-        /// <returns>Reified message</returns>
-        string Reify();
+        /// <returns>The generated request and response contents</returns>
+        string GenerateContents();
     }
 }

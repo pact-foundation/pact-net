@@ -45,9 +45,9 @@ namespace PactNet
         {
             try
             {
-                TRequest requestReified = this.RequestReified<TRequest>();
+                TRequest request = this.GeneratedRequest<TRequest>();
 
-                handler(requestReified);
+                handler(request);
 
                 this.driver.WritePactFile(this.config.PactDir);
             }
@@ -65,9 +65,9 @@ namespace PactNet
         {
             try
             {
-                TRequest requestReified = this.RequestReified<TRequest>();
+                TRequest request = this.GeneratedRequest<TRequest>();
 
-                await handler(requestReified);
+                await handler(request);
 
                 this.driver.WritePactFile(this.config.PactDir);
             }
@@ -78,22 +78,23 @@ namespace PactNet
         }
 
         /// <summary>
-        /// Try to read the reified request message
+        /// Get the actual request message, with any matchers removed and any configured
+        /// generators applied
         /// </summary>
         /// <typeparam name="TRequest">the type of the request message</typeparam>
         /// <returns>the request message</returns>
-        private TRequest RequestReified<TRequest>()
+        private TRequest GeneratedRequest<TRequest>()
         {
-            string reified = this.driver.Reify();
-            NativeSyncMessage content = JsonSerializer.Deserialize<NativeSyncMessage>(reified, NativeMessageSettings);
+            string generated = this.driver.GenerateContents();
+            NativeSyncMessage content = JsonSerializer.Deserialize<NativeSyncMessage>(generated, NativeMessageSettings);
 
-            // Synchronous messages only exist in the V4 Pact format, so the reified contents
+            // Synchronous messages only exist in the V4 Pact format, so the generated contents
             // always use the V4 body envelope (a `content` field)
             string contentString = ((JsonElement)content.Request.Contents).GetProperty("content").GetRawText();
 
-            TRequest requestReified = JsonSerializer.Deserialize<TRequest>(contentString, this.config.DefaultJsonSettings);
+            TRequest request = JsonSerializer.Deserialize<TRequest>(contentString, this.config.DefaultJsonSettings);
 
-            return requestReified;
+            return request;
         }
     }
 }

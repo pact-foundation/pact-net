@@ -70,13 +70,13 @@ namespace PactNet.Drivers
             => NativeInterop.WithBody(this.interaction, InteractionPart.Response, contentType, body).CheckInteropSuccess();
 
         /// <summary>
-        /// Returns the request and response contents without the matchers, with any configured
-        /// generators applied
+        /// Get the actual request and response contents, with any matchers removed and any
+        /// configured generators applied
         /// </summary>
-        /// <returns>Reified message</returns>
-        public string Reify()
+        /// <returns>The generated request and response contents</returns>
+        public string GenerateContents()
         {
-            IntPtr pointer = NativeInterop.SyncMessageReify(this.interaction);
+            IntPtr pointer = NativeInterop.SyncMessageGenerateContents(this.interaction);
             string body = Marshal.PtrToStringAnsi(pointer);
             return body;
         }
