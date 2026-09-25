@@ -13,6 +13,13 @@
         IMessageInteractionDriver NewMessageInteraction(string description);
 
         /// <summary>
+        /// Create a new synchronous (request/response) message interaction on the current pact
+        /// </summary>
+        /// <param name="description">Interaction description</param>
+        /// <returns>Synchronous message interaction driver</returns>
+        ISyncMessageInteractionDriver NewSyncMessageInteraction(string description);
+
+        /// <summary>
         /// Add metadata to the message pact
         /// </summary>
         /// <param name="namespace">the namespace</param>

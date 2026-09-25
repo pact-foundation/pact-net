@@ -130,5 +130,39 @@ namespace PactNet.Tests.Drivers
             string expectedPactContent = File.ReadAllText("data/v3-message-integration.json").TrimEnd();
             pactContents.Should().Be(expectedPactContent);
         }
+
+        [Fact(Skip = "Requires a pact_ffi build with pactffi_sync_message_generate_contents " +
+                     "(see https://github.com/pact-foundation/pact-reference/pull/555); " +
+                     "remove this Skip once that lands in a released pact_ffi version")]
+        public void SyncMessageInteraction_v4_CreatesPactFile()
+        {
+            var driver = new PactDriver();
+
+            try
+            {
+                IMessagePactDriver pact = driver.NewMessagePact("NativeDriverTests-Consumer-V4",
+                                                                "NativeDriverTests-Producer",
+                                                                PactSpecification.V4);
+
+                ISyncMessageInteractionDriver interaction = pact.NewSyncMessageInteraction("a sync message interaction");
+
+                interaction.WithRequestMetadata("foo", "bar");
+                interaction.WithRequestContents("application/json", @"{""foo"":42}");
+                interaction.WithResponseMetadata("baz", "bash");
+                interaction.WithResponseContents("application/json", @"{""baz"":42}");
+
+                string generated = interaction.GenerateContents();
+                generated.Should().NotBeNullOrEmpty();
+
+                interaction.WritePactFile(Environment.CurrentDirectory);
+            }
+            finally
+            {
+                this.WriteDriverLogs(driver);
+            }
+
+            var file = new FileInfo("NativeDriverTests-Consumer-V4-NativeDriverTests-Producer.json");
+            file.Exists.Should().BeTrue();
+        }
     }
 }
