@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 
 namespace PactNet.Verifier.Messaging
 {
@@ -44,32 +43,15 @@ namespace PactNet.Verifier.Messaging
         }
 
         /// <summary>
-        /// Add a message scenario
+        /// Add a message scenario by configuring a scenario builder
         /// </summary>
         /// <param name="description">Scenario description</param>
         /// <param name="configure">Scenario configure</param>
-        /// <returns></returns>
+        /// <returns>Fluent builder</returns>
         public IMessageScenarios Add(string description, Action<IMessageScenarioBuilder> configure)
         {
             var builder = new MessageScenarioBuilder(description);
             configure?.Invoke(builder);
-
-            Scenario scenario = builder.Build();
-            this.scenarios.Add(description, scenario);
-
-            return this;
-        }
-
-        /// <summary>
-        /// Add a message scenario
-        /// </summary>
-        /// <param name="description">Scenario description</param>
-        /// <param name="configure">Scenario configure</param>
-        /// <returns></returns>
-        public IMessageScenarios Add(string description, Func<IMessageScenarioBuilder, Task> configure)
-        {
-            var builder = new MessageScenarioBuilder(description);
-            configure?.Invoke(builder).GetAwaiter().GetResult();
 
             Scenario scenario = builder.Build();
             this.scenarios.Add(description, scenario);

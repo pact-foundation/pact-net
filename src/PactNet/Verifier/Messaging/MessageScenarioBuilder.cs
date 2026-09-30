@@ -10,6 +10,7 @@ namespace PactNet.Verifier.Messaging
     internal class MessageScenarioBuilder : IMessageScenarioBuilder
     {
         private readonly string description;
+
         private Func<dynamic> factory;
         private dynamic metadata = new { ContentType = "application/json" };
         private JsonSerializerOptions settings;
@@ -55,25 +56,32 @@ namespace PactNet.Verifier.Messaging
         }
 
         /// <summary>
-        /// Set the action of the scenario
+        /// Set the content factory of the scenario. The factory is invoked each time the scenario is required.
         /// </summary>
         /// <param name="factory">Content factory</param>
-        public async Task WithContentAsync(Func<Task<dynamic>> factory)
+        public void WithAsyncContent(Func<Task<dynamic>> factory)
         {
-            dynamic value = await factory();
-            this.factory = () => value;
+            if (factory == null)
+            {
+                throw new ArgumentNullException(nameof(factory));
+            }
+
+            this.WithContent(() => factory().GetAwaiter().GetResult());
         }
 
         /// <summary>
-        /// Set the content of the scenario
+        /// Set the content factory of the scenario. The factory is invoked each time the scenario is required.
         /// </summary>
         /// <param name="factory">Content factory</param>
         /// <param name="settings">Custom JSON serializer settings</param>
-        public async Task WithContentAsync(Func<Task<dynamic>> factory, JsonSerializerOptions settings)
+        public void WithAsyncContent(Func<Task<dynamic>> factory, JsonSerializerOptions settings)
         {
-            dynamic value = await factory();
-            this.factory = () => value;
-            this.settings = settings;
+            if (factory == null)
+            {
+                throw new ArgumentNullException(nameof(factory));
+            }
+
+            this.WithContent(() => factory().GetAwaiter().GetResult(), settings);
         }
 
         /// <summary>
