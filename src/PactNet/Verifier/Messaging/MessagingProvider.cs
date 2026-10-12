@@ -66,12 +66,13 @@ namespace PactNet.Verifier.Messaging
                 try
                 {
                     int port = FindUnusedPort();
-                    uri = new Uri($"http://localhost:{port}/pact-messages/");
+                    uri = new Uri($"http://127.0.0.1:{port}/pact-messages/");
 
                     this.config.WriteLine($"Starting messaging provider at {uri}");
 
                     this.server = new HttpListener();
                     this.server.Prefixes.Add(uri.AbsoluteUri);
+                    this.server.Prefixes.Add($"http://localhost:{port}/pact-messages/");
                     this.server.Start();
                 }
                 catch (HttpListenerException e) when (e.Message == "Address already in use")

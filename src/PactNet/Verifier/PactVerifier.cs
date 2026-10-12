@@ -21,6 +21,7 @@ namespace PactNet.Verifier
         private bool providerInitialised;
         private bool httpTransportAdded;
         private bool messageTransportAdded;
+        private Uri messageProviderUri;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="PactVerifier"/> class.
@@ -78,7 +79,15 @@ namespace PactNet.Verifier
             }
             else
             {
-                this.provider.AddTransport("http", (ushort)pactUri.Port, pactUri.AbsolutePath, pactUri.Scheme);
+                if (this.messageTransportAdded)
+                {
+                    this.provider.SetProviderInfo(this.providerName, pactUri.Scheme, pactUri.Host, (ushort)pactUri.Port, pactUri.AbsolutePath);
+                    this.provider.AddTransport("message", (ushort)this.messageProviderUri.Port, this.messageProviderUri.AbsolutePath, null);
+                }
+                else
+                {
+                    this.provider.AddTransport("http", (ushort)pactUri.Port, pactUri.AbsolutePath, pactUri.Scheme);
+                }
             }
 
             this.httpTransportAdded = true;
@@ -109,11 +118,13 @@ namespace PactNet.Verifier
 
             // start an in-proc server which creates the messaging responses
             Uri uri = this.messagingProvider.Start(settings);
+            this.messageProviderUri = uri;
 
             if (!this.providerInitialised)
             {
                 this.provider.Initialise();
-                this.provider.SetProviderInfo(this.providerName, "message", uri.Host, (ushort)uri.Port, uri.AbsolutePath);
+                this.provider.SetProviderInfo(this.providerName, "http", uri.Host, (ushort)uri.Port, uri.AbsolutePath);
+                this.provider.AddTransport("message", (ushort)uri.Port, uri.AbsolutePath, null);
                 this.providerInitialised = true;
             }
             else

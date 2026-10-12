@@ -52,6 +52,25 @@ namespace PactNet.Tests.Verifier.Messaging
         }
 
         [Fact]
+        public void Start_UsesIpv4LoopbackAddress()
+        {
+            this.client.BaseAddress.Host.Should().Be("127.0.0.1");
+        }
+
+        [Fact]
+        public async Task HandleMessage_LocalhostHost_IsAccepted()
+        {
+            var localhostClient = new HttpClient
+            {
+                BaseAddress = new UriBuilder(this.client.BaseAddress) { Host = "localhost" }.Uri
+            };
+
+            HttpResponseMessage response = await localhostClient.DeleteAsync(string.Empty);
+
+            response.StatusCode.Should().Be(HttpStatusCode.MethodNotAllowed);
+        }
+
+        [Fact]
         public async Task HandleMessage_InvalidHttpMethod_ReturnsMethodNotAllowed()
         {
             HttpResponseMessage response = await this.client.DeleteAsync(string.Empty);

@@ -65,11 +65,27 @@ namespace PactNet.Tests.Verifier
                 var settings = new JsonSerializerOptions();
                 this.mockMessaging
                     .Setup(m => m.Start(settings))
-                    .Returns(new Uri("https://localhost:1234/pact-messaging/"));
+                    .Returns(new Uri("http://127.0.0.1:1234/pact-messaging/"));
 
                 this.verifier.WithMessages(_ => { }, settings);
 
-                this.mockProvider.Verify(p => p.SetProviderInfo("Provider", "message", "localhost", 1234, "/pact-messaging/"));
+                this.mockProvider.Verify(p => p.SetProviderInfo("Provider", "http", "127.0.0.1", 1234, "/pact-messaging/"));
+                this.mockProvider.Verify(p => p.AddTransport("message", 1234, "/pact-messaging/", null));
+            }
+
+            [Fact]
+            public void WithMessages_BeforeHttpEndpoint_ResetsProviderInfoAndRestoresMessageTransport()
+            {
+                this.mockMessaging
+                    .Setup(m => m.Start(It.IsAny<JsonSerializerOptions>()))
+                    .Returns(new Uri("http://127.0.0.1:1234/pact-messaging/"));
+
+                this.verifier
+                    .WithMessages(_ => { })
+                    .WithHttpEndpoint(new Uri("http://localhost:8080/base/path"));
+
+                this.mockProvider.Verify(p => p.SetProviderInfo("Provider", "http", "localhost", 8080, "/base/path"));
+                this.mockProvider.Verify(p => p.AddTransport("message", 1234, "/pact-messaging/", null), Times.Exactly(2));
             }
 
             [Fact]

@@ -76,5 +76,27 @@ namespace Provider.Tests
                 .WithProviderStateUrl(new Uri(ProviderUri, "/provider-states"))
                 .Verify();
         }
+
+        [Fact]
+        public void VerifyMessagesOnly()
+        {
+            string pactPath = Path.Combine("..",
+                                           "..",
+                                           "..",
+                                           "..",
+                                           "Consumer.Tests",
+                                           "pacts",
+                                           "Fulfilment API-Orders API.json");
+
+            this.verifier
+                .WithMessages(scenarios =>
+                {
+                    scenarios.Add("an event indicating that an order has been created", () => new OrderCreatedEvent(1));
+                }, Options)
+                .WithFileSource(new FileInfo(pactPath))
+                .WithFilter("description", "^an event indicating that an order has been created$")
+                .WithProviderStateUrl(new Uri(ProviderUri, "/provider-states"))
+                .Verify();
+        }
     }
 }
