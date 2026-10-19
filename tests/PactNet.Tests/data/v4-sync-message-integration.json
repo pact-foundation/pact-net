@@ -1,0 +1,66 @@
+{
+  "consumer": {
+    "name": "NativeDriverTests-Consumer-V4"
+  },
+  "interactions": [
+    {
+      "description": "a sync message interaction",
+      "pending": false,
+      "request": {
+        "contents": {
+          "content": {
+            "foo": 42
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "metadata": {
+          "contentType": "application/json",
+          "count": 42,
+          "foo": "bar"
+        }
+      },
+      "response": [
+        {
+          "contents": {
+            "content": {
+              "baz": 42
+            },
+            "contentType": "application/json",
+            "encoded": false
+          },
+          "matchingRules": {
+            "metadata": {
+              "baz": {
+                "combine": "AND",
+                "matchers": [
+                  {
+                    "match": "regex",
+                    "regex": "^ba"
+                  }
+                ]
+              }
+            }
+          },
+          "metadata": {
+            "baz": "bash",
+            "contentType": "application/json"
+          }
+        }
+      ],
+      "type": "Synchronous/Messages"
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "ffi": "0.5.12",
+      "models": "1.3.17"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  },
+  "provider": {
+    "name": "NativeDriverTests-Producer"
+  }
+}

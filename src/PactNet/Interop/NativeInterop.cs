@@ -69,6 +69,9 @@ namespace PactNet.Interop
         [DllImport(DllName, EntryPoint = "pactffi_verify")]
         public static extern int Verify(string args);
 
+        [DllImport(DllName, EntryPoint = "pactffi_add_interaction_reference")]
+        public static extern bool AddInteractionReference(InteractionHandle interaction, string group, string name, string value);
+
         #endregion Http Interop Support
 
         #region Messaging Interop Support
@@ -90,6 +93,18 @@ namespace PactNet.Interop
 
         [DllImport(DllName, EntryPoint = "pactffi_message_reify")]
         public static extern IntPtr MessageReify(InteractionHandle message);
+
+        [DllImport(DllName, EntryPoint = "pactffi_new_sync_message_interaction")]
+        public static extern InteractionHandle NewSyncMessageInteraction(PactHandle pact, string description);
+
+        [DllImport(DllName, EntryPoint = "pactffi_with_metadata")]
+        public static extern bool WithMetadata(InteractionHandle interaction, string key, string value, InteractionPart part);
+
+        [DllImport(DllName, EntryPoint = "pactffi_sync_message_generate_contents")]
+        public static extern IntPtr SyncMessageGenerateContents(InteractionHandle message);
+
+        [DllImport(DllName, EntryPoint = "pactffi_sync_message_match_response_contents")]
+        public static extern IntPtr SyncMessageMatchResponseContents(InteractionHandle message, UIntPtr index, string contentType, string contents);
 
         #endregion Http Interop Support
 

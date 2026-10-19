@@ -30,6 +30,17 @@ namespace PactNet.Drivers
         }
 
         /// <summary>
+        /// Create a new synchronous (request/response) message interaction on the current pact
+        /// </summary>
+        /// <param name="description">Interaction description</param>
+        /// <returns>Synchronous message interaction driver</returns>
+        public ISyncMessageInteractionDriver NewSyncMessageInteraction(string description)
+        {
+            InteractionHandle interaction = NativeInterop.NewSyncMessageInteraction(this.pact, description);
+            return new SyncMessageInteractionDriver(this.pact, interaction);
+        }
+
+        /// <summary>
         /// Add metadata to the message pact
         /// </summary>
         /// <param name="namespace">the namespace</param>

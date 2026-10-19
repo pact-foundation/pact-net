@@ -130,5 +130,44 @@ namespace PactNet.Tests.Drivers
             string expectedPactContent = File.ReadAllText("data/v3-message-integration.json").TrimEnd();
             pactContents.Should().Be(expectedPactContent);
         }
+
+        [Fact]
+        public void SyncMessageInteraction_v4_CreatesPactFile()
+        {
+            var driver = new PactDriver();
+
+            try
+            {
+                IMessagePactDriver pact = driver.NewMessagePact("NativeDriverTests-Consumer-V4",
+                                                                "NativeDriverTests-Producer",
+                                                                PactSpecification.V4);
+
+                ISyncMessageInteractionDriver interaction = pact.NewSyncMessageInteraction("a sync message interaction");
+
+                interaction.WithRequestMetadata("foo", @"""bar""");
+                interaction.WithRequestMetadata("count", "42");
+                interaction.WithRequestContents("application/json", @"{""foo"":42}");
+
+                // response metadata only applies to responses that already exist, so set the contents first
+                interaction.WithResponseContents("application/json", @"{""baz"":42}");
+                interaction.WithResponseMetadata("baz", @"{""pact:matcher:type"":""regex"",""value"":""bash"",""regex"":""^ba""}");
+
+                string generated = interaction.GenerateContents();
+                generated.Should().NotBeNullOrEmpty();
+
+                interaction.WritePactFile(Environment.CurrentDirectory);
+            }
+            finally
+            {
+                this.WriteDriverLogs(driver);
+            }
+
+            var file = new FileInfo("NativeDriverTests-Consumer-V4-NativeDriverTests-Producer.json");
+            file.Exists.Should().BeTrue();
+
+            string pactContents = File.ReadAllText(file.FullName).TrimEnd();
+            string expectedPactContent = File.ReadAllText("data/v4-sync-message-integration.json").TrimEnd();
+            pactContents.Should().Be(expectedPactContent);
+        }
     }
 }

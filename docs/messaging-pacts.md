@@ -153,3 +153,64 @@ public class StockEventGeneratorTests : IDisposable
     }
 }
 ```
+
+Synchronous (Request/Response) Messages
+----------------------------------------
+
+> This is a V4-only pact feature (`Pact.V4(...)`). It's used for message flows that expect a reply
+> to each request - for example an AsyncAPI operation with a `reply` block.
+
+Unlike the fire-and-forget messages above, a synchronous message interaction has both a request and a
+response. The consumer specifies the expected request and response content, PactNet feeds the
+generated request (matchers stripped, generators applied) to your handler under test, and checks the
+value your handler returns against the response's matchers before writing the pact file. For example
+`Match.Type("shipped")` accepts any string, `Match.Integer(12)` any integer, `Match.Decimal(12.5)` any
+decimal, and `Match.Regex(...)` any value in the given format, such as a datetime. Values without a
+matcher must be equal, and extra properties in the response are allowed.
+
+In code, this is:
+
+```csharp
+public class OrderLookupConsumerTests
+{
+    private readonly ISyncMessagePactBuilderV4 messagePact;
+
+    public OrderLookupConsumerTests(ITestOutputHelper output)
+    {
+        IPactV4 v4 = Pact.V4("Order Lookup Consumer", "Order Lookup Producer", new PactConfig
+        {
+            PactDir = "../../../pacts/",
+            Outputters = new[]
+            {
+                new XUnitOutput(output)
+            }
+        });
+
+        this.messagePact = v4.WithSynchronousMessageInteractions();
+    }
+
+    [Fact]
+    public void LooksUpAnOrder()
+    {
+        this.messagePact
+            .ExpectsToReceive("a request for an order")
+            .Given("order 1234 exists")
+            .WithReference("AsyncAPI", "operationId", "getOrder")
+            .WithRequestMetadata("priority", 1)
+            .WithRequestJsonContent(new { OrderId = Match.Type("1234") })
+            .WithResponseMetadata("replyTo", Match.Regex("orders-reply", "^orders-"))
+            .WithResponseJsonContent(new { Status = Match.Type("shipped") })
+            .Verify<OrderRequest, OrderStatus>(request =>
+            {
+                OrderStatus response = this.orderLookupClient.Lookup(request);
+                return response;
+            });
+    }
+}
+```
+
+Metadata values are serialised as JSON, so they keep their type (`1` is a number, `"1"` is a string) and can be
+matchers. `WithReference` links the interaction to an external resource such as an AsyncAPI operation; it's
+written to the pact under `comments.references.{group}.{name}`.
+
+As with fire-and-forget messages, a pact file is written to disk once all consumer tests have passed

@@ -1,0 +1,128 @@
+{
+  "consumer": {
+    "name": "PactExtensionsTests-SyncMessageConsumer-V4"
+  },
+  "interactions": [
+    {
+      "comments": {
+        "references": {
+          "AsyncAPI": {
+            "operationId": "getOrder",
+            "version": "123"
+          }
+        }
+      },
+      "description": "a sample request",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a provider state"
+        },
+        {
+          "name": "a provider state with params",
+          "params": {
+            "foo": "bar"
+          }
+        }
+      ],
+      "request": {
+        "contents": {
+          "content": {
+            "int": 1,
+            "string": "a description"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "matchingRules": {
+          "body": {
+            "$.int": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "integer"
+                }
+              ]
+            },
+            "$.string": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "metadata": {
+          "contentType": "application/json",
+          "priority": 1,
+          "queueId": "1234"
+        }
+      },
+      "response": [
+        {
+          "contents": {
+            "content": {
+              "int": 2,
+              "string": "a reply"
+            },
+            "contentType": "application/json",
+            "encoded": false
+          },
+          "matchingRules": {
+            "body": {
+              "$.int": {
+                "combine": "AND",
+                "matchers": [
+                  {
+                    "match": "integer"
+                  }
+                ]
+              },
+              "$.string": {
+                "combine": "AND",
+                "matchers": [
+                  {
+                    "match": "type"
+                  }
+                ]
+              }
+            },
+            "metadata": {
+              "replyTo": {
+                "combine": "AND",
+                "matchers": [
+                  {
+                    "match": "regex",
+                    "regex": "^queue-"
+                  }
+                ]
+              }
+            }
+          },
+          "metadata": {
+            "contentType": "application/json",
+            "replyTo": "queue-1"
+          }
+        }
+      ],
+      "type": "Synchronous/Messages"
+    }
+  ],
+  "metadata": {
+    "framework": {
+      "language": "C#"
+    },
+    "pactRust": {
+      "ffi": "0.5.12",
+      "models": "1.3.17"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  },
+  "provider": {
+    "name": "PactExtensionsTests-SyncMessageProvider"
+  }
+}
