@@ -53,14 +53,16 @@ Building PactNet
 ----------------
 
 In order to build PactNet you must first download the native Rust FFI libraries. You can pull the current supported
-version by executing the script in Bash (or Git Bash on Windows):
+version by executing the script in Bash (or Git Bash on Windows). The script needs `curl`, `tar` with xz support, and
+`unzip` (or `7z`) on the path, and verifies each archive against its `.sha256` file:
 
 ```bash
 build/download-native-libs.sh
 ```
 
-Alternatively you can download a particular FFI version from the [pact-reference] releases or build your own version
-locally, and then copy the artifacts into the folders:
+Alternatively you can download a particular FFI version from the [pact-reference] `pact_ffi-v<version>` releases (one
+archive per Rust target, e.g. `pact_ffi-aarch64-apple-darwin.tar.xz`) or build your own version locally, and then copy
+the shared libraries into the folders:
 
 ```
 build/
@@ -69,7 +71,7 @@ build/
             libpact_ffi.so
         aarch64/
             libpact_ffi.so
-    osx/
+    macos/
         aarch64/
             libpact_ffi.dylib
         x86_64/

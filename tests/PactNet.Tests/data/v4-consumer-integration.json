@@ -39,12 +39,12 @@
           "encoded": false
         },
         "headers": {
-          "Content-Type": [
-            "application/json"
-          ],
-          "X-Request": [
+          "Accept-Language": [
             "request1",
             "request2"
+          ],
+          "Content-Type": [
+            "application/json"
           ]
         },
         "matchingRules": {
@@ -150,8 +150,8 @@
   ],
   "metadata": {
     "pactRust": {
-      "ffi": "0.4.27",
-      "models": "1.2.8"
+      "ffi": "0.5.12",
+      "models": "1.3.16"
     },
     "pactSpecification": {
       "version": "4.0"

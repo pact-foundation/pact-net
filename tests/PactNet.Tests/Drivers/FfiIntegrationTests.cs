@@ -42,8 +42,8 @@ namespace PactNet.Tests.Drivers
                 interaction.Given("provider state");
                 interaction.GivenWithParam("state with param", "foo", "bar");
                 interaction.WithRequest("POST", "/path");
-                interaction.WithRequestHeader("X-Request-Header", "request1", 0);
-                interaction.WithRequestHeader("X-Request-Header", "request2", 1);
+                interaction.WithRequestHeader("Accept-Language", "request1", 0);
+                interaction.WithRequestHeader("Accept-Language", "request2", 1);
                 interaction.WithQueryParameter("param", "value", 0);
                 interaction.WithRequestBody("application/json", @"{""foo"":42}");
 
@@ -55,7 +55,7 @@ namespace PactNet.Tests.Drivers
                 using IMockServerDriver mockServer = pact.CreateMockServer("127.0.0.1", null, false);
 
                 var client = new HttpClient { BaseAddress = mockServer.Uri };
-                client.DefaultRequestHeaders.Add("X-Request-Header", new[] { "request1", "request2" });
+                client.DefaultRequestHeaders.Add("Accept-Language", new[] { "request1", "request2" });
 
                 HttpResponseMessage result = await client.PostAsync("/path?param=value", new StringContent(@"{""foo"":42}", Encoding.UTF8, "application/json"));
                 result.StatusCode.Should().Be(HttpStatusCode.Created);
