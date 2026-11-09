@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <!-- Feature files come from the pact-compatibility-suite submodule; they are linked below, not globbed -->
+    <ReqnrollUseDefaultFeatureFilesGlobbing>false</ReqnrollUseDefaultFeatureFilesGlobbing>
+    <!-- Generate code-behind under obj/ so nothing is written into the submodule -->
+    <ReqnrollUseIntermediateOutputPathForCodeBehind>true</ReqnrollUseIntermediateOutputPathForCodeBehind>
+    <!-- Works around a JunitXml.TestLogger crash on duplicate scenario titles; see compat.runsettings -->
+    <RunSettingsFilePath>$(MSBuildProjectDirectory)/compat.runsettings</RunSettingsFilePath>
+    <CompatSuiteDir>$(MSBuildProjectDirectory)/pact-compatibility-suite</CompatSuiteDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Link (not copy) every feature from the submodule, keeping the V1/V2/... folder structure -->
+    <ReqnrollFeatureFiles Include="pact-compatibility-suite/features/**/*.feature">
+      <Link>features/%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </ReqnrollFeatureFiles>
+    <None Remove="pact-compatibility-suite/**" />
+    <Compile Remove="pact-compatibility-suite/**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Fixtures and the baseline are read in place from the source tree -->
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>CompatSuiteDir</_Parameter1>
+      <_Parameter2>$(CompatSuiteDir)</_Parameter2>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>CompatProjectDir</_Parameter1>
+      <_Parameter2>$(MSBuildProjectDirectory)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="Reqnroll.xUnit" Version="3.3.4" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="JunitXml.TestLogger" Version="8.0.0" />
+    <PackageReference Include="YamlDotNet" Version="16.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PactNet\PactNet.csproj" />
+  </ItemGroup>
+
+</Project>

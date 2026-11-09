@@ -251,6 +251,24 @@ Due to using a shared native library instead of C# for the main Pact logic only 
 | 4.x     | Deprecated | 2, 3                 | See [installation] |
 | 3.x     | Deprecated | 2                    |                    |
 
+### Pact Compatibility Suite
+
+`tests/PactNet.Compatibility.Tests` runs the shared [pact-compatibility-suite](https://github.com/pact-foundation/pact-compatibility-suite)
+feature files (a git submodule) against PactNet using [Reqnroll](https://reqnroll.net). Only the V1 HTTP consumer
+steps are implemented so far; scenarios with undefined steps are reported as skipped (unsupported), not failed.
+
+```bash
+git submodule update --init
+./build/download-native-libs.sh   # or copy a libpact_ffi into build/<os>/<arch>/
+dotnet test tests/PactNet.Compatibility.Tests --logger "junit;LogFilePath=TestResults/compat-junit.xml"
+```
+
+- `PACT_FFI_LIB=/path/to/libpact_ffi.{so,dylib,dll}` runs the suite against a different FFI build than the bundled one.
+- `tests/PactNet.Compatibility.Tests/baseline.yaml` is a ratchet of scenarios that are known to fail, each with a reason.
+  A run fails when a scenario that is not in the baseline fails, or when a baselined scenario starts passing.
+  Rerun with `COMPAT_UPDATE_BASELINE=1` to rewrite it (existing reasons are kept); `COMPAT_BASELINE_FILE` points at a different file.
+- The JUnit report lands in `tests/PactNet.Compatibility.Tests/TestResults/`; a plain-text summary is written to `compat-summary.txt` in the test output directory.
+
 ## Roadmap
 
 The [roadmap](https://docs.pact.io/roadmap/) for Pact and Pact Net is outlined on our main website.

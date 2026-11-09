@@ -1,0 +1,3 @@
+[submodule "tests/PactNet.Compatibility.Tests/pact-compatibility-suite"]
+	path = tests/PactNet.Compatibility.Tests/pact-compatibility-suite
+	url = https://github.com/pact-foundation/pact-compatibility-suite.git

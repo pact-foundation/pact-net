@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <xUnit>
+    <!--
+      The default xUnit reporter logs "<display name> [SKIP]" lines, and JunitXml.TestLogger
+      (Spekt XunitTestAdapter) indexes those by display name with Dictionary.Add. The suite has
+      identically titled scenarios in different features (e.g. "Supports adding comments"),
+      so the logger crashes and writes nothing. The json reporter avoids those lines.
+    -->
+    <ReporterSwitch>json</ReporterSwitch>
+  </xUnit>
+</RunSettings>
