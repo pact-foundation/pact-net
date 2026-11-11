@@ -226,6 +226,12 @@ For writing messaging pacts instead of requests/response pacts, see the [messagi
 
 ![----------](https://raw.githubusercontent.com/pactumjs/pactum/master/assets/rainbow.png)
 
+### Plugin Interactions
+
+For protocols handled by a Pact plugin, such as gRPC, see the [plugin interactions guide](docs/plugin-interactions.md).
+
+![----------](https://raw.githubusercontent.com/pactumjs/pactum/master/assets/rainbow.png)
+
 ## Compatibility
 
 ### Operating System

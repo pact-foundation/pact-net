@@ -1,4 +1,4 @@
-﻿namespace PactNet.Drivers
+﻿namespace PactNet.Drivers.Message
 {
     /// <summary>
     /// Driver for message pacts

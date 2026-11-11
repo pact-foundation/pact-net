@@ -8,6 +8,11 @@ namespace PactNet.Drivers
     internal interface IMockServerDriver : IDisposable
     {
         /// <summary>
+        /// Mock server port
+        /// </summary>
+        int Port { get; }
+
+        /// <summary>
         /// Mock server URI
         /// </summary>
         Uri Uri { get; }

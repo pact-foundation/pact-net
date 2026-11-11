@@ -43,8 +43,7 @@
             "application/json"
           ],
           "X-Request": [
-            "request1",
-            "request2"
+            "request1, request2"
           ]
         },
         "matchingRules": {
@@ -145,6 +144,7 @@
         },
         "status": 201
       },
+      "transport": "http",
       "type": "Synchronous/HTTP"
     },
     {
@@ -185,8 +185,8 @@
       "language": "C#"
     },
     "pactRust": {
-      "ffi": "0.4.27",
-      "models": "1.2.8"
+      "ffi": "0.5.10",
+      "models": "1.3.16"
     },
     "pactSpecification": {
       "version": "4.0"

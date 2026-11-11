@@ -132,3 +132,18 @@ MacOS ARM64 Full Support
 ------------------------
 
 MacOS now has full x86-64 and ARM support.
+
+HTTP Request Headers with Multiple Values
+-----------------------------------------
+
+With `libpact_ffi` 0.5.10, a request header configured as separate values can mismatch
+the single comma-separated value sent by an HTTP client. Configure the expected header
+as the joined value instead:
+
+```csharp
+.WithHeader("X-Request", "request1, request2")
+```
+
+This replaces separate calls such as `.WithHeader("X-Request", "request1")` and
+`.WithHeader("X-Request", "request2")` when those values are sent together in one
+request header.

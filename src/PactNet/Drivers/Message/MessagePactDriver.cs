@@ -1,21 +1,18 @@
 ﻿using PactNet.Interop;
 
-namespace PactNet.Drivers
+namespace PactNet.Drivers.Message
 {
     /// <summary>
     /// Driver for message pacts
     /// </summary>
     internal class MessagePactDriver : AbstractPactDriver, IMessagePactDriver
     {
-        private readonly PactHandle pact;
-
         /// <summary>
         /// Initialises a new instance of the <see cref="MessagePactDriver"/> class.
         /// </summary>
         /// <param name="pact">Pact handle</param>
         internal MessagePactDriver(PactHandle pact) : base(pact)
         {
-            this.pact = pact;
         }
 
         /// <summary>

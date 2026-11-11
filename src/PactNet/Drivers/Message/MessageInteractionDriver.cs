@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using PactNet.Interop;
 
-namespace PactNet.Drivers
+namespace PactNet.Drivers.Message
 {
     /// <summary>
     /// Driver for asynchronous message interactions
