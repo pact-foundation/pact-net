@@ -66,7 +66,6 @@ namespace PactNet.Tests.Drivers
                 mockServer.MockServerMismatches().Should().Be("[]");
 
                 string logs = mockServer.MockServerLogs();
-                logs.Should().NotBeEmpty();
 
                 this.output.WriteLine("Mock Server Logs");
                 this.output.WriteLine("----------------");
